@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { ChevronLeft, Eye, Share2, Upload, X, ChevronRight } from 'lucide-react';
@@ -23,6 +24,7 @@ const CampaignEditor: React.FC = () => {
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [showMobileBuilder, setShowMobileBuilder] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
 
   useEffect(() => {
     const initializeCampaign = async () => {
@@ -343,31 +345,31 @@ const CampaignEditor: React.FC = () => {
                   />
                 </div>
 
-               <div>
-  <label className="block text-sm font-medium text-gray-700 mb-1">
-    URL publique
-  </label>
-  <div className="flex items-center space-x-2">
-    <input
-      type="text"
-      value={`https://cerulean-sprite-d201e9.netlify.app/${campaign.public_url || campaign.id}`}
-      readOnly
-      className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-gray-500"
-    />
-    <button
-      onClick={() => {
-        navigator.clipboard.writeText(`https://cerulean-sprite-d201e9.netlify.app/${campaign.public_url || campaign.id}`);
-        alert('URL copiée !');
-      }}
-      className="px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors whitespace-nowrap"
-    >
-      Copier
-    </button>
-  </div>
-  <p className="mt-1 text-sm text-gray-500">
-    Cette URL permet d'accéder à votre campagne publiquement
-  </p>
-</div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    URL publique
+                  </label>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="text"
+                      value={`https://cerulean-sprite-d201e9.netlify.app/${campaign.public_url || campaign.id}`}
+                      readOnly
+                      className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-gray-500"
+                    />
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(`https://cerulean-sprite-d201e9.netlify.app/${campaign.public_url || campaign.id}`);
+                        alert('URL copiée !');
+                      }}
+                      className="px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors whitespace-nowrap"
+                    >
+                      Copier
+                    </button>
+                  </div>
+                  <p className="mt-1 text-sm text-gray-500">
+                    Cette URL permet d'accéder à votre campagne publiquement
+                  </p>
+                </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
@@ -452,51 +454,49 @@ const CampaignEditor: React.FC = () => {
               </div>
 
               {/* Builder Panel */}
-            {activeTab === 'content' && campaign && (
-  <div className="flex flex-col lg:flex-row">
-    <div className="w-full lg:w-1/3 border-r">
-      <QuestionBuilder
-        onAddField={(field) => {
-          const newField = { ...field, id: uuidv4() };
-          setCampaign({
-            ...campaign,
-            fields: [...(campaign.fields || []), newField]
-          });
-        }}
-        onAddQuestion={(question) => {
-          const newQuestion = { ...question, id: uuidv4() };
-          setCampaign({
-            ...campaign,
-            questions: [...(campaign.questions || []), newQuestion]
-          });
-        }}
-        fields={campaign.fields || []}
-        questions={campaign.questions || []}
-        onRemoveField={(id) => {
-          setCampaign({
-            ...campaign,
-            fields: campaign.fields?.filter(f => f.id !== id) || []
-          });
-        }}
-        onRemoveQuestion={(id) => {
-          setCampaign({
-            ...campaign,
-            questions: campaign.questions?.filter(q => q.id !== id) || []
-          });
-        }}
-      />
-    </div>
-    <div className="w-full lg:w-2/3">
-      <div className="h-[calc(100vh-240px)] p-4">
-        <CampaignPreview campaign={campaign} />
-      </div>
-    </div>
-  </div>
-)}
+              {activeTab === 'content' && campaign && (
+                <div className={`
+                  w-full lg:w-1/3 border-r
+                  ${showMobileBuilder ? 'block' : 'hidden lg:block'}
+                `}>
+                  <QuestionBuilder
+                    onAddField={(field) => {
+                      const newField = { ...field, id: uuidv4() };
+                      setCampaign({
+                        ...campaign,
+                        fields: [...(campaign.fields || []), newField]
+                      });
+                    }}
+                    onAddQuestion={(question) => {
+                      const newQuestion = { ...question, id: uuidv4() };
+                      setCampaign({
+                        ...campaign,
+                        questions: [...(campaign.questions || []), newQuestion]
+                      });
+                    }}
+                    fields={campaign.fields || []}
+                    questions={campaign.questions || []}
+                    onRemoveField={(id) => {
+                      setCampaign({
+                        ...campaign,
+                        fields: campaign.fields?.filter(f => f.id !== id) || []
+                      });
+                    }}
+                    onRemoveQuestion={(id) => {
+                      setCampaign({
+                        ...campaign,
+                        questions: campaign.questions?.filter(q => q.id !== id) || []
+                      });
+                    }}
+                  />
+                </div>
+              )}
 
-
-
-                {activeTab === 'design' && (
+              {activeTab === 'design' && (
+                <div className={`
+                  w-full lg:w-1/3 border-r
+                  ${showMobileBuilder ? 'block' : 'hidden lg:block'}
+                `}>
                   <div className="p-4 space-y-6">
                     <div>
                       <h3 className="text-lg font-medium text-gray-900 mb-4">Image de fond</h3>
@@ -686,8 +686,8 @@ const CampaignEditor: React.FC = () => {
                       </div>
                     </div>
                   </div>
-                )}
-              </div>
+                </div>
+              )}
 
               {/* Preview Panel */}
               <div className={`
