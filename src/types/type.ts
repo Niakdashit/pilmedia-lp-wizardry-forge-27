@@ -20,8 +20,8 @@ export interface Campaign {
   name: string;
   type: 'quiz' | 'survey' | 'contest' | 'form' | 'wheel' | 'memory' | 'scratch' | 'puzzle' | 'dice' | 'target';
   status: 'active' | 'draft' | 'scheduled' | 'ended';
-  start_date: string;
-  end_date: string;
+  start_date?: string; // Changed to optional to match index.ts
+  end_date?: string; // Made optional for consistency
   start_time?: string;
   end_time?: string;
   user_id: string;
@@ -31,7 +31,7 @@ export interface Campaign {
   participants?: number;
   created_at?: string;
   updated_at?: string;
-  description?: string; // Adding this property for compatibility
+  description?: string;
 
   style?: {
     containerRadius?: string;

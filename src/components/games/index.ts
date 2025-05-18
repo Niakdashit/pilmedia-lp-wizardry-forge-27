@@ -1,6 +1,6 @@
 
 import WheelOfFortune from './WheelOfFortune';
-import MemoryGame from './MemoryGame';
+import { MemoryGame } from './MemoryGame'; // Changed to use named import
 import Puzzle from './Puzzle';
 import ScratchCard from './ScratchCard';
 import DiceRoll from './DiceRoll';

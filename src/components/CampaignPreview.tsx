@@ -13,9 +13,7 @@ interface PreviewPageProps {
 const PreviewPage: React.FC<PreviewPageProps> = ({ 
   campaign, 
   currentStep: initialStep = 'welcome',
-  onParticipate,
-  onFormSubmit,
-  onGameComplete
+  onParticipate
 }) => {
   const [currentStep, setCurrentStep] = useState<'welcome' | 'questions' | 'end' | 'form' | 'game'>(initialStep);
   const [currentQuestion, setCurrentQuestion] = useState(0);

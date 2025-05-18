@@ -1,166 +1,239 @@
 
-import React, { useState } from 'react';
-import { DiceGameProps } from '../../types/componentInterfaces';
+import React, { useState, useEffect } from 'react';
 
-// Type guard function
-function isValidDiceFace(face: number): face is 1 | 2 | 3 | 4 | 5 | 6 {
-  return face >= 1 && face <= 6;
+interface DiceRollProps {
+  sides: number;
+  style: 'classic' | 'modern';
+  colors: {
+    primary: string;
+    secondary: string;
+    text: string;
+  };
+  onComplete?: () => void;
 }
 
-const DiceRoll: React.FC<DiceGameProps> = ({ sides = 6, style = 'classic', colors }) => {
-  const [result, setResult] = useState(1);
+const DiceRoll: React.FC<DiceRollProps> = ({ sides = 6, style = 'classic', colors, onComplete }) => {
+  const [currentValue, setCurrentValue] = useState(1);
   const [rolling, setRolling] = useState(false);
-  const [showResult, setShowResult] = useState(false);
+  const [rollCount, setRollCount] = useState(0);
+  const maxRolls = 3;
 
   const rollDice = () => {
-    if (rolling) return;
+    if (rolling || rollCount >= maxRolls) return;
     
     setRolling(true);
-    setShowResult(false);
     
-    // Animate the dice roll
-    let rollCount = 0;
-    const maxRolls = 10;
-    const rollInterval = setInterval(() => {
-      const randomFace = Math.floor(Math.random() * sides) + 1;
-      setResult(randomFace);
+    // Random dice rolling animation
+    let rollDuration = 0;
+    const intervalId = setInterval(() => {
+      setCurrentValue(Math.floor(Math.random() * sides) + 1);
+      rollDuration += 50;
       
-      rollCount++;
-      
-      if (rollCount >= maxRolls) {
-        clearInterval(rollInterval);
+      if (rollDuration >= 1000) {
+        clearInterval(intervalId);
         setRolling(false);
-        setShowResult(true);
+        setRollCount(prev => prev + 1);
+        
+        if (rollCount + 1 >= maxRolls && onComplete) {
+          setTimeout(() => {
+            onComplete();
+          }, 1500);
+        }
       }
-    }, 100);
+    }, 50);
   };
 
-  // Define the dice faces
-  const diceFaces: Record<1 | 2 | 3 | 4 | 5 | 6, JSX.Element> = {
-    1: <div className="dice-dot center"></div>,
+  // Create a lookup object for classic dice faces
+  const diceFaces = {
+    1: (
+      <div className="dice-face">
+        <span className="dot dot-center"></span>
+      </div>
+    ),
     2: (
-      <>
-        <div className="dice-dot top-left"></div>
-        <div className="dice-dot bottom-right"></div>
-      </>
+      <div className="dice-face">
+        <span className="dot dot-top-left"></span>
+        <span className="dot dot-bottom-right"></span>
+      </div>
     ),
     3: (
-      <>
-        <div className="dice-dot top-left"></div>
-        <div className="dice-dot center"></div>
-        <div className="dice-dot bottom-right"></div>
-      </>
+      <div className="dice-face">
+        <span className="dot dot-top-left"></span>
+        <span className="dot dot-center"></span>
+        <span className="dot dot-bottom-right"></span>
+      </div>
     ),
     4: (
-      <>
-        <div className="dice-dot top-left"></div>
-        <div className="dice-dot top-right"></div>
-        <div className="dice-dot bottom-left"></div>
-        <div className="dice-dot bottom-right"></div>
-      </>
+      <div className="dice-face">
+        <span className="dot dot-top-left"></span>
+        <span className="dot dot-top-right"></span>
+        <span className="dot dot-bottom-left"></span>
+        <span className="dot dot-bottom-right"></span>
+      </div>
     ),
     5: (
-      <>
-        <div className="dice-dot top-left"></div>
-        <div className="dice-dot top-right"></div>
-        <div className="dice-dot center"></div>
-        <div className="dice-dot bottom-left"></div>
-        <div className="dice-dot bottom-right"></div>
-      </>
+      <div className="dice-face">
+        <span className="dot dot-top-left"></span>
+        <span className="dot dot-top-right"></span>
+        <span className="dot dot-center"></span>
+        <span className="dot dot-bottom-left"></span>
+        <span className="dot dot-bottom-right"></span>
+      </div>
     ),
     6: (
-      <>
-        <div className="dice-dot top-left"></div>
-        <div className="dice-dot top-right"></div>
-        <div className="dice-dot middle-left"></div>
-        <div className="dice-dot middle-right"></div>
-        <div className="dice-dot bottom-left"></div>
-        <div className="dice-dot bottom-right"></div>
-      </>
+      <div className="dice-face">
+        <span className="dot dot-top-left"></span>
+        <span className="dot dot-top-right"></span>
+        <span className="dot dot-middle-left"></span>
+        <span className="dot dot-middle-right"></span>
+        <span className="dot dot-bottom-left"></span>
+        <span className="dot dot-bottom-right"></span>
+      </div>
     )
   };
 
-  const safeFace = isValidDiceFace(result) ? result : 1;
-
   return (
-    <div className="flex flex-col items-center justify-center p-8">
-      <div className="mb-8">
-        <div 
-          className={`dice ${rolling ? 'rolling' : ''} ${style}`}
-          style={{ 
-            backgroundColor: colors.primary,
-            color: colors.text,
-            boxShadow: `0 0 10px ${colors.secondary}`
-          }}
-        >
-          {diceFaces[safeFace]}
-        </div>
-      </div>
+    <div className="flex flex-col items-center justify-center p-8 w-full max-w-md mx-auto">
+      <h2 className="text-2xl font-bold mb-6" style={{ color: colors.text }}>
+        {rollCount < maxRolls ? "Roll the dice!" : "Game Over!"}
+      </h2>
       
-      <button 
+      <div 
+        className={`mb-8 dice ${rolling ? 'rolling' : ''} ${style === 'modern' ? 'modern' : 'classic'}`}
+        style={{ 
+          backgroundColor: colors.primary,
+          borderColor: colors.secondary,
+        }}
         onClick={rollDice}
-        disabled={rolling}
-        className="px-6 py-3 rounded-lg text-white font-bold transition-transform transform hover:scale-105 disabled:opacity-50"
-        style={{ backgroundColor: colors.secondary }}
       >
-        {rolling ? 'Lancer en cours...' : 'Lancer le dé'}
-      </button>
-      
-      {showResult && (
-        <div className="mt-4 text-center">
-          <p className="text-xl font-bold">Résultat: {result}</p>
-        </div>
-      )}
+        {style === 'classic' ? (
+          // @ts-ignore - Type safety handled by ensuring currentValue is between 1 and 6
+          diceFaces[currentValue]
+        ) : (
+          <div className="modern-face">
+            <span style={{ color: colors.text }}>{currentValue}</span>
+          </div>
+        )}
+      </div>
 
-      <style jsx>{`
-        .dice {
-          width: 100px;
-          height: 100px;
-          border-radius: 10px;
-          display: grid;
-          grid-template: repeat(3, 1fr) / repeat(3, 1fr);
-          padding: 8px;
-          transform-style: preserve-3d;
-        }
-        
-        .dice.rolling {
-          animation: roll 0.5s infinite;
-        }
-        
-        @keyframes roll {
-          0% { transform: rotateX(0deg) rotateY(0deg); }
-          25% { transform: rotateX(90deg) rotateY(45deg); }
-          50% { transform: rotateX(180deg) rotateY(90deg); }
-          75% { transform: rotateX(270deg) rotateY(135deg); }
-          100% { transform: rotateX(360deg) rotateY(180deg); }
-        }
-        
-        .dice-dot {
-          width: 16px;
-          height: 16px;
-          border-radius: 50%;
-          background-color: white;
-          place-self: center;
-        }
-        
-        .top-left { grid-area: 1 / 1; }
-        .top-right { grid-area: 1 / 3; }
-        .middle-left { grid-area: 2 / 1; }
-        .center { grid-area: 2 / 2; }
-        .middle-right { grid-area: 2 / 3; }
-        .bottom-left { grid-area: 3 / 1; }
-        .bottom-right { grid-area: 3 / 3; }
-        
-        .classic {
-          background-color: white;
-          border: 2px solid #333;
-        }
-        
-        .modern {
-          background: linear-gradient(135deg, #6e8efb, #a777e3);
-          box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-        }
-      `}</style>
+      <p className="mb-4" style={{ color: colors.text }}>
+        Rolls remaining: {maxRolls - rollCount}
+      </p>
+
+      <button
+        className="px-6 py-2 rounded-lg font-semibold transition-all"
+        style={{ 
+          backgroundColor: rollCount >= maxRolls ? '#888888' : colors.secondary,
+          color: colors.text,
+          opacity: rollCount >= maxRolls || rolling ? 0.6 : 1
+        }}
+        onClick={rollDice}
+        disabled={rolling || rollCount >= maxRolls}
+      >
+        {rolling ? "Rolling..." : "Roll Dice"}
+      </button>
+
+      <style>
+        {`
+          .dice {
+            width: 100px;
+            height: 100px;
+            border-radius: 12px;
+            border: 2px solid;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+          }
+          
+          .dice.rolling {
+            animation: roll 0.5s infinite;
+          }
+          
+          .dice.modern {
+            border-radius: 16px;
+          }
+          
+          .dice-face {
+            width: 90%;
+            height: 90%;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+          }
+          
+          .dot {
+            width: 14px;
+            height: 14px;
+            background-color: #fff;
+            border-radius: 50%;
+          }
+          
+          .dot-center {
+            grid-column: 2;
+            grid-row: 2;
+            justify-self: center;
+            align-self: center;
+          }
+          
+          .dot-top-left {
+            grid-column: 1;
+            grid-row: 1;
+            justify-self: center;
+            align-self: center;
+          }
+          
+          .dot-top-right {
+            grid-column: 3;
+            grid-row: 1;
+            justify-self: center;
+            align-self: center;
+          }
+          
+          .dot-middle-left {
+            grid-column: 1;
+            grid-row: 2;
+            justify-self: center;
+            align-self: center;
+          }
+          
+          .dot-middle-right {
+            grid-column: 3;
+            grid-row: 2;
+            justify-self: center;
+            align-self: center;
+          }
+          
+          .dot-bottom-left {
+            grid-column: 1;
+            grid-row: 3;
+            justify-self: center;
+            align-self: center;
+          }
+          
+          .dot-bottom-right {
+            grid-column: 3;
+            grid-row: 3;
+            justify-self: center;
+            align-self: center;
+          }
+          
+          .modern-face {
+            font-size: 40px;
+            font-weight: bold;
+          }
+          
+          @keyframes roll {
+            0% { transform: rotateX(0deg) rotateY(0deg); }
+            25% { transform: rotateX(90deg) rotateY(45deg); }
+            50% { transform: rotateX(180deg) rotateY(90deg); }
+            75% { transform: rotateX(270deg) rotateY(135deg); }
+            100% { transform: rotateX(360deg) rotateY(180deg); }
+          }
+        `}
+      </style>
     </div>
   );
 };

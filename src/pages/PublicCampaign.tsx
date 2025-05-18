@@ -166,8 +166,8 @@ const PublicCampaign: React.FC = () => {
       <div className="max-w-[800px] w-full">
         <CampaignPreview
           campaign={campaign}
-          currentStep={currentStep}
-          onParticipate={handleParticipation}
+          currentStep="questions"
+          onParticipate={handleParticipate}
           onFormSubmit={handleFormSubmit}
           onGameComplete={handleGameComplete}
         />

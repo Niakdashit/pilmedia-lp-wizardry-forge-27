@@ -39,7 +39,6 @@ export const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({
 }) => {
   const wheelRef = useRef<HTMLDivElement>(null);
   const [isSpinning, setIsSpinning] = useState(false);
-  const [selectedSegment, setSelectedSegment] = useState<string | null>(null);
   const controls = useAnimation();
 
   const getRotationDegrees = (segmentIndex: number): number => {
@@ -49,7 +48,6 @@ export const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({
   const spin = async () => {
     if (isSpinning) return;
     setIsSpinning(true);
-    setSelectedSegment(null);
 
     // Calculate winning segment based on probabilities
     const totalProbability = segments.reduce((sum, segment) => sum + (segment.probability || 1), 0);

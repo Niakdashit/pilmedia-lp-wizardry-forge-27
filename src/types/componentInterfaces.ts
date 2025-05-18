@@ -11,6 +11,8 @@ export interface MemoryGameProps {
     secondary: string;
     text: string;
   };
+  onComplete?: () => void; // Added optional onComplete callback
+  backgroundImage?: string; // Added optional backgroundImage prop
 }
 
 export interface DiceGameProps {
@@ -21,6 +23,7 @@ export interface DiceGameProps {
     secondary: string;
     text: string;
   };
+  onComplete?: () => void; // Added optional onComplete callback
 }
 
 export interface TargetGameProps {
@@ -31,6 +34,7 @@ export interface TargetGameProps {
     secondary: string;
     text: string;
   };
+  onComplete?: () => void; // Added optional onComplete callback
 }
 
 export interface WheelOfFortuneProps {
@@ -44,4 +48,6 @@ export interface WheelOfFortuneProps {
     secondary: string;
     text: string;
   };
+  backgroundImage?: string; // Added optional backgroundImage prop
+  onComplete?: () => void; // Added optional onComplete callback
 }
