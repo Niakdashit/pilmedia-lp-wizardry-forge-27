@@ -1,14 +1,9 @@
+
 import React from 'react';
 import { ChevronUp, ChevronDown } from 'lucide-react';
-import { StatCard as StatCardType } from '../types';
+import { StatCardProps } from '../types';
 
-interface StatCardProps {
-  stat: StatCardType;
-}
-
-const StatCard: React.FC<StatCardProps> = ({ stat }) => {
-  const { title, value, change, icon, positive } = stat;
-
+const StatCard: React.FC<StatCardProps> = ({ title, value, change, icon, positive, stat }) => {
   return (
     <div className="bg-white rounded-lg shadow-md p-6 transform transition-transform duration-300 hover:translate-y-[-4px] hover:shadow-lg">
       <div className="flex items-center justify-between mb-4">
@@ -28,6 +23,7 @@ const StatCard: React.FC<StatCardProps> = ({ stat }) => {
           {change}
         </span>
       </div>
+      <div className="text-sm text-gray-500 mt-1">{stat}</div>
     </div>
   );
 };

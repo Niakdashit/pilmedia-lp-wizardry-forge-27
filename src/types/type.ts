@@ -4,13 +4,14 @@ export interface FormField {
   label: string;
   type: string; // text, select, email, etc.
   placeholder?: string;
-  required?: boolean;
+  required: boolean; // Change to non-optional to match index.ts
   options?: string[];
 }
 
 export interface Question {
   id: string;
   text: string;
+  type: 'multiple-choice' | 'text' | 'checkbox'; // Added type field to match index.ts
   options: string[];
   correct_answer?: string;
 }

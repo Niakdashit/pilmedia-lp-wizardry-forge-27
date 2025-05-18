@@ -1,9 +1,9 @@
+
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import StatCard from '../components/StatCard';
 import CampaignCard from '../components/CampaignCard';
 import { Campaign, StatCardProps } from '../types';
-import { supabase } from '../lib/supabase';
 
 const Dashboard = () => {
   const [campaigns] = useState<Campaign[]>([]);
