@@ -1,16 +1,16 @@
 
-import { WheelOfFortune } from './WheelOfFortune';
-import { MemoryGame } from './MemoryGame';
-import ScratchCard from './ScratchCard';
+import WheelOfFortune from './WheelOfFortune';
+import MemoryGame from './MemoryGame';
 import Puzzle from './Puzzle';
-import { DiceRoll } from './DiceRoll';
-import { TargetShoot } from './TargetShoot';
+import ScratchCard from './ScratchCard';
+import DiceRoll from './DiceRoll';
+import TargetShoot from './TargetShoot';
 
 export {
   WheelOfFortune,
   MemoryGame,
-  ScratchCard,
   Puzzle,
+  ScratchCard,
   DiceRoll,
   TargetShoot
 };

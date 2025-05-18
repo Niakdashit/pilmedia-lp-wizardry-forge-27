@@ -1,7 +1,8 @@
+
 import React, { useState } from 'react';
 import { WheelOfFortune, MemoryGame, ScratchCard, Puzzle, DiceRoll, TargetShoot } from './games';
 import { supabase } from '../lib/supabase';
-import { MemoryGameProps, DiceGameProps, TargetGameProps } from '../types/componentInterfaces';
+import { FormField } from '../types/type';
 
 interface GamePreviewProps {
   type?: string;
@@ -64,8 +65,7 @@ const GamePreview: React.FC<GamePreviewProps> = ({ type, settings }) => {
         secondary: settings?.colors?.secondary || '#6d1750',
         text: settings?.colors?.text || '#ffffff'
       },
-      backgroundImage: settings?.background_image || '',
-      // We will only pass onComplete to components that accept it
+      // Remove backgroundImage from props, it's not expected in these components
     };
 
     switch (type) {
@@ -81,7 +81,6 @@ const GamePreview: React.FC<GamePreviewProps> = ({ type, settings }) => {
               { text: "FREE GIFT", color: "#D4A5A5" }
             ]}
             colors={gameProps.colors}
-            backgroundImage={gameProps.backgroundImage}
           />
         );
       case 'memory':
@@ -93,7 +92,6 @@ const GamePreview: React.FC<GamePreviewProps> = ({ type, settings }) => {
               secondary: gameProps.colors.secondary,
               text: gameProps.colors.text
             }}
-            backgroundImage={gameProps.backgroundImage}
           />
         );
       case 'scratch':

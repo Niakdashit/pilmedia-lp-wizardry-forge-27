@@ -11,8 +11,6 @@ export interface MemoryGameProps {
     secondary: string;
     text: string;
   };
-  onComplete?: () => void;
-  backgroundImage?: string;
 }
 
 export interface DiceGameProps {
@@ -23,7 +21,6 @@ export interface DiceGameProps {
     secondary: string;
     text: string;
   };
-  onComplete?: () => void;
 }
 
 export interface TargetGameProps {
@@ -34,5 +31,17 @@ export interface TargetGameProps {
     secondary: string;
     text: string;
   };
-  onComplete?: () => void;
+}
+
+export interface WheelOfFortuneProps {
+  segments: Array<{
+    text: string;
+    color: string;
+    probability?: number;
+  }>;
+  colors: {
+    primary: string;
+    secondary: string;
+    text: string;
+  };
 }

@@ -1,3 +1,4 @@
+
 export interface FormField {
   id: string;
   label: string;
@@ -17,8 +18,8 @@ export interface Question {
 export interface Campaign {
   id: string;
   name: string;
-  type: string;
-  status: string;
+  type: 'quiz' | 'survey' | 'contest' | 'form' | 'wheel' | 'memory' | 'scratch' | 'puzzle' | 'dice' | 'target';
+  status: 'active' | 'draft' | 'scheduled' | 'ended';
   start_date: string;
   end_date: string;
   start_time?: string;
@@ -30,6 +31,7 @@ export interface Campaign {
   participants?: number;
   created_at?: string;
   updated_at?: string;
+  description?: string; // Adding this property for compatibility
 
   style?: {
     containerRadius?: string;
@@ -50,8 +52,54 @@ export interface Campaign {
     border?: string;
     questionBackground?: string;
     progressBar?: string;
+    primary?: string;
+    secondary?: string;
   };
 
   fields?: FormField[];
   questions?: Question[];
+
+  game_content?: {
+    title: string;
+    description: string;
+    rules: string;
+    successMessage: string;
+    failureMessage: string;
+  };
+
+  game_settings?: {
+    wheel?: {
+      segments: Array<{
+        text: string;
+        color: string;
+        probability?: number;
+      }>;
+    };
+    memory?: {
+      pairs?: number;
+      cards?: Array<{
+        content: string;
+        image?: string;
+      }>;
+    };
+    scratch?: {
+      prize: {
+        text: string;
+        image?: string;
+      };
+      revealPercent: number;
+    };
+    puzzle?: {
+      imageUrl: string;
+      gridSize: number;
+    };
+    dice?: {
+      sides: number;
+      style: string;
+    };
+    target?: {
+      targets: number;
+      speed: number;
+    };
+  };
 }

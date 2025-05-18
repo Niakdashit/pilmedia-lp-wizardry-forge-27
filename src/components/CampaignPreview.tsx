@@ -1,35 +1,31 @@
 
 import React, { useState } from 'react';
-import { Campaign } from '../types';
-import { MemoryGameProps, DiceGameProps, TargetGameProps } from '../types/componentInterfaces';
+import { Campaign } from '../types/type';
 
 interface PreviewPageProps {
   campaign: Campaign;
+  currentStep?: 'welcome' | 'questions' | 'end' | 'form' | 'game';
+  onParticipate?: () => Promise<void>;
+  onFormSubmit?: (formData: Record<string, string>) => Promise<void>;
+  onGameComplete?: () => Promise<void>;
 }
 
-// Define mock components to satisfy TypeScript
-const MemoryGame: React.FC<MemoryGameProps> = () => (
-  <div>Memory Game Placeholder</div>
-);
-
-const ScratchCard: React.FC<{ prize: {text: string, image?: string}, revealPercent: number }> = () => (
-  <div>Scratch Card Placeholder</div>
-);
-
-const DiceGame: React.FC<DiceGameProps> = () => (
-  <div>Dice Game Placeholder</div>
-);
-
-const TargetGame: React.FC<TargetGameProps> = () => (
-  <div>Target Game Placeholder</div>
-);
-
-const PreviewPage: React.FC<PreviewPageProps> = ({ campaign }) => {
-  const [currentStep, setCurrentStep] = useState<'welcome' | 'questions' | 'end'>('welcome');
+const PreviewPage: React.FC<PreviewPageProps> = ({ 
+  campaign, 
+  currentStep: initialStep = 'welcome',
+  onParticipate,
+  onFormSubmit,
+  onGameComplete
+}) => {
+  const [currentStep, setCurrentStep] = useState<'welcome' | 'questions' | 'end' | 'form' | 'game'>(initialStep);
   const [currentQuestion, setCurrentQuestion] = useState(0);
 
   const handleStart = () => {
-    setCurrentStep('questions');
+    if (onParticipate) {
+      onParticipate();
+    } else {
+      setCurrentStep('questions');
+    }
   };
 
   const handleNext = () => {
@@ -43,11 +39,6 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ campaign }) => {
   const handleRestart = () => {
     setCurrentStep('welcome');
     setCurrentQuestion(0);
-  };
-
-  // Handle game completion
-  const handleGameComplete = () => {
-    setCurrentStep('end');
   };
 
   return (
@@ -65,9 +56,9 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ campaign }) => {
         {currentStep === 'welcome' && (
           <div className="text-center fade-in">
             <h1 className="text-3xl font-bold mb-6">{campaign.name}</h1>
-            {/* campaign.description is missing in Campaign type, providing conditional rendering */}
-            {campaign.game_content?.description && (
-              <p className="mb-8">{campaign.game_content.description}</p>
+            {/* Check for game_content?.description or description */}
+            {(campaign.game_content?.description || campaign.description) && (
+              <p className="mb-8">{campaign.game_content?.description || campaign.description}</p>
             )}
             <button
               className="px-8 py-3 rounded-lg text-white font-semibold transition-all"
@@ -113,56 +104,6 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ campaign }) => {
               </div>
             </div>
           </div>
-        )}
-
-        {/* Gamification components */}
-        {currentStep === 'questions' && campaign.type === 'memory' && campaign.game_settings?.memory && (
-          <MemoryGame 
-            cards={campaign.game_settings.memory.cards || []}
-            colors={{
-              primary: campaign.colors?.button || '#841b60',
-              secondary: campaign.colors?.background || '#ffffff',
-              text: campaign.colors?.text || '#333333'
-            }}
-            onComplete={handleGameComplete}
-            backgroundImage={campaign.background_image}
-          />
-        )}
-
-        {currentStep === 'questions' && campaign.type === 'scratch' && campaign.game_settings?.scratch && (
-          <ScratchCard 
-            prize={{
-              text: campaign.game_settings.scratch.prize.text || 'Félicitations!',
-              image: campaign.game_settings.scratch.prize.image
-            }}
-            revealPercent={campaign.game_settings.scratch.revealPercent || 50}
-          />
-        )}
-
-        {currentStep === 'questions' && campaign.type === 'dice' && campaign.game_settings?.dice && (
-          <DiceGame 
-            sides={campaign.game_settings.dice.sides || 6}
-            style={campaign.game_settings.dice.style || 'standard'}
-            colors={{
-              primary: campaign.colors?.button || '#841b60',
-              secondary: campaign.colors?.background || '#ffffff',
-              text: campaign.colors?.text || '#333333'
-            }}
-            onComplete={handleGameComplete}
-          />
-        )}
-
-        {currentStep === 'questions' && campaign.type === 'target' && campaign.game_settings?.target && (
-          <TargetGame 
-            targets={campaign.game_settings.target.targets || 3}
-            speed={campaign.game_settings.target.speed || 1}
-            colors={{
-              primary: campaign.colors?.button || '#841b60',
-              secondary: campaign.colors?.background || '#ffffff',
-              text: campaign.colors?.text || '#333333'
-            }}
-            onComplete={handleGameComplete}
-          />
         )}
 
         {currentStep === 'end' && (

@@ -1,28 +1,10 @@
 
 import React, { useState } from 'react';
 import { Campaign } from '../types';
-import { MemoryGameProps, DiceGameProps, TargetGameProps } from '../types/componentInterfaces';
 
 interface PreviewPageProps {
   campaign: Campaign;
 }
-
-// Define mock components to satisfy TypeScript
-const MemoryGame: React.FC<MemoryGameProps> = () => (
-  <div>Memory Game Placeholder</div>
-);
-
-const ScratchCard: React.FC<{ prize: {text: string, image?: string}, revealPercent: number }> = () => (
-  <div>Scratch Card Placeholder</div>
-);
-
-const DiceGame: React.FC<DiceGameProps> = () => (
-  <div>Dice Game Placeholder</div>
-);
-
-const TargetGame: React.FC<TargetGameProps> = () => (
-  <div>Target Game Placeholder</div>
-);
 
 const PreviewPage: React.FC<PreviewPageProps> = ({ campaign }) => {
   const [currentStep, setCurrentStep] = useState<'welcome' | 'questions' | 'end'>('welcome');
@@ -43,11 +25,6 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ campaign }) => {
   const handleRestart = () => {
     setCurrentStep('welcome');
     setCurrentQuestion(0);
-  };
-
-  // Handle game completion
-  const handleGameComplete = () => {
-    setCurrentStep('end');
   };
 
   return (

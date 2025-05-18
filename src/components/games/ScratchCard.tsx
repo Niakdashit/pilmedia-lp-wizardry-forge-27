@@ -1,224 +1,205 @@
+
 import React, { useRef, useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 
 interface ScratchCardProps {
-  width?: number;
-  height?: number;
-  image?: string;
-  brushSize?: number;
-  revealPercent?: number;
-  colors?: {
-    primary: string;
-    secondary: string;
-    text: string;
-  };
-  style?: {
-    width?: string;
-    height?: string;
-    fontSize?: string;
-  };
-  onComplete?: () => void;
-  prize?: {
+  prize: {
     text: string;
     image?: string;
   };
+  revealPercent: number;
 }
 
-const ScratchCard: React.FC<ScratchCardProps> = ({
-  width = 300,
-  height = 300,
-  brushSize = 40,
-  revealPercent = 50,
-  colors = {
-    primary: '#841b60',
-    secondary: '#6d1750',
-    text: '#ffffff'
-  },
-  style = {
-    width: '300px',
-    height: '300px',
-    fontSize: '24px'
-  },
-  onComplete,
-  prize = {
-    text: "Vous avez gagné !",
-    image: "https://images.pexels.com/photos/1829191/pexels-photo-1829191.jpeg"
-  }
-}) => {
+const ScratchCard: React.FC<ScratchCardProps> = ({ prize, revealPercent = 50 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [isRevealed, setIsRevealed] = useState(false);
+  const [percentRevealed, setPercentRevealed] = useState(0);
   const [isDrawing, setIsDrawing] = useState(false);
-  const [isComplete, setIsComplete] = useState(false);
-  const [lastPoint, setLastPoint] = useState<{ x: number; y: number } | null>(null);
-  const [revealed, setRevealed] = useState(0);
+
+  // Track the last position for smoother drawing
+  const lastPosition = useRef({ x: 0, y: 0 });
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
+    const context = canvas.getContext('2d');
+    if (!context) return;
 
-    canvas.width = width;
-    canvas.height = height;
+    // Set canvas dimensions
+    const setCanvasDimensions = () => {
+      const containerRect = canvas.parentElement?.getBoundingClientRect();
+      if (containerRect) {
+        canvas.width = containerRect.width;
+        canvas.height = containerRect.height;
+        
+        // Fill with gray scratch-off layer
+        context.fillStyle = '#AAAAAA';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+      }
+    };
 
-    const gradient = ctx.createLinearGradient(0, 0, width, height);
-    gradient.addColorStop(0, colors.primary);
-    gradient.addColorStop(1, colors.secondary);
+    setCanvasDimensions();
+    window.addEventListener('resize', setCanvasDimensions);
 
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, width, height);
+    return () => {
+      window.removeEventListener('resize', setCanvasDimensions);
+    };
+  }, []);
 
-    ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
-    for (let i = 0; i < 3; i++) {
-      ctx.beginPath();
-      ctx.arc(
-        Math.random() * width,
-        Math.random() * height,
-        Math.random() * 50 + 20,
-        0,
-        Math.PI * 2
-      );
-      ctx.fill();
+  // Calculate the percentage of the canvas that has been scratched
+  const calculateRevealPercentage = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return 0;
+
+    const context = canvas.getContext('2d');
+    if (!context) return 0;
+
+    const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+    const pixels = imageData.data;
+    
+    let transparentPixels = 0;
+    let totalPixels = pixels.length / 4;
+    
+    // Check every 4th value (alpha channel)
+    for (let i = 3; i < pixels.length; i += 4) {
+      if (pixels[i] < 50) { // If pixel is mostly transparent
+        transparentPixels++;
+      }
     }
+    
+    const percent = (transparentPixels / totalPixels) * 100;
+    return percent;
+  };
 
-    ctx.font = '20px Arial';
-    ctx.fillStyle = colors.text;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('Grattez ici !', width / 2, height / 2);
-  }, [width, height, colors]);
+  const startDrawing = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+    setIsDrawing(true);
+    
+    // Get position
+    const position = getEventPosition(e);
+    if (position) {
+      lastPosition.current = position;
+    }
+  };
 
-  const getMousePos = (e: React.MouseEvent | React.TouchEvent) => {
+  const draw = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+    if (!isDrawing) return;
+    
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const context = canvas.getContext('2d');
+    if (!context) return;
+    
+    const position = getEventPosition(e);
+    if (!position) return;
+    
+    // Draw a line between last position and current position
+    context.globalCompositeOperation = 'destination-out';
+    context.lineWidth = 40;
+    context.lineCap = 'round';
+    context.beginPath();
+    context.moveTo(lastPosition.current.x, lastPosition.current.y);
+    context.lineTo(position.x, position.y);
+    context.stroke();
+    
+    // Update last position
+    lastPosition.current = position;
+    
+    // Check if enough has been revealed
+    const percent = calculateRevealPercentage();
+    setPercentRevealed(percent);
+    
+    if (percent > revealPercent && !isRevealed) {
+      setIsRevealed(true);
+      
+      // If more than threshold is revealed, clear the rest after a slight delay
+      setTimeout(() => {
+        if (canvas && context) {
+          context.clearRect(0, 0, canvas.width, canvas.height);
+        }
+      }, 500);
+    }
+  };
+
+  const endDrawing = () => {
+    setIsDrawing(false);
+  };
+
+  // Helper to get position from either mouse or touch event
+  const getEventPosition = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
     const canvas = canvasRef.current;
     if (!canvas) return null;
-
-    const rect = canvas.getBoundingClientRect();
-    const scaleX = canvas.width / rect.width;
-    const scaleY = canvas.height / rect.height;
-
+    
+    let clientX, clientY;
+    
+    // Check if it's a touch event
     if ('touches' in e) {
-      const touch = e.touches[0];
-      return {
-        x: (touch.clientX - rect.left) * scaleX,
-        y: (touch.clientY - rect.top) * scaleY
-      };
+      if (e.touches.length === 0) return null;
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
     } else {
-      return {
-        x: (e.clientX - rect.left) * scaleX,
-        y: (e.clientY - rect.top) * scaleY
-      };
+      clientX = e.clientX;
+      clientY = e.clientY;
     }
-  };
-
-  const scratch = (point: { x: number; y: number }) => {
-    const canvas = canvasRef.current;
-    const ctx = canvas?.getContext('2d');
-    if (!ctx || !lastPoint) return;
-
-    ctx.globalCompositeOperation = 'destination-out';
-    ctx.lineWidth = brushSize;
-    ctx.lineCap = 'round';
-    ctx.lineJoin = 'round';
-    ctx.beginPath();
-    ctx.moveTo(lastPoint.x, lastPoint.y);
-    ctx.lineTo(point.x, point.y);
-    ctx.stroke();
-
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const pixels = imageData.data;
-    let transparent = 0;
-    for (let i = 3; i < pixels.length; i += 4) {
-      if (pixels[i] === 0) transparent++;
-    }
-    const percentRevealed = (transparent / (pixels.length / 4)) * 100;
-    setRevealed(percentRevealed);
-
-    if (percentRevealed > revealPercent && !isComplete) {
-      setIsComplete(true);
-      onComplete?.();
-    }
-  };
-
-  const handleStart = (e: React.MouseEvent | React.TouchEvent) => {
-    e.preventDefault();
-    const point = getMousePos(e);
-    if (!point) return;
-
-    setIsDrawing(true);
-    setLastPoint(point);
-  };
-
-  const handleMove = (e: React.MouseEvent | React.TouchEvent) => {
-    e.preventDefault();
-    if (!isDrawing) return;
-
-    const point = getMousePos(e);
-    if (!point) return;
-
-    scratch(point);
-    setLastPoint(point);
-  };
-
-  const handleEnd = () => {
-    setIsDrawing(false);
-    setLastPoint(null);
+    
+    // Get canvas position
+    const rect = canvas.getBoundingClientRect();
+    const x = clientX - rect.left;
+    const y = clientY - rect.top;
+    
+    return { x, y };
   };
 
   return (
-    <div
-      className="relative rounded-lg overflow-hidden"
-      style={{
-        width: style.width,
-        height: style.height
-      }}
-    >
-      {/* Prize Content */}
-      <div
-        className="absolute inset-0 flex flex-col items-center justify-center bg-white"
-        style={{
-          backgroundImage: prize.image ? `url(${prize.image})` : undefined,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center'
-        }}
+    <div className="flex flex-col items-center justify-center p-4">
+      <div 
+        className="relative w-full max-w-md aspect-video bg-gradient-to-b from-purple-600 to-indigo-700 rounded-lg overflow-hidden"
+        style={{ boxShadow: '0 10px 25px rgba(0,0,0,0.2)' }}
       >
-        <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={isComplete ? { opacity: 1, scale: 1 } : {}}
-          className="bg-white bg-opacity-90 p-6 rounded-lg text-center"
-        >
-          <h2 className="text-2xl font-bold mb-2" style={{ color: colors.primary }}>
-            {prize.text}
-          </h2>
-        </motion.div>
+        <div className="absolute inset-0 flex items-center justify-center text-white">
+          <div className="text-center p-6">
+            {prize.image && (
+              <img 
+                src={prize.image} 
+                alt="Prize" 
+                className="mx-auto mb-4 max-h-24 object-contain"
+              />
+            )}
+            <h2 className="text-3xl font-bold mb-2">{prize.text}</h2>
+            <p className="text-lg opacity-90">Grattez pour découvrir</p>
+          </div>
+        </div>
+        
+        <canvas
+          ref={canvasRef}
+          className="absolute inset-0 w-full h-full cursor-pointer"
+          onMouseDown={startDrawing}
+          onMouseMove={draw}
+          onMouseUp={endDrawing}
+          onMouseLeave={endDrawing}
+          onTouchStart={startDrawing}
+          onTouchMove={draw}
+          onTouchEnd={endDrawing}
+        ></canvas>
+
+        {isRevealed && (
+          <div className="absolute bottom-4 left-0 right-0 flex justify-center">
+            <div className="bg-white bg-opacity-80 px-4 py-2 rounded-full text-purple-600 font-semibold">
+              Félicitations!
+            </div>
+          </div>
+        )}
       </div>
 
-      {/* Scratch Layer */}
-      <canvas
-        ref={canvasRef}
-        className="absolute inset-0 cursor-pointer touch-none"
-        style={{
-          width: '100%',
-          height: '100%'
-        }}
-        onMouseDown={handleStart}
-        onMouseMove={handleMove}
-        onMouseUp={handleEnd}
-        onMouseLeave={handleEnd}
-        onTouchStart={handleStart}
-        onTouchMove={handleMove}
-        onTouchEnd={handleEnd}
-      />
-
-      {/* Progress Indicator */}
-      {!isComplete && (
-        <div className="absolute bottom-4 left-4 right-4 h-2 bg-white bg-opacity-20 rounded-full overflow-hidden">
-          <div
-            className="h-full rounded-full transition-all duration-300"
-            style={{
-              width: `${revealed}%`,
-              backgroundColor: colors.text
-            }}
-          />
+      {!isRevealed && (
+        <div className="mt-4 text-center text-gray-600">
+          <p>Grattez la carte avec votre doigt ou la souris</p>
+          <div className="mt-2 w-full bg-gray-200 h-2 rounded-full">
+            <div 
+              className="bg-indigo-600 h-2 rounded-full transition-all duration-300"
+              style={{ width: `${percentRevealed}%` }}
+            ></div>
+          </div>
         </div>
       )}
     </div>
