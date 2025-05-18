@@ -1,210 +1,170 @@
 
-import React, { useState } from 'react';
-import { DiceGameProps } from '../../types/componentInterfaces';
+import React, { useState, useRef } from 'react';
+import { DiceRollProps } from '../../types';
 
-const DiceRoll: React.FC<DiceGameProps> = ({ sides = 6, style = 'classic', colors, onComplete }) => {
-  const [currentValue, setCurrentValue] = useState(1);
-  const [isRolling, setIsRolling] = useState(false);
-  const [rolls, setRolls] = useState(0);
-  const maxRolls = 5;
-
+const DiceRoll: React.FC<DiceRollProps> = ({ sides = 6, style = 'classic', colors }) => {
+  const [result, setResult] = useState<number | null>(null);
+  const [rolling, setRolling] = useState(false);
+  const diceRef = useRef<HTMLDivElement>(null);
+  
   const rollDice = () => {
-    if (isRolling || rolls >= maxRolls) return;
+    if (rolling) return;
     
-    setIsRolling(true);
+    setRolling(true);
     
-    // Animate the dice roll
-    let rollCount = 0;
-    const maxRollCount = 10;
+    // Animate the dice
+    if (diceRef.current) {
+      diceRef.current.classList.add('animate-spin');
+    }
+    
+    // Random roll between 10-20 iterations
+    let iterations = 10 + Math.floor(Math.random() * 10);
+    let currentIteration = 0;
+    
     const rollInterval = setInterval(() => {
-      setCurrentValue(Math.floor(Math.random() * sides) + 1);
-      rollCount++;
+      const randomResult = Math.floor(Math.random() * sides) + 1;
+      setResult(randomResult);
       
-      if (rollCount >= maxRollCount) {
+      currentIteration++;
+      if (currentIteration >= iterations) {
         clearInterval(rollInterval);
-        setIsRolling(false);
-        setRolls(prevRolls => {
-          const newRolls = prevRolls + 1;
-          if (newRolls >= maxRolls && onComplete) {
-            onComplete();
-          }
-          return newRolls;
-        });
+        
+        // Stop animation
+        if (diceRef.current) {
+          diceRef.current.classList.remove('animate-spin');
+        }
+        
+        setRolling(false);
       }
     }, 100);
   };
-
-  const renderDiceFace = (value: number) => {
-    if (style === 'modern') {
-      return (
-        <div className="flex items-center justify-center h-full w-full text-3xl font-bold">
-          {value}
-        </div>
-      );
+  
+  const renderDiceFace = () => {
+    if (!result) return null;
+    
+    switch (style) {
+      case 'classic':
+        return <ClassicDiceFace value={result} sides={sides} />;
+      case 'modern':
+        return <ModernDiceFace value={result} />;
+      default:
+        return <NumberDiceFace value={result} />;
     }
-    
-    // Classic dice style with dots
-    const dotPositions: Record<number, JSX.Element> = {
-      1: (
-        <div className="flex items-center justify-center h-full">
-          <div className="h-3 w-3 bg-black rounded-full" />
-        </div>
-      ),
-      2: (
-        <div className="grid grid-cols-2 h-full">
-          <div className="flex items-start justify-start p-2">
-            <div className="h-3 w-3 bg-black rounded-full" />
-          </div>
-          <div className="flex items-end justify-end p-2">
-            <div className="h-3 w-3 bg-black rounded-full" />
-          </div>
-        </div>
-      ),
-      3: (
-        <div className="grid grid-cols-3 grid-rows-3 h-full">
-          <div className="flex items-start justify-start p-2">
-            <div className="h-3 w-3 bg-black rounded-full" />
-          </div>
-          <div className="flex items-center justify-center">
-            <div className="h-3 w-3 bg-black rounded-full" />
-          </div>
-          <div className="flex items-end justify-end p-2">
-            <div className="h-3 w-3 bg-black rounded-full" />
-          </div>
-        </div>
-      ),
-      4: (
-        <div className="grid grid-cols-2 grid-rows-2 h-full">
-          <div className="flex items-start justify-start p-2">
-            <div className="h-3 w-3 bg-black rounded-full" />
-          </div>
-          <div className="flex items-start justify-end p-2">
-            <div className="h-3 w-3 bg-black rounded-full" />
-          </div>
-          <div className="flex items-end justify-start p-2">
-            <div className="h-3 w-3 bg-black rounded-full" />
-          </div>
-          <div className="flex items-end justify-end p-2">
-            <div className="h-3 w-3 bg-black rounded-full" />
-          </div>
-        </div>
-      ),
-      5: (
-        <div className="grid grid-cols-3 grid-rows-3 h-full">
-          <div className="flex items-start justify-start p-2">
-            <div className="h-3 w-3 bg-black rounded-full" />
-          </div>
-          <div></div>
-          <div className="flex items-start justify-end p-2">
-            <div className="h-3 w-3 bg-black rounded-full" />
-          </div>
-          <div></div>
-          <div className="flex items-center justify-center">
-            <div className="h-3 w-3 bg-black rounded-full" />
-          </div>
-          <div></div>
-          <div className="flex items-end justify-start p-2">
-            <div className="h-3 w-3 bg-black rounded-full" />
-          </div>
-          <div></div>
-          <div className="flex items-end justify-end p-2">
-            <div className="h-3 w-3 bg-black rounded-full" />
-          </div>
-        </div>
-      ),
-      6: (
-        <div className="grid grid-cols-3 grid-rows-3 h-full">
-          <div className="flex items-start justify-start p-2">
-            <div className="h-3 w-3 bg-black rounded-full" />
-          </div>
-          <div></div>
-          <div className="flex items-start justify-end p-2">
-            <div className="h-3 w-3 bg-black rounded-full" />
-          </div>
-          <div className="flex items-center justify-start p-2">
-            <div className="h-3 w-3 bg-black rounded-full" />
-          </div>
-          <div></div>
-          <div className="flex items-center justify-end p-2">
-            <div className="h-3 w-3 bg-black rounded-full" />
-          </div>
-          <div className="flex items-end justify-start p-2">
-            <div className="h-3 w-3 bg-black rounded-full" />
-          </div>
-          <div></div>
-          <div className="flex items-end justify-end p-2">
-            <div className="h-3 w-3 bg-black rounded-full" />
-          </div>
-        </div>
-      ),
-    };
-    
-    return value <= 6 ? dotPositions[value] : (
-      <div className="flex items-center justify-center h-full w-full text-3xl font-bold">
-        {value}
-      </div>
-    );
   };
-
+  
   return (
-    <div className="flex flex-col items-center justify-center p-8">
-      <div className="text-center mb-6">
-        <h2 className="text-2xl font-bold mb-2" style={{ color: colors.text || '#000' }}>
-          Roll the Dice
-        </h2>
-        <p className="text-sm" style={{ color: colors.text || '#000' }}>
-          Click the button to roll! You have {maxRolls - rolls} rolls left.
-        </p>
-      </div>
-      
+    <div className="flex flex-col items-center justify-center p-8 rounded-lg bg-white shadow">
       <div 
-        className={`dice ${isRolling ? 'rolling' : ''} mb-6`}
+        ref={diceRef}
+        className={`
+          w-24 h-24 rounded-lg shadow-lg flex items-center justify-center mb-6
+          ${rolling ? 'animate-bounce' : ''}
+        `}
         style={{ 
-          backgroundColor: colors.secondary || '#f8f8f8',
-          borderColor: colors.primary || '#333',
-          width: '100px',
-          height: '100px',
-          perspective: '1000px',
-          borderRadius: '10px',
-          overflow: 'hidden',
-          boxShadow: '0 0 10px rgba(0,0,0,0.2)'
+          backgroundColor: colors?.primary || '#841b60',
+          color: colors?.text || 'white'
         }}
       >
-        {renderDiceFace(currentValue)}
+        {renderDiceFace()}
       </div>
       
       <button
+        className="px-6 py-2 rounded text-white font-medium transition-all"
+        style={{ backgroundColor: colors?.secondary || '#6d1750' }}
         onClick={rollDice}
-        disabled={isRolling || rolls >= maxRolls}
-        className="px-6 py-2 rounded-lg transition-transform transform hover:scale-105 disabled:opacity-50"
-        style={{ backgroundColor: colors.primary || '#841b60', color: '#fff' }}
+        disabled={rolling}
       >
-        {isRolling ? 'Rolling...' : rolls >= maxRolls ? 'No more rolls' : 'Roll Dice'}
+        {rolling ? 'Rolling...' : 'Roll Dice'}
       </button>
-      
-      {rolls >= maxRolls && (
-        <div className="mt-4 p-3 rounded text-center" style={{ backgroundColor: colors.secondary || '#f0f0f0', color: colors.text || '#000' }}>
-          <p>Game completed! Thanks for playing.</p>
+
+      <style>{`
+        .animate-spin {
+          animation: spin 0.75s ease-in-out;
+        }
+        
+        @keyframes spin {
+          0% { transform: rotateZ(0deg); }
+          25% { transform: rotateZ(90deg); }
+          50% { transform: rotateZ(180deg); }
+          75% { transform: rotateZ(270deg); }
+          100% { transform: rotateZ(360deg); }
+        }
+      `}</style>
+    </div>
+  );
+};
+
+// Dice face components
+const ClassicDiceFace: React.FC<{value: number, sides: number}> = ({value, sides}) => {
+  // For standard 6-sided dice
+  if (sides === 6) {
+    const diceFaces: Record<number, JSX.Element> = {
+      1: (
+        <div className="grid place-items-center h-full w-full">
+          <span className="w-4 h-4 bg-white rounded-full"></span>
         </div>
-      )}
-      
-      <style jsx>
-        {`
-          .dice {
-            transition: transform 0.5s ease;
-          }
-          .rolling {
-            animation: roll 0.5s ease;
-          }
-          @keyframes roll {
-            0% { transform: rotateX(0deg) rotateY(0deg); }
-            25% { transform: rotateX(90deg) rotateY(45deg); }
-            50% { transform: rotateX(180deg) rotateY(90deg); }
-            75% { transform: rotateX(270deg) rotateY(135deg); }
-            100% { transform: rotateX(360deg) rotateY(180deg); }
-          }
-        `}
-      </style>
+      ),
+      2: (
+        <div className="grid grid-cols-2 p-2 h-full w-full">
+          <span className="w-3 h-3 bg-white rounded-full justify-self-end"></span>
+          <span className="w-3 h-3 bg-white rounded-full justify-self-start self-end"></span>
+        </div>
+      ),
+      3: (
+        <div className="grid grid-cols-3 grid-rows-3 h-full w-full p-2">
+          <span className="w-2 h-2 bg-white rounded-full col-start-3 row-start-1"></span>
+          <span className="w-2 h-2 bg-white rounded-full col-start-2 row-start-2"></span>
+          <span className="w-2 h-2 bg-white rounded-full col-start-1 row-start-3"></span>
+        </div>
+      ),
+      4: (
+        <div className="grid grid-cols-2 grid-rows-2 gap-2 p-3 h-full w-full">
+          <span className="w-3 h-3 bg-white rounded-full"></span>
+          <span className="w-3 h-3 bg-white rounded-full"></span>
+          <span className="w-3 h-3 bg-white rounded-full"></span>
+          <span className="w-3 h-3 bg-white rounded-full"></span>
+        </div>
+      ),
+      5: (
+        <div className="grid grid-cols-3 grid-rows-3 h-full w-full p-2">
+          <span className="w-2 h-2 bg-white rounded-full col-start-1 row-start-1"></span>
+          <span className="w-2 h-2 bg-white rounded-full col-start-3 row-start-1"></span>
+          <span className="w-2 h-2 bg-white rounded-full col-start-2 row-start-2"></span>
+          <span className="w-2 h-2 bg-white rounded-full col-start-1 row-start-3"></span>
+          <span className="w-2 h-2 bg-white rounded-full col-start-3 row-start-3"></span>
+        </div>
+      ),
+      6: (
+        <div className="grid grid-cols-2 grid-rows-3 gap-1 p-3 h-full w-full">
+          <span className="w-2 h-2 bg-white rounded-full"></span>
+          <span className="w-2 h-2 bg-white rounded-full"></span>
+          <span className="w-2 h-2 bg-white rounded-full"></span>
+          <span className="w-2 h-2 bg-white rounded-full"></span>
+          <span className="w-2 h-2 bg-white rounded-full"></span>
+          <span className="w-2 h-2 bg-white rounded-full"></span>
+        </div>
+      )
+    };
+    // Type assertion to fix the index signature issue
+    return diceFaces[value as keyof typeof diceFaces] || <NumberDiceFace value={value} />;
+  }
+  
+  // For other sided dice, use numbers
+  return <NumberDiceFace value={value} />;
+};
+
+const ModernDiceFace: React.FC<{value: number}> = ({value}) => {
+  return (
+    <div className="grid place-items-center h-full w-full text-3xl font-extrabold">
+      {value}
+    </div>
+  );
+};
+
+const NumberDiceFace: React.FC<{value: number}> = ({value}) => {
+  return (
+    <div className="grid place-items-center h-full w-full text-2xl font-bold">
+      {value}
     </div>
   );
 };
