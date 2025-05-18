@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React from 'react';
 import { WheelOfFortune } from './games/WheelOfFortune';
 import { MemoryGame } from './games/MemoryGame';
 import ScratchCard from './games/ScratchCard';

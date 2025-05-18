@@ -1,9 +1,11 @@
 
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import { ChevronLeft, Eye, Share2, Upload, X, ChevronRight } from 'lucide-react';
+import { ChevronLeft, Eye, Upload, X, ChevronRight } from 'lucide-react';
+// Remove unused Share2 import
 import { useDropzone } from 'react-dropzone';
-import { Campaign, Question, FormField } from '../types';
+import { Campaign } from '../types'; 
+// Remove unused Question and FormField imports
 import EditorTabs from '../components/EditorTabs';
 import QuestionBuilder from '../components/QuestionBuilder';
 import CampaignPreview from '../components/CampaignPreview';
@@ -15,7 +17,9 @@ const CampaignEditor: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
-  const type = queryParams.get('type') || 'quiz';
+  
+  // Fix the type to match expected type in Campaign interface
+  const type = queryParams.get('type') || 'quiz' as Campaign['type'];
   
   const [loading, setLoading] = useState(true);
   const [campaign, setCampaign] = useState<Campaign | null>(null);
@@ -68,12 +72,12 @@ const CampaignEditor: React.FC = () => {
             name: 'Nouvelle Campagne',
             type,
             status: 'draft',
-            startDate: today,
-            endDate: today,
-            startTime: '00:00',
-            endTime: '23:59',
+            start_date: today,
+            end_date: today,
+            start_time: '00:00',
+            end_time: '23:59',
             url: '',
-            backgroundImage: '',
+            background_image: '',
             user_id: user.id,
             style: {
               containerRadius: '12px',
@@ -91,8 +95,8 @@ const CampaignEditor: React.FC = () => {
               progressBar: '#841b60'
             },
             participants: 0,
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
             questions: [],
             fields: []
           };
@@ -124,7 +128,7 @@ const CampaignEditor: React.FC = () => {
         .upsert({
           ...campaignData,
           user_id: user.id,
-          updatedAt: new Date().toISOString()
+          updated_at: new Date().toISOString()
         });
 
       if (campaignError) throw campaignError;
@@ -212,7 +216,8 @@ const CampaignEditor: React.FC = () => {
       const fileName = `${uuidv4()}.${fileExt}`;
       const filePath = `campaign-backgrounds/${fileName}`;
 
-      const { error: uploadError, data } = await supabase.storage
+      // Remove unused data parameter
+      const { error: uploadError } = await supabase.storage
         .from('campaign-assets')
         .upload(filePath, file);
 
@@ -224,7 +229,7 @@ const CampaignEditor: React.FC = () => {
 
       setCampaign(prev => {
         if (!prev) return prev;
-        return { ...prev, backgroundImage: publicUrl };
+        return { ...prev, background_image: publicUrl };
       });
     } catch (error) {
       console.error('Error uploading image:', error);
@@ -243,11 +248,11 @@ const CampaignEditor: React.FC = () => {
   });
 
   const removeImage = () => {
-    if (!campaign?.backgroundImage) return;
+    if (!campaign?.background_image) return;
     
     setCampaign(prev => {
       if (!prev) return prev;
-      return { ...prev, backgroundImage: '' };
+      return { ...prev, background_image: '' };
     });
   };
 
@@ -378,8 +383,8 @@ const CampaignEditor: React.FC = () => {
                     </label>
                     <input
                       type="date"
-                      value={campaign.startDate}
-                      onChange={(e) => setCampaign({ ...campaign, startDate: e.target.value })}
+                      value={campaign.start_date}
+                      onChange={(e) => setCampaign({ ...campaign, start_date: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#841b60]"
                     />
                   </div>
@@ -389,8 +394,8 @@ const CampaignEditor: React.FC = () => {
                     </label>
                     <input
                       type="time"
-                      value={campaign.startTime}
-                      onChange={(e) => setCampaign({ ...campaign, startTime: e.target.value })}
+                      value={campaign.start_time}
+                      onChange={(e) => setCampaign({ ...campaign, start_time: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#841b60]"
                     />
                   </div>
@@ -403,8 +408,8 @@ const CampaignEditor: React.FC = () => {
                     </label>
                     <input
                       type="date"
-                      value={campaign.endDate}
-                      onChange={(e) => setCampaign({ ...campaign, endDate: e.target.value })}
+                      value={campaign.end_date}
+                      onChange={(e) => setCampaign({ ...campaign, end_date: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#841b60]"
                     />
                   </div>
@@ -414,8 +419,8 @@ const CampaignEditor: React.FC = () => {
                     </label>
                     <input
                       type="time"
-                      value={campaign.endTime}
-                      onChange={(e) => setCampaign({ ...campaign, endTime: e.target.value })}
+                      value={campaign.end_time}
+                      onChange={(e) => setCampaign({ ...campaign, end_time: e.target.value })}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#841b60]"
                     />
                   </div>
@@ -529,10 +534,10 @@ const CampaignEditor: React.FC = () => {
                           </div>
                         )}
 
-                        {campaign.backgroundImage && (
+                        {campaign.background_image && (
                           <div className="relative">
                             <img
-                              src={campaign.backgroundImage}
+                              src={campaign.background_image}
                               alt="Aperçu"
                               className="w-full h-32 object-cover rounded-lg"
                             />
@@ -559,7 +564,15 @@ const CampaignEditor: React.FC = () => {
                             value={campaign.colors?.background || '#ffffff'}
                             onChange={(e) => setCampaign({
                               ...campaign,
-                              colors: { ...(campaign.colors || {}), background: e.target.value }
+                              colors: { 
+                                background: e.target.value,
+                                button: campaign.colors?.button || '#841b60',
+                                buttonText: campaign.colors?.buttonText || '#ffffff',
+                                text: campaign.colors?.text || '#333333',
+                                border: campaign.colors?.border || '#e5e7eb',
+                                questionBackground: campaign.colors?.questionBackground || 'rgba(255, 255, 255, 0.9)',
+                                progressBar: campaign.colors?.progressBar || '#841b60'
+                              }
                             })}
                             className="w-full h-10 p-1 rounded-md"
                           />
@@ -573,7 +586,15 @@ const CampaignEditor: React.FC = () => {
                             value={campaign.colors?.button || '#841b60'}
                             onChange={(e) => setCampaign({
                               ...campaign,
-                              colors: { ...(campaign.colors || {}), button: e.target.value }
+                              colors: { 
+                                button: e.target.value,
+                                background: campaign.colors?.background || '#ffffff',
+                                buttonText: campaign.colors?.buttonText || '#ffffff',
+                                text: campaign.colors?.text || '#333333',
+                                border: campaign.colors?.border || '#e5e7eb',
+                                questionBackground: campaign.colors?.questionBackground || 'rgba(255, 255, 255, 0.9)',
+                                progressBar: campaign.colors?.progressBar || '#841b60'
+                              }
                             })}
                             className="w-full h-10 p-1 rounded-md"
                           />
@@ -587,7 +608,15 @@ const CampaignEditor: React.FC = () => {
                             value={campaign.colors?.buttonText || '#ffffff'}
                             onChange={(e) => setCampaign({
                               ...campaign,
-                              colors: { ...(campaign.colors || {}), buttonText: e.target.value }
+                              colors: { 
+                                buttonText: e.target.value,
+                                background: campaign.colors?.background || '#ffffff',
+                                button: campaign.colors?.button || '#841b60',
+                                text: campaign.colors?.text || '#333333',
+                                border: campaign.colors?.border || '#e5e7eb',
+                                questionBackground: campaign.colors?.questionBackground || 'rgba(255, 255, 255, 0.9)',
+                                progressBar: campaign.colors?.progressBar || '#841b60'
+                              }
                             })}
                             className="w-full h-10 p-1 rounded-md"
                           />
@@ -601,7 +630,15 @@ const CampaignEditor: React.FC = () => {
                             value={campaign.colors?.text || '#333333'}
                             onChange={(e) => setCampaign({
                               ...campaign,
-                              colors: { ...(campaign.colors || {}), text: e.target.value }
+                              colors: { 
+                                text: e.target.value,
+                                background: campaign.colors?.background || '#ffffff',
+                                button: campaign.colors?.button || '#841b60',
+                                buttonText: campaign.colors?.buttonText || '#ffffff',
+                                border: campaign.colors?.border || '#e5e7eb',
+                                questionBackground: campaign.colors?.questionBackground || 'rgba(255, 255, 255, 0.9)',
+                                progressBar: campaign.colors?.progressBar || '#841b60'
+                              }
                             })}
                             className="w-full h-10 p-1 rounded-md"
                           />
@@ -615,7 +652,15 @@ const CampaignEditor: React.FC = () => {
                             value={campaign.colors?.border || '#e5e7eb'}
                             onChange={(e) => setCampaign({
                               ...campaign,
-                              colors: { ...(campaign.colors || {}), border: e.target.value }
+                              colors: { 
+                                border: e.target.value,
+                                background: campaign.colors?.background || '#ffffff',
+                                button: campaign.colors?.button || '#841b60',
+                                buttonText: campaign.colors?.buttonText || '#ffffff',
+                                text: campaign.colors?.text || '#333333',
+                                questionBackground: campaign.colors?.questionBackground || 'rgba(255, 255, 255, 0.9)',
+                                progressBar: campaign.colors?.progressBar || '#841b60'
+                              }
                             })}
                             className="w-full h-10 p-1 rounded-md"
                           />
@@ -638,8 +683,14 @@ const CampaignEditor: React.FC = () => {
                             onChange={(e) => setCampaign({
                               ...campaign,
                               style: {
-                                ...(campaign.style || {}),
-                                containerRadius: `${e.target.value}px`
+                                containerRadius: `${e.target.value}px`,
+                                buttonRadius: campaign.style?.buttonRadius || '8px',
+                                containerOpacity: campaign.style?.containerOpacity || '0.9',
+                                buttonPadding: campaign.style?.buttonPadding || '12px 24px',
+                                buttonShadow: campaign.style?.buttonShadow,
+                                containerShadow: campaign.style?.containerShadow,
+                                fontFamily: campaign.style?.fontFamily,
+                                fontSize: campaign.style?.fontSize
                               }
                             })}
                             className="w-full"
@@ -657,8 +708,14 @@ const CampaignEditor: React.FC = () => {
                             onChange={(e) => setCampaign({
                               ...campaign,
                               style: {
-                                ...(campaign.style || {}),
-                                buttonRadius: `${e.target.value}px`
+                                buttonRadius: `${e.target.value}px`,
+                                containerRadius: campaign.style?.containerRadius || '12px',
+                                containerOpacity: campaign.style?.containerOpacity || '0.9',
+                                buttonPadding: campaign.style?.buttonPadding || '12px 24px',
+                                buttonShadow: campaign.style?.buttonShadow,
+                                containerShadow: campaign.style?.containerShadow,
+                                fontFamily: campaign.style?.fontFamily,
+                                fontSize: campaign.style?.fontSize
                               }
                             })}
                             className="w-full"
@@ -676,8 +733,14 @@ const CampaignEditor: React.FC = () => {
                             onChange={(e) => setCampaign({
                               ...campaign,
                               style: {
-                                ...(campaign.style || {}),
-                                containerOpacity: (parseInt(e.target.value) / 100).toString()
+                                containerOpacity: (parseInt(e.target.value) / 100).toString(),
+                                containerRadius: campaign.style?.containerRadius || '12px',
+                                buttonRadius: campaign.style?.buttonRadius || '8px',
+                                buttonPadding: campaign.style?.buttonPadding || '12px 24px',
+                                buttonShadow: campaign.style?.buttonShadow,
+                                containerShadow: campaign.style?.containerShadow,
+                                fontFamily: campaign.style?.fontFamily,
+                                fontSize: campaign.style?.fontSize
                               }
                             })}
                             className="w-full"
