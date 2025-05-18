@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { ChevronLeft, Eye, Upload, X, ChevronRight } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
-import { Campaign } from '../types'; 
+import { Campaign, Question, FormField } from '../types'; 
 import EditorTabs from '../components/EditorTabs';
 import QuestionBuilder from '../components/QuestionBuilder';
 import CampaignPreview from '../components/CampaignPreview';
@@ -492,7 +492,12 @@ const CampaignEditor: React.FC = () => {
                       });
                     }}
                     onAddQuestion={(question) => {
-                      const newQuestion = { ...question, id: uuidv4() };
+                      // Explicit type casting to ensure compatibility
+                      const newQuestion: Question = {
+                        ...question,
+                        id: uuidv4(),
+                        options: question.options || []
+                      };
                       setCampaign({
                         ...campaign,
                         questions: [...(campaign.questions || []), newQuestion]

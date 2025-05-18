@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Home, Edit3, BarChart2, Settings, LogOut, Gamepad2, X, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -101,9 +102,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isCollapsed, onColla
                     title={isCollapsed ? item.label : undefined}
                   >
                     <div className={isCollapsed ? '' : 'mr-3'}>
-                      {React.cloneElement(item.icon, {
-                        className: `${location.pathname === item.path ? 'text-[#841b60]' : 'text-gray-600'}`,
-                      })}
+                      {item.icon}
                     </div>
                     {!isCollapsed && item.label}
                   </Link>
@@ -129,9 +128,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose, isCollapsed, onColla
                     title={isCollapsed ? item.label : undefined}
                   >
                     <div className={isCollapsed ? '' : 'mr-3'}>
-                      {React.cloneElement(item.icon, {
-                        className: `${location.pathname === item.path ? 'text-[#841b60]' : 'text-gray-600'}`,
-                      })}
+                      {item.icon}
                     </div>
                     {!isCollapsed && item.label}
                   </Link>

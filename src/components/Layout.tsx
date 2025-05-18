@@ -6,15 +6,25 @@ import Navbar from './Navbar';
 
 const Layout: React.FC = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
+  const toggleCollapse = (collapsed: boolean) => {
+    setSidebarCollapsed(collapsed);
+  };
+
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Sidebar */}
-      <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+      <Sidebar 
+        isOpen={sidebarOpen} 
+        onClose={toggleSidebar} 
+        isCollapsed={sidebarCollapsed} 
+        onCollapse={toggleCollapse}
+      />
 
       {/* Main Content */}
       <div className="flex flex-col flex-1 w-0 overflow-hidden">

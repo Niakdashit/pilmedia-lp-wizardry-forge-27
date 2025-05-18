@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 import { FormField, Question } from '../types';
@@ -44,8 +45,9 @@ const QuestionBuilder: React.FC<QuestionBuilderProps> = ({
       const options = newQuestionOptions.split(',').map(option => option.trim());
       onAddQuestion({
         text: newQuestionText,
+        type: 'multiple-choice',
         options: options,
-        correct_answer: newQuestionCorrectAnswer
+        correctAnswer: newQuestionCorrectAnswer
       });
       setNewQuestionText('');
       setNewQuestionOptions('');
