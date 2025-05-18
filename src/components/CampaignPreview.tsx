@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Campaign } from '../types/type';
+import { Campaign } from '../types';
 
 interface PreviewPageProps {
   campaign: Campaign;
@@ -54,7 +54,7 @@ const PreviewPage: React.FC<PreviewPageProps> = ({
         {currentStep === 'welcome' && (
           <div className="text-center fade-in">
             <h1 className="text-3xl font-bold mb-6">{campaign.name}</h1>
-            {/* Check for game_content?.description or description */}
+            {/* Vérifier game_content?.description ou description */}
             {(campaign.game_content?.description || campaign.description) && (
               <p className="mb-8">{campaign.game_content?.description || campaign.description}</p>
             )}

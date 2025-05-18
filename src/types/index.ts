@@ -1,50 +1,42 @@
-import { Campaign as CampaignType } from './type';
 
-// Extend the imported Campaign type
+import { Campaign as CampaignType, Question as QuestionType, FormField as FormFieldType } from './type';
+
+// Étendre le type Campaign importé
 export interface Campaign extends CampaignType {
-  // No need to override fields - just extending is enough
+  // Pas besoin de remplacer les champs - l'extension suffit
 }
 
-// Update Question interface to match with type.ts
-export interface Question {
-  id: string;
-  text: string;
-  type: 'multiple-choice' | 'text' | 'checkbox';
-  options: string[];
-  correctAnswer?: string;
+// Interface Question alignée avec type.ts
+export interface Question extends QuestionType {
+  // Tous les champs de QuestionType sont déjà inclus
 }
 
-// Update FormField interface to match with type.ts
-export interface FormField {
-  id: string;
-  label: string;
-  type: string;
-  required: boolean; // Making this non-optional to match usage
-  options?: string[];
-  placeholder?: string;
+// Interface FormField alignée avec type.ts
+export interface FormField extends FormFieldType {
+  // Tous les champs de FormFieldType sont déjà inclus
 }
 
-// StatCard interface
+// Interface StatCard
 export interface StatCard {
   title: string;
   value: string | number;
   change: string;
   icon: string;
   positive: boolean;
-  stat: string; // Making this non-optional to match usage
+  stat: string;
 }
 
-// StatCardProps interface for the component
+// Interface StatCardProps pour le composant
 export interface StatCardProps {
   title: string;
   value: string | number;
   change: string;
   icon: string;
   positive: boolean;
-  stat: string; // Making this non-optional
+  stat: string;
 }
 
-// Keep existing User interface
+// Conserver l'interface User existante
 export interface User {
   id: string;
   email: string;
@@ -57,7 +49,7 @@ export interface User {
   updated_at: string;
 }
 
-// Keep existing game props interfaces
+// Conserver les interfaces de props de jeux existantes
 export interface DiceRollProps {
   sides: number;
   style: string;
