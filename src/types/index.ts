@@ -10,8 +10,8 @@ export interface Question {
   id: string;
   text: string;
   type: 'multiple-choice' | 'text' | 'checkbox';
-  options: string[]; // Make options non-optional so it's compatible
-  correctAnswer?: string; // Use camelCase to match with the correct usage
+  options: string[]; // Make options non-optional to match imported type
+  correctAnswer?: string;
 }
 
 // Update FormField interface to match with type.ts
@@ -19,19 +19,19 @@ export interface FormField {
   id: string;
   label: string;
   type: string;
-  required: boolean; // Keep required non-optional to match with expected usage
+  required: boolean;
   options?: string[];
   placeholder?: string;
 }
 
-// Keep existing StatCard interface
+// StatCard interface
 export interface StatCard {
   title: string;
   value: string | number;
   change: string;
   icon: string;
   positive: boolean;
-  stat?: string; // Made optional
+  stat?: string;
 }
 
 // Keep existing User interface

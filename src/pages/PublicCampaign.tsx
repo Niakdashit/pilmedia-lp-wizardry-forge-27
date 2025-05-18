@@ -1,176 +1,138 @@
 
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
 import { Campaign } from '../types';
+import { supabase } from '../lib/supabase';
 
-const PublicCampaign: React.FC = () => {
-  const { id } = useParams<{ id: string }>();
+const PublicCampaign = () => {
+  const { id } = useParams();
   const [campaign, setCampaign] = useState<Campaign | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
-    const loadCampaign = async () => {
+    const fetchCampaign = async () => {
+      if (!id) {
+        setError("No campaign ID provided");
+        setLoading(false);
+        return;
+      }
+
       try {
-        if (!id) throw new Error('Campaign ID is required');
-
-        // Create a public Supabase client without auth
-        const publicSupabase = supabase;
-
-        // First try to find by public_url
-        let { data, error: campaignError } = await publicSupabase
+        // Fetch the campaign data
+        const { data: campaignData, error: campaignError } = await supabase
           .from('campaigns')
-          .select(`
-            *,
-            questions (*),
-            form_fields (*)
-          `)
-          .eq('public_url', id)
+          .select('*')
+          .eq('id', id)
           .single();
 
-        // If not found by public_url, try by id
-        if (!data && !campaignError) {
-          const { data: dataById, error: errorById } = await publicSupabase
-            .from('campaigns')
-            .select(`
-              *,
-              questions (*),
-              form_fields (*)
-            `)
-            .eq('id', id)
-            .single();
-
-          if (errorById) throw errorById;
-          data = dataById;
+        if (campaignError) {
+          throw campaignError;
         }
 
-        if (!data) throw new Error('Campaign not found');
+        if (!campaignData) {
+          setError("Campaign not found");
+          setLoading(false);
+          return;
+        }
 
-        const campaign: Campaign = {
-          ...data,
-          questions: data.questions || [],
-          fields: data.form_fields || [],
-          participants: data.participants || 0
-        };
+        // Check if the campaign is active
+        const now = new Date();
+        const startDate = new Date(`${campaignData.start_date}T${campaignData.start_time || '00:00'}`);
+        const endDate = new Date(`${campaignData.end_date}T${campaignData.end_time || '23:59'}`);
 
-        setCampaign(campaign);
-        await recordAnalytics(campaign.id, 'view');
+        if (now < startDate) {
+          setError("This campaign hasn't started yet");
+          setLoading(false);
+          return;
+        }
+
+        if (now > endDate) {
+          setError("This campaign has ended");
+          setLoading(false);
+          return;
+        }
+
+        // Fetch questions and form fields
+        const { data: questionsData, error: questionsError } = await supabase
+          .from('questions')
+          .select('*')
+          .eq('campaign_id', id);
+
+        if (questionsError) {
+          throw questionsError;
+        }
+
+        const { data: fieldsData, error: fieldsError } = await supabase
+          .from('form_fields')
+          .select('*')
+          .eq('campaign_id', id);
+
+        if (fieldsError) {
+          throw fieldsError;
+        }
+
+        // Set campaign with all data
+        setCampaign({
+          ...campaignData,
+          questions: questionsData || [],
+          fields: fieldsData || []
+        });
       } catch (error) {
         console.error('Error loading campaign:', error);
-        setError(error instanceof Error ? error.message : 'Campaign not found or unavailable');
+        setError("Error loading campaign");
       } finally {
         setLoading(false);
       }
     };
 
-    loadCampaign();
+    fetchCampaign();
   }, [id]);
-
-  const recordAnalytics = async (campaignId: string, eventType: string) => {
-    try {
-      const { error } = await supabase
-        .from('campaign_analytics')
-        .insert({
-          campaign_id: campaignId,
-          event_type: eventType,
-          ip_address: 'client-ip'
-        });
-
-      if (error) throw error;
-
-      if (eventType === 'participation') {
-        const { error: updateError } = await supabase
-          .from('campaigns')
-          .update({
-            participants: campaign?.participants ? campaign.participants + 1 : 1,
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', campaignId);
-
-        if (updateError) throw updateError;
-
-        setCampaign(prev =>
-          prev ? { ...prev, participants: (prev.participants || 0) + 1 } : null
-        );
-      }
-    } catch (err) {
-      console.error('Error recording analytics:', err);
-    }
-  };
-
-  const handleParticipate = async () => {
-    if (campaign) {
-      await recordAnalytics(campaign.id, 'participation');
-    }
-  };
-
-  const handleFormSubmit = async (formData: Record<string, string>) => {
-    if (campaign) {
-      try {
-        const { error: participationError } = await supabase
-          .from('participations')
-          .insert({
-            campaign_id: campaign.id,
-            ...formData,
-            reglement_accepte: true
-          });
-
-        if (participationError) throw participationError;
-
-        await recordAnalytics(campaign.id, 'form_submission');
-        setShowSuccess(true);
-      } catch (error) {
-        console.error('Error submitting form:', error);
-      }
-    }
-  };
-
-  const handleGameComplete = async () => {
-    if (campaign) {
-      await recordAnalytics(campaign.id, 'completion');
-      setShowSuccess(true);
-    }
-  };
 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#841b60]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#841b60]"></div>
       </div>
     );
   }
 
-  if (error || !campaign) {
+  if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center p-4">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Campaign Not Found</h1>
-          <p className="text-gray-600">The campaign you're looking for doesn't exist or is no longer available.</p>
+          <h1 className="text-2xl font-bold text-gray-800 mb-4">Oops!</h1>
+          <p className="text-gray-600 mb-6">{error}</p>
+          <a href="/" className="px-4 py-2 bg-[#841b60] text-white rounded hover:bg-[#6d1750]">
+            Go back to home
+          </a>
+        </div>
+      </div>
+    );
+  }
+
+  if (!campaign) {
+    return (
+      <div className="min-h-screen flex items-center justify-center p-4">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-800 mb-4">Campaign not found</h1>
+          <p className="text-gray-600 mb-6">The requested campaign could not be found.</p>
+          <a href="/" className="px-4 py-2 bg-[#841b60] text-white rounded hover:bg-[#6d1750]">
+            Go back to home
+          </a>
         </div>
       </div>
     );
   }
 
   return (
-    <div
-      className="min-h-screen w-full bg-cover bg-center bg-no-repeat flex items-center justify-center p-4"
-      style={{ 
-        backgroundImage: `url(${campaign.background_image || 'https://images.pexels.com/photos/7130555/pexels-photo-7130555.jpeg'})` 
-      }}
-    >
-      <div className="max-w-[800px] w-full">
-        <div className="bg-white bg-opacity-90 rounded-lg shadow-lg p-6">
-          <h1 className="text-2xl font-bold mb-4">{campaign.name}</h1>
-          <p className="mb-6">{campaign.description || 'No description available'}</p>
-          
-          <button
-            onClick={handleParticipate}
-            className="px-4 py-2 bg-[#841b60] text-white rounded-md hover:bg-[#6d1750] transition-colors"
-          >
-            Participate
-          </button>
+    <div className="min-h-screen bg-gray-50 p-4 flex items-center justify-center">
+      <div className="w-full max-w-lg">
+        <div className="bg-white rounded-lg shadow-lg p-6">
+          <h1 className="text-2xl font-bold text-center mb-6">{campaign.name}</h1>
+          <p className="text-center text-gray-600 mb-8">
+            This campaign preview is currently under development.
+          </p>
         </div>
       </div>
     </div>

@@ -16,7 +16,7 @@ const Login: React.FC = () => {
       setLoading(true);
       setError(null);
       
-      const { data, error: signInError } = await signIn(email, password);
+      const { error: signInError } = await signIn(email, password);
       
       if (signInError) {
         // Handle the error property correctly based on its actual structure

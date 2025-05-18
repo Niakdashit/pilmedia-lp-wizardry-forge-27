@@ -1,14 +1,13 @@
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import StatCard from '../components/StatCard';
 import CampaignCard from '../components/CampaignCard';
 import { Campaign, StatCard as StatCardType } from '../types';
-import { supabase } from '../lib/supabase';
 
 const Dashboard = () => {
-  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
-  const [recentCampaigns, setRecentCampaigns] = useState<Campaign[]>([]);
+  const [campaigns] = useState<Campaign[]>([]);
+  const [recentCampaigns] = useState<Campaign[]>([]);
 
   // Fix the cards to properly use the StatCard interface
   const statCards: StatCardType[] = [
