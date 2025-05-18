@@ -1,7 +1,8 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import { Campaign } from '../types';
+import { Campaign } from '../types/type';
 import CampaignPreview from '../components/CampaignPreview';
 
 const PublicCampaign: React.FC = () => {
@@ -9,8 +10,7 @@ const PublicCampaign: React.FC = () => {
   const [campaign, setCampaign] = useState<Campaign | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [currentStep, setCurrentStep] = useState<'welcome' | 'form' | 'quiz' | 'game'>('welcome');
-  const [formData, setFormData] = useState<Record<string, string>>({});
+  const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
     const loadCampaign = async () => {
@@ -101,10 +101,9 @@ const PublicCampaign: React.FC = () => {
     }
   };
 
-  const handleParticipation = async () => {
+  const handleParticipate = async () => {
     if (campaign) {
       await recordAnalytics(campaign.id, 'participation');
-      setCurrentStep('form');
     }
   };
 
@@ -122,9 +121,7 @@ const PublicCampaign: React.FC = () => {
         if (participationError) throw participationError;
 
         await recordAnalytics(campaign.id, 'form_submission');
-        
-        // Always go to quiz step if there are questions, otherwise go to game
-        setCurrentStep(campaign.questions && campaign.questions.length > 0 ? 'quiz' : 'game');
+        setShowSuccess(true);
       } catch (error) {
         console.error('Error submitting form:', error);
       }
@@ -134,6 +131,7 @@ const PublicCampaign: React.FC = () => {
   const handleGameComplete = async () => {
     if (campaign) {
       await recordAnalytics(campaign.id, 'completion');
+      setShowSuccess(true);
     }
   };
 
@@ -166,7 +164,6 @@ const PublicCampaign: React.FC = () => {
       <div className="max-w-[800px] w-full">
         <CampaignPreview
           campaign={campaign}
-          currentStep="questions"
           onParticipate={handleParticipate}
           onFormSubmit={handleFormSubmit}
           onGameComplete={handleGameComplete}

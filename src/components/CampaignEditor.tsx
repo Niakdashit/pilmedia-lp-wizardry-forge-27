@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { ChevronLeft, Eye, Upload, X, ChevronRight } from 'lucide-react';
-// Remove unused Share2 import
 import { useDropzone } from 'react-dropzone';
-import { Campaign } from '../types'; 
-// Remove unused Question and FormField imports
+import { Campaign } from '../types/type'; 
 import EditorTabs from '../components/EditorTabs';
 import QuestionBuilder from '../components/QuestionBuilder';
 import CampaignPreview from '../components/CampaignPreview';
@@ -215,7 +213,6 @@ const CampaignEditor: React.FC = () => {
       const fileName = `${uuidv4()}.${fileExt}`;
       const filePath = `campaign-backgrounds/${fileName}`;
 
-      // Remove unused data parameter
       const { error: uploadError } = await supabase.storage
         .from('campaign-assets')
         .upload(filePath, file);

@@ -1,230 +1,201 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { DiceGameProps } from '../../types/componentInterfaces';
 
-interface DiceRollProps {
-  sides: number;
-  style: 'classic' | 'modern';
-  colors: {
-    primary: string;
-    secondary: string;
-    text: string;
-  };
-  onComplete?: () => void;
-}
-
-const DiceRoll: React.FC<DiceRollProps> = ({ sides = 6, style = 'classic', colors, onComplete }) => {
+const DiceRoll: React.FC<DiceGameProps> = ({ sides = 6, style = 'classic', colors, onComplete }) => {
   const [currentValue, setCurrentValue] = useState(1);
-  const [rolling, setRolling] = useState(false);
-  const [rollCount, setRollCount] = useState(0);
-  const maxRolls = 3;
+  const [isRolling, setIsRolling] = useState(false);
+  const [rolls, setRolls] = useState(0);
+  const maxRolls = 5;
 
   const rollDice = () => {
-    if (rolling || rollCount >= maxRolls) return;
+    if (isRolling || rolls >= maxRolls) return;
     
-    setRolling(true);
+    setIsRolling(true);
     
-    // Random dice rolling animation
-    let rollDuration = 0;
-    const intervalId = setInterval(() => {
+    // Animate the dice roll
+    let rollCount = 0;
+    const maxRollCount = 10;
+    const rollInterval = setInterval(() => {
       setCurrentValue(Math.floor(Math.random() * sides) + 1);
-      rollDuration += 50;
+      rollCount++;
       
-      if (rollDuration >= 1000) {
-        clearInterval(intervalId);
-        setRolling(false);
-        setRollCount(prev => prev + 1);
-        
-        if (rollCount + 1 >= maxRolls && onComplete) {
-          setTimeout(() => {
+      if (rollCount >= maxRollCount) {
+        clearInterval(rollInterval);
+        setIsRolling(false);
+        setRolls(prevRolls => {
+          const newRolls = prevRolls + 1;
+          if (newRolls >= maxRolls && onComplete) {
             onComplete();
-          }, 1500);
-        }
+          }
+          return newRolls;
+        });
       }
-    }, 50);
+    }, 100);
   };
 
-  // Create a lookup object for classic dice faces
-  const diceFaces = {
-    1: (
-      <div className="dice-face">
-        <span className="dot dot-center"></span>
+  const renderDiceFace = (value: number) => {
+    if (style === 'modern') {
+      return (
+        <div className="flex items-center justify-center h-full w-full text-3xl font-bold">
+          {value}
+        </div>
+      );
+    }
+    
+    // Classic dice style with dots
+    const dotPositions: Record<number, JSX.Element> = {
+      1: (
+        <div className="flex items-center justify-center h-full">
+          <div className="h-3 w-3 bg-black rounded-full" />
+        </div>
+      ),
+      2: (
+        <div className="grid grid-cols-2 h-full">
+          <div className="flex items-start justify-start p-2">
+            <div className="h-3 w-3 bg-black rounded-full" />
+          </div>
+          <div className="flex items-end justify-end p-2">
+            <div className="h-3 w-3 bg-black rounded-full" />
+          </div>
+        </div>
+      ),
+      3: (
+        <div className="grid grid-cols-3 grid-rows-3 h-full">
+          <div className="flex items-start justify-start p-2">
+            <div className="h-3 w-3 bg-black rounded-full" />
+          </div>
+          <div className="flex items-center justify-center">
+            <div className="h-3 w-3 bg-black rounded-full" />
+          </div>
+          <div className="flex items-end justify-end p-2">
+            <div className="h-3 w-3 bg-black rounded-full" />
+          </div>
+        </div>
+      ),
+      4: (
+        <div className="grid grid-cols-2 grid-rows-2 h-full">
+          <div className="flex items-start justify-start p-2">
+            <div className="h-3 w-3 bg-black rounded-full" />
+          </div>
+          <div className="flex items-start justify-end p-2">
+            <div className="h-3 w-3 bg-black rounded-full" />
+          </div>
+          <div className="flex items-end justify-start p-2">
+            <div className="h-3 w-3 bg-black rounded-full" />
+          </div>
+          <div className="flex items-end justify-end p-2">
+            <div className="h-3 w-3 bg-black rounded-full" />
+          </div>
+        </div>
+      ),
+      5: (
+        <div className="grid grid-cols-3 grid-rows-3 h-full">
+          <div className="flex items-start justify-start p-2">
+            <div className="h-3 w-3 bg-black rounded-full" />
+          </div>
+          <div></div>
+          <div className="flex items-start justify-end p-2">
+            <div className="h-3 w-3 bg-black rounded-full" />
+          </div>
+          <div></div>
+          <div className="flex items-center justify-center">
+            <div className="h-3 w-3 bg-black rounded-full" />
+          </div>
+          <div></div>
+          <div className="flex items-end justify-start p-2">
+            <div className="h-3 w-3 bg-black rounded-full" />
+          </div>
+          <div></div>
+          <div className="flex items-end justify-end p-2">
+            <div className="h-3 w-3 bg-black rounded-full" />
+          </div>
+        </div>
+      ),
+      6: (
+        <div className="grid grid-cols-3 grid-rows-3 h-full">
+          <div className="flex items-start justify-start p-2">
+            <div className="h-3 w-3 bg-black rounded-full" />
+          </div>
+          <div></div>
+          <div className="flex items-start justify-end p-2">
+            <div className="h-3 w-3 bg-black rounded-full" />
+          </div>
+          <div className="flex items-center justify-start p-2">
+            <div className="h-3 w-3 bg-black rounded-full" />
+          </div>
+          <div></div>
+          <div className="flex items-center justify-end p-2">
+            <div className="h-3 w-3 bg-black rounded-full" />
+          </div>
+          <div className="flex items-end justify-start p-2">
+            <div className="h-3 w-3 bg-black rounded-full" />
+          </div>
+          <div></div>
+          <div className="flex items-end justify-end p-2">
+            <div className="h-3 w-3 bg-black rounded-full" />
+          </div>
+        </div>
+      ),
+    };
+    
+    return value <= 6 ? dotPositions[value] : (
+      <div className="flex items-center justify-center h-full w-full text-3xl font-bold">
+        {value}
       </div>
-    ),
-    2: (
-      <div className="dice-face">
-        <span className="dot dot-top-left"></span>
-        <span className="dot dot-bottom-right"></span>
-      </div>
-    ),
-    3: (
-      <div className="dice-face">
-        <span className="dot dot-top-left"></span>
-        <span className="dot dot-center"></span>
-        <span className="dot dot-bottom-right"></span>
-      </div>
-    ),
-    4: (
-      <div className="dice-face">
-        <span className="dot dot-top-left"></span>
-        <span className="dot dot-top-right"></span>
-        <span className="dot dot-bottom-left"></span>
-        <span className="dot dot-bottom-right"></span>
-      </div>
-    ),
-    5: (
-      <div className="dice-face">
-        <span className="dot dot-top-left"></span>
-        <span className="dot dot-top-right"></span>
-        <span className="dot dot-center"></span>
-        <span className="dot dot-bottom-left"></span>
-        <span className="dot dot-bottom-right"></span>
-      </div>
-    ),
-    6: (
-      <div className="dice-face">
-        <span className="dot dot-top-left"></span>
-        <span className="dot dot-top-right"></span>
-        <span className="dot dot-middle-left"></span>
-        <span className="dot dot-middle-right"></span>
-        <span className="dot dot-bottom-left"></span>
-        <span className="dot dot-bottom-right"></span>
-      </div>
-    )
+    );
   };
 
   return (
-    <div className="flex flex-col items-center justify-center p-8 w-full max-w-md mx-auto">
-      <h2 className="text-2xl font-bold mb-6" style={{ color: colors.text }}>
-        {rollCount < maxRolls ? "Roll the dice!" : "Game Over!"}
-      </h2>
+    <div className="flex flex-col items-center justify-center p-8">
+      <div className="text-center mb-6">
+        <h2 className="text-2xl font-bold mb-2" style={{ color: colors.text || '#000' }}>
+          Roll the Dice
+        </h2>
+        <p className="text-sm" style={{ color: colors.text || '#000' }}>
+          Click the button to roll! You have {maxRolls - rolls} rolls left.
+        </p>
+      </div>
       
       <div 
-        className={`mb-8 dice ${rolling ? 'rolling' : ''} ${style === 'modern' ? 'modern' : 'classic'}`}
+        className={`dice ${isRolling ? 'rolling' : ''} mb-6`}
         style={{ 
-          backgroundColor: colors.primary,
-          borderColor: colors.secondary,
+          backgroundColor: colors.secondary || '#f8f8f8',
+          borderColor: colors.primary || '#333',
+          width: '100px',
+          height: '100px',
+          perspective: '1000px',
+          borderRadius: '10px',
+          overflow: 'hidden',
+          boxShadow: '0 0 10px rgba(0,0,0,0.2)'
         }}
-        onClick={rollDice}
       >
-        {style === 'classic' ? (
-          // @ts-ignore - Type safety handled by ensuring currentValue is between 1 and 6
-          diceFaces[currentValue]
-        ) : (
-          <div className="modern-face">
-            <span style={{ color: colors.text }}>{currentValue}</span>
-          </div>
-        )}
+        {renderDiceFace(currentValue)}
       </div>
-
-      <p className="mb-4" style={{ color: colors.text }}>
-        Rolls remaining: {maxRolls - rollCount}
-      </p>
-
+      
       <button
-        className="px-6 py-2 rounded-lg font-semibold transition-all"
-        style={{ 
-          backgroundColor: rollCount >= maxRolls ? '#888888' : colors.secondary,
-          color: colors.text,
-          opacity: rollCount >= maxRolls || rolling ? 0.6 : 1
-        }}
         onClick={rollDice}
-        disabled={rolling || rollCount >= maxRolls}
+        disabled={isRolling || rolls >= maxRolls}
+        className="px-6 py-2 rounded-lg transition-transform transform hover:scale-105 disabled:opacity-50"
+        style={{ backgroundColor: colors.primary || '#841b60', color: '#fff' }}
       >
-        {rolling ? "Rolling..." : "Roll Dice"}
+        {isRolling ? 'Rolling...' : rolls >= maxRolls ? 'No more rolls' : 'Roll Dice'}
       </button>
-
-      <style>
+      
+      {rolls >= maxRolls && (
+        <div className="mt-4 p-3 rounded text-center" style={{ backgroundColor: colors.secondary || '#f0f0f0', color: colors.text || '#000' }}>
+          <p>Game completed! Thanks for playing.</p>
+        </div>
+      )}
+      
+      <style jsx>
         {`
           .dice {
-            width: 100px;
-            height: 100px;
-            border-radius: 12px;
-            border: 2px solid;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            transition: transform 0.5s ease;
           }
-          
-          .dice.rolling {
-            animation: roll 0.5s infinite;
+          .rolling {
+            animation: roll 0.5s ease;
           }
-          
-          .dice.modern {
-            border-radius: 16px;
-          }
-          
-          .dice-face {
-            width: 90%;
-            height: 90%;
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            grid-template-rows: repeat(3, 1fr);
-          }
-          
-          .dot {
-            width: 14px;
-            height: 14px;
-            background-color: #fff;
-            border-radius: 50%;
-          }
-          
-          .dot-center {
-            grid-column: 2;
-            grid-row: 2;
-            justify-self: center;
-            align-self: center;
-          }
-          
-          .dot-top-left {
-            grid-column: 1;
-            grid-row: 1;
-            justify-self: center;
-            align-self: center;
-          }
-          
-          .dot-top-right {
-            grid-column: 3;
-            grid-row: 1;
-            justify-self: center;
-            align-self: center;
-          }
-          
-          .dot-middle-left {
-            grid-column: 1;
-            grid-row: 2;
-            justify-self: center;
-            align-self: center;
-          }
-          
-          .dot-middle-right {
-            grid-column: 3;
-            grid-row: 2;
-            justify-self: center;
-            align-self: center;
-          }
-          
-          .dot-bottom-left {
-            grid-column: 1;
-            grid-row: 3;
-            justify-self: center;
-            align-self: center;
-          }
-          
-          .dot-bottom-right {
-            grid-column: 3;
-            grid-row: 3;
-            justify-self: center;
-            align-self: center;
-          }
-          
-          .modern-face {
-            font-size: 40px;
-            font-weight: bold;
-          }
-          
           @keyframes roll {
             0% { transform: rotateX(0deg) rotateY(0deg); }
             25% { transform: rotateX(90deg) rotateY(45deg); }

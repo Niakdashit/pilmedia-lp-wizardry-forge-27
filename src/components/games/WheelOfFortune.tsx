@@ -1,176 +1,191 @@
-import React, { useState, useRef } from 'react';
-import { motion, useAnimation } from 'framer-motion';
 
-interface WheelSegment {
-  text: string;
-  color: string;
-  image?: string;
-  probability?: number;
-}
+import React, { useRef, useState, useEffect } from 'react';
+import { WheelOfFortuneProps } from '../../types/componentInterfaces';
 
-interface WheelOfFortuneProps {
-  segments: WheelSegment[];
-  onSpinEnd?: (segment: string) => void;
-  colors?: {
-    primary: string;
-    secondary: string;
-    text: string;
-  };
-  style?: {
-    width?: string;
-    height?: string;
-    fontSize?: string;
-  };
-}
-
-export const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({
+const WheelOfFortune: React.FC<WheelOfFortuneProps> = ({
   segments,
-  onSpinEnd,
-  colors = {
-    primary: '#841b60',
-    secondary: '#6d1750',
-    text: '#ffffff'
-  },
-  style = {
-    width: '400px',
-    height: '400px',
-    fontSize: '16px'
-  }
+  colors,
+  backgroundImage,
+  onComplete
 }) => {
-  const wheelRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isSpinning, setIsSpinning] = useState(false);
-  const controls = useAnimation();
+  const [result, setResult] = useState<string | null>(null);
+  const [selectedSegment, setSelectedSegment] = useState<string | null>(null);
+  const animationRef = useRef<number | null>(null);
+  const currentRotationRef = useRef(0);
+  const totalRotation = 360 * 5 + Math.random() * 360; // 5 full rotations + random angle
+  const duration = 5000; // 5 seconds
+  const startTime = useRef<number>(0);
 
-  const getRotationDegrees = (segmentIndex: number): number => {
-    return (360 / segments.length) * segmentIndex;
-  };
+  useEffect(() => {
+    drawWheel();
+  }, [segments]);
 
-  const spin = async () => {
-    if (isSpinning) return;
-    setIsSpinning(true);
+  const drawWheel = () => {
+    const canvas = canvasRef.current;
+    if (!canvas || !segments || segments.length === 0) return;
 
-    // Calculate winning segment based on probabilities
-    const totalProbability = segments.reduce((sum, segment) => sum + (segment.probability || 1), 0);
-    let random = Math.random() * totalProbability;
-    let winningIndex = 0;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
 
-    for (let i = 0; i < segments.length; i++) {
-      random -= segments[i].probability || 1;
-      if (random <= 0) {
-        winningIndex = i;
-        break;
-      }
-    }
+    const centerX = canvas.width / 2;
+    const centerY = canvas.height / 2;
+    const radius = Math.min(centerX, centerY) * 0.9;
 
-    const extraSpins = 5;
-    const baseRotation = 360 * extraSpins;
-    const segmentRotation = (360 / segments.length) * winningIndex;
-    const finalRotation = baseRotation + segmentRotation;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const arcAngle = (2 * Math.PI) / segments.length;
 
-    await controls.start({
-      rotate: [0, finalRotation],
-      transition: {
-        duration: 5,
-        ease: [0.34, 1.56, 0.64, 1],
-      }
+    segments.forEach((segment, i) => {
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY);
+      ctx.arc(
+        centerX,
+        centerY,
+        radius,
+        i * arcAngle,
+        (i + 1) * arcAngle
+      );
+      ctx.closePath();
+      ctx.fillStyle = segment.color;
+      ctx.fill();
+      ctx.stroke();
+
+      // Add text
+      ctx.save();
+      ctx.translate(centerX, centerY);
+      ctx.rotate(i * arcAngle + arcAngle / 2);
+      ctx.textAlign = 'right';
+      ctx.fillStyle = colors.text || '#000000';
+      ctx.font = '12px Arial';
+      ctx.fillText(segment.text, radius * 0.85, 5);
+      ctx.restore();
     });
 
-    setIsSpinning(false);
-    setSelectedSegment(segments[winningIndex].text);
-    if (onSpinEnd) onSpinEnd(segments[winningIndex].text);
+    // Draw center circle
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, 15, 0, 2 * Math.PI);
+    ctx.fillStyle = colors.primary || '#ffffff';
+    ctx.fill();
+    ctx.stroke();
   };
 
+  const spinWheel = () => {
+    if (isSpinning || !segments || segments.length === 0) return;
+
+    setIsSpinning(true);
+    setResult(null);
+    startTime.current = performance.now();
+    currentRotationRef.current = 0;
+
+    const animate = (timestamp: number) => {
+      const progress = (timestamp - startTime.current) / duration;
+      
+      if (progress < 1) {
+        // Ease-out function to slow down towards the end
+        const easeOutProgress = 1 - Math.pow(1 - progress, 3);
+        currentRotationRef.current = easeOutProgress * totalRotation;
+        
+        const canvas = canvasRef.current;
+        if (canvas) {
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.save();
+            ctx.translate(canvas.width / 2, canvas.height / 2);
+            ctx.rotate((currentRotationRef.current * Math.PI) / 180);
+            ctx.translate(-canvas.width / 2, -canvas.height / 2);
+            drawWheel();
+            ctx.restore();
+          }
+        }
+        
+        animationRef.current = requestAnimationFrame(animate);
+      } else {
+        // Animation complete
+        const finalRotation = totalRotation % 360;
+        const segmentAngle = 360 / segments.length;
+        const segmentIndex = Math.floor((360 - (finalRotation % 360)) / segmentAngle);
+        const winningSegment = segments[segmentIndex % segments.length];
+        
+        setResult(winningSegment.text);
+        setSelectedSegment(winningSegment.text);
+        setIsSpinning(false);
+        
+        if (onComplete) {
+          onComplete();
+        }
+      }
+    };
+    
+    animationRef.current = requestAnimationFrame(animate);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (animationRef.current !== null) {
+        cancelAnimationFrame(animationRef.current);
+      }
+    };
+  }, []);
+
   return (
-    <div className="relative" style={{ width: style.width, height: style.height }}>
-      {/* Wheel */}
-      <motion.div
-        ref={wheelRef}
-        animate={controls}
-        className="absolute inset-0 rounded-full overflow-hidden"
-        style={{ transformOrigin: 'center' }}
-      >
-        {segments.map((segment, index) => {
-          const rotation = getRotationDegrees(index);
-          const skewedRotation = rotation + (360 / segments.length / 2);
-
-          return (
-            <div
-              key={index}
-              className="absolute top-0 right-0 bottom-0 left-0"
-              style={{
-                transform: `rotate(${rotation}deg)`,
-                transformOrigin: '50% 50%',
-                clipPath: `polygon(50% 50%, 50% 0%, ${50 + (100 / segments.length)}% 0%)`
-              }}
-            >
-              <div
-                className="absolute inset-0 flex items-center justify-center"
-                style={{
-                  backgroundColor: segment.color || colors.primary,
-                  transform: `rotate(${360 / segments.length / 2}deg)`,
-                  transformOrigin: 'center',
-                }}
-              >
-                {segment.image ? (
-                  <img
-                    src={segment.image}
-                    alt={segment.text}
-                    className="absolute w-12 h-12 object-contain"
-                    style={{
-                      transform: `rotate(${-skewedRotation}deg)`,
-                      top: '15%',
-                      left: '50%',
-                      marginLeft: '-24px'
-                    }}
-                  />
-                ) : (
-                  <span
-                    className="absolute whitespace-nowrap text-center"
-                    style={{
-                      color: colors.text,
-                      fontSize: style.fontSize,
-                      transform: `rotate(${-skewedRotation}deg)`,
-                      width: '100px',
-                      left: '50%',
-                      marginLeft: '-50px',
-                      top: '15%'
-                    }}
-                  >
-                    {segment.text}
-                  </span>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </motion.div>
-
-      {/* Center button */}
-      <button
-        onClick={spin}
-        disabled={isSpinning}
-        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-white shadow-lg z-10 focus:outline-none transition-transform hover:scale-110 disabled:opacity-50 disabled:hover:scale-100"
-        style={{ border: `4px solid ${colors.primary}` }}
-      >
-        <div
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-0 h-0"
-          style={{
-            borderLeft: '8px solid transparent',
-            borderRight: '8px solid transparent',
-            borderBottom: `16px solid ${colors.primary}`
+    <div className="flex flex-col items-center"
+      style={{
+        backgroundImage: backgroundImage ? `url(${backgroundImage})` : 'none',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        width: '100%',
+        height: '100%',
+        padding: '20px',
+        borderRadius: '10px'
+      }}
+    >
+      <div className="text-center mb-4">
+        <h2 className="text-xl font-bold" style={{ color: colors.text || '#000' }}>
+          Wheel of Fortune
+        </h2>
+        <p className="text-sm" style={{ color: colors.text || '#000' }}>
+          Spin the wheel to win a prize!
+        </p>
+      </div>
+      
+      <div className="relative">
+        <canvas 
+          ref={canvasRef} 
+          width={300} 
+          height={300} 
+          className="border rounded-full"
+        />
+        <div 
+          className="absolute top-0 left-1/2 transform -translate-x-1/2 w-0 h-0"
+          style={{ 
+            borderLeft: '10px solid transparent',
+            borderRight: '10px solid transparent',
+            borderTop: `20px solid ${colors.primary || '#000'}`,
+            marginTop: '-5px'
           }}
         />
-      </button>
-
-      {/* Pointer */}
-      <div
-        className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-2 w-0 h-0 z-20"
-        style={{
-          borderLeft: '12px solid transparent',
-          borderRight: '12px solid transparent',
-          borderTop: `24px solid ${colors.secondary}`
+      </div>
+      
+      <button
+        onClick={spinWheel}
+        disabled={isSpinning}
+        className="mt-4 px-6 py-2 rounded-full shadow-lg transition-transform transform hover:scale-105"
+        style={{ 
+          backgroundColor: colors.primary || '#841b60',
+          color: '#fff',
+          opacity: isSpinning ? 0.7 : 1
         }}
-      />
+      >
+        {isSpinning ? 'Spinning...' : 'Spin'}
+      </button>
+      
+      {result && (
+        <div className="mt-4 p-3 rounded text-center" style={{ backgroundColor: colors.secondary || '#f0f0f0', color: colors.text || '#000' }}>
+          <p className="font-bold">Congratulations!</p>
+          <p>You won: {result}</p>
+        </div>
+      )}
     </div>
   );
 };
