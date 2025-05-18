@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
+import { supabase, checkSupabaseConnection } from '../lib/supabase';
 import { Session, User } from '@supabase/supabase-js';
 
 interface AuthContextType {
@@ -10,6 +10,7 @@ interface AuthContextType {
   loading: boolean;
   signIn: (email: string) => Promise<void>;
   signOut: () => Promise<void>;
+  supabaseConfigured: boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({
@@ -18,6 +19,7 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
   signIn: async () => {},
   signOut: async () => {},
+  supabaseConfigured: false
 });
 
 export const useAuth = () => {
@@ -28,22 +30,38 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [supabaseConfigured, setSupabaseConfigured] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
+    // Check if Supabase is properly configured
+    checkSupabaseConnection().then(isConfigured => {
+      setSupabaseConfigured(isConfigured);
+      
+      // Only try to get session if Supabase is configured
+      if (isConfigured) {
+        supabase.auth.getSession().then(({ data: { session } }) => {
+          setSession(session);
+          setUser(session?.user ?? null);
+          setLoading(false);
+        });
 
-    supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      setUser(session?.user ?? null);
+        supabase.auth.onAuthStateChange((_event, session) => {
+          setSession(session);
+          setUser(session?.user ?? null);
+        });
+      } else {
+        setLoading(false);
+      }
     });
   }, []);
 
   const handleSignIn = async (email: string) => {
+    if (!supabaseConfigured) {
+      alert('Supabase is not properly configured. Please set up your environment variables.');
+      return;
+    }
+    
     try {
       const { error } = await supabase.auth.signInWithOtp({ email });
       if (error) throw error;
@@ -69,7 +87,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       user, 
       loading,
       signIn: handleSignIn, 
-      signOut: handleSignOut 
+      signOut: handleSignOut,
+      supabaseConfigured 
     }}>
       {children}
     </AuthContext.Provider>
