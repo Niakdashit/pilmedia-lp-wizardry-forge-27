@@ -1,24 +1,26 @@
-
 import React, { useState, useEffect } from 'react';
-import { Campaign } from '../types';
-import { Link } from 'react-router-dom';
-import { Plus, Filter } from 'lucide-react';
-import { supabase } from '../lib/supabase';
-import CampaignCard from '../components/CampaignCard';
+import { useNavigate } from 'react-router-dom';
+import { Plus, BarChart3, Calendar, Users } from 'lucide-react';
 import StatCard from '../components/StatCard';
+import CampaignCard from '../components/CampaignCard';
+import { Campaign } from '../types';
+import { supabase } from '../lib/supabase';
 
 const Dashboard: React.FC = () => {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
-  const [filteredCampaigns, setFilteredCampaigns] = useState<Campaign[]>([]);
-  const [activeFilter, setActiveFilter] = useState<string>('all');
   const [loading, setLoading] = useState(true);
-  const [showFilterMenu, setShowFilterMenu] = useState(false);
+  const [stats, setStats] = useState({
+    activeCampaigns: 0,
+    totalParticipants: 0,
+    conversionRate: 0,
+    averageEngagement: 0,
+  });
+  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchCampaigns = async () => {
+      setLoading(true);
       try {
-        setLoading(true);
-        
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) throw new Error('No authenticated user found');
 
@@ -31,177 +33,154 @@ const Dashboard: React.FC = () => {
         if (error) throw error;
 
         setCampaigns(data || []);
-        setFilteredCampaigns(data || []);
       } catch (error) {
-        console.error('Error fetching data:', error);
+        console.error('Error fetching campaigns:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
+    fetchCampaigns();
   }, []);
 
-  const handleFilterChange = (filter: string) => {
-    setActiveFilter(filter);
-    setShowFilterMenu(false);
+  useEffect(() => {
+    const calculateStats = () => {
+      const activeCampaignsCount = campaigns.filter(campaign => campaign.status === 'active').length;
+      const totalParticipantsCount = campaigns.reduce((sum, campaign) => sum + (campaign.participants || 0), 0);
+      const conversionRateValue = activeCampaignsCount > 0 ? 75 : 25;
+      const averageEngagementValue = totalParticipantsCount > 0 ? 60 : 10;
 
-    if (filter === 'all') {
-      setFilteredCampaigns(campaigns);
-    } else {
-      setFilteredCampaigns(campaigns.filter(campaign => campaign.type === filter));
-    }
+      setStats({
+        activeCampaigns: activeCampaignsCount,
+        totalParticipants: totalParticipantsCount,
+        conversionRate: conversionRateValue,
+        averageEngagement: averageEngagementValue,
+      });
+    };
+
+    calculateStats();
+  }, [campaigns]);
+  
+  // Remove unused function or handle the campaign deletion
+  // const handleDeleteCampaign = async (id: string) => {
+  //   // Implementation if needed
+  // };
+  
+  const handleCreateCampaign = (type: Campaign['type']) => {
+    navigate(`/dashboard/campaigns/new?type=${type}`);
   };
-
-  const handleDeleteCampaign = async (id: string) => {
-    try {
-      const { error } = await supabase
-        .from('campaigns')
-        .delete()
-        .eq('id', id);
-
-      if (error) throw error;
-
-      // Update both state arrays
-      const updatedCampaigns = campaigns.filter(campaign => campaign.id !== id);
-      setCampaigns(updatedCampaigns);
-      setFilteredCampaigns(updatedCampaigns.filter(campaign => {
-        return activeFilter === 'all' || campaign.type === activeFilter;
-      }));
-
-    } catch (error) {
-      console.error('Error deleting campaign:', error);
-    }
-  };
-
-  if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#841b60]"></div>
-      </div>
-    );
-  }
-
-  // Get stats for the dashboard
-  const totalCampaigns = campaigns.length;
-  const activeCampaigns = campaigns.filter(c => c.status === 'active').length;
-  const draftCampaigns = campaigns.filter(c => c.status === 'draft').length;
-  const scheduledCampaigns = campaigns.filter(c => c.status === 'scheduled').length;
-
-  const stats = [
-    {
-      title: 'Total Campaigns',
-      value: totalCampaigns,
-      change: '+20%',
-      icon: 'chart-bar',
-      positive: true,
-    },
-    {
-      title: 'Active Campaigns',
-      value: activeCampaigns,
-      change: '+5%',
-      icon: 'play',
-      positive: true,
-    },
-    {
-      title: 'Draft Campaigns',
-      value: draftCampaigns,
-      change: '-2%',
-      icon: 'document',
-      positive: false,
-    },
-    {
-      title: 'Scheduled Campaigns',
-      value: scheduledCampaigns,
-      change: '+15%',
-      icon: 'calendar',
-      positive: true,
-    },
-  ];
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-        <h1 className="text-2xl font-semibold mb-4 md:mb-0">Dashboard</h1>
-        <Link to="/dashboard/campaigns" className="text-[#841b60] hover:underline">
-          View all campaigns
-        </Link>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-        {stats.map((stat, index) => (
-          <StatCard key={index} {...stat} />
-        ))}
-      </div>
-
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
-        <h2 className="text-xl font-semibold mb-4 md:mb-0">Recent Campaigns</h2>
-        <div className="flex flex-col md:flex-row md:items-center space-y-3 md:space-y-0 md:space-x-3">
-          <div className="relative">
-            <button
-              onClick={() => setShowFilterMenu(!showFilterMenu)}
-              className="flex items-center space-x-1 px-3 py-2 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
-            >
-              <Filter size={16} />
-              <span>Filter: {activeFilter.charAt(0).toUpperCase() + activeFilter.slice(1)}</span>
-            </button>
-            
-            {showFilterMenu && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border">
-                <div className="py-1">
-                  <button
-                    onClick={() => handleFilterChange('all')}
-                    className={`block w-full text-left px-4 py-2 hover:bg-gray-100 ${activeFilter === 'all' ? 'bg-gray-100' : ''}`}
-                  >
-                    All
-                  </button>
-                  <button
-                    onClick={() => handleFilterChange('quiz')}
-                    className={`block w-full text-left px-4 py-2 hover:bg-gray-100 ${activeFilter === 'quiz' ? 'bg-gray-100' : ''}`}
-                  >
-                    Quiz
-                  </button>
-                  <button
-                    onClick={() => handleFilterChange('survey')}
-                    className={`block w-full text-left px-4 py-2 hover:bg-gray-100 ${activeFilter === 'survey' ? 'bg-gray-100' : ''}`}
-                  >
-                    Survey
-                  </button>
-                  <button
-                    onClick={() => handleFilterChange('form')}
-                    className={`block w-full text-left px-4 py-2 hover:bg-gray-100 ${activeFilter === 'form' ? 'bg-gray-100' : ''}`}
-                  >
-                    Form
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-
-          <Link
-            to="/dashboard/campaigns/new"
-            className="flex items-center justify-center space-x-1 px-4 py-2 bg-[#841b60] text-white rounded-md hover:bg-[#6d1750] transition-colors"
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Tableau de bord</h1>
+          <p className="text-gray-500">Bienvenue sur votre espace de gestion de campagnes</p>
+        </div>
+        <div className="mt-4 md:mt-0 space-x-2 flex">
+          <button
+            onClick={() => handleCreateCampaign('quiz')}
+            className="bg-[#841b60] hover:bg-[#6d1750] text-white font-bold py-2 px-4 rounded flex items-center"
           >
-            <Plus size={16} />
-            <span>New Campaign</span>
-          </Link>
+            <Plus className="mr-2 w-4 h-4" />
+            Créer un Quiz
+          </button>
+          <button
+            onClick={() => handleCreateCampaign('survey')}
+            className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded flex items-center"
+          >
+            <Plus className="mr-2 w-4 h-4" />
+            Créer un Sondage
+          </button>
+          <button
+            onClick={() => handleCreateCampaign('contest')}
+            className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded flex items-center"
+          >
+            <Plus className="mr-2 w-4 h-4" />
+            Créer un Concours
+          </button>
+          <button
+            onClick={() => handleCreateCampaign('form')}
+            className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded flex items-center"
+          >
+            <Plus className="mr-2 w-4 h-4" />
+            Créer un Formulaire
+          </button>
         </div>
       </div>
 
-      {filteredCampaigns.length === 0 ? (
-        <div className="bg-white p-6 rounded-lg shadow-sm text-center">
-          <p className="text-gray-500">No campaigns found. Create your first campaign!</p>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <StatCard
+          title="Campagnes Actives"
+          value={stats.activeCampaigns}
+          change="+12%"
+          icon="bar-chart-3"
+          positive
+          stat="campaigns"
+        />
+        <StatCard
+          title="Total Participants"
+          value={stats.totalParticipants}
+          change="+18%"
+          icon="users"
+          positive
+          stat="participants"
+        />
+        <StatCard
+          title="Taux de Conversion"
+          value={`${stats.conversionRate}%`}
+          change="+5%"
+          icon="percent"
+          positive
+          stat="conversion"
+        />
+        <StatCard
+          title="Engagement Moyen"
+          value={`${stats.averageEngagement}%`}
+          change="-3%"
+          icon="activity"
+          positive={false}
+          stat="engagement"
+        />
+      </div>
+      
+      <div className="flex flex-col">
+        <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+          <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+            <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Nom
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Type
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Statut
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Participants
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Date de création
+                    </th>
+                    <th scope="col" className="relative px-6 py-3">
+                      <span className="sr-only">Actions</span>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {campaigns.map((campaign) => (
+                    <CampaignCard key={campaign.id} campaign={campaign} />
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredCampaigns.slice(0, 6).map((campaign) => (
-            <CampaignCard 
-              key={campaign.id} 
-              campaign={campaign} 
-            />
-          ))}
-        </div>
-      )}
+      </div>
     </div>
   );
 };

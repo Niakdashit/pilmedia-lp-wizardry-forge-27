@@ -28,7 +28,7 @@ const Layout: React.FC = () => {
 
       {/* Main Content */}
       <div className="flex flex-col flex-1 w-0 overflow-hidden">
-        <Navbar toggleSidebar={toggleSidebar} />
+        <Navbar onMenuClick={toggleSidebar} />
 
         <main className="relative flex-1 overflow-y-auto focus:outline-none">
           <div className="py-6">

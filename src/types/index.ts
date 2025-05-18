@@ -9,7 +9,7 @@ export interface Question {
   id: string;
   text: string;
   type: 'multiple-choice' | 'text' | 'checkbox';
-  options?: string[]; // Make options optional to match type.ts
+  options: string[]; // Make options non-optional so it matches type.ts
   correctAnswer?: string;
 }
 
@@ -17,7 +17,7 @@ export interface FormField {
   id: string;
   label: string;
   type: string;
-  required?: boolean; // Make required optional to match type.ts
+  required: boolean; // Make required non-optional to match type.ts
   options?: string[];
   placeholder?: string;
 }
@@ -29,6 +29,7 @@ export interface StatCard {
   change: string;
   icon: string;
   positive: boolean;
+  stat?: string; // Make stat optional
 }
 
 // Keep existing User interface

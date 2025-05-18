@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { 
@@ -10,8 +10,15 @@ import {
   Puzzle, 
   Gamepad2,
   Search,
-  SlidersHorizontal
+  Plus,
+  Trash2,
+  PenSquare,
+  Copy,
+  Eye,
+  List,
+  Grid
 } from 'lucide-react';
+import { supabase } from '../lib/supabase';
 
 interface GameMechanic {
   id: string;
@@ -82,9 +89,9 @@ const mechanics: GameMechanic[] = [
 
 const Gamification: React.FC = () => {
   const navigate = useNavigate();
-  const [searchQuery, setSearchQuery] = React.useState('');
-  const [selectedCategory, setSelectedCategory] = React.useState<string>('all');
-  const [selectedDifficulty, setSelectedDifficulty] = React.useState<string>('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [selectedDifficulty, setSelectedDifficulty] = useState<string>('all');
 
   const filteredMechanics = mechanics.filter(mechanic => {
     const matchesSearch = mechanic.name.toLowerCase().includes(searchQuery.toLowerCase()) ||

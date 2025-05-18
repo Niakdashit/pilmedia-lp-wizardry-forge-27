@@ -1,21 +1,30 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import { Campaign } from '../types/type';
-import CampaignPreview from '../components/CampaignPreview';
+import { Campaign, Question } from '../types';
+import toast from 'react-hot-toast';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 const PublicCampaign: React.FC = () => {
-  const { slug } = useParams();
+  const { id } = useParams<{ id: string }>();
   const [campaign, setCampaign] = useState<Campaign | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [showSuccess, setShowSuccess] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [formData, setFormData] = useState<Record<string, string>>({});
+  const [completed, setCompleted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [result, setResult] = useState<{
+    score: number;
+    totalQuestions: number;
+    message?: string;
+  } | null>(null);
 
   useEffect(() => {
     const loadCampaign = async () => {
       try {
-        if (!slug) throw new Error('Campaign slug is required');
+        if (!id) throw new Error('Campaign ID is required');
 
         // Create a public Supabase client without auth
         const publicSupabase = supabase;
@@ -28,7 +37,7 @@ const PublicCampaign: React.FC = () => {
             questions (*),
             form_fields (*)
           `)
-          .eq('public_url', slug)
+          .eq('public_url', id)
           .single();
 
         // If not found by public_url, try by id
@@ -40,7 +49,7 @@ const PublicCampaign: React.FC = () => {
               questions (*),
               form_fields (*)
             `)
-            .eq('id', slug)
+            .eq('id', id)
             .single();
 
           if (errorById) throw errorById;
@@ -67,7 +76,7 @@ const PublicCampaign: React.FC = () => {
     };
 
     loadCampaign();
-  }, [slug]);
+  }, [id]);
 
   const recordAnalytics = async (campaignId: string, eventType: string) => {
     try {

@@ -252,6 +252,22 @@ const CampaignEditor: React.FC = () => {
     });
   };
 
+  const handleAddQuestion = (question: Omit<Question, 'id'>) => {
+    if (!campaign) return;
+    
+    // We ensure options is always an array to satisfy the type requirement
+    const newQuestion: Question = {
+      ...question,
+      id: uuidv4(),
+      options: question.options || []
+    };
+    
+    setCampaign({
+      ...campaign,
+      questions: [...(campaign.questions || []), newQuestion]
+    });
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -441,6 +457,7 @@ const CampaignEditor: React.FC = () => {
             </div>
           )}
 
+          {/* Content & design tabs */}
           {(activeTab === 'content' || activeTab === 'design') && campaign && (
             <div className="flex flex-col lg:flex-row">
               {/* Mobile Builder Toggle */}
@@ -468,18 +485,7 @@ const CampaignEditor: React.FC = () => {
                         fields: [...(campaign.fields || []), newField]
                       });
                     }}
-                    onAddQuestion={(question) => {
-                      // Explicit type casting to ensure compatibility
-                      const newQuestion: Question = {
-                        ...question,
-                        id: uuidv4(),
-                        options: question.options || []
-                      };
-                      setCampaign({
-                        ...campaign,
-                        questions: [...(campaign.questions || []), newQuestion]
-                      });
-                    }}
+                    onAddQuestion={handleAddQuestion}
                     fields={campaign.fields || []}
                     questions={campaign.questions || []}
                     onRemoveField={(id) => {
