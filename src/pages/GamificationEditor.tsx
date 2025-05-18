@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ChevronLeft, Save, X } from 'lucide-react';
-import GamePreview from '../components/GamePreview';
+import { ChevronLeft, X } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { supabase } from '../lib/supabase';
+import GamePreview from '../components/GamePreview';
 
 interface GameSettings {
   id: string;

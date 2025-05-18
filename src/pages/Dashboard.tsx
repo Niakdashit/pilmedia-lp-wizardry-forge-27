@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import StatCard from '../components/StatCard';
 import CampaignCard from '../components/CampaignCard';
 import { Campaign, StatCard as StatCardType } from '../types';
+import { supabase } from '../lib/supabase';
 
 const Dashboard = () => {
   const [campaigns] = useState<Campaign[]>([]);

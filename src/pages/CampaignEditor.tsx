@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { ChevronLeft, Eye, Upload, X, ChevronRight } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
-import { Campaign, Question, FormField } from '../types'; 
+import { Campaign, Question } from '../types'; 
 import EditorTabs from '../components/EditorTabs';
 import QuestionBuilder from '../components/QuestionBuilder';
 import CampaignPreview from '../components/CampaignPreview';

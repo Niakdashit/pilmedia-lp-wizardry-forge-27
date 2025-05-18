@@ -1,3 +1,4 @@
+
 import { Campaign as CampaignType } from './type';
 
 // Extend the imported Campaign type
@@ -10,7 +11,7 @@ export interface Question {
   id: string;
   text: string;
   type: 'multiple-choice' | 'text' | 'checkbox';
-  options: string[]; // Make options non-optional to match imported type
+  options: string[];
   correctAnswer?: string;
 }
 
