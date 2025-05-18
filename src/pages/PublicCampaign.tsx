@@ -1,25 +1,15 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
-import { Campaign, Question } from '../types';
-import toast from 'react-hot-toast';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Campaign } from '../types';
 
 const PublicCampaign: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const [campaign, setCampaign] = useState<Campaign | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [currentStep, setCurrentStep] = useState(0);
-  const [answers, setAnswers] = useState<Record<string, string>>({});
-  const [formData, setFormData] = useState<Record<string, string>>({});
-  const [completed, setCompleted] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [result, setResult] = useState<{
-    score: number;
-    totalQuestions: number;
-    message?: string;
-  } | null>(null);
+  const [showSuccess, setShowSuccess] = useState(false);
 
   useEffect(() => {
     const loadCampaign = async () => {
@@ -171,12 +161,17 @@ const PublicCampaign: React.FC = () => {
       }}
     >
       <div className="max-w-[800px] w-full">
-        <CampaignPreview
-          campaign={campaign}
-          onParticipate={handleParticipate}
-          onFormSubmit={handleFormSubmit}
-          onGameComplete={handleGameComplete}
-        />
+        <div className="bg-white bg-opacity-90 rounded-lg shadow-lg p-6">
+          <h1 className="text-2xl font-bold mb-4">{campaign.name}</h1>
+          <p className="mb-6">{campaign.description || 'No description available'}</p>
+          
+          <button
+            onClick={handleParticipate}
+            className="px-4 py-2 bg-[#841b60] text-white rounded-md hover:bg-[#6d1750] transition-colors"
+          >
+            Participate
+          </button>
+        </div>
       </div>
     </div>
   );

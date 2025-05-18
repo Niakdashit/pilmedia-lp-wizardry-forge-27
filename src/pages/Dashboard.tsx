@@ -1,186 +1,127 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Plus, BarChart3, Calendar, Users } from 'lucide-react';
+
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import StatCard from '../components/StatCard';
 import CampaignCard from '../components/CampaignCard';
-import { Campaign } from '../types';
+import { Campaign, StatCard as StatCardType } from '../types';
 import { supabase } from '../lib/supabase';
 
-const Dashboard: React.FC = () => {
+const Dashboard = () => {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [stats, setStats] = useState({
-    activeCampaigns: 0,
-    totalParticipants: 0,
-    conversionRate: 0,
-    averageEngagement: 0,
-  });
-  const navigate = useNavigate();
+  const [recentCampaigns, setRecentCampaigns] = useState<Campaign[]>([]);
 
-  useEffect(() => {
-    const fetchCampaigns = async () => {
-      setLoading(true);
-      try {
-        const { data: { user } } = await supabase.auth.getUser();
-        if (!user) throw new Error('No authenticated user found');
-
-        const { data, error } = await supabase
-          .from('campaigns')
-          .select('*')
-          .eq('user_id', user.id)
-          .order('created_at', { ascending: false });
-
-        if (error) throw error;
-
-        setCampaigns(data || []);
-      } catch (error) {
-        console.error('Error fetching campaigns:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCampaigns();
-  }, []);
-
-  useEffect(() => {
-    const calculateStats = () => {
-      const activeCampaignsCount = campaigns.filter(campaign => campaign.status === 'active').length;
-      const totalParticipantsCount = campaigns.reduce((sum, campaign) => sum + (campaign.participants || 0), 0);
-      const conversionRateValue = activeCampaignsCount > 0 ? 75 : 25;
-      const averageEngagementValue = totalParticipantsCount > 0 ? 60 : 10;
-
-      setStats({
-        activeCampaigns: activeCampaignsCount,
-        totalParticipants: totalParticipantsCount,
-        conversionRate: conversionRateValue,
-        averageEngagement: averageEngagementValue,
-      });
-    };
-
-    calculateStats();
-  }, [campaigns]);
-  
-  // Remove unused function or handle the campaign deletion
-  // const handleDeleteCampaign = async (id: string) => {
-  //   // Implementation if needed
-  // };
-  
-  const handleCreateCampaign = (type: Campaign['type']) => {
-    navigate(`/dashboard/campaigns/new?type=${type}`);
-  };
+  // Fix the cards to properly use the StatCard interface
+  const statCards: StatCardType[] = [
+    {
+      title: "Campaigns",
+      value: campaigns.length,
+      change: "+12%",
+      icon: "trending-up",
+      positive: true,
+      stat: "from last month"
+    },
+    {
+      title: "Active Campaigns",
+      value: campaigns.filter(c => c.status === 'active').length,
+      change: "+8%",
+      icon: "activity",
+      positive: true,
+      stat: "from last month"
+    },
+    {
+      title: "Total Participants",
+      value: campaigns.reduce((sum, campaign) => sum + (campaign.participants || 0), 0),
+      change: "+25%",
+      icon: "users",
+      positive: true,
+      stat: "from last month"
+    },
+    {
+      title: "Completion Rate",
+      value: "84%",
+      change: "+4%",
+      icon: "percent",
+      positive: true,
+      stat: "from last month"
+    }
+  ];
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-900">Tableau de bord</h1>
-          <p className="text-gray-500">Bienvenue sur votre espace de gestion de campagnes</p>
-        </div>
-        <div className="mt-4 md:mt-0 space-x-2 flex">
-          <button
-            onClick={() => handleCreateCampaign('quiz')}
-            className="bg-[#841b60] hover:bg-[#6d1750] text-white font-bold py-2 px-4 rounded flex items-center"
-          >
-            <Plus className="mr-2 w-4 h-4" />
-            Créer un Quiz
-          </button>
-          <button
-            onClick={() => handleCreateCampaign('survey')}
-            className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded flex items-center"
-          >
-            <Plus className="mr-2 w-4 h-4" />
-            Créer un Sondage
-          </button>
-          <button
-            onClick={() => handleCreateCampaign('contest')}
-            className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded flex items-center"
-          >
-            <Plus className="mr-2 w-4 h-4" />
-            Créer un Concours
-          </button>
-          <button
-            onClick={() => handleCreateCampaign('form')}
-            className="bg-gray-200 hover:bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded flex items-center"
-          >
-            <Plus className="mr-2 w-4 h-4" />
-            Créer un Formulaire
-          </button>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-        <StatCard
-          title="Campagnes Actives"
-          value={stats.activeCampaigns}
-          change="+12%"
-          icon="bar-chart-3"
-          positive
-          stat="campaigns"
-        />
-        <StatCard
-          title="Total Participants"
-          value={stats.totalParticipants}
-          change="+18%"
-          icon="users"
-          positive
-          stat="participants"
-        />
-        <StatCard
-          title="Taux de Conversion"
-          value={`${stats.conversionRate}%`}
-          change="+5%"
-          icon="percent"
-          positive
-          stat="conversion"
-        />
-        <StatCard
-          title="Engagement Moyen"
-          value={`${stats.averageEngagement}%`}
-          change="-3%"
-          icon="activity"
-          positive={false}
-          stat="engagement"
-        />
-      </div>
+    <div className="p-6">
+      <header className="mb-8">
+        <h1 className="text-2xl font-semibold text-gray-900">Dashboard</h1>
+      </header>
       
-      <div className="flex flex-col">
-        <div className="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-          <div className="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
-            <div className="shadow overflow-hidden border-b border-gray-200 sm:rounded-lg">
-              <table className="min-w-full divide-y divide-gray-200">
-                <thead className="bg-gray-50">
-                  <tr>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Nom
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Type
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Statut
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Participants
-                    </th>
-                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Date de création
-                    </th>
-                    <th scope="col" className="relative px-6 py-3">
-                      <span className="sr-only">Actions</span>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200">
-                  {campaigns.map((campaign) => (
-                    <CampaignCard key={campaign.id} campaign={campaign} />
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+      {/* Stats Overview */}
+      <section className="mb-10">
+        <h2 className="text-lg font-medium text-gray-900 mb-4">Overview</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {statCards.map((card, index) => (
+            <StatCard key={index} {...card} />
+          ))}
         </div>
-      </div>
+      </section>
+      
+      {/* Recent Campaigns */}
+      <section className="mb-10">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-lg font-medium text-gray-900">Recent Campaigns</h2>
+          <Link 
+            to="/dashboard/campaigns"
+            className="text-sm text-[#841b60] hover:text-[#6d1750] font-medium"
+          >
+            View All
+          </Link>
+        </div>
+        
+        {recentCampaigns.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {recentCampaigns.map((campaign) => (
+              <CampaignCard key={campaign.id} campaign={campaign} />
+            ))}
+          </div>
+        ) : (
+          <div className="bg-white p-6 rounded-lg shadow-sm text-center">
+            <p className="text-gray-600 mb-4">You haven't created any campaigns yet.</p>
+            <Link
+              to="/dashboard/campaigns/new"
+              className="inline-block px-4 py-2 bg-[#841b60] text-white rounded-md hover:bg-[#6d1750] transition-colors"
+            >
+              Create Your First Campaign
+            </Link>
+          </div>
+        )}
+      </section>
+      
+      {/* Quick Actions */}
+      <section>
+        <h2 className="text-lg font-medium text-gray-900 mb-4">Quick Actions</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <Link
+            to="/dashboard/campaigns/new?type=quiz"
+            className="bg-white p-6 rounded-lg shadow-sm hover:shadow transition-shadow border-l-4 border-blue-500"
+          >
+            <h3 className="font-medium text-gray-900 mb-2">Create Quiz</h3>
+            <p className="text-gray-600 text-sm">Engage your audience with interactive quizzes.</p>
+          </Link>
+          
+          <Link
+            to="/dashboard/campaigns/new?type=survey"
+            className="bg-white p-6 rounded-lg shadow-sm hover:shadow transition-shadow border-l-4 border-green-500"
+          >
+            <h3 className="font-medium text-gray-900 mb-2">Create Survey</h3>
+            <p className="text-gray-600 text-sm">Collect valuable feedback from your audience.</p>
+          </Link>
+          
+          <Link
+            to="/dashboard/campaigns/new?type=contest"
+            className="bg-white p-6 rounded-lg shadow-sm hover:shadow transition-shadow border-l-4 border-purple-500"
+          >
+            <h3 className="font-medium text-gray-900 mb-2">Create Contest</h3>
+            <p className="text-gray-600 text-sm">Run engaging contests to grow your audience.</p>
+          </Link>
+        </div>
+      </section>
     </div>
   );
 };

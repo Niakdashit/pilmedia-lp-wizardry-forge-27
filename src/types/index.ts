@@ -5,19 +5,21 @@ export interface Campaign extends CampaignType {
   // No need to override fields - just extending is enough
 }
 
+// Update Question interface to match with type.ts
 export interface Question {
   id: string;
   text: string;
   type: 'multiple-choice' | 'text' | 'checkbox';
-  options: string[]; // Make options non-optional so it matches type.ts
-  correctAnswer?: string;
+  options: string[]; // Make options non-optional so it's compatible
+  correctAnswer?: string; // Use camelCase to match with the correct usage
 }
 
+// Update FormField interface to match with type.ts
 export interface FormField {
   id: string;
   label: string;
   type: string;
-  required: boolean; // Make required non-optional to match type.ts
+  required: boolean; // Keep required non-optional to match with expected usage
   options?: string[];
   placeholder?: string;
 }
@@ -29,7 +31,7 @@ export interface StatCard {
   change: string;
   icon: string;
   positive: boolean;
-  stat?: string; // Make stat optional
+  stat?: string; // Made optional
 }
 
 // Keep existing User interface
