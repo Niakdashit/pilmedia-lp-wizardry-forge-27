@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ChevronLeft, X } from 'lucide-react';
+import { ChevronLeft, X, Save } from 'lucide-react';
 import { v4 as uuidv4 } from 'uuid';
 import { supabase } from '../lib/supabase';
 import GamePreview from '../components/GamePreview';
@@ -27,7 +27,6 @@ const GamificationEditor: React.FC = () => {
   const navigate = useNavigate();
   const [settings, setSettings] = useState<GameSettings | null>(null);
   const [name, setName] = useState('');
-  const [activeTab, setActiveTab] = useState('general');
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -52,42 +51,6 @@ const GamificationEditor: React.FC = () => {
     fetchSettings();
   }, [id]);
 
-  const handleImageUpload = async (file: File, gameType: string) => {
-    if (!settings) return;
-    
-    try {
-      const filePath = `${gameType}-images/${uuidv4()}.${file.name.split('.').pop()}`;
-      
-      const { error: uploadError } = await supabase.storage
-        .from('game-assets')
-        .upload(filePath, file);
-        
-      const { data: { publicUrl } } = supabase.storage
-        .from('game-assets')
-        .getPublicUrl(filePath);
-        
-      setSettings(prev => {
-        if (!prev) return prev;
-        
-        const updatedSettings = {
-          ...prev,
-          game_settings: {
-            ...prev.game_settings,
-            [gameType]: {
-              ...prev.game_settings[gameType],
-              imageUrl: publicUrl
-            }
-          }
-        };
-        
-        return updatedSettings;
-      });
-      
-    } catch (error) {
-      console.error('Error uploading image:', error);
-    }
-  };
-  
   const handlePuzzleImageUpload = useCallback(async (file: File) => {
     if (!settings) return;
     
@@ -124,7 +87,7 @@ const GamificationEditor: React.FC = () => {
       console.error('Error uploading puzzle image:', error);
     }
   }, [settings]);
-  
+
   const handleSegmentAdd = () => {
     if (!settings) return;
     

@@ -1,8 +1,9 @@
+
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Gamepad2, 
-  Dice, 
+  Dices, 
   Target, 
   CircleDot, 
   PuzzleIcon, 
@@ -22,7 +23,7 @@ const Gamification = () => {
     {
       id: '2',
       name: 'Dice Roll',
-      icon: Dice,
+      icon: Dices,
       description: 'Add excitement with a simple dice rolling game.',
       type: 'dice'
     },

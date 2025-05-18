@@ -1,4 +1,3 @@
-
 import { Campaign as CampaignType } from './type';
 
 // Extend the imported Campaign type
@@ -20,7 +19,7 @@ export interface FormField {
   id: string;
   label: string;
   type: string;
-  required: boolean;
+  required: boolean; // Making this non-optional to match usage
   options?: string[];
   placeholder?: string;
 }
@@ -32,7 +31,17 @@ export interface StatCard {
   change: string;
   icon: string;
   positive: boolean;
-  stat?: string;
+  stat: string; // Making this non-optional to match usage
+}
+
+// StatCardProps interface for the component
+export interface StatCardProps {
+  title: string;
+  value: string | number;
+  change: string;
+  icon: string;
+  positive: boolean;
+  stat: string; // Making this non-optional
 }
 
 // Keep existing User interface
