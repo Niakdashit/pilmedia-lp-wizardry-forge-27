@@ -1,13 +1,6 @@
-
 import React, { useState } from 'react';
-import { WheelOfFortune } from './games/WheelOfFortune';
-import { MemoryGame } from './games/MemoryGame';
-import ScratchCard from './games/ScratchCard';
-import Puzzle from './games/Puzzle';
-import { DiceRoll } from './games/DiceRoll';
-import { TargetShoot } from './games/TargetShoot';
+import { WheelOfFortune, MemoryGame, ScratchCard, Puzzle, DiceRoll, TargetShoot } from './games';
 import { supabase } from '../lib/supabase';
-import { Campaign, FormField, Question } from '../types';
 import { MemoryGameProps, DiceGameProps, TargetGameProps } from '../types/componentInterfaces';
 
 interface GamePreviewProps {
@@ -72,7 +65,7 @@ const GamePreview: React.FC<GamePreviewProps> = ({ type, settings }) => {
         text: settings?.colors?.text || '#ffffff'
       },
       backgroundImage: settings?.background_image || '',
-      onComplete: () => {}
+      // We will only pass onComplete to components that accept it
     };
 
     switch (type) {
@@ -87,7 +80,8 @@ const GamePreview: React.FC<GamePreviewProps> = ({ type, settings }) => {
               { text: "50% OFF", color: "#FFEEAD" },
               { text: "FREE GIFT", color: "#D4A5A5" }
             ]}
-            {...gameProps}
+            colors={gameProps.colors}
+            backgroundImage={gameProps.backgroundImage}
           />
         );
       case 'memory':
@@ -99,14 +93,12 @@ const GamePreview: React.FC<GamePreviewProps> = ({ type, settings }) => {
               secondary: gameProps.colors.secondary,
               text: gameProps.colors.text
             }}
-            onComplete={gameProps.onComplete}
             backgroundImage={gameProps.backgroundImage}
           />
         );
       case 'scratch':
         return (
           <ScratchCard
-            {...gameProps}
             prize={{ 
               text: settings?.game_settings?.scratch?.prize?.text || "Vous avez gagné !",
               image: settings?.game_settings?.scratch?.prize?.image || ""
@@ -117,7 +109,6 @@ const GamePreview: React.FC<GamePreviewProps> = ({ type, settings }) => {
       case 'puzzle':
         return (
           <Puzzle
-            {...gameProps}
             imageUrl={settings?.game_settings?.puzzle?.imageUrl || settings?.background_image || ''}
             gridSize={settings?.game_settings?.puzzle?.gridSize || 3}
           />
@@ -132,7 +123,6 @@ const GamePreview: React.FC<GamePreviewProps> = ({ type, settings }) => {
               secondary: gameProps.colors.secondary,
               text: gameProps.colors.text
             }}
-            onComplete={gameProps.onComplete}
           />
         );
       case 'target':
@@ -145,7 +135,6 @@ const GamePreview: React.FC<GamePreviewProps> = ({ type, settings }) => {
               secondary: gameProps.colors.secondary,
               text: gameProps.colors.text
             }}
-            onComplete={gameProps.onComplete}
           />
         );
       default:
@@ -185,6 +174,7 @@ const GamePreview: React.FC<GamePreviewProps> = ({ type, settings }) => {
           </div>
         )}
 
+        {/* Form Step */}
         {currentStep === 'form' && (
           <div className="bg-white rounded-lg p-6">
             <h3 className="text-xl font-semibold mb-4">Vos informations</h3>
@@ -264,6 +254,7 @@ const GamePreview: React.FC<GamePreviewProps> = ({ type, settings }) => {
           </div>
         )}
 
+        {/* Quiz Step */}
         {currentStep === 'quiz' && settings?.questions && (
           <div className="bg-white rounded-lg p-6">
             <div className="mb-6 bg-gray-100 h-2 rounded-full overflow-hidden">
@@ -290,6 +281,7 @@ const GamePreview: React.FC<GamePreviewProps> = ({ type, settings }) => {
           </div>
         )}
 
+        {/* Game Step */}
         {currentStep === 'game' && (
           <div className="w-full h-full">
             {renderGame()}

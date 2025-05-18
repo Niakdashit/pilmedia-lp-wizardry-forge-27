@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { ChevronLeft, Eye, Upload, X, ChevronRight } from 'lucide-react';
@@ -18,8 +17,8 @@ const CampaignEditor: React.FC = () => {
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
   
-  // Fix the type to match expected type in Campaign interface
-  const type = queryParams.get('type') || 'quiz' as Campaign['type'];
+  // Fix the type casting to match the expected Campaign type
+  const type = (queryParams.get('type') || 'quiz') as Campaign['type'];
   
   const [loading, setLoading] = useState(true);
   const [campaign, setCampaign] = useState<Campaign | null>(null);

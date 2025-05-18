@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 8080,
-    // Ensure we're using HTTP for local development
-    https: false
+    // Use proper ServerOptions format
+    https: null
   }
 })

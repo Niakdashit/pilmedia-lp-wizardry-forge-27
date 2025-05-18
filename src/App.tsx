@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from './components/AuthProvider';
 import AppRoutes from './AppRoutes';
 
-export default function App() {
+function App() {
   return (
     <StrictMode>
       <BrowserRouter>
@@ -15,3 +15,5 @@ export default function App() {
     </StrictMode>
   );
 }
+
+export default App;
