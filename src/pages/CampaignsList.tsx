@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
@@ -268,11 +269,8 @@ const CampaignsList: React.FC = () => {
           </thead>
           <tbody>
             {campaigns.map(campaign => {
-              const startDate = campaign.start_date ? new Date(campaign.start_date) : new Date();
-              const formattedDate = startDate.toLocaleDateString();
               const campaignDate = campaign.created_at ? new Date(campaign.created_at) : new Date();
               const timeAgo = formatDistanceToNow(campaignDate, { addSuffix: true, locale: enUS });
-              const participantsCount = showStats?.participants ?? 0;
 
               return (
                 <tr key={campaign.id} className="border-b">

@@ -1,8 +1,9 @@
-
 import { Campaign as CampaignType } from './type';
 
 // Extend the imported Campaign type
-export interface Campaign extends CampaignType {}
+export interface Campaign extends CampaignType {
+  // No need to override fields - just extending is enough
+}
 
 export interface Question {
   id: string;
@@ -16,11 +17,12 @@ export interface FormField {
   id: string;
   label: string;
   type: string;
-  required: boolean; // Keep as required for backward compatibility
+  required?: boolean; // Make required optional to match type.ts
   options?: string[];
   placeholder?: string;
 }
 
+// Keep existing StatCard interface
 export interface StatCard {
   title: string;
   value: string | number;
@@ -29,6 +31,7 @@ export interface StatCard {
   positive: boolean;
 }
 
+// Keep existing User interface
 export interface User {
   id: string;
   email: string;
@@ -41,7 +44,7 @@ export interface User {
   updated_at: string;
 }
 
-// Add additional interfaces as needed
+// Keep existing game props interfaces
 export interface DiceRollProps {
   sides: number;
   style: string;

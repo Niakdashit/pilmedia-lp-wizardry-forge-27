@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
+import { Plus, Trash2 } from 'lucide-react';
 import { FormField, Question } from '../types';
-import { v4 as uuidv4 } from 'uuid';
 
 interface QuestionBuilderProps {
-  onAddQuestion: (question: Omit<Question, 'id'>) => void;
   onAddField: (field: Omit<FormField, 'id'>) => void;
+  onAddQuestion: (question: Omit<Question, 'id'>) => void;
   fields: FormField[];
   questions: Question[];
   onRemoveField: (id: string) => void;
@@ -12,233 +12,154 @@ interface QuestionBuilderProps {
 }
 
 const QuestionBuilder: React.FC<QuestionBuilderProps> = ({
-  onAddQuestion,
   onAddField,
+  onAddQuestion,
   fields,
   questions,
   onRemoveField,
   onRemoveQuestion
 }) => {
-  const [newQuestionText, setNewQuestionText] = useState('');
-  const [newQuestionType, setNewQuestionType] = useState<'multiple-choice' | 'text' | 'checkbox'>('multiple-choice');
-  const [newOptionText, setNewOptionText] = useState<string>("");
-  const [options, setOptions] = useState<string[]>([]);
   const [newFieldLabel, setNewFieldLabel] = useState('');
   const [newFieldType, setNewFieldType] = useState('text');
-  const [fieldRequired, setFieldRequired] = useState(false);
-
-  const handleAddOption = () => {
-    if (newOptionText && !options.includes(newOptionText)) {
-      setOptions([...options, newOptionText]);
-      setNewOptionText('');
-    }
-  };
-
-  const handleRemoveOption = (optionToRemove: string) => {
-    setOptions(options.filter(option => option !== optionToRemove));
-  };
+  const [newQuestionText, setNewQuestionText] = useState('');
+  const [newQuestionOptions, setNewQuestionOptions] = useState('');
+  const [newQuestionCorrectAnswer, setNewQuestionCorrectAnswer] = useState('');
 
   const handleAddFieldSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (newFieldLabel && newFieldType) {
+    if (newFieldLabel.trim() !== '') {
       onAddField({
         label: newFieldLabel,
         type: newFieldType,
-        required: fieldRequired
+        required: true
       });
       setNewFieldLabel('');
       setNewFieldType('text');
-      setFieldRequired(false);
     }
   };
 
   const handleAddQuestionSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (newQuestionText) {
-      const newQuestion: Omit<Question, 'id'> = {
+    if (newQuestionText.trim() !== '' && newQuestionOptions.trim() !== '') {
+      const options = newQuestionOptions.split(',').map(option => option.trim());
+      onAddQuestion({
         text: newQuestionText,
-        type: newQuestionType,
-        options: newQuestionType === 'multiple-choice' || newQuestionType === 'checkbox' ? options : []
-      };
-      onAddQuestion(newQuestion);
+        options: options,
+        correct_answer: newQuestionCorrectAnswer
+      });
       setNewQuestionText('');
-      setNewQuestionType('multiple-choice');
-      setOptions([]);
+      setNewQuestionOptions('');
+      setNewQuestionCorrectAnswer('');
     }
   };
 
   return (
-    <div className="p-4">
-      <h2 className="text-xl font-semibold mb-4">Ajouter une Question</h2>
-      <form onSubmit={handleAddQuestionSubmit} className="mb-6">
-        <div className="mb-4">
-          <label htmlFor="questionText" className="block text-sm font-medium text-gray-700">
-            Texte de la question
-          </label>
+    <div className="p-4 space-y-4">
+      <div>
+        <h3 className="text-lg font-medium text-gray-900 mb-2">Ajouter un champ au formulaire</h3>
+        <form onSubmit={handleAddFieldSubmit} className="flex space-x-2">
           <input
             type="text"
-            id="questionText"
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-            value={newQuestionText}
-            onChange={(e) => setNewQuestionText(e.target.value)}
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <label htmlFor="questionType" className="block text-sm font-medium text-gray-700">
-            Type de question
-          </label>
-          <select
-            id="questionType"
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-            value={newQuestionType}
-            onChange={(e) => setNewQuestionType(e.target.value as 'multiple-choice' | 'text' | 'checkbox')}
-          >
-            <option value="multiple-choice">Choix multiple</option>
-            <option value="text">Texte</option>
-            <option value="checkbox">Case à cocher</option>
-          </select>
-        </div>
-
-        {(newQuestionType === 'multiple-choice' || newQuestionType === 'checkbox') && (
-          <div>
-            <div className="mb-2">
-              <label htmlFor="optionText" className="block text-sm font-medium text-gray-700">
-                Options
-              </label>
-              <div className="flex">
-                <input
-                  type="text"
-                  id="optionText"
-                  className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                  value={newOptionText}
-                  onChange={(e) => setNewOptionText(e.target.value)}
-                />
-                <button
-                  type="button"
-                  onClick={handleAddOption}
-                  className="ml-2 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                >
-                  Ajouter
-                </button>
-              </div>
-            </div>
-            {options.length > 0 && (
-              <div className="mb-4">
-                <ul className="list-disc list-inside">
-                  {options.map((option, index) => (
-                    <li key={index} className="flex items-center justify-between py-1">
-                      {option}
-                      <button
-                        type="button"
-                        onClick={() => handleRemoveOption(option)}
-                        className="text-red-600 hover:text-red-800"
-                      >
-                        Supprimer
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-        )}
-
-        <button
-          type="submit"
-          className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        >
-          Ajouter la Question
-        </button>
-      </form>
-
-      <h2 className="text-xl font-semibold mb-4">Ajouter un Champ de Formulaire</h2>
-      <form onSubmit={handleAddFieldSubmit} className="mb-6">
-        <div className="mb-4">
-          <label htmlFor="fieldLabel" className="block text-sm font-medium text-gray-700">
-            Label du champ
-          </label>
-          <input
-            type="text"
-            id="fieldLabel"
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+            placeholder="Label du champ"
             value={newFieldLabel}
             onChange={(e) => setNewFieldLabel(e.target.value)}
-            required
+            className="px-3 py-2 border rounded-md w-1/2"
           />
-        </div>
-        <div className="mb-4">
-          <label htmlFor="fieldType" className="block text-sm font-medium text-gray-700">
-            Type de champ
-          </label>
           <select
-            id="fieldType"
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
             value={newFieldType}
             onChange={(e) => setNewFieldType(e.target.value)}
+            className="px-3 py-2 border rounded-md"
           >
             <option value="text">Texte</option>
             <option value="email">Email</option>
             <option value="select">Select</option>
+            <option value="textarea">Textarea</option>
           </select>
-        </div>
-        <div className="mb-4">
-          <label htmlFor="fieldRequired" className="block text-sm font-medium text-gray-700">
-            Champ requis ?
-          </label>
+          <button
+            type="submit"
+            className="bg-[#841b60] text-white px-4 py-2 rounded-md hover:bg-[#6d1750] transition-colors"
+          >
+            <Plus className="inline-block mr-1" size={16} />
+            Ajouter
+          </button>
+        </form>
+      </div>
+
+      <div>
+        <h3 className="text-lg font-medium text-gray-900 mb-2">Ajouter une question au quiz</h3>
+        <form onSubmit={handleAddQuestionSubmit} className="space-y-2">
           <input
-            type="checkbox"
-            id="fieldRequired"
-            className="mt-1 h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-            checked={fieldRequired}
-            onChange={(e) => setFieldRequired(e.target.checked)}
+            type="text"
+            placeholder="Texte de la question"
+            value={newQuestionText}
+            onChange={(e) => setNewQuestionText(e.target.value)}
+            className="w-full px-3 py-2 border rounded-md"
           />
-        </div>
-        <button
-          type="submit"
-          className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        >
-          Ajouter le Champ
-        </button>
-      </form>
+          <input
+            type="text"
+            placeholder="Options (séparées par des virgules)"
+            value={newQuestionOptions}
+            onChange={(e) => setNewQuestionOptions(e.target.value)}
+            className="w-full px-3 py-2 border rounded-md"
+          />
+           <input
+            type="text"
+            placeholder="Réponse Correcte"
+            value={newQuestionCorrectAnswer}
+            onChange={(e) => setNewQuestionCorrectAnswer(e.target.value)}
+            className="w-full px-3 py-2 border rounded-md"
+          />
+          <button
+            type="submit"
+            className="bg-[#841b60] text-white px-4 py-2 rounded-md hover:bg-[#6d1750] transition-colors"
+          >
+            <Plus className="inline-block mr-1" size={16} />
+            Ajouter
+          </button>
+        </form>
+      </div>
 
-      <h2 className="text-xl font-semibold mt-8 mb-4">Questions Existantes</h2>
-      {questions.length > 0 ? (
-        <ul className="space-y-2">
-          {questions.map(question => (
-            <li key={question.id} className="bg-white shadow rounded-md p-3 flex items-center justify-between">
-              <span>{question.text} ({question.type})</span>
-              <button
-                onClick={() => onRemoveQuestion(question.id)}
-                className="text-red-600 hover:text-red-800"
-              >
-                Supprimer
-              </button>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>Aucune question existante.</p>
-      )}
+      <div>
+        <h3 className="text-lg font-medium text-gray-900 mb-2">Champs du formulaire</h3>
+        {fields.length === 0 ? (
+          <p className="text-gray-500">Aucun champ ajouté.</p>
+        ) : (
+          <ul className="space-y-2">
+            {fields.map(field => (
+              <li key={field.id} className="flex items-center justify-between px-4 py-2 border rounded-md">
+                <span>{field.label} ({field.type})</span>
+                <button
+                  onClick={() => onRemoveField(field.id)}
+                  className="text-red-600 hover:text-red-800"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
 
-      <h2 className="text-xl font-semibold mt-8 mb-4">Champs de Formulaire Existants</h2>
-      {fields.length > 0 ? (
-        <ul className="space-y-2">
-          {fields.map(field => (
-            <li key={field.id} className="bg-white shadow rounded-md p-3 flex items-center justify-between">
-              <span>{field.label} ({field.type})</span>
-              <button
-                onClick={() => onRemoveField(field.id)}
-                className="text-red-600 hover:text-red-800"
-              >
-                Supprimer
-              </button>
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>Aucun champ de formulaire existant.</p>
-      )}
+      <div>
+        <h3 className="text-lg font-medium text-gray-900 mb-2">Questions du quiz</h3>
+        {questions.length === 0 ? (
+          <p className="text-gray-500">Aucune question ajoutée.</p>
+        ) : (
+          <ul className="space-y-2">
+            {questions.map(question => (
+              <li key={question.id} className="flex items-center justify-between px-4 py-2 border rounded-md">
+                <span>{question.text}</span>
+                <button
+                  onClick={() => onRemoveQuestion(question.id)}
+                  className="text-red-600 hover:text-red-800"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
     </div>
   );
 };

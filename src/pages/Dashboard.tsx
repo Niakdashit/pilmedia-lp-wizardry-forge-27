@@ -1,151 +1,207 @@
+
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import StatCard from '../components/StatCard';
-import CampaignCard from '../components/CampaignCard';
-import FormatModal from '../components/FormatModal';
-import { Campaign, StatCard as StatCardType } from '../types';
-import { PlusIcon } from 'lucide-react';
+import { Campaign } from '../types';
+import { Link } from 'react-router-dom';
+import { Plus, Filter } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import CampaignCard from '../components/CampaignCard';
+import StatCard from '../components/StatCard';
 
 const Dashboard: React.FC = () => {
-  const navigate = useNavigate();
-  const [showFormatModal, setShowFormatModal] = useState(false);
-  const [recentCampaigns, setRecentCampaigns] = useState<Campaign[]>([]);
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [filteredCampaigns, setFilteredCampaigns] = useState<Campaign[]>([]);
+  const [activeFilter, setActiveFilter] = useState<string>('all');
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  
+  const [showFilterMenu, setShowFilterMenu] = useState(false);
+
   useEffect(() => {
-    loadRecentCampaigns();
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) throw new Error('No authenticated user found');
+
+        const { data, error } = await supabase
+          .from('campaigns')
+          .select('*')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false });
+
+        if (error) throw error;
+
+        setCampaigns(data || []);
+        setFilteredCampaigns(data || []);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
 
-  const loadRecentCampaigns = async () => {
-    try {
-      setError(null);
-      const { data, error: supabaseError } = await supabase
-        .from('campaigns')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(3);
+  const handleFilterChange = (filter: string) => {
+    setActiveFilter(filter);
+    setShowFilterMenu(false);
 
-      if (supabaseError) {
-        console.error('Supabase error:', supabaseError);
-        throw new Error(supabaseError.message);
-      }
-      
-      setRecentCampaigns(data || []);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Failed to load campaigns';
-      console.error('Error loading recent campaigns:', error);
-      setError(errorMessage);
-    } finally {
-      setLoading(false);
+    if (filter === 'all') {
+      setFilteredCampaigns(campaigns);
+    } else {
+      setFilteredCampaigns(campaigns.filter(campaign => campaign.type === filter));
     }
   };
-  
-  // Example data
-  const stats: StatCardType[] = [
-    {
-      title: 'Campagnes actives',
-      value: 5,
-      change: '+2 cette semaine',
-      icon: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>',
-      positive: true
-    },
-    {
-      title: 'Participations',
-      value: 1254,
-      change: '+18% ce mois',
-      icon: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>',
-      positive: true
-    },
-    {
-      title: 'Taux de conversion',
-      value: '42%',
-      change: '+5% ce mois',
-      icon: '<svg fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>',
-      positive: true
+
+  const handleDeleteCampaign = async (id: string) => {
+    try {
+      const { error } = await supabase
+        .from('campaigns')
+        .delete()
+        .eq('id', id);
+
+      if (error) throw error;
+
+      // Update both state arrays
+      const updatedCampaigns = campaigns.filter(campaign => campaign.id !== id);
+      setCampaigns(updatedCampaigns);
+      setFilteredCampaigns(updatedCampaigns.filter(campaign => {
+        return activeFilter === 'all' || campaign.type === activeFilter;
+      }));
+
+    } catch (error) {
+      console.error('Error deleting campaign:', error);
     }
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-[#841b60]"></div>
+      </div>
+    );
+  }
+
+  // Get stats for the dashboard
+  const totalCampaigns = campaigns.length;
+  const activeCampaigns = campaigns.filter(c => c.status === 'active').length;
+  const draftCampaigns = campaigns.filter(c => c.status === 'draft').length;
+  const scheduledCampaigns = campaigns.filter(c => c.status === 'scheduled').length;
+
+  const stats = [
+    {
+      title: 'Total Campaigns',
+      value: totalCampaigns,
+      change: '+20%',
+      icon: 'chart-bar',
+      positive: true,
+    },
+    {
+      title: 'Active Campaigns',
+      value: activeCampaigns,
+      change: '+5%',
+      icon: 'play',
+      positive: true,
+    },
+    {
+      title: 'Draft Campaigns',
+      value: draftCampaigns,
+      change: '-2%',
+      icon: 'document',
+      positive: false,
+    },
+    {
+      title: 'Scheduled Campaigns',
+      value: scheduledCampaigns,
+      change: '+15%',
+      icon: 'calendar',
+      positive: true,
+    },
   ];
 
-  const handleCreateCampaign = () => {
-    setShowFormatModal(true);
-  };
-
-  const handleViewAllCampaigns = () => {
-    navigate('/dashboard/campaigns');
-  };
-
-  const handleCampaignDelete = async (campaignId: string) => {
-    setRecentCampaigns(recentCampaigns.filter(c => c.id !== campaignId));
-  };
-
   return (
-    <div className="p-8">
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-2xl font-bold">Tableau de bord</h1>
-        <button 
-          className="btn-primary px-4 py-2 rounded-md flex items-center"
-          onClick={handleCreateCampaign}
-        >
-          <PlusIcon className="w-5 h-5 mr-2" />
-          Nouvelle campagne
-        </button>
+    <div className="container mx-auto px-4 py-8">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+        <h1 className="text-2xl font-semibold mb-4 md:mb-0">Dashboard</h1>
+        <Link to="/dashboard/campaigns" className="text-[#841b60] hover:underline">
+          View all campaigns
+        </Link>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         {stats.map((stat, index) => (
-          <StatCard key={index} stat={stat} />
+          <StatCard key={index} {...stat} />
         ))}
       </div>
 
-      {/* Recent Campaigns */}
-      <div className="mb-8">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold">Campagnes récentes</h2>
-          <button 
-            className="text-[#841b60] font-medium flex items-center"
-            onClick={handleViewAllCampaigns}
-          >
-            Voir toutes
-            <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M9 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"></path>
-            </svg>
-          </button>
-        </div>
-
-        {loading ? (
-          <div className="flex justify-center items-center py-8">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#841b60]"></div>
-          </div>
-        ) : error ? (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded relative" role="alert">
-            <strong className="font-bold">Error: </strong>
-            <span className="block sm:inline">{error}</span>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {recentCampaigns.map(campaign => (
-              <CampaignCard 
-                key={campaign.id} 
-                campaign={campaign} 
-                onDelete={() => handleCampaignDelete(campaign.id)}
-              />
-            ))}
-            {recentCampaigns.length === 0 && (
-              <div className="col-span-full text-center py-8 text-gray-500">
-                No campaigns found. Create your first campaign to get started!
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6">
+        <h2 className="text-xl font-semibold mb-4 md:mb-0">Recent Campaigns</h2>
+        <div className="flex flex-col md:flex-row md:items-center space-y-3 md:space-y-0 md:space-x-3">
+          <div className="relative">
+            <button
+              onClick={() => setShowFilterMenu(!showFilterMenu)}
+              className="flex items-center space-x-1 px-3 py-2 bg-gray-100 rounded-md hover:bg-gray-200 transition-colors"
+            >
+              <Filter size={16} />
+              <span>Filter: {activeFilter.charAt(0).toUpperCase() + activeFilter.slice(1)}</span>
+            </button>
+            
+            {showFilterMenu && (
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 border">
+                <div className="py-1">
+                  <button
+                    onClick={() => handleFilterChange('all')}
+                    className={`block w-full text-left px-4 py-2 hover:bg-gray-100 ${activeFilter === 'all' ? 'bg-gray-100' : ''}`}
+                  >
+                    All
+                  </button>
+                  <button
+                    onClick={() => handleFilterChange('quiz')}
+                    className={`block w-full text-left px-4 py-2 hover:bg-gray-100 ${activeFilter === 'quiz' ? 'bg-gray-100' : ''}`}
+                  >
+                    Quiz
+                  </button>
+                  <button
+                    onClick={() => handleFilterChange('survey')}
+                    className={`block w-full text-left px-4 py-2 hover:bg-gray-100 ${activeFilter === 'survey' ? 'bg-gray-100' : ''}`}
+                  >
+                    Survey
+                  </button>
+                  <button
+                    onClick={() => handleFilterChange('form')}
+                    className={`block w-full text-left px-4 py-2 hover:bg-gray-100 ${activeFilter === 'form' ? 'bg-gray-100' : ''}`}
+                  >
+                    Form
+                  </button>
+                </div>
               </div>
             )}
           </div>
-        )}
+
+          <Link
+            to="/dashboard/campaigns/new"
+            className="flex items-center justify-center space-x-1 px-4 py-2 bg-[#841b60] text-white rounded-md hover:bg-[#6d1750] transition-colors"
+          >
+            <Plus size={16} />
+            <span>New Campaign</span>
+          </Link>
+        </div>
       </div>
 
-      {/* Format Modal */}
-      <FormatModal 
-        isOpen={showFormatModal} 
-        onClose={() => setShowFormatModal(false)} 
-      />
+      {filteredCampaigns.length === 0 ? (
+        <div className="bg-white p-6 rounded-lg shadow-sm text-center">
+          <p className="text-gray-500">No campaigns found. Create your first campaign!</p>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {filteredCampaigns.slice(0, 6).map((campaign) => (
+            <CampaignCard 
+              key={campaign.id} 
+              campaign={campaign} 
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };

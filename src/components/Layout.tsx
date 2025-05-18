@@ -1,30 +1,30 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import { Outlet } from 'react-router-dom';
-import Navbar from './Navbar';
 import Sidebar from './Sidebar';
-import { Menu } from 'lucide-react';
+import Navbar from './Navbar';
 
 const Layout: React.FC = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
-  const [isCollapsed, setIsCollapsed] = React.useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
 
   return (
-    <div className="min-h-screen">
-      <Navbar onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} />
-      <div className="pt-16 flex">
-        <Sidebar 
-          isOpen={isSidebarOpen} 
-          onClose={() => setIsSidebarOpen(false)}
-          isCollapsed={isCollapsed}
-          onCollapse={setIsCollapsed}
-        />
-        <div 
-          className={`flex-1 transition-all duration-300 ease-in-out ${
-            isCollapsed ? 'lg:ml-16' : 'lg:ml-64'
-          }`}
-        >
-          <Outlet />
-        </div>
+    <div className="flex h-screen bg-gray-50">
+      {/* Sidebar */}
+      <Sidebar isOpen={sidebarOpen} toggleSidebar={toggleSidebar} />
+
+      {/* Main Content */}
+      <div className="flex flex-col flex-1 w-0 overflow-hidden">
+        <Navbar toggleSidebar={toggleSidebar} />
+
+        <main className="relative flex-1 overflow-y-auto focus:outline-none">
+          <div className="py-6">
+            <Outlet />
+          </div>
+        </main>
       </div>
     </div>
   );
