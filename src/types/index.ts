@@ -93,6 +93,7 @@ export interface Campaign {
   created_at: string;
   updated_at?: string;
   public_url?: string;
+  description?: string; // Adding this property for compatibility
 }
 
 export interface Question {

@@ -1,6 +1,16 @@
-export { MemoryGame } from './MemoryGame';
-export { default as WheelOfFortune } from './WheelOfFortune';
-export { ScratchCard } from './ScratchCard';
-export { default as Puzzle } from './Puzzle';
-export { default as DiceRoll } from './DiceRoll';
-export { default as TargetShoot } from './TargetShoot';
+
+import { WheelOfFortune } from './WheelOfFortune';
+import { MemoryGame } from './MemoryGame';
+import ScratchCard from './ScratchCard';
+import Puzzle from './Puzzle';
+import { DiceRoll } from './DiceRoll';
+import { TargetShoot } from './TargetShoot';
+
+export {
+  WheelOfFortune,
+  MemoryGame,
+  ScratchCard,
+  Puzzle,
+  DiceRoll,
+  TargetShoot
+};

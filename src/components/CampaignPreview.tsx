@@ -8,22 +8,20 @@ interface PreviewPageProps {
 }
 
 // Define mock components to satisfy TypeScript
-const MemoryGame: React.FC<MemoryGameProps> = ({ cards, colors, onComplete }) => (
-  <div style={{ color: colors.text, backgroundColor: colors.primary }}>
-    Memory Game Placeholder
-  </div>
+const MemoryGame: React.FC<MemoryGameProps> = () => (
+  <div>Memory Game Placeholder</div>
 );
 
-const ScratchCard: React.FC<{ prize: string, revealPercent: number, image: string }> = ({ prize, revealPercent, image }) => (
-  <div>Scratch Card Placeholder: {prize}</div>
+const ScratchCard: React.FC<{ prize: {text: string, image?: string}, revealPercent: number }> = () => (
+  <div>Scratch Card Placeholder</div>
 );
 
-const DiceGame: React.FC<DiceGameProps> = ({ sides, style, colors }) => (
-  <div style={{ color: colors.text }}>Dice Game with {sides} sides</div>
+const DiceGame: React.FC<DiceGameProps> = () => (
+  <div>Dice Game Placeholder</div>
 );
 
-const TargetGame: React.FC<TargetGameProps> = ({ targets, speed, colors }) => (
-  <div style={{ color: colors.text }}>Target Game with {targets} targets at speed {speed}</div>
+const TargetGame: React.FC<TargetGameProps> = () => (
+  <div>Target Game Placeholder</div>
 );
 
 const PreviewPage: React.FC<PreviewPageProps> = ({ campaign }) => {
@@ -67,7 +65,10 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ campaign }) => {
         {currentStep === 'welcome' && (
           <div className="text-center fade-in">
             <h1 className="text-3xl font-bold mb-6">{campaign.name}</h1>
-            <p className="mb-8">{campaign.description}</p>
+            {/* campaign.description is missing in Campaign type, providing conditional rendering */}
+            {campaign.game_content?.description && (
+              <p className="mb-8">{campaign.game_content.description}</p>
+            )}
             <button
               className="px-8 py-3 rounded-lg text-white font-semibold transition-all"
               style={{ backgroundColor: campaign.colors?.button || '#841b60' }}
@@ -124,14 +125,17 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ campaign }) => {
               text: campaign.colors?.text || '#333333'
             }}
             onComplete={handleGameComplete}
+            backgroundImage={campaign.background_image}
           />
         )}
 
         {currentStep === 'questions' && campaign.type === 'scratch' && campaign.game_settings?.scratch && (
           <ScratchCard 
-            prize={campaign.game_settings.scratch.prize.text || 'Félicitations!'}
+            prize={{
+              text: campaign.game_settings.scratch.prize.text || 'Félicitations!',
+              image: campaign.game_settings.scratch.prize.image
+            }}
             revealPercent={campaign.game_settings.scratch.revealPercent || 50}
-            image={campaign.game_settings.scratch.prize.image || ''}
           />
         )}
 

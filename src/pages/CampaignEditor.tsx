@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
-import { ChevronLeft, Eye, Share2, Upload, X, ChevronRight } from 'lucide-react';
+import { ChevronLeft, Eye, Upload, X, ChevronRight } from 'lucide-react';
 import { useDropzone } from 'react-dropzone';
-import { Campaign, Question, FormField } from '../types';
+import { Campaign } from '../types'; 
 import EditorTabs from '../components/EditorTabs';
 import QuestionBuilder from '../components/QuestionBuilder';
 import CampaignPreview from '../components/CampaignPreview';
@@ -14,16 +14,18 @@ const CampaignEditor: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const queryParams = new URLSearchParams(location.search);
-  const type = queryParams.get('type') || 'quiz';
+  
+  // Fix the type casting
+  const campaignType = (queryParams.get('type') || 'quiz') as Campaign['type'];
   
   const [loading, setLoading] = useState(true);
   const [campaign, setCampaign] = useState<Campaign | null>(null);
   const [activeTab, setActiveTab] = useState('general');
-  const [showPreview, setShowPreview] = useState(false);
   const [saving, setSaving] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [showMobileBuilder, setShowMobileBuilder] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
 
   useEffect(() => {
     const initializeCampaign = async () => {
@@ -65,7 +67,7 @@ const CampaignEditor: React.FC = () => {
           const newCampaign: Campaign = {
             id: uuidv4(),
             name: 'Nouvelle Campagne',
-            type,
+            type: campaignType,
             status: 'draft',
             start_date: today,
             end_date: today,
@@ -105,40 +107,44 @@ const CampaignEditor: React.FC = () => {
     };
 
     initializeCampaign();
-  }, [id, type]);
+  }, [id, campaignType]);
 
   const handleSave = async (andExit: boolean = false) => {
-  if (!campaign) return;
+    if (!campaign) return;
+    
+    try {
+      setSaving(true);
 
-  try {
-    setSaving(true);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('No authenticated user found');
 
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) throw new Error('No authenticated user found');
+      const { questions, fields, ...campaignData } = campaign;
 
-    // 🛠 Correction ici : s'assurer que public_url est défini
-    if (!campaign.public_url) {
-      campaign.public_url = campaign.id;
-    }
-
-    const { questions, fields, ...campaignData } = campaign;
-
-// 🔥 Ajout critique
-campaignData.form_fields = fields;
-
-
-    const { error: campaignError } = await supabase
-      .from('campaigns')
-      .upsert({
+      // Ensure all required fields are set with sensible defaults
+      const campaignToSave = {
         ...campaignData,
         user_id: user.id,
-        updated_at: new Date().toISOString()
-      });
+        updated_at: new Date().toISOString(),
+        colors: {
+          background: campaign.colors?.background || '#ffffff',
+          button: campaign.colors?.button || '#841b60',
+          buttonText: campaign.colors?.buttonText || '#ffffff',
+          text: campaign.colors?.text || '#333333',
+          border: campaign.colors?.border || '#e5e7eb',
+          questionBackground: campaign.colors?.questionBackground || 'rgba(255, 255, 255, 0.9)',
+          progressBar: campaign.colors?.progressBar || '#841b60'
+        },
+        style: {
+          containerRadius: campaign.style?.containerRadius || '12px',
+          buttonRadius: campaign.style?.buttonRadius || '8px',
+          containerOpacity: campaign.style?.containerOpacity || '0.9',
+          buttonPadding: campaign.style?.buttonPadding || '12px 24px',
+        }
+      };
 
-    if (campaignError) throw campaignError;
-
-    // (le reste reste inchangé…)
-
+      const { error: campaignError } = await supabase
+        .from('campaigns')
+        .upsert(campaignToSave);
 
       if (campaignError) throw campaignError;
 
@@ -225,7 +231,8 @@ campaignData.form_fields = fields;
       const fileName = `${uuidv4()}.${fileExt}`;
       const filePath = `campaign-backgrounds/${fileName}`;
 
-      const { error: uploadError, data } = await supabase.storage
+      // Remove unused data parameter
+      const { error: uploadError } = await supabase.storage
         .from('campaign-assets')
         .upload(filePath, file);
 
@@ -274,6 +281,7 @@ campaignData.form_fields = fields;
 
   return (
     <div className="min-h-screen bg-gray-50 relative pb-20">
+      {/* Header section */}
       <div className="bg-white border-b">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
@@ -295,26 +303,29 @@ campaignData.form_fields = fields;
                 </p>
               </div>
             </div>
-            <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2 md:space-x-3">
               <button
                 onClick={() => setShowPreview(true)}
-                className="flex items-center px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
+                className="flex items-center px-3 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
               >
-                <Eye className="w-4 h-4 mr-2" />
-                Aperçu
+                <Eye className="w-4 h-4 md:mr-2" />
+                <span className="hidden md:inline">Aperçu</span>
               </button>
               <button
                 onClick={() => handleSave(false)}
                 disabled={saving}
-                className="flex items-center px-4 py-2 bg-[#841b60] text-white rounded-lg hover:bg-[#6d1750] transition-colors disabled:opacity-50"
+                className="flex items-center px-3 py-2 bg-[#841b60] text-white rounded-lg hover:bg-[#6d1750] transition-colors disabled:opacity-50"
               >
                 {saving ? (
                   <>
                     <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
-                    Enregistrement...
+                    <span className="hidden md:inline">Enregistrement...</span>
                   </>
                 ) : (
-                  'Enregistrer et continuer'
+                  <>
+                    <span className="hidden md:inline">Enregistrer et continuer</span>
+                    <span className="md:hidden">Enregistrer</span>
+                  </>
                 )}
               </button>
             </div>
@@ -322,10 +333,12 @@ campaignData.form_fields = fields;
         </div>
       </div>
 
+      {/* Content section */}
       <div className="container mx-auto px-4 py-6">
         <div className="bg-white rounded-lg shadow-sm overflow-hidden">
           <EditorTabs activeTab={activeTab} setActiveTab={setActiveTab} />
           
+          {/* General tab content */}
           {activeTab === 'general' && campaign && (
             <div className="p-6 max-w-2xl mx-auto">
               <div className="space-y-6">
@@ -355,29 +368,31 @@ campaignData.form_fields = fields;
                   />
                 </div>
 
-               <div>
-  <label className="block text-sm font-medium text-gray-700 mb-1">
-    URL publique
-  </label>
-  <div className="flex items-center space-x-2">
-    <input
-      type="text"
-      value={`https://cerulean-sprite-d201e9.netlify.app/${campaign.public_url || campaign.id}`}
-      readOnly
-      className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-gray-500"
-    />
-    <button
-      onClick={() => {
-        navigator.clipboard.writeText(`https://cerulean-sprite-d201e9.netlify.app/${campaign.public_url || campaign.id}`);
-        alert('URL copiée !');
-      }}
-      className="px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors whitespace-nowrap"
-    >
-      Copier
-    </button>
-  </div>
-  <p className="mt-1 text-sm text-gray-500">Cette URL permet d'accéder à votre campagne publiquement</p>
-</div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    URL publique
+                  </label>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="text"
+                      value={`https://cerulean-sprite-d201e9.netlify.app/${campaign.public_url || campaign.id}`}
+                      readOnly
+                      className="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-md text-gray-500"
+                    />
+                    <button
+                      onClick={() => {
+                        navigator.clipboard.writeText(`https://cerulean-sprite-d201e9.netlify.app/${campaign.public_url || campaign.id}`);
+                        alert('URL copiée !');
+                      }}
+                      className="px-3 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 transition-colors whitespace-nowrap"
+                    >
+                      Copier
+                    </button>
+                  </div>
+                  <p className="mt-1 text-sm text-gray-500">
+                    Cette URL permet d'accéder à votre campagne publiquement
+                  </p>
+                </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
@@ -448,13 +463,14 @@ campaignData.form_fields = fields;
             </div>
           )}
 
+          {/* Content & design tabs */}
           {(activeTab === 'content' || activeTab === 'design') && campaign && (
             <div className="flex flex-col lg:flex-row">
               {/* Mobile Builder Toggle */}
               <div className="lg:hidden flex justify-between items-center p-4 border-b">
                 <button
                   onClick={() => setShowMobileBuilder(!showMobileBuilder)}
-                  className="text-[#841b60]"
+                  className="flex items-center text-[#841b60]"
                 >
                   {showMobileBuilder ? 'Voir l\'aperçu' : 'Modifier le contenu'}
                   <ChevronRight className="w-4 h-4 ml-1" />
@@ -462,46 +478,49 @@ campaignData.form_fields = fields;
               </div>
 
               {/* Builder Panel */}
-              <div className={`
-                w-full lg:w-1/3 border-r
-                ${showMobileBuilder ? 'block' : 'hidden lg:block'}
-              `}>
-                {activeTab === 'content' && (
-                  <div className="p-4">
-                    <QuestionBuilder
-                      onAddField={(field) => {
-                        const newField = { ...field, id: uuidv4() };
-                        setCampaign({
-                          ...campaign,
-                          fields: [...(campaign.fields || []), newField]
-                        });
-                      }}
-                      onAddQuestion={(question) => {
-                        const newQuestion = { ...question, id: uuidv4() };
-                        setCampaign({
-                          ...campaign,
-                          questions: [...(campaign.questions || []), newQuestion]
-                        });
-                      }}
-                      fields={campaign.fields || []}
-                      questions={campaign.questions || []}
-                      onRemoveField={(id) => {
-                        setCampaign({
-                          ...campaign,
-                          fields: campaign.fields?.filter(f => f.id !== id) || []
-                        });
-                      }}
-                      onRemoveQuestion={(id) => {
-                        setCampaign({
-                          ...campaign,
-                          questions: campaign.questions?.filter(q => q.id !== id) || []
-                        });
-                      }}
-                    />
-                  </div>
-                )}
+              {activeTab === 'content' && campaign && (
+                <div className={`
+                  w-full lg:w-1/3 border-r
+                  ${showMobileBuilder ? 'block' : 'hidden lg:block'}
+                `}>
+                  <QuestionBuilder
+                    onAddField={(field) => {
+                      const newField = { ...field, id: uuidv4() };
+                      setCampaign({
+                        ...campaign,
+                        fields: [...(campaign.fields || []), newField]
+                      });
+                    }}
+                    onAddQuestion={(question) => {
+                      const newQuestion = { ...question, id: uuidv4() };
+                      setCampaign({
+                        ...campaign,
+                        questions: [...(campaign.questions || []), newQuestion]
+                      });
+                    }}
+                    fields={campaign.fields || []}
+                    questions={campaign.questions || []}
+                    onRemoveField={(id) => {
+                      setCampaign({
+                        ...campaign,
+                        fields: campaign.fields?.filter(f => f.id !== id) || []
+                      });
+                    }}
+                    onRemoveQuestion={(id) => {
+                      setCampaign({
+                        ...campaign,
+                        questions: campaign.questions?.filter(q => q.id !== id) || []
+                      });
+                    }}
+                  />
+                </div>
+              )}
 
-                {activeTab === 'design' && (
+              {activeTab === 'design' && (
+                <div className={`
+                  w-full lg:w-1/3 border-r
+                  ${showMobileBuilder ? 'block' : 'hidden lg:block'}
+                `}>
                   <div className="p-4 space-y-6">
                     <div>
                       <h3 className="text-lg font-medium text-gray-900 mb-4">Image de fond</h3>
@@ -564,7 +583,15 @@ campaignData.form_fields = fields;
                             value={campaign.colors?.background || '#ffffff'}
                             onChange={(e) => setCampaign({
                               ...campaign,
-                              colors: { ...(campaign.colors || {}), background: e.target.value }
+                              colors: { 
+                                background: e.target.value,
+                                button: campaign.colors?.button || '#841b60',
+                                buttonText: campaign.colors?.buttonText || '#ffffff',
+                                text: campaign.colors?.text || '#333333',
+                                border: campaign.colors?.border || '#e5e7eb',
+                                questionBackground: campaign.colors?.questionBackground || 'rgba(255, 255, 255, 0.9)',
+                                progressBar: campaign.colors?.progressBar || '#841b60'
+                              }
                             })}
                             className="w-full h-10 p-1 rounded-md"
                           />
@@ -578,7 +605,15 @@ campaignData.form_fields = fields;
                             value={campaign.colors?.button || '#841b60'}
                             onChange={(e) => setCampaign({
                               ...campaign,
-                              colors: { ...(campaign.colors || {}), button: e.target.value }
+                              colors: { 
+                                button: e.target.value,
+                                background: campaign.colors?.background || '#ffffff',
+                                buttonText: campaign.colors?.buttonText || '#ffffff',
+                                text: campaign.colors?.text || '#333333',
+                                border: campaign.colors?.border || '#e5e7eb',
+                                questionBackground: campaign.colors?.questionBackground || 'rgba(255, 255, 255, 0.9)',
+                                progressBar: campaign.colors?.progressBar || '#841b60'
+                              }
                             })}
                             className="w-full h-10 p-1 rounded-md"
                           />
@@ -592,7 +627,15 @@ campaignData.form_fields = fields;
                             value={campaign.colors?.buttonText || '#ffffff'}
                             onChange={(e) => setCampaign({
                               ...campaign,
-                              colors: { ...(campaign.colors || {}), buttonText: e.target.value }
+                              colors: { 
+                                buttonText: e.target.value,
+                                background: campaign.colors?.background || '#ffffff',
+                                button: campaign.colors?.button || '#841b60',
+                                text: campaign.colors?.text || '#333333',
+                                border: campaign.colors?.border || '#e5e7eb',
+                                questionBackground: campaign.colors?.questionBackground || 'rgba(255, 255, 255, 0.9)',
+                                progressBar: campaign.colors?.progressBar || '#841b60'
+                              }
                             })}
                             className="w-full h-10 p-1 rounded-md"
                           />
@@ -606,7 +649,15 @@ campaignData.form_fields = fields;
                             value={campaign.colors?.text || '#333333'}
                             onChange={(e) => setCampaign({
                               ...campaign,
-                              colors: { ...(campaign.colors || {}), text: e.target.value }
+                              colors: { 
+                                text: e.target.value,
+                                background: campaign.colors?.background || '#ffffff',
+                                button: campaign.colors?.button || '#841b60',
+                                buttonText: campaign.colors?.buttonText || '#ffffff',
+                                border: campaign.colors?.border || '#e5e7eb',
+                                questionBackground: campaign.colors?.questionBackground || 'rgba(255, 255, 255, 0.9)',
+                                progressBar: campaign.colors?.progressBar || '#841b60'
+                              }
                             })}
                             className="w-full h-10 p-1 rounded-md"
                           />
@@ -620,7 +671,15 @@ campaignData.form_fields = fields;
                             value={campaign.colors?.border || '#e5e7eb'}
                             onChange={(e) => setCampaign({
                               ...campaign,
-                              colors: { ...(campaign.colors || {}), border: e.target.value }
+                              colors: { 
+                                border: e.target.value,
+                                background: campaign.colors?.background || '#ffffff',
+                                button: campaign.colors?.button || '#841b60',
+                                buttonText: campaign.colors?.buttonText || '#ffffff',
+                                text: campaign.colors?.text || '#333333',
+                                questionBackground: campaign.colors?.questionBackground || 'rgba(255, 255, 255, 0.9)',
+                                progressBar: campaign.colors?.progressBar || '#841b60'
+                              }
                             })}
                             className="w-full h-10 p-1 rounded-md"
                           />
@@ -643,8 +702,14 @@ campaignData.form_fields = fields;
                             onChange={(e) => setCampaign({
                               ...campaign,
                               style: {
-                                ...(campaign.style || {}),
-                                containerRadius: `${e.target.value}px`
+                                containerRadius: `${e.target.value}px`,
+                                buttonRadius: campaign.style?.buttonRadius || '8px',
+                                containerOpacity: campaign.style?.containerOpacity || '0.9',
+                                buttonPadding: campaign.style?.buttonPadding || '12px 24px',
+                                buttonShadow: campaign.style?.buttonShadow,
+                                containerShadow: campaign.style?.containerShadow,
+                                fontFamily: campaign.style?.fontFamily,
+                                fontSize: campaign.style?.fontSize
                               }
                             })}
                             className="w-full"
@@ -662,8 +727,14 @@ campaignData.form_fields = fields;
                             onChange={(e) => setCampaign({
                               ...campaign,
                               style: {
-                                ...(campaign.style || {}),
-                                buttonRadius: `${e.target.value}px`
+                                buttonRadius: `${e.target.value}px`,
+                                containerRadius: campaign.style?.containerRadius || '12px',
+                                containerOpacity: campaign.style?.containerOpacity || '0.9',
+                                buttonPadding: campaign.style?.buttonPadding || '12px 24px',
+                                buttonShadow: campaign.style?.buttonShadow,
+                                containerShadow: campaign.style?.containerShadow,
+                                fontFamily: campaign.style?.fontFamily,
+                                fontSize: campaign.style?.fontSize
                               }
                             })}
                             className="w-full"
@@ -681,8 +752,14 @@ campaignData.form_fields = fields;
                             onChange={(e) => setCampaign({
                               ...campaign,
                               style: {
-                                ...(campaign.style || {}),
-                                containerOpacity: (parseInt(e.target.value) / 100).toString()
+                                containerOpacity: (parseInt(e.target.value) / 100).toString(),
+                                containerRadius: campaign.style?.containerRadius || '12px',
+                                buttonRadius: campaign.style?.buttonRadius || '8px',
+                                buttonPadding: campaign.style?.buttonPadding || '12px 24px',
+                                buttonShadow: campaign.style?.buttonShadow,
+                                containerShadow: campaign.style?.containerShadow,
+                                fontFamily: campaign.style?.fontFamily,
+                                fontSize: campaign.style?.fontSize
                               }
                             })}
                             className="w-full"
@@ -691,12 +768,12 @@ campaignData.form_fields = fields;
                       </div>
                     </div>
                   </div>
-                )}
-              </div>
+                </div>
+              )}
 
               {/* Preview Panel */}
               <div className={`
-                w-full lg:w-2/3
+                w-full lg:w-3/4
                 ${showMobileBuilder ? 'hidden lg:block' : 'block'}
               `}>
                 <div className="h-[calc(100vh-240px)] p-4">
@@ -707,9 +784,10 @@ campaignData.form_fields = fields;
           )}
         </div>
       </div>
-
+      
+      {/* Preview modal */}
       {showPreview && campaign && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
           <div className="bg-white rounded-lg w-full max-w-4xl h-[80vh] overflow-hidden flex flex-col">
             <div className="p-4 border-b flex justify-between items-center">
               <h3 className="text-lg font-medium">Aperçu de la campagne</h3>
@@ -727,9 +805,10 @@ campaignData.form_fields = fields;
         </div>
       )}
 
+      {/* Bottom action buttons */}
       <div className="fixed bottom-0 left-0 right-0 bg-white border-t py-4 px-6 flex justify-end space-x-4">
         <button
-          onClick={() => handleSave(true)}
+          onClick={() => handleCancel()}
           className="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
         >
           Fermer

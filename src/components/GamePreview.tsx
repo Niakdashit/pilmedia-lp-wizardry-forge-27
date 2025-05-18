@@ -1,4 +1,5 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import { WheelOfFortune } from './games/WheelOfFortune';
 import { MemoryGame } from './games/MemoryGame';
 import ScratchCard from './games/ScratchCard';
@@ -6,6 +7,8 @@ import Puzzle from './games/Puzzle';
 import { DiceRoll } from './games/DiceRoll';
 import { TargetShoot } from './games/TargetShoot';
 import { supabase } from '../lib/supabase';
+import { Campaign, FormField, Question } from '../types';
+import { MemoryGameProps, DiceGameProps, TargetGameProps } from '../types/componentInterfaces';
 
 interface GamePreviewProps {
   type?: string;
@@ -14,7 +17,7 @@ interface GamePreviewProps {
 
 const GamePreview: React.FC<GamePreviewProps> = ({ type, settings }) => {
   const [currentStep, setCurrentStep] = useState<'welcome' | 'form' | 'quiz' | 'game'>('welcome');
-  const [formData, setFormData] = useState<Record<string, string>>({
+  const [formData, setFormData] = useState<Record<string, string | boolean>>({
     civilite: 'M.',
   });
   const [currentQuestion, setCurrentQuestion] = useState(0);
@@ -68,7 +71,7 @@ const GamePreview: React.FC<GamePreviewProps> = ({ type, settings }) => {
         secondary: settings?.colors?.secondary || '#6d1750',
         text: settings?.colors?.text || '#ffffff'
       },
-      backgroundImage: settings?.background_image || settings?.backgroundImage,
+      backgroundImage: settings?.background_image || '',
       onComplete: () => {}
     };
 
@@ -90,18 +93,23 @@ const GamePreview: React.FC<GamePreviewProps> = ({ type, settings }) => {
       case 'memory':
         return (
           <MemoryGame
-            {...gameProps}
-            pairs={settings?.game_settings?.memory?.pairs || 6}
-            cards={settings?.game_settings?.memory?.cards}
+            cards={settings?.game_settings?.memory?.cards || []}
+            colors={{
+              primary: gameProps.colors.primary,
+              secondary: gameProps.colors.secondary,
+              text: gameProps.colors.text
+            }}
+            onComplete={gameProps.onComplete}
+            backgroundImage={gameProps.backgroundImage}
           />
         );
       case 'scratch':
         return (
           <ScratchCard
             {...gameProps}
-            prize={settings?.game_settings?.scratch?.prize || {
-              text: settings?.content?.title || "Vous avez gagné !",
-              image: settings?.backgroundImage
+            prize={{ 
+              text: settings?.game_settings?.scratch?.prize?.text || "Vous avez gagné !",
+              image: settings?.game_settings?.scratch?.prize?.image || ""
             }}
             revealPercent={settings?.game_settings?.scratch?.revealPercent || 50}
           />
@@ -110,24 +118,34 @@ const GamePreview: React.FC<GamePreviewProps> = ({ type, settings }) => {
         return (
           <Puzzle
             {...gameProps}
-            imageUrl={settings?.game_settings?.puzzle?.imageUrl || settings?.backgroundImage}
+            imageUrl={settings?.game_settings?.puzzle?.imageUrl || settings?.background_image || ''}
             gridSize={settings?.game_settings?.puzzle?.gridSize || 3}
           />
         );
       case 'dice':
         return (
           <DiceRoll
-            {...gameProps}
             sides={settings?.game_settings?.dice?.sides || 6}
             style={settings?.game_settings?.dice?.style || 'classic'}
+            colors={{
+              primary: gameProps.colors.primary,
+              secondary: gameProps.colors.secondary,
+              text: gameProps.colors.text
+            }}
+            onComplete={gameProps.onComplete}
           />
         );
       case 'target':
         return (
           <TargetShoot
-            {...gameProps}
             targets={settings?.game_settings?.target?.targets || 5}
             speed={settings?.game_settings?.target?.speed || 1000}
+            colors={{
+              primary: gameProps.colors.primary,
+              secondary: gameProps.colors.secondary,
+              text: gameProps.colors.text
+            }}
+            onComplete={gameProps.onComplete}
           />
         );
       default:
@@ -177,7 +195,7 @@ const GamePreview: React.FC<GamePreviewProps> = ({ type, settings }) => {
                 </label>
                 <select
                   required
-                  value={formData.civilite}
+                  value={formData.civilite as string}
                   onChange={(e) => setFormData(prev => ({ ...prev, civilite: e.target.value }))}
                   className="w-full px-3 py-2 border rounded-md"
                 >
@@ -210,7 +228,7 @@ const GamePreview: React.FC<GamePreviewProps> = ({ type, settings }) => {
                   onChange={(e) => setFormData(prev => ({ ...prev, prenom: e.target.value }))}
                 />
               </div>
-              {settings?.fields?.map((field: any) => (
+              {settings?.fields?.map((field: FormField) => (
                 <div key={field.id}>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     {field.label}
