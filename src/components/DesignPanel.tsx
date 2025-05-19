@@ -1,7 +1,7 @@
 
 import React from 'react';
-import { Camera, Text, Palette, Image, Layout, Box, Type } from 'lucide-react';
-import { Campaign } from '../types';
+import { Image, Layout, Text, Palette, Box, Upload, X } from 'lucide-react';
+import { Campaign } from '../types'; 
 import ColorPicker from './ColorPicker';
 import GradientPicker from './GradientPicker';
 import FontSelector from './FontSelector';

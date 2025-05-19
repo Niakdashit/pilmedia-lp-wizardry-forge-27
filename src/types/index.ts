@@ -1,91 +1,90 @@
 
-import { Campaign as CampaignType, Question as QuestionType, FormField as FormFieldType } from './type';
+export type ContactStatus = 'pending' | 'verified' | 'rejected';
+export type CampaignType = 'quiz' | 'survey' | 'contest' | 'form';
+export type CampaignStatus = 'draft' | 'scheduled' | 'active' | 'ended';
 
-// Étendre le type Campaign importé
-export interface Campaign extends CampaignType {
-  // Pas besoin de remplacer les champs - l'extension suffit
+export interface CampaignColors {
+  background: string;
+  button: string;
+  buttonText: string;
+  text: string;
+  border: string;
+  questionBackground: string;
+  progressBar: string;
 }
 
-// Interface Question alignée avec type.ts
-export interface Question extends QuestionType {
-  // Tous les champs de QuestionType sont déjà inclus
+export interface CampaignStyle {
+  containerRadius?: string;
+  buttonRadius?: string;
+  containerOpacity?: string;
+  buttonPadding?: string;
+  fontFamily?: string;
+  fontSize?: string;
+  containerShadow?: string;
+  buttonShadow?: string;
+  containerBorder?: string;
+  backgroundType?: 'color' | 'gradient' | 'image';
+  gradient?: string;
+  imageOverlayOpacity?: string;
+  imageOverlayColor?: string;
+  backgroundPosition?: string;
+  backgroundSize?: string;
+  headingStyle?: string;
+  lineHeight?: string;
+  textAlign?: string;
+  containerSize?: string;
+  containerPadding?: string;
+  formPosition?: string;
+  animation?: string;
+  buttonHoverEffect?: string;
 }
 
-// Interface FormField alignée avec type.ts
-export interface FormField extends FormFieldType {
-  // Tous les champs de FormFieldType sont déjà inclus
-}
-
-// Interface StatCard
-export interface StatCard {
-  title: string;
-  value: string | number;
-  change: string;
-  icon: string;
-  positive: boolean;
-  stat: string;
-}
-
-// Interface StatCardProps pour le composant
-export interface StatCardProps {
-  title: string;
-  value: string | number;
-  change: string;
-  icon: string;
-  positive: boolean;
-  stat: string;
-}
-
-// Conserver l'interface User existante
-export interface User {
+export interface FormField {
   id: string;
-  email: string;
-  fullName?: string;
-  avatarUrl?: string;
-  phone?: string;
-  company?: string;
-  role?: string;
+  name: string;
+  label: string;
+  type: string;
+  required: boolean;
+  options?: string[];
+  placeholder?: string;
+  campaign_id: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface QuestionOption {
+  text: string;
+  isCorrect?: boolean;
+}
+
+export interface Question {
+  id: string;
+  campaign_id?: string;
+  question: string;
+  type: 'multiple_choice' | 'open_ended';
+  options: QuestionOption[];
+  created_at?: string;
+  updated_at?: string;
+}
+
+export interface Campaign {
+  id: string;
+  name: string;
+  type: 'quiz' | 'survey' | 'contest' | 'form';
+  status: CampaignStatus;
+  start_date: string;
+  end_date: string;
+  start_time: string;
+  end_time: string;
+  url: string;
+  public_url?: string;
+  background_image?: string;
+  user_id: string;
+  colors: CampaignColors;
+  style: CampaignStyle;
+  participants: number;
   created_at: string;
   updated_at: string;
-}
-
-// Conserver les interfaces de props de jeux existantes
-export interface DiceRollProps {
-  sides: number;
-  style: string;
-  colors: {
-    primary: string;
-    secondary: string;
-    text: string;
-  };
-}
-
-export interface TargetShootProps {
-  targets: number;
-  speed: number;
-  colors: {
-    primary: string;
-    secondary: string;
-    text: string;
-  };
-}
-
-export interface WheelOfFortuneProps {
-  segments: any[];
-  colors: {
-    primary: string;
-    secondary: string;
-    text: string;
-  };
-  backgroundImage?: string;
-}
-
-export interface MemoryGameProps {
-  cards: any[];
-  colors: {
-    primary: string;
-    secondary: string;
-    text: string;
-  };
-  backgroundImage?: string;
+  questions?: Question[];
+  fields?: FormField[];
 }
