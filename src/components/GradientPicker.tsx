@@ -1,77 +1,146 @@
 
 import React, { useState } from 'react';
-import { Pipette } from 'lucide-react';
+import { HexColorInput, HexColorPicker } from 'react-colorful';
 
-interface GradientPickerProps {
-  gradient: string;
-  onChange: (gradient: string) => void;
-}
+const GradientPicker = ({ value, onChange }: { value: string, onChange: (value: string) => void }) => {
+  const [active, setActive] = useState('start');
+  const [start, setStart] = useState('#ff5858');
+  const [end, setEnd] = useState('#f857a6');
+  const [direction, setDirection] = useState('to right');
+  const [preview, setPreview] = useState(value || 'linear-gradient(to right, #ff5858, #f857a6)');
 
-// Liste des dégradés prédéfinis
-const presetGradients = [
-  'linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%)',
-  'linear-gradient(180deg, rgb(254,100,121) 0%, rgb(251,221,186) 100%)',
-  'linear-gradient(to right, #243949 0%, #517fa4 100%)',
-  'linear-gradient(to top, #accbee 0%, #e7f0fd 100%)',
-  'linear-gradient(to right, #ffc3a0 0%, #ffafbd 100%)',
-  'linear-gradient(225deg, #FFE29F 0%, #FFA99F 48%, #FF719A 100%)',
-  'linear-gradient(90deg, hsla(277, 75%, 84%, 1) 0%, hsla(297, 50%, 51%, 1) 100%)',
-  'linear-gradient(90deg, hsla(186, 33%, 94%, 1) 0%, hsla(216, 41%, 79%, 1) 100%)',
-  'linear-gradient(90deg, hsla(22, 100%, 78%, 1) 0%, hsla(2, 78%, 62%, 1) 100%)',
-  'linear-gradient(90deg, hsla(139, 70%, 75%, 1) 0%, hsla(63, 90%, 76%, 1) 100%)',
-  'linear-gradient(60deg, #abecd6 0%, #fbed96 100%)',
-  'linear-gradient(to right, #e6e9f0 0%, #eef1f5 100%)',
-];
-
-const GradientPicker: React.FC<GradientPickerProps> = ({ gradient, onChange }) => {
-  const [customGradient, setCustomGradient] = useState(gradient);
-  
-  const handleCustomGradientChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setCustomGradient(value);
+  const handleStartChange = (color: string) => {
+    setStart(color);
+    const newGradient = `linear-gradient(${direction}, ${color}, ${end})`;
+    setPreview(newGradient);
+    onChange(newGradient);
   };
 
-  const handleSubmitCustomGradient = (e: React.FormEvent) => {
-    e.preventDefault();
-    onChange(customGradient);
+  const handleEndChange = (color: string) => {
+    setEnd(color);
+    const newGradient = `linear-gradient(${direction}, ${start}, ${color})`;
+    setPreview(newGradient);
+    onChange(newGradient);
   };
+
+  const handleDirectionChange = (dir: string) => {
+    setDirection(dir);
+    const newGradient = `linear-gradient(${dir}, ${start}, ${end})`;
+    setPreview(newGradient);
+    onChange(newGradient);
+  };
+
+  const presets = [
+    'linear-gradient(to right, #ff5858, #f857a6)',
+    'linear-gradient(to right, #43cea2, #185a9d)',
+    'linear-gradient(to right, #ffafbd, #ffc3a0)',
+    'linear-gradient(to right, #2193b0, #6dd5ed)',
+    'linear-gradient(to right, #834d9b, #d04ed6)',
+    'linear-gradient(to right, #4568dc, #b06ab3)'
+  ];
 
   return (
     <div className="space-y-4">
-      <div className="grid grid-cols-3 gap-2">
-        {presetGradients.map((presetGradient, index) => (
+      <div 
+        className="h-20 w-full rounded-md border"
+        style={{ background: preview }}
+      />
+      
+      <div className="flex space-x-2 mb-4">
+        <button
+          className={`px-3 py-1 rounded text-sm ${active === 'start' ? 'bg-gray-200' : 'bg-white'}`}
+          onClick={() => setActive('start')}
+        >
+          Couleur début
+        </button>
+        <button
+          className={`px-3 py-1 rounded text-sm ${active === 'end' ? 'bg-gray-200' : 'bg-white'}`}
+          onClick={() => setActive('end')}
+        >
+          Couleur fin
+        </button>
+      </div>
+      
+      {active === 'start' ? (
+        <>
+          <HexColorPicker color={start} onChange={handleStartChange} />
+          <HexColorInput color={start} onChange={handleStartChange} prefixed className="w-full p-2 border rounded mt-2" />
+        </>
+      ) : (
+        <>
+          <HexColorPicker color={end} onChange={handleEndChange} />
+          <HexColorInput color={end} onChange={handleEndChange} prefixed className="w-full p-2 border rounded mt-2" />
+        </>
+      )}
+      
+      <div>
+        <label className="block mb-2 text-sm font-medium">Direction</label>
+        <div className="grid grid-cols-4 gap-2">
           <button
-            key={index}
-            onClick={() => onChange(presetGradient)}
-            className={`w-full h-16 rounded-md border-2 transition-all ${presetGradient === gradient ? 'border-[#841b60]' : 'border-transparent'}`}
-            style={{ background: presetGradient }}
-          />
-        ))}
+            className={`p-2 border rounded ${direction === 'to top' ? 'bg-gray-200' : 'bg-white'}`}
+            onClick={() => handleDirectionChange('to top')}
+          >
+            ↑
+          </button>
+          <button
+            className={`p-2 border rounded ${direction === 'to right top' ? 'bg-gray-200' : 'bg-white'}`}
+            onClick={() => handleDirectionChange('to right top')}
+          >
+            ↗
+          </button>
+          <button
+            className={`p-2 border rounded ${direction === 'to right' ? 'bg-gray-200' : 'bg-white'}`}
+            onClick={() => handleDirectionChange('to right')}
+          >
+            →
+          </button>
+          <button
+            className={`p-2 border rounded ${direction === 'to right bottom' ? 'bg-gray-200' : 'bg-white'}`}
+            onClick={() => handleDirectionChange('to right bottom')}
+          >
+            ↘
+          </button>
+          <button
+            className={`p-2 border rounded ${direction === 'to bottom' ? 'bg-gray-200' : 'bg-white'}`}
+            onClick={() => handleDirectionChange('to bottom')}
+          >
+            ↓
+          </button>
+          <button
+            className={`p-2 border rounded ${direction === 'to left bottom' ? 'bg-gray-200' : 'bg-white'}`}
+            onClick={() => handleDirectionChange('to left bottom')}
+          >
+            ↙
+          </button>
+          <button
+            className={`p-2 border rounded ${direction === 'to left' ? 'bg-gray-200' : 'bg-white'}`}
+            onClick={() => handleDirectionChange('to left')}
+          >
+            ←
+          </button>
+          <button
+            className={`p-2 border rounded ${direction === 'to left top' ? 'bg-gray-200' : 'bg-white'}`}
+            onClick={() => handleDirectionChange('to left top')}
+          >
+            ↖
+          </button>
+        </div>
       </div>
       
       <div>
-        <form onSubmit={handleSubmitCustomGradient} className="flex items-center space-x-2">
-          <input
-            type="text"
-            value={customGradient}
-            onChange={handleCustomGradientChange}
-            className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-            placeholder="linear-gradient(..."
-          />
-          <button
-            type="submit"
-            className="p-2 bg-[#841b60] text-white rounded-md hover:bg-[#6d1750] transition-colors"
-          >
-            Appliquer
-          </button>
-        </form>
-      </div>
-      
-      <div className="h-16 rounded-md border border-gray-300" style={{ background: gradient }}>
-        <div className="h-full flex items-center justify-center">
-          <span className="text-sm bg-white bg-opacity-70 px-2 py-1 rounded">
-            Aperçu
-          </span>
+        <label className="block mb-2 text-sm font-medium">Gradients prédéfinis</label>
+        <div className="grid grid-cols-3 gap-2">
+          {presets.map((preset, index) => (
+            <button
+              key={index}
+              className="h-8 rounded border"
+              style={{ background: preset }}
+              onClick={() => {
+                setPreview(preset);
+                onChange(preset);
+              }}
+            />
+          ))}
         </div>
       </div>
     </div>

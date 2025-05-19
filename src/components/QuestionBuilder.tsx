@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
-import { FormField, Question } from '../types';
+import { FormField, Question, QuestionOption } from '../types';
 
 interface QuestionBuilderProps {
   onAddField: (field: Omit<FormField, 'id'>) => void;
@@ -32,7 +32,9 @@ const QuestionBuilder: React.FC<QuestionBuilderProps> = ({
       onAddField({
         label: newFieldLabel,
         type: newFieldType,
-        required: true
+        required: true,
+        name: newFieldLabel.toLowerCase().replace(/\s+/g, '_'),
+        campaign_id: ''
       });
       setNewFieldLabel('');
       setNewFieldType('text');
@@ -42,13 +44,17 @@ const QuestionBuilder: React.FC<QuestionBuilderProps> = ({
   const handleAddQuestionSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (newQuestionText.trim() !== '' && newQuestionOptions.trim() !== '') {
-      const options = newQuestionOptions.split(',').map(option => option.trim());
+      const optionsArray = newQuestionOptions.split(',').map(option => ({
+        text: option.trim()
+      }));
+      
       onAddQuestion({
-        text: newQuestionText,
-        type: 'multiple-choice',
-        options: options,
-        correct_answer: newQuestionCorrectAnswer
+        question: newQuestionText,
+        type: 'multiple_choice',
+        options: optionsArray,
+        text: newQuestionText
       });
+      
       setNewQuestionText('');
       setNewQuestionOptions('');
       setNewQuestionCorrectAnswer('');
@@ -150,7 +156,7 @@ const QuestionBuilder: React.FC<QuestionBuilderProps> = ({
           <ul className="space-y-2">
             {questions.map(question => (
               <li key={question.id} className="flex items-center justify-between px-4 py-2 border rounded-md">
-                <span>{question.text}</span>
+                <span>{question.question}</span>
                 <button
                   onClick={() => onRemoveQuestion(question.id)}
                   className="text-red-600 hover:text-red-800"

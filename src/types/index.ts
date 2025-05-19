@@ -11,6 +11,8 @@ export interface CampaignColors {
   border: string;
   questionBackground: string;
   progressBar: string;
+  primary?: string;
+  secondary?: string;
 }
 
 export interface CampaignStyle {
@@ -65,12 +67,13 @@ export interface Question {
   options: QuestionOption[];
   created_at?: string;
   updated_at?: string;
+  text?: string;
 }
 
 export interface Campaign {
   id: string;
   name: string;
-  type: 'quiz' | 'survey' | 'contest' | 'form';
+  type: 'quiz' | 'survey' | 'contest' | 'form' | 'wheel' | 'memory' | 'scratch' | 'puzzle' | 'dice' | 'target';
   status: CampaignStatus;
   start_date: string;
   end_date: string;
@@ -87,4 +90,97 @@ export interface Campaign {
   updated_at: string;
   questions?: Question[];
   fields?: FormField[];
+  description?: string;
+  game_content?: {
+    title: string;
+    description: string;
+    rules: string;
+    successMessage: string;
+    failureMessage: string;
+  };
+  game_settings?: {
+    wheel?: {
+      segments: Array<{
+        text: string;
+        color: string;
+        probability?: number;
+      }>;
+    };
+    memory?: {
+      pairs?: number;
+      cards?: Array<{
+        content: string;
+        image?: string;
+      }>;
+    };
+    scratch?: {
+      prize: {
+        text: string;
+        image?: string;
+      };
+      revealPercent: number;
+    };
+    puzzle?: {
+      imageUrl: string;
+      gridSize: number;
+    };
+    dice?: {
+      sides: number;
+      style: string;
+    };
+    target?: {
+      targets: number;
+      speed: number;
+    };
+  };
+}
+
+// Props interfaces for components
+export interface StatCardProps {
+  title: string;
+  value: string | number;
+  change: string;
+  icon: string;
+  positive: boolean;
+  stat: string;
+}
+
+export interface DiceRollProps {
+  sides: number;
+  style: string;
+  colors: {
+    primary: string;
+    secondary: string;
+    text: string;
+  };
+}
+
+export interface TargetShootProps {
+  targets: number;
+  speed: number;
+  colors: {
+    primary: string;
+    secondary: string;
+    text: string;
+  };
+}
+
+export interface WheelOfFortuneProps {
+  segments: any[];
+  colors: {
+    primary: string;
+    secondary: string;
+    text: string;
+  };
+  backgroundImage?: string;
+}
+
+export interface MemoryGameProps {
+  cards: any[];
+  colors: {
+    primary: string;
+    secondary: string;
+    text: string;
+  };
+  backgroundImage?: string;
 }

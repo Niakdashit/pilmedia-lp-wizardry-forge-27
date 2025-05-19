@@ -42,7 +42,6 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ campaign }) => {
         {currentStep === 'welcome' && (
           <div className="text-center fade-in">
             <h1 className="text-3xl font-bold mb-6">{campaign.name}</h1>
-            {/* Check for game_content?.description */}
             {campaign.game_content?.description && (
               <p className="mb-8">{campaign.game_content.description}</p>
             )}
@@ -70,10 +69,10 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ campaign }) => {
 
             <div className="bg-white rounded-lg p-6 shadow-lg">
               <h2 className="text-xl font-semibold mb-6">
-                {campaign.questions[currentQuestion].text}
+                {campaign.questions[currentQuestion].question}
               </h2>
               <div className="space-y-3">
-                {campaign.questions[currentQuestion].options?.map((option, index) => (
+                {campaign.questions[currentQuestion].options.map((option, index) => (
                   <button
                     key={index}
                     className="w-full p-4 text-left rounded-lg border transition-all hover:bg-opacity-10"
@@ -84,7 +83,7 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ campaign }) => {
                     }}
                     onClick={handleNext}
                   >
-                    {option}
+                    {option.text}
                   </button>
                 ))}
               </div>
