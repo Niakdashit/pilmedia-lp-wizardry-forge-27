@@ -21,7 +21,7 @@ const AppRoutes: React.FC = () => {
       <Route path="/signup" element={<Signup />} />
       <Route path="/:id" element={<PublicCampaign />} />
       
-      <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
+      <Route path="/" element={<ProtectedRoute requireAuth={false}><Layout /></ProtectedRoute>}>
         <Route index element={<Navigate to="/dashboard" replace />} />
         <Route path="dashboard" element={<Dashboard />} />
         <Route path="dashboard/campaigns" element={<CampaignsList />} />
