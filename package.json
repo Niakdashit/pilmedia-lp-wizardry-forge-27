@@ -14,7 +14,7 @@
     "@fontsource/inter": "^5.0.16",
     "@fontsource/montserrat": "^5.0.8",
     "@fontsource/roboto": "^5.0.8",
-    "@supabase/supabase-js": "^2.39.7",
+    "@supabase/supabase-js": "^2.49.4",
     "date-fns": "^4.1.0",
     "file-saver": "^2.0.5",
     "framer-motion": "^11.0.8",
