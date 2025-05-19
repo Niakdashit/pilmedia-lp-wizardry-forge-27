@@ -6,6 +6,8 @@ import { Campaign, Question } from '../types';
 import EditorTabs from '../components/EditorTabs';
 import QuestionBuilder from '../components/QuestionBuilder';
 import CampaignPreview from '../components/CampaignPreview';
+import ColorPicker from '../components/ColorPicker';
+import DesignPanel from '../components/DesignPanel';
 import { v4 as uuidv4 } from 'uuid';
 import { supabase } from '../lib/supabase';
 
@@ -528,256 +530,21 @@ const CampaignEditor: React.FC = () => {
 
               {activeTab === 'design' && (
                 <div className={`
-                  w-full lg:w-1/3 border-r
+                  w-full lg:w-1/3 border-r overflow-y-auto h-[calc(100vh-240px)]
                   ${showMobileBuilder ? 'block' : 'hidden lg:block'}
                 `}>
-                  <div className="p-4 space-y-6">
-                    <div>
-                      <h3 className="text-lg font-medium text-gray-900 mb-4">Image de fond</h3>
-                      <div className="space-y-4">
-                        <div
-                          {...getRootProps()}
-                          className={`border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition-colors
-                            ${isDragActive ? 'border-[#841b60] bg-[#841b60] bg-opacity-5' : 'border-gray-300 hover:border-[#841b60]'}`}
-                        >
-                          <input {...getInputProps()} />
-                          <Upload className="w-8 h-8 mx-auto mb-2 text-gray-400" />
-                          <p className="text-sm text-gray-600">
-                            {isDragActive
-                              ? "Déposez l'image ici"
-                              : "Glissez-déposez une image ou cliquez pour sélectionner"}
-                          </p>
-                          <p className="text-xs text-gray-500 mt-1">
-                            JPG, PNG ou GIF (max. 5MB)
-                          </p>
-                        </div>
-
-                        {uploadError && (
-                          <p className="text-sm text-red-600">{uploadError}</p>
-                        )}
-
-                        {uploading && (
-                          <div className="flex items-center justify-center">
-                            <div className="animate-spin rounded-full h-6 w-6 border-2 border-[#841b60] border-t-transparent"></div>
-                            <span className="ml-2 text-sm text-gray-600">Upload en cours...</span>
-                          </div>
-                        )}
-
-                        {campaign.background_image && (
-                          <div className="relative">
-                            <img
-                              src={campaign.background_image}
-                              alt="Aperçu"
-                              className="w-full h-32 object-cover rounded-lg"
-                            />
-                            <button
-                              onClick={removeImage}
-                              className="absolute top-2 right-2 p-1 bg-white rounded-full shadow-md hover:bg-gray-100 transition-colors"
-                            >
-                              <X className="w-4 h-4 text-gray-600" />
-                            </button>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-
-                    <div>
-                      <h3 className="text-lg font-medium text-gray-900 mb-4">Couleurs</h3>
-                      <div className="space-y-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Arrière-plan
-                          </label>
-                          <input
-                            type="color"
-                            value={campaign.colors?.background || '#ffffff'}
-                            onChange={(e) => setCampaign({
-                              ...campaign,
-                              colors: { 
-                                background: e.target.value,
-                                button: campaign.colors?.button || '#841b60',
-                                buttonText: campaign.colors?.buttonText || '#ffffff',
-                                text: campaign.colors?.text || '#333333',
-                                border: campaign.colors?.border || '#e5e7eb',
-                                questionBackground: campaign.colors?.questionBackground || 'rgba(255, 255, 255, 0.9)',
-                                progressBar: campaign.colors?.progressBar || '#841b60'
-                              }
-                            })}
-                            className="w-full h-10 p-1 rounded-md"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Boutons
-                          </label>
-                          <input
-                            type="color"
-                            value={campaign.colors?.button || '#841b60'}
-                            onChange={(e) => setCampaign({
-                              ...campaign,
-                              colors: { 
-                                button: e.target.value,
-                                background: campaign.colors?.background || '#ffffff',
-                                buttonText: campaign.colors?.buttonText || '#ffffff',
-                                text: campaign.colors?.text || '#333333',
-                                border: campaign.colors?.border || '#e5e7eb',
-                                questionBackground: campaign.colors?.questionBackground || 'rgba(255, 255, 255, 0.9)',
-                                progressBar: campaign.colors?.progressBar || '#841b60'
-                              }
-                            })}
-                            className="w-full h-10 p-1 rounded-md"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Texte boutons
-                          </label>
-                          <input
-                            type="color"
-                            value={campaign.colors?.buttonText || '#ffffff'}
-                            onChange={(e) => setCampaign({
-                              ...campaign,
-                              colors: { 
-                                buttonText: e.target.value,
-                                background: campaign.colors?.background || '#ffffff',
-                                button: campaign.colors?.button || '#841b60',
-                                text: campaign.colors?.text || '#333333',
-                                border: campaign.colors?.border || '#e5e7eb',
-                                questionBackground: campaign.colors?.questionBackground || 'rgba(255, 255, 255, 0.9)',
-                                progressBar: campaign.colors?.progressBar || '#841b60'
-                              }
-                            })}
-                            className="w-full h-10 p-1 rounded-md"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Texte
-                          </label>
-                          <input
-                            type="color"
-                            value={campaign.colors?.text || '#333333'}
-                            onChange={(e) => setCampaign({
-                              ...campaign,
-                              colors: { 
-                                text: e.target.value,
-                                background: campaign.colors?.background || '#ffffff',
-                                button: campaign.colors?.button || '#841b60',
-                                buttonText: campaign.colors?.buttonText || '#ffffff',
-                                border: campaign.colors?.border || '#e5e7eb',
-                                questionBackground: campaign.colors?.questionBackground || 'rgba(255, 255, 255, 0.9)',
-                                progressBar: campaign.colors?.progressBar || '#841b60'
-                              }
-                            })}
-                            className="w-full h-10 p-1 rounded-md"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Bordures
-                          </label>
-                          <input
-                            type="color"
-                            value={campaign.colors?.border || '#e5e7eb'}
-                            onChange={(e) => setCampaign({
-                              ...campaign,
-                              colors: { 
-                                border: e.target.value,
-                                background: campaign.colors?.background || '#ffffff',
-                                button: campaign.colors?.button || '#841b60',
-                                buttonText: campaign.colors?.buttonText || '#ffffff',
-                                text: campaign.colors?.text || '#333333',
-                                questionBackground: campaign.colors?.questionBackground || 'rgba(255, 255, 255, 0.9)',
-                                progressBar: campaign.colors?.progressBar || '#841b60'
-                              }
-                            })}
-                            className="w-full h-10 p-1 rounded-md"
-                          />
-                        </div>
-                      </div>
-                    </div>
-
-                    <div>
-                      <h3 className="text-lg font-medium text-gray-900 mb-4">Style</h3>
-                      <div className="space-y-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Rayon des coins (conteneur)
-                          </label>
-                          <input
-                            type="range"
-                            min="0"
-                            max="24"
-                            value={parseInt(campaign.style?.containerRadius || '12')}
-                            onChange={(e) => setCampaign({
-                              ...campaign,
-                              style: {
-                                containerRadius: `${e.target.value}px`,
-                                buttonRadius: campaign.style?.buttonRadius || '8px',
-                                containerOpacity: campaign.style?.containerOpacity || '0.9',
-                                buttonPadding: campaign.style?.buttonPadding || '12px 24px',
-                                buttonShadow: campaign.style?.buttonShadow,
-                                containerShadow: campaign.style?.containerShadow,
-                                fontFamily: campaign.style?.fontFamily,
-                                fontSize: campaign.style?.fontSize
-                              }
-                            })}
-                            className="w-full"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Rayon des coins (boutons)
-                          </label>
-                          <input
-                            type="range"
-                            min="0"
-                            max="24"
-                            value={parseInt(campaign.style?.buttonRadius || '8')}
-                            onChange={(e) => setCampaign({
-                              ...campaign,
-                              style: {
-                                buttonRadius: `${e.target.value}px`,
-                                containerRadius: campaign.style?.containerRadius || '12px',
-                                containerOpacity: campaign.style?.containerOpacity || '0.9',
-                                buttonPadding: campaign.style?.buttonPadding || '12px 24px',
-                                buttonShadow: campaign.style?.buttonShadow,
-                                containerShadow: campaign.style?.containerShadow,
-                                fontFamily: campaign.style?.fontFamily,
-                                fontSize: campaign.style?.fontSize
-                              }
-                            })}
-                            className="w-full"
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Opacité du conteneur
-                          </label>
-                          <input
-                            type="range"
-                            min="0"
-                            max="100"
-                            value={parseFloat(campaign.style?.containerOpacity || '0.9') * 100}
-                            onChange={(e) => setCampaign({
-                              ...campaign,
-                              style: {
-                                containerOpacity: (parseInt(e.target.value) / 100).toString(),
-                                containerRadius: campaign.style?.containerRadius || '12px',
-                                buttonRadius: campaign.style?.buttonRadius || '8px',
-                                buttonPadding: campaign.style?.buttonPadding || '12px 24px',
-                                buttonShadow: campaign.style?.buttonShadow,
-                                containerShadow: campaign.style?.containerShadow,
-                                fontFamily: campaign.style?.fontFamily,
-                                fontSize: campaign.style?.fontSize
-                              }
-                            })}
-                            className="w-full"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  {campaign && (
+                    <DesignPanel 
+                      campaign={campaign}
+                      setCampaign={setCampaign}
+                      getRootProps={getRootProps}
+                      getInputProps={getInputProps}
+                      isDragActive={isDragActive}
+                      uploadError={uploadError}
+                      uploading={uploading}
+                      removeImage={removeImage}
+                    />
+                  )}
                 </div>
               )}
 
