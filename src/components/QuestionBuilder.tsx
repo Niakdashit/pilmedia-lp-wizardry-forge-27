@@ -47,7 +47,7 @@ const QuestionBuilder: React.FC<QuestionBuilderProps> = ({
         text: newQuestionText,
         type: 'multiple-choice',
         options: options,
-        correctAnswer: newQuestionCorrectAnswer
+        correct_answer: newQuestionCorrectAnswer
       });
       setNewQuestionText('');
       setNewQuestionOptions('');
