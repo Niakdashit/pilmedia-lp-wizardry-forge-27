@@ -19,11 +19,11 @@ const SpacingControls: React.FC<SpacingControlsProps> = ({ padding, onChange, la
     const parts = padding.split(' ').map(part => parseInt(part));
     
     if (parts.length === 1) {
-      const value = parseInt(parts[0]);
-      setTop(value.toString());
-      setRight(value.toString());
-      setBottom(value.toString());
-      setLeft(value.toString());
+      const value = parts[0].toString();
+      setTop(value);
+      setRight(value);
+      setBottom(value);
+      setLeft(value);
       setUniform(true);
     } else if (parts.length === 4) {
       setTop(parts[0].toString());
