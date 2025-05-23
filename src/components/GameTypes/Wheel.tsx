@@ -98,6 +98,26 @@ const Wheel: React.FC<WheelProps> = ({
     }
   };
   
+  // Example of using onConfigChange - this could be triggered by a UI control
+  const handleSegmentChange = (newSegments: string[]) => {
+    if (onConfigChange && !spinning) {
+      onConfigChange({
+        segments: newSegments,
+        colors: wheelColors
+      });
+    }
+  };
+
+  // Example of using onConfigChange - this could be triggered by a color picker
+  const handleColorChange = (newColors: string[]) => {
+    if (onConfigChange && !spinning) {
+      onConfigChange({
+        segments: wheelSegments,
+        colors: newColors
+      });
+    }
+  };
+  
   return (
     <div className="flex flex-col items-center justify-center p-4">
       <div 

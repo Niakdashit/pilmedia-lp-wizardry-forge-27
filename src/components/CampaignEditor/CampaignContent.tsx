@@ -1,8 +1,7 @@
-
 import React, { useState } from 'react';
 import { Quiz, Wheel, Scratch, Swiper } from '../GameTypes';
 import { Palette, Type, Square, Box } from 'lucide-react';
-import { Campaign, WheelSegment, SwiperCard } from '../../types/campaign';
+import { Campaign, SwiperCard } from '../../types/campaign';
 
 interface CampaignContentProps {
   campaign: Campaign;
