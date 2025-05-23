@@ -1,20 +1,22 @@
+
 import React, { useState } from 'react';
 import { Calendar, Clock, Percent, Gift, Plus, Trash2 } from 'lucide-react';
+import { Campaign, TimeSlot } from '../../types/campaign';
 
 interface CampaignSettingsProps {
-  campaign: any;
-  setCampaign: React.Dispatch<React.SetStateAction<any>>;
+  campaign: Campaign;
+  setCampaign: React.Dispatch<React.SetStateAction<Campaign>>;
 }
 
 const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaign, setCampaign }) => {
-  const [rewardMode, setRewardMode] = useState('probability');
-  const [timeSlots, setTimeSlots] = useState([
+  const [rewardMode, setRewardMode] = useState<'probability' | 'schedule'>('probability');
+  const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([
     { id: '1', date: '', time: '', quantity: 1 }
   ]);
 
-  const handleRewardModeChange = (mode: string) => {
+  const handleRewardModeChange = (mode: 'probability' | 'schedule') => {
     setRewardMode(mode);
-    setCampaign(prev => ({
+    setCampaign((prev: Campaign) => ({
       ...prev,
       rewards: {
         ...prev.rewards,
@@ -24,7 +26,7 @@ const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaign, setCampai
   };
 
   const handleProbabilityChange = (value: string) => {
-    setCampaign(prev => ({
+    setCampaign((prev: Campaign) => ({
       ...prev,
       rewards: {
         ...prev.rewards,
@@ -34,7 +36,7 @@ const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaign, setCampai
   };
 
   const handleQuantityChange = (value: string) => {
-    setCampaign(prev => ({
+    setCampaign((prev: Campaign) => ({
       ...prev,
       rewards: {
         ...prev.rewards,
