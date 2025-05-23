@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Image, Layout, Text, Palette, Box, Upload, X } from 'lucide-react';
 import { Campaign } from '../types'; 
@@ -179,7 +178,7 @@ const DesignPanel: React.FC<DesignPanelProps> = ({
               
               {campaign.style?.backgroundType === 'gradient' && (
                 <GradientPicker 
-                  gradient={campaign.style?.gradient || 'linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%)'}
+                  value={campaign.style?.gradient || 'linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%)'}
                   onChange={(gradient) => updateCampaignStyle('gradient', gradient)}
                 />
               )}

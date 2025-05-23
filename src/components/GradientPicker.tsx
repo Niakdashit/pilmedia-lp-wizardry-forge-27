@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { HexColorInput, HexColorPicker } from 'react-colorful';
 
 const GradientPicker = ({ value, onChange }: { value: string, onChange: (value: string) => void }) => {

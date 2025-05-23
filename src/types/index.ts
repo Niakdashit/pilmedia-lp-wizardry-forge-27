@@ -67,7 +67,6 @@ export interface Question {
   options: QuestionOption[];
   created_at?: string;
   updated_at?: string;
-  text?: string;
 }
 
 export interface Campaign {

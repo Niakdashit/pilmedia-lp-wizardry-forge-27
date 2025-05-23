@@ -10,7 +10,7 @@ interface PreviewPageProps {
   onGameComplete?: () => Promise<void>;
 }
 
-const PreviewPage: React.FC<PreviewPageProps> = ({ 
+const CampaignPreview: React.FC<PreviewPageProps> = ({ 
   campaign, 
   currentStep: initialStep = 'welcome',
   onParticipate
@@ -54,8 +54,8 @@ const PreviewPage: React.FC<PreviewPageProps> = ({
         {currentStep === 'welcome' && (
           <div className="text-center fade-in">
             <h1 className="text-3xl font-bold mb-6">{campaign.name}</h1>
-            {(campaign.game_content?.description || campaign.description) && (
-              <p className="mb-8">{campaign.game_content?.description || campaign.description}</p>
+            {campaign.description && (
+              <p className="mb-8">{campaign.description}</p>
             )}
             <button
               className="px-8 py-3 rounded-lg text-white font-semibold transition-all"
@@ -121,4 +121,4 @@ const PreviewPage: React.FC<PreviewPageProps> = ({
   );
 };
 
-export default PreviewPage;
+export default CampaignPreview;

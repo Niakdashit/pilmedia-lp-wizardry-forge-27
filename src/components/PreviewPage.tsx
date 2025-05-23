@@ -42,8 +42,8 @@ const PreviewPage: React.FC<PreviewPageProps> = ({ campaign }) => {
         {currentStep === 'welcome' && (
           <div className="text-center fade-in">
             <h1 className="text-3xl font-bold mb-6">{campaign.name}</h1>
-            {campaign.game_content?.description && (
-              <p className="mb-8">{campaign.game_content.description}</p>
+            {campaign.description && (
+              <p className="mb-8">{campaign.description}</p>
             )}
             <button
               className="px-8 py-3 rounded-lg text-white font-semibold transition-all"

@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Plus, Trash2 } from 'lucide-react';
-import { FormField, Question, QuestionOption } from '../types';
+import { FormField, Question } from '../types';
 
 interface QuestionBuilderProps {
   onAddField: (field: Omit<FormField, 'id'>) => void;
@@ -52,7 +52,7 @@ const QuestionBuilder: React.FC<QuestionBuilderProps> = ({
         question: newQuestionText,
         type: 'multiple_choice',
         options: optionsArray,
-        text: newQuestionText
+        campaign_id: ''
       });
       
       setNewQuestionText('');
