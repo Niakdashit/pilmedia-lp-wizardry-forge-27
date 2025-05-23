@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { Save, ChevronRight, Link as LinkIcon, Copy, Eye } from 'lucide-react';
@@ -10,12 +9,6 @@ import CampaignSettings from '../components/CampaignEditor/CampaignSettings';
 import CampaignPreview from '../components/CampaignEditor/CampaignPreview';
 import PreviewModal from '../components/CampaignEditor/PreviewModal';
 import { Campaign } from '../types/campaign';
-
-// Create interfaces for component props
-interface CampaignComponentProps {
-  campaign: Campaign;
-  setCampaign: React.Dispatch<React.SetStateAction<Campaign>>;
-}
 
 const CampaignEditor: React.FC = () => {
   const { id } = useParams();

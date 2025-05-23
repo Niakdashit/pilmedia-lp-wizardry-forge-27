@@ -1,7 +1,14 @@
+
 import React from 'react';
 import { AlertCircle } from 'lucide-react';
+import { Campaign } from '../../types/campaign';
 
-const CampaignDesign: React.FC = () => {
+interface CampaignDesignProps {
+  campaign: Campaign;
+  setCampaign: React.Dispatch<React.SetStateAction<Campaign>>;
+}
+
+const CampaignDesign: React.FC<CampaignDesignProps> = ({ campaign, setCampaign }) => {
   return (
     <div className="p-6 bg-yellow-50 rounded-lg">
       <div className="flex items-start space-x-3">
