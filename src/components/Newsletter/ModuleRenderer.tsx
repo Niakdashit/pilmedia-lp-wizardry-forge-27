@@ -1,13 +1,16 @@
 import React from 'react';
 import { NewsletterModule } from '../../types/newsletter';
 
+// Fix TextAlign type issues by being explicit about allowed values
+type TextAlign = 'left' | 'center' | 'right';
+
 export const renderText = (module: NewsletterModule) => {
   return (
     <div
       style={{
         padding: module.settings.padding || '10px',
         backgroundColor: module.settings.backgroundColor || 'transparent',
-        textAlign: module.settings.textAlign || 'left',
+        textAlign: (module.settings.textAlign as TextAlign) || 'left',
         color: module.settings.color || '#000',
         fontSize: module.settings.fontSize || '16px',
       }}
@@ -23,7 +26,7 @@ export const renderImage = (module: NewsletterModule) => {
       style={{
         padding: module.settings.padding || '10px',
         backgroundColor: module.settings.backgroundColor || 'transparent',
-        textAlign: module.settings.textAlign || 'center',
+        textAlign: (module.settings.textAlign as TextAlign) || 'center',
       }}
     >
       <img
@@ -45,7 +48,7 @@ export const renderButton = (module: NewsletterModule) => {
       style={{
         padding: module.settings.padding || '10px',
         backgroundColor: module.settings.backgroundColor || 'transparent',
-        textAlign: module.settings.textAlign || 'center',
+        textAlign: (module.settings.textAlign as TextAlign) || 'center',
       }}
     >
       <a
@@ -66,15 +69,15 @@ export const renderButton = (module: NewsletterModule) => {
 };
 
 export const renderSocial = (module: NewsletterModule) => {
-  // Convert the array of social links to a proper string value
-  const socialLinks = Array.isArray(module.content) ? module.content.join(',') : module.content || '';
+  // Convert the content to string to handle both array and string cases
+  const socialLinks = module.content.toString();
 
   return (
     <div
       style={{
         padding: module.settings.padding || '10px',
         backgroundColor: module.settings.backgroundColor || 'transparent',
-        textAlign: module.settings.textAlign || 'center',
+        textAlign: (module.settings.textAlign as TextAlign) || 'center',
       }}
     >
       {socialLinks}
@@ -83,7 +86,8 @@ export const renderSocial = (module: NewsletterModule) => {
 };
 
 export const renderColumns = (module: NewsletterModule) => {
-  const numColumns = parseInt(module.settings.columns || '2', 10);
+  // Convert columns to number and ensure valid fallback
+  const numColumns = module.settings.columns ? Number(module.settings.columns) : 2;
   const columnWidth = 100 / numColumns + '%';
 
   return (
@@ -101,7 +105,7 @@ export const renderColumns = (module: NewsletterModule) => {
             key={index}
             style={{
               width: columnWidth,
-              textAlign: module.settings.textAlign || 'left',
+              textAlign: (module.settings.textAlign as TextAlign) || 'left',
               verticalAlign: module.settings.verticalAlignment || 'top',
             }}
           >
@@ -118,7 +122,7 @@ export const renderDivider = (module: NewsletterModule) => {
       style={{
         padding: module.settings.padding || '10px',
         backgroundColor: module.settings.backgroundColor || 'transparent',
-        textAlign: module.settings.textAlign || 'center',
+        textAlign: (module.settings.textAlign as TextAlign) || 'center',
       }}
     >
       <hr style={{ border: '1px solid #ccc' }} />
@@ -126,7 +130,8 @@ export const renderDivider = (module: NewsletterModule) => {
   );
 };
 
-const ModuleRenderer = ({ module }: { module: NewsletterModule }) => {
+// Change from default export to named export to fix the import issue
+export const ModuleRenderer = ({ module }: { module: NewsletterModule }) => {
   switch (module.type) {
     case 'text':
       return renderText(module);
@@ -145,4 +150,5 @@ const ModuleRenderer = ({ module }: { module: NewsletterModule }) => {
   }
 };
 
+// Keep default export for backward compatibility with other files
 export default ModuleRenderer;

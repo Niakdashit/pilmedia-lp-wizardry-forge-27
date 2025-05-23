@@ -1,5 +1,5 @@
+
 import React from 'react';
-import { ChevronDown } from 'lucide-react';
 import { useNewsletterStore } from '../../../../stores/newsletterStore';
 import { NewsletterModule } from '../../../../types/newsletter';
 
@@ -11,11 +11,9 @@ interface SettingsTabProps {
 
 const SettingsTab: React.FC<SettingsTabProps> = ({ 
   selectedModule, 
-  onUpdateModule, 
-  onDeleteModule 
+  onUpdateModule
 }) => {
-  // Remove unused variables
-  const { presets } = useNewsletterStore();
+  // Remove unused variables and properties
   
   const handlePaddingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onUpdateModule(selectedModule.id, { settings: { ...selectedModule.settings, padding: e.target.value } });

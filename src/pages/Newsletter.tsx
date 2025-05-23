@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { DndContext, DragEndEvent, DragOverlay } from '@dnd-kit/core';
 import { Eye, Send, Save } from 'lucide-react';
@@ -6,7 +7,7 @@ import { EditorCanvas } from '../components/Newsletter/EditorCanvas';
 import { PropertiesPanel } from '../components/Newsletter/PropertiesPanel';
 import { useNewsletterStore } from '../stores/newsletterStore';
 import PreviewModal from '../components/Newsletter/PreviewModal';
-import { SettingsTab } from '@/components/Newsletter/properties/Tab/SettingsTab';
+import SettingsTab from '@/components/Newsletter/properties/Tab/SettingsTab';
 
 const Newsletter: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'edit' | 'settings' | 'send' | 'automate'>('edit');
