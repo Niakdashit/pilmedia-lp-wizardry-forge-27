@@ -44,16 +44,19 @@ const Sidebar: React.FC = () => {
       <div className="flex items-center justify-between px-6 py-8 border-b border-gray-200/50">
         {!sidebarCollapsed && (
           <div className="flex items-center">
-            <div className="w-10 h-10 rounded-2xl bg-[#841b60] flex items-center justify-center">
-              <span className="text-white font-medium text-xl">L</span>
-            </div>
-            <h1 className="ml-3 text-2xl font-medium text-[#841b60]">Leadya</h1>
+            <img 
+              src="/lovable-uploads/70ca0724-3210-4ff8-a94b-a216b14df758.png" 
+              alt="Leadya Logo" 
+              className="h-8" 
+            />
           </div>
         )}
         {sidebarCollapsed && (
-          <div className="w-10 h-10 mx-auto rounded-2xl bg-[#841b60] flex items-center justify-center">
-            <span className="text-white font-medium text-xl">L</span>
-          </div>
+          <img 
+            src="/lovable-uploads/70ca0724-3210-4ff8-a94b-a216b14df758.png" 
+            alt="Leadya Logo" 
+            className="h-8 mx-auto" 
+          />
         )}
         <button 
           onClick={toggleSidebar}
