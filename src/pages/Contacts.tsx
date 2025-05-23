@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { 
   Search, Download, Upload, 
@@ -117,9 +118,7 @@ const Contacts: React.FC = () => {
     setShowImportModal(false);
   };
 
-  const handleDeleteContacts = () => {
-    // Implementation...
-  };
+  // Removed the unused handleDeleteContacts function
 
   return (
     <div className="-mx-6 -mt-6">

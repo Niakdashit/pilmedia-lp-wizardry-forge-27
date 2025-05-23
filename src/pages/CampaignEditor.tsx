@@ -120,13 +120,8 @@ const CampaignEditor: React.FC = () => {
     }
   };
 
-  // This is for type compatibility with the Campaign components.
-  // We need to pass specific props to each component to comply with their expected types.
-  const generalProps = { campaign, setCampaign };
-  const contentProps = { campaign, setCampaign };
-  const screensProps = { campaign, setCampaign };
-  const designProps = { campaign, setCampaign };
-  const settingsProps = { campaign, setCampaign };
+  // Pass the props directly to each component without creating separate prop objects
+  // This avoids the TypeScript error since we're not trying to create intermediate objects
   
   return (
     <div className="h-[calc(100vh-3rem)] flex flex-col">
@@ -228,23 +223,23 @@ const CampaignEditor: React.FC = () => {
           
           <div className="flex-1 overflow-y-auto p-6">
             {activeTab === 'general' && (
-              <CampaignGeneral {...generalProps} />
+              <CampaignGeneral campaign={campaign} setCampaign={setCampaign} />
             )}
             
             {activeTab === 'content' && (
-              <CampaignContent {...contentProps} />
+              <CampaignContent campaign={campaign} setCampaign={setCampaign} />
             )}
 
             {activeTab === 'screens' && (
-              <CampaignScreens {...screensProps} />
+              <CampaignScreens campaign={campaign} setCampaign={setCampaign} />
             )}
             
             {activeTab === 'design' && (
-              <CampaignDesign {...designProps} />
+              <CampaignDesign campaign={campaign} setCampaign={setCampaign} />
             )}
 
             {activeTab === 'settings' && (
-              <CampaignSettings {...settingsProps} />
+              <CampaignSettings campaign={campaign} setCampaign={setCampaign} />
             )}
           </div>
         </div>
