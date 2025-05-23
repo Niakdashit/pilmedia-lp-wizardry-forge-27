@@ -9,7 +9,7 @@ interface ModuleRendererProps {
   preview?: boolean;
 }
 
-export const ModuleRenderer: React.FC<ModuleRendererProps> = ({ module, preview = false }) => {
+export const ModuleRenderer: React.FC<ModuleRendererProps> = ({ module }) => {
   const { updateModule, removeModule, selectModule } = useNewsletterStore();
 
   const handleMoveUp = (e: React.MouseEvent) => {
@@ -25,14 +25,6 @@ export const ModuleRenderer: React.FC<ModuleRendererProps> = ({ module, preview 
   const handleDuplicate = (e: React.MouseEvent) => {
     e.stopPropagation();
     // Add duplicate module implementation
-  };
-
-  // Fix the string[] issue with string join
-  const renderColumnContent = (content: string | string[]) => {
-    if (Array.isArray(content)) {
-      return content.join('\n');
-    }
-    return content;
   };
 
   return (

@@ -12,6 +12,8 @@ export interface ModuleSettings {
   margin?: string;
   width?: string;
   height?: string;
+  spacing?: number;
+  verticalAlignment?: string;
   [key: string]: any;
 }
 

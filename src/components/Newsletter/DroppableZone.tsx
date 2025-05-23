@@ -1,6 +1,7 @@
+
 import React from 'react';
 import { useDroppable } from '@dnd-kit/core';
-import { Mail, Image as ImageIcon, Link as LinkIcon, Minus, Share2, Code } from 'lucide-react';
+import { Mail, Image as ImageIcon, Share2 } from 'lucide-react';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 
 interface DroppableZoneProps {
@@ -8,11 +9,9 @@ interface DroppableZoneProps {
   type: 'header' | 'content' | 'footer';
   children?: React.ReactNode;
   items?: string[];
-  onSplit?: (moduleId: string) => void;
-  onMerge?: (moduleId: string) => void;
 }
 
-const DroppableZone: React.FC<DroppableZoneProps> = ({ id, type, children, items = [], onSplit, onMerge }) => {
+const DroppableZone: React.FC<DroppableZoneProps> = ({ id, type, children, items = [] }) => {
   const { setNodeRef, isOver } = useDroppable({
     id: `${type}-${id}`
   });

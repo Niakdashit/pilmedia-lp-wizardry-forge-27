@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Settings } from 'lucide-react';
 import { useNewsletterStore } from '@/stores/newsletterStore';
@@ -5,7 +6,7 @@ import { TextProperties } from './properties/TextProperties';
 import { ImageProperties } from './properties/ImageProperties';
 import { ButtonProperties } from './properties/ButtonProperties';
 import { DividerProperties } from './properties/DividerProperties';
-import { SocialProperties } from './properties/SocialProperties';
+import SocialProperties from './properties/SocialProperties';
 import { FooterProperties } from './properties/FooterProperties';
 import { HeaderProperties } from './properties/HeaderProperties';
 import { HTMLProperties } from './properties/HTMLProperties';
@@ -36,7 +37,7 @@ export const PropertiesPanel: React.FC = () => {
       case 'divider':
         return <DividerProperties module={selectedModule} onUpdate={updateModule} />;
       case 'social':
-        return <SocialProperties module={selectedModule} onUpdate={updateModule} />;
+        return <SocialProperties module={selectedModule} />;
       case 'footer':
         return <FooterProperties module={selectedModule} onUpdate={updateModule} />;
       case 'header':

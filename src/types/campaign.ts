@@ -7,6 +7,13 @@ export interface CampaignScreen {
   showTitle: boolean;
   showDescription: boolean;
   showReplayButton?: boolean;
+  frame?: {
+    show?: boolean;
+    position?: string;
+    maxWidth?: number;
+    maxHeight?: number;
+    padding?: number;
+  };
 }
 
 export interface QuizQuestion {
@@ -71,6 +78,8 @@ export interface CampaignDesign {
     position?: string;
     show?: boolean;
   };
+  customHTML?: string;
+  customCSS?: string;
 }
 
 export interface CampaignRewards {

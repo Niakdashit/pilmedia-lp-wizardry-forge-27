@@ -1,6 +1,5 @@
+
 import React from 'react';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 
 const SocialProperties: React.FC<{ module: any }> = ({ module }) => {
   const handleChange = (key: string, value: string) => {
@@ -14,7 +13,7 @@ const SocialProperties: React.FC<{ module: any }> = ({ module }) => {
     { name: 'linkedin', label: 'LinkedIn URL' },
     { name: 'youtube', label: 'YouTube URL' },
     { name: 'website', label: 'Website URL' },
-  ].map((platform: any) => {
+  ].map((platform) => {
     return {
       ...platform,
       value: module.settings?.[platform.name] || '',
@@ -28,15 +27,15 @@ const SocialProperties: React.FC<{ module: any }> = ({ module }) => {
     <div className="space-y-4">
       {platforms.map((platform) => (
         <div key={platform.name} className="grid grid-cols-3 items-center gap-4">
-          <Label htmlFor={platform.name} className="text-right">
+          <label htmlFor={platform.name} className="text-right">
             {platform.label}
-          </Label>
-          <Input
+          </label>
+          <input
             type="url"
             id={platform.name}
             value={platform.value}
             onChange={platform.onChange}
-            className="col-span-2"
+            className="col-span-2 border border-gray-300 rounded-md shadow-sm py-1 px-3 focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-[#841b60]"
           />
         </div>
       ))}
