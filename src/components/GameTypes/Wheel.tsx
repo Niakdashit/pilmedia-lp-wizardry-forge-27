@@ -20,7 +20,7 @@ const Wheel: React.FC<WheelProps> = ({
   onSpinComplete,
   onSpinEnd,
   config,
-  onConfigChange
+  onConfigChange = () => {} // Provide a default empty function to prevent the "never read" error
 }) => {
   const wheelSegments = config?.segments || segments;
   const wheelColors = config?.colors || colors;
@@ -184,3 +184,4 @@ const Wheel: React.FC<WheelProps> = ({
 };
 
 export default Wheel;
+
