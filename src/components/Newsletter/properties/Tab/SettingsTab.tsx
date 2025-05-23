@@ -1,166 +1,99 @@
-import React, { useState } from 'react';
-import { Sparkles, Save, Eye } from 'lucide-react';
-import { useNewsletterStore } from '@/stores/newsletterStore';
+import React from 'react';
+import { ChevronDown } from 'lucide-react';
+import { useNewsletterStore } from '../../../../stores/newsletterStore';
+import { NewsletterModule } from '../../../../types/newsletter';
 
-interface Template {
-  id: string;
-  name: string;
-  prompt: string;
-  content: string;
-  createdAt: string;
+interface SettingsTabProps {
+  selectedModule: NewsletterModule;
+  onUpdateModule: (moduleId: string, data: Partial<NewsletterModule>) => void;
+  onDeleteModule: (moduleId: string) => void;
 }
 
-export const SettingsTab: React.FC = () => {
-  const [prompt, setPrompt] = useState('');
-  const [style, setStyle] = useState('professional');
-  const [generatedContent, setGeneratedContent] = useState('');
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [showPreview, setShowPreview] = useState(false);
-  const [templates, setTemplates] = useState<Template[]>([]);
-  const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
-
-  const { setFromGeneratedHTML, loadGeneratedAsModules } = useNewsletterStore();
-
-  const handleGenerate = async () => {
-    if (!prompt) return;
-    setIsGenerating(true);
-    try {
-      const response = await fetch('/api/generate-newsletter', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt, style }),
-      });
-
-      if (!response.ok) throw new Error('Failed to generate newsletter');
-
-      const data = await response.json();
-      setGeneratedContent(data.html);
-    } catch (error) {
-      console.error(error);
-      setGeneratedContent(`
-        <div style="max-width:600px;margin:0 auto;padding:20px;">
-          <h1 style="color:#333;">Newsletter générée</h1>
-          <p style="color:#666;">Contenu basé sur le prompt: ${prompt}</p>
-          <div style="margin:20px 0;">
-            <a href="#" style="background:#841b60;color:white;padding:10px 20px;text-decoration:none;border-radius:5px;">
-              Call to Action
-            </a>
-          </div>
-        </div>
-      `);
-    } finally {
-      setIsGenerating(false);
-    }
+const SettingsTab: React.FC<SettingsTabProps> = ({ 
+  selectedModule, 
+  onUpdateModule, 
+  onDeleteModule 
+}) => {
+  // Remove unused variables
+  const { presets } = useNewsletterStore();
+  
+  const handlePaddingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onUpdateModule(selectedModule.id, { settings: { ...selectedModule.settings, padding: e.target.value } });
   };
 
-  const handleSaveTemplate = () => {
-    if (!prompt || !generatedContent) return;
-    const newTemplate = {
-      id: Date.now().toString(),
-      name: `Template ${templates.length + 1}`,
-      prompt,
-      content: generatedContent,
-      createdAt: new Date().toISOString(),
-    };
-    setTemplates([...templates, newTemplate]);
-    setPrompt('');
-    setGeneratedContent('');
+  const handleBackgroundColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onUpdateModule(selectedModule.id, { settings: { ...selectedModule.settings, backgroundColor: e.target.value } });
   };
 
-  const handleExportToEditor = () => {
-    if (!generatedContent) return;
-    setFromGeneratedHTML(generatedContent);
-    loadGeneratedAsModules();
-    alert('Le template a bien été transféré dans l\'onglet Modifier.');
+  const handleTextAlignChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    onUpdateModule(selectedModule.id, { settings: { ...selectedModule.settings, textAlign: e.target.value } });
+  };
+
+  const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onUpdateModule(selectedModule.id, { settings: { ...selectedModule.settings, color: e.target.value } });
+  };
+
+  const handleFontSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    onUpdateModule(selectedModule.id, { settings: { ...selectedModule.settings, fontSize: e.target.value } });
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
       <div>
-        <h2 className="text-xl font-semibold text-[#841b60] mb-4 flex items-center">
-          <Sparkles className="w-6 h-6 mr-2" /> Générateur de Template avec IA
-        </h2>
-
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Prompt de génération</label>
-            <textarea
-              value={prompt}
-              onChange={(e) => setPrompt(e.target.value)}
-              placeholder="Décrivez la newsletter que vous souhaitez générer..."
-              className="w-full h-32 px-4 py-3 border border-gray-300 rounded-lg"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Style</label>
-            <select
-              value={style}
-              onChange={(e) => setStyle(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-            >
-              <option value="professional">Professionnel</option>
-              <option value="minimalist">Minimaliste</option>
-              <option value="creative">Créatif</option>
-              <option value="emotional">Émotionnel</option>
-              <option value="corporate">Corporate</option>
-            </select>
-          </div>
-
-          <button
-            onClick={handleGenerate}
-            disabled={!prompt || isGenerating}
-            className="w-full px-4 py-2 bg-[#841b60] text-white rounded-lg"
-          >
-            {isGenerating ? 'Génération...' : 'Générer avec l\'IA'}
-          </button>
-
-          {generatedContent && (
-            <div className="space-y-4">
-              <textarea
-                value={generatedContent}
-                onChange={(e) => setGeneratedContent(e.target.value)}
-                className="w-full h-64 px-4 py-3 border border-gray-300 rounded-lg font-mono text-sm"
-              />
-              <div className="flex justify-between flex-wrap gap-2">
-                <button
-                  onClick={() => setShowPreview(true)}
-                  className="inline-flex items-center px-3 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded-lg"
-                >
-                  <Eye className="w-4 h-4 mr-1" /> Aperçu
-                </button>
-                <button
-                  onClick={handleSaveTemplate}
-                  className="px-4 py-2 bg-[#841b60] text-white rounded-lg"
-                >
-                  <Save className="w-4 h-4 mr-2" /> Sauvegarder comme template
-                </button>
-                <button
-                  onClick={handleExportToEditor}
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg"
-                >
-                  📤 Utiliser dans l’onglet Modifier
-                </button>
-              </div>
-            </div>
-          )}
-        </div>
+        <label className="block text-sm font-medium text-gray-700">Padding</label>
+        <input
+          type="text"
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          value={selectedModule.settings.padding || ''}
+          onChange={handlePaddingChange}
+        />
       </div>
-
-      {showPreview && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
-          <div className="bg-white w-[90%] max-w-3xl rounded-lg shadow-lg p-6 relative overflow-auto max-h-[90vh]">
-            <button
-              onClick={() => setShowPreview(false)}
-              className="absolute top-2 right-2 text-gray-500 hover:text-red-600"
-            >
-              ✕
-            </button>
-            <h3 className="text-lg font-bold mb-4 text-[#841b60]">Aperçu de la newsletter</h3>
-            <div dangerouslySetInnerHTML={{ __html: generatedContent }} className="prose max-w-none" />
-          </div>
-        </div>
-      )}
+      <div>
+        <label className="block text-sm font-medium text-gray-700">Background Color</label>
+        <input
+          type="color"
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          value={selectedModule.settings.backgroundColor || ''}
+          onChange={handleBackgroundColorChange}
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700">Text Align</label>
+        <select
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          value={selectedModule.settings.textAlign || 'left'}
+          onChange={handleTextAlignChange}
+        >
+          <option value="left">Left</option>
+          <option value="center">Center</option>
+          <option value="right">Right</option>
+        </select>
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700">Color</label>
+        <input
+          type="color"
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          value={selectedModule.settings.color || ''}
+          onChange={handleColorChange}
+        />
+      </div>
+      <div>
+        <label className="block text-sm font-medium text-gray-700">Font Size</label>
+        <select
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+          value={selectedModule.settings.fontSize || '16px'}
+          onChange={handleFontSizeChange}
+        >
+          <option value="12px">12px</option>
+          <option value="14px">14px</option>
+          <option value="16px">16px</option>
+          <option value="18px">18px</option>
+          <option value="20px">20px</option>
+        </select>
+      </div>
     </div>
   );
 };
+
+export default SettingsTab;

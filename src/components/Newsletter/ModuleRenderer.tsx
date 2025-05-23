@@ -1,209 +1,148 @@
 import React from 'react';
-import { useNewsletterStore } from '@/stores/newsletterStore';
-import { Trash2, GripVertical, ChevronUp, ChevronDown, Copy } from 'lucide-react';
-import { NewsletterModule, ModuleSettings } from '../../types/newsletter';
+import { NewsletterModule } from '../../types/newsletter';
 
-interface ModuleRendererProps {
-  module: NewsletterModule;
-  settings?: ModuleSettings;
-  preview?: boolean;
-}
-
-export const ModuleRenderer: React.FC<ModuleRendererProps> = ({ module }) => {
-  const { updateModule, removeModule, selectModule } = useNewsletterStore();
-
-  const handleMoveUp = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    // Implementation for moving module up
-  };
-
-  const handleMoveDown = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    // Implementation for moving module down
-  };
-
-  const handleDuplicate = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    // Add duplicate module implementation
-  };
-
+export const renderText = (module: NewsletterModule) => {
   return (
-    <div 
-      className="relative p-4 border border-gray-200 rounded-lg mb-4 group hover:border-[#841b60] transition-colors duration-200"
-      onClick={() => selectModule(module.id)}
+    <div
+      style={{
+        padding: module.settings.padding || '10px',
+        backgroundColor: module.settings.backgroundColor || 'transparent',
+        textAlign: module.settings.textAlign || 'left',
+        color: module.settings.color || '#000',
+        fontSize: module.settings.fontSize || '16px',
+      }}
     >
-      <div className="absolute left-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity cursor-move">
-        <GripVertical className="w-4 h-4 text-gray-400" />
-      </div>
-
-      <div className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity flex items-center space-x-1">
-        <button
-          onClick={handleMoveUp}
-          className="p-1 text-gray-400 hover:text-[#841b60] rounded-lg transition-colors duration-200"
-        >
-          <ChevronUp className="w-4 h-4" />
-        </button>
-        <button
-          onClick={handleMoveDown}
-          className="p-1 text-gray-400 hover:text-[#841b60] rounded-lg transition-colors duration-200"
-        >
-          <ChevronDown className="w-4 h-4" />
-        </button>
-        <button
-          onClick={handleDuplicate}
-          className="p-1 text-gray-400 hover:text-[#841b60] rounded-lg transition-colors duration-200"
-        >
-          <Copy className="w-4 h-4" />
-        </button>
-        <button
-          onClick={(e) => {
-            e.stopPropagation();
-            removeModule(module.id);
-          }}
-          className="p-1 text-gray-400 hover:text-red-500 rounded-lg transition-colors duration-200"
-        >
-          <Trash2 className="w-4 h-4" />
-        </button>
-      </div>
-
-      <div className="pl-6 pr-24">
-        {module.type === 'text' && (
-          <textarea
-            value={module.content as string || ''}
-            onChange={(e) => updateModule(module.id, { content: e.target.value })}
-            className="w-full p-2 border border-gray-200 rounded resize-y min-h-[100px] focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-            placeholder="Saisissez votre texte ici..."
-          />
-        )}
-
-        {module.type === 'image' && (
-          <div className="space-y-2">
-            <input
-              type="text"
-              value={module.content as string || ''}
-              onChange={(e) => updateModule(module.id, { content: e.target.value })}
-              className="w-full p-2 border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-              placeholder="URL de l'image..."
-            />
-            {module.content && (
-              <img
-                src={module.content as string}
-                alt=""
-                className="max-w-full h-auto rounded"
-              />
-            )}
-          </div>
-        )}
-
-        {module.type === 'button' && (
-          <div className="space-y-2">
-            <input
-              type="text"
-              value={module.content as string || ''}
-              onChange={(e) => updateModule(module.id, { content: e.target.value })}
-              className="w-full p-2 border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-              placeholder="Texte du bouton..."
-            />
-            <input
-              type="text"
-              value={module.settings?.url || ''}
-              onChange={(e) => updateModule(module.id, { settings: { ...module.settings, url: e.target.value } })}
-              className="w-full p-2 border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-              placeholder="URL du lien..."
-            />
-            {module.content && (
-              <button className="w-full px-6 py-3 bg-[#841b60] text-white font-medium rounded-lg hover:bg-[#6d164f] transition-colors duration-200">
-                {module.content as string}
-              </button>
-            )}
-          </div>
-        )}
-
-        {module.type === 'divider' && (
-          <hr className="border-t border-gray-200 my-2" />
-        )}
-
-        {module.type === 'header' && (
-          <div className="flex justify-between items-center">
-            <div className="w-32 h-10 bg-[#841b60] rounded flex items-center justify-center text-white font-bold">
-              LOGO
-            </div>
-            <div className="flex space-x-4 text-sm">
-              <a href="#" className="text-[#841b60] hover:underline">Accueil</a>
-              <a href="#" className="text-[#841b60] hover:underline">Produits</a>
-              <a href="#" className="text-[#841b60] hover:underline">Contact</a>
-            </div>
-          </div>
-        )}
-
-        {module.type === 'footer' && (
-          <div className="text-center text-sm text-gray-600">
-            <p className="mb-2">Entreprise SAS - 123 rue de l'exemple, 75000 Paris</p>
-            <p className="mb-2">Pour vous désabonner, <a href="#" className="text-[#841b60] underline">cliquez ici</a></p>
-            <p>&copy; 2023 Tous droits réservés</p>
-          </div>
-        )}
-
-        {module.type === 'social' && (
-          <div className="text-center">
-            <p className="mb-2 text-sm text-gray-600">Suivez-nous sur les réseaux sociaux</p>
-            <div className="flex justify-center space-x-4">
-              {['facebook', 'twitter', 'instagram', 'linkedin'].map((network) => (
-                <a
-                  key={network}
-                  href="#"
-                  className="w-8 h-8 rounded-full bg-[#841b60] flex items-center justify-center text-white hover:bg-[#6d164f] transition-colors duration-200"
-                >
-                  <i className={`fab fa-${network}`}></i>
-                </a>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {module.type === 'columns' && (
-          <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${module.settings?.columns || 2}, 1fr)` }}>
-            {Array.from({ length: module.settings?.columns || 2 }).map((_, index) => (
-              <div key={index} className="border border-gray-200 rounded p-4">
-                <textarea
-                  value={Array.isArray(module.content) ? (module.content[index] || '') : ''}
-                  onChange={(e) => {
-                    const newContent = Array.isArray(module.content) ? 
-                      [...module.content] : 
-                      Array(module.settings?.columns || 2).fill('');
-                    newContent[index] = e.target.value;
-                    updateModule(module.id, { content: newContent });
-                  }}
-                  className="w-full p-2 border border-gray-200 rounded resize-y min-h-[100px] focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-                  placeholder={`Contenu de la colonne ${index + 1}...`}
-                />
-              </div>
-            ))}
-          </div>
-        )}
-
-        {module.type === 'html' && (
-          <div className="bg-white border border-gray-200 rounded p-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Code HTML</label>
-            <textarea
-              value={module.content as string || ''}
-              onChange={(e) => updateModule(module.id, { content: e.target.value })}
-              rows={10}
-              className="w-full font-mono p-2 border border-gray-300 rounded resize-y focus:outline-none focus:ring-2 focus:ring-[#841b60]"
-              placeholder="<div>Mon bloc HTML</div>"
-            />
-            <div className="mt-4 border-t pt-4">
-              <p className="text-sm text-gray-500 mb-1">Aperçu :</p>
-              <div
-                className="bg-gray-50 p-4 border rounded"
-                dangerouslySetInnerHTML={{ __html: module.content as string || '<p>(vide)</p>' }}
-              />
-            </div>
-          </div>
-        )}
-      </div>
+      {module.content}
     </div>
   );
+};
+
+export const renderImage = (module: NewsletterModule) => {
+  return (
+    <div
+      style={{
+        padding: module.settings.padding || '10px',
+        backgroundColor: module.settings.backgroundColor || 'transparent',
+        textAlign: module.settings.textAlign || 'center',
+      }}
+    >
+      <img
+        src={module.settings.imageUrl || ''}
+        alt="Newsletter Image"
+        style={{
+          width: module.settings.width || 'auto',
+          height: module.settings.height || 'auto',
+          borderRadius: module.settings.borderRadius || '0',
+        }}
+      />
+    </div>
+  );
+};
+
+export const renderButton = (module: NewsletterModule) => {
+  return (
+    <div
+      style={{
+        padding: module.settings.padding || '10px',
+        backgroundColor: module.settings.backgroundColor || 'transparent',
+        textAlign: module.settings.textAlign || 'center',
+      }}
+    >
+      <a
+        href={module.settings.href || '#'}
+        style={{
+          backgroundColor: '#841b60',
+          color: '#fff',
+          padding: '10px 20px',
+          textDecoration: 'none',
+          borderRadius: module.settings.borderRadius || '5px',
+          fontSize: module.settings.fontSize || '16px',
+        }}
+      >
+        {module.content}
+      </a>
+    </div>
+  );
+};
+
+export const renderSocial = (module: NewsletterModule) => {
+  // Convert the array of social links to a proper string value
+  const socialLinks = Array.isArray(module.content) ? module.content.join(',') : module.content || '';
+
+  return (
+    <div
+      style={{
+        padding: module.settings.padding || '10px',
+        backgroundColor: module.settings.backgroundColor || 'transparent',
+        textAlign: module.settings.textAlign || 'center',
+      }}
+    >
+      {socialLinks}
+    </div>
+  );
+};
+
+export const renderColumns = (module: NewsletterModule) => {
+  const numColumns = parseInt(module.settings.columns || '2', 10);
+  const columnWidth = 100 / numColumns + '%';
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        padding: module.settings.padding || '10px',
+        backgroundColor: module.settings.backgroundColor || 'transparent',
+        gap: module.settings.spacing || '10px',
+      }}
+    >
+      {Array.isArray(module.content) &&
+        module.content.map((item, index) => (
+          <div
+            key={index}
+            style={{
+              width: columnWidth,
+              textAlign: module.settings.textAlign || 'left',
+              verticalAlign: module.settings.verticalAlignment || 'top',
+            }}
+          >
+            {item}
+          </div>
+        ))}
+    </div>
+  );
+};
+
+export const renderDivider = (module: NewsletterModule) => {
+  return (
+    <div
+      style={{
+        padding: module.settings.padding || '10px',
+        backgroundColor: module.settings.backgroundColor || 'transparent',
+        textAlign: module.settings.textAlign || 'center',
+      }}
+    >
+      <hr style={{ border: '1px solid #ccc' }} />
+    </div>
+  );
+};
+
+const ModuleRenderer = ({ module }: { module: NewsletterModule }) => {
+  switch (module.type) {
+    case 'text':
+      return renderText(module);
+    case 'image':
+      return renderImage(module);
+    case 'button':
+      return renderButton(module);
+    case 'social':
+      return renderSocial(module);
+    case 'columns':
+      return renderColumns(module);
+    case 'divider':
+      return renderDivider(module);
+    default:
+      return <div>Unknown module type: {module.type}</div>;
+  }
 };
 
 export default ModuleRenderer;

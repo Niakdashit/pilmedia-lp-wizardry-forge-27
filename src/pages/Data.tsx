@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Search, Filter, Download, Settings } from 'lucide-react';
-// Remove ChevronDown and Plus if they're not used
 
 const Data: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
@@ -58,6 +57,7 @@ const Data: React.FC = () => {
                     id="options-menu"
                     aria-haspopup="true"
                     aria-expanded="true"
+                    onClick={() => setFilterStatus(filterStatus === 'all' ? 'active' : 'all')}
                   >
                     Filtrer
                     <Filter className="-mr-1 ml-2 h-5 w-5" aria-hidden="true" />

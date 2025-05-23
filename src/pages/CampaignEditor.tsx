@@ -23,7 +23,7 @@ const CampaignEditor: React.FC = () => {
   const campaignType = searchParams.get('type');
   
   const [activeTab, setActiveTab] = useState('general');
-  const [showPreview] = useState(false);
+  const showPreview = false; // Changed from useState to avoid unused setter
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   
   const [campaign, setCampaign] = useState<Campaign>({
@@ -230,23 +230,23 @@ const CampaignEditor: React.FC = () => {
           
           <div className="flex-1 overflow-y-auto p-6">
             {activeTab === 'general' && (
-              <CampaignGeneral {...getCampaignProps()} />
+              <CampaignGeneral campaign={campaign} setCampaign={setCampaign} />
             )}
             
             {activeTab === 'content' && (
-              <CampaignContent {...getCampaignProps()} />
+              <CampaignContent campaign={campaign} setCampaign={setCampaign} />
             )}
 
             {activeTab === 'screens' && (
-              <CampaignScreens {...getCampaignProps()} />
+              <CampaignScreens campaign={campaign} setCampaign={setCampaign} />
             )}
             
             {activeTab === 'design' && (
-              <CampaignDesign {...getCampaignProps()} />
+              <CampaignDesign campaign={campaign} setCampaign={setCampaign} />
             )}
 
             {activeTab === 'settings' && (
-              <CampaignSettings {...getCampaignProps()} />
+              <CampaignSettings campaign={campaign} setCampaign={setCampaign} />
             )}
           </div>
         </div>

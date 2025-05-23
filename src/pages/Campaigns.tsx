@@ -74,6 +74,17 @@ const ActionModal: React.FC<ActionModalProps> = ({ isOpen, onClose, campaign, po
   );
 };
 
+// Helper function to get status text
+const getStatusText = (status: string): string => {
+  switch (status) {
+    case 'active': return 'Actif';
+    case 'draft': return 'Brouillon';
+    case 'scheduled': return 'Programmé';
+    case 'ended': return 'Terminé';
+    default: return 'Inconnu';
+  }
+};
+
 const Campaigns: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');

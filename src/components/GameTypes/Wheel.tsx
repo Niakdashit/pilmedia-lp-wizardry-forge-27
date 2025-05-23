@@ -5,13 +5,23 @@ interface WheelProps {
   segments: string[];
   colors: string[];
   onSpinEnd: (segment: string) => void;
+  config?: {
+    segments: WheelSegment[];
+    colors: string[];
+  };
+  onConfigChange?: (config: any) => void;
 }
 
-const Wheel: React.FC<WheelProps> = ({ segments, colors, onSpinEnd }) => {
+interface WheelSegment {
+  text: string;
+  isWinning: boolean;
+}
+
+const Wheel: React.FC<WheelProps> = ({ segments, colors, onSpinEnd, config, onConfigChange }) => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const [spinning, setSpinning] = React.useState(false);
   const [result, setResult] = React.useState<string | null>(null);
-  const [spinDuration, setSpinDuration] = React.useState(5000);
+  const spinDuration = 5000;
   const [spinSpeed, setSpinSpeed] = React.useState(1);
 
   React.useEffect(() => {

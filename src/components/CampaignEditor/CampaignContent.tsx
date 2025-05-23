@@ -1,8 +1,7 @@
-
 import React, { useState } from 'react';
 import { Quiz, Wheel, Scratch, Swiper } from '../GameTypes';
 import { Palette, Type, Square, Box } from 'lucide-react';
-import { Campaign } from '../../types/campaign';
+import { Campaign, WheelSegment, SwiperCard } from '../../types/campaign';
 
 interface CampaignContentProps {
   campaign: Campaign;
@@ -52,11 +51,19 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
             }} 
           />
         );
-      case 'wheel':
+      case 'wheel': {
+        const segmentTexts = campaign.gameConfig.wheel.segments.map(s => s.text);
+        const wheelColors = campaign.gameConfig.wheel.colors;
+        
         return (
           <Wheel 
-            config={campaign.gameConfig.wheel} 
-            onConfigChange={(config) => {
+            segments={segmentTexts}
+            colors={wheelColors}
+            onSpinEnd={(segment: string) => {
+              console.log("Wheel stopped at:", segment);
+            }}
+            config={campaign.gameConfig.wheel}
+            onConfigChange={(config: { segments: WheelSegment[]; colors: string[] }) => {
               setCampaign((prev: Campaign) => ({
                 ...prev,
                 gameConfig: {
@@ -67,11 +74,15 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
             }} 
           />
         );
+      }
       case 'scratch':
         return (
           <Scratch 
             config={campaign.gameConfig.scratch} 
-            onConfigChange={(config) => {
+            onComplete={() => {
+              console.log("Scratch completed");
+            }}
+            onConfigChange={(config: { image: string; revealPercentage: number }) => {
               setCampaign((prev: Campaign) => ({
                 ...prev,
                 gameConfig: {
@@ -86,7 +97,7 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
         return (
           <Swiper 
             config={campaign.gameConfig.swiper} 
-            onConfigChange={(config) => {
+            onConfigChange={(config: { cards: SwiperCard[]; swipeThreshold: number }) => {
               setCampaign((prev: Campaign) => ({
                 ...prev,
                 gameConfig: {

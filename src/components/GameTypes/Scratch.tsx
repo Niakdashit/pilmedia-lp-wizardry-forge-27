@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Laptop } from 'lucide-react';
 
@@ -7,9 +8,13 @@ interface ScratchProps {
     revealPercentage: number;
   };
   onComplete: () => void;
+  onConfigChange?: (config: {
+    image: string;
+    revealPercentage: number;
+  }) => void;
 }
 
-const Scratch: React.FC<ScratchProps> = ({ config, onComplete }) => {
+const Scratch: React.FC<ScratchProps> = ({ config, onComplete, onConfigChange }) => {
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
   const [isScratching, setIsScratching] = React.useState(false);
   const [revealedPercentage, setRevealedPercentage] = React.useState(0);

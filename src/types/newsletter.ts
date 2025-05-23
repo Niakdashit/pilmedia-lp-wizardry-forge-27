@@ -1,47 +1,41 @@
 
-export interface ModuleSettings {
-  url?: string;
-  columns?: number;
-  align?: 'left' | 'center' | 'right';
-  color?: string;
-  backgroundColor?: string;
-  borderColor?: string;
-  borderWidth?: string;
-  borderRadius?: string;
-  padding?: string;
-  margin?: string;
-  width?: string;
-  height?: string;
-  spacing?: number;
-  verticalAlignment?: string;
-  // Social links
+export interface SocialLinks {
   facebook?: string;
   twitter?: string;
   instagram?: string;
   linkedin?: string;
   youtube?: string;
-  website?: string;
-  [key: string]: any;
 }
 
 export interface NewsletterModule {
   id: string;
   type: string;
   content: string | string[];
-  settings: ModuleSettings;
+  settings: {
+    padding?: string;
+    backgroundColor?: string;
+    textAlign?: string;
+    color?: string;
+    fontSize?: string;
+    width?: string;
+    height?: string;
+    href?: string;
+    borderRadius?: string;
+    imageUrl?: string;
+    socialLinks?: SocialLinks;
+    columns?: number;
+    spacing?: string;
+    verticalAlignment?: string;
+  };
 }
 
-export interface EditorSettings {
-  title: string;
-  subject: string;
-  preheader: string;
-  fromName: string;
-  fromEmail: string;
-  replyTo: string;
-  backgroundColor: string;
-  contentWidth: string;
-  fontFamily: string;
-  fontSize: string;
-  textColor: string;
-  linkColor: string;
+export interface EmailTemplate {
+  id: string;
+  name: string;
+  modules: NewsletterModule[];
+  settings: {
+    backgroundColor: string;
+    contentWidth: string;
+    fontFamily: string;
+  };
 }
