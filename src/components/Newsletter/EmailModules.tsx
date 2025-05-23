@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { 
   Image as ImageIcon, 
@@ -107,9 +108,9 @@ export const moduleCategories = [
   { id: 'analytics', label: 'Analytique' },
   { id: 'footer', label: 'Pied de page' },
   { id: 'advanced', label: 'Avancé' }
-  { id: 'advanced', label: 'Avancé' },
-  { id: 'content', label: 'Contenu' },
+];
 
+export const additionalModules = [
   {
     id: 'video',
     type: 'video',
