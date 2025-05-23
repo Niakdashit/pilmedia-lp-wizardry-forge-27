@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Color from 'color';
 import confetti from 'canvas-confetti';
-import { Quiz, Wheel, Scratch, Swiper } from '../GameTypes';
-import { Campaign, QuizQuestion, WheelSegment, SwiperCard } from '../../types/campaign';
+import { Wheel, Scratch, Swiper } from '../GameTypes';
+import { Campaign, QuizQuestion } from '../../types/campaign';
 
 interface PreviewContentProps {
   campaign: Campaign;
@@ -16,10 +16,10 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
   const [showFeedback, setShowFeedback] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
   
-  // We use these state variables in handlers, keeping them
-  const [scratchRevealed, setScratchRevealed] = useState(false);
-  const [wheelResult, setWheelResult] = useState<string | null>(null);
-  const [swipeResult, setSwipeResult] = useState<'like' | 'dislike' | null>(null);
+  // We'll keep these state variables for future usage but mark them with underscore to prevent unused variable warnings
+  const [_scratchRevealed, setScratchRevealed] = useState(false);
+  const [_wheelResult, setWheelResult] = useState<string | null>(null);
+  const [_swipeResult, setSwipeResult] = useState<'like' | 'dislike' | null>(null);
 
   useEffect(() => {
     setCurrentQuestionIndex(0);
@@ -263,7 +263,9 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
                 cards: campaign.gameConfig.swiper?.cards || [],
                 swipeThreshold: campaign.gameConfig.swiper?.swipeThreshold || 50
               }}
-              onSwipeResult={(result: boolean) => handleSwipeComplete(result ? 'like' : 'dislike')}
+              onConfigChange={(updatedConfig) => {
+                console.log('Swiper config updated:', updatedConfig);
+              }}
             />
           </div>
         );

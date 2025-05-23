@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Plus, Trash2, Image as ImageIcon, Type, Heart, X } from 'lucide-react';
 
 interface SwiperProps {
-  config: any;
-  onConfigChange: (config: any) => void;
+  config?: any;
+  onConfigChange?: (config: any) => void;
+  onSwipeResult?: (result: boolean) => void;
 }
 
-const Swiper: React.FC<SwiperProps> = ({ config, onConfigChange }) => {
+const Swiper: React.FC<SwiperProps> = ({ config, onConfigChange, onSwipeResult }) => {
   const updateConfig = (field: string, value: any) => {
     onConfigChange({
       ...config,
@@ -39,6 +40,13 @@ const Swiper: React.FC<SwiperProps> = ({ config, onConfigChange }) => {
       [field]: value
     };
     updateConfig('cards', newCards);
+  };
+
+  // Add a function to handle swipe events
+  const handleSwipe = (direction: boolean) => {
+    if (onSwipeResult) {
+      onSwipeResult(direction);
+    }
   };
 
   return (
@@ -203,6 +211,24 @@ const Swiper: React.FC<SwiperProps> = ({ config, onConfigChange }) => {
           ))}
         </div>
       </div>
+
+      {/* Add test buttons for swipe simulation when in edit mode */}
+      {onSwipeResult && (
+        <div className="mt-4 flex justify-center space-x-4">
+          <button 
+            onClick={() => handleSwipe(true)}
+            className="px-4 py-2 bg-green-500 text-white rounded-lg"
+          >
+            Test Like Swipe
+          </button>
+          <button 
+            onClick={() => handleSwipe(false)}
+            className="px-4 py-2 bg-red-500 text-white rounded-lg"
+          >
+            Test Dislike Swipe
+          </button>
+        </div>
+      )}
     </div>
   );
 };
