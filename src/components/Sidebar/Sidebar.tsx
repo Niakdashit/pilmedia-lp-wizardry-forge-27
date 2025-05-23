@@ -78,10 +78,10 @@ const Sidebar: React.FC = () => {
                 : 'text-gray-600 hover:text-[#841b60] hover:bg-[#f8f0f5]'
             } transition-colors duration-200`}
           >
-            <span className="flex items-center justify-center w-5">
+            <span className="flex items-center justify-center min-w-[20px]">
               {item.icon}
             </span>
-            {!sidebarCollapsed && <span className="ml-3">{item.name}</span>}
+            {!sidebarCollapsed && <span className="ml-3 truncate">{item.name}</span>}
           </Link>
         ))}
       </nav>
@@ -91,10 +91,10 @@ const Sidebar: React.FC = () => {
           to="/logout"
           className="flex items-center px-6 py-3 text-gray-600 hover:text-[#841b60] hover:bg-[#f8f0f5] transition-colors duration-200"
         >
-          <span className="flex items-center justify-center w-5">
+          <span className="flex items-center justify-center min-w-[20px]">
             <LogOut className="w-5 h-5" />
           </span>
-          {!sidebarCollapsed && <span className="ml-3">Déconnexion</span>}
+          {!sidebarCollapsed && <span className="ml-3 truncate">Déconnexion</span>}
         </Link>
       </div>
     </div>

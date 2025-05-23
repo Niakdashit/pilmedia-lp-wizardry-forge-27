@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Clock, Calendar, Users, PlayCircle, PlusCircle, Settings, Edit, Trash2 } from 'lucide-react';
 
@@ -13,7 +12,7 @@ interface Automation {
 }
 
 const AutomateTab: React.FC = () => {
-  const [automations, setAutomations] = useState<Automation[]>([
+  const [automations] = useState<Automation[]>([
     {
       id: '1',
       name: 'Email de bienvenue',

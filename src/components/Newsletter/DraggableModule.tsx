@@ -67,8 +67,8 @@ export const DraggableModule: React.FC<DraggableModuleProps> = ({
       }`}></div>
       
       {/* Barre d'outils */}
-      <div className={`absolute -top-10 left-1/2 transform -translate-x-1/2 bg-white shadow-md rounded-md flex items-center transition-all duration-200 ${
-        showControls ? 'opacity-100 visible' : 'opacity-0 invisible'
+      <div className={`absolute -top-10 left-1/2 transform -translate-x-1/2 bg-white shadow-md rounded-md flex items-center transition-all duration-200 z-10 ${
+        showControls ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'
       }`}>
         <button 
           {...attributes} 

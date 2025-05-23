@@ -41,7 +41,7 @@ export interface GameConfig {
     showCorrectAnswers: boolean;
   };
   wheel: {
-    segments: WheelSegment[];
+    segments: WheelSegment[] | string[]; // Updated to accept both types for backward compatibility
     colors: string[];
   };
   scratch: {
