@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Save } from 'lucide-react';
 
@@ -8,7 +7,7 @@ interface SettingsTabProps {
   onDeleteModule: (id: string) => void;
 }
 
-const SettingsTab: React.FC<SettingsTabProps> = ({ selectedModule, onUpdateModule }) => {
+const SettingsTab: React.FC<SettingsTabProps> = () => {
   const [settings, setSettings] = useState({
     senderName: "Leadya Marketing",
     senderEmail: "marketing@leadya.com",

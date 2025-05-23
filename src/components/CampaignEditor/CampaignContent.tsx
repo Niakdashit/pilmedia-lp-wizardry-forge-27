@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Quiz, Wheel, Scratch, Swiper } from '../GameTypes';
 import { Palette, Type, Square, Box } from 'lucide-react';
@@ -52,7 +53,13 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
           />
         );
       case 'wheel': {
-        const segmentTexts = campaign.gameConfig.wheel.segments.map(s => s.text);
+        // Convert the segments to string[] for the Wheel component
+        const segmentTexts = Array.isArray(campaign.gameConfig.wheel.segments) 
+          ? campaign.gameConfig.wheel.segments.map(segment => 
+              typeof segment === 'string' ? segment : segment.text
+            )
+          : [];
+        
         const wheelColors = campaign.gameConfig.wheel.colors;
         
         return (
@@ -62,13 +69,25 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
             onSpinComplete={(segment: string) => {
               console.log("Wheel stopped at:", segment);
             }}
-            config={campaign.gameConfig.wheel}
-            onConfigChange={(config: { segments: WheelSegment[]; colors: string[] }) => {
+            config={{
+              segments: segmentTexts,
+              colors: wheelColors
+            }}
+            onConfigChange={(config) => {
+              // Convert string[] back to WheelSegment[] if necessary
+              const updatedSegments = config.segments.map(text => ({
+                text,
+                isWinning: text !== 'Réessayez' // Default logic for determining winning segments
+              }));
+              
               setCampaign((prev: Campaign) => ({
                 ...prev,
                 gameConfig: {
                   ...prev.gameConfig,
-                  wheel: config
+                  wheel: {
+                    segments: updatedSegments,
+                    colors: config.colors
+                  }
                 }
               }));
             }} 

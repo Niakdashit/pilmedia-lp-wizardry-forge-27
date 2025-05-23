@@ -6,8 +6,8 @@ interface WheelProps {
   segments?: string[];
   colors?: string[];
   onSpinComplete?: (segment: string) => void;
-  onConfigChange?: (config: any) => void;
   onSpinEnd?: (segment: string) => void;
+  onConfigChange?: (config: { segments: string[]; colors: string[] }) => void;
   config?: {
     segments: string[];
     colors: string[];
@@ -19,7 +19,8 @@ const Wheel: React.FC<WheelProps> = ({
   colors = ['#E57373', '#81C784', '#64B5F6', '#FFD54F', '#BA68C8', '#4FC3F7', '#FFB74D', '#AED581'],
   onSpinComplete,
   onSpinEnd,
-  config
+  config,
+  onConfigChange
 }) => {
   const wheelSegments = config?.segments || segments;
   const wheelColors = config?.colors || colors;
