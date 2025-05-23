@@ -9,14 +9,32 @@ export interface CampaignScreen {
   showReplayButton?: boolean;
 }
 
+export interface QuizQuestion {
+  question: string;
+  options: string[];
+  correctAnswer: number;
+  explanation?: string;
+}
+
+export interface WheelSegment {
+  text: string;
+  isWinning: boolean;
+}
+
+export interface SwiperCard {
+  image: string;
+  text: string;
+  isWinning: boolean;
+}
+
 export interface GameConfig {
   quiz: {
-    questions: any[];
+    questions: QuizQuestion[];
     timeLimit: number;
     showCorrectAnswers: boolean;
   };
   wheel: {
-    segments: any[];
+    segments: WheelSegment[];
     colors: string[];
   };
   scratch: {
@@ -24,7 +42,7 @@ export interface GameConfig {
     revealPercentage: number;
   };
   swiper: {
-    cards: any[];
+    cards: SwiperCard[];
     swipeThreshold: number;
   };
 }
@@ -46,6 +64,13 @@ export interface CampaignDesign {
   fontWeight: string;
   logoUrl: string;
   backgroundImage: string;
+  frame?: {
+    maxWidth?: number;
+    maxHeight?: number;
+    padding?: number;
+    position?: string;
+    show?: boolean;
+  };
 }
 
 export interface CampaignRewards {

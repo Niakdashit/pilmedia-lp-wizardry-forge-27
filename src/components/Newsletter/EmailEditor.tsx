@@ -1,9 +1,12 @@
+
 import React from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import Placeholder from '@tiptap/extension-placeholder';
+import TextAlign from '@tiptap/extension-text-align';
+import Underline from '@tiptap/extension-underline';
 import { 
   Bold, 
   Italic, 
@@ -18,7 +21,7 @@ import {
   Heading1,
   Heading2,
   Strikethrough,
-  Underline,
+  Underline as UnderlineIcon,
   Code,
   Undo,
   Redo,
@@ -36,6 +39,10 @@ const EmailEditor: React.FC<EmailEditorProps> = ({ content, onChange }) => {
       StarterKit,
       Image,
       Link,
+      TextAlign.configure({
+        types: ['heading', 'paragraph'],
+      }),
+      Underline,
       Placeholder.configure({
         placeholder: 'Commencez à écrire votre newsletter...',
       }),
@@ -64,7 +71,15 @@ const EmailEditor: React.FC<EmailEditorProps> = ({ content, onChange }) => {
     }
   };
 
-  const toolbarGroups = [
+  interface ToolbarItem {
+    icon: JSX.Element;
+    title: string;
+    action: () => void;
+    isActive?: () => boolean;
+    isDisabled?: () => boolean;
+  }
+
+  const toolbarGroups: ToolbarItem[][] = [
     [
       {
         icon: <Undo className="w-4 h-4" />,
@@ -113,7 +128,7 @@ const EmailEditor: React.FC<EmailEditorProps> = ({ content, onChange }) => {
         isActive: () => editor.isActive('italic'),
       },
       {
-        icon: <Underline className="w-4 h-4" />,
+        icon: <UnderlineIcon className="w-4 h-4" />,
         title: 'Souligné',
         action: () => editor.chain().focus().toggleUnderline().run(),
         isActive: () => editor.isActive('underline'),
@@ -197,9 +212,9 @@ const EmailEditor: React.FC<EmailEditorProps> = ({ content, onChange }) => {
                   <button
                     key={itemIndex}
                     onClick={item.action}
-                    disabled={item.isDisabled?.()}
+                    disabled={item.isDisabled ? item.isDisabled() : false}
                     className={`p-2 rounded hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed ${
-                      item.isActive?.() ? 'bg-gray-200' : ''
+                      item.isActive && item.isActive() ? 'bg-gray-200' : ''
                     }`}
                     title={item.title}
                   >

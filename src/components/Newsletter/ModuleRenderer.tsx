@@ -1,13 +1,16 @@
+
 import React from 'react';
 import { useNewsletterStore } from '@/stores/newsletterStore';
 import { Trash2, GripVertical, ChevronUp, ChevronDown, Copy } from 'lucide-react';
+import { NewsletterModule } from '@/types/newsletter';
 
 interface ModuleRendererProps {
-  module: any;
+  module: NewsletterModule;
+  preview?: boolean;
 }
 
 export const ModuleRenderer: React.FC<ModuleRendererProps> = ({ module }) => {
-  const { updateModule, removeModule, selectModule, reorderModules } = useNewsletterStore();
+  const { updateModule, removeModule, selectModule } = useNewsletterStore();
 
   const handleMoveUp = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -21,11 +24,7 @@ export const ModuleRenderer: React.FC<ModuleRendererProps> = ({ module }) => {
 
   const handleDuplicate = (e: React.MouseEvent) => {
     e.stopPropagation();
-    const newModule = {
-      ...module,
-      id: `module-${Date.now()}`
-    };
-    // Add duplicate module
+    // Add duplicate module implementation
   };
 
   return (
@@ -70,7 +69,7 @@ export const ModuleRenderer: React.FC<ModuleRendererProps> = ({ module }) => {
       <div className="pl-6 pr-24">
         {module.type === 'text' && (
           <textarea
-            value={module.content || ''}
+            value={module.content as string || ''}
             onChange={(e) => updateModule(module.id, { content: e.target.value })}
             className="w-full p-2 border border-gray-200 rounded resize-y min-h-[100px] focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
             placeholder="Saisissez votre texte ici..."
@@ -81,14 +80,14 @@ export const ModuleRenderer: React.FC<ModuleRendererProps> = ({ module }) => {
           <div className="space-y-2">
             <input
               type="text"
-              value={module.content || ''}
+              value={module.content as string || ''}
               onChange={(e) => updateModule(module.id, { content: e.target.value })}
               className="w-full p-2 border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
               placeholder="URL de l'image..."
             />
             {module.content && (
               <img
-                src={module.content}
+                src={module.content as string}
                 alt=""
                 className="max-w-full h-auto rounded"
               />
@@ -167,9 +166,11 @@ export const ModuleRenderer: React.FC<ModuleRendererProps> = ({ module }) => {
             {Array.from({ length: module.settings?.columns || 2 }).map((_, index) => (
               <div key={index} className="border border-gray-200 rounded p-4">
                 <textarea
-                  value={module.content?.[index] || ''}
+                  value={Array.isArray(module.content) ? (module.content[index] || '') : ''}
                   onChange={(e) => {
-                    const newContent = [...(module.content || [])];
+                    const newContent = Array.isArray(module.content) ? 
+                      [...module.content] : 
+                      [];
                     newContent[index] = e.target.value;
                     updateModule(module.id, { content: newContent });
                   }}
@@ -181,27 +182,25 @@ export const ModuleRenderer: React.FC<ModuleRendererProps> = ({ module }) => {
           </div>
         )}
 
-{module.type === 'html' && (
-  <div className="bg-white border border-gray-200 rounded p-4">
-    <label className="block text-sm font-medium text-gray-700 mb-2">Code HTML</label>
-    <textarea
-      value={module.content || ''}
-      onChange={(e) => updateModule(module.id, { content: e.target.value })}
-      rows={10}
-      className="w-full font-mono p-2 border border-gray-300 rounded resize-y focus:outline-none focus:ring-2 focus:ring-[#841b60]"
-      placeholder="<div>Mon bloc HTML</div>"
-    />
-    <div className="mt-4 border-t pt-4">
-      <p className="text-sm text-gray-500 mb-1">Aperçu :</p>
-      <div
-        className="bg-gray-50 p-4 border rounded"
-        dangerouslySetInnerHTML={{ __html: module.content || '<p>(vide)</p>' }}
-      />
-    </div>
-  </div>
-)}
-
-        
+        {module.type === 'html' && (
+          <div className="bg-white border border-gray-200 rounded p-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">Code HTML</label>
+            <textarea
+              value={module.content as string || ''}
+              onChange={(e) => updateModule(module.id, { content: e.target.value })}
+              rows={10}
+              className="w-full font-mono p-2 border border-gray-300 rounded resize-y focus:outline-none focus:ring-2 focus:ring-[#841b60]"
+              placeholder="<div>Mon bloc HTML</div>"
+            />
+            <div className="mt-4 border-t pt-4">
+              <p className="text-sm text-gray-500 mb-1">Aperçu :</p>
+              <div
+                className="bg-gray-50 p-4 border rounded"
+                dangerouslySetInnerHTML={{ __html: module.content as string || '<p>(vide)</p>' }}
+              />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

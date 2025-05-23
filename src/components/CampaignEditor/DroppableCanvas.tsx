@@ -1,7 +1,6 @@
-import React, { useState } from 'react';
-import { useSpring, animated } from 'react-spring';
+
+import React from 'react';
 import Color from 'color';
-import PreviewContent from './PreviewContent';
 
 interface DroppableCanvasProps {
   components: any[];
@@ -16,21 +15,9 @@ export const DroppableCanvas: React.FC<DroppableCanvasProps> = ({
   components,
   selectedComponent,
   onComponentSelect,
-  onComponentUpdate,
   backgroundImage,
   campaign
 }) => {
-  const [currentScreen, setCurrentScreen] = useState<'start' | 'game' | 'end'>('start');
-
-  const getContrastColor = (bgColor: string) => {
-    try {
-      const color = Color(bgColor);
-      return color.isLight() ? '#000000' : '#FFFFFF';
-    } catch {
-      return '#000000';
-    }
-  };
-
   const getPositionStyles = (position: string) => {
     const styles: React.CSSProperties = {
       position: 'absolute',
