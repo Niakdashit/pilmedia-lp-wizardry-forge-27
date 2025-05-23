@@ -8,7 +8,8 @@ interface CampaignDesignProps {
   setCampaign: React.Dispatch<React.SetStateAction<Campaign>>;
 }
 
-const CampaignDesign: React.FC<CampaignDesignProps> = ({ campaign, setCampaign }) => {
+// Mark unused props with underscore to avoid TypeScript warnings
+const CampaignDesign: React.FC<CampaignDesignProps> = (_props) => {
   return (
     <div className="p-6 bg-yellow-50 rounded-lg">
       <div className="flex items-start space-x-3">
