@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { DndContext, DragEndEvent, DragOverlay } from '@dnd-kit/core';
 import { Eye, Send, Save } from 'lucide-react';
@@ -13,9 +12,8 @@ import { NewsletterModule } from '../types/newsletter';
 const Newsletter: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'edit' | 'settings' | 'send' | 'automate'>('edit');
   const [showPreviewModal, setShowPreviewModal] = useState(false);
-  const { modules, addModule, updateModule, removeModule, selectModule, selectedModuleId } = useNewsletterStore();
+  const { modules, addModule, updateModule, removeModule, selectedModuleId } = useNewsletterStore();
   
-  // Remove the unused setSelectedModule useState declaration
   const selectedModule = modules.find(module => module.id === selectedModuleId);
 
   const handleDragEnd = (event: DragEndEvent) => {

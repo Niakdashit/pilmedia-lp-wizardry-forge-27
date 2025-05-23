@@ -11,6 +11,12 @@ import CampaignPreview from '../components/CampaignEditor/CampaignPreview';
 import PreviewModal from '../components/CampaignEditor/PreviewModal';
 import { Campaign } from '../types/campaign';
 
+// Create interfaces for component props
+interface CampaignComponentProps {
+  campaign: Campaign;
+  setCampaign: React.Dispatch<React.SetStateAction<Campaign>>;
+}
+
 const CampaignEditor: React.FC = () => {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
@@ -18,7 +24,7 @@ const CampaignEditor: React.FC = () => {
   const campaignType = searchParams.get('type');
   
   const [activeTab, setActiveTab] = useState('general');
-  const showPreview = false; // Changed from useState to avoid unused setter
+  const showPreview = false;
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   
   const [campaign, setCampaign] = useState<Campaign>({
@@ -119,9 +125,6 @@ const CampaignEditor: React.FC = () => {
       window.location.href = '/campaigns';
     }
   };
-
-  // Pass the props directly to each component without creating separate prop objects
-  // This avoids the TypeScript error since we're not trying to create intermediate objects
   
   return (
     <div className="h-[calc(100vh-3rem)] flex flex-col">
