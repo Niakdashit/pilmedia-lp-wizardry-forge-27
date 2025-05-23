@@ -1,139 +1,253 @@
 import React, { useState } from 'react';
-import { BarChart2, ChevronDown, AlertCircle, Plus } from 'lucide-react';
+import { Search, Filter, Calendar } from 'lucide-react';
 
 const Social: React.FC = () => {
-  const [selectedCampaign, setSelectedCampaign] = useState('');
-  
-  return (
-    <div className="-mx-6 -mt-6">
-      <div className="relative h-[100px] bg-[#841b60] overflow-hidden">
-        {/* Background pattern */}
-        <div className="absolute inset-10 opacity-[0.15]" 
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-            backgroundSize: '60px 60px',
-          }}
-        />
-        
-        {/* Content */}
-        <div className="relative h-full max-w-3xl mx-auto px-6 flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-white mb-4">Réseaux sociaux</h1>
-            <p className="text-white/80 text-lg max-w-2xl">
-            </p>
-          </div>
-          <button className="inline-flex items-center px-6 py-3 bg-white text-[#841b60] font-medium rounded-xl hover:bg-white/90 transition-all duration-200 shadow-lg hover:shadow-xl">
-            <Plus className="w-5 h-5 mr-2" />
-            Nouvelle Publication
-          </button>
-        </div>
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterStatus, setFilterStatus] = useState('all');
 
-        {/* Decorative bottom curve */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg
-            viewBox="0 0 1440 116"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-full"
-            preserveAspectRatio="none"
-            height="10"
-          >
-            <path
-              d="M0 116L60 96.3C120 76.7 240 37.3 360 21.7C480 6 600 14 720 34.7C840 55.3 960 89.7 1080 96.3C1200 103 1320 82 1380 71.5L1440 61V116H1380C1320 116 1200 116 1080 116C960 116 840 116 720 116C600 116 480 116 360 116C240 116 120 116 60 116H0Z"
-              fill="#ebf4f7"
-            />
-          </svg>
+  // Mock data for social campaigns
+  const socialCampaigns = [
+    {
+      id: 1,
+      name: 'Campagne Instagram Été',
+      platform: 'Instagram',
+      status: 'active',
+      startDate: '2023-06-01',
+      endDate: '2023-08-31',
+      budget: 1500,
+      engagement: 3240,
+      clicks: 1876,
+      conversions: 342
+    },
+    {
+      id: 2,
+      name: 'Promotion Facebook Rentrée',
+      platform: 'Facebook',
+      status: 'scheduled',
+      startDate: '2023-09-01',
+      endDate: '2023-09-30',
+      budget: 2000,
+      engagement: 0,
+      clicks: 0,
+      conversions: 0
+    },
+    {
+      id: 3,
+      name: 'Campagne LinkedIn B2B',
+      platform: 'LinkedIn',
+      status: 'ended',
+      startDate: '2023-03-15',
+      endDate: '2023-05-15',
+      budget: 3000,
+      engagement: 1560,
+      clicks: 876,
+      conversions: 124
+    },
+    {
+      id: 4,
+      name: 'Campagne Twitter Événement',
+      platform: 'Twitter',
+      status: 'draft',
+      startDate: '',
+      endDate: '',
+      budget: 1000,
+      engagement: 0,
+      clicks: 0,
+      conversions: 0
+    }
+  ];
+
+  // Filter campaigns based on search term and status
+  const filteredCampaigns = socialCampaigns.filter(campaign => {
+    const matchesSearch = campaign.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         campaign.platform.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter = filterStatus === 'all' || campaign.status === filterStatus;
+    
+    return matchesSearch && matchesFilter;
+  });
+
+  // Helper function to get status badge color
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'active': return 'bg-green-100 text-green-800';
+      case 'draft': return 'bg-gray-100 text-gray-800';
+      case 'scheduled': return 'bg-blue-100 text-blue-800';
+      case 'ended': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
+  };
+
+  // Helper function to get platform icon
+  const getPlatformIcon = (platform: string) => {
+    switch (platform.toLowerCase()) {
+      case 'facebook': return 'fab fa-facebook text-blue-600';
+      case 'instagram': return 'fab fa-instagram text-pink-600';
+      case 'twitter': return 'fab fa-twitter text-blue-400';
+      case 'linkedin': return 'fab fa-linkedin text-blue-800';
+      default: return 'fas fa-globe text-gray-600';
+    }
+  };
+
+  return (
+    <div className="container mx-auto px-4 py-6">
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl font-bold text-gray-800">Campagnes Social Media</h1>
+        <button className="bg-[#841b60] text-white px-4 py-2 rounded-lg hover:bg-[#6d164f] transition-colors duration-200">
+          Nouvelle Campagne
+        </button>
+      </div>
+
+      <div className="bg-white rounded-xl shadow-sm mb-6">
+        <div className="p-4 border-b border-gray-200">
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="relative flex-1">
+              <input
+                type="text"
+                placeholder="Rechercher une campagne..."
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+            </div>
+            
+            <div className="flex items-center gap-2">
+              <Filter className="text-gray-400 w-5 h-5" />
+              <select 
+                className="border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-[#841b60]"
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value)}
+              >
+                <option value="all">Tous les statuts</option>
+                <option value="active">Actif</option>
+                <option value="draft">Brouillon</option>
+                <option value="scheduled">Programmé</option>
+                <option value="ended">Terminé</option>
+              </select>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Calendar className="text-gray-400 w-5 h-5" />
+              <select 
+                className="border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-[#841b60]"
+              >
+                <option value="all">Toutes les périodes</option>
+                <option value="current">En cours</option>
+                <option value="upcoming">À venir</option>
+                <option value="past">Passées</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="bg-gray-50">
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Plateforme
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Campagne
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Statut
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Période
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Budget
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Performance
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {filteredCampaigns.map((campaign) => (
+                <tr 
+                  key={campaign.id}
+                  className="hover:bg-gray-50 transition-colors duration-200"
+                >
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center">
+                      <i className={`${getPlatformIcon(campaign.platform)} text-xl mr-2`}></i>
+                      <span>{campaign.platform}</span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="text-sm font-medium text-gray-900">{campaign.name}</div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(campaign.status)}`}>
+                      {campaign.status.charAt(0).toUpperCase() + campaign.status.slice(1)}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {campaign.startDate && campaign.endDate ? 
+                      `${new Date(campaign.startDate).toLocaleDateString()} - ${new Date(campaign.endDate).toLocaleDateString()}` : 
+                      'Non définie'}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    {campaign.budget.toLocaleString()} €
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {campaign.status === 'active' || campaign.status === 'ended' ? (
+                      <div className="flex space-x-4">
+                        <div>
+                          <div className="text-xs text-gray-500">Engagement</div>
+                          <div className="font-medium">{campaign.engagement.toLocaleString()}</div>
+                        </div>
+                        <div>
+                          <div className="text-xs text-gray-500">Clics</div>
+                          <div className="font-medium">{campaign.clicks.toLocaleString()}</div>
+                        </div>
+                        <div>
+                          <div className="text-xs text-gray-500">Conversions</div>
+                          <div className="font-medium">{campaign.conversions.toLocaleString()}</div>
+                        </div>
+                      </div>
+                    ) : (
+                      <span className="text-sm text-gray-500">Pas de données</span>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          
+          {filteredCampaigns.length === 0 && (
+            <div className="text-center py-10">
+              <p className="text-gray-500">Aucune campagne ne correspond à votre recherche.</p>
+            </div>
+          )}
         </div>
       </div>
 
-      <div className="px-6 space-y-6">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-          <div className="lg:col-span-2 space-y-6">
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h2 className="text-lg font-bold text-gray-800 mb-4">Publications</h2>
-              <div className="space-y-4">
-                {[1, 2, 3].map((post) => (
-                  <div key={post} className="border border-gray-200 rounded-lg p-4">
-                    <div className="flex items-start space-x-4">
-                      <div className="w-24 h-24 bg-gray-100 rounded flex items-center justify-center">
-                        <span className="text-gray-400">Image</span>
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-gray-600 mb-2">
-                          Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
-                          Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-                        </p>
-                        <div className="flex space-x-4 text-sm text-gray-500">
-                          <span>❤️ 245</span>
-                          <span>💬 23</span>
-                          <span>🔄 12</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h2 className="text-lg font-bold text-gray-800 mb-4">Comparatif multi-réseaux</h2>
-              <div className="space-y-4">
-                <div className="flex space-x-3">
-                  <select className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]">
-                    <option>Likes</option>
-                    <option>Commentaires</option>
-                    <option>Partages</option>
-                  </select>
-                  <button className="px-4 py-2 bg-[#841b60] text-white font-medium rounded-lg hover:bg-[#6d164f] transition-colors duration-200">
-                    Comparer
-                  </button>
-                </div>
-                <div className="h-64 border border-gray-200 rounded-lg flex items-center justify-center">
-                  <BarChart2 className="w-8 h-8 text-gray-300" />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-6">
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h2 className="text-lg font-bold text-gray-800 mb-4">Alertes</h2>
-              <div className="space-y-3">
-                <div className="flex items-start space-x-3 p-3 bg-red-50 text-red-800 rounded-lg">
-                  <AlertCircle className="w-5 h-5 flex-shrink-0" />
-                  <div>
-                    <p className="font-medium">Baisse d'engagement</p>
-                    <p className="text-sm">-15% cette semaine</p>
-                  </div>
-                </div>
-                <div className="flex items-start space-x-3 p-3 bg-yellow-50 text-yellow-800 rounded-lg">
-                  <AlertCircle className="w-5 h-5 flex-shrink-0" />
-                  <div>
-                    <p className="font-medium">Commentaire négatif</p>
-                    <p className="text-sm">2 nouveaux signalements</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h2 className="text-lg font-bold text-gray-800 mb-4">Performances</h2>
-              <div className="space-y-4">
-                <div className="flex justify-between items-center pb-2 border-b border-gray-200">
-                  <span className="text-gray-600">Engagement moyen</span>
-                  <span className="font-medium">4.8%</span>
-                </div>
-                <div className="flex justify-between items-center pb-2 border-b border-gray-200">
-                  <span className="text-gray-600">Meilleur post</span>
-                  <span className="font-medium">852 likes</span>
-                </div>
-                <div className="flex justify-between items-center pb-2 border-b border-gray-200">
-                  <span className="text-gray-600">Portée totale</span>
-                  <span className="font-medium">12.4k</span>
-                </div>
-              </div>
-            </div>
-          </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="bg-white rounded-xl shadow-sm p-6">
+          <h3 className="text-lg font-semibold mb-2">Engagement Total</h3>
+          <p className="text-3xl font-bold text-[#841b60]">4,800</p>
+          <p className="text-sm text-gray-500">+12% par rapport au mois dernier</p>
+        </div>
+        
+        <div className="bg-white rounded-xl shadow-sm p-6">
+          <h3 className="text-lg font-semibold mb-2">Clics</h3>
+          <p className="text-3xl font-bold text-[#841b60]">2,752</p>
+          <p className="text-sm text-gray-500">+8% par rapport au mois dernier</p>
+        </div>
+        
+        <div className="bg-white rounded-xl shadow-sm p-6">
+          <h3 className="text-lg font-semibold mb-2">Conversions</h3>
+          <p className="text-3xl font-bold text-[#841b60]">466</p>
+          <p className="text-sm text-gray-500">+15% par rapport au mois dernier</p>
+        </div>
+        
+        <div className="bg-white rounded-xl shadow-sm p-6">
+          <h3 className="text-lg font-semibold mb-2">ROI</h3>
+          <p className="text-3xl font-bold text-[#841b60]">324%</p>
+          <p className="text-sm text-gray-500">+5% par rapport au mois dernier</p>
         </div>
       </div>
     </div>

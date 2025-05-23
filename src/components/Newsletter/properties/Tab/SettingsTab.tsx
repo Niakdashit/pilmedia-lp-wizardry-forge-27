@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Sparkles, Save, Trash2, Eye } from 'lucide-react';
+import { Sparkles, Save, Eye } from 'lucide-react';
 import { useNewsletterStore } from '@/stores/newsletterStore';
 
 interface Template {
@@ -18,13 +18,6 @@ export const SettingsTab: React.FC = () => {
   const [showPreview, setShowPreview] = useState(false);
   const [templates, setTemplates] = useState<Template[]>([]);
   const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
-  const [editorSettings] = useState({
-    defaultMode: 'visual',
-    fontSize: '14',
-    realtimePreview: true,
-    autosave: true,
-    aiEnabled: true,
-  });
 
   const { setFromGeneratedHTML, loadGeneratedAsModules } = useNewsletterStore();
 
@@ -74,22 +67,11 @@ export const SettingsTab: React.FC = () => {
     setGeneratedContent('');
   };
 
-  const handleDeleteTemplate = (id: string) => {
-    setTemplates(templates.filter((t) => t.id !== id));
-    if (selectedTemplate?.id === id) setSelectedTemplate(null);
-  };
-
-  const handleTemplateSelect = (template: Template) => {
-    setSelectedTemplate(template);
-    setPrompt(template.prompt);
-    setGeneratedContent(template.content);
-  };
-
   const handleExportToEditor = () => {
     if (!generatedContent) return;
     setFromGeneratedHTML(generatedContent);
     loadGeneratedAsModules();
-    alert('Le template a bien été transféré dans l’onglet Modifier.');
+    alert('Le template a bien été transféré dans l\'onglet Modifier.');
   };
 
   return (

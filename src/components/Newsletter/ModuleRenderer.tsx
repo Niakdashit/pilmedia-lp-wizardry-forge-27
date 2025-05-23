@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNewsletterStore } from '@/stores/newsletterStore';
 import { Trash2, GripVertical, ChevronUp, ChevronDown, Copy } from 'lucide-react';
@@ -26,14 +25,6 @@ export const ModuleRenderer: React.FC<ModuleRendererProps> = ({ module }) => {
   const handleDuplicate = (e: React.MouseEvent) => {
     e.stopPropagation();
     // Add duplicate module implementation
-  };
-
-  // Helper function to handle column content (not used directly in this file - moved to separate component)
-  const renderColumnContent = (content: string | string[], index: number) => {
-    if (Array.isArray(content) && content[index]) {
-      return content[index];
-    }
-    return '';
   };
 
   return (

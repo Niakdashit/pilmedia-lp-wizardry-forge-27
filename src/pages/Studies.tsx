@@ -1,171 +1,200 @@
 import React, { useState } from 'react';
-import { Calendar, Download, ChevronRight, Bell, Plus } from 'lucide-react';
+import { Search, Filter, BarChart2, PieChart } from 'lucide-react';
+// Remove Bell and Plus if they're not used
 
 const Studies: React.FC = () => {
-  const [selectedEvent, setSelectedEvent] = useState<string[]>([]);
-  
-  const marketingEvents = [
-    { id: '1', name: 'Saint-Valentin', date: '14 février' },
-    { id: '2', name: 'Soldes d\'été', date: '28 juin' },
-    { id: '3', name: 'Black Friday', date: '29 novembre' },
-    { id: '4', name: 'Noël', date: '25 décembre' },
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterStatus, setFilterStatus] = useState('all');
+
+  const mockStudies = [
+    {
+      id: '1',
+      name: 'Satisfaction Client 2024',
+      description: 'Étude de satisfaction client menée en 2024',
+      status: 'active',
+      participants: 542,
+      startDate: '2024-01-15',
+      endDate: '2024-02-28',
+      type: 'survey'
+    },
+    {
+      id: '2',
+      name: 'Tendances du Marché Tech',
+      description: 'Analyse des tendances actuelles du marché technologique',
+      status: 'draft',
+      participants: 0,
+      startDate: '2024-03-01',
+      endDate: '2024-04-15',
+      type: 'market research'
+    },
+    {
+      id: '3',
+      name: 'Impact de la Publicité sur les Ventes',
+      description: 'Mesure de l\'impact des campagnes publicitaires sur les ventes',
+      status: 'scheduled',
+      participants: 0,
+      startDate: '2024-05-01',
+      endDate: '2024-06-30',
+      type: 'advertising analysis'
+    },
+    {
+      id: '4',
+      name: 'Analyse des Réseaux Sociaux',
+      description: 'Étude de l\'engagement et de la portée sur les réseaux sociaux',
+      status: 'ended',
+      participants: 1256,
+      startDate: '2023-11-01',
+      endDate: '2023-12-31',
+      type: 'social media analysis'
+    }
   ];
-  
-  const toggleEvent = (id: string) => {
-    setSelectedEvent(prev => 
-      prev.includes(id) 
-        ? prev.filter(eventId => eventId !== id)
-        : [...prev, id]
-    );
+
+  const filteredStudies = mockStudies.filter(study => {
+    const matchesSearch = study.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      study.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesFilter = filterStatus === 'all' || study.status === filterStatus;
+
+    return matchesSearch && matchesFilter;
+  });
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'active': return 'bg-green-100 text-green-800';
+      case 'draft': return 'bg-gray-100 text-gray-800';
+      case 'scheduled': return 'bg-blue-100 text-blue-800';
+      case 'ended': return 'bg-red-100 text-red-800';
+      default: return 'bg-gray-100 text-gray-800';
+    }
   };
-  
+
+  const getStatusText = (status: string) => {
+    switch (status) {
+      case 'active': return 'Actif';
+      case 'draft': return 'Brouillon';
+      case 'scheduled': return 'Programmé';
+      case 'ended': return 'Terminé';
+      default: return status;
+    }
+  };
+
   return (
     <div className="-mx-6 -mt-6">
       <div className="relative h-[100px] bg-[#841b60] overflow-hidden">
-        {/* Background pattern */}
-        <div className="absolute inset-10 opacity-[0.15]" 
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-            backgroundSize: '60px 60px',
-          }}
-        />
-        
-        {/* Content */}
-        <div className="relative h-full max-w-3xl mx-auto px-6 flex items-center justify-between">
+        <div className="relative h-full max-w-7xl mx-auto px-6 flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-white mb-4">Études</h1>
-            <p className="text-white/80 text-lg max-w-2xl">
-            </p>
           </div>
-          <button className="inline-flex items-center px-6 py-3 bg-white text-[#841b60] font-medium rounded-xl hover:bg-white/90 transition-all duration-200 shadow-lg hover:shadow-xl">
-            <Download className="w-5 h-5 mr-2" />
-            Télécharger le rapport
-          </button>
-        </div>
-
-        {/* Decorative bottom curve */}
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg
-            viewBox="0 0 1440 116"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-full"
-            preserveAspectRatio="none"
-            height="10"
-          >
-            <path
-              d="M0 116L60 96.3C120 76.7 240 37.3 360 21.7C480 6 600 14 720 34.7C840 55.3 960 89.7 1080 96.3C1200 103 1320 82 1380 71.5L1440 61V116H1380C1320 116 1200 116 1080 116C960 116 840 116 720 116C600 116 480 116 360 116C240 116 120 116 60 116H0Z"
-              fill="#ebf4f7"
-            />
-          </svg>
         </div>
       </div>
 
-      <div className="px-6 space-y-6">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-          <div className="lg:col-span-2 space-y-6">
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h2 className="text-lg font-bold text-gray-800 mb-4">Publication hebdomadaire</h2>
-              <div className="prose max-w-none">
-                <h3>Tendances du marché - Mai 2025</h3>
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor 
-                  incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis 
-                  nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-                </p>
-                <h4>Points clés :</h4>
-                <ul>
-                  <li>Augmentation de 25% des ventes en ligne</li>
-                  <li>Nouvelles réglementations RGPD</li>
-                  <li>Émergence des achats via réseaux sociaux</li>
-                </ul>
+      <div className="px-6">
+        <div className="bg-white rounded-xl shadow-sm mt-6">
+          <div className="p-6 border-b border-gray-200">
+            <div className="flex flex-col md:flex-row gap-4">
+              <div className="relative flex-1">
+                <input
+                  type="text"
+                  placeholder="Rechercher une étude..."
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               </div>
-            </div>
 
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h2 className="text-lg font-bold text-gray-800 mb-4">Résumé de veille</h2>
-              <div className="space-y-4">
-                <div className="border-l-4 border-[#841b60] pl-4">
-                  <h3 className="font-medium text-gray-800">Tendances du marché</h3>
-                  <p className="text-gray-600 mt-1">
-                    Les consommateurs privilégient de plus en plus les marques engagées 
-                    dans le développement durable. 73% des millennials sont prêts à payer plus 
-                    cher pour des produits éco-responsables.
-                  </p>
-                </div>
-                
-                <div className="border-l-4 border-[#841b60] pl-4">
-                  <h3 className="font-medium text-gray-800">Analyse concurrentielle</h3>
-                  <p className="text-gray-600 mt-1">
-                
-                    Lancement d'une nouvelle gamme de produits par le concurrent principal. 
-                    Forte présence sur TikTok avec une campagne virale atteignant 2M de vues.
-                  </p>
-                </div>
+              <div className="flex items-center gap-2">
+                <Filter className="text-gray-400 w-5 h-5" />
+                <select
+                  className="border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-[#841b60]"
+                  value={filterStatus}
+                  onChange={(e) => setFilterStatus(e.target.value)}
+                >
+                  <option value="all">Tous les statuts</option>
+                  <option value="active">Actif</option>
+                  <option value="draft">Brouillon</option>
+                  <option value="scheduled">Programmé</option>
+                  <option value="ended">Terminé</option>
+                </select>
               </div>
             </div>
           </div>
 
-          <div className="space-y-6">
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h2 className="text-lg font-bold text-gray-800 mb-4">Calendrier marketing</h2>
-              <div className="space-y-3">
-                {marketingEvents.map(event => (
-                  <div 
-                    key={event.id}
-                    className="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:border-[#841b60] transition-colors duration-200"
-                  >
-                    <div className="flex items-center">
-                      <Calendar className="w-5 h-5 text-gray-400 mr-3" />
-                      <div>
-                        <p className="font-medium text-gray-800">{event.name}</p>
-                        <p className="text-sm text-gray-500">{event.date}</p>
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead>
+                <tr className="bg-gray-50">
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Étude
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Statut
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Participants
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Période
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Type
+                  </th>
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {filteredStudies.map((study) => (
+                  <tr key={study.id} className="hover:bg-gray-50 transition-colors duration-200">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">{study.name}</div>
+                          <div className="text-sm text-gray-500">{study.description}</div>
+                        </div>
                       </div>
-                    </div>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="sr-only peer"
-                        checked={selectedEvent.includes(event.id)}
-                        onChange={() => toggleEvent(event.id)}
-                      />
-                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#841b60]/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#841b60]"></div>
-                    </label>
-                  </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <label className="relative inline-flex items-center cursor-pointer mr-3">
+                          <input
+                            type="checkbox"
+                            className="sr-only peer"
+                            checked={study.status === 'active'}
+                            onChange={() => { }}
+                          />
+                          <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#841b60]/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#841b60]"></div>
+                        </label>
+                        <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${getStatusColor(study.status)}`}>
+                          {getStatusText(study.status)}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {study.participants}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {new Date(study.startDate).toLocaleDateString('fr-FR')} - {new Date(study.endDate).toLocaleDateString('fr-FR')}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {study.type}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <div className="flex justify-end items-center">
+                        <BarChart2 className="w-4 h-4 mr-2" />
+                        <PieChart className="w-4 h-4" />
+                      </div>
+                    </td>
+                  </tr>
                 ))}
-              </div>
-            </div>
+              </tbody>
+            </table>
 
-            <div className="bg-white rounded-xl shadow-sm p-6">
-              <h2 className="text-lg font-bold text-gray-800 mb-4">Axes stratégiques</h2>
-              <div className="space-y-4">
-                <div className="p-4 bg-[#f8f0f5] rounded-lg">
-                  <h3 className="font-medium text-[#841b60] mb-2">
-                    Promotion Saint-Valentin
-                  </h3>
-                  <p className="text-sm text-gray-600">
-                    Lancer une campagne spéciale couples avec des codes promo personnalisés.
-                  </p>
-                  <button className="mt-3 text-sm text-[#841b60] hover:text-[#6d164f] font-medium flex items-center">
-                    En savoir plus
-                    <ChevronRight className="w-4 h-4 ml-1" />
-                  </button>
-                </div>
-                
-                <div className="p-4 bg-[#f8f0f5] rounded-lg">
-                  <h3 className="font-medium text-[#841b60] mb-2">
-                    Campagne UGC
-                  </h3>
-                  <p className="text-sm text-gray-600">
-                    Encourager les utilisateurs à partager leurs expériences sur les réseaux sociaux.
-                  </p>
-                  <button className="mt-3 text-sm text-[#841b60] hover:text-[#6d164f] font-medium flex items-center">
-                    En savoir plus
-                    <ChevronRight className="w-4 h-4 ml-1" />
-                  </button>
-                </div>
+            {filteredStudies.length === 0 && (
+              <div className="text-center py-10">
+                <p className="text-gray-500">Aucune étude ne correspond à votre recherche.</p>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>

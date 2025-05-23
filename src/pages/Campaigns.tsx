@@ -13,7 +13,7 @@ import {
   ExternalLink,
   MoreVertical
 } from 'lucide-react';
-import { getCampaignTypeIcon, getCampaignTypeText } from '../utils/campaignTypes';
+import { getCampaignTypeIcon } from '../utils/campaignTypes';
 
 interface ActionModalProps {
   isOpen: boolean;
@@ -150,16 +150,6 @@ const Campaigns: React.FC = () => {
       case 'scheduled': return 'bg-blue-100 text-blue-800';
       case 'ended': return 'bg-red-100 text-red-800';
       default: return 'bg-gray-100 text-gray-800';
-    }
-  };
-
-  const getStatusText = (status: string) => {
-    switch (status) {
-      case 'active': return 'Actif';
-      case 'draft': return 'Brouillon';
-      case 'scheduled': return 'Programmé';
-      case 'ended': return 'Terminé';
-      default: return status;
     }
   };
 

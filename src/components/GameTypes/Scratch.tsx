@@ -1,170 +1,140 @@
 import React from 'react';
-import { Image as ImageIcon, Type, Percent } from 'lucide-react';
+import { Laptop } from 'lucide-react';
 
 interface ScratchProps {
-  config: any;
-  onConfigChange: (config: any) => void;
+  config: {
+    image: string;
+    revealPercentage: number;
+  };
+  onComplete: () => void;
 }
 
-const Scratch: React.FC<ScratchProps> = ({ config, onConfigChange }) => {
-  const updateConfig = (field: string, value: any) => {
-    onConfigChange({
-      ...config,
-      [field]: value
-    });
+const Scratch: React.FC<ScratchProps> = ({ config, onComplete }) => {
+  const canvasRef = React.useRef<HTMLCanvasElement>(null);
+  const [isScratching, setIsScratching] = React.useState(false);
+  const [revealedPercentage, setRevealedPercentage] = React.useState(0);
+  
+  React.useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
+    // Draw scratch layer
+    ctx.fillStyle = '#CCCCCC';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Draw text
+    ctx.fillStyle = '#888888';
+    ctx.font = '16px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('Grattez ici pour révéler', canvas.width / 2, canvas.height / 2);
+    
+    // Load background image if provided
+    if (config.image) {
+      const img = new Image();
+      img.onload = () => {
+        // Store the clean version for later comparison
+        const cleanCanvas = document.createElement('canvas');
+        cleanCanvas.width = canvas.width;
+        cleanCanvas.height = canvas.height;
+        const cleanCtx = cleanCanvas.getContext('2d');
+        if (cleanCtx) {
+          cleanCtx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        }
+      };
+      img.src = config.image;
+    }
+  }, [config.image]);
+  
+  const handleScratch = (e: React.MouseEvent<HTMLCanvasElement> | React.TouchEvent<HTMLCanvasElement>) => {
+    const canvas = canvasRef.current;
+    if (!canvas || !isScratching) return;
+    
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+    
+    const rect = canvas.getBoundingClientRect();
+    let x, y;
+    
+    if ('touches' in e) {
+      // Touch event
+      x = e.touches[0].clientX - rect.left;
+      y = e.touches[0].clientY - rect.top;
+    } else {
+      // Mouse event
+      x = e.clientX - rect.left;
+      y = e.clientY - rect.top;
+    }
+    
+    // Clear a circle where the user scratched
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.beginPath();
+    ctx.arc(x, y, 20, 0, Math.PI * 2);
+    ctx.fill();
+    
+    // Calculate revealed percentage
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const pixelData = imageData.data;
+    let transparentPixels = 0;
+    
+    for (let i = 3; i < pixelData.length; i += 4) {
+      if (pixelData[i] === 0) {
+        transparentPixels++;
+      }
+    }
+    
+    const totalPixels = canvas.width * canvas.height;
+    const newRevealedPercentage = (transparentPixels / totalPixels) * 100;
+    setRevealedPercentage(newRevealedPercentage);
+    
+    // Check if enough has been revealed
+    if (newRevealedPercentage >= config.revealPercentage) {
+      onComplete();
+    }
   };
-
+  
   return (
-    <div className="space-y-6">
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Image à révéler
-        </label>
-        <div className="relative">
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <ImageIcon className="w-5 h-5 text-gray-400" />
-          </div>
-          <input
-            type="text"
-            value={config?.revealImage || ''}
-            onChange={(e) => updateConfig('revealImage', e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
-            placeholder="URL de l'image à révéler"
+    <div className="flex flex-col items-center">
+      <div className="relative mb-4 border-2 border-gray-300 rounded-lg overflow-hidden">
+        {config.image && (
+          <img 
+            src={config.image} 
+            alt="Prize" 
+            className="absolute inset-0 w-full h-full object-cover"
           />
+        )}
+        <canvas
+          ref={canvasRef}
+          width={300}
+          height={200}
+          className="relative z-10 cursor-pointer"
+          onMouseDown={() => setIsScratching(true)}
+          onMouseUp={() => setIsScratching(false)}
+          onMouseLeave={() => setIsScratching(false)}
+          onMouseMove={handleScratch}
+          onTouchStart={() => setIsScratching(true)}
+          onTouchEnd={() => setIsScratching(false)}
+          onTouchMove={handleScratch}
+        />
+      </div>
+      
+      <div className="text-center">
+        <p className="text-sm text-gray-500 mb-2">
+          Grattez la carte pour découvrir votre prix
+        </p>
+        <div className="flex items-center justify-center text-xs text-gray-400">
+          <Laptop className="w-4 h-4 mr-1" />
+          <span>Utilisez votre souris ou votre doigt pour gratter</span>
         </div>
       </div>
-
-      <div className="grid grid-cols-2 gap-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Couleur de la couche à gratter
-          </label>
-          <input
-            type="color"
-            value={config?.scratchColor || '#CCCCCC'}
-            onChange={(e) => updateConfig('scratchColor', e.target.value)}
-            className="w-full h-10 p-1 border border-gray-300 rounded-lg cursor-pointer"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Image de la couche à gratter (optionnelle)
-          </label>
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-              <ImageIcon className="w-5 h-5 text-gray-400" />
-            </div>
-            <input
-              type="text"
-              value={config?.scratchImage || ''}
-              onChange={(e) => updateConfig('scratchImage', e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
-              placeholder="URL de l'image de grattage"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Forme du masque
-        </label>
-        <select
-          value={config?.maskShape || 'rectangle'}
-          onChange={(e) => updateConfig('maskShape', e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
-        >
-          <option value="rectangle">Rectangle</option>
-          <option value="circle">Cercle</option>
-          <option value="star">Étoile</option>
-          <option value="heart">Cœur</option>
-        </select>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Curseur personnalisé
-        </label>
-        <div className="relative">
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-            <ImageIcon className="w-5 h-5 text-gray-400" />
-          </div>
-          <input
-            type="text"
-            value={config?.cursorImage || ''}
-            onChange={(e) => updateConfig('cursorImage', e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
-            placeholder="URL de l'image du curseur"
-          />
-        </div>
-      </div>
-
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Pourcentage de grattage nécessaire
-        </label>
-        <div className="flex items-center space-x-4">
-          <div className="flex-1">
-            <input
-              type="range"
-              min="1"
-              max="100"
-              value={config?.requiredScratchPercent || 70}
-              onChange={(e) => updateConfig('requiredScratchPercent', parseInt(e.target.value))}
-              className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-[#841b60]"
-            />
-          </div>
-          <div className="w-16 relative">
-            <input
-              type="number"
-              min="1"
-              max="100"
-              value={config?.requiredScratchPercent || 70}
-              onChange={(e) => updateConfig('requiredScratchPercent', parseInt(e.target.value))}
-              className="w-full pl-2 pr-8 py-1 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
-            />
-            <span className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-500">%</span>
-          </div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-6">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Message de victoire
-          </label>
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-              <Type className="w-5 h-5 text-gray-400" />
-            </div>
-            <input
-              type="text"
-              value={config?.winMessage || 'Félicitations ! Vous avez gagné !'}
-              onChange={(e) => updateConfig('winMessage', e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
-              placeholder="Message de victoire"
-            />
-          </div>
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Message de défaite
-          </label>
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-              <Type className="w-5 h-5 text-gray-400" />
-            </div>
-            <input
-              type="text"
-              value={config?.loseMessage || 'Pas de chance ! Réessayez !'}
-              onChange={(e) => updateConfig('loseMessage', e.target.value)}
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
-              placeholder="Message de défaite"
-            />
-          </div>
-        </div>
+      
+      <div className="w-full mt-4 bg-gray-200 rounded-full h-2.5">
+        <div 
+          className="bg-[#841b60] h-2.5 rounded-full" 
+          style={{ width: `${revealedPercentage}%` }}
+        ></div>
       </div>
     </div>
   );

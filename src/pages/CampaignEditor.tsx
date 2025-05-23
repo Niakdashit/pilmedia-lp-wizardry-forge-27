@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { Save, ChevronRight, Link as LinkIcon, Copy, Eye } from 'lucide-react';
@@ -11,6 +10,12 @@ import CampaignPreview from '../components/CampaignEditor/CampaignPreview';
 import PreviewModal from '../components/CampaignEditor/PreviewModal';
 import { Campaign } from '../types/campaign';
 
+// Define the props interface for campaign components
+interface CampaignComponentProps {
+  campaign: Campaign;
+  setCampaign: React.Dispatch<React.SetStateAction<Campaign>>;
+}
+
 const CampaignEditor: React.FC = () => {
   const { id } = useParams();
   const [searchParams] = useSearchParams();
@@ -18,7 +23,6 @@ const CampaignEditor: React.FC = () => {
   const campaignType = searchParams.get('type');
   
   const [activeTab, setActiveTab] = useState('general');
-  // Using this variable but not changing it in the current code
   const [showPreview] = useState(false);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   
@@ -30,7 +34,7 @@ const CampaignEditor: React.FC = () => {
     startTime: isNewCampaign ? '' : '09:00',
     endDate: isNewCampaign ? '' : '2025-04-15',
     endTime: isNewCampaign ? '' : '18:00',
-    status: isNewCampaign ? 'draft' : 'active' as 'draft' | 'scheduled' | 'active' | 'ended',
+    status: isNewCampaign ? 'draft' : 'active',
     type: isNewCampaign ? (campaignType || 'quiz') : 'quiz',
     screens: {
       1: {
@@ -122,7 +126,7 @@ const CampaignEditor: React.FC = () => {
   };
   
   // Function to get props for campaign-related components
-  const getCampaignProps = () => {
+  const getCampaignProps = (): CampaignComponentProps => {
     return { campaign, setCampaign };
   };
   

@@ -1,14 +1,8 @@
 import React, { useState } from 'react';
 import { 
-  Search, 
-  Download, 
-  Upload, 
-  Plus, 
-  ChevronDown, 
-  ChevronUp,
-  UserCircle,
-  X,
-  Check
+  Search, Filter, Download, Upload, Trash2, MoreHorizontal, 
+  UserPlus, ChevronDown, UserCircle, Mail, Calendar, Tag, 
+  Activity 
 } from 'lucide-react';
 
 interface Contact {
@@ -121,6 +115,10 @@ const Contacts: React.FC = () => {
   const handleImportContacts = () => {
     // Implement contact import logic
     setShowImportModal(false);
+  };
+
+  const handleDeleteContacts = () => {
+    // Implementation...
   };
 
   return (
