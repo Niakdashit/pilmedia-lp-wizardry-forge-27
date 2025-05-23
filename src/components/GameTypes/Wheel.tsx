@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 
@@ -25,7 +26,6 @@ const Wheel: React.FC<WheelProps> = ({
   const wheelColors = config?.colors || colors;
   
   // Effect to notify parent component of any configuration changes
-  // This silences the TypeScript error by actually using onConfigChange
   useEffect(() => {
     // Only call onConfigChange if the configuration has been updated
     if (config === undefined) {
@@ -114,15 +114,16 @@ const Wheel: React.FC<WheelProps> = ({
       >
         {/* Centre de la roue avec flèche */}
         <div className="absolute left-1/2 -top-6 transform -translate-x-1/2 z-10">
-          <div className="w-0 h-0 border-l-[15px] border-l-transparent border-r-[15px] border-r-transparent border-t-[30px] border-t-[#841b60]"></div>
+          <div className="w-0 h-0 border-l-[15px] border-l-transparent border-r-[15px] border-r-transparent border-t-[30px] border-t-[#841b60] filter drop-shadow-md"></div>
         </div>
         
         {/* Roue */}
         <div 
-          className="absolute inset-0 rounded-full border-8 border-[#841b60] shadow-lg overflow-hidden"
+          className="absolute inset-0 rounded-full border-8 border-[#841b60] shadow-xl overflow-hidden bg-gradient-to-br from-white to-gray-50"
           style={{ 
             transform: `rotate(${rotation}deg)`,
-            transition: spinning ? 'none' : 'transform 0.5s ease-out'
+            transition: spinning ? 'none' : 'transform 0.5s ease-out',
+            boxShadow: "0 10px 25px -5px rgba(0,0,0,0.2), 0 10px 10px -5px rgba(0,0,0,0.1), inset 0 -5px 15px rgba(0,0,0,0.1)"
           }}
         >
           {wheelSegments.map((segment, index) => {
@@ -143,13 +144,16 @@ const Wheel: React.FC<WheelProps> = ({
                   style={{ 
                     backgroundColor: wheelColors[index % wheelColors.length],
                     transform: `skew(${-skew}deg) rotate(${angle / 2}deg)`,
+                    backgroundImage: 'linear-gradient(rgba(255,255,255,0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.2) 1px, transparent 1px)',
+                    backgroundSize: '20px 20px'
                   }}
                 >
                   <span 
-                    className="font-bold text-white text-center block transform rotate-90 whitespace-nowrap px-2 py-1 text-shadow"
+                    className="font-bold text-white text-center block transform rotate-90 whitespace-nowrap px-2 py-1"
                     style={{ 
-                      textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
+                      textShadow: '2px 2px 4px rgba(0,0,0,0.5)',
                       transform: `translate(-25%, 0) rotate(${90 - angle * index - angle/2}deg)`,
+                      filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.3))'
                     }}
                   >
                     {segment}
@@ -161,24 +165,26 @@ const Wheel: React.FC<WheelProps> = ({
           
           {/* Centre de la roue */}
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="w-12 h-12 bg-white rounded-full shadow-inner border-4 border-[#841b60] z-10"></div>
+            <div className="w-14 h-14 bg-white rounded-full shadow-inner border-4 border-[#841b60] z-10 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#841b60] to-[#a02475]"></div>
+            </div>
           </div>
         </div>
       </div>
       
       {/* Bouton et résultat */}
-      <div className="text-center mt-4">
+      <div className="text-center mt-6">
         <button
           onClick={handleSpin}
           disabled={spinning}
-          className="px-6 py-3 bg-[#841b60] text-white font-semibold rounded-full disabled:bg-gray-400 hover:bg-[#6d164f] transition-all duration-300 shadow-md transform hover:scale-105 disabled:transform-none"
+          className="px-8 py-4 bg-[#841b60] text-white font-semibold rounded-full disabled:bg-gray-400 hover:bg-[#6d164f] transition-all duration-300 shadow-lg transform hover:scale-105 disabled:transform-none text-lg"
         >
           {spinning ? 'La roue tourne...' : 'Faire tourner la roue'}
         </button>
         
         {selectedSegment && (
-          <div className="mt-4 py-2 px-4 bg-white shadow-md rounded-lg">
-            <p className="text-lg font-medium">
+          <div className="mt-6 py-4 px-6 bg-white shadow-lg rounded-lg border border-gray-100 animate-fade-in">
+            <p className="text-xl font-medium">
               Résultat : <span className="text-[#841b60] font-bold">{selectedSegment}</span>
             </p>
           </div>

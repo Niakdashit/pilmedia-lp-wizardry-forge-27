@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { X, Smartphone, Monitor } from 'lucide-react';
 import { useSpring, animated } from 'react-spring';
@@ -40,6 +41,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
     }
   };
 
+  // Cette fonction est identique à celle de CampaignScreens pour assurer la cohérence
   const getPositionStyles = (position: string) => {
     const styles: React.CSSProperties = {
       position: 'absolute',
@@ -71,6 +73,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
     }
   };
 
+  // Cette fonction doit utiliser exactement les mêmes propriétés que CampaignScreens
   const getFrameStyle = (screenNumber: number) => {
     const screenConfig = campaign.screens?.[screenNumber];
     const frameConfig = screenConfig?.frame;
@@ -84,7 +87,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
       maxHeight: `${frameConfig?.maxHeight || campaign.design.frame?.maxHeight || 90}%`,
       padding: `${frameConfig?.padding || campaign.design.frame?.padding || 24}px`,
       backgroundColor: Color(campaign.design.blockColor || '#FFFFFF').alpha(0.9).toString(),
-      backdropFilter: 'blur(px)',
+      backdropFilter: 'blur(8px)',
       borderRadius: campaign.design.borderRadius || '0.5rem',
       boxShadow: campaign.design.shadow === 'shadow-xl' 
         ? '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
@@ -123,7 +126,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
   };
 
   const controlsStyle = {
-    backgroundColor: 'transparent',
+    backgroundColor: 'rgba(255, 255, 255, 0.9)',
     borderBottom: '1px solid rgba(229, 231, 235, 0.5)',
     backdropFilter: 'blur(8px)',
   };

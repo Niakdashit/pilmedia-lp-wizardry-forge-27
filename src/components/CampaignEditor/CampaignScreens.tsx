@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Type, Palette, Box, Image as ImageIcon, Upload, Code } from 'lucide-react';
 import Color from 'color';
@@ -99,6 +98,7 @@ const CampaignScreens: React.FC<CampaignScreensProps> = ({ campaign, setCampaign
     }
   };
 
+  // Mise à jour du style de frame pour garantir la cohérence entre les prévisualisations
   const getFrameStyle = (screenNumber: number) => {
     const screenConfig = campaign.screens?.[screenNumber];
     const frameConfig = screenConfig?.frame;

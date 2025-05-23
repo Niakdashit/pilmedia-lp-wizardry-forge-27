@@ -1,9 +1,12 @@
+
 import React, { useState, useEffect } from 'react';
 import Color from 'color';
 import confetti from 'canvas-confetti';
+import { Quiz, Wheel, Scratch, Swiper } from '../GameTypes';
+import { Campaign } from '../../types/campaign';
 
 interface PreviewContentProps {
-  campaign: any;
+  campaign: Campaign;
   step?: 'start' | 'game' | 'end';
   onComplete?: () => void;
 }
@@ -13,12 +16,18 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
+  const [scratchRevealed, setScratchRevealed] = useState(false);
+  const [wheelResult, setWheelResult] = useState<string | null>(null);
+  const [swipeResult, setSwipeResult] = useState<'like' | 'dislike' | null>(null);
 
   useEffect(() => {
     setCurrentQuestionIndex(0);
     setSelectedAnswer(null);
     setShowFeedback(false);
     setIsComplete(false);
+    setScratchRevealed(false);
+    setWheelResult(null);
+    setSwipeResult(null);
   }, [step]);
 
   const getContrastColor = (bgColor: string) => {
@@ -55,6 +64,44 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
         setCurrentQuestionIndex(prev => prev + 1);
       }
     }, 1500);
+  };
+
+  const handleWheelComplete = (segment: string) => {
+    setWheelResult(segment);
+    if (segment && segment !== 'Réessayez') {
+      setIsComplete(true);
+      setTimeout(() => {
+        onComplete?.();
+      }, 2000);
+    }
+  };
+
+  const handleScratchComplete = () => {
+    setScratchRevealed(true);
+    setIsComplete(true);
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { y: 0.6 }
+    });
+    setTimeout(() => {
+      onComplete?.();
+    }, 1000);
+  };
+
+  const handleSwipeComplete = (result: 'like' | 'dislike') => {
+    setSwipeResult(result);
+    if (result === 'like') {
+      setIsComplete(true);
+      confetti({
+        particleCount: 100,
+        spread: 70,
+        origin: { y: 0.6 }
+      });
+      setTimeout(() => {
+        onComplete?.();
+      }, 1000);
+    }
   };
 
   const getGameComponent = () => {
@@ -173,12 +220,76 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
           </div>
         );
 
+      case 'wheel':
+        // Convert wheel segments to strings if needed
+        const wheelSegments = Array.isArray(campaign.gameConfig.wheel?.segments) 
+          ? campaign.gameConfig.wheel.segments.map(segment => 
+              typeof segment === 'string' ? segment : segment.text
+            )
+          : ['Prix 1', 'Prix 2', 'Prix 3', 'Réessayez'];
+        
+        return (
+          <div className="flex flex-col items-center justify-center h-full w-full">
+            <Wheel 
+              segments={wheelSegments}
+              colors={campaign.gameConfig.wheel?.colors || []}
+              onSpinComplete={handleWheelComplete}
+            />
+          </div>
+        );
+
+      case 'scratch':
+        return (
+          <div className="flex flex-col items-center justify-center h-full w-full">
+            <Scratch 
+              image={campaign.gameConfig.scratch?.image || 'https://placehold.co/600x400/e9d0e5/841b60?text=Prix+Gagné!'}
+              revealPercentage={campaign.gameConfig.scratch?.revealPercentage || 50}
+              onReveal={handleScratchComplete}
+            />
+          </div>
+        );
+
+      case 'swiper':
+        return (
+          <div className="flex flex-col items-center justify-center h-full w-full">
+            <Swiper 
+              cards={campaign.gameConfig.swiper?.cards || [
+                { 
+                  image: 'https://placehold.co/600x400/e9d0e5/841b60?text=Offre+Spéciale', 
+                  text: 'Offre spéciale limitée', 
+                  isWinning: true 
+                },
+                { 
+                  image: 'https://placehold.co/600x400/cccccc/333333?text=Autre+Offre', 
+                  text: 'Une autre offre', 
+                  isWinning: false 
+                }
+              ]}
+              onSwipeResult={(result) => handleSwipeComplete(result ? 'like' : 'dislike')}
+            />
+          </div>
+        );
+
       default:
         return (
-          <div className="flex items-center justify-center h-full w-full">
-            <p className="text-gray-500 text-center">
-              Aperçu en cours de développement pour le type "{campaign.type}".
+          <div className="flex flex-col items-center justify-center h-full w-full text-center p-8">
+            <div className="text-2xl font-bold mb-4" style={{ color: campaign.design.titleColor }}>
+              {campaign.name}
+            </div>
+            <p className="text-lg mb-8">
+              {campaign.description}
             </p>
+            <button 
+              className="px-8 py-4 rounded-lg shadow-md transition-all duration-300 hover:shadow-lg"
+              style={{
+                backgroundColor: campaign.design.buttonColor,
+                color: getContrastColor(campaign.design.buttonColor),
+                fontFamily: campaign.design.textFont
+              }}
+              onClick={() => onComplete?.()}
+            >
+              Continuer
+            </button>
           </div>
         );
     }

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Quiz, Wheel, Scratch, Swiper } from '../GameTypes';
 import { Palette, Type, Square, Box } from 'lucide-react';
@@ -62,70 +63,417 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
         const wheelColors = campaign.gameConfig.wheel.colors;
         
         return (
-          <Wheel 
-            segments={segmentTexts}
-            colors={wheelColors}
-            onSpinComplete={(segment: string) => {
-              console.log("Wheel stopped at:", segment);
-            }}
-            config={{
-              segments: segmentTexts,
-              colors: wheelColors
-            }}
-            onConfigChange={(config) => {
-              // Convert string[] back to WheelSegment[] if necessary
-              const updatedSegments = config.segments.map(text => ({
-                text,
-                isWinning: text !== 'Réessayez' // Default logic for determining winning segments
-              }));
-              
-              setCampaign((prev: Campaign) => ({
-                ...prev,
-                gameConfig: {
-                  ...prev.gameConfig,
-                  wheel: {
-                    segments: updatedSegments,
-                    colors: config.colors
-                  }
-                }
-              }));
-            }} 
-          />
+          <div className="space-y-8">
+            <div className="bg-white shadow-md rounded-lg p-6 border border-gray-100">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">Aperçu de la roue</h3>
+              <Wheel 
+                segments={segmentTexts}
+                colors={wheelColors}
+                onSpinComplete={(segment: string) => {
+                  console.log("Wheel stopped at:", segment);
+                }}
+                config={{
+                  segments: segmentTexts,
+                  colors: wheelColors
+                }}
+                onConfigChange={(config) => {
+                  // Convert string[] back to WheelSegment[] if necessary
+                  const updatedSegments = config.segments.map(text => ({
+                    text,
+                    isWinning: text !== 'Réessayez' // Default logic for determining winning segments
+                  }));
+                  
+                  setCampaign((prev: Campaign) => ({
+                    ...prev,
+                    gameConfig: {
+                      ...prev.gameConfig,
+                      wheel: {
+                        segments: updatedSegments,
+                        colors: config.colors
+                      }
+                    }
+                  }));
+                }} 
+              />
+            </div>
+
+            <div className="bg-white shadow-md rounded-lg p-6 border border-gray-100">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">Configurer les segments</h3>
+              <div className="space-y-4">
+                {segmentTexts.map((text, index) => (
+                  <div key={index} className="flex items-center gap-4">
+                    <input
+                      type="color"
+                      value={wheelColors[index % wheelColors.length] || '#E57373'}
+                      onChange={(e) => {
+                        const newColors = [...wheelColors];
+                        newColors[index] = e.target.value;
+                        
+                        setCampaign((prev: Campaign) => ({
+                          ...prev,
+                          gameConfig: {
+                            ...prev.gameConfig,
+                            wheel: {
+                              ...prev.gameConfig.wheel,
+                              colors: newColors
+                            }
+                          }
+                        }));
+                      }}
+                      className="h-10 w-10 rounded cursor-pointer"
+                    />
+                    
+                    <div className="flex-1">
+                      <input
+                        type="text"
+                        value={text}
+                        onChange={(e) => {
+                          const newSegments = [...segmentTexts];
+                          newSegments[index] = e.target.value;
+                          
+                          // Convert string[] back to WheelSegment[]
+                          const updatedSegments = newSegments.map(segText => ({
+                            text: segText,
+                            isWinning: segText !== 'Réessayez'
+                          }));
+                          
+                          setCampaign((prev: Campaign) => ({
+                            ...prev,
+                            gameConfig: {
+                              ...prev.gameConfig,
+                              wheel: {
+                                ...prev.gameConfig.wheel,
+                                segments: updatedSegments
+                              }
+                            }
+                          }));
+                        }}
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                        placeholder="Texte du segment"
+                      />
+                    </div>
+                    
+                    <button
+                      onClick={() => {
+                        const newSegments = segmentTexts.filter((_, i) => i !== index);
+                        const newColors = wheelColors.filter((_, i) => i !== index);
+                        
+                        // Convert string[] back to WheelSegment[]
+                        const updatedSegments = newSegments.map(segText => ({
+                          text: segText,
+                          isWinning: segText !== 'Réessayez'
+                        }));
+                        
+                        setCampaign((prev: Campaign) => ({
+                          ...prev,
+                          gameConfig: {
+                            ...prev.gameConfig,
+                            wheel: {
+                              segments: updatedSegments,
+                              colors: newColors
+                            }
+                          }
+                        }));
+                      }}
+                      className="p-2 text-red-600 hover:bg-red-50 rounded"
+                      title="Supprimer ce segment"
+                    >
+                      ✕
+                    </button>
+                  </div>
+                ))}
+                
+                <button
+                  onClick={() => {
+                    // Add a new segment
+                    const newSegment = { 
+                      text: `Prix ${segmentTexts.length + 1}`,
+                      isWinning: true
+                    };
+                    
+                    const defaultColors = ['#E57373', '#81C784', '#64B5F6', '#FFD54F', '#BA68C8', '#4FC3F7', '#FFB74D', '#AED581'];
+                    const newColor = defaultColors[segmentTexts.length % defaultColors.length];
+                    
+                    setCampaign((prev: Campaign) => ({
+                      ...prev,
+                      gameConfig: {
+                        ...prev.gameConfig,
+                        wheel: {
+                          segments: [...prev.gameConfig.wheel.segments, newSegment],
+                          colors: [...prev.gameConfig.wheel.colors, newColor]
+                        }
+                      }
+                    }));
+                  }}
+                  className="w-full py-2 bg-[#f9f0f5] text-[#841b60] border border-[#e9d0e5] rounded-lg hover:bg-[#f0e0eb] transition-colors duration-200"
+                >
+                  + Ajouter un segment
+                </button>
+              </div>
+            </div>
+          </div>
         );
       }
       case 'scratch':
+        const defaultScratchImage = 'https://placehold.co/600x400/e9d0e5/841b60?text=Prix+Gagné!';
         return (
-          <Scratch 
-            image={campaign.gameConfig.scratch.image}
-            onReveal={() => {
-              console.log("Scratch revealed");
-            }}
-            config={campaign.gameConfig.scratch} 
-            onConfigChange={(config: { image: string; revealPercentage: number }) => {
-              setCampaign((prev: Campaign) => ({
-                ...prev,
-                gameConfig: {
-                  ...prev.gameConfig,
-                  scratch: config
-                }
-              }));
-            }} 
-          />
+          <div className="space-y-8">
+            <div className="bg-white shadow-md rounded-lg p-6 border border-gray-100">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">Aperçu de la carte à gratter</h3>
+              <Scratch 
+                image={campaign.gameConfig.scratch.image || defaultScratchImage}
+                onReveal={() => {
+                  console.log("Scratch revealed");
+                }}
+                config={campaign.gameConfig.scratch} 
+                onConfigChange={(config: { image: string; revealPercentage: number }) => {
+                  setCampaign((prev: Campaign) => ({
+                    ...prev,
+                    gameConfig: {
+                      ...prev.gameConfig,
+                      scratch: config
+                    }
+                  }));
+                }} 
+              />
+            </div>
+            
+            <div className="bg-white shadow-md rounded-lg p-6 border border-gray-100">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">Configurer la carte à gratter</h3>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Image à révéler
+                  </label>
+                  <input
+                    type="text"
+                    value={campaign.gameConfig.scratch.image || defaultScratchImage}
+                    onChange={(e) => {
+                      setCampaign((prev: Campaign) => ({
+                        ...prev,
+                        gameConfig: {
+                          ...prev.gameConfig,
+                          scratch: {
+                            ...prev.gameConfig.scratch,
+                            image: e.target.value
+                          }
+                        }
+                      }));
+                    }}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+                    placeholder="URL de l'image"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Pourcentage de révélation ({campaign.gameConfig.scratch.revealPercentage}%)
+                  </label>
+                  <input
+                    type="range"
+                    min="10"
+                    max="90"
+                    value={campaign.gameConfig.scratch.revealPercentage}
+                    onChange={(e) => {
+                      setCampaign((prev: Campaign) => ({
+                        ...prev,
+                        gameConfig: {
+                          ...prev.gameConfig,
+                          scratch: {
+                            ...prev.gameConfig.scratch,
+                            revealPercentage: parseInt(e.target.value)
+                          }
+                        }
+                      }));
+                    }}
+                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
         );
       case 'swiper':
         return (
-          <Swiper 
-            config={campaign.gameConfig.swiper} 
-            onConfigChange={(config: { cards: SwiperCard[]; swipeThreshold: number }) => {
-              setCampaign((prev: Campaign) => ({
-                ...prev,
-                gameConfig: {
-                  ...prev.gameConfig,
-                  swiper: config
-                }
-              }));
-            }} 
-          />
+          <div className="space-y-8">
+            <div className="bg-white shadow-md rounded-lg p-6 border border-gray-100">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">Aperçu du swiper</h3>
+              <Swiper 
+                config={campaign.gameConfig.swiper} 
+                onConfigChange={(config: { cards: SwiperCard[]; swipeThreshold: number }) => {
+                  setCampaign((prev: Campaign) => ({
+                    ...prev,
+                    gameConfig: {
+                      ...prev.gameConfig,
+                      swiper: config
+                    }
+                  }));
+                }} 
+              />
+            </div>
+            
+            <div className="bg-white shadow-md rounded-lg p-6 border border-gray-100">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">Configurer les cartes</h3>
+              <div className="space-y-4">
+                {(campaign.gameConfig.swiper.cards || []).map((card, index) => (
+                  <div key={index} className="p-4 border border-gray-200 rounded-lg">
+                    <div className="flex justify-between mb-2">
+                      <h4 className="font-medium">Carte {index + 1}</h4>
+                      <button
+                        onClick={() => {
+                          setCampaign((prev: Campaign) => ({
+                            ...prev,
+                            gameConfig: {
+                              ...prev.gameConfig,
+                              swiper: {
+                                ...prev.gameConfig.swiper,
+                                cards: prev.gameConfig.swiper.cards.filter((_, i) => i !== index)
+                              }
+                            }
+                          }));
+                        }}
+                        className="text-red-600 hover:bg-red-50 p-1 rounded"
+                      >
+                        Supprimer
+                      </button>
+                    </div>
+                    
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Image
+                        </label>
+                        <input
+                          type="text"
+                          value={card.image}
+                          onChange={(e) => {
+                            const updatedCards = [...campaign.gameConfig.swiper.cards];
+                            updatedCards[index] = { ...updatedCards[index], image: e.target.value };
+                            
+                            setCampaign((prev: Campaign) => ({
+                              ...prev,
+                              gameConfig: {
+                                ...prev.gameConfig,
+                                swiper: {
+                                  ...prev.gameConfig.swiper,
+                                  cards: updatedCards
+                                }
+                              }
+                            }));
+                          }}
+                          className="w-full px-3 py-2 border border-gray-300 rounded"
+                          placeholder="URL de l'image"
+                        />
+                      </div>
+                      
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">
+                          Texte
+                        </label>
+                        <input
+                          type="text"
+                          value={card.text}
+                          onChange={(e) => {
+                            const updatedCards = [...campaign.gameConfig.swiper.cards];
+                            updatedCards[index] = { ...updatedCards[index], text: e.target.value };
+                            
+                            setCampaign((prev: Campaign) => ({
+                              ...prev,
+                              gameConfig: {
+                                ...prev.gameConfig,
+                                swiper: {
+                                  ...prev.gameConfig.swiper,
+                                  cards: updatedCards
+                                }
+                              }
+                            }));
+                          }}
+                          className="w-full px-3 py-2 border border-gray-300 rounded"
+                          placeholder="Texte de la carte"
+                        />
+                      </div>
+                      
+                      <div className="flex items-center">
+                        <input
+                          type="checkbox"
+                          id={`winning-${index}`}
+                          checked={card.isWinning}
+                          onChange={(e) => {
+                            const updatedCards = [...campaign.gameConfig.swiper.cards];
+                            updatedCards[index] = { ...updatedCards[index], isWinning: e.target.checked };
+                            
+                            setCampaign((prev: Campaign) => ({
+                              ...prev,
+                              gameConfig: {
+                                ...prev.gameConfig,
+                                swiper: {
+                                  ...prev.gameConfig.swiper,
+                                  cards: updatedCards
+                                }
+                              }
+                            }));
+                          }}
+                          className="rounded border-gray-300 text-[#841b60]"
+                        />
+                        <label htmlFor={`winning-${index}`} className="ml-2 text-sm text-gray-700">
+                          Carte gagnante
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                
+                <button
+                  onClick={() => {
+                    const defaultCard = {
+                      image: `https://placehold.co/600x400/e9d0e5/841b60?text=Carte${campaign.gameConfig.swiper.cards.length + 1}`,
+                      text: `Offre ${campaign.gameConfig.swiper.cards.length + 1}`,
+                      isWinning: campaign.gameConfig.swiper.cards.length === 0
+                    };
+                    
+                    setCampaign((prev: Campaign) => ({
+                      ...prev,
+                      gameConfig: {
+                        ...prev.gameConfig,
+                        swiper: {
+                          ...prev.gameConfig.swiper,
+                          cards: [...prev.gameConfig.swiper.cards, defaultCard]
+                        }
+                      }
+                    }));
+                  }}
+                  className="w-full py-2 bg-[#f9f0f5] text-[#841b60] border border-[#e9d0e5] rounded-lg hover:bg-[#f0e0eb] transition-colors duration-200"
+                >
+                  + Ajouter une carte
+                </button>
+                
+                <div className="mt-6">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Seuil de balayage ({campaign.gameConfig.swiper.swipeThreshold}%)
+                  </label>
+                  <input
+                    type="range"
+                    min="10"
+                    max="90"
+                    value={campaign.gameConfig.swiper.swipeThreshold}
+                    onChange={(e) => {
+                      setCampaign((prev: Campaign) => ({
+                        ...prev,
+                        gameConfig: {
+                          ...prev.gameConfig,
+                          swiper: {
+                            ...prev.gameConfig.swiper,
+                            swipeThreshold: parseInt(e.target.value)
+                          }
+                        }
+                      }));
+                    }}
+                    className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
         );
       default:
         return (
