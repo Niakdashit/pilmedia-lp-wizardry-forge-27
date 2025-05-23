@@ -12,7 +12,8 @@ import SettingsTab from '@/components/Newsletter/properties/Tab/SettingsTab';
 const Newsletter: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'edit' | 'settings' | 'send' | 'automate'>('edit');
   const [showPreviewModal, setShowPreviewModal] = useState(false);
-  const { modules, addModule } = useNewsletterStore();
+  const { modules, addModule, updateModule, deleteModule } = useNewsletterStore();
+  const [selectedModule, setSelectedModule] = useState<any>(null);
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -104,7 +105,7 @@ const Newsletter: React.FC = () => {
         {activeTab === 'edit' && (
           <DndContext onDragEnd={handleDragEnd}>
             <ModulesList />
-            <EditorCanvas />
+            <EditorCanvas onModuleSelect={setSelectedModule} />
             <PropertiesPanel />
             <DragOverlay>{/* Preview during drag */}</DragOverlay>
           </DndContext>
@@ -112,7 +113,11 @@ const Newsletter: React.FC = () => {
 
         {activeTab === 'settings' && (
           <div className="flex-1 bg-white p-6 overflow-auto">
-            <SettingsTab />
+            <SettingsTab 
+              selectedModule={selectedModule} 
+              onUpdateModule={updateModule} 
+              onDeleteModule={deleteModule} 
+            />
           </div>
         )}
 

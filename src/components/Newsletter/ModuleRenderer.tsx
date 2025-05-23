@@ -1,4 +1,5 @@
-import React from 'react';
+
+// Remove React import as it's not directly used
 import { NewsletterModule } from '../../types/newsletter';
 
 // Fix TextAlign type issues by being explicit about allowed values
@@ -70,7 +71,7 @@ export const renderButton = (module: NewsletterModule) => {
 
 export const renderSocial = (module: NewsletterModule) => {
   // Convert the content to string to handle both array and string cases
-  const socialLinks = module.content.toString();
+  const socialLinks = typeof module.content === 'string' ? module.content : JSON.stringify(module.content);
 
   return (
     <div
@@ -130,8 +131,14 @@ export const renderDivider = (module: NewsletterModule) => {
   );
 };
 
-// Change from default export to named export to fix the import issue
-export const ModuleRenderer = ({ module }: { module: NewsletterModule }) => {
+// Update the ModuleRenderer props interface
+interface ModuleRendererProps {
+  module: NewsletterModule;
+  preview?: boolean;
+}
+
+// Export as named export
+export const ModuleRenderer = ({ module, preview }: ModuleRendererProps) => {
   switch (module.type) {
     case 'text':
       return renderText(module);

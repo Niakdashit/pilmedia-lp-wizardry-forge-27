@@ -5,19 +5,32 @@ interface ScratchProps {
   image?: string;
   revealPercentage?: number;
   onReveal?: () => void;
+  onComplete?: () => void;
+  onConfigChange?: (config: any) => void;
+  config?: {
+    image: string;
+    revealPercentage: number;
+  };
 }
 
 const Scratch: React.FC<ScratchProps> = ({
   image = 'https://via.placeholder.com/300',
-  revealPercentage = 50,
-  onReveal
+  onReveal,
+  onComplete,
+  config
 }) => {
+  // Use image from config if provided
+  const imageToShow = config?.image || image;
+  // Use revealPercentage from config if provided, otherwise default to 50
   const [revealed, setRevealed] = useState(false);
 
   const handleReveal = () => {
     setRevealed(true);
     if (onReveal) {
       onReveal();
+    }
+    if (onComplete) {
+      onComplete();
     }
   };
 
@@ -26,7 +39,7 @@ const Scratch: React.FC<ScratchProps> = ({
       <div className="relative w-full max-w-xs aspect-square bg-gray-200 rounded-lg overflow-hidden">
         {/* Prize image */}
         <img
-          src={image}
+          src={imageToShow}
           alt="Scratch prize"
           className="w-full h-full object-cover"
           style={{ opacity: revealed ? 1 : 0.2 }}

@@ -1,19 +1,24 @@
 
 import React from 'react';
-import { useNewsletterStore } from '../../../../stores/newsletterStore';
 import { NewsletterModule } from '../../../../types/newsletter';
 
 interface SettingsTabProps {
-  selectedModule: NewsletterModule;
-  onUpdateModule: (moduleId: string, data: Partial<NewsletterModule>) => void;
-  onDeleteModule: (moduleId: string) => void;
+  selectedModule?: NewsletterModule;
+  onUpdateModule?: (moduleId: string, data: Partial<NewsletterModule>) => void;
+  onDeleteModule?: (moduleId: string) => void;
 }
 
 const SettingsTab: React.FC<SettingsTabProps> = ({ 
   selectedModule, 
   onUpdateModule
 }) => {
-  // Remove unused variables and properties
+  if (!selectedModule || !onUpdateModule) {
+    return (
+      <div className="p-4 text-gray-500">
+        Select a module to edit its settings.
+      </div>
+    );
+  }
   
   const handlePaddingChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onUpdateModule(selectedModule.id, { settings: { ...selectedModule.settings, padding: e.target.value } });
@@ -51,7 +56,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
         <input
           type="color"
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-          value={selectedModule.settings.backgroundColor || ''}
+          value={selectedModule.settings.backgroundColor || '#ffffff'}
           onChange={handleBackgroundColorChange}
         />
       </div>
@@ -72,7 +77,7 @@ const SettingsTab: React.FC<SettingsTabProps> = ({
         <input
           type="color"
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-          value={selectedModule.settings.color || ''}
+          value={selectedModule.settings.color || '#000000'}
           onChange={handleColorChange}
         />
       </div>

@@ -1,12 +1,14 @@
+
 import React, { useState } from 'react';
 import { X, Smartphone, Monitor } from 'lucide-react';
 import { useSpring, animated } from 'react-spring';
 import { ModuleRenderer } from './ModuleRenderer';
+import { NewsletterModule } from '../../types/newsletter';
 
 interface PreviewModalProps {
   isOpen: boolean;
   onClose: () => void;
-  modules: any[];
+  modules: NewsletterModule[];
 }
 
 const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, modules }) => {
@@ -62,7 +64,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, modules })
         <div className="flex-1 overflow-y-auto p-6">
           <div className="max-w-4xl mx-auto space-y-4">
             {modules.map((module) => (
-              <ModuleRenderer key={module.id} module={module} preview />
+              <ModuleRenderer key={module.id} module={module} />
             ))}
           </div>
         </div>

@@ -29,7 +29,7 @@ export const ColumnsProperties: React.FC<ColumnsPropertiesProps> = ({ module, on
               key={count}
               onClick={() => handleColumnCountChange(count)}
               className={`px-4 py-2 rounded-md text-sm font-medium ${
-                module.settings?.columns === count
+                Number(module.settings?.columns) === count
                   ? 'bg-blue-600 text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
@@ -48,11 +48,11 @@ export const ColumnsProperties: React.FC<ColumnsPropertiesProps> = ({ module, on
           type="range"
           min="0"
           max="8"
-          value={module.settings?.spacing || 4}
+          value={module.settings?.spacing || '4'}
           onChange={(e) => onUpdate(module.id, { 
             settings: { 
               ...module.settings, 
-              spacing: Number(e.target.value) 
+              spacing: String(e.target.value) 
             } 
           })}
           className="w-full"

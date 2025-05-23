@@ -59,7 +59,7 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
           <Wheel 
             segments={segmentTexts}
             colors={wheelColors}
-            onSpinEnd={(segment: string) => {
+            onSpinComplete={(segment: string) => {
               console.log("Wheel stopped at:", segment);
             }}
             config={campaign.gameConfig.wheel}
@@ -78,10 +78,11 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
       case 'scratch':
         return (
           <Scratch 
-            config={campaign.gameConfig.scratch} 
-            onComplete={() => {
-              console.log("Scratch completed");
+            image={campaign.gameConfig.scratch.image}
+            onReveal={() => {
+              console.log("Scratch revealed");
             }}
+            config={campaign.gameConfig.scratch} 
             onConfigChange={(config: { image: string; revealPercentage: number }) => {
               setCampaign((prev: Campaign) => ({
                 ...prev,

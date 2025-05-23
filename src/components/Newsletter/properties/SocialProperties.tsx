@@ -8,7 +8,17 @@ interface SocialPropertiesProps {
 
 const SocialProperties: React.FC<SocialPropertiesProps> = ({ module }) => {
   const handleChange = (key: string, value: string) => {
-    module.settings = { ...module.settings, [key]: value };
+    if (!module.settings.socialLinks) {
+      module.settings.socialLinks = {};
+    }
+    
+    module.settings = { 
+      ...module.settings, 
+      socialLinks: {
+        ...module.settings.socialLinks,
+        [key]: value
+      }
+    };
   };
   
   const platforms = [
@@ -19,9 +29,10 @@ const SocialProperties: React.FC<SocialPropertiesProps> = ({ module }) => {
     { name: 'youtube', label: 'YouTube URL' },
     { name: 'website', label: 'Website URL' },
   ].map((platform) => {
+    const socialLinks = module.settings.socialLinks || {};
     return {
       ...platform,
-      value: module.settings?.[platform.name] || '',
+      value: socialLinks[platform.name as keyof typeof socialLinks] || '',
       onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
         handleChange(platform.name, e.target.value);
       },

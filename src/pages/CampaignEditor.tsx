@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { Save, ChevronRight, Link as LinkIcon, Copy, Eye } from 'lucide-react';
@@ -9,12 +10,6 @@ import CampaignSettings from '../components/CampaignEditor/CampaignSettings';
 import CampaignPreview from '../components/CampaignEditor/CampaignPreview';
 import PreviewModal from '../components/CampaignEditor/PreviewModal';
 import { Campaign } from '../types/campaign';
-
-// Define the props interface for campaign components
-interface CampaignComponentProps {
-  campaign: Campaign;
-  setCampaign: React.Dispatch<React.SetStateAction<Campaign>>;
-}
 
 const CampaignEditor: React.FC = () => {
   const { id } = useParams();
@@ -123,11 +118,6 @@ const CampaignEditor: React.FC = () => {
     if (!continueEditing) {
       window.location.href = '/campaigns';
     }
-  };
-  
-  // Function to get props for campaign-related components
-  const getCampaignProps = (): CampaignComponentProps => {
-    return { campaign, setCampaign };
   };
   
   return (
@@ -286,11 +276,13 @@ const CampaignEditor: React.FC = () => {
         )}
       </div>
 
-      <PreviewModal
-        isOpen={showPreviewModal}
-        onClose={() => setShowPreviewModal(false)}
-        campaign={campaign}
-      />
+      {showPreviewModal && (
+        <PreviewModal
+          isOpen={true}
+          onClose={() => setShowPreviewModal(false)}
+          campaign={campaign}
+        />
+      )}
     </div>
   );
 };

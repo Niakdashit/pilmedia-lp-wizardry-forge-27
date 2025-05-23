@@ -5,6 +5,7 @@ export interface SocialLinks {
   instagram?: string;
   linkedin?: string;
   youtube?: string;
+  website?: string;
 }
 
 export interface NewsletterModule {

@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 interface WheelProps {
@@ -5,12 +6,18 @@ interface WheelProps {
   colors?: string[];
   onSpinComplete?: (segment: string) => void;
   onConfigChange?: (config: any) => void;
+  onSpinEnd?: (segment: string) => void;
+  config?: {
+    segments: any[];
+    colors: string[];
+  };
 }
 
 const Wheel: React.FC<WheelProps> = ({
   segments = ['Prize 1', 'Prize 2', 'Prize 3', 'Try Again'],
   colors = ['#E57373', '#81C784', '#64B5F6', '#FFD54F'],
-  onSpinComplete
+  onSpinComplete,
+  onSpinEnd
 }) => {
   // Using only needed states and removing unused ones
   const [spinning, setSpinning] = React.useState(false);
@@ -22,8 +29,12 @@ const Wheel: React.FC<WheelProps> = ({
       setTimeout(() => {
         setSpinning(false);
         const randomIndex = Math.floor(Math.random() * segments.length);
+        const selectedSegment = segments[randomIndex];
         if (onSpinComplete) {
-          onSpinComplete(segments[randomIndex]);
+          onSpinComplete(selectedSegment);
+        }
+        if (onSpinEnd) {
+          onSpinEnd(selectedSegment);
         }
       }, spinDuration);
     }
