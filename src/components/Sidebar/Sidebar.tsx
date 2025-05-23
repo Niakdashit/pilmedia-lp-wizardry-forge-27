@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { 
@@ -22,16 +23,16 @@ const Sidebar: React.FC = () => {
   const { sidebarCollapsed, toggleSidebar } = useAppContext();
   
   const navItems = [
-    { name: 'Tableau de bord', path: '/', icon: <LayoutDashboard className="w-6 h-6" /> },
-    { name: 'Campagnes', path: '/campaigns', icon: <Target className="w-6 h-6" /> },
-    { name: 'Gamification', path: '/gamification', icon: <Gamepad2 className="w-6 h-6" /> },
-    { name: 'Newsletter', path: '/newsletter', icon: <Mail className="w-6 h-6" /> },
-    { name: 'Statistiques', path: '/statistics', icon: <BarChart3 className="w-6 h-6" /> },
-    { name: 'Contacts', path: '/contacts', icon: <Users className="w-6 h-6" /> },
-    { name: 'Données', path: '/data', icon: <Database className="w-6 h-6" /> },
-    { name: 'Réseaux sociaux', path: '/social', icon: <Share2 className="w-6 h-6" /> },
-    { name: 'Études', path: '/studies', icon: <BookOpen className="w-6 h-6" /> },
-    { name: 'Compte', path: '/account', icon: <UserCircle className="w-6 h-6" /> },
+    { name: 'Tableau de bord', path: '/', icon: <LayoutDashboard className="w-5 h-5" /> },
+    { name: 'Campagnes', path: '/campaigns', icon: <Target className="w-5 h-5" /> },
+    { name: 'Gamification', path: '/gamification', icon: <Gamepad2 className="w-5 h-5" /> },
+    { name: 'Newsletter', path: '/newsletter', icon: <Mail className="w-5 h-5" /> },
+    { name: 'Statistiques', path: '/statistics', icon: <BarChart3 className="w-5 h-5" /> },
+    { name: 'Contacts', path: '/contacts', icon: <Users className="w-5 h-5" /> },
+    { name: 'Données', path: '/data', icon: <Database className="w-5 h-5" /> },
+    { name: 'Réseaux sociaux', path: '/social', icon: <Share2 className="w-5 h-5" /> },
+    { name: 'Études', path: '/studies', icon: <BookOpen className="w-5 h-5" /> },
+    { name: 'Compte', path: '/account', icon: <UserCircle className="w-5 h-5" /> },
   ];
 
   return (
@@ -71,11 +72,15 @@ const Sidebar: React.FC = () => {
           <Link
             key={item.path}
             to={item.path}
-            className={`nav-link mx-3 my-1 ${
-              location.pathname === item.path ? 'active' : ''
-            } ${sidebarCollapsed ? 'justify-center' : ''}`}
+            className={`flex items-center px-6 py-3 ${
+              location.pathname === item.path 
+                ? 'bg-[#f8f0f5] text-[#841b60]' 
+                : 'text-gray-600 hover:text-[#841b60] hover:bg-[#f8f0f5]'
+            } transition-colors duration-200`}
           >
-            {item.icon}
+            <span className="flex items-center justify-center w-5">
+              {item.icon}
+            </span>
             {!sidebarCollapsed && <span className="ml-3">{item.name}</span>}
           </Link>
         ))}
@@ -84,11 +89,11 @@ const Sidebar: React.FC = () => {
       <div className="mt-auto pb-6">
         <Link
           to="/logout"
-          className={`nav-link mx-3 mb-3 ${
-            sidebarCollapsed ? 'justify-center' : ''
-          }`}
+          className="flex items-center px-6 py-3 text-gray-600 hover:text-[#841b60] hover:bg-[#f8f0f5] transition-colors duration-200"
         >
-          <LogOut className="w-6 h-6" />
+          <span className="flex items-center justify-center w-5">
+            <LogOut className="w-5 h-5" />
+          </span>
           {!sidebarCollapsed && <span className="ml-3">Déconnexion</span>}
         </Link>
       </div>

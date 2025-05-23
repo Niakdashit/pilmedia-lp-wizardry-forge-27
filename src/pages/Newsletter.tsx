@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { DndContext, DragEndEvent, DragOverlay } from '@dnd-kit/core';
 import { Eye, Send, Save } from 'lucide-react';
@@ -7,6 +8,8 @@ import { PropertiesPanel } from '../components/Newsletter/PropertiesPanel';
 import { useNewsletterStore, ModuleType } from '../stores/newsletterStore';
 import PreviewModal from '../components/Newsletter/PreviewModal';
 import SettingsTab from '@/components/Newsletter/properties/Tab/SettingsTab';
+import SendTab from '@/components/Newsletter/tabs/SendTab';
+import AutomateTab from '@/components/Newsletter/tabs/AutomateTab';
 import { NewsletterModule } from '../types/newsletter';
 
 const Newsletter: React.FC = () => {
@@ -69,44 +72,44 @@ const Newsletter: React.FC = () => {
       </div>
 
       {/* Onglets */}
-      <div className="bg-[#ebf4f7] border-b border-gray-300">
+      <div className="bg-[#ebf4f7] border-b border-gray-300 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="flex space-x-6">
+          <div className="flex space-x-6 overflow-x-auto hide-scrollbar">
             <button
-              className={`px-6 py-3 font-semibold transition ${
+              className={`px-6 py-3 font-semibold transition whitespace-nowrap ${
                 activeTab === 'edit'
                   ? 'bg-white text-[#841b60] border-b-2 border-[#841b60]'
-                  : 'text-gray-600 hover:text-[#841b60] hover:bg-white rounded-t-md'
+                  : 'text-gray-600 hover:text-[#841b60] hover:bg-white/50 rounded-t-md'
               }`}
               onClick={() => setActiveTab('edit')}
             >
               Modifier
             </button>
             <button
-              className={`px-6 py-3 font-semibold transition ${
+              className={`px-6 py-3 font-semibold transition whitespace-nowrap ${
                 activeTab === 'settings'
                   ? 'bg-white text-[#841b60] border-b-2 border-[#841b60]'
-                  : 'text-gray-600 hover:text-[#841b60] hover:bg-white rounded-t-md'
+                  : 'text-gray-600 hover:text-[#841b60] hover:bg-white/50 rounded-t-md'
               }`}
               onClick={() => setActiveTab('settings')}
             >
               Paramètres
             </button>
             <button
-              className={`px-6 py-3 font-semibold transition ${
+              className={`px-6 py-3 font-semibold transition whitespace-nowrap ${
                 activeTab === 'send'
                   ? 'bg-white text-[#841b60] border-b-2 border-[#841b60]'
-                  : 'text-gray-600 hover:text-[#841b60] hover:bg-white rounded-t-md'
+                  : 'text-gray-600 hover:text-[#841b60] hover:bg-white/50 rounded-t-md'
               }`}
               onClick={() => setActiveTab('send')}
             >
               Envoyer ou planifier
             </button>
             <button
-              className={`px-6 py-3 font-semibold transition ${
+              className={`px-6 py-3 font-semibold transition whitespace-nowrap ${
                 activeTab === 'automate'
                   ? 'bg-white text-[#841b60] border-b-2 border-[#841b60]'
-                  : 'text-gray-600 hover:text-[#841b60] hover:bg-white rounded-t-md'
+                  : 'text-gray-600 hover:text-[#841b60] hover:bg-white/50 rounded-t-md'
               }`}
               onClick={() => setActiveTab('automate')}
             >
@@ -138,14 +141,14 @@ const Newsletter: React.FC = () => {
         )}
 
         {activeTab === 'send' && (
-          <div className="flex-1 p-6 bg-white text-gray-600">
-            <h2>Envoyer ou planifier</h2>
+          <div className="flex-1 p-6 bg-white overflow-auto">
+            <SendTab />
           </div>
         )}
 
         {activeTab === 'automate' && (
-          <div className="flex-1 p-6 bg-white text-gray-600">
-            <h2>Automatiser</h2>
+          <div className="flex-1 p-6 bg-white overflow-auto">
+            <AutomateTab />
           </div>
         )}
       </div>

@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -51,6 +52,15 @@
   @apply bg-gray-300/50 rounded-full hover:bg-gray-400/50 transition-colors duration-200;
 }
 
+/* Hide scrollbar for modern browsers */
+.hide-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;  /* Chrome, Safari and Opera */
+}
+
 /* Animations */
 .fade-in {
   animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -79,6 +89,37 @@
   to {
     transform: translateY(0);
     opacity: 1;
+  }
+}
+
+.spin-in {
+  animation: spinIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes spinIn {
+  from {
+    transform: rotate(-180deg) scale(0.8);
+    opacity: 0;
+  }
+  to {
+    transform: rotate(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.pulse-animate {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
   }
 }
 
@@ -113,9 +154,55 @@ textarea {
 
 /* Navigation */
 .nav-link {
-  @apply px-6 py-3 rounded-2xl text-gray-600 hover:text-[#841b60] hover:bg-[#841b60]/5 transition-all duration-300;
+  @apply flex items-center px-6 py-3 rounded-2xl text-gray-600 hover:text-[#841b60] hover:bg-[#841b60]/5 transition-all duration-300;
 }
 
 .nav-link.active {
   @apply text-[#841b60] bg-[#841b60]/5;
+}
+
+/* Responsive Design Helpers */
+.responsive-container {
+  @apply container mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+.responsive-grid {
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6;
+}
+
+.responsive-flex {
+  @apply flex flex-col sm:flex-row items-start sm:items-center justify-between;
+}
+
+/* Text shadow for improved readability */
+.text-shadow {
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.text-shadow-lg {
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Animation for buttons */
+.btn-hover-effect {
+  @apply transition-all duration-300 ease-in-out transform hover:translate-y-[-2px] hover:shadow-lg;
+}
+
+/* Tooltip */
+.tooltip {
+  @apply relative;
+}
+
+.tooltip::after {
+  @apply content-[attr(data-tooltip)] absolute bottom-full left-1/2 transform -translate-x-1/2 px-3 py-1 bg-gray-900 text-white text-xs rounded opacity-0 transition-opacity pointer-events-none;
+  margin-bottom: 5px;
+}
+
+.tooltip:hover::after {
+  @apply opacity-100;
+}
+
+/* Improved focus styles for accessibility */
+:focus-visible {
+  @apply outline-none ring-2 ring-[#841b60] ring-offset-2;
 }
