@@ -1,9 +1,9 @@
 import React from 'react';
-import { Module } from '../../../stores/newsletterStore';
+import { NewsletterModule } from '../../../types/newsletter';
 
 interface ColumnsPropertiesProps {
-  module: Module;
-  onUpdate: (moduleId: string, updates: Partial<Module>) => void;
+  module: NewsletterModule;
+  onUpdate: (moduleId: string, updates: Partial<NewsletterModule>) => void;
 }
 
 export const ColumnsProperties: React.FC<ColumnsPropertiesProps> = ({ module, onUpdate }) => {
@@ -68,3 +68,5 @@ export const ColumnsProperties: React.FC<ColumnsPropertiesProps> = ({ module, on
     </div>
   );
 };
+
+export default ColumnsProperties;

@@ -1,15 +1,15 @@
-
 import React from 'react';
 import { useNewsletterStore } from '@/stores/newsletterStore';
 import { Trash2, GripVertical, ChevronUp, ChevronDown, Copy } from 'lucide-react';
-import { NewsletterModule } from '@/types/newsletter';
+import { NewsletterModule, ModuleSettings } from '../../types/newsletter';
 
 interface ModuleRendererProps {
   module: NewsletterModule;
+  settings?: ModuleSettings;
   preview?: boolean;
 }
 
-export const ModuleRenderer: React.FC<ModuleRendererProps> = ({ module }) => {
+export const ModuleRenderer: React.FC<ModuleRendererProps> = ({ module, preview = false }) => {
   const { updateModule, removeModule, selectModule } = useNewsletterStore();
 
   const handleMoveUp = (e: React.MouseEvent) => {
@@ -25,6 +25,14 @@ export const ModuleRenderer: React.FC<ModuleRendererProps> = ({ module }) => {
   const handleDuplicate = (e: React.MouseEvent) => {
     e.stopPropagation();
     // Add duplicate module implementation
+  };
+
+  // Fix the string[] issue with string join
+  const renderColumnContent = (content: string | string[]) => {
+    if (Array.isArray(content)) {
+      return content.join('\n');
+    }
+    return content;
   };
 
   return (

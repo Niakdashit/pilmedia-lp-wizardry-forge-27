@@ -1,7 +1,9 @@
+
 import React, { useState } from 'react';
-import { Layout, Type, Palette, Box, Image as ImageIcon, Upload, Code, Eye, Link as LinkIcon } from 'lucide-react';
+import { Type, Palette, Box, Image as ImageIcon, Upload, Code } from 'lucide-react';
 import Color from 'color';
 import PreviewContent from './PreviewContent';
+import { Campaign } from '../../types/campaign';
 
 // Add the getContrastColor function
 const getContrastColor = (backgroundColor: string): string => {
@@ -16,8 +18,8 @@ const getContrastColor = (backgroundColor: string): string => {
 };
 
 interface CampaignScreensProps {
-  campaign: any;
-  setCampaign: React.Dispatch<React.SetStateAction<any>>;
+  campaign: Campaign;
+  setCampaign: React.Dispatch<React.SetStateAction<Campaign>>;
 }
 
 const CampaignScreens: React.FC<CampaignScreensProps> = ({ campaign, setCampaign }) => {
@@ -33,7 +35,7 @@ const CampaignScreens: React.FC<CampaignScreensProps> = ({ campaign, setCampaign
   ];
 
   const updateScreen = (screenNumber: number, field: string, value: any) => {
-    setCampaign(prev => ({
+    setCampaign((prev: Campaign) => ({
       ...prev,
       screens: {
         ...prev.screens,
@@ -46,7 +48,7 @@ const CampaignScreens: React.FC<CampaignScreensProps> = ({ campaign, setCampaign
   };
 
   const updateDesign = (key: string, value: any) => {
-    setCampaign(prev => ({
+    setCampaign((prev: Campaign) => ({
       ...prev,
       design: {
         ...prev.design,
@@ -133,7 +135,7 @@ const CampaignScreens: React.FC<CampaignScreensProps> = ({ campaign, setCampaign
 
   const updateScreenFrame = (field: string, value: any) => {
     const screenNumber = getScreenNumber();
-    setCampaign(prev => ({
+    setCampaign((prev: Campaign) => ({
       ...prev,
       screens: {
         ...prev.screens,

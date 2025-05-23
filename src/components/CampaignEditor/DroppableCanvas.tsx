@@ -1,14 +1,15 @@
 
 import React from 'react';
 import Color from 'color';
+import { Campaign } from '../../types/campaign';
 
 interface DroppableCanvasProps {
   components: any[];
   selectedComponent: any;
   onComponentSelect: (component: any) => void;
-  onComponentUpdate: (id: string, updates: any) => void;
+  onComponentUpdate?: (id: string, updates: any) => void;
   backgroundImage?: string;
-  campaign: any;
+  campaign: Campaign;
 }
 
 export const DroppableCanvas: React.FC<DroppableCanvasProps> = ({

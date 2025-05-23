@@ -8,6 +8,7 @@ import CampaignDesign from '../components/CampaignEditor/CampaignDesign';
 import CampaignSettings from '../components/CampaignEditor/CampaignSettings';
 import CampaignPreview from '../components/CampaignEditor/CampaignPreview';
 import PreviewModal from '../components/CampaignEditor/PreviewModal';
+import { Campaign } from '../types/campaign';
 
 const CampaignEditor: React.FC = () => {
   const { id } = useParams();
@@ -19,7 +20,7 @@ const CampaignEditor: React.FC = () => {
   const [showPreview, setShowPreview] = useState(false);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   
-  const [campaign, setCampaign] = useState({
+  const [campaign, setCampaign] = useState<Campaign>({
     name: isNewCampaign ? 'Nouvelle Campagne' : 'Quiz Marketing Digital',
     description: isNewCampaign ? '' : 'Quiz pour évaluer les connaissances en marketing digital',
     url: isNewCampaign ? '' : 'quiz-marketing-digital',
@@ -39,7 +40,12 @@ const CampaignEditor: React.FC = () => {
         showDescription: true
       },
       2: {
-        // Game screen configuration is handled in gameConfig
+        title: '',
+        description: '',
+        buttonText: '',
+        buttonLink: '',
+        showTitle: false,
+        showDescription: false
       },
       3: {
         title: 'Félicitations !',

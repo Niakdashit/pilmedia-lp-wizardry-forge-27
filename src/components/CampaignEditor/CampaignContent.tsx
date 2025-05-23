@@ -1,10 +1,12 @@
+
 import React, { useState } from 'react';
 import { Quiz, Wheel, Scratch, Swiper } from '../GameTypes';
 import { Palette, Type, Square, Box } from 'lucide-react';
+import { Campaign } from '../../types/campaign';
 
 interface CampaignContentProps {
-  campaign: any;
-  setCampaign: React.Dispatch<React.SetStateAction<any>>;
+  campaign: Campaign;
+  setCampaign: React.Dispatch<React.SetStateAction<Campaign>>;
 }
 
 const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign }) => {
@@ -24,7 +26,7 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
   ];
 
   const updateStyle = (key: string, value: string) => {
-    setCampaign(prev => ({
+    setCampaign((prev: Campaign) => ({
       ...prev,
       design: {
         ...prev.design,
@@ -40,7 +42,7 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
           <Quiz 
             config={campaign.gameConfig.quiz} 
             onConfigChange={(config) => {
-              setCampaign(prev => ({
+              setCampaign((prev: Campaign) => ({
                 ...prev,
                 gameConfig: {
                   ...prev.gameConfig,
@@ -55,7 +57,7 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
           <Wheel 
             config={campaign.gameConfig.wheel} 
             onConfigChange={(config) => {
-              setCampaign(prev => ({
+              setCampaign((prev: Campaign) => ({
                 ...prev,
                 gameConfig: {
                   ...prev.gameConfig,
@@ -70,7 +72,7 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
           <Scratch 
             config={campaign.gameConfig.scratch} 
             onConfigChange={(config) => {
-              setCampaign(prev => ({
+              setCampaign((prev: Campaign) => ({
                 ...prev,
                 gameConfig: {
                   ...prev.gameConfig,
@@ -85,7 +87,7 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
           <Swiper 
             config={campaign.gameConfig.swiper} 
             onConfigChange={(config) => {
-              setCampaign(prev => ({
+              setCampaign((prev: Campaign) => ({
                 ...prev,
                 gameConfig: {
                   ...prev.gameConfig,
