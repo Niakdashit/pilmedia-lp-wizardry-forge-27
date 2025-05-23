@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNewsletterStore } from '@/stores/newsletterStore';
 import { Trash2, GripVertical, ChevronUp, ChevronDown, Copy } from 'lucide-react';
@@ -25,6 +26,14 @@ export const ModuleRenderer: React.FC<ModuleRendererProps> = ({ module }) => {
   const handleDuplicate = (e: React.MouseEvent) => {
     e.stopPropagation();
     // Add duplicate module implementation
+  };
+
+  // Helper function to handle column content (not used directly in this file - moved to separate component)
+  const renderColumnContent = (content: string | string[], index: number) => {
+    if (Array.isArray(content) && content[index]) {
+      return content[index];
+    }
+    return '';
   };
 
   return (
@@ -99,7 +108,7 @@ export const ModuleRenderer: React.FC<ModuleRendererProps> = ({ module }) => {
           <div className="space-y-2">
             <input
               type="text"
-              value={module.content || ''}
+              value={module.content as string || ''}
               onChange={(e) => updateModule(module.id, { content: e.target.value })}
               className="w-full p-2 border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
               placeholder="Texte du bouton..."
@@ -113,7 +122,7 @@ export const ModuleRenderer: React.FC<ModuleRendererProps> = ({ module }) => {
             />
             {module.content && (
               <button className="w-full px-6 py-3 bg-[#841b60] text-white font-medium rounded-lg hover:bg-[#6d164f] transition-colors duration-200">
-                {module.content}
+                {module.content as string}
               </button>
             )}
           </div>
@@ -170,7 +179,7 @@ export const ModuleRenderer: React.FC<ModuleRendererProps> = ({ module }) => {
                   onChange={(e) => {
                     const newContent = Array.isArray(module.content) ? 
                       [...module.content] : 
-                      [];
+                      Array(module.settings?.columns || 2).fill('');
                     newContent[index] = e.target.value;
                     updateModule(module.id, { content: newContent });
                   }}

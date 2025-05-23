@@ -71,6 +71,8 @@ export interface CampaignDesign {
   fontWeight: string;
   logoUrl: string;
   backgroundImage: string;
+  customHTML?: string;
+  customCSS?: string;
   frame?: {
     maxWidth?: number;
     maxHeight?: number;
@@ -78,8 +80,6 @@ export interface CampaignDesign {
     position?: string;
     show?: boolean;
   };
-  customHTML?: string;
-  customCSS?: string;
 }
 
 export interface CampaignRewards {

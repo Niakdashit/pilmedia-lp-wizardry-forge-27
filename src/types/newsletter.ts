@@ -14,6 +14,13 @@ export interface ModuleSettings {
   height?: string;
   spacing?: number;
   verticalAlignment?: string;
+  // Social links
+  facebook?: string;
+  twitter?: string;
+  instagram?: string;
+  linkedin?: string;
+  youtube?: string;
+  website?: string;
   [key: string]: any;
 }
 

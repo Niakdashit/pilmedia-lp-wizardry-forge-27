@@ -15,7 +15,7 @@ interface PreviewModalProps {
 const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }) => {
   const [step, setStep] = useState<'start' | 'game' | 'end'>('start');
   const [viewMode, setViewMode] = useState<'desktop' | 'mobile'>('desktop');
-  const { width } = useWindowSize();
+  useWindowSize();
 
   const modalSpring = useSpring({
     opacity: isOpen ? 1 : 0,

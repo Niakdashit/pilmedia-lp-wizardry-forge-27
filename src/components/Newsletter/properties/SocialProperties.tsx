@@ -1,7 +1,12 @@
 
 import React from 'react';
+import { NewsletterModule } from '../../../types/newsletter';
 
-const SocialProperties: React.FC<{ module: any }> = ({ module }) => {
+interface SocialPropertiesProps {
+  module: NewsletterModule;
+}
+
+const SocialProperties: React.FC<SocialPropertiesProps> = ({ module }) => {
   const handleChange = (key: string, value: string) => {
     module.settings = { ...module.settings, [key]: value };
   };

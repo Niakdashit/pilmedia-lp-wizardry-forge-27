@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import { Save, ChevronRight, Link as LinkIcon, Copy, Eye } from 'lucide-react';
@@ -17,7 +18,8 @@ const CampaignEditor: React.FC = () => {
   const campaignType = searchParams.get('type');
   
   const [activeTab, setActiveTab] = useState('general');
-  const [showPreview, setShowPreview] = useState(false);
+  // Using this variable but not changing it in the current code
+  const [showPreview] = useState(false);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   
   const [campaign, setCampaign] = useState<Campaign>({
@@ -28,7 +30,7 @@ const CampaignEditor: React.FC = () => {
     startTime: isNewCampaign ? '' : '09:00',
     endDate: isNewCampaign ? '' : '2025-04-15',
     endTime: isNewCampaign ? '' : '18:00',
-    status: isNewCampaign ? 'draft' : 'active',
+    status: isNewCampaign ? 'draft' : 'active' as 'draft' | 'scheduled' | 'active' | 'ended',
     type: isNewCampaign ? (campaignType || 'quiz') : 'quiz',
     screens: {
       1: {
@@ -92,7 +94,16 @@ const CampaignEditor: React.FC = () => {
       fontSize: 'normal',
       fontWeight: 'normal',
       logoUrl: '',
-      backgroundImage: ''
+      backgroundImage: '',
+      customHTML: '',
+      customCSS: '',
+      frame: {
+        maxWidth: 800,
+        maxHeight: 600,
+        padding: 24,
+        position: 'center-center',
+        show: true
+      }
     },
     rewards: {
       mode: 'probability',
@@ -108,6 +119,11 @@ const CampaignEditor: React.FC = () => {
     if (!continueEditing) {
       window.location.href = '/campaigns';
     }
+  };
+  
+  // Function to get props for campaign-related components
+  const getCampaignProps = () => {
+    return { campaign, setCampaign };
   };
   
   return (
@@ -210,23 +226,23 @@ const CampaignEditor: React.FC = () => {
           
           <div className="flex-1 overflow-y-auto p-6">
             {activeTab === 'general' && (
-              <CampaignGeneral campaign={campaign} setCampaign={setCampaign} />
+              <CampaignGeneral {...getCampaignProps()} />
             )}
             
             {activeTab === 'content' && (
-              <CampaignContent campaign={campaign} setCampaign={setCampaign} />
+              <CampaignContent {...getCampaignProps()} />
             )}
 
             {activeTab === 'screens' && (
-              <CampaignScreens campaign={campaign} setCampaign={setCampaign} />
+              <CampaignScreens {...getCampaignProps()} />
             )}
             
             {activeTab === 'design' && (
-              <CampaignDesign campaign={campaign} setCampaign={setCampaign} />
+              <CampaignDesign {...getCampaignProps()} />
             )}
 
             {activeTab === 'settings' && (
-              <CampaignSettings campaign={campaign} setCampaign={setCampaign} />
+              <CampaignSettings {...getCampaignProps()} />
             )}
           </div>
         </div>
