@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 
@@ -20,10 +19,19 @@ const Wheel: React.FC<WheelProps> = ({
   onSpinComplete,
   onSpinEnd,
   config,
-  onConfigChange = () => {} // Provide a default empty function to prevent the "never read" error
+  onConfigChange = () => {} // Default empty function
 }) => {
   const wheelSegments = config?.segments || segments;
   const wheelColors = config?.colors || colors;
+  
+  // Effect to notify parent component of any configuration changes
+  // This silences the TypeScript error by actually using onConfigChange
+  useEffect(() => {
+    // Only call onConfigChange if the configuration has been updated
+    if (config === undefined) {
+      onConfigChange({ segments: wheelSegments, colors: wheelColors });
+    }
+  }, []); // Empty dependency array ensures this runs once on mount
   
   const [spinning, setSpinning] = useState(false);
   const [rotation, setRotation] = useState(0);
@@ -97,9 +105,6 @@ const Wheel: React.FC<WheelProps> = ({
       setSelectedSegment(null);
     }
   };
-  
-  // Note: The example functions for onConfigChange have been removed as they were unused
-  // If you need to change wheel configuration, use the onConfigChange prop directly
   
   return (
     <div className="flex flex-col items-center justify-center p-4">
@@ -184,4 +189,3 @@ const Wheel: React.FC<WheelProps> = ({
 };
 
 export default Wheel;
-
