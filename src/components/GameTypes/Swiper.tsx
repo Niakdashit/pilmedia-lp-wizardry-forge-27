@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Plus, Trash2, Image as ImageIcon, Type, Heart, X } from 'lucide-react';
 
 interface SwiperProps {
@@ -9,10 +9,12 @@ interface SwiperProps {
 
 const Swiper: React.FC<SwiperProps> = ({ config, onConfigChange, onSwipeResult }) => {
   const updateConfig = (field: string, value: any) => {
-    onConfigChange({
-      ...config,
-      [field]: value
-    });
+    if (onConfigChange) {
+      onConfigChange({
+        ...config,
+        [field]: value
+      });
+    }
   };
 
   const addCard = () => {

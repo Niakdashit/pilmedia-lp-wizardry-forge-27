@@ -90,9 +90,9 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
     }, 1000);
   };
 
-  const handleSwipeComplete = (result: 'like' | 'dislike') => {
-    setSwipeResult(result);
-    if (result === 'like') {
+  const handleSwipe = (result: boolean) => {
+    setSwipeResult(result ? 'like' : 'dislike');
+    if (result) {
       setIsComplete(true);
       confetti({
         particleCount: 100,
@@ -266,6 +266,7 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
               onConfigChange={(updatedConfig) => {
                 console.log('Swiper config updated:', updatedConfig);
               }}
+              onSwipeResult={handleSwipe}
             />
           </div>
         );
