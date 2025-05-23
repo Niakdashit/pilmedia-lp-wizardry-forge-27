@@ -1,9 +1,8 @@
 
-import React, { useState } from 'react';
-import { X, Smartphone, Monitor } from 'lucide-react';
-import { useSpring, animated } from 'react-spring';
+import React from 'react';
+import { X } from 'lucide-react';
 import { ModuleRenderer } from './ModuleRenderer';
-import { NewsletterModule } from '../../types/newsletter';
+import { NewsletterModule } from '@/types/newsletter';
 
 interface PreviewModalProps {
   isOpen: boolean;
@@ -12,63 +11,58 @@ interface PreviewModalProps {
 }
 
 const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, modules }) => {
-  const [viewMode, setViewMode] = useState<'desktop' | 'mobile'>('desktop');
-
-  const modalSpring = useSpring({
-    opacity: isOpen ? 1 : 0,
-    transform: isOpen ? 'translateY(0%)' : 'translateY(-100%)',
-    config: { tension: 280, friction: 20 }
-  });
-
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <animated.div 
-        style={modalSpring}
-        className={`bg-white rounded-lg shadow-xl ${
-          viewMode === 'mobile' ? 'w-[375px]' : 'w-[90vw]'
-        } h-[90vh] flex flex-col`}
-      >
-        <div className="flex items-center justify-between p-4 border-b">
-          <div className="flex space-x-2">
-            <button
-              onClick={() => setViewMode('desktop')}
-              className={`p-2 rounded-lg ${
-                viewMode === 'desktop' 
-                  ? 'bg-[#841b60] text-white' 
-                  : 'bg-gray-100 text-gray-700'
-              }`}
-            >
-              <Monitor className="w-5 h-5" />
-            </button>
-            <button
-              onClick={() => setViewMode('mobile')}
-              className={`p-2 rounded-lg ${
-                viewMode === 'mobile' 
-                  ? 'bg-[#841b60] text-white' 
-                  : 'bg-gray-100 text-gray-700'
-              }`}
-            >
-              <Smartphone className="w-5 h-5" />
-            </button>
-          </div>
+    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 overflow-y-auto h-full w-full flex items-start justify-center">
+      <div className="bg-white rounded-xl m-6 max-w-4xl w-full">
+        <div className="flex justify-between items-center p-4 border-b">
+          <h3 className="text-xl font-semibold text-gray-800">Aperçu de la newsletter</h3>
           <button
             onClick={onClose}
-            className="p-2 text-gray-500 hover:text-gray-700 rounded-lg hover:bg-gray-100"
+            className="text-gray-500 hover:text-gray-700 transition-colors duration-200"
           >
             <X className="w-6 h-6" />
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-6">
-          <div className="max-w-4xl mx-auto space-y-4">
-            {modules.map((module) => (
-              <ModuleRenderer key={module.id} module={module} />
-            ))}
+        <div className="flex p-4">
+          <div className="flex-1 border-r pr-4">
+            <div className="bg-gray-100 p-3 rounded-lg">
+              <h4 className="font-semibold mb-2">Aperçu sur ordinateur</h4>
+              <div className="bg-white p-4 rounded shadow-sm">
+                {modules.map((module) => (
+                  <div key={module.id}>
+                    <ModuleRenderer module={module} />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="flex-1 pl-4 max-w-[375px]">
+            <div className="bg-gray-100 p-3 rounded-lg">
+              <h4 className="font-semibold mb-2">Aperçu sur mobile</h4>
+              <div className="bg-white p-3 rounded shadow-sm max-w-[320px] mx-auto">
+                {modules.map((module) => (
+                  <div key={module.id}>
+                    <ModuleRenderer module={module} />
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
-      </animated.div>
+
+        <div className="flex justify-end p-4 border-t">
+          <button
+            onClick={onClose}
+            className="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors duration-200"
+          >
+            Fermer
+          </button>
+        </div>
+      </div>
     </div>
   );
 };

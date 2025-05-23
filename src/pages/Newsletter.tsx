@@ -5,14 +5,15 @@ import { Eye, Send, Save } from 'lucide-react';
 import { ModulesList } from '../components/Newsletter/ModulesList';
 import { EditorCanvas } from '../components/Newsletter/EditorCanvas';
 import { PropertiesPanel } from '../components/Newsletter/PropertiesPanel';
-import { useNewsletterStore } from '../stores/newsletterStore';
+import { useNewsletterStore, ModuleType } from '../stores/newsletterStore';
 import PreviewModal from '../components/Newsletter/PreviewModal';
 import SettingsTab from '@/components/Newsletter/properties/Tab/SettingsTab';
+import { NewsletterModule } from '../types/newsletter';
 
 const Newsletter: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'edit' | 'settings' | 'send' | 'automate'>('edit');
   const [showPreviewModal, setShowPreviewModal] = useState(false);
-  const { modules, addModule, updateModule, deleteModule } = useNewsletterStore();
+  const { modules, addModule, updateModule, removeModule } = useNewsletterStore();
   const [selectedModule, setSelectedModule] = useState<any>(null);
 
   const handleDragEnd = (event: DragEndEvent) => {
@@ -22,11 +23,26 @@ const Newsletter: React.FC = () => {
       const moduleType = active.id as string;
       addModule({
         id: `module-${Date.now()}`,
-        type: moduleType as any,
+        type: moduleType as ModuleType,
         content: '',
         settings: {}
       });
     }
+  };
+
+  // Convert ModuleData to NewsletterModule for compatibility
+  const convertToNewsletterModules = (modules: any[]): NewsletterModule[] => {
+    return modules.map(module => ({
+      id: module.id,
+      type: module.type,
+      content: module.content,
+      settings: module.settings
+    }));
+  };
+
+  // Adapter function to ensure type compatibility when updating modules
+  const handleUpdateModule = (id: string, updates: Partial<any>) => {
+    updateModule(id, updates);
   };
 
   return (
@@ -105,7 +121,7 @@ const Newsletter: React.FC = () => {
         {activeTab === 'edit' && (
           <DndContext onDragEnd={handleDragEnd}>
             <ModulesList />
-            <EditorCanvas onModuleSelect={setSelectedModule} />
+            <EditorCanvas />
             <PropertiesPanel />
             <DragOverlay>{/* Preview during drag */}</DragOverlay>
           </DndContext>
@@ -115,8 +131,8 @@ const Newsletter: React.FC = () => {
           <div className="flex-1 bg-white p-6 overflow-auto">
             <SettingsTab 
               selectedModule={selectedModule} 
-              onUpdateModule={updateModule} 
-              onDeleteModule={deleteModule} 
+              onUpdateModule={handleUpdateModule} 
+              onDeleteModule={removeModule} 
             />
           </div>
         )}
@@ -138,7 +154,7 @@ const Newsletter: React.FC = () => {
       <PreviewModal
         isOpen={showPreviewModal}
         onClose={() => setShowPreviewModal(false)}
-        modules={modules}
+        modules={convertToNewsletterModules(modules)}
       />
     </div>
   );

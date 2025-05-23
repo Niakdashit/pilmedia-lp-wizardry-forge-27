@@ -3,9 +3,10 @@ import React from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { ModuleRenderer } from './ModuleRenderer';
+import { NewsletterModule } from '@/types/newsletter';
 
 interface SortableModuleProps {
-  module: any;
+  module: NewsletterModule;
   isSelected?: boolean;
   onClick?: () => void;
 }

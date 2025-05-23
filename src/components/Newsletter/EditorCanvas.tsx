@@ -1,10 +1,11 @@
+
 import React, { useEffect } from 'react';
 import { useDroppable } from '@dnd-kit/core';
 import { useNewsletterStore } from '@/stores/newsletterStore';
 import { ModuleRenderer } from './ModuleRenderer';
 
 export const EditorCanvas: React.FC = () => {
-  const { modules, generatedHTML, setFromGeneratedHTML } = useNewsletterStore();
+  const { modules, generatedHTML, setFromGeneratedHTML, selectModule } = useNewsletterStore();
   const { setNodeRef, isOver } = useDroppable({ id: 'editor' });
 
   useEffect(() => {
@@ -44,7 +45,12 @@ export const EditorCanvas: React.FC = () => {
             ) : (
               <div className="space-y-4">
                 {modules.map((module) => (
-                  <ModuleRenderer key={module.id} module={module} />
+                  <div 
+                    key={module.id} 
+                    onClick={() => selectModule(module.id)}
+                  >
+                    <ModuleRenderer module={module} />
+                  </div>
                 ))}
               </div>
             )}

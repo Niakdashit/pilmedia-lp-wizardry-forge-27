@@ -119,6 +119,14 @@ const CampaignEditor: React.FC = () => {
       window.location.href = '/campaigns';
     }
   };
+
+  // This is for type compatibility with the Campaign components.
+  // We need to pass specific props to each component to comply with their expected types.
+  const generalProps = { campaign, setCampaign };
+  const contentProps = { campaign, setCampaign };
+  const screensProps = { campaign, setCampaign };
+  const designProps = { campaign, setCampaign };
+  const settingsProps = { campaign, setCampaign };
   
   return (
     <div className="h-[calc(100vh-3rem)] flex flex-col">
@@ -220,23 +228,23 @@ const CampaignEditor: React.FC = () => {
           
           <div className="flex-1 overflow-y-auto p-6">
             {activeTab === 'general' && (
-              <CampaignGeneral campaign={campaign} setCampaign={setCampaign} />
+              <CampaignGeneral {...generalProps} />
             )}
             
             {activeTab === 'content' && (
-              <CampaignContent campaign={campaign} setCampaign={setCampaign} />
+              <CampaignContent {...contentProps} />
             )}
 
             {activeTab === 'screens' && (
-              <CampaignScreens campaign={campaign} setCampaign={setCampaign} />
+              <CampaignScreens {...screensProps} />
             )}
             
             {activeTab === 'design' && (
-              <CampaignDesign campaign={campaign} setCampaign={setCampaign} />
+              <CampaignDesign {...designProps} />
             )}
 
             {activeTab === 'settings' && (
-              <CampaignSettings campaign={campaign} setCampaign={setCampaign} />
+              <CampaignSettings {...settingsProps} />
             )}
           </div>
         </div>

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { 
-  Search, Filter, Download, Upload, Trash2, MoreHorizontal, 
-  UserPlus, ChevronDown, UserCircle, Mail, Calendar, Tag, 
-  Activity 
+  Search, Download, Upload, 
+  ChevronDown, UserCircle,
+  X, Plus
 } from 'lucide-react';
 
 interface Contact {
@@ -246,7 +246,7 @@ const Contacts: React.FC = () => {
                       <span>Nom</span>
                       {sortField === 'name' && (
                         sortDirection === 'asc' ? 
-                          <ChevronUp className="w-4 h-4" /> : 
+                          <ChevronDown className="w-4 h-4 rotate-180" /> : 
                           <ChevronDown className="w-4 h-4" />
                       )}
                     </button>
@@ -259,7 +259,7 @@ const Contacts: React.FC = () => {
                       <span>Email</span>
                       {sortField === 'email' && (
                         sortDirection === 'asc' ? 
-                          <ChevronUp className="w-4 h-4" /> : 
+                          <ChevronDown className="w-4 h-4 rotate-180" /> : 
                           <ChevronDown className="w-4 h-4" />
                       )}
                     </button>
@@ -316,7 +316,7 @@ const Contacts: React.FC = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <select
                         value={contact.status}
-                        onChange={(e) => {/* Implement status update logic */}}
+                        onChange={() => {/* Implement status update logic */}}
                         className={`text-sm font-medium rounded-full px-2.5 py-0.5 ${statusColors[contact.status]}`}
                       >
                         <option value="Nouveau">Nouveau</option>

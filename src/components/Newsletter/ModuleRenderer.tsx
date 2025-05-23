@@ -1,5 +1,3 @@
-
-// Remove React import as it's not directly used
 import { NewsletterModule } from '../../types/newsletter';
 
 // Fix TextAlign type issues by being explicit about allowed values
@@ -134,11 +132,10 @@ export const renderDivider = (module: NewsletterModule) => {
 // Update the ModuleRenderer props interface
 interface ModuleRendererProps {
   module: NewsletterModule;
-  preview?: boolean;
 }
 
 // Export as named export
-export const ModuleRenderer = ({ module, preview }: ModuleRendererProps) => {
+export const ModuleRenderer = ({ module }: ModuleRendererProps) => {
   switch (module.type) {
     case 'text':
       return renderText(module);
