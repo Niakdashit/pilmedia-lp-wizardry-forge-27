@@ -45,7 +45,7 @@ const Sidebar: React.FC = () => {
         {!sidebarCollapsed && (
           <div className="flex items-center">
             <img 
-              src="/lovable-uploads/70ca0724-3210-4ff8-a94b-a216b14df758.png" 
+              src="/lovable-uploads/aa13bf5a-2641-411b-b2c6-14f0352b94a9.png" 
               alt="Leadya Logo" 
               className="h-8" 
             />
@@ -53,7 +53,7 @@ const Sidebar: React.FC = () => {
         )}
         {sidebarCollapsed && (
           <img 
-            src="/lovable-uploads/70ca0724-3210-4ff8-a94b-a216b14df758.png" 
+            src="/lovable-uploads/aa13bf5a-2641-411b-b2c6-14f0352b94a9.png" 
             alt="Leadya Logo" 
             className="h-8 mx-auto" 
           />
