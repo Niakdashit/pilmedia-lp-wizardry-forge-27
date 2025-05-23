@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Quiz, Wheel, Scratch, Swiper } from '../GameTypes';
 import { Palette, Type, Square, Box } from 'lucide-react';
-import { Campaign, SwiperCard } from '../../types/campaign';
+import { Campaign, SwiperCard, WheelSegment } from '../../types/campaign';
 
 interface CampaignContentProps {
   campaign: Campaign;
@@ -77,8 +77,8 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
                   colors: wheelColors
                 }}
                 onConfigChange={(config) => {
-                  // Convert string[] back to WheelSegment[] if necessary
-                  const updatedSegments = config.segments.map(text => ({
+                  // Convert string[] to WheelSegment[] 
+                  const updatedSegments: WheelSegment[] = config.segments.map(text => ({
                     text,
                     isWinning: text !== 'Réessayez' // Default logic for determining winning segments
                   }));
@@ -88,6 +88,7 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
                     gameConfig: {
                       ...prev.gameConfig,
                       wheel: {
+                        ...prev.gameConfig.wheel,
                         segments: updatedSegments,
                         colors: config.colors
                       }
@@ -131,8 +132,8 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
                           const newSegments = [...segmentTexts];
                           newSegments[index] = e.target.value;
                           
-                          // Convert string[] back to WheelSegment[]
-                          const updatedSegments = newSegments.map(segText => ({
+                          // Convert string[] to WheelSegment[]
+                          const updatedSegments: WheelSegment[] = newSegments.map(segText => ({
                             text: segText,
                             isWinning: segText !== 'Réessayez'
                           }));
@@ -158,8 +159,8 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
                         const newSegments = segmentTexts.filter((_, i) => i !== index);
                         const newColors = wheelColors.filter((_, i) => i !== index);
                         
-                        // Convert string[] back to WheelSegment[]
-                        const updatedSegments = newSegments.map(segText => ({
+                        // Convert string[] to WheelSegment[]
+                        const updatedSegments: WheelSegment[] = newSegments.map(segText => ({
                           text: segText,
                           isWinning: segText !== 'Réessayez'
                         }));
@@ -169,6 +170,7 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
                           gameConfig: {
                             ...prev.gameConfig,
                             wheel: {
+                              ...prev.gameConfig.wheel,
                               segments: updatedSegments,
                               colors: newColors
                             }
@@ -186,7 +188,7 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
                 <button
                   onClick={() => {
                     // Add a new segment
-                    const newSegment = { 
+                    const newSegment: WheelSegment = { 
                       text: `Prix ${segmentTexts.length + 1}`,
                       isWinning: true
                     };
@@ -199,7 +201,8 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
                       gameConfig: {
                         ...prev.gameConfig,
                         wheel: {
-                          segments: [...prev.gameConfig.wheel.segments, newSegment],
+                          ...prev.gameConfig.wheel,
+                          segments: [...(prev.gameConfig.wheel.segments as WheelSegment[]), newSegment],
                           colors: [...prev.gameConfig.wheel.colors, newColor]
                         }
                       }

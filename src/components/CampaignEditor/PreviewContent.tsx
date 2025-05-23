@@ -1,9 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import Color from 'color';
 import confetti from 'canvas-confetti';
 import { Quiz, Wheel, Scratch, Swiper } from '../GameTypes';
-import { Campaign } from '../../types/campaign';
+import { Campaign, QuizQuestion, WheelSegment, SwiperCard } from '../../types/campaign';
 
 interface PreviewContentProps {
   campaign: Campaign;
@@ -16,6 +15,8 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showFeedback, setShowFeedback] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
+  
+  // We use these state variables in handlers, keeping them
   const [scratchRevealed, setScratchRevealed] = useState(false);
   const [wheelResult, setWheelResult] = useState<string | null>(null);
   const [swipeResult, setSwipeResult] = useState<'like' | 'dislike' | null>(null);
@@ -143,9 +144,12 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
     };
 
     switch (campaign.type) {
-      case 'quiz':
-        const question = campaign.gameConfig.quiz?.questions?.[currentQuestionIndex];
-        if (!question) return null;
+      case 'quiz': {
+        const questions = campaign.gameConfig.quiz?.questions;
+        if (!questions || questions.length === 0 || currentQuestionIndex >= questions.length) {
+          return null;
+        }
+        const question = questions[currentQuestionIndex] as QuizQuestion;
 
         return (
           <div className="flex flex-col items-center justify-center h-full w-full max-w-2xl mx-auto px-4">
@@ -163,14 +167,14 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
                 className="text-lg"
                 style={{ fontFamily: campaign.design.textFont }}
               >
-                {question.text}
+                {question.question}
               </p>
             </div>
 
             <div className="space-y-3 w-full">
-              {question.options.map((option: any, optionIndex: number) => {
+              {question.options.map((option, optionIndex) => {
                 const isSelected = selectedAnswer === optionIndex;
-                const isCorrect = option.isCorrect;
+                const isCorrect = optionIndex === question.correctAnswer;
                 
                 let buttonBackground = buttonStyle.backgroundColor;
                 if (showFeedback && isSelected && isCorrect) {
@@ -189,13 +193,13 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
                     }}
                     disabled={showFeedback}
                   >
-                    {option.text}
+                    {option}
                   </button>
                 );
               })}
             </div>
 
-            {showFeedback && selectedAnswer !== null && question.options[selectedAnswer].isCorrect && (
+            {showFeedback && selectedAnswer !== null && selectedAnswer === question.correctAnswer && (
               <div 
                 className="text-center p-4 rounded-lg mt-6 w-full"
                 style={{
@@ -204,7 +208,7 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
                   fontFamily: campaign.design.textFont
                 }}
               >
-                {question.feedback?.correct || 'Bonne réponse !'}
+                {question.explanation || 'Bonne réponse !'}
               </div>
             )}
 
@@ -219,8 +223,9 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
             </div>
           </div>
         );
+      }
 
-      case 'wheel':
+      case 'wheel': {
         // Convert wheel segments to strings if needed
         const wheelSegments = Array.isArray(campaign.gameConfig.wheel?.segments) 
           ? campaign.gameConfig.wheel.segments.map(segment => 
@@ -237,6 +242,7 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
             />
           </div>
         );
+      }
 
       case 'scratch':
         return (
@@ -253,19 +259,11 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
         return (
           <div className="flex flex-col items-center justify-center h-full w-full">
             <Swiper 
-              cards={campaign.gameConfig.swiper?.cards || [
-                { 
-                  image: 'https://placehold.co/600x400/e9d0e5/841b60?text=Offre+Spéciale', 
-                  text: 'Offre spéciale limitée', 
-                  isWinning: true 
-                },
-                { 
-                  image: 'https://placehold.co/600x400/cccccc/333333?text=Autre+Offre', 
-                  text: 'Une autre offre', 
-                  isWinning: false 
-                }
-              ]}
-              onSwipeResult={(result) => handleSwipeComplete(result ? 'like' : 'dislike')}
+              config={{ 
+                cards: campaign.gameConfig.swiper?.cards || [],
+                swipeThreshold: campaign.gameConfig.swiper?.swipeThreshold || 50
+              }}
+              onSwipeResult={(result: boolean) => handleSwipeComplete(result ? 'like' : 'dislike')}
             />
           </div>
         );
