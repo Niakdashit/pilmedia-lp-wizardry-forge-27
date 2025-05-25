@@ -44,18 +44,18 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
       className={`bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 relative overflow-hidden ${className}`}
       style={{ minHeight: '500px' }}
     >
-      {/* Image de fond générale - remplit tout l'arrière-plan du canvas */}
+      {/* Image de fond générale - s'adapte à sa taille sans être coupée */}
       {gameBackgroundImage && (
         <div
-          className="absolute inset-0 rounded-lg"
-          style={{ 
-            backgroundImage: `url(${gameBackgroundImage})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            backgroundRepeat: 'no-repeat',
-            zIndex: 1
-          }}
-        />
+          className="absolute inset-0 rounded-lg flex items-center justify-center"
+          style={{ zIndex: 1 }}
+        >
+          <img
+            src={gameBackgroundImage}
+            alt="Image de fond du jeu"
+            className="max-w-full max-h-full object-contain rounded-lg"
+          />
+        </div>
       )}
 
       {/* Conteneur principal du jeu - parfaitement centré */}
@@ -70,8 +70,8 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
           zIndex: 2
         }}
       >
-        {/* Template de jackpot - s'affiche DERRIÈRE le jeu mais AU-DESSUS du fond */}
-        {jackpotTemplateImage ? (
+        {/* Template de jackpot - s'affiche seulement si uploadé */}
+        {jackpotTemplateImage && (
           <div
             className="absolute inset-0 rounded-lg"
             style={{
@@ -82,13 +82,6 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
               zIndex: 1
             }}
           />
-        ) : (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/10 rounded-lg border-2 border-dashed border-gray-400">
-            <div className="text-center text-gray-600 bg-white/90 backdrop-blur-sm p-6 rounded-lg shadow-sm">
-              <p className="text-sm font-medium mb-1">Aucun modèle de jackpot</p>
-              <p className="text-xs text-gray-500">Uploadez un modèle dans "Apparence visuelle"</p>
-            </div>
-          </div>
         )}
 
         {/* Jeu (rouleaux + bouton) - absolument centré AU-DESSUS du template */}

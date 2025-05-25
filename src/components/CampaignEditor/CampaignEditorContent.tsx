@@ -1,69 +1,209 @@
+import React, { useState } from 'react';
+import { Quiz, Scratch, Memory, Puzzle, Dice } from '../GameTypes';
+import TabRoulette from '@/components/configurators/TabRoulette';
+import TabJackpot from '@/components/configurators/TabJackpot';
+import ImageUpload from '../common/ImageUpload';
+import GameCanvasPreview from './GameCanvasPreview';
+import { Settings, Eye, Palette } from 'lucide-react';
 
-import React from 'react';
-import CampaignGeneral from './CampaignGeneral';
-import CampaignContent from './CampaignContent';
-import CampaignScreens from './CampaignScreens';
-import CampaignDesign from './CampaignDesign';
-import CampaignSettings from './CampaignSettings';
-import TabJackpot from '../configurators/TabJackpot';
-
-interface CampaignEditorContentProps {
-  activeTab: string;
+interface CampaignContentProps {
   campaign: any;
   setCampaign: React.Dispatch<React.SetStateAction<any>>;
 }
 
-const CampaignEditorContent: React.FC<CampaignEditorContentProps> = ({
-  activeTab,
-  campaign,
-  setCampaign
-}) => {
-  const renderTabContent = () => {
-    switch (activeTab) {
-      case 'general':
-        return <CampaignGeneral campaign={campaign} setCampaign={setCampaign} />;
-        
-      case 'content':
-        return <CampaignContent campaign={campaign} setCampaign={setCampaign} />;
+const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign }) => {
+  const [activeSection, setActiveSection] = useState<'game' | 'visual'>('game');
 
-      case 'screens':
-        return <CampaignScreens campaign={campaign} setCampaign={setCampaign} />;
-        
-      case 'design':
-        return <CampaignDesign campaign={campaign} setCampaign={setCampaign} />;
+  const updateGameConfig = (gameType: string, config: any) => {
+    setCampaign((prev: any) => ({
+      ...prev,
+      gameConfig: {
+        ...prev.gameConfig,
+        [gameType]: config
+      }
+    }));
+  };
 
-      case 'settings':
+  const getContentEditor = () => {
+    console.log('Current campaign type:', campaign.type);
+    console.log('Current gameConfig:', campaign.gameConfig);
+
+    switch (campaign.type) {
+      case 'quiz':
         return (
+          <Quiz 
+            config={campaign.gameConfig?.quiz} 
+            onConfigChange={(config) => updateGameConfig('quiz', config)} 
+          />
+        );
+      case 'wheel':
+        return (
+          <TabRoulette 
+            campaign={campaign}
+            setCampaign={setCampaign}
+            config={campaign.gameConfig?.wheel}
+          />
+        );
+      case 'scratch':
+        return (
+          <Scratch 
+            config={campaign.gameConfig?.scratch} 
+            onConfigChange={(config) => updateGameConfig('scratch', config)} 
+          />
+        );
+      case 'memory':
+        return (
+          <Memory 
+            config={campaign.gameConfig?.memory} 
+            onConfigChange={(config) => updateGameConfig('memory', config)} 
+          />
+        );
+      case 'puzzle':
+        return (
+          <Puzzle 
+            config={campaign.gameConfig?.puzzle} 
+            onConfigChange={(config) => updateGameConfig('puzzle', config)} 
+          />
+        );
+      case 'dice':
+        return (
+          <Dice 
+            config={campaign.gameConfig?.dice} 
+            onConfigChange={(config) => updateGameConfig('dice', config)} 
+          />
+        );
+      case 'jackpot':
+        console.log('Rendering Jackpot editor with config:', campaign.gameConfig?.jackpot);
+        return (
+          <TabJackpot
+            config={campaign.gameConfig?.jackpot}
+            onConfigChange={(config) => updateGameConfig('jackpot', config)}
+          />
+        );
+      default:
+        return (
+          <div className="flex items-center justify-center h-64 bg-gray-50 border border-gray-200 rounded-lg">
+            <p className="text-gray-500">
+              Éditeur de contenu pour le type "{campaign.type}" en cours de développement.
+            </p>
+          </div>
+        );
+    }
+  };
+  
+  return (
+    <div className="space-y-6">
+      <div className="bg-[#f9f0f5] border border-[#e9d0e5] rounded-lg p-4">
+        <p className="text-[#841b60] text-sm">
+          Configurez le contenu et l'apparence de votre {campaign.type}.
+        </p>
+      </div>
+
+      <div className="flex space-x-4 border-b border-gray-200">
+        <button
+          onClick={() => setActiveSection('game')}
+          className={`py-3 px-4 font-medium text-sm border-b-2 transition-colors duration-200 flex items-center space-x-2 ${
+            activeSection === 'game'
+              ? 'border-[#841b60] text-[#841b60]'
+              : 'border-transparent text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          <Settings className="w-4 h-4" />
+          <span>Configuration du jeu</span>
+        </button>
+        <button
+          onClick={() => setActiveSection('visual')}
+          className={`py-3 px-4 font-medium text-sm border-b-2 transition-colors duration-200 flex items-center space-x-2 ${
+            activeSection === 'visual'
+              ? 'border-[#841b60] text-[#841b60]'
+              : 'border-transparent text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          <Palette className="w-4 h-4" />
+          <span>Apparence visuelle</span>
+        </button>
+      </div>
+
+      {activeSection === 'game' ? (
+        <div className="space-y-6">
+          {/* Aperçu du jeu en haut */}
           <div>
-            <CampaignSettings campaign={campaign} setCampaign={setCampaign} />
-            <div className="mt-8">
-              <h2 className="text-xl font-bold mb-3 text-[#841b60]">Configuration du Jackpot</h2>
-              <TabJackpot
-                config={campaign.gameConfig?.jackpot}
-                onConfigChange={(newJackpotConfig: any) =>
+            <div className="flex items-center space-x-2 mb-4">
+              <Eye className="w-5 h-5 text-[#841b60]" />
+              <h3 className="text-lg font-medium text-gray-900">Aperçu du jeu</h3>
+            </div>
+            <GameCanvasPreview campaign={campaign} />
+          </div>
+
+          {/* Configuration spécifique au jeu */}
+          <div>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">Paramètres du jeu</h3>
+            {getContentEditor()}
+          </div>
+        </div>
+      ) : (
+        <div className="space-y-6">
+          {/* Aperçu du jeu */}
+          <div>
+            <div className="flex items-center space-x-2 mb-4">
+              <Eye className="w-5 h-5 text-[#841b60]" />
+              <h3 className="text-lg font-medium text-gray-900">Aperçu du jeu</h3>
+            </div>
+            <GameCanvasPreview campaign={campaign} />
+          </div>
+
+          {/* Modèle personnalisé de jackpot - uniquement pour le type jackpot */}
+          {campaign.type === 'jackpot' && (
+            <div>
+              <h3 className="text-lg font-medium text-gray-900 mb-4">Modèle de jackpot</h3>
+              <ImageUpload
+                value={campaign.gameConfig?.jackpot?.customTemplate}
+                onChange={(value) => {
                   setCampaign((prev: any) => ({
                     ...prev,
                     gameConfig: {
                       ...prev.gameConfig,
-                      jackpot: newJackpotConfig
+                      jackpot: {
+                        ...prev.gameConfig?.jackpot,
+                        customTemplate: value
+                      }
                     }
-                  }))
-                }
+                  }));
+                }}
+                label="Uploadez votre modèle personnalisé de jackpot"
+                className="w-full"
               />
+              <p className="text-sm text-gray-500 mt-2">
+                Si aucun modèle n'est uploadé, le modèle par défaut sera utilisé.
+              </p>
             </div>
-          </div>
-        );
-        
-      default:
-        return null;
-    }
-  };
+          )}
 
-  return (
-    <div className="flex-1 overflow-y-auto p-6">
-      {renderTabContent()}
+          {/* Image de fond du jeu */}
+          <div>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">Image de fond du jeu</h3>
+            <ImageUpload
+              value={campaign.gameConfig?.[campaign.type]?.backgroundImage}
+              onChange={(value) => {
+                setCampaign((prev: any) => ({
+                  ...prev,
+                  gameConfig: {
+                    ...prev.gameConfig,
+                    [campaign.type]: {
+                      ...prev.gameConfig?.[campaign.type],
+                      backgroundImage: value
+                    }
+                  }
+                }));
+              }}
+              label="Téléchargez ou sélectionnez une image de fond pour votre jeu"
+              className="w-full"
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-export default CampaignEditorContent;
+export default CampaignContent;
