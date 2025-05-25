@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { Save, ChevronRight, Link as LinkIcon, Copy, Eye } from 'lucide-react';
@@ -32,7 +33,6 @@ const CampaignEditor: React.FC = () => {
   const campaignType = searchParams.get('type') as CampaignType || 'quiz';
   
   const [activeTab, setActiveTab] = useState('general');
-  const [showPreview, setShowPreview] = useState(false);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
 
   // ----------- STATE CAMPAGNE AVEC CONFIG.JACKPOT -----------
@@ -149,7 +149,7 @@ const CampaignEditor: React.FC = () => {
       </div>
       
       <div className="flex flex-1 overflow-hidden bg-white rounded-xl shadow-sm">
-        <div className={`flex flex-col ${showPreview ? 'w-1/2' : 'w-full'}`}>
+        <div className="flex flex-col w-full">
           <div className="border-b border-gray-200">
             <nav className="flex space-x-8 px-6">
               <button
@@ -236,7 +236,7 @@ const CampaignEditor: React.FC = () => {
                   <TabJackpot
                     config={campaign.config?.jackpot}
                     onConfigChange={(newJackpotConfig) =>
-                      setCampaign((prev) => ({
+                      setCampaign((prev: any) => ({
                         ...prev,
                         config: {
                           ...prev.config,
@@ -250,40 +250,6 @@ const CampaignEditor: React.FC = () => {
             )}
           </div>
         </div>
-        
-        {showPreview && (
-          <div className="w-1/2 border-l border-gray-200">
-            <div className="h-16 bg-gray-50 border-b border-gray-200 flex items-center justify-between px-6">
-              <div className="flex items-center space-x-2">
-                <span className="text-gray-500 text-sm">URL Publique:</span>
-                <div className="flex items-center space-x-1 bg-white border border-gray-300 rounded-lg px-3 py-1.5">
-                  <LinkIcon className="w-4 h-4 text-gray-400" />
-                  <span className="text-sm text-gray-800">
-                    leadya.com/c/{campaign.url || 'your-campaign-url'}
-                  </span>
-                  <button 
-                    className="text-[#841b60] hover:text-[#6d164f] ml-2"
-                    title="Copier l'URL"
-                  >
-                    <Copy className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-              <div className="flex space-x-2">
-                <button className="text-sm px-3 py-1.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200">
-                  Mobile
-                </button>
-                <button className="text-sm px-3 py-1.5 bg-[#841b60] text-white rounded-lg hover:bg-[#6d164f] transition-colors duration-200">
-                  Desktop
-                </button>
-              </div>
-            </div>
-            
-            <div className="h-[calc(100%-4rem)] bg-gray-100 p-6 overflow-y-auto">
-              <CampaignPreview campaign={campaign} />
-            </div>
-          </div>
-        )}
       </div>
 
       <PreviewModal
