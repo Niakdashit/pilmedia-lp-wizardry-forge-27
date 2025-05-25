@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Calendar, Clock, Percent, Gift, Plus, Trash2 } from 'lucide-react';
 
@@ -15,7 +14,7 @@ const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaign, setCampai
 
   const handleRewardModeChange = (mode: string) => {
     setRewardMode(mode);
-    setCampaign((prev: any) => ({
+    setCampaign(prev => ({
       ...prev,
       rewards: {
         ...prev.rewards,
@@ -25,7 +24,7 @@ const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaign, setCampai
   };
 
   const handleProbabilityChange = (value: string) => {
-    setCampaign((prev: any) => ({
+    setCampaign(prev => ({
       ...prev,
       rewards: {
         ...prev.rewards,
@@ -35,7 +34,7 @@ const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaign, setCampai
   };
 
   const handleQuantityChange = (value: string) => {
-    setCampaign((prev: any) => ({
+    setCampaign(prev => ({
       ...prev,
       rewards: {
         ...prev.rewards,
