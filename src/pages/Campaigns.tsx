@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { 
@@ -14,7 +13,7 @@ import {
   ExternalLink,
   MoreVertical
 } from 'lucide-react';
-import { getCampaignTypeIcon, getCampaignTypeText } from '../utils/campaignTypes';
+import { getCampaignTypeIcon, CampaignType } from '../utils/campaignTypes';
 
 interface ActionModalProps {
   isOpen: boolean;
@@ -295,7 +294,7 @@ const Campaigns: React.FC = () => {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {filteredCampaigns.map((campaign) => {
-                  const CampaignIcon = getCampaignTypeIcon(campaign.type);
+                  const CampaignIcon = getCampaignTypeIcon(campaign.type as CampaignType);
                   return (
                     <tr 
                       key={campaign.id}
