@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Jackpot from '../GameTypes/Jackpot';
 
@@ -32,10 +33,8 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
               maxWinners: campaign.gameConfig?.jackpot?.instantWin?.maxWinners,
               winnersCount: 0
             }}
-            config={campaign.gameConfig?.jackpot}
             buttonLabel={buttonLabel}
             buttonColor={buttonColor}
-            hideDefaultTemplate={true}
           />
         );
       default:

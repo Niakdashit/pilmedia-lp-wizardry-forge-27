@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface TabJackpotProps {
@@ -7,6 +6,11 @@ interface TabJackpotProps {
 }
 
 const TabJackpot: React.FC<TabJackpotProps> = ({ campaign, setCampaign }) => {
+  // Add null check to prevent runtime error
+  if (!campaign) {
+    return <div>Loading...</div>;
+  }
+
   const config = campaign.gameConfig?.[campaign.type] || {};
 
   const updateGameConfig = (key: string, value: any) => {

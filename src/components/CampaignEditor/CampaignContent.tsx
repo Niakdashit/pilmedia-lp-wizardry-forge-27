@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Quiz, Scratch, Memory, Puzzle, Dice } from '../GameTypes';
 import TabRoulette from '@/components/configurators/TabRoulette';
@@ -77,8 +76,8 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
         console.log('Rendering Jackpot editor with config:', campaign.gameConfig?.jackpot);
         return (
           <TabJackpot
-            config={campaign.gameConfig?.jackpot}
-            onConfigChange={(config) => updateGameConfig('jackpot', config)}
+            campaign={campaign}
+            setCampaign={setCampaign}
           />
         );
       default:
