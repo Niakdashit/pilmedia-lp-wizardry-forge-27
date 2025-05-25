@@ -4,7 +4,7 @@ import CampaignEditorHeader from '../components/CampaignEditor/CampaignEditorHea
 import CampaignEditorTabs from '../components/CampaignEditor/CampaignEditorTabs';
 import CampaignEditorContent from '../components/CampaignEditor/CampaignEditorContent';
 import PreviewModal from '../components/CampaignEditor/PreviewModal';
-import JackpotAppearance from '../components/configurators/JackpotAppearance'; // ✅ Ajout ici
+import JackpotAppearance from '../components/CampaignEditor/JackpotAppearance'; // ✅ Emplacement correct
 import { CampaignType, getDefaultGameConfig } from '../utils/campaignTypes';
 
 const defaultJackpotConfig = {
@@ -118,7 +118,7 @@ const CampaignEditor: React.FC = () => {
             onTabChange={setActiveTab}
           />
 
-          {activeTab === 'appearance' ? (
+          {activeTab === 'appearance' && campaign.type === 'jackpot' ? (
             <div className="p-6 overflow-y-auto">
               <JackpotAppearance
                 campaign={campaign}
