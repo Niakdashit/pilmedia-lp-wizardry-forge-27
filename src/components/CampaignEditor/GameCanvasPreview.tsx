@@ -17,7 +17,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
     <div
       className={`bg-gray-100 rounded-lg p-6 min-h-[300px] border-2 border-dashed border-gray-300 ${className}`}
     >
-      <div className="relative rounded-lg shadow-lg min-h-[350px] max-w-md mx-auto overflow-hidden">
+      <div className="relative rounded-lg shadow-lg min-h-[100%] w-full overflow-hidden">
         {/* ✅ Image de fond */}
         {gameBackgroundImage && (
           <div
@@ -26,13 +26,13 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
           />
         )}
 
-        {/* ✅ Contenu */}
+        {/* ✅ Contenu par-dessus */}
         <div className="relative z-10 flex items-center justify-center w-full h-full p-6">
           {!gameBackgroundImage && (
             <div className="text-center text-gray-500">
               <p className="text-sm">Aucune image de fond</p>
               <p className="text-xs mt-1">
-                Ajoutez une image dans l'onglet "Apparence visuelle"
+                Ajoutez une image dans l’onglet "Apparence visuelle"
               </p>
             </div>
           )}
