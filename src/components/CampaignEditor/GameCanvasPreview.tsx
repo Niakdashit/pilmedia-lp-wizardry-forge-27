@@ -54,12 +54,12 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
           />
         )}
 
-        {/* ✅ Image du modèle */}
+        {/* ✅ Image du modèle de jackpot centrée */}
         {jackpotTemplateImage && (
           <img
             src={jackpotTemplateImage}
             alt="Modèle de jackpot"
-            className="absolute top-0 left-1/2 -translate-x-1/2 z-0"
+            className="absolute top-0 left-0 right-0 mx-auto z-0"
             style={{
               width: '680px',
               height: '400px',
@@ -68,11 +68,11 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
           />
         )}
 
-        {/* ✅ Jeu centré dans l'image */}
+        {/* ✅ Jeu superposé au bon endroit */}
         <div
           className="absolute z-10"
           style={{
-            top: '160px', // ajuste cette valeur pour placer les rouleaux
+            top: '160px', // ajuste selon la position des cases du visuel
             left: '50%',
             transform: 'translateX(-50%)'
           }}
