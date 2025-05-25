@@ -39,26 +39,37 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
 
   return (
     <div className={`bg-gray-100 rounded-lg p-6 border-2 border-dashed border-gray-300 ${className}`}>
-      <div className="relative mx-auto rounded-lg shadow-lg overflow-hidden" style={{ width: '680px', height: '400px' }}>
-        {/* ✅ Image de fond */}
+      <div
+        className="relative mx-auto rounded-lg shadow-lg"
+        style={{ width: '680px', height: '400px' }} // ↔ Taille exacte de ton PNG
+      >
+        {/* ✅ Image de fond (optionnelle) */}
         {gameBackgroundImage && (
           <div
-            className="absolute inset-0 bg-no-repeat bg-center bg-contain"
+            className="absolute inset-0 bg-no-repeat bg-center bg-contain z-0"
             style={{ backgroundImage: `url(${gameBackgroundImage})` }}
           />
         )}
 
-        {/* ✅ Image du modèle visuel */}
+        {/* ✅ Image du modèle (non rognée, taille exacte) */}
         {jackpotTemplateImage && (
           <img
             src={jackpotTemplateImage}
             alt="Modèle de jackpot"
-            className="absolute top-0 left-0 z-0 w-[680px] h-auto"
+            className="absolute top-0 left-0 z-0"
+            style={{ width: '680px', height: 'auto' }}
           />
         )}
 
-        {/* ✅ Jeu positionné exactement au centre des emplacements */}
-        <div className="absolute z-10 top-[140px] left-1/2 -translate-x-1/2">
+        {/* ✅ Jeu centré sur les emplacements blancs */}
+        <div
+          className="absolute z-10"
+          style={{
+            top: '160px', // ← Ajuste ici pour centrer verticalement les cases
+            left: '50%',
+            transform: 'translateX(-50%)',
+          }}
+        >
           {renderGame() || (
             <div className="text-center text-white backdrop-blur-sm bg-black/30 p-4 rounded">
               <p className="text-sm font-semibold">Aperçu du jeu</p>
