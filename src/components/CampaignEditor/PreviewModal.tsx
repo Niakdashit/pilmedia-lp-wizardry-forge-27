@@ -1,8 +1,8 @@
-
 import React, { useState } from 'react';
 import { X, Smartphone, Monitor } from 'lucide-react';
 import { useSpring, animated } from 'react-spring';
 import confetti from 'canvas-confetti';
+import { useWindowSize } from 'react-use';
 import PreviewContent from './PreviewContent';
 import Color from 'color';
 
@@ -15,6 +15,7 @@ interface PreviewModalProps {
 const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }) => {
   const [step, setStep] = useState<'start' | 'game' | 'end'>('start');
   const [viewMode, setViewMode] = useState<'desktop' | 'mobile'>('desktop');
+  const { width } = useWindowSize();
 
   const modalSpring = useSpring({
     opacity: isOpen ? 1 : 0,
@@ -83,7 +84,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
       maxHeight: `${frameConfig?.maxHeight || campaign.design.frame?.maxHeight || 90}%`,
       padding: `${frameConfig?.padding || campaign.design.frame?.padding || 24}px`,
       backgroundColor: Color(campaign.design.blockColor || '#FFFFFF').alpha(0.9).toString(),
-      backdropFilter: 'blur(8px)',
+      backdropFilter: 'blur(px)',
       borderRadius: campaign.design.borderRadius || '0.5rem',
       boxShadow: campaign.design.shadow === 'shadow-xl' 
         ? '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
