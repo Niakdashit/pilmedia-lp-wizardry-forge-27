@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { DndContext, DragEndEvent, DragOverlay } from '@dnd-kit/core';
 import { Eye, Send, Save } from 'lucide-react';
@@ -6,7 +5,7 @@ import { ModulesList } from '../components/Newsletter/ModulesList';
 import { EditorCanvas } from '../components/Newsletter/EditorCanvas';
 import { PropertiesPanel } from '../components/Newsletter/PropertiesPanel';
 import { useNewsletterStore } from '../stores/newsletterStore';
-import PreviewModal from '../components/Newsletter/PreviewModal';
+import NewsletterPreviewModal from '../components/Newsletter/NewsletterPreviewModal';
 import { SettingsTab } from '@/components/Newsletter/properties/Tab/SettingsTab';
 
 const Newsletter: React.FC = () => {
@@ -159,7 +158,7 @@ const Newsletter: React.FC = () => {
         )}
       </div>
 
-      <PreviewModal
+      <NewsletterPreviewModal
         isOpen={showPreviewModal}
         onClose={() => setShowPreviewModal(false)}
         campaign={mockCampaign}
