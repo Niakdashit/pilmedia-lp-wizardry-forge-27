@@ -1,15 +1,15 @@
 
 // Mock Supabase client for development
 export const supabase = {
-  from: (table: string) => ({
+  from: (tableName: string) => ({
     insert: (data: any) => ({
       select: () => ({
         single: () => Promise.resolve({ data, error: null })
       })
     }),
-    select: (columns?: string) => ({
-      eq: (column: string, value: any) => ({
-        eq: (column2: string, value2: any) => Promise.resolve({ count: 0, error: null })
+    select: (columnsParam?: string) => ({
+      eq: (columnName: string, valueParam: any) => ({
+        eq: (column2Name: string, value2Param: any) => Promise.resolve({ count: 0, error: null })
       })
     }),
     update: (data: any) => Promise.resolve({ data, error: null }),

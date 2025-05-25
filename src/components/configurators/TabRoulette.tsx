@@ -81,9 +81,13 @@ const TabRoulette: React.FC<TabRouletteProps> = ({
     }));
   };
 
-  const handleSegmentChange = (index: number, field: keyof Segment, value: any) => {
+  const handleSegmentChange = (index: number, field: keyof Segment, value: string | number) => {
     const updated = [...segments];
-    updated[index][field] = value;
+    if (field === 'chance') {
+      updated[index][field] = value as number;
+    } else {
+      updated[index][field] = value as string;
+    }
     updateCampaign(updated, centerImage);
   };
 
@@ -91,10 +95,6 @@ const TabRoulette: React.FC<TabRouletteProps> = ({
     const updated = [...segments];
     updated[index].image = file;
     updateCampaign(updated, centerImage);
-  };
-
-  const handleCenterImageUpload = (file: File | null) => {
-    updateCampaign(segments, file);
   };
 
   const addSegment = () => {

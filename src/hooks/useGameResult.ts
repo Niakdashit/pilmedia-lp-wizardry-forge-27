@@ -1,3 +1,4 @@
+
 import { useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 import type { GameResult, GameConfig } from '../types/game';
@@ -9,7 +10,7 @@ export const useGameResult = (campaignId: string, config: GameConfig) => {
     // Get current winners count
     const { count } = await supabase
       .from('game_results')
-      .select('id', { count: 'exact' })
+      .select('*', { count: 'exact' })
       .eq('campaign_id', campaignId)
       .eq('is_winner', true);
 
@@ -35,9 +36,7 @@ export const useGameResult = (campaignId: string, config: GameConfig) => {
         score: result.score,
         duration: result.duration,
         is_winner: result.isWinner
-      }])
-      .select()
-      .single();
+      }]);
 
     if (error) {
       console.error('Error saving game result:', error);
