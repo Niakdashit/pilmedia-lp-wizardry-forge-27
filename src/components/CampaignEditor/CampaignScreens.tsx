@@ -146,22 +146,6 @@ const CampaignScreens: React.FC<CampaignScreensProps> = ({ campaign, setCampaign
     );
   };
 
-  const updateFrameSettings = (field: string, value: any) => {
-    setCampaign((prev: any) => ({
-      ...prev,
-      screens: {
-        ...prev.screens,
-        [activeScreen]: {
-          ...prev.screens[activeScreen],
-          frame: {
-            ...prev.screens[activeScreen]?.frame,
-            [field]: value
-          }
-        }
-      }
-    }));
-  };
-
   return (
     <div className="space-y-6">
       <div className="bg-[#f9f0f5] border border-[#e9d0e5] rounded-lg p-4 mb-4">

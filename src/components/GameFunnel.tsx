@@ -37,7 +37,6 @@ const GameFunnel: React.FC<GameFunnelProps> = ({ campaign }) => {
           <Quiz 
             config={campaign.gameConfig.quiz} 
             onConfigChange={() => {}}
-            onComplete={() => handleGameComplete('win')}
           />
         );
 
@@ -49,7 +48,6 @@ const GameFunnel: React.FC<GameFunnelProps> = ({ campaign }) => {
             currentWinners={0}
             maxWinners={100}
             winRate={10}
-            onComplete={() => handleGameComplete('win')}
           />
         );
 
@@ -66,7 +64,6 @@ const GameFunnel: React.FC<GameFunnelProps> = ({ campaign }) => {
           <Memory 
             config={campaign.gameConfig.memory} 
             onConfigChange={() => {}}
-            onComplete={() => handleGameComplete('win')}
           />
         );
 
@@ -75,7 +72,6 @@ const GameFunnel: React.FC<GameFunnelProps> = ({ campaign }) => {
           <Puzzle 
             config={campaign.gameConfig.puzzle} 
             onConfigChange={() => {}}
-            onComplete={() => handleGameComplete('win')}
           />
         );
 
@@ -84,7 +80,6 @@ const GameFunnel: React.FC<GameFunnelProps> = ({ campaign }) => {
           <Dice 
             config={campaign.gameConfig.dice} 
             onConfigChange={() => {}}
-            onComplete={() => handleGameComplete('win')}
           />
         );
 
@@ -277,8 +272,8 @@ const GameFunnel: React.FC<GameFunnelProps> = ({ campaign }) => {
             }}
           >
             {gameResult === 'win' 
-              ? campaign.screens[4].winMessage 
-              : campaign.screens[4].loseMessage}
+              ? campaign.screens[4]?.winMessage || 'Félicitations !'
+              : campaign.screens[4]?.loseMessage || 'Merci pour votre participation !'}
           </h2>
           <p 
             className="mb-8"
@@ -287,10 +282,10 @@ const GameFunnel: React.FC<GameFunnelProps> = ({ campaign }) => {
               fontFamily: campaign.design.textFont
             }}
           >
-            {campaign.screens[4].participationMessage}
+            {campaign.screens[4]?.participationMessage || 'Merci d\'avoir participé !'}
           </p>
           <div className="flex justify-center space-x-4">
-            {campaign.screens[4].shareButtonText && (
+            {campaign.screens[4]?.shareButtonText && (
               <button
                 className="px-6 py-3 font-medium transition-colors duration-200"
                 style={{
@@ -303,7 +298,7 @@ const GameFunnel: React.FC<GameFunnelProps> = ({ campaign }) => {
                 {campaign.screens[4].shareButtonText}
               </button>
             )}
-            {campaign.screens[4].replayButtonText && (
+            {campaign.screens[4]?.replayButtonText && (
               <button
                 onClick={() => setStep('start')}
                 className="px-6 py-3 font-medium transition-colors duration-200"

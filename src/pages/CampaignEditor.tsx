@@ -1,13 +1,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
-import { Save, ChevronRight, Link as LinkIcon, Copy, Eye } from 'lucide-react';
+import { Save, ChevronRight, Eye } from 'lucide-react';
 import CampaignGeneral from '../components/CampaignEditor/CampaignGeneral';
 import CampaignContent from '../components/CampaignEditor/CampaignContent';
 import CampaignScreens from '../components/CampaignEditor/CampaignScreens';
 import CampaignDesign from '../components/CampaignEditor/CampaignDesign';
 import CampaignSettings from '../components/CampaignEditor/CampaignSettings';
-import CampaignPreview from '../components/CampaignEditor/CampaignPreview';
 import PreviewModal from '../components/CampaignEditor/PreviewModal';
 import TabJackpot from "../components/configurators/TabJackpot";
 import { CampaignType, getDefaultGameConfig } from '../utils/campaignTypes';
@@ -235,7 +234,7 @@ const CampaignEditor: React.FC = () => {
                   <h2 className="text-xl font-bold mb-3 text-[#841b60]">Configuration du Jackpot</h2>
                   <TabJackpot
                     config={campaign.config?.jackpot}
-                    onConfigChange={(newJackpotConfig) =>
+                    onConfigChange={(newJackpotConfig: any) =>
                       setCampaign((prev: any) => ({
                         ...prev,
                         config: {
