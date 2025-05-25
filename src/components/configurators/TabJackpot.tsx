@@ -6,10 +6,19 @@ interface TabJackpotProps {
   onConfigChange: (config: any) => void;
 }
 
-const TabJackpot: React.FC<TabJackpotProps> = ({ config, onConfigChange }) => {
+const TabJackpot: React.FC<TabJackpotProps> = ({ config = {}, onConfigChange }) => {
+  // Provide default values if config is undefined or missing properties
+  const safeConfig = {
+    symbols: ['🍒', '🍋', '🍊'],
+    reels: 3,
+    winMessage: 'JACKPOT ! Vous avez gagné !',
+    loseMessage: 'Dommage, pas de jackpot !',
+    ...config
+  };
+
   const handleChange = (field: string, value: any) => {
     onConfigChange({
-      ...config,
+      ...safeConfig,
       [field]: value
     });
   };
@@ -22,7 +31,7 @@ const TabJackpot: React.FC<TabJackpotProps> = ({ config, onConfigChange }) => {
         </label>
         <input
           type="text"
-          value={config.symbols?.join(', ') || '🍒, 🍋, 🍊'}
+          value={safeConfig.symbols?.join(', ') || '🍒, 🍋, 🍊'}
           onChange={(e) => handleChange('symbols', e.target.value.split(', '))}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
           placeholder="🍒, 🍋, 🍊"
@@ -35,7 +44,7 @@ const TabJackpot: React.FC<TabJackpotProps> = ({ config, onConfigChange }) => {
         </label>
         <input
           type="number"
-          value={config.reels || 3}
+          value={safeConfig.reels || 3}
           onChange={(e) => handleChange('reels', parseInt(e.target.value))}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
           min="3"
@@ -49,7 +58,7 @@ const TabJackpot: React.FC<TabJackpotProps> = ({ config, onConfigChange }) => {
         </label>
         <input
           type="text"
-          value={config.winMessage || 'JACKPOT ! Vous avez gagné !'}
+          value={safeConfig.winMessage || 'JACKPOT ! Vous avez gagné !'}
           onChange={(e) => handleChange('winMessage', e.target.value)}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
         />
@@ -61,7 +70,7 @@ const TabJackpot: React.FC<TabJackpotProps> = ({ config, onConfigChange }) => {
         </label>
         <input
           type="text"
-          value={config.loseMessage || 'Dommage, pas de jackpot !'}
+          value={safeConfig.loseMessage || 'Dommage, pas de jackpot !'}
           onChange={(e) => handleChange('loseMessage', e.target.value)}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
         />

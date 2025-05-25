@@ -34,6 +34,18 @@ const CampaignEditor: React.FC = () => {
   const [activeTab, setActiveTab] = useState('general');
   const [showPreviewModal, setShowPreviewModal] = useState(false);
 
+  // Initialize gameConfig with proper jackpot configuration
+  const getInitialGameConfig = () => {
+    const baseConfig = getDefaultGameConfig(campaignType);
+    if (campaignType === 'jackpot') {
+      return {
+        ...baseConfig,
+        jackpot: defaultJackpotConfig
+      };
+    }
+    return baseConfig;
+  };
+
   // ----------- STATE CAMPAGNE AVEC CONFIG.JACKPOT -----------
   const [campaign, setCampaign] = useState({
     name: isNewCampaign ? 'Nouvelle Campagne' : 'Quiz Marketing Digital',
@@ -67,7 +79,7 @@ const CampaignEditor: React.FC = () => {
         showReplayButton: true
       }
     },
-    gameConfig: getDefaultGameConfig(campaignType),
+    gameConfig: getInitialGameConfig(),
     design: {
       background: '#ebf4f7',
       fontFamily: 'Inter',
