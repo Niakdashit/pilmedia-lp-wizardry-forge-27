@@ -164,7 +164,7 @@ export const ModuleRenderer: React.FC<ModuleRendererProps> = ({ module }) => {
             {Array.from({ length: module.settings?.columns || 2 }).map((_, index) => (
               <div key={index} className="border border-gray-200 rounded p-4">
                 <textarea
-                  value={Array.isArray(module.content) ? (module.content[index] || '') : (index === 0 ? module.content || '' : '')}
+                  value={Array.isArray(module.content) ? (module.content[index] || '') : (index === 0 ? (module.content || '') : '')}
                   onChange={(e) => {
                     const newContent = Array.isArray(module.content) ? [...module.content] : [];
                     newContent[index] = e.target.value;

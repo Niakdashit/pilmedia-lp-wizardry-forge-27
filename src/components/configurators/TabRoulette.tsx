@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 
 interface Segment {
@@ -84,9 +85,9 @@ const TabRoulette: React.FC<TabRouletteProps> = ({
   const handleSegmentChange = (index: number, field: keyof Segment, value: string | number) => {
     const updated = [...segments];
     if (field === 'chance') {
-      updated[index][field] = value as number;
-    } else {
-      updated[index][field] = value as string;
+      (updated[index] as any)[field] = value as number;
+    } else if (field === 'label' || field === 'color') {
+      (updated[index] as any)[field] = value as string;
     }
     updateCampaign(updated, centerImage);
   };
