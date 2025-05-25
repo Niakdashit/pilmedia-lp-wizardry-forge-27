@@ -28,11 +28,47 @@ export const getCampaignTypeIcon = (type: CampaignType) => {
 export const getDefaultGameConfig = (type: CampaignType) => {
   switch (type) {
     case 'quiz':
-      return { questions: [], timeLimit: 30, showCorrectAnswers: true };
+      return { 
+        quiz: {
+          questions: [
+            {
+              id: Date.now(),
+              text: '',
+              type: 'multiple',
+              image: '',
+              options: [
+                { id: Date.now() + 1, text: '', isCorrect: false },
+                { id: Date.now() + 2, text: '', isCorrect: false }
+              ],
+              feedback: {
+                correct: 'Bonne réponse !',
+                incorrect: 'Mauvaise réponse.'
+              },
+              timeLimit: 0
+            }
+          ],
+          timeLimit: 30, 
+          showCorrectAnswers: true 
+        }
+      };
     case 'wheel':
-      return { segments: [], colors: ['#ff6b6b', '#4ecdc4', '#45b7d1'] };
+      return { wheel: { segments: [], colors: ['#ff6b6b', '#4ecdc4', '#45b7d1'] } };
     case 'dice':
-      return { sides: 6, count: 2 };
+      return { dice: { sides: 6, count: 2 } };
+    case 'jackpot':
+      return { 
+        jackpot: {
+          symbols: ['🍒', '🍋', '🍊'],
+          reels: 3,
+          winMessage: 'JACKPOT ! Vous avez gagné !',
+          loseMessage: 'Dommage, pas de jackpot !',
+          instantWin: {
+            enabled: false,
+            winProbability: 0.05,
+            maxWinners: undefined,
+          }
+        }
+      };
     default:
       return {};
   }
