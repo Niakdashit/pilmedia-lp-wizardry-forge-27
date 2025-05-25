@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Jackpot from '@/components/GameTypes/Jackpot';
 
@@ -9,15 +8,14 @@ interface GameCanvasPreviewProps {
 
 const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   campaign,
-  className = ''
+  className = ""
 }) => {
-  // Image de fond générale (pour tout l'arrière-plan)
   const gameBackgroundImage =
     campaign.gameConfig?.[campaign.type]?.backgroundImage ||
-    campaign.design.backgroundImage;
+    campaign.design?.backgroundImage;
 
-  // Template de jackpot spécifique (différent de l'image de fond)
-  const jackpotTemplateImage = campaign.gameConfig?.jackpot?.customTemplate;
+  const jackpotTemplateImage =
+    campaign.gameConfig?.[campaign.type]?.templateImage;
 
   const renderGame = () => {
     switch (campaign.type) {
@@ -41,64 +39,49 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
 
   return (
     <div
-      className={`bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 relative overflow-hidden ${className}`}
-      style={{ 
-        minHeight: '500px',
-        height: gameBackgroundImage ? 'auto' : '500px'
-      }}
+      className={`bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 relative ${className}`}
+      style={{ minHeight: '500px' }}
     >
-      {/* Image de fond générale - s'adapte à sa taille sans être coupée */}
-      {gameBackgroundImage && (
-        <div className="w-full h-auto">
-          <img
-            src={gameBackgroundImage}
-            alt="Image de fond du jeu"
-            className="w-full h-auto object-contain rounded-lg"
-          />
-        </div>
-      )}
-
-      {/* Conteneur principal du jeu - parfaitement centré */}
+      {/* ✅ Container centré */}
       <div
-        className="absolute"
-        style={{ 
-          width: '680px', 
-          height: '400px',
-          left: '50%',
-          top: '50%',
-          transform: 'translate(-50%, -50%)',
-          zIndex: 2
-        }}
+        className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"
+        style={{ width: '680px', height: '400px' }}
       >
-        {/* Template de jackpot - s'affiche seulement si uploadé */}
-        {jackpotTemplateImage && (
+        {/* ✅ Image de fond (optionnelle) */}
+        {gameBackgroundImage && (
           <div
-            className="absolute inset-0 rounded-lg"
+            className="absolute inset-0 bg-no-repeat bg-center bg-contain"
+            style={{ backgroundImage: `url(${gameBackgroundImage})`, zIndex: 0 }}
+          />
+        )}
+
+        {/* ✅ Template importé uniquement s’il existe */}
+        {jackpotTemplateImage && (
+          <img
+            src={jackpotTemplateImage}
+            alt="Modèle personnalisé"
+            className="absolute top-0 left-0 right-0 mx-auto z-0"
             style={{
-              backgroundImage: `url(${jackpotTemplateImage})`,
-              backgroundSize: 'contain',
-              backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat',
-              zIndex: 1
+              width: '680px',
+              height: '400px',
+              objectFit: 'contain',
             }}
           />
         )}
 
-        {/* Jeu (rouleaux + bouton) - absolument centré AU-DESSUS du template */}
+        {/* ✅ Jeu ou fallback */}
         <div
-          className="absolute flex flex-col items-center justify-center"
-          style={{ 
+          className="absolute z-10"
+          style={{
+            top: '160px',
             left: '50%',
-            top: '50%',
-            transform: 'translate(-50%, -50%)',
-            zIndex: 10,
-            width: '100%'
+            transform: 'translateX(-50%)',
           }}
         >
           {renderGame() || (
-            <div className="text-center text-gray-700 bg-white/90 backdrop-blur-sm p-6 rounded-lg shadow-sm">
-              <p className="text-sm font-medium mb-1">Aperçu du jeu</p>
-              <p className="text-xs text-gray-500">Le jeu apparaîtra ici</p>
+            <div className="text-center text-white backdrop-blur-sm bg-black/30 p-4 rounded">
+              <p className="text-sm font-semibold">Aperçu du jeu</p>
+              <p className="text-xs mt-1">Sélectionnez un type de jeu pour voir l'aperçu</p>
             </div>
           )}
         </div>
