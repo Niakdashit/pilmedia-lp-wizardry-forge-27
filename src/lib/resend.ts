@@ -1,3 +1,4 @@
+
 import { Resend } from 'resend';
 
 // Validate API key presence and format
@@ -14,16 +15,7 @@ if (!apiKey.startsWith('re_')) {
 // Initialize Resend with better error handling
 let resendInstance: Resend;
 try {
-  resendInstance = new Resend(apiKey, {
-    timeout: 10000, // 10 second timeout
-    retry: {
-      attempts: 3,
-      backoff: {
-        type: 'exponential',
-        factor: 2,
-      },
-    },
-  });
+  resendInstance = new Resend(apiKey);
 } catch (error) {
   console.error('Failed to initialize Resend client:', error);
   throw new Error('Failed to initialize email service');
