@@ -19,9 +19,17 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   const renderGame = () => {
     switch (campaign.type) {
       case 'jackpot':
-        return <Jackpot config={campaign.gameConfig?.jackpot} isPreview={true} />;
-      // case 'quiz':
-      //   return <Quiz config={campaign.gameConfig?.quiz} />;
+        return (
+          <Jackpot 
+            isPreview={true} 
+            instantWinConfig={{
+              mode: 'instant_winner' as const,
+              winProbability: campaign.gameConfig?.jackpot?.instantWin?.winProbability || 0.05,
+              maxWinners: campaign.gameConfig?.jackpot?.instantWin?.maxWinners,
+              winnersCount: 0
+            }}
+          />
+        );
       default:
         return null;
     }

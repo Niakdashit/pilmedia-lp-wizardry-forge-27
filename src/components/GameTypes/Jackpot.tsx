@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
@@ -17,15 +18,19 @@ interface JackpotProps {
   isPreview?: boolean;
   instantWinConfig?: JackpotInstantWinConfig;
   onFinish?: (result: 'win' | 'lose') => void;
+  customTemplate?: string;
 }
+
 const Jackpot: React.FC<JackpotProps> = ({
   isPreview,
   instantWinConfig,
-  onFinish
+  onFinish,
+  customTemplate
 }) => {
   const [slots, setSlots] = useState<string[]>(['🍒', '🍋', '🍊']);
   const [isRolling, setIsRolling] = useState(false);
   const [result, setResult] = useState<'win' | 'lose' | null>(null);
+  
   const roll = () => {
     if (isRolling || result) return;
     setIsRolling(true);
@@ -59,6 +64,7 @@ const Jackpot: React.FC<JackpotProps> = ({
       }
     }, 1800);
   };
+  
   if (!isPreview) {
     return <div>
         <p>Pas de configuration pour le moment.</p>
@@ -74,38 +80,57 @@ const Jackpot: React.FC<JackpotProps> = ({
     minWidth: 260,
     minHeight: 340
   }} className="flex flex-col items-center justify-center w-full py-[199px]">
-      {/* SVG fond/visuel */}
-      <svg viewBox="0 0 360 450" width="100%" height="100%" style={{
-      position: "absolute",
-      left: 0,
-      top: 0,
-      zIndex: 0,
-      pointerEvents: "none"
-    }} className="select-none">
-        {/* Cadre bois et header */}
-        <rect x="0" y="45" width="360" height="380" rx="32" fill="#FFD700" />
-        <rect x="10" y="55" width="340" height="360" rx="24" fill="#d6a768" stroke="#b07b37" strokeWidth="3" />
-        {/* Header rose */}
-        <path d="M0 72 Q180 -30 360 72 V120 H0 V72Z" fill="#FF4B8B" />
-        {/* Texte & objets */}
-        <text x="180" y="68" textAnchor="middle" fontWeight="bold" fontFamily="Arial Rounded MT Bold, Arial" fontSize="32" fill="#fff">
-          Cuisine Actuelle
-        </text>
-        {/* Toque */}
-        <ellipse cx="48" cy="40" rx="32" ry="20" fill="#fff" stroke="#aaa" strokeWidth="3" />
-        <ellipse cx="62" cy="33" rx="12" ry="10" fill="#fafafa" stroke="#bbb" strokeWidth="2" />
-        {/* Batteur */}
-        <g>
-          <ellipse cx="322" cy="38" rx="18" ry="14" fill="#fffbb7" stroke="#ffb14c" strokeWidth="4" />
-          <rect x="320" y="45" width="10" height="22" rx="4" fill="#ffd700" />
-          <rect x="317" y="67" width="16" height="4" rx="2" fill="#ff4b8b" />
-        </g>
-        {/* Levier */}
-        <rect x="335" y="140" width="8" height="180" rx="5" fill="#e23c26" />
-        <circle cx="339" cy="140" r="20" fill="#FF4B8B" stroke="#d14343" strokeWidth="3" />
-        {/* ombre levier */}
-        <ellipse cx="339" cy="320" rx="16" ry="10" fill="#ffb14c" opacity="0.2" />
-      </svg>
+      {/* Modèle personnalisé ou SVG par défaut */}
+      {customTemplate ? (
+        <img 
+          src={customTemplate} 
+          alt="Modèle jackpot personnalisé"
+          style={{
+            position: "absolute",
+            left: 0,
+            top: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            zIndex: 0,
+            pointerEvents: "none"
+          }}
+          className="select-none"
+        />
+      ) : (
+        <svg viewBox="0 0 360 450" width="100%" height="100%" style={{
+          position: "absolute",
+          left: 0,
+          top: 0,
+          zIndex: 0,
+          pointerEvents: "none"
+        }} className="select-none">
+          {/* Cadre bois et header */}
+          <rect x="0" y="45" width="360" height="380" rx="32" fill="#FFD700" />
+          <rect x="10" y="55" width="340" height="360" rx="24" fill="#d6a768" stroke="#b07b37" strokeWidth="3" />
+          {/* Header rose */}
+          <path d="M0 72 Q180 -30 360 72 V120 H0 V72Z" fill="#FF4B8B" />
+          {/* Texte & objets */}
+          <text x="180" y="68" textAnchor="middle" fontWeight="bold" fontFamily="Arial Rounded MT Bold, Arial" fontSize="32" fill="#fff">
+            Cuisine Actuelle
+          </text>
+          {/* Toque */}
+          <ellipse cx="48" cy="40" rx="32" ry="20" fill="#fff" stroke="#aaa" strokeWidth="3" />
+          <ellipse cx="62" cy="33" rx="12" ry="10" fill="#fafafa" stroke="#bbb" strokeWidth="2" />
+          {/* Batteur */}
+          <g>
+            <ellipse cx="322" cy="38" rx="18" ry="14" fill="#fffbb7" stroke="#ffb14c" strokeWidth="4" />
+            <rect x="320" y="45" width="10" height="22" rx="4" fill="#ffd700" />
+            <rect x="317" y="67" width="16" height="4" rx="2" fill="#ff4b8b" />
+          </g>
+          {/* Levier */}
+          <rect x="335" y="140" width="8" height="180" rx="5" fill="#e23c26" />
+          <circle cx="339" cy="140" r="20" fill="#FF4B8B" stroke="#d14343" strokeWidth="3" />
+          {/* ombre levier */}
+          <ellipse cx="339" cy="320" rx="16" ry="10" fill="#ffb14c" opacity="0.2" />
+        </svg>
+      )}
+      
       {/* Slots - centrés dans le cadre */}
       <div style={{
       position: "absolute",

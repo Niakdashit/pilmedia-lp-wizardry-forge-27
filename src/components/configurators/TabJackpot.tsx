@@ -1,5 +1,6 @@
 
 import React from 'react';
+import ImageUpload from '../common/ImageUpload';
 
 interface TabJackpotProps {
   config: any;
@@ -13,6 +14,7 @@ const TabJackpot: React.FC<TabJackpotProps> = ({ config = {}, onConfigChange }) 
     reels: 3,
     winMessage: 'JACKPOT ! Vous avez gagné !',
     loseMessage: 'Dommage, pas de jackpot !',
+    customTemplate: '',
     ...config
   };
 
@@ -25,6 +27,19 @@ const TabJackpot: React.FC<TabJackpotProps> = ({ config = {}, onConfigChange }) 
 
   return (
     <div className="space-y-6">
+      <div>
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Modèle de jackpot</h3>
+        <ImageUpload
+          value={safeConfig.customTemplate}
+          onChange={(value) => handleChange('customTemplate', value)}
+          label="Uploadez votre modèle personnalisé de jackpot"
+          className="w-full"
+        />
+        <p className="text-sm text-gray-500 mt-2">
+          Si aucun modèle n'est uploadé, le modèle par défaut sera utilisé.
+        </p>
+      </div>
+
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-2">
           Symboles du jackpot
