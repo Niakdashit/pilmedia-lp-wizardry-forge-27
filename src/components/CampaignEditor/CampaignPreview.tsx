@@ -11,6 +11,9 @@ interface CampaignPreviewProps {
 const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
   const { design } = campaign;
 
+  // Get game-specific background image or fallback to design background image
+  const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage || design.backgroundImage;
+
   // Container style with full height and width
   const containerStyle = {
     width: '100%',
@@ -21,10 +24,10 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
   };
 
   // Background image wrapper with absolute positioning
-  const backgroundStyle = design.backgroundImage ? {
+  const backgroundStyle = gameBackgroundImage ? {
     position: 'absolute' as const,
     inset: 0,
-    backgroundImage: `url(${design.backgroundImage})`,
+    backgroundImage: `url(${gameBackgroundImage})`,
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'contain',
@@ -80,7 +83,7 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
       {customStyles}
       
       {/* Background image */}
-      {design.backgroundImage && <div style={backgroundStyle} />}
+      {gameBackgroundImage && <div style={backgroundStyle} />}
 
       {/* Content wrapper */}
       <div style={contentWrapperStyle}>

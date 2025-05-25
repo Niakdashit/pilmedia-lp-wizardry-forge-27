@@ -1,8 +1,10 @@
+
 import React, { useState } from 'react';
 import { Quiz, Scratch, Memory, Puzzle, Dice } from '../GameTypes';
 import TabRoulette from '@/components/configurators/TabRoulette';
 import TabJackpot from '@/components/configurators/TabJackpot';
-import { Palette, Type, Square, Box } from 'lucide-react';
+import ImageUpload from '../common/ImageUpload';
+import { Palette, Type, Square, Box, Image as ImageIcon, Gamepad2 } from 'lucide-react';
 
 interface CampaignContentProps {
   campaign: any;
@@ -10,7 +12,7 @@ interface CampaignContentProps {
 }
 
 const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign }) => {
-  const [activeSection, setActiveSection] = useState<'game' | 'style'>('game');
+  const [activeSection, setActiveSection] = useState<'game' | 'canvas' | 'style'>('game');
 
   const fonts = [
     { name: 'Inter', value: 'Inter, sans-serif' },
@@ -35,6 +37,16 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
     }));
   };
 
+  const updateGameConfig = (gameType: string, config: any) => {
+    setCampaign((prev: any) => ({
+      ...prev,
+      gameConfig: {
+        ...prev.gameConfig,
+        [gameType]: config
+      }
+    }));
+  };
+
   const getContentEditor = () => {
     console.log('Current campaign type:', campaign.type);
     console.log('Current gameConfig:', campaign.gameConfig);
@@ -44,15 +56,7 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
         return (
           <Quiz 
             config={campaign.gameConfig?.quiz} 
-            onConfigChange={(config) => {
-              setCampaign((prev: any) => ({
-                ...prev,
-                gameConfig: {
-                  ...prev.gameConfig,
-                  quiz: config
-                }
-              }));
-            }} 
+            onConfigChange={(config) => updateGameConfig('quiz', config)} 
           />
         );
       case 'wheel':
@@ -67,60 +71,28 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
         return (
           <Scratch 
             config={campaign.gameConfig?.scratch} 
-            onConfigChange={(config) => {
-              setCampaign((prev: any) => ({
-                ...prev,
-                gameConfig: {
-                  ...prev.gameConfig,
-                  scratch: config
-                }
-              }));
-            }} 
+            onConfigChange={(config) => updateGameConfig('scratch', config)} 
           />
         );
       case 'memory':
         return (
           <Memory 
             config={campaign.gameConfig?.memory} 
-            onConfigChange={(config) => {
-              setCampaign((prev: any) => ({
-                ...prev,
-                gameConfig: {
-                  ...prev.gameConfig,
-                  memory: config
-                }
-              }));
-            }} 
+            onConfigChange={(config) => updateGameConfig('memory', config)} 
           />
         );
       case 'puzzle':
         return (
           <Puzzle 
             config={campaign.gameConfig?.puzzle} 
-            onConfigChange={(config) => {
-              setCampaign((prev: any) => ({
-                ...prev,
-                gameConfig: {
-                  ...prev.gameConfig,
-                  puzzle: config
-                }
-              }));
-            }} 
+            onConfigChange={(config) => updateGameConfig('puzzle', config)} 
           />
         );
       case 'dice':
         return (
           <Dice 
             config={campaign.gameConfig?.dice} 
-            onConfigChange={(config) => {
-              setCampaign((prev: any) => ({
-                ...prev,
-                gameConfig: {
-                  ...prev.gameConfig,
-                  dice: config
-                }
-              }));
-            }} 
+            onConfigChange={(config) => updateGameConfig('dice', config)} 
           />
         );
       case 'jackpot':
@@ -128,16 +100,7 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
         return (
           <TabJackpot
             config={campaign.gameConfig?.jackpot}
-            onConfigChange={(config) => {
-              console.log('Updating jackpot config:', config);
-              setCampaign((prev: any) => ({
-                ...prev,
-                gameConfig: {
-                  ...prev.gameConfig,
-                  jackpot: config
-                }
-              }));
-            }}
+            onConfigChange={(config) => updateGameConfig('jackpot', config)}
           />
         );
       default:
@@ -149,6 +112,76 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
           </div>
         );
     }
+  };
+
+  const getGameCanvas = () => {
+    const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage || campaign.design.backgroundImage;
+
+    return (
+      <div className="space-y-6">
+        <div className="bg-[#f9f0f5] border border-[#e9d0e5] rounded-lg p-4">
+          <p className="text-[#841b60] text-sm">
+            Configurez l'apparence visuelle de votre jeu {campaign.type}.
+          </p>
+        </div>
+
+        <div className="space-y-6">
+          <div>
+            <h3 className="text-sm font-medium text-gray-700 mb-4 flex items-center">
+              <ImageIcon className="w-5 h-5 mr-2" />
+              Image de fond du jeu
+            </h3>
+            <ImageUpload
+              value={gameBackgroundImage}
+              onChange={(value) => {
+                setCampaign((prev: any) => ({
+                  ...prev,
+                  gameConfig: {
+                    ...prev.gameConfig,
+                    [campaign.type]: {
+                      ...prev.gameConfig?.[campaign.type],
+                      backgroundImage: value
+                    }
+                  }
+                }));
+              }}
+              label=""
+              className="w-full"
+            />
+          </div>
+
+          <div className="bg-gray-100 rounded-lg p-6 min-h-[400px] border-2 border-dashed border-gray-300">
+            <div className="text-center text-gray-500 mb-4">
+              <Gamepad2 className="w-12 h-12 mx-auto mb-2" />
+              <h4 className="font-medium">Aperçu du canvas de jeu</h4>
+              <p className="text-sm">Voici comment votre jeu apparaîtra</p>
+            </div>
+            
+            <div 
+              className="relative bg-white rounded-lg shadow-lg p-6 min-h-[300px] mx-auto max-w-md"
+              style={{
+                backgroundImage: gameBackgroundImage ? `url(${gameBackgroundImage})` : undefined,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center'
+              }}
+            >
+              {gameBackgroundImage && (
+                <div className="absolute inset-0 bg-black bg-opacity-20 rounded-lg"></div>
+              )}
+              
+              <div className="relative z-10 text-center">
+                <h5 className="font-bold text-lg mb-2" style={{ color: campaign.design.titleColor }}>
+                  {campaign.type.charAt(0).toUpperCase() + campaign.type.slice(1)}
+                </h5>
+                <p className="text-sm opacity-75">
+                  Zone de jeu interactive
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   };
   
   return (
@@ -171,6 +204,16 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
           Mécanique de jeu
         </button>
         <button
+          onClick={() => setActiveSection('canvas')}
+          className={`py-3 px-4 font-medium text-sm border-b-2 transition-colors duration-200 ${
+            activeSection === 'canvas'
+              ? 'border-[#841b60] text-[#841b60]'
+              : 'border-transparent text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          Canvas jeu
+        </button>
+        <button
           onClick={() => setActiveSection('style')}
           className={`py-3 px-4 font-medium text-sm border-b-2 transition-colors duration-200 ${
             activeSection === 'style'
@@ -184,6 +227,8 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
 
       {activeSection === 'game' ? (
         getContentEditor()
+      ) : activeSection === 'canvas' ? (
+        getGameCanvas()
       ) : (
         <div className="space-y-8">
           <div>
