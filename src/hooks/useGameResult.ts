@@ -7,13 +7,6 @@ export const useGameResult = (campaignId: string, config: GameConfig) => {
   const checkWinningCondition = useCallback(async () => {
     if (!config.maxWinners || !config.winRate) return false;
 
-    // Get current winners count - using the mock structure
-    const queryResult = await supabase
-      .from('game_results')
-      .select('*')
-      .eq('campaign_id', campaignId)
-      .eq('is_winner', true);
-
     // Since this is a mock, we'll simulate having 0 winners
     const currentWinners = 0;
 

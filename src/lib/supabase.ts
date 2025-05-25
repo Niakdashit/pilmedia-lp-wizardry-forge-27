@@ -1,7 +1,7 @@
 
 // Mock Supabase client for development
 export const supabase = {
-  from: (tableName: string) => ({
+  from: () => ({
     insert: (data: any) => ({
       data,
       error: null,
@@ -9,9 +9,9 @@ export const supabase = {
         single: () => Promise.resolve({ data, error: null })
       })
     }),
-    select: (columns?: string) => ({
-      eq: (column: string, value: any) => ({
-        eq: (column2: string, value2: any) => Promise.resolve({ count: 0, error: null })
+    select: () => ({
+      eq: () => ({
+        eq: () => Promise.resolve({ count: 0, error: null })
       })
     }),
     update: (data: any) => Promise.resolve({ data, error: null }),
