@@ -35,7 +35,7 @@ const CampaignEditorContent: React.FC<CampaignEditorContentProps> = ({
       case 'settings':
         return (
           <div>
-            <CampaignSettings campaign={campaign} setCampaign={setCampaign} />
+            <CampaignSettings />
             <div className="mt-8">
               <h2 className="text-xl font-bold mb-3 text-[#841b60]">Configuration du Jackpot</h2>
               <TabJackpot
