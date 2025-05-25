@@ -17,7 +17,6 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   const jackpotTemplateImage =
     campaign.gameConfig?.[campaign.type]?.templateImage;
 
-  // Choix du jeu en fonction du type
   const renderGame = () => {
     switch (campaign.type) {
       case 'jackpot':
@@ -39,37 +38,51 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   };
 
   return (
-    <div
-      className={`bg-gray-100 rounded-lg p-6 border-2 border-dashed border-gray-300 ${className}`}
-    >
-      <div className="relative w-full max-w-3xl mx-auto rounded-lg shadow-lg overflow-hidden min-h-[300px]">
-        {/* ✅ Image de fond */}
+    <div className={`bg-gray-100 rounded-lg p-6 border-2 border-dashed border-gray-300 ${className}`}>
+      <div
+        className="relative mx-auto"
+        style={{
+          width: '680px',
+          height: '400px'
+        }}
+      >
+        {/* ✅ Image de fond optionnelle */}
         {gameBackgroundImage && (
           <div
-            className="absolute inset-0 bg-no-repeat bg-center bg-contain"
+            className="absolute inset-0 bg-no-repeat bg-center bg-contain z-0"
             style={{ backgroundImage: `url(${gameBackgroundImage})` }}
           />
         )}
 
-        {/* ✅ Modèle de jackpot sous les rouleaux */}
-        <div className="relative z-10 w-full h-full flex flex-col items-center justify-center p-4">
-          {jackpotTemplateImage && (
-            <img
-              src={jackpotTemplateImage}
-              alt="Modèle de jackpot"
-              className="w-full max-w-[700px] h-auto object-contain mb-[-80px] z-0"
-            />
-          )}
+        {/* ✅ Image du modèle */}
+        {jackpotTemplateImage && (
+          <img
+            src={jackpotTemplateImage}
+            alt="Modèle de jackpot"
+            className="absolute top-0 left-1/2 -translate-x-1/2 z-0"
+            style={{
+              width: '680px',
+              height: '400px',
+              objectFit: 'contain',
+            }}
+          />
+        )}
 
-          {/* ✅ Composant de jeu par-dessus */}
-          <div className="relative z-10">
-            {renderGame() || (
-              <div className="text-center text-white backdrop-blur-sm bg-black/30 p-4 rounded">
-                <p className="text-sm font-semibold">Aperçu du jeu</p>
-                <p className="text-xs mt-1">Sélectionnez un type de jeu pour voir l'aperçu</p>
-              </div>
-            )}
-          </div>
+        {/* ✅ Jeu centré dans l'image */}
+        <div
+          className="absolute z-10"
+          style={{
+            top: '160px', // ajuste cette valeur pour placer les rouleaux
+            left: '50%',
+            transform: 'translateX(-50%)'
+          }}
+        >
+          {renderGame() || (
+            <div className="text-center text-white backdrop-blur-sm bg-black/30 p-4 rounded">
+              <p className="text-sm font-semibold">Aperçu du jeu</p>
+              <p className="text-xs mt-1">Sélectionnez un type de jeu pour voir l'aperçu</p>
+            </div>
+          )}
         </div>
       </div>
     </div>
