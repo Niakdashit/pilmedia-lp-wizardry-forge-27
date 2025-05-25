@@ -85,7 +85,7 @@ const Jackpot: React.FC<JackpotProps> = ({
       boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
       marginBottom: 24
     }}>
-        {slots.map((symbol, i) => <motion.div key={i} className="bg-white shadow-md flex items-center justify-center" style={{
+        {slots.map((symbol, i) => <motion.div key={i} className="shadow-md flex items-center justify-center" style={{
         width: SLOT_SIZE,
         height: SLOT_SIZE,
         borderRadius: 10,
