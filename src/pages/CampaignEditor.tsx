@@ -1,13 +1,12 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import CampaignEditorHeader from '../components/CampaignEditor/CampaignEditorHeader';
 import CampaignEditorTabs from '../components/CampaignEditor/CampaignEditorTabs';
 import CampaignEditorContent from '../components/CampaignEditor/CampaignEditorContent';
 import PreviewModal from '../components/CampaignEditor/PreviewModal';
+import JackpotAppearance from '../components/configurators/JackpotAppearance'; // ✅ Ajout ici
 import { CampaignType, getDefaultGameConfig } from '../utils/campaignTypes';
 
-// Config de base pour jackpot (tu peux déplacer ailleurs si tu veux)
 const defaultJackpotConfig = {
   symbols: ['🍒', '🍋', '🍊'],
   reels: 3,
@@ -26,11 +25,10 @@ const CampaignEditor: React.FC = () => {
   const navigate = useNavigate();
   const isNewCampaign = id === 'new';
   const campaignType = searchParams.get('type') as CampaignType || 'quiz';
-  
+
   const [activeTab, setActiveTab] = useState('general');
   const [showPreviewModal, setShowPreviewModal] = useState(false);
 
-  // ----------- STATE CAMPAGNE AVEC CONFIG.JACKPOT -----------
   const [campaign, setCampaign] = useState({
     name: isNewCampaign ? 'Nouvelle Campagne' : 'Quiz Marketing Digital',
     description: isNewCampaign ? '' : 'Quiz pour évaluer les connaissances en marketing digital',
@@ -50,9 +48,7 @@ const CampaignEditor: React.FC = () => {
         showTitle: true,
         showDescription: true
       },
-      2: {
-        // Game screen configuration is handled in gameConfig
-      },
+      2: {},
       3: {
         title: 'Félicitations !',
         description: 'Merci pour votre participation !',
@@ -98,14 +94,14 @@ const CampaignEditor: React.FC = () => {
       navigate('/campaigns');
     }
   }, [isNewCampaign, searchParams, navigate]);
-  
+
   const handleSave = (continueEditing = false) => {
     console.log('Saving campaign:', campaign);
     if (!continueEditing) {
       navigate('/campaigns');
     }
   };
-  
+
   return (
     <div className="h-[calc(100vh-3rem)] flex flex-col">
       <CampaignEditorHeader
@@ -114,19 +110,28 @@ const CampaignEditor: React.FC = () => {
         onPreview={() => setShowPreviewModal(true)}
         onSave={handleSave}
       />
-      
+
       <div className="flex flex-1 overflow-hidden bg-white rounded-xl shadow-sm">
         <div className="flex flex-col w-full">
           <CampaignEditorTabs
             activeTab={activeTab}
             onTabChange={setActiveTab}
           />
-          
-          <CampaignEditorContent
-            activeTab={activeTab}
-            campaign={campaign}
-            setCampaign={setCampaign}
-          />
+
+          {activeTab === 'appearance' ? (
+            <div className="p-6 overflow-y-auto">
+              <JackpotAppearance
+                campaign={campaign}
+                setCampaign={setCampaign}
+              />
+            </div>
+          ) : (
+            <CampaignEditorContent
+              activeTab={activeTab}
+              campaign={campaign}
+              setCampaign={setCampaign}
+            />
+          )}
         </div>
       </div>
 
