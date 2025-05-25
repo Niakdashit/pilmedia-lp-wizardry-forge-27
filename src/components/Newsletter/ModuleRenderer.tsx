@@ -162,17 +162,29 @@ export const ModuleRenderer: React.FC<ModuleRendererProps> = ({ module }) => {
         {module.type === 'columns' && (
           <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${module.settings?.columns || 2}, 1fr)` }}>
             {Array.from({ length: module.settings?.columns || 2 }).map((_, index) => {
-              const columnContent = Array.isArray(module.content) 
-                ? String(module.content[index] || '') 
-                : (index === 0 ? String(module.content || '') : '');
+              let columnContent = '';
+              try {
+                const parsedContent = JSON.parse(module.content || '[]');
+                columnContent = Array.isArray(parsedContent) ? (parsedContent[index] || '') : '';
+              } catch {
+                columnContent = index === 0 ? (module.content || '') : '';
+              }
+              
               return (
                 <div key={index} className="border border-gray-200 rounded p-4">
                   <textarea
                     value={columnContent}
                     onChange={(e) => {
-                      const newContent = Array.isArray(module.content) ? [...module.content] : [];
-                      newContent[index] = e.target.value;
-                      updateModule(module.id, { content: JSON.stringify(newContent) });
+                      try {
+                        const parsedContent = JSON.parse(module.content || '[]');
+                        const newContent = Array.isArray(parsedContent) ? [...parsedContent] : [];
+                        newContent[index] = e.target.value;
+                        updateModule(module.id, { content: JSON.stringify(newContent) });
+                      } catch {
+                        const newContent = new Array(module.settings?.columns || 2).fill('');
+                        newContent[index] = e.target.value;
+                        updateModule(module.id, { content: JSON.stringify(newContent) });
+                      }
                     }}
                     className="w-full p-2 border border-gray-200 rounded resize-y min-h-[100px] focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
                     placeholder={`Contenu de la colonne ${index + 1}...`}
