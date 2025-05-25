@@ -1,9 +1,12 @@
+
 import React from 'react';
 import GameCanvasPreview from '../CampaignEditor/GameCanvasPreview';
+
 interface JackpotAppearanceProps {
   campaign: any;
   setCampaign: (value: any) => void;
 }
+
 const JackpotAppearance: React.FC<JackpotAppearanceProps> = ({
   campaign,
   setCampaign
@@ -21,12 +24,13 @@ const JackpotAppearance: React.FC<JackpotAppearanceProps> = ({
     };
     setCampaign(updatedCampaign);
   };
-  const gameConfig = campaign.gameConfig?.[campaign.type] || {};
-  return <div className="space-y-6">
-      
 
+  const gameConfig = campaign.gameConfig?.[campaign.type] || {};
+
+  return (
+    <div className="space-y-6">
       {/* Aperçu du jeu avec configurateur intégré */}
-      <GameCanvasPreview campaign={campaign} handleInputChange={handleInputChange} />
+      <GameCanvasPreview campaign={campaign} />
 
       {/* Configurateur d'apparence */}
       <div className="space-y-4 bg-white p-6 rounded-lg border">
@@ -37,19 +41,30 @@ const JackpotAppearance: React.FC<JackpotAppearanceProps> = ({
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Image de fond du jeu
           </label>
-          <input type="file" accept="image/*" onChange={e => {
-          const file = e.target.files?.[0];
-          if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-              handleInputChange('backgroundImage', reader.result as string);
-            };
-            reader.readAsDataURL(file);
-          }
-        }} className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-[#841b60] file:text-white hover:file:bg-[#6d164f]" />
-          {gameConfig.backgroundImage && <div className="mt-2">
-              <img src={gameConfig.backgroundImage} alt="Background Preview" className="w-[170px] h-[100px] object-cover border rounded" />
-            </div>}
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                  handleInputChange('backgroundImage', reader.result as string);
+                };
+                reader.readAsDataURL(file);
+              }
+            }}
+            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-[#841b60] file:text-white hover:file:bg-[#6d164f]"
+          />
+          {gameConfig.backgroundImage && (
+            <div className="mt-2">
+              <img
+                src={gameConfig.backgroundImage}
+                alt="Background Preview"
+                className="w-[170px] h-[100px] object-cover border rounded"
+              />
+            </div>
+          )}
         </div>
         
         {/* Modèle personnalisé du jackpot */}
@@ -57,19 +72,30 @@ const JackpotAppearance: React.FC<JackpotAppearanceProps> = ({
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Modèle personnalisé du jackpot (680x400)
           </label>
-          <input type="file" accept="image/*" onChange={e => {
-          const file = e.target.files?.[0];
-          if (file) {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-              handleInputChange('customTemplate', reader.result as string);
-            };
-            reader.readAsDataURL(file);
-          }
-        }} className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-[#841b60] file:text-white hover:file:bg-[#6d164f]" />
-          {gameConfig.customTemplate && <div className="mt-2">
-              <img src={gameConfig.customTemplate} alt="Jackpot Template Preview" className="w-[170px] h-[100px] object-cover border rounded" />
-            </div>}
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                  handleInputChange('customTemplate', reader.result as string);
+                };
+                reader.readAsDataURL(file);
+              }
+            }}
+            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-[#841b60] file:text-white hover:file:bg-[#6d164f]"
+          />
+          {gameConfig.customTemplate && (
+            <div className="mt-2">
+              <img
+                src={gameConfig.customTemplate}
+                alt="Jackpot Template Preview"
+                className="w-[170px] h-[100px] object-cover border rounded"
+              />
+            </div>
+          )}
         </div>
 
         {/* Texte du bouton */}
@@ -77,7 +103,13 @@ const JackpotAppearance: React.FC<JackpotAppearanceProps> = ({
           <label className="block text-sm font-medium text-gray-700 mb-2">
             Texte du bouton
           </label>
-          <input type="text" value={gameConfig.buttonLabel || 'Lancer le Jackpot'} onChange={e => handleInputChange('buttonLabel', e.target.value)} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]" placeholder="Ex: Lancer le Jackpot" />
+          <input
+            type="text"
+            value={gameConfig.buttonLabel || 'Lancer le Jackpot'}
+            onChange={(e) => handleInputChange('buttonLabel', e.target.value)}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
+            placeholder="Ex: Lancer le Jackpot"
+          />
         </div>
 
         {/* Couleur du bouton */}
@@ -86,11 +118,24 @@ const JackpotAppearance: React.FC<JackpotAppearanceProps> = ({
             Couleur du bouton
           </label>
           <div className="flex items-center space-x-3">
-            <input type="color" value={gameConfig.buttonColor || '#ec4899'} onChange={e => handleInputChange('buttonColor', e.target.value)} className="w-12 h-10 border border-gray-300 rounded cursor-pointer" />
-            <input type="text" value={gameConfig.buttonColor || '#ec4899'} onChange={e => handleInputChange('buttonColor', e.target.value)} className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]" placeholder="#ec4899" />
+            <input
+              type="color"
+              value={gameConfig.buttonColor || '#ec4899'}
+              onChange={(e) => handleInputChange('buttonColor', e.target.value)}
+              className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
+            />
+            <input
+              type="text"
+              value={gameConfig.buttonColor || '#ec4899'}
+              onChange={(e) => handleInputChange('buttonColor', e.target.value)}
+              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
+              placeholder="#ec4899"
+            />
           </div>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default JackpotAppearance;
