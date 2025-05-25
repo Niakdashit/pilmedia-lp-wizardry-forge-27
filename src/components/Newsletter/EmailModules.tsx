@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { 
   Image as ImageIcon, 
@@ -10,7 +11,9 @@ import {
   ListCollapse,
   Eye,
   BarChart3,
-  LogIn
+  LogIn,
+  Video,
+  Quote
 } from 'lucide-react';
 
 export const emailModules = [
@@ -64,6 +67,20 @@ export const emailModules = [
     category: 'content'
   },
   {
+    id: 'video',
+    type: 'video',
+    icon: <Video className="w-6 h-6 text-gray-400 mb-2" />,
+    label: 'Vidéo',
+    category: 'content'
+  },
+  {
+    id: 'testimonial',
+    type: 'testimonial',
+    icon: <Quote className="w-6 h-6 text-gray-400 mb-2" />,
+    label: 'Témoignage',
+    category: 'content'
+  },
+  {
     id: 'tracking-pixel',
     type: 'tracking-pixel',
     icon: <Eye className="w-6 h-6 text-gray-400 mb-2" />,
@@ -107,28 +124,4 @@ export const moduleCategories = [
   { id: 'analytics', label: 'Analytique' },
   { id: 'footer', label: 'Pied de page' },
   { id: 'advanced', label: 'Avancé' }
-  { id: 'advanced', label: 'Avancé' },
-  { id: 'content', label: 'Contenu' },
-
-  {
-    id: 'video',
-    type: 'video',
-    icon: <i className="fas fa-video text-primary mr-3" />,
-    label: 'Vidéo',
-    category: 'content'
-  },
-  {
-    id: 'testimonial',
-    type: 'testimonial',
-    icon: <i className="fas fa-quote-right text-primary mr-3" />,
-    label: 'Témoignage',
-    category: 'content'
-  },
-  {
-    id: 'html',
-    type: 'html',
-    icon: <i className="fas fa-code text-primary mr-3" />,
-    label: 'Bloc HTML',
-    category: 'advanced'
-  }
 ];
