@@ -27,10 +27,10 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
 
         {/* Canvas en dessous de la barre */}
         <div className="flex-1 pt-20 overflow-auto bg-gray-50 flex justify-center items-center">
-  <div className="w-full max-w-6xl px-6">
-    <GameCanvasPreview campaign={campaign} />
-  </div>
-</div>
+          <div className="w-full max-w-6xl px-4">
+            <GameCanvasPreview campaign={campaign} />
+          </div>
+        </div>
       </div>
     </div>
   );
