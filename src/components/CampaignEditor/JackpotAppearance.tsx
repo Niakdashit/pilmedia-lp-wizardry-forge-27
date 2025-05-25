@@ -40,6 +40,15 @@ const JackpotAppearance: React.FC<JackpotAppearanceProps> = ({ campaign, setCamp
             }
           }}
         />
+        {gameConfig.backgroundImage && (
+          <div className="mt-2">
+            <img
+              src={gameConfig.backgroundImage}
+              alt="Aperçu image de fond"
+              className="w-[170px] h-[100px] object-cover border rounded"
+            />
+          </div>
+        )}
       </div>
 
       {/* Modèle personnalisé du jackpot (680x400) */}
@@ -59,6 +68,15 @@ const JackpotAppearance: React.FC<JackpotAppearanceProps> = ({ campaign, setCamp
             }
           }}
         />
+        {gameConfig.customTemplate && (
+          <div className="mt-2">
+            <img
+              src={gameConfig.customTemplate}
+              alt="Aperçu template jackpot"
+              className="w-[170px] h-[100px] object-cover border rounded"
+            />
+          </div>
+        )}
       </div>
 
       {/* Texte du bouton */}
