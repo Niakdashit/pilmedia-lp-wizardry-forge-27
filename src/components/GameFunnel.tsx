@@ -36,6 +36,7 @@ const GameFunnel: React.FC<GameFunnelProps> = ({ campaign }) => {
         return (
           <Quiz 
             config={campaign.gameConfig.quiz}
+            onConfigChange={() => {}}
           />
         );
 
@@ -54,6 +55,7 @@ const GameFunnel: React.FC<GameFunnelProps> = ({ campaign }) => {
         return (
           <Scratch 
             config={campaign.gameConfig.scratch}
+            onConfigChange={() => {}}
           />
         );
 
@@ -61,6 +63,7 @@ const GameFunnel: React.FC<GameFunnelProps> = ({ campaign }) => {
         return (
           <Memory 
             config={campaign.gameConfig.memory}
+            onConfigChange={() => {}}
           />
         );
 
@@ -68,6 +71,7 @@ const GameFunnel: React.FC<GameFunnelProps> = ({ campaign }) => {
         return (
           <Puzzle 
             config={campaign.gameConfig.puzzle}
+            onConfigChange={() => {}}
           />
         );
 
@@ -75,6 +79,7 @@ const GameFunnel: React.FC<GameFunnelProps> = ({ campaign }) => {
         return (
           <Dice 
             config={campaign.gameConfig.dice}
+            onConfigChange={() => {}}
           />
         );
 

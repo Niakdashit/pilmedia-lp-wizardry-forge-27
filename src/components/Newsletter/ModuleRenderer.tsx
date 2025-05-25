@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNewsletterStore } from '@/stores/newsletterStore';
 import { Trash2, GripVertical, ChevronUp, ChevronDown, Copy } from 'lucide-react';
@@ -164,7 +163,7 @@ export const ModuleRenderer: React.FC<ModuleRendererProps> = ({ module }) => {
             {Array.from({ length: module.settings?.columns || 2 }).map((_, index) => (
               <div key={index} className="border border-gray-200 rounded p-4">
                 <textarea
-                  value={Array.isArray(module.content) ? module.content[index] || '' : ''}
+                  value={Array.isArray(module.content) ? (module.content[index] || '') : ''}
                   onChange={(e) => {
                     const newContent = Array.isArray(module.content) ? [...module.content] : [];
                     newContent[index] = e.target.value;

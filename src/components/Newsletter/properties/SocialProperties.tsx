@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { ModuleData } from '@/stores/newsletterStore';
 
@@ -21,7 +22,7 @@ export const SocialProperties: React.FC<SocialPropertiesProps> = ({ module, onUp
   const handlePlatformToggle = (platform: string) => {
     const currentPlatforms = module.settings?.platforms || [];
     const newPlatforms = currentPlatforms.includes(platform)
-      ? currentPlatforms.filter(p => p !== platform)
+      ? currentPlatforms.filter((p: string) => p !== platform)
       : [...currentPlatforms, platform];
     handleSettingChange('platforms', newPlatforms);
   };
