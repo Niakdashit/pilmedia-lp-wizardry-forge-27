@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Calendar, Link as LinkIcon, Clock } from 'lucide-react';
 
@@ -9,7 +10,7 @@ interface CampaignGeneralProps {
 const CampaignGeneral: React.FC<CampaignGeneralProps> = ({ campaign, setCampaign }) => {
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setCampaign(prev => ({ ...prev, [name]: value }));
+    setCampaign((prev: any) => ({ ...prev, [name]: value }));
   };
   
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -20,7 +21,7 @@ const CampaignGeneral: React.FC<CampaignGeneralProps> = ({ campaign, setCampaign
       .replace(/^-+/, '')         // Trim - from start of text
       .replace(/-+$/, '');        // Trim - from end of text
     
-    setCampaign(prev => ({ ...prev, url: value }));
+    setCampaign((prev: any) => ({ ...prev, url: value }));
   };
   
   return (

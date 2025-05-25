@@ -71,7 +71,6 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
           <Quiz 
             config={campaign.gameConfig.quiz} 
             onConfigChange={() => {}}
-            onComplete={handleGameComplete}
           />
         );
 
