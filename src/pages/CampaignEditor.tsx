@@ -1,13 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
-import { Save, ChevronRight, Eye } from 'lucide-react';
-import CampaignGeneral from '../components/CampaignEditor/CampaignGeneral';
-import CampaignContent from '../components/CampaignEditor/CampaignContent';
-import CampaignScreens from '../components/CampaignEditor/CampaignScreens';
-import CampaignDesign from '../components/CampaignEditor/CampaignDesign';
-import CampaignSettings from '../components/CampaignEditor/CampaignSettings';
+import CampaignEditorHeader from '../components/CampaignEditor/CampaignEditorHeader';
+import CampaignEditorTabs from '../components/CampaignEditor/CampaignEditorTabs';
+import CampaignEditorContent from '../components/CampaignEditor/CampaignEditorContent';
 import PreviewModal from '../components/CampaignEditor/PreviewModal';
-import TabJackpot from "../components/configurators/TabJackpot";
 import { CampaignType, getDefaultGameConfig } from '../utils/campaignTypes';
 
 // Config de base pour jackpot (tu peux déplacer ailleurs si tu veux)
@@ -111,140 +108,25 @@ const CampaignEditor: React.FC = () => {
   
   return (
     <div className="h-[calc(100vh-3rem)] flex flex-col">
-      <div className="flex justify-between items-center mb-4">
-        <div>
-          <h1 className="text-2xl font-bold text-gray-800">
-            {isNewCampaign ? 'Nouvelle Campagne' : campaign.name}
-          </h1>
-          <p className="text-gray-500">{isNewCampaign ? 'Création' : 'Modification'}</p>
-        </div>
-        
-        <div className="flex space-x-3">
-          <button
-            onClick={() => setShowPreviewModal(true)}
-            className="inline-flex items-center px-3 py-2 border border-gray-300 text-sm font-medium rounded-lg bg-white hover:bg-gray-50 transition-colors duration-200"
-          >
-            <Eye className="w-4 h-4 mr-2" />
-            Aperçu
-          </button>
-          
-          <button
-            onClick={() => handleSave(true)}
-            className="inline-flex items-center px-3 py-2 border border-[#841b60] text-sm font-medium rounded-lg text-[#841b60] bg-white hover:bg-[#f8f0f5] transition-colors duration-200"
-          >
-            <Save className="w-4 h-4 mr-2" />
-            Enregistrer
-          </button>
-          
-          <button
-            onClick={() => handleSave(false)}
-            className="inline-flex items-center px-3 py-2 bg-[#841b60] text-white text-sm font-medium rounded-lg hover:bg-[#6d164f] transition-colors duration-200"
-          >
-            Publier
-            <ChevronRight className="w-4 h-4 ml-2" />
-          </button>
-        </div>
-      </div>
+      <CampaignEditorHeader
+        isNewCampaign={isNewCampaign}
+        campaignName={campaign.name}
+        onPreview={() => setShowPreviewModal(true)}
+        onSave={handleSave}
+      />
       
       <div className="flex flex-1 overflow-hidden bg-white rounded-xl shadow-sm">
         <div className="flex flex-col w-full">
-          <div className="border-b border-gray-200">
-            <nav className="flex space-x-8 px-6">
-              <button
-                onClick={() => setActiveTab('general')}
-                className={`py-4 px-1 font-medium text-sm border-b-2 transition-colors duration-200 ${
-                  activeTab === 'general' 
-                    ? 'border-[#841b60] text-[#841b60]' 
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                Général
-              </button>
-              
-              <button
-                onClick={() => setActiveTab('content')}
-                className={`py-4 px-1 font-medium text-sm border-b-2 transition-colors duration-200 ${
-                  activeTab === 'content' 
-                    ? 'border-[#841b60] text-[#841b60]' 
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                Contenu
-              </button>
-
-              <button
-                onClick={() => setActiveTab('screens')}
-                className={`py-4 px-1 font-medium text-sm border-b-2 transition-colors duration-200 ${
-                  activeTab === 'screens' 
-                    ? 'border-[#841b60] text-[#841b60]' 
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                Écrans
-              </button>
-              
-              <button
-                onClick={() => setActiveTab('design')}
-                className={`py-4 px-1 font-medium text-sm border-b-2 transition-colors duration-200 ${
-                  activeTab === 'design' 
-                    ? 'border-[#841b60] text-[#841b60]' 
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                Design
-              </button>
-
-              <button
-                onClick={() => setActiveTab('settings')}
-                className={`py-4 px-1 font-medium text-sm border-b-2 transition-colors duration-200 ${
-                  activeTab === 'settings' 
-                    ? 'border-[#841b60] text-[#841b60]' 
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                Paramétrage
-              </button>
-            </nav>
-          </div>
+          <CampaignEditorTabs
+            activeTab={activeTab}
+            onTabChange={setActiveTab}
+          />
           
-          <div className="flex-1 overflow-y-auto p-6">
-            {activeTab === 'general' && (
-              <CampaignGeneral campaign={campaign} setCampaign={setCampaign} />
-            )}
-            
-            {activeTab === 'content' && (
-              <CampaignContent campaign={campaign} setCampaign={setCampaign} />
-            )}
-
-            {activeTab === 'screens' && (
-              <CampaignScreens campaign={campaign} setCampaign={setCampaign} />
-            )}
-            
-            {activeTab === 'design' && (
-              <CampaignDesign campaign={campaign} setCampaign={setCampaign} />
-            )}
-
-            {activeTab === 'settings' && (
-              <div>
-                <CampaignSettings campaign={campaign} setCampaign={setCampaign} />
-                <div className="mt-8">
-                  <h2 className="text-xl font-bold mb-3 text-[#841b60]">Configuration du Jackpot</h2>
-                  <TabJackpot
-                    config={campaign.config?.jackpot}
-                    onConfigChange={(newJackpotConfig: any) =>
-                      setCampaign((prev: any) => ({
-                        ...prev,
-                        config: {
-                          ...prev.config,
-                          jackpot: newJackpotConfig
-                        }
-                      }))
-                    }
-                  />
-                </div>
-              </div>
-            )}
-          </div>
+          <CampaignEditorContent
+            activeTab={activeTab}
+            campaign={campaign}
+            setCampaign={setCampaign}
+          />
         </div>
       </div>
 
