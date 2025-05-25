@@ -1,86 +1,103 @@
-import React, { useState } from 'react';
-import GameCanvasPreview from './GameCanvasPreview';
+import React from 'react';
+import Jackpot from '../GameTypes/Jackpot';
 
-interface CampaignEditorContentProps {
+interface GameCanvasPreviewProps {
   campaign: any;
-  setCampaign: (campaign: any) => void;
+  className?: string;
 }
 
-const CampaignEditorContent: React.FC<CampaignEditorContentProps> = ({ campaign, setCampaign }) => {
-  const handleInputChange = (field: string, value: string) => {
-    setCampaign((prev: any) => ({
-      ...prev,
-      gameConfig: {
-        ...prev.gameConfig,
-        [prev.type]: {
-          ...prev.gameConfig?.[prev.type],
-          [field]: value
-        }
-      }
-    }));
-  };
+const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
+  campaign,
+  className = ""
+}) => {
+  // Image de fond générale (pour tout l'arrière-plan)
+  const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage;
 
-  const handleFileChange = (field: string, file: File | null) => {
-    if (!file) return;
-    const url = URL.createObjectURL(file);
-    setCampaign((prev: any) => ({
-      ...prev,
-      gameConfig: {
-        ...prev.gameConfig,
-        [prev.type]: {
-          ...prev.gameConfig?.[prev.type],
-          [field]: url
-        }
-      }
-    }));
+  // Template de jackpot spécifique (680x400)
+  const jackpotTemplateImage = campaign.gameConfig?.[campaign.type]?.customTemplate;
+
+  // Configuration du bouton pour le jackpot
+  const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel || 'Lancer le Jackpot';
+  const buttonColor = campaign.gameConfig?.[campaign.type]?.buttonColor || '#ec4899';
+
+  const renderGame = () => {
+    switch (campaign.type) {
+      case 'jackpot':
+        return (
+          <Jackpot
+            isPreview={true}
+            instantWinConfig={{
+              mode: 'instant_winner' as const,
+              winProbability: campaign.gameConfig?.jackpot?.instantWin?.winProbability || 0.05,
+              maxWinners: campaign.gameConfig?.jackpot?.instantWin?.maxWinners,
+              winnersCount: 0
+            }}
+            config={campaign.gameConfig?.jackpot}
+            buttonLabel={buttonLabel}
+            buttonColor={buttonColor}
+            hideDefaultTemplate={true}
+          />
+        );
+      default:
+        return null;
+    }
   };
 
   return (
-    <div className="space-y-6 p-6">
-      <h2 className="text-xl font-bold">Aperçu du jeu</h2>
-      <GameCanvasPreview campaign={campaign} className="mb-6" />
+    <div className={`bg-gray-100 rounded-lg p-6 border-2 border-dashed border-gray-300 ${className}`}>
+      <div className="w-full max-w-3xl mx-auto relative" style={{ minHeight: '500px' }}>
+        {/* Container principal du jeu - dimensions fixes 680x400px, centré */}
+        <div
+          className="absolute bg-white rounded-lg shadow-lg overflow-hidden"
+          style={{
+            width: '680px',
+            height: '400px',
+            left: '50%',
+            top: '50%',
+            transform: 'translate(-50%, -50%)'
+          }}
+        >
+          {/* Image de fond - s'affiche uniquement si uploadée */}
+          {gameBackgroundImage && (
+            <img
+              src={gameBackgroundImage}
+              className="absolute inset-0 w-full h-full object-contain z-0"
+              alt="Background"
+            />
+          )}
 
-      <div className="space-y-4">
-        <div>
-          <label className="block font-medium mb-1">Image de fond du jeu</label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => handleFileChange('backgroundImage', e.target.files?.[0] || null)}
-          />
-        </div>
+          {/* Modèle de jackpot - s'affiche uniquement si uploadé (680x400) */}
+          {jackpotTemplateImage && (
+            <img
+              src={jackpotTemplateImage}
+              className="absolute inset-0 w-full h-full object-contain z-1"
+              alt="Jackpot Template"
+            />
+          )}
 
-        <div>
-          <label className="block font-medium mb-1">Modèle personnalisé du jackpot (680x400)</label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => handleFileChange('customTemplate', e.target.files?.[0] || null)}
-          />
-        </div>
-
-        <div>
-          <label className="block font-medium mb-1">Texte du bouton</label>
-          <input
-            type="text"
-            className="w-full border rounded px-3 py-2"
-            value={campaign.gameConfig?.[campaign.type]?.buttonLabel || ''}
-            onChange={(e) => handleInputChange('buttonLabel', e.target.value)}
-          />
-        </div>
-
-        <div>
-          <label className="block font-medium mb-1">Couleur du bouton</label>
-          <input
-            type="color"
-            className="w-12 h-10 p-0 border-0"
-            value={campaign.gameConfig?.[campaign.type]?.buttonColor || '#ec4899'}
-            onChange={(e) => handleInputChange('buttonColor', e.target.value)}
-          />
+          {/* Jeu Jackpot - centré au-dessus de tous les visuels */}
+          <div
+            className="absolute flex items-center justify-center"
+            style={{
+              left: '50%',
+              top: '50%',
+              transform: 'translate(-50%, -50%)',
+              zIndex: 10,
+              width: '100%',
+              height: '100%'
+            }}
+          >
+            {renderGame() || (
+              <div className="text-center text-gray-500">
+                <p className="text-sm">Aperçu du jeu Jackpot</p>
+                <p className="text-xs mt-1">Le jeu apparaîtra ici</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default CampaignEditorContent;
+export default GameCanvasPreview;
