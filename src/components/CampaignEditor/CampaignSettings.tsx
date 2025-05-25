@@ -17,7 +17,43 @@ const CampaignSettings: React.FC<CampaignSettingsProps> = ({ campaign, setCampai
       
       <div className="space-y-4">
         <h3 className="text-lg font-medium text-gray-900">Paramètres de la campagne</h3>
-        <p className="text-gray-600">Les paramètres spécifiques seront disponibles ici.</p>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Mode de récompense
+            </label>
+            <select
+              value={campaign.rewards?.mode || 'probability'}
+              onChange={(e) => setCampaign((prev: any) => ({
+                ...prev,
+                rewards: { ...prev.rewards, mode: e.target.value }
+              }))}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
+            >
+              <option value="probability">Probabilité</option>
+              <option value="quantity">Quantité limitée</option>
+              <option value="timeSlots">Créneaux horaires</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Probabilité de gain (%)
+            </label>
+            <input
+              type="number"
+              min="0"
+              max="100"
+              value={campaign.rewards?.probability || 10}
+              onChange={(e) => setCampaign((prev: any) => ({
+                ...prev,
+                rewards: { ...prev.rewards, probability: Number(e.target.value) }
+              }))}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
