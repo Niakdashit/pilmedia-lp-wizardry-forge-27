@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Jackpot from '@/components/GameTypes/Jackpot';
 
@@ -9,7 +8,7 @@ interface GameCanvasPreviewProps {
 
 const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   campaign,
-  className = ""
+  className = ''
 }) => {
   const gameBackgroundImage =
     campaign.gameConfig?.[campaign.type]?.backgroundImage ||
@@ -40,44 +39,35 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
 
   return (
     <div
-      className={`bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 relative ${className}`}
-      style={{ minHeight: '500px' }}
+      className={`bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 ${className}`}
+      style={{ minHeight: '500px', position: 'relative' }}
     >
-      {/* Container centré de 680x400 */}
+      {/* Image de fond (full zone grise) */}
+      {gameBackgroundImage && (
+        <div
+          className="absolute inset-0 bg-no-repeat bg-center bg-contain"
+          style={{ backgroundImage: `url(${gameBackgroundImage})`, zIndex: 0 }}
+        />
+      )}
+
+      {/* Conteneur centré */}
       <div
         className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"
-        style={{ width: '680px', height: '400px' }}
+        style={{ width: 680, height: 400 }}
       >
-        {/* Image de fond */}
-        {gameBackgroundImage && (
-          <div
-            className="absolute inset-0 bg-no-repeat bg-center bg-contain"
-            style={{ backgroundImage: `url(${gameBackgroundImage})`, zIndex: 0 }}
-          />
-        )}
-
-        {/* Modèle de jackpot centré */}
+        {/* Template visuel */}
         {jackpotTemplateImage && (
           <img
             src={jackpotTemplateImage}
-            alt="Modèle de jackpot"
-            className="absolute top-0 left-0 right-0 mx-auto z-0"
-            style={{
-              width: '680px',
-              height: '400px',
-              objectFit: 'contain',
-            }}
+            alt="Modèle Jackpot"
+            className="absolute top-0 left-0 w-full h-full object-contain z-0"
           />
         )}
 
-        {/* Jeu centré dans le template */}
+        {/* Rouleaux + bouton */}
         <div
-          className="absolute z-10"
-          style={{
-            top: '160px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-          }}
+          className="absolute left-1/2 transform -translate-x-1/2 z-10"
+          style={{ top: '150px' }} // ajuste cette valeur pour bien centrer les rouleaux
         >
           {renderGame() || (
             <div className="text-center text-white backdrop-blur-sm bg-black/30 p-4 rounded">

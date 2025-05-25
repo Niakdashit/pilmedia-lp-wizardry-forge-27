@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
@@ -21,7 +20,6 @@ interface JackpotProps {
   customTemplate?: string;
   config?: any;
 }
-
 const Jackpot: React.FC<JackpotProps> = ({
   isPreview,
   instantWinConfig,
@@ -32,10 +30,9 @@ const Jackpot: React.FC<JackpotProps> = ({
   const [slots, setSlots] = useState<string[]>(['🍒', '🍋', '🍊']);
   const [isRolling, setIsRolling] = useState(false);
   const [result, setResult] = useState<'win' | 'lose' | null>(null);
-  
+
   // Utilise le customTemplate du config si disponible
   const templateImage = config?.customTemplate || customTemplate;
-  
   const roll = () => {
     if (isRolling || result) return;
     setIsRolling(true);
@@ -69,7 +66,6 @@ const Jackpot: React.FC<JackpotProps> = ({
       }
     }, 1800);
   };
-  
   if (!isPreview) {
     return <div>
         <p>Pas de configuration pour le moment.</p>
@@ -86,30 +82,22 @@ const Jackpot: React.FC<JackpotProps> = ({
     minHeight: 340
   }} className="flex flex-col items-center justify-center w-full py-[199px]">
       {/* Modèle personnalisé ou SVG par défaut */}
-      {templateImage ? (
-        <img 
-          src={templateImage} 
-          alt="Modèle jackpot personnalisé"
-          style={{
-            position: "absolute",
-            left: 0,
-            top: 0,
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            zIndex: 0,
-            pointerEvents: "none"
-          }}
-          className="select-none"
-        />
-      ) : (
-        <svg viewBox="0 0 360 450" width="100%" height="100%" style={{
-          position: "absolute",
-          left: 0,
-          top: 0,
-          zIndex: 0,
-          pointerEvents: "none"
-        }} className="select-none">
+      {templateImage ? <img src={templateImage} alt="Modèle jackpot personnalisé" style={{
+      position: "absolute",
+      left: 0,
+      top: 0,
+      width: "100%",
+      height: "100%",
+      objectFit: "cover",
+      zIndex: 0,
+      pointerEvents: "none"
+    }} className="select-none" /> : <svg viewBox="0 0 360 450" width="100%" height="100%" style={{
+      position: "absolute",
+      left: 0,
+      top: 0,
+      zIndex: 0,
+      pointerEvents: "none"
+    }} className="select-none">
           {/* Cadre bois et header */}
           <rect x="0" y="45" width="360" height="380" rx="32" fill="#FFD700" />
           <rect x="10" y="55" width="340" height="360" rx="24" fill="#d6a768" stroke="#b07b37" strokeWidth="3" />
@@ -133,8 +121,7 @@ const Jackpot: React.FC<JackpotProps> = ({
           <circle cx="339" cy="140" r="20" fill="#FF4B8B" stroke="#d14343" strokeWidth="3" />
           {/* ombre levier */}
           <ellipse cx="339" cy="320" rx="16" ry="10" fill="#ffb14c" opacity="0.2" />
-        </svg>
-      )}
+        </svg>}
       
       {/* Slots - centrés dans le cadre */}
       <div style={{
@@ -145,7 +132,7 @@ const Jackpot: React.FC<JackpotProps> = ({
       display: "flex",
       justifyContent: "center",
       zIndex: 1
-    }}>
+    }} className="p">
         <div style={{
         display: "flex",
         gap: SLOT_GAP,
@@ -196,5 +183,4 @@ const Jackpot: React.FC<JackpotProps> = ({
     }} />
     </div>;
 };
-
 export default Jackpot;
