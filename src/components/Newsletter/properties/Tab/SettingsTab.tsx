@@ -71,7 +71,7 @@ export const SettingsTab: React.FC = () => {
     if (!generatedContent) return;
     setFromGeneratedHTML(generatedContent);
     loadGeneratedAsModules();
-    alert('Le template a bien été transféré dans l'onglet Modifier.');
+    alert('Le template a bien été transféré dans l\'onglet Modifier.');
   };
 
   return (
