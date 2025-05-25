@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { X } from 'lucide-react';
 import GameCanvasPreview from './GameCanvasPreview';
@@ -15,8 +14,8 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
       <div className="bg-white w-full h-full flex flex-col relative overflow-hidden">
-        {/* Barre supérieure conservée */}
-        <div className="absolute top-0 left-0 right-0 z-30 flex items-center justify-between px-6 py-4 bg-white border-b border-gray-200 shadow-sm">
+        {/* Bande supérieure */}
+        <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-6 py-4 bg-white border-b border-gray-200 shadow-sm">
           <h2 className="text-lg font-semibold text-gray-800">Aperçu de la campagne</h2>
           <button
             onClick={onClose}
@@ -26,9 +25,11 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
           </button>
         </div>
 
-        {/* Canvas plein écran avec padding top pour la barre, même structure en couches */}
-        <div className="flex-1 pt-20 overflow-hidden">
-          <GameCanvasPreview campaign={campaign} className="w-full h-full" />
+        {/* Canvas plein écran avec padding top pour la bande */}
+        <div className="flex-1 pt-20 overflow-hidden flex justify-center items-center">
+          <div className="w-full h-full">
+            <GameCanvasPreview campaign={campaign} className="h-full" />
+          </div>
         </div>
       </div>
     </div>

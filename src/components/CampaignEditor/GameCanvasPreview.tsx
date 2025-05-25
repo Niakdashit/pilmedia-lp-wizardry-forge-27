@@ -1,20 +1,19 @@
-
 import React from 'react';
-import { Quiz, Wheel, Scratch, Memory, Puzzle, Dice, Jackpot } from '../GameTypes';
+import Jackpot from '../GameTypes/Jackpot';
 
 interface GameCanvasPreviewProps {
   campaign: any;
   className?: string;
+  handleInputChange?: (key: string, value: string) => void;
 }
 
 const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   campaign,
-  className = ""
+  className = "",
+  handleInputChange
 }) => {
   const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage;
-  const customTemplate = campaign.gameConfig?.[campaign.type]?.customTemplate;
-  
-  // Configuration spécifique pour le jackpot
+  const jackpotTemplateImage = campaign.gameConfig?.[campaign.type]?.customTemplate;
   const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel || 'Lancer le Jackpot';
   const buttonColor = campaign.gameConfig?.[campaign.type]?.buttonColor || '#ec4899';
 
@@ -34,64 +33,14 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
             buttonColor={buttonColor}
           />
         );
-      case 'quiz':
-        return (
-          <Quiz 
-            config={campaign.gameConfig.quiz} 
-            onConfigChange={() => {}}
-          />
-        );
-      case 'wheel':
-        return (
-          <Wheel 
-            config={campaign.gameConfig.wheel}
-            isPreview={true}
-            currentWinners={0}
-            maxWinners={100}
-            winRate={10}
-          />
-        );
-      case 'scratch':
-        return (
-          <Scratch 
-            config={campaign.gameConfig.scratch} 
-            onConfigChange={() => {}}
-          />
-        );
-      case 'memory':
-        return (
-          <Memory 
-            config={campaign.gameConfig.memory} 
-            onConfigChange={() => {}}
-          />
-        );
-      case 'puzzle':
-        return (
-          <Puzzle 
-            config={campaign.gameConfig.puzzle} 
-            onConfigChange={() => {}}
-          />
-        );
-      case 'dice':
-        return (
-          <Dice 
-            config={campaign.gameConfig.dice} 
-            onConfigChange={() => {}}
-          />
-        );
       default:
-        return (
-          <div className="text-center text-gray-500">
-            <p className="text-sm">Aperçu du jeu {campaign.type}</p>
-            <p className="text-xs mt-1">Le jeu apparaîtra ici</p>
-          </div>
-        );
+        return null;
     }
   };
 
   return (
     <div className={`relative w-full h-full ${className} overflow-hidden`}>
-      {/* Image de fond plein écran, rognée si besoin */}
+      {/* ✅ Image de fond plein écran, rognée si besoin */}
       {gameBackgroundImage && (
         <img
           src={gameBackgroundImage}
@@ -101,19 +50,24 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
         />
       )}
 
-      {/* Template personnalisé du jeu au-dessus (optionnel) */}
-      {customTemplate && (
+      {/* ✅ Template jackpot au-dessus */}
+      {jackpotTemplateImage && (
         <img
-          src={customTemplate}
-          alt={`${campaign.type} Template`}
+          src={jackpotTemplateImage}
+          alt="Jackpot Template"
           className="absolute inset-0 w-full h-full object-contain z-10"
           style={{ pointerEvents: 'none' }}
         />
       )}
 
-      {/* Jeu centré par-dessus */}
+      {/* ✅ Jeu centré par-dessus */}
       <div className="relative z-20 flex items-center justify-center w-full h-full px-4">
-        {renderGame()}
+        {renderGame() || (
+          <div className="text-center text-gray-500">
+            <p className="text-sm">Aperçu du jeu Jackpot</p>
+            <p className="text-xs mt-1">Le jeu apparaîtra ici</p>
+          </div>
+        )}
       </div>
     </div>
   );
