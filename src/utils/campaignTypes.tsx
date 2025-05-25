@@ -1,5 +1,5 @@
 
-import { Quiz, Wheel, Dice, Calendar, Gift, Brain, FileText, Puzzle } from 'lucide-react';
+import { HelpCircle, Dice1, Calendar, Gift, Brain, FileText, Puzzle } from 'lucide-react';
 
 export type CampaignType = 'quiz' | 'wheel' | 'scratch' | 'memory' | 'contest' | 'survey' | 'form' | 'puzzle' | 'dice';
 
@@ -31,15 +31,30 @@ export const getDefaultGameConfig = (type: CampaignType) => {
 
 export const getCampaignTypeIcon = (type: CampaignType) => {
   const iconMap = {
-    quiz: Quiz,
-    wheel: Wheel,
+    quiz: HelpCircle,
+    wheel: Dice1,
     scratch: Gift,
     memory: Brain,
     contest: Calendar,
     survey: FileText,
     form: FileText,
     puzzle: Puzzle,
-    dice: Dice
+    dice: Dice1
   };
-  return iconMap[type] || Quiz;
+  return iconMap[type] || HelpCircle;
+};
+
+export const getCampaignTypeText = (type: CampaignType) => {
+  const textMap = {
+    quiz: 'Quiz',
+    wheel: 'Roue de la fortune',
+    scratch: 'Carte à gratter',
+    memory: 'Jeu de mémoire',
+    contest: 'Concours',
+    survey: 'Sondage',
+    form: 'Formulaire',
+    puzzle: 'Puzzle',
+    dice: 'Dés chanceux'
+  };
+  return textMap[type] || 'Quiz';
 };
