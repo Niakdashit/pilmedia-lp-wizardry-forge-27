@@ -26,6 +26,12 @@ interface PreviewModalProps {
         showTitle?: boolean;
         showDescription?: boolean;
         showReplayButton?: boolean;
+        requiredFields?: string[];
+        winMessage?: string;
+        loseMessage?: string;
+        participationMessage?: string;
+        shareButtonText?: string;
+        replayButtonText?: string;
       };
     };
     gameConfig: any;
