@@ -4,11 +4,13 @@ import Jackpot from '../GameTypes/Jackpot';
 interface GameCanvasPreviewProps {
   campaign: any;
   className?: string;
+  handleInputChange?: (key: string, value: string) => void;
 }
 
 const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   campaign,
-  className = ""
+  className = "",
+  handleInputChange = () => {}
 }) => {
   // Image de fond générale (pour tout l'arrière-plan)
   const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage;
@@ -34,7 +36,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
             }}
             buttonLabel={buttonLabel}
             buttonColor={buttonColor}
-            hideDefaultTemplate={true} // important pour ne jamais afficher le template SVG
+            hideDefaultTemplate={true}
           />
         );
       default:
@@ -65,7 +67,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
             />
           )}
 
-          {/* Modèle de jackpot (image personnalisée 680x400) - entre le fond et le jeu */}
+          {/* Modèle de jackpot - s'affiche uniquement si uploadé (680x400) */}
           {jackpotTemplateImage && (
             <img
               src={jackpotTemplateImage}
@@ -74,7 +76,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
             />
           )}
 
-          {/* Jeu Jackpot (rouleaux + bouton) - affiché tout au-dessus */}
+          {/* Jeu Jackpot - centré au-dessus de tous les visuels */}
           <div
             className="absolute flex items-center justify-center"
             style={{
@@ -93,6 +95,44 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
               </div>
             )}
           </div>
+        </div>
+      </div>
+
+      {/* CONFIGURATEUR "Apparence visuelle" */}
+      <div className="mt-6 space-y-4">
+        {/* Modèle personnalisé du jackpot */}
+        <div>
+          <label className="block font-medium mb-1">Modèle personnalisé du jackpot (680x400)</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) handleInputChange('customTemplate', URL.createObjectURL(file));
+            }}
+          />
+        </div>
+
+        {/* Texte du bouton */}
+        <div>
+          <label className="block font-medium mb-1">Texte du bouton</label>
+          <input
+            type="text"
+            value={campaign.gameConfig?.[campaign.type]?.buttonLabel || ''}
+            onChange={(e) => handleInputChange('buttonLabel', e.target.value)}
+            className="border rounded px-3 py-2 w-full"
+          />
+        </div>
+
+        {/* Couleur du bouton */}
+        <div>
+          <label className="block font-medium mb-1">Couleur du bouton</label>
+          <input
+            type="color"
+            value={campaign.gameConfig?.[campaign.type]?.buttonColor || '#ec4899'}
+            onChange={(e) => handleInputChange('buttonColor', e.target.value)}
+            className="h-10 w-20 p-0 border rounded"
+          />
         </div>
       </div>
     </div>
