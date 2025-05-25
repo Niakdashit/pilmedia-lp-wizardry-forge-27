@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { Save } from 'lucide-react';
-import ImageUpload from '../common/ImageUpload';
 
 interface CampaignScreensProps {
   campaign: any;
