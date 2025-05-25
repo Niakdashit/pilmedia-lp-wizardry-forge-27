@@ -2,7 +2,7 @@
 import React from 'react';
 import Jackpot from '../GameTypes/Jackpot';
 import { Quiz, Scratch, Memory, Puzzle, Dice } from '../GameTypes';
-import TabRoulette from '../configurators/TabRoulette';
+import WheelPreview from '../GameTypes/WheelPreview';
 
 interface GameCanvasPreviewProps {
   campaign: any;
@@ -43,9 +43,8 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
         );
       case 'wheel':
         return (
-          <TabRoulette
+          <WheelPreview
             campaign={campaign}
-            setCampaign={() => {}}
             config={{
               mode: 'instant_winner' as const,
               winProbability: campaign.gameConfig?.wheel?.winProbability || 0.1,
