@@ -1,7 +1,8 @@
 
 import React from 'react';
 import Jackpot from '../GameTypes/Jackpot';
-import { Quiz, Wheel, Scratch, Memory, Puzzle, Dice } from '../GameTypes';
+import { Quiz, Scratch, Memory, Puzzle, Dice } from '../GameTypes';
+import TabRoulette from '../configurators/TabRoulette';
 
 interface GameCanvasPreviewProps {
   campaign: any;
@@ -42,13 +43,16 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
         );
       case 'wheel':
         return (
-          <Wheel 
-            config={campaign.gameConfig?.wheel || {}}
-            isPreview={true}
-            currentWinners={0}
-            maxWinners={100}
-            winRate={10}
-            onComplete={() => {}}
+          <TabRoulette
+            campaign={campaign}
+            setCampaign={() => {}}
+            config={{
+              mode: 'instant_winner' as const,
+              winProbability: campaign.gameConfig?.wheel?.winProbability || 0.1,
+              maxWinners: campaign.gameConfig?.wheel?.maxWinners,
+              winnersCount: 0
+            }}
+            onFinish={() => {}}
           />
         );
       case 'scratch':
