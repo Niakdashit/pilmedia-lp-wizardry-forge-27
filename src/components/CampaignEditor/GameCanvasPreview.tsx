@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 interface GameCanvasPreviewProps {
@@ -23,13 +24,14 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
             src={gameBackgroundImage}
             alt="Aperçu du jeu"
             className="w-full h-auto rounded-lg shadow-lg"
+            style={{ backgroundSize: 'cover' }}
           />
         ) : (
           <div className="rounded-lg shadow-lg h-[300px] flex items-center justify-center text-center text-gray-500 bg-white">
             <div>
               <p className="text-sm">Aucune image de fond</p>
               <p className="text-xs mt-1">
-                Ajoutez une image dans l’onglet "Apparence visuelle"
+                Ajoutez une image dans l'onglet "Apparence visuelle"
               </p>
             </div>
           </div>
