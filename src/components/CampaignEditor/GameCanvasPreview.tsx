@@ -40,7 +40,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
 
   return (
     <div className={`relative w-full h-full ${className}`}>
-      {/* ✅ Image de fond sur toute la surface (largeur + hauteur) */}
+      {/* ✅ Image de fond pleine largeur + hauteur */}
       {gameBackgroundImage && (
         <div
           className="absolute inset-0 z-0"
@@ -55,7 +55,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
         />
       )}
 
-      {/* ✅ Template spécifique jackpot (optionnel) */}
+      {/* ✅ Template visuel jackpot (facultatif) */}
       {jackpotTemplateImage && (
         <img
           src={jackpotTemplateImage}
@@ -64,7 +64,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
         />
       )}
 
-      {/* ✅ Jeu centré au-dessus */}
+      {/* ✅ Jeu centré (mais image couvre tout) */}
       <div className="relative z-20 flex items-center justify-center w-full h-full px-4">
         {renderGame() || (
           <div className="text-center text-gray-500">
