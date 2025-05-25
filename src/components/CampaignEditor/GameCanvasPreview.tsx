@@ -28,6 +28,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
               maxWinners: campaign.gameConfig?.jackpot?.instantWin?.maxWinners,
               winnersCount: 0
             }}
+            config={campaign.gameConfig?.jackpot}
           />
         );
       default:

@@ -19,17 +19,22 @@ interface JackpotProps {
   instantWinConfig?: JackpotInstantWinConfig;
   onFinish?: (result: 'win' | 'lose') => void;
   customTemplate?: string;
+  config?: any;
 }
 
 const Jackpot: React.FC<JackpotProps> = ({
   isPreview,
   instantWinConfig,
   onFinish,
-  customTemplate
+  customTemplate,
+  config
 }) => {
   const [slots, setSlots] = useState<string[]>(['🍒', '🍋', '🍊']);
   const [isRolling, setIsRolling] = useState(false);
   const [result, setResult] = useState<'win' | 'lose' | null>(null);
+  
+  // Utilise le customTemplate du config si disponible
+  const templateImage = config?.customTemplate || customTemplate;
   
   const roll = () => {
     if (isRolling || result) return;
@@ -81,9 +86,9 @@ const Jackpot: React.FC<JackpotProps> = ({
     minHeight: 340
   }} className="flex flex-col items-center justify-center w-full py-[199px]">
       {/* Modèle personnalisé ou SVG par défaut */}
-      {customTemplate ? (
+      {templateImage ? (
         <img 
-          src={customTemplate} 
+          src={templateImage} 
           alt="Modèle jackpot personnalisé"
           style={{
             position: "absolute",
@@ -191,4 +196,5 @@ const Jackpot: React.FC<JackpotProps> = ({
     }} />
     </div>;
 };
+
 export default Jackpot;

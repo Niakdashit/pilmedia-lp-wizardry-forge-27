@@ -153,6 +153,33 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
             <GameCanvasPreview campaign={campaign} />
           </div>
 
+          {/* Modèle personnalisé de jackpot */}
+          {campaign.type === 'jackpot' && (
+            <div>
+              <h3 className="text-lg font-medium text-gray-900 mb-4">Modèle de jackpot</h3>
+              <ImageUpload
+                value={campaign.gameConfig?.jackpot?.customTemplate}
+                onChange={(value) => {
+                  setCampaign((prev: any) => ({
+                    ...prev,
+                    gameConfig: {
+                      ...prev.gameConfig,
+                      jackpot: {
+                        ...prev.gameConfig?.jackpot,
+                        customTemplate: value
+                      }
+                    }
+                  }));
+                }}
+                label="Uploadez votre modèle personnalisé de jackpot"
+                className="w-full"
+              />
+              <p className="text-sm text-gray-500 mt-2">
+                Si aucun modèle n'est uploadé, le modèle par défaut sera utilisé.
+              </p>
+            </div>
+          )}
+
           {/* Image de fond du jeu */}
           <div>
             <h3 className="text-lg font-medium text-gray-900 mb-4">Image de fond du jeu</h3>
