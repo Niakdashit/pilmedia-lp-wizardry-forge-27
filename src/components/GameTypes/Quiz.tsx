@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Plus, Trash2, Image as ImageIcon, Type, Clock } from 'lucide-react';
 
@@ -9,11 +10,15 @@ interface QuizProps {
 const Quiz: React.FC<QuizProps> = ({ config, onConfigChange }) => {
   const [activeQuestion, setActiveQuestion] = useState(0);
 
+  // Ensure config has a default structure
+  const safeConfig = config || { questions: [] };
+  const questions = safeConfig.questions || [];
+
   const addQuestion = () => {
     const newConfig = {
-      ...config,
+      ...safeConfig,
       questions: [
-        ...config.questions,
+        ...questions,
         {
           id: Date.now(),
           text: '',
@@ -36,52 +41,68 @@ const Quiz: React.FC<QuizProps> = ({ config, onConfigChange }) => {
   };
 
   const removeQuestion = (index: number) => {
-    const newQuestions = [...config.questions];
+    const newQuestions = [...questions];
     newQuestions.splice(index, 1);
-    onConfigChange({ ...config, questions: newQuestions });
+    onConfigChange({ ...safeConfig, questions: newQuestions });
     if (activeQuestion >= newQuestions.length) {
       setActiveQuestion(Math.max(0, newQuestions.length - 1));
     }
   };
 
   const updateQuestion = (index: number, field: string, value: any) => {
-    const newQuestions = [...config.questions];
+    const newQuestions = [...questions];
     newQuestions[index] = {
       ...newQuestions[index],
       [field]: value
     };
-    onConfigChange({ ...config, questions: newQuestions });
+    onConfigChange({ ...safeConfig, questions: newQuestions });
   };
 
   const addOption = (questionIndex: number) => {
-    const newQuestions = [...config.questions];
+    const newQuestions = [...questions];
     newQuestions[questionIndex].options.push({
       id: Date.now(),
       text: '',
       isCorrect: false
     });
-    onConfigChange({ ...config, questions: newQuestions });
+    onConfigChange({ ...safeConfig, questions: newQuestions });
   };
 
   const removeOption = (questionIndex: number, optionIndex: number) => {
-    const newQuestions = [...config.questions];
+    const newQuestions = [...questions];
     newQuestions[questionIndex].options.splice(optionIndex, 1);
-    onConfigChange({ ...config, questions: newQuestions });
+    onConfigChange({ ...safeConfig, questions: newQuestions });
   };
 
   const updateOption = (questionIndex: number, optionIndex: number, field: string, value: any) => {
-    const newQuestions = [...config.questions];
+    const newQuestions = [...questions];
     newQuestions[questionIndex].options[optionIndex] = {
       ...newQuestions[questionIndex].options[optionIndex],
       [field]: value
     };
-    onConfigChange({ ...config, questions: newQuestions });
+    onConfigChange({ ...safeConfig, questions: newQuestions });
   };
+
+  // If no questions exist, show empty state
+  if (questions.length === 0) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-gray-500 mb-4">Aucune question configurée</p>
+        <button
+          onClick={addQuestion}
+          className="flex items-center px-4 py-2 bg-[#841b60] text-white rounded-lg hover:bg-[#6d164f] mx-auto"
+        >
+          <Plus className="w-4 h-4 mr-2" />
+          Ajouter la première question
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
       <div className="flex space-x-4 overflow-x-auto pb-4">
-        {config.questions.map((question: any, index: number) => (
+        {questions.map((question: any, index: number) => (
           <button
             key={question.id}
             onClick={() => setActiveQuestion(index)}
@@ -103,7 +124,7 @@ const Quiz: React.FC<QuizProps> = ({ config, onConfigChange }) => {
         </button>
       </div>
 
-      {config.questions[activeQuestion] && (
+      {questions[activeQuestion] && (
         <div className="space-y-6">
           <div className="flex justify-between items-start">
             <div className="flex-1 space-y-4">
@@ -117,7 +138,7 @@ const Quiz: React.FC<QuizProps> = ({ config, onConfigChange }) => {
                   </div>
                   <input
                     type="text"
-                    value={config.questions[activeQuestion].text}
+                    value={questions[activeQuestion].text}
                     onChange={(e) => updateQuestion(activeQuestion, 'text', e.target.value)}
                     className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
                     placeholder="Saisissez votre question"
@@ -135,7 +156,7 @@ const Quiz: React.FC<QuizProps> = ({ config, onConfigChange }) => {
                   </div>
                   <input
                     type="text"
-                    value={config.questions[activeQuestion].image}
+                    value={questions[activeQuestion].image}
                     onChange={(e) => updateQuestion(activeQuestion, 'image', e.target.value)}
                     className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
                     placeholder="URL de l'image"
@@ -148,7 +169,7 @@ const Quiz: React.FC<QuizProps> = ({ config, onConfigChange }) => {
                   Type de réponse
                 </label>
                 <select
-                  value={config.questions[activeQuestion].type}
+                  value={questions[activeQuestion].type}
                   onChange={(e) => updateQuestion(activeQuestion, 'type', e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
                 >
@@ -169,7 +190,7 @@ const Quiz: React.FC<QuizProps> = ({ config, onConfigChange }) => {
                   <input
                     type="number"
                     min="0"
-                    value={config.questions[activeQuestion].timeLimit}
+                    value={questions[activeQuestion].timeLimit}
                     onChange={(e) => updateQuestion(activeQuestion, 'timeLimit', parseInt(e.target.value))}
                     className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
                   />
@@ -180,7 +201,7 @@ const Quiz: React.FC<QuizProps> = ({ config, onConfigChange }) => {
             <button
               onClick={() => removeQuestion(activeQuestion)}
               className="ml-4 p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors duration-200"
-              disabled={config.questions.length === 1}
+              disabled={questions.length === 1}
             >
               <Trash2 className="w-5 h-5" />
             </button>
@@ -201,10 +222,10 @@ const Quiz: React.FC<QuizProps> = ({ config, onConfigChange }) => {
             </div>
 
             <div className="space-y-3">
-              {config.questions[activeQuestion].options.map((option: any, optionIndex: number) => (
+              {questions[activeQuestion].options?.map((option: any, optionIndex: number) => (
                 <div key={option.id} className="flex items-center space-x-3">
                   <input
-                    type={config.questions[activeQuestion].type === 'multiple' ? 'checkbox' : 'radio'}
+                    type={questions[activeQuestion].type === 'multiple' ? 'checkbox' : 'radio'}
                     checked={option.isCorrect}
                     onChange={(e) => updateOption(activeQuestion, optionIndex, 'isCorrect', e.target.checked)}
                     className="w-5 h-5 text-[#841b60] border-gray-300 focus:ring-[#841b60]"
@@ -219,7 +240,7 @@ const Quiz: React.FC<QuizProps> = ({ config, onConfigChange }) => {
                   <button
                     onClick={() => removeOption(activeQuestion, optionIndex)}
                     className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors duration-200"
-                    disabled={config.questions[activeQuestion].options.length <= 2}
+                    disabled={questions[activeQuestion].options?.length <= 2}
                   >
                     <Trash2 className="w-4 h-4" />
                   </button>
@@ -235,9 +256,9 @@ const Quiz: React.FC<QuizProps> = ({ config, onConfigChange }) => {
               </label>
               <input
                 type="text"
-                value={config.questions[activeQuestion].feedback.correct}
+                value={questions[activeQuestion].feedback?.correct || ''}
                 onChange={(e) => updateQuestion(activeQuestion, 'feedback', {
-                  ...config.questions[activeQuestion].feedback,
+                  ...questions[activeQuestion].feedback,
                   correct: e.target.value
                 })}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
@@ -251,9 +272,9 @@ const Quiz: React.FC<QuizProps> = ({ config, onConfigChange }) => {
               </label>
               <input
                 type="text"
-                value={config.questions[activeQuestion].feedback.incorrect}
+                value={questions[activeQuestion].feedback?.incorrect || ''}
                 onChange={(e) => updateQuestion(activeQuestion, 'feedback', {
-                  ...config.questions[activeQuestion].feedback,
+                  ...questions[activeQuestion].feedback,
                   incorrect: e.target.value
                 })}
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"

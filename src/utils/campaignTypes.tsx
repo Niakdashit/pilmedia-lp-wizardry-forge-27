@@ -28,11 +28,83 @@ export const getCampaignTypeIcon = (type: CampaignType) => {
 export const getDefaultGameConfig = (type: CampaignType) => {
   switch (type) {
     case 'quiz':
-      return { questions: [], timeLimit: 30, showCorrectAnswers: true };
+      return { 
+        quiz: {
+          questions: [
+            {
+              id: Date.now(),
+              text: 'Question exemple',
+              type: 'multiple',
+              image: '',
+              options: [
+                { id: Date.now() + 1, text: 'Option 1', isCorrect: true },
+                { id: Date.now() + 2, text: 'Option 2', isCorrect: false }
+              ],
+              feedback: {
+                correct: 'Bonne réponse !',
+                incorrect: 'Mauvaise réponse.'
+              },
+              timeLimit: 0
+            }
+          ],
+          timeLimit: 30, 
+          showCorrectAnswers: true 
+        }
+      };
     case 'wheel':
-      return { segments: [], colors: ['#ff6b6b', '#4ecdc4', '#45b7d1'] };
+      return { 
+        wheel: {
+          segments: [], 
+          colors: ['#ff6b6b', '#4ecdc4', '#45b7d1'] 
+        }
+      };
+    case 'scratch':
+      return {
+        scratch: {
+          scratchArea: 70,
+          revealMessage: 'Félicitations !',
+          backgroundImage: ''
+        }
+      };
+    case 'memory':
+      return {
+        memory: {
+          cards: [],
+          difficulty: 'easy',
+          backgroundImage: ''
+        }
+      };
+    case 'puzzle':
+      return {
+        puzzle: {
+          pieces: 9,
+          image: '',
+          backgroundImage: ''
+        }
+      };
     case 'dice':
-      return { sides: 6, count: 2 };
+      return { 
+        dice: {
+          sides: 6, 
+          count: 2,
+          backgroundImage: ''
+        }
+      };
+    case 'jackpot':
+      return {
+        jackpot: {
+          symbols: ['🍒', '🍋', '🍊'],
+          reels: 3,
+          winMessage: 'JACKPOT ! Vous avez gagné !',
+          loseMessage: 'Dommage, pas de jackpot !',
+          backgroundImage: '',
+          instantWin: {
+            enabled: false,
+            winProbability: 0.05,
+            maxWinners: undefined,
+          }
+        }
+      };
     default:
       return {};
   }
