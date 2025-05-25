@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Download, Filter, RefreshCw, ChevronDown, Plus } from 'lucide-react';
+import { Download, Filter, RefreshCw } from 'lucide-react';
 
 const Data: React.FC = () => {
   const [selectedCampaign, setSelectedCampaign] = useState('');
