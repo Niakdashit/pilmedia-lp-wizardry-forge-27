@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Quiz, Scratch, Memory, Puzzle, Dice } from '../GameTypes';
+import { Quiz, Scratch, Memory, Puzzle, Dice, Jackpot } from '../GameTypes';
 import TabRoulette from '@/components/configurators/TabRoulette';
 import TabJackpot from '@/components/configurators/TabJackpot';
 import { Palette, Type, Square, Box } from 'lucide-react';
@@ -26,7 +26,7 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
   ];
 
   const updateStyle = (key: string, value: string) => {
-    setCampaign((prev: any) => ({
+    setCampaign(prev => ({
       ...prev,
       design: {
         ...prev.design,
@@ -45,7 +45,7 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
           <Quiz 
             config={campaign.gameConfig?.quiz} 
             onConfigChange={(config) => {
-              setCampaign((prev: any) => ({
+              setCampaign(prev => ({
                 ...prev,
                 gameConfig: {
                   ...prev.gameConfig,
@@ -60,7 +60,6 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
           <TabRoulette 
             campaign={campaign}
             setCampaign={setCampaign}
-            config={campaign.gameConfig?.wheel}
           />
         );
       case 'scratch':
@@ -68,7 +67,7 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
           <Scratch 
             config={campaign.gameConfig?.scratch} 
             onConfigChange={(config) => {
-              setCampaign((prev: any) => ({
+              setCampaign(prev => ({
                 ...prev,
                 gameConfig: {
                   ...prev.gameConfig,
@@ -83,7 +82,7 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
           <Memory 
             config={campaign.gameConfig?.memory} 
             onConfigChange={(config) => {
-              setCampaign((prev: any) => ({
+              setCampaign(prev => ({
                 ...prev,
                 gameConfig: {
                   ...prev.gameConfig,
@@ -98,7 +97,7 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
           <Puzzle 
             config={campaign.gameConfig?.puzzle} 
             onConfigChange={(config) => {
-              setCampaign((prev: any) => ({
+              setCampaign(prev => ({
                 ...prev,
                 gameConfig: {
                   ...prev.gameConfig,
@@ -113,7 +112,7 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
           <Dice 
             config={campaign.gameConfig?.dice} 
             onConfigChange={(config) => {
-              setCampaign((prev: any) => ({
+              setCampaign(prev => ({
                 ...prev,
                 gameConfig: {
                   ...prev.gameConfig,
@@ -130,7 +129,7 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
             config={campaign.gameConfig?.jackpot}
             onConfigChange={(config) => {
               console.log('Updating jackpot config:', config);
-              setCampaign((prev: any) => ({
+              setCampaign(prev => ({
                 ...prev,
                 gameConfig: {
                   ...prev.gameConfig,
