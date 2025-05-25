@@ -40,58 +40,71 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
 
   return (
     <div
-      className={`bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 relative ${className}`}
+      className={`bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 relative overflow-hidden ${className}`}
       style={{ minHeight: '500px' }}
     >
-      {/* Image de fond générale (remplit toute la zone grise) */}
+      {/* Image de fond générale - remplit tout l'arrière-plan */}
       {gameBackgroundImage && (
         <div
-          className="absolute inset-0 bg-no-repeat bg-center bg-cover rounded-lg"
+          className="absolute inset-0 rounded-lg"
           style={{ 
             backgroundImage: `url(${gameBackgroundImage})`,
-            zIndex: 0 
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat',
+            zIndex: 1
           }}
         />
       )}
 
-      {/* Conteneur principal du jeu - absolument centré */}
+      {/* Conteneur principal du jeu - parfaitement centré */}
       <div
-        className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2"
+        className="absolute"
         style={{ 
           width: '680px', 
           height: '400px',
-          zIndex: 1
+          left: '50%',
+          top: '50%',
+          transform: 'translate(-50%, -50%)',
+          zIndex: 2
         }}
       >
         {/* Template de jackpot - remplit exactement le conteneur 680x400 */}
         {jackpotTemplateImage ? (
-          <img
-            src={jackpotTemplateImage}
-            alt="Modèle de jackpot"
-            className="absolute inset-0 w-full h-full object-contain"
-            style={{ zIndex: 0 }}
+          <div
+            className="absolute inset-0 rounded-lg"
+            style={{
+              backgroundImage: `url(${jackpotTemplateImage})`,
+              backgroundSize: 'contain',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+              zIndex: 1
+            }}
           />
         ) : (
-          <div className="absolute inset-0 flex items-center justify-center bg-black/20 rounded-lg">
-            <div className="text-center text-white backdrop-blur-sm bg-black/40 p-4 rounded">
-              <p className="text-sm font-semibold">Aucun modèle de jackpot</p>
-              <p className="text-xs mt-1">Uploadez un modèle dans l'onglet "Apparence visuelle"</p>
+          <div className="absolute inset-0 flex items-center justify-center bg-black/10 rounded-lg border-2 border-dashed border-gray-400">
+            <div className="text-center text-gray-600 bg-white/90 backdrop-blur-sm p-6 rounded-lg shadow-sm">
+              <p className="text-sm font-medium mb-1">Aucun modèle de jackpot</p>
+              <p className="text-xs text-gray-500">Uploadez un modèle dans "Apparence visuelle"</p>
             </div>
           </div>
         )}
 
-        {/* Jeu (rouleaux + bouton) - centré au-dessus du template */}
+        {/* Jeu (rouleaux + bouton) - absolument centré au-dessus du template */}
         <div
-          className="absolute left-1/2 transform -translate-x-1/2"
+          className="absolute flex flex-col items-center justify-center"
           style={{ 
-            top: '150px',
-            zIndex: 10
+            left: '50%',
+            top: '50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 10,
+            width: '100%'
           }}
         >
           {renderGame() || (
-            <div className="text-center text-white backdrop-blur-sm bg-black/30 p-4 rounded">
-              <p className="text-sm font-semibold">Aperçu du jeu</p>
-              <p className="text-xs mt-1">Sélectionnez un type de jeu pour voir l'aperçu</p>
+            <div className="text-center text-gray-700 bg-white/90 backdrop-blur-sm p-6 rounded-lg shadow-sm">
+              <p className="text-sm font-medium mb-1">Aperçu du jeu</p>
+              <p className="text-xs text-gray-500">Le jeu apparaîtra ici</p>
             </div>
           )}
         </div>
