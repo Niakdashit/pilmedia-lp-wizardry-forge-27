@@ -1,7 +1,8 @@
+
 import React from 'react';
 import Color from 'color';
-// AJOUT : Import du funnel de jeu
-import GameFunnel from '@/components/GameFunnel'; // Corrige le chemin selon ton arborescence si besoin
+// FIXED: Update import path to use relative path instead of alias
+import GameFunnel from '../GameFunnel';
 
 interface CampaignPreviewProps {
   campaign: any;
@@ -103,7 +104,7 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
 
         {/* Game container */}
         <div style={gameContainerStyle}>
-          {/* REMPLACEMENT: On affiche le funnel de jeu, peu importe gameConfig */}
+          {/* FIXED: Ensure GameFunnel is properly rendered with explicit JSX */}
           <GameFunnel campaign={campaign} />
         </div>
       </div>
