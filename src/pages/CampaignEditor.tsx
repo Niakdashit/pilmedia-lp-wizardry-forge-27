@@ -1,12 +1,12 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
-import { Save, ChevronRight, Eye } from 'lucide-react';
+import { Save, ChevronRight, Link as LinkIcon, Copy, Eye } from 'lucide-react';
 import CampaignGeneral from '../components/CampaignEditor/CampaignGeneral';
 import CampaignContent from '../components/CampaignEditor/CampaignContent';
 import CampaignScreens from '../components/CampaignEditor/CampaignScreens';
 import CampaignDesign from '../components/CampaignEditor/CampaignDesign';
 import CampaignSettings from '../components/CampaignEditor/CampaignSettings';
+import CampaignPreview from '../components/CampaignEditor/CampaignPreview';
 import PreviewModal from '../components/CampaignEditor/PreviewModal';
 import TabJackpot from "../components/configurators/TabJackpot";
 import { CampaignType, getDefaultGameConfig } from '../utils/campaignTypes';
@@ -32,19 +32,8 @@ const CampaignEditor: React.FC = () => {
   const campaignType = searchParams.get('type') as CampaignType || 'quiz';
   
   const [activeTab, setActiveTab] = useState('general');
+  const [showPreview, setShowPreview] = useState(false);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
-
-  // Initialize gameConfig with proper jackpot configuration
-  const getInitialGameConfig = () => {
-    const baseConfig = getDefaultGameConfig(campaignType);
-    if (campaignType === 'jackpot') {
-      return {
-        ...baseConfig,
-        jackpot: defaultJackpotConfig
-      };
-    }
-    return baseConfig;
-  };
 
   // ----------- STATE CAMPAGNE AVEC CONFIG.JACKPOT -----------
   const [campaign, setCampaign] = useState({
@@ -79,7 +68,7 @@ const CampaignEditor: React.FC = () => {
         showReplayButton: true
       }
     },
-    gameConfig: getInitialGameConfig(),
+    gameConfig: getDefaultGameConfig(campaignType),
     design: {
       background: '#ebf4f7',
       fontFamily: 'Inter',
@@ -160,7 +149,7 @@ const CampaignEditor: React.FC = () => {
       </div>
       
       <div className="flex flex-1 overflow-hidden bg-white rounded-xl shadow-sm">
-        <div className="flex flex-col w-full">
+        <div className={`flex flex-col ${showPreview ? 'w-1/2' : 'w-full'}`}>
           <div className="border-b border-gray-200">
             <nav className="flex space-x-8 px-6">
               <button
@@ -234,18 +223,20 @@ const CampaignEditor: React.FC = () => {
             )}
             
             {activeTab === 'design' && (
-              <CampaignDesign />
+              <CampaignDesign campaign={campaign} setCampaign={setCampaign} />
             )}
 
+            {/* ------------ ONGLET PARAMÉTRAGE AVEC JACKPOT ------------ */}
             {activeTab === 'settings' && (
               <div>
                 <CampaignSettings campaign={campaign} setCampaign={setCampaign} />
+                {/* Ajoute l'éditeur TabJackpot, branche-le sur config.jackpot */}
                 <div className="mt-8">
                   <h2 className="text-xl font-bold mb-3 text-[#841b60]">Configuration du Jackpot</h2>
                   <TabJackpot
-                    config={campaign.config?.jackpot || {}}
-                    onConfigChange={(newJackpotConfig: any) =>
-                      setCampaign((prev: typeof campaign) => ({
+                    config={campaign.config?.jackpot}
+                    onConfigChange={(newJackpotConfig) =>
+                      setCampaign((prev) => ({
                         ...prev,
                         config: {
                           ...prev.config,
@@ -259,6 +250,40 @@ const CampaignEditor: React.FC = () => {
             )}
           </div>
         </div>
+        
+        {showPreview && (
+          <div className="w-1/2 border-l border-gray-200">
+            <div className="h-16 bg-gray-50 border-b border-gray-200 flex items-center justify-between px-6">
+              <div className="flex items-center space-x-2">
+                <span className="text-gray-500 text-sm">URL Publique:</span>
+                <div className="flex items-center space-x-1 bg-white border border-gray-300 rounded-lg px-3 py-1.5">
+                  <LinkIcon className="w-4 h-4 text-gray-400" />
+                  <span className="text-sm text-gray-800">
+                    leadya.com/c/{campaign.url || 'your-campaign-url'}
+                  </span>
+                  <button 
+                    className="text-[#841b60] hover:text-[#6d164f] ml-2"
+                    title="Copier l'URL"
+                  >
+                    <Copy className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+              <div className="flex space-x-2">
+                <button className="text-sm px-3 py-1.5 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors duration-200">
+                  Mobile
+                </button>
+                <button className="text-sm px-3 py-1.5 bg-[#841b60] text-white rounded-lg hover:bg-[#6d164f] transition-colors duration-200">
+                  Desktop
+                </button>
+              </div>
+            </div>
+            
+            <div className="h-[calc(100%-4rem)] bg-gray-100 p-6 overflow-y-auto">
+              <CampaignPreview campaign={campaign} />
+            </div>
+          </div>
+        )}
       </div>
 
       <PreviewModal
