@@ -23,13 +23,6 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel || 'Lancer le Jackpot';
   const buttonColor = campaign.gameConfig?.[campaign.type]?.buttonColor || '#ec4899';
 
-  // Fonction pour gérer les changements d'input
-  const handleChange = (key: string, value: string) => {
-    if (handleInputChange) {
-      handleInputChange(key, value);
-    }
-  };
-
   const renderGame = () => {
     switch (campaign.type) {
       case 'jackpot':
