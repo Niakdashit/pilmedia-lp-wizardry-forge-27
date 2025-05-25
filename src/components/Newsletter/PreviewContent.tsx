@@ -87,8 +87,8 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
       case 'wheel':
         return (
           <Wheel 
-            config={campaign.gameConfig.wheel} 
-            onConfigChange={() => {}}
+            config={campaign.gameConfig.wheel}
+            isPreview={true}
             currentWinners={0}
             maxWinners={100}
             winRate={10}
@@ -99,8 +99,7 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
       case 'scratch':
         return (
           <Scratch 
-            config={campaign.gameConfig.scratch} 
-            onConfigChange={() => {}}
+            config={campaign.gameConfig.scratch}
           />
         );
 

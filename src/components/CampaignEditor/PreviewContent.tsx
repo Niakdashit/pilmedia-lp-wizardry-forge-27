@@ -69,16 +69,15 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
       case 'quiz':
         return (
           <Quiz 
-            config={campaign.gameConfig.quiz} 
-            onConfigChange={() => {}}
+            config={campaign.gameConfig.quiz}
           />
         );
 
       case 'wheel':
         return (
           <Wheel 
-            config={campaign.gameConfig.wheel} 
-            onConfigChange={() => {}}
+            config={campaign.gameConfig.wheel}
+            isPreview={true}
             currentWinners={0}
             maxWinners={100}
             winRate={10}
@@ -89,16 +88,14 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
       case 'scratch':
         return (
           <Scratch 
-            config={campaign.gameConfig.scratch} 
-            onConfigChange={() => {}}
+            config={campaign.gameConfig.scratch}
           />
         );
 
       case 'memory':
         return (
           <Memory 
-            config={campaign.gameConfig.memory} 
-            onConfigChange={() => {}}
+            config={campaign.gameConfig.memory}
             onComplete={handleGameComplete}
           />
         );
@@ -106,8 +103,7 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
       case 'puzzle':
         return (
           <Puzzle 
-            config={campaign.gameConfig.puzzle} 
-            onConfigChange={() => {}}
+            config={campaign.gameConfig.puzzle}
             onComplete={handleGameComplete}
           />
         );
@@ -115,8 +111,7 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
       case 'dice':
         return (
           <Dice 
-            config={campaign.gameConfig.dice} 
-            onConfigChange={() => {}}
+            config={campaign.gameConfig.dice}
             onComplete={handleGameComplete}
           />
         );

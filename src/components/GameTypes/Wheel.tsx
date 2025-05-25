@@ -6,6 +6,9 @@ interface WheelProps {
   config: any;
   isPreview?: boolean;
   onComplete?: (prize: string) => void;
+  currentWinners?: number;
+  maxWinners?: number;
+  winRate?: number;
 }
 
 const Wheel: React.FC<WheelProps> = ({ config, isPreview, onComplete }) => {
@@ -57,7 +60,7 @@ const Wheel: React.FC<WheelProps> = ({ config, isPreview, onComplete }) => {
           className="w-80 h-80 rounded-full border-8 border-gray-800 relative overflow-hidden"
           style={{ transition: 'transform 3s ease-out' }}
         >
-          {prizes.map((prize, index) => (
+          {prizes.map((prize: string, index: number) => (
             <div
               key={index}
               className="absolute w-1/2 h-1/2 origin-bottom-right flex items-center justify-center text-white font-bold"
