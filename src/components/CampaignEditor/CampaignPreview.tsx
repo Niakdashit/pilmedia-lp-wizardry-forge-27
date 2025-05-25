@@ -1,6 +1,5 @@
 
 import React from 'react';
-import Color from 'color';
 import GameFunnel from '../GameFunnel';
 
 interface CampaignPreviewProps {
