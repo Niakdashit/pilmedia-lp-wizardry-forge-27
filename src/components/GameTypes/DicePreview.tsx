@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import confetti from 'canvas-confetti';
@@ -89,7 +90,6 @@ const DicePreview: React.FC<DicePreviewProps> = ({ config, onComplete }) => {
       setIsRolling(false);
       setHasResult(true);
 
-      const sum = finalValues.reduce((a, b) => a + b, 0);
       const isWinning = config.winningCombinations.some(combo => 
         combo.length === finalValues.length && 
         combo.every((val, idx) => val === finalValues[idx])

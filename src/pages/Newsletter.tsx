@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { DndContext, DragEndEvent, DragOverlay } from '@dnd-kit/core';
 import { Eye, Send, Save } from 'lucide-react';
@@ -11,7 +12,7 @@ import { SettingsTab } from '@/components/Newsletter/properties/Tab/SettingsTab'
 const Newsletter: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'edit' | 'settings' | 'send' | 'automate'>('edit');
   const [showPreviewModal, setShowPreviewModal] = useState(false);
-  const { modules, addModule } = useNewsletterStore();
+  const { addModule } = useNewsletterStore();
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -24,6 +25,16 @@ const Newsletter: React.FC = () => {
         content: '',
         settings: {}
       });
+    }
+  };
+
+  // Mock campaign data for preview
+  const mockCampaign = {
+    name: 'Newsletter Test',
+    description: 'Newsletter de test',
+    design: {
+      background: '#ffffff',
+      primaryColor: '#841b60'
     }
   };
 
@@ -151,6 +162,7 @@ const Newsletter: React.FC = () => {
       <PreviewModal
         isOpen={showPreviewModal}
         onClose={() => setShowPreviewModal(false)}
+        campaign={mockCampaign}
       />
     </div>
   );

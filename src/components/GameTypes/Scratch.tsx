@@ -1,5 +1,6 @@
+
 import React, { useState, useRef, useEffect } from 'react';
-import { Image as ImageIcon, Type } from 'lucide-react';
+import { Type } from 'lucide-react';
 import ImageUpload from '../common/ImageUpload';
 
 interface ScratchCardInstantWinConfig {
@@ -26,7 +27,6 @@ const Scratch: React.FC<ScratchProps> = ({
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isRevealed, setIsRevealed] = useState(false);
-  const [scratchPercentage, setScratchPercentage] = useState(0);
   const [scratchResult, setScratchResult] = useState<'win' | 'lose' | null>(null);
 
   // ----------- SCRATCH CANVAS INTERACTIF -----------
@@ -94,7 +94,6 @@ const Scratch: React.FC<ScratchProps> = ({
         }
 
         const percentage = (transparentPixels / (pixels.length / 4)) * 100;
-        setScratchPercentage(percentage);
 
         if (
           percentage >= (config?.requiredScratchPercent || 70) &&

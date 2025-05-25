@@ -14,17 +14,16 @@ const Swiper: React.FC<SwiperProps> = ({ config, onConfigChange, isPreview }) =>
   const rotate = useTransform(x, [-200, 200], [-30, 30]);
   const opacity = useTransform(x, [-200, 0, 200], [0, 1, 0]);
 
-  const handleDragEnd = (event: any, info: any) => {
+  const handleDragEnd = (_event: any, info: any) => {
     const swipe = info.offset.x;
     const threshold = 100;
 
     if (Math.abs(swipe) > threshold) {
-      const direction = swipe > 0 ? 'right' : 'left';
-      handleSwipe(direction);
+      handleSwipe(swipe > 0 ? 'right' : 'left');
     }
   };
 
-  const handleSwipe = (direction: 'left' | 'right') => {
+  const handleSwipe = (_direction: 'left' | 'right') => {
     if (currentIndex < (config.cards?.length || 0) - 1) {
       setCurrentIndex(prev => prev + 1);
     }

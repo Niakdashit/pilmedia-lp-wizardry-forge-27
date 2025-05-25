@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import confetti from 'canvas-confetti';
@@ -14,7 +15,6 @@ const Memory: React.FC<MemoryProps> = ({ config = {}, onConfigChange, isPreview,
   const [flipped, setFlipped] = useState<number[]>([]);
   const [matched, setMatched] = useState<number[]>([]);
   const [disabled, setDisabled] = useState(false);
-  const [gameComplete, setGameComplete] = useState(false);
 
   useEffect(() => {
     if (isPreview) {
@@ -41,7 +41,6 @@ const Memory: React.FC<MemoryProps> = ({ config = {}, onConfigChange, isPreview,
         setDisabled(false);
 
         if (matched.length + 2 === cards.length) {
-          setGameComplete(true);
           confetti({
             particleCount: 100,
             spread: 70,

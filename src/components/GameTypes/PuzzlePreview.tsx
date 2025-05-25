@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import confetti from 'canvas-confetti';
@@ -43,7 +44,7 @@ const PuzzlePreview: React.FC<PuzzlePreviewProps> = ({ config, onComplete }) => 
   }, [config.gridSize, config.difficulty]);
 
   useEffect(() => {
-    if (gameStarted && config.timeLimit) {
+    if (gameStarted && config.timeLimit && config.timeLimit > 0) {
       const timer = setInterval(() => {
         setTimeLeft(prev => {
           if (prev <= 1) {
@@ -93,7 +94,7 @@ const PuzzlePreview: React.FC<PuzzlePreviewProps> = ({ config, onComplete }) => 
     <div className="max-w-2xl mx-auto p-4">
       <div className="flex justify-between items-center mb-4">
         <div className="text-lg font-bold">Mouvements: {moves}</div>
-        {config.timeLimit > 0 && (
+        {config.timeLimit && config.timeLimit > 0 && (
           <div className="text-lg font-bold">
             Temps: {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
           </div>
