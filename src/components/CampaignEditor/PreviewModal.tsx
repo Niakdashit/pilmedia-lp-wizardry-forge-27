@@ -2,11 +2,66 @@
 import React from 'react';
 import { X } from 'lucide-react';
 import CampaignPreview from './CampaignPreview';
+import { CampaignType } from '../../utils/campaignTypes';
+
+interface Campaign {
+  name: string;
+  description: string;
+  url: string;
+  startDate: string;
+  startTime: string;
+  endDate: string;
+  endTime: string;
+  status: string;
+  type: CampaignType;
+  screens: {
+    [key: number]: {
+      title?: string;
+      description?: string;
+      buttonText?: string;
+      buttonLink?: string;
+      showTitle?: boolean;
+      showDescription?: boolean;
+      showReplayButton?: boolean;
+    };
+  };
+  gameConfig: any;
+  design: {
+    background: string;
+    fontFamily: string;
+    primaryColor: string;
+    secondaryColor: string;
+    titleColor: string;
+    buttonColor: string;
+    blockColor: string;
+    borderColor: string;
+    borderRadius: string;
+    shadow: string;
+    titleFont: string;
+    textFont: string;
+    fontSize: string;
+    fontWeight: string;
+    logoUrl: string;
+    backgroundImage: string;
+    customCSS?: string;
+    customHTML?: string;
+    textColor?: string;
+  };
+  rewards: {
+    mode: string;
+    quantity: number;
+    probability: number;
+    timeSlots: any[];
+  };
+  config: {
+    jackpot?: any;
+  };
+}
 
 interface PreviewModalProps {
   isOpen: boolean;
   onClose: () => void;
-  campaign: any;
+  campaign: Campaign;
 }
 
 const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }) => {
