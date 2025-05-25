@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Quiz, Scratch, Memory, Puzzle, Dice } from '../GameTypes';
 import TabRoulette from '@/components/configurators/TabRoulette';
 import TabJackpot from '@/components/configurators/TabJackpot';
+import JackpotAppearance from '@/components/configurators/JackpotAppearance';
 import ImageUpload from '../common/ImageUpload';
 import GameCanvasPreview from './GameCanvasPreview';
 import { Settings, Eye, Palette } from 'lucide-react';
@@ -25,9 +26,6 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
   };
 
   const getContentEditor = () => {
-    console.log('Current campaign type:', campaign.type);
-    console.log('Current gameConfig:', campaign.gameConfig);
-
     switch (campaign.type) {
       case 'quiz':
         return (
@@ -73,7 +71,6 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
           />
         );
       case 'jackpot':
-        console.log('Rendering Jackpot editor with config:', campaign.gameConfig?.jackpot);
         return (
           <TabJackpot
             campaign={campaign}
@@ -90,7 +87,7 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
         );
     }
   };
-  
+
   return (
     <div className="space-y-6">
       <div className="bg-[#f9f0f5] border border-[#e9d0e5] rounded-lg p-4">
@@ -126,7 +123,6 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
 
       {activeSection === 'game' ? (
         <div className="space-y-6">
-          {/* Aperçu du jeu en haut */}
           <div>
             <div className="flex items-center space-x-2 mb-4">
               <Eye className="w-5 h-5 text-[#841b60]" />
@@ -135,7 +131,6 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
             <GameCanvasPreview campaign={campaign} />
           </div>
 
-          {/* Configuration spécifique au jeu */}
           <div>
             <h3 className="text-lg font-medium text-gray-900 mb-4">Paramètres du jeu</h3>
             {getContentEditor()}
@@ -143,36 +138,39 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
         </div>
       ) : (
         <div className="space-y-6">
-          {/* Aperçu du jeu */}
-          <div>
-            <div className="flex items-center space-x-2 mb-4">
-              <Eye className="w-5 h-5 text-[#841b60]" />
-              <h3 className="text-lg font-medium text-gray-900">Aperçu du jeu</h3>
-            </div>
-            <GameCanvasPreview campaign={campaign} />
-          </div>
+          {/* Si le type est jackpot, afficher JackpotAppearance */}
+          {campaign.type === 'jackpot' ? (
+            <JackpotAppearance campaign={campaign} setCampaign={setCampaign} />
+          ) : (
+            <>
+              <div className="flex items-center space-x-2 mb-4">
+                <Eye className="w-5 h-5 text-[#841b60]" />
+                <h3 className="text-lg font-medium text-gray-900">Aperçu du jeu</h3>
+              </div>
+              <GameCanvasPreview campaign={campaign} />
 
-          {/* Image de fond du jeu */}
-          <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Image de fond du jeu</h3>
-            <ImageUpload
-              value={campaign.gameConfig?.[campaign.type]?.backgroundImage || campaign.design.backgroundImage}
-              onChange={(value) => {
-                setCampaign((prev: any) => ({
-                  ...prev,
-                  gameConfig: {
-                    ...prev.gameConfig,
-                    [campaign.type]: {
-                      ...prev.gameConfig?.[campaign.type],
-                      backgroundImage: value
-                    }
-                  }
-                }));
-              }}
-              label="Téléchargez ou sélectionnez une image de fond pour votre jeu"
-              className="w-full"
-            />
-          </div>
+              <div>
+                <h3 className="text-lg font-medium text-gray-900 mb-4">Image de fond du jeu</h3>
+                <ImageUpload
+                  value={campaign.gameConfig?.[campaign.type]?.backgroundImage || campaign.design.backgroundImage}
+                  onChange={(value) => {
+                    setCampaign((prev: any) => ({
+                      ...prev,
+                      gameConfig: {
+                        ...prev.gameConfig,
+                        [campaign.type]: {
+                          ...prev.gameConfig?.[campaign.type],
+                          backgroundImage: value
+                        }
+                      }
+                    }));
+                  }}
+                  label="Téléchargez ou sélectionnez une image de fond pour votre jeu"
+                  className="w-full"
+                />
+              </div>
+            </>
+          )}
         </div>
       )}
     </div>
