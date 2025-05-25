@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Jackpot from '@/components/GameTypes/Jackpot';
 
@@ -16,7 +15,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
     campaign.gameConfig?.[campaign.type]?.backgroundImage ||
     campaign.design.backgroundImage;
 
-  // Template de jackpot spécifique (différent de l'image de fond)
+  // Template de jackpot spécifique (n'est plus affiché par défaut)
   const jackpotTemplateImage = campaign.gameConfig?.jackpot?.customTemplate;
 
   const renderGame = () => {
@@ -47,7 +46,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
         height: gameBackgroundImage ? 'auto' : '500px'
       }}
     >
-      {/* Image de fond générale - s'adapte à sa taille sans être coupée */}
+      {/* ✅ Image de fond */}
       {gameBackgroundImage && (
         <div className="w-full h-auto">
           <img
@@ -58,7 +57,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
         </div>
       )}
 
-      {/* Conteneur principal du jeu - parfaitement centré */}
+      {/* ✅ Conteneur principal du jeu */}
       <div
         className="absolute"
         style={{ 
@@ -70,7 +69,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
           zIndex: 2
         }}
       >
-        {/* Template de jackpot - s'affiche seulement si uploadé */}
+        {/* ✅ Template du jackpot uniquement si uploadé */}
         {jackpotTemplateImage && (
           <div
             className="absolute inset-0 rounded-lg"
@@ -84,7 +83,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
           />
         )}
 
-        {/* Jeu (rouleaux + bouton) - absolument centré AU-DESSUS du template */}
+        {/* ✅ Jeu par-dessus */}
         <div
           className="absolute flex flex-col items-center justify-center"
           style={{ 
