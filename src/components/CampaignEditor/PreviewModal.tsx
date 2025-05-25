@@ -1,7 +1,6 @@
-
 import React from 'react';
 import { X } from 'lucide-react';
-import CampaignPreview from './CampaignPreview';
+import GameCanvasPreview from './GameCanvasPreview';
 
 interface PreviewModalProps {
   isOpen: boolean;
@@ -13,20 +12,22 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl h-[90vh] flex flex-col">
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
-          <h2 className="text-xl font-semibold text-gray-800">Aperçu de la campagne</h2>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
+      <div className="bg-white w-full h-full flex flex-col relative overflow-hidden">
+        {/* Barre supérieure */}
+        <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-6 py-4 bg-white border-b border-gray-200 shadow-sm">
+          <h2 className="text-lg font-semibold text-gray-800">Aperçu de la campagne</h2>
           <button
             onClick={onClose}
             className="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"
           >
-            <X className="w-full h-full" />
+            <X className="w-5 h-5" />
           </button>
         </div>
-        
-        <div className="flex-1 overflow-hidden">
-          <CampaignPreview campaign={campaign} />
+
+        {/* Canvas en dessous de la barre */}
+        <div className="flex-1 pt-20 flex items-center justify-center overflow-auto bg-gray-50">
+          <GameCanvasPreview campaign={campaign} />
         </div>
       </div>
     </div>
