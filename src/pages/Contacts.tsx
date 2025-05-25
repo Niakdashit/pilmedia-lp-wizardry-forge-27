@@ -7,8 +7,7 @@ import {
   ChevronDown, 
   ChevronUp,
   UserCircle,
-  X,
-  Check
+  X
 } from 'lucide-react';
 
 interface Contact {
@@ -318,7 +317,7 @@ const Contacts: React.FC = () => {
                     <td className="px-6 py-4 whitespace-nowrap">
                       <select
                         value={contact.status}
-                        onChange={(e) => {/* Implement status update logic */}}
+                        onChange={() => {/* Implement status update logic */}}
                         className={`text-sm font-medium rounded-full px-2.5 py-0.5 ${statusColors[contact.status]}`}
                       >
                         <option value="Nouveau">Nouveau</option>
@@ -485,7 +484,6 @@ const Contacts: React.FC = () => {
                   Canaux préférés
                 </label>
                 <div className="space-y-2">
-                
                   {['Email', 'SMS', 'WhatsApp'].map((channel) => (
                     <label key={channel} className="flex items-center">
                       <input
