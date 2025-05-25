@@ -1,13 +1,16 @@
+
 import React from 'react';
 import { useEditor, EditorContent } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import Placeholder from '@tiptap/extension-placeholder';
+import Underline from '@tiptap/extension-underline';
+import TextAlign from '@tiptap/extension-text-align';
 import { 
   Bold, 
   Italic, 
-  Link as LinkIcon, 
+  LinkIcon, 
   Image as ImageIcon, 
   List, 
   ListOrdered, 
@@ -18,7 +21,7 @@ import {
   Heading1,
   Heading2,
   Strikethrough,
-  Underline,
+  Underline as UnderlineIcon,
   Code,
   Undo,
   Redo,
@@ -30,12 +33,24 @@ interface EmailEditorProps {
   onChange: (content: string) => void;
 }
 
+interface ToolbarItem {
+  icon: React.ReactElement;
+  title: string;
+  action: () => void;
+  isActive?: () => boolean;
+  isDisabled?: () => boolean;
+}
+
 const EmailEditor: React.FC<EmailEditorProps> = ({ content, onChange }) => {
   const editor = useEditor({
     extensions: [
       StarterKit,
       Image,
       Link,
+      Underline,
+      TextAlign.configure({
+        types: ['heading', 'paragraph'],
+      }),
       Placeholder.configure({
         placeholder: 'Commencez à écrire votre newsletter...',
       }),
@@ -64,7 +79,7 @@ const EmailEditor: React.FC<EmailEditorProps> = ({ content, onChange }) => {
     }
   };
 
-  const toolbarGroups = [
+  const toolbarGroups: ToolbarItem[][] = [
     [
       {
         icon: <Undo className="w-4 h-4" />,
@@ -113,7 +128,7 @@ const EmailEditor: React.FC<EmailEditorProps> = ({ content, onChange }) => {
         isActive: () => editor.isActive('italic'),
       },
       {
-        icon: <Underline className="w-4 h-4" />,
+        icon: <UnderlineIcon className="w-4 h-4" />,
         title: 'Souligné',
         action: () => editor.chain().focus().toggleUnderline().run(),
         isActive: () => editor.isActive('underline'),

@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { Save, ChevronRight, Eye } from 'lucide-react';
@@ -225,17 +224,15 @@ const CampaignEditor: React.FC = () => {
               <CampaignDesign campaign={campaign} setCampaign={setCampaign} />
             )}
 
-            {/* ------------ ONGLET PARAMÉTRAGE AVEC JACKPOT ------------ */}
             {activeTab === 'settings' && (
               <div>
                 <CampaignSettings campaign={campaign} setCampaign={setCampaign} />
-                {/* Ajoute l'éditeur TabJackpot, branche-le sur config.jackpot */}
                 <div className="mt-8">
                   <h2 className="text-xl font-bold mb-3 text-[#841b60]">Configuration du Jackpot</h2>
                   <TabJackpot
-                    config={campaign.config?.jackpot}
+                    config={campaign.config?.jackpot || {}}
                     onConfigChange={(newJackpotConfig: any) =>
-                      setCampaign((prev: any) => ({
+                      setCampaign((prev: typeof campaign) => ({
                         ...prev,
                         config: {
                           ...prev.config,

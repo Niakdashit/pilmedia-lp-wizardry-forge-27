@@ -151,7 +151,6 @@ const Newsletter: React.FC = () => {
       <PreviewModal
         isOpen={showPreviewModal}
         onClose={() => setShowPreviewModal(false)}
-        modules={modules}
       />
     </div>
   );
