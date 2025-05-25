@@ -164,7 +164,7 @@ export const ModuleRenderer: React.FC<ModuleRendererProps> = ({ module }) => {
             {Array.from({ length: module.settings?.columns || 2 }).map((_, index) => {
               const columnContent = Array.isArray(module.content) 
                 ? (module.content[index] || '') 
-                : (index === 0 ? String(module.content || '') : '');
+                : (index === 0 ? (module.content || '') : '');
               return (
                 <div key={index} className="border border-gray-200 rounded p-4">
                   <textarea

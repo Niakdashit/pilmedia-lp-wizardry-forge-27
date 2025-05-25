@@ -21,7 +21,7 @@ export const useGameResult = (campaignId: string, config: GameConfig) => {
 
   const saveResult = useCallback(async (result: Omit<GameResult, 'id' | 'createdAt'>) => {
     const insertResult = await supabase
-      .from('game_results')
+      .from()
       .insert([{
         campaign_id: result.campaignId,
         user_id: result.userId,
