@@ -17,7 +17,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
       <div 
         style={{
           backgroundImage: gameBackgroundImage ? `url(${gameBackgroundImage})` : undefined,
-          backgroundSize: 'contain',
+          backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundRepeat: 'no-repeat'
         }} 
