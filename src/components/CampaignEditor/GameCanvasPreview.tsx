@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Jackpot from '@/components/GameTypes/Jackpot';
 
@@ -41,7 +40,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
 
   return (
     <div
-      className={`bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 relative overflow-hidden ${className}`}
+      className={bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 relative overflow-hidden ${className}}
       style={{ 
         minHeight: '500px',
         height: gameBackgroundImage ? 'auto' : '500px'
@@ -70,7 +69,17 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
           zIndex: 2
         }}
       >
-      
+        {/* Template de jackpot - s'affiche seulement si uploadé */}
+        {jackpotTemplateImage && (
+          <div
+            className="absolute inset-0 rounded-lg"
+            style={{
+              backgroundImage: url(${jackpotTemplateImage}),
+              backgroundSize: 'contain',
+              backgroundPosition: 'center',
+              backgroundRepeat: 'no-repeat',
+              zIndex: 1
+            }}
           />
         )}
 
