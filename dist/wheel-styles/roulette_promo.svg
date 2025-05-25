@@ -1,0 +1,17 @@
+<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="50" cy="50" r="47" fill="none" stroke="url(#pinkGloss)" stroke-width="4"/>
+  <defs>
+    <radialGradient id="pinkGloss" cx="50%" cy="40%" r="80%">
+      <stop offset="0%" stop-color="#ffc4ec" />
+      <stop offset="70%" stop-color="#ff3d9e" />
+      <stop offset="100%" stop-color="#b71369" />
+    </radialGradient>
+  </defs>
+  <path d="M10 60 Q30 75 50 60 Q70 45 90 60" fill="none" stroke="#ffd6f5" stroke-width="1.2" />
+  <g stroke="#fff" stroke-width="1.2" stroke-linecap="round">
+    <line x1="50" y1="8" x2="50" y2="17"/>
+    <line x1="13" y1="50" x2="22" y2="50"/>
+    <line x1="50" y1="92" x2="50" y2="83"/>
+    <line x1="87" y1="50" x2="78" y2="50"/>
+  </g>
+</svg>
