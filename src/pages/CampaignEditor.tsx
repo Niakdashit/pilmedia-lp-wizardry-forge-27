@@ -236,7 +236,7 @@ const CampaignEditor: React.FC = () => {
                   <TabJackpot
                     config={campaign.config?.jackpot}
                     onConfigChange={(newJackpotConfig) =>
-                      setCampaign((prev) => ({
+                      setCampaign((prev: any) => ({
                         ...prev,
                         config: {
                           ...prev.config,

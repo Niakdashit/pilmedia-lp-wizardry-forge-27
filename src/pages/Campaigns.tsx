@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Plus, Search, Filter, MoreVertical, Edit, Trash2, Copy, ExternalLink } from 'lucide-react';
+import { Plus, Search, Filter, Edit, Trash2, Copy, ExternalLink } from 'lucide-react';
 import { getCampaignTypeIcon, CampaignType } from '../utils/campaignTypes';
 import { useNavigate } from 'react-router-dom';
 
