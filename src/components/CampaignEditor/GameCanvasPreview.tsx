@@ -38,15 +38,18 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   };
 
   return (
-    <div className={`bg-gray-100 rounded-lg p-6 border-2 border-dashed border-gray-300 ${className}`}>
+    <div
+      className={`bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center ${className}`}
+      style={{ minHeight: '500px' }} // ← hauteur ajustée pour centrer verticalement
+    >
       <div
-        className="relative mx-auto"
+        className="relative"
         style={{
           width: '680px',
-          height: '400px'
+          height: '400px',
         }}
       >
-        {/* ✅ Image de fond optionnelle */}
+        {/* ✅ Image de fond (optionnelle) */}
         {gameBackgroundImage && (
           <div
             className="absolute inset-0 bg-no-repeat bg-center bg-contain z-0"
@@ -54,7 +57,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
           />
         )}
 
-        {/* ✅ Image du modèle de jackpot centrée */}
+        {/* ✅ Modèle de jackpot centré */}
         {jackpotTemplateImage && (
           <img
             src={jackpotTemplateImage}
@@ -68,13 +71,13 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
           />
         )}
 
-        {/* ✅ Jeu superposé au bon endroit */}
+        {/* ✅ Jeu (rouleaux) centré sur le modèle */}
         <div
           className="absolute z-10"
           style={{
-            top: '160px', // ajuste selon la position des cases du visuel
+            top: '160px',
             left: '50%',
-            transform: 'translateX(-50%)'
+            transform: 'translateX(-50%)',
           }}
         >
           {renderGame() || (
