@@ -14,7 +14,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
       <div className="bg-white w-full h-full flex flex-col relative overflow-hidden">
-        {/* Barre supérieure */}
+        {/* Bande supérieure */}
         <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-6 py-4 bg-white border-b border-gray-200 shadow-sm">
           <h2 className="text-lg font-semibold text-gray-800">Aperçu de la campagne</h2>
           <button
@@ -25,10 +25,10 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
           </button>
         </div>
 
-        {/* Canvas en dessous de la barre */}
-        <div className="flex-1 pt-20 overflow-auto bg-gray-50 flex justify-center items-center">
-          <div className="w-full max-w-6xl px-4">
-            <GameCanvasPreview campaign={campaign} />
+        {/* Canvas plein écran avec padding top pour la bande */}
+        <div className="flex-1 pt-20 overflow-hidden flex justify-center items-center">
+          <div className="w-full h-full">
+            <GameCanvasPreview campaign={campaign} className="h-full" />
           </div>
         </div>
       </div>
