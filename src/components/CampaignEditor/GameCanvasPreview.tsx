@@ -70,18 +70,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
           zIndex: 2
         }}
       >
-        {/* Template de jackpot - s'affiche seulement si uploadé */}
-        {jackpotTemplateImage && (
-          <div
-            className="absolute inset-0 rounded-lg"
-            style={{
-              backgroundImage: `url(${jackpotTemplateImage})`,
-              backgroundSize: 'contain',
-              backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat',
-              zIndex: 1
-            }}
-          />
+      
         )}
 
         {/* Jeu (rouleaux + bouton) - absolument centré AU-DESSUS du template */}
