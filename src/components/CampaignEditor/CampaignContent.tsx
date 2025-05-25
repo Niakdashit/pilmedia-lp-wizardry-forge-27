@@ -1,9 +1,9 @@
-
 import React, { useState } from 'react';
 import { Quiz, Scratch, Memory, Puzzle, Dice } from '../GameTypes';
 import TabRoulette from '@/components/configurators/TabRoulette';
 import TabJackpot from '@/components/configurators/TabJackpot';
 import ImageUpload from '../common/ImageUpload';
+import GameCanvasPreview from './GameCanvasPreview';
 import { Palette, Type, Square, Box, Image as ImageIcon, Gamepad2 } from 'lucide-react';
 
 interface CampaignContentProps {
@@ -150,35 +150,7 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
             />
           </div>
 
-          <div className="bg-gray-100 rounded-lg p-6 min-h-[400px] border-2 border-dashed border-gray-300">
-            <div className="text-center text-gray-500 mb-4">
-              <Gamepad2 className="w-12 h-12 mx-auto mb-2" />
-              <h4 className="font-medium">Aperçu du canvas de jeu</h4>
-              <p className="text-sm">Voici comment votre jeu apparaîtra</p>
-            </div>
-            
-            <div 
-              className="relative bg-white rounded-lg shadow-lg p-6 min-h-[300px] mx-auto max-w-md"
-              style={{
-                backgroundImage: gameBackgroundImage ? `url(${gameBackgroundImage})` : undefined,
-                backgroundSize: 'cover',
-                backgroundPosition: 'center'
-              }}
-            >
-              {gameBackgroundImage && (
-                <div className="absolute inset-0 bg-black bg-opacity-20 rounded-lg"></div>
-              )}
-              
-              <div className="relative z-10 text-center">
-                <h5 className="font-bold text-lg mb-2" style={{ color: campaign.design.titleColor }}>
-                  {campaign.type.charAt(0).toUpperCase() + campaign.type.slice(1)}
-                </h5>
-                <p className="text-sm opacity-75">
-                  Zone de jeu interactive
-                </p>
-              </div>
-            </div>
-          </div>
+          <GameCanvasPreview campaign={campaign} />
         </div>
       </div>
     );
@@ -226,7 +198,38 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
       </div>
 
       {activeSection === 'game' ? (
-        getContentEditor()
+        <div className="space-y-6">
+          {/* Game Canvas Preview */}
+          <GameCanvasPreview campaign={campaign} className="mb-6" />
+          
+          {/* Image de fond du jeu */}
+          <div>
+            <h3 className="text-sm font-medium text-gray-700 mb-4 flex items-center">
+              <ImageIcon className="w-5 h-5 mr-2" />
+              Image de fond du jeu
+            </h3>
+            <ImageUpload
+              value={campaign.gameConfig?.[campaign.type]?.backgroundImage || campaign.design.backgroundImage}
+              onChange={(value) => {
+                setCampaign((prev: any) => ({
+                  ...prev,
+                  gameConfig: {
+                    ...prev.gameConfig,
+                    [campaign.type]: {
+                      ...prev.gameConfig?.[campaign.type],
+                      backgroundImage: value
+                    }
+                  }
+                }));
+              }}
+              label=""
+              className="w-full"
+            />
+          </div>
+
+          {/* Game-specific content editor */}
+          {getContentEditor()}
+        </div>
       ) : activeSection === 'canvas' ? (
         getGameCanvas()
       ) : (
