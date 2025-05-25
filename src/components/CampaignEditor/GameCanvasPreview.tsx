@@ -17,6 +17,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   const jackpotTemplateImage =
     campaign.gameConfig?.[campaign.type]?.templateImage;
 
+  // Choix du jeu en fonction du type
   const renderGame = () => {
     switch (campaign.type) {
       case 'jackpot':
@@ -38,44 +39,37 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   };
 
   return (
-    <div className={`bg-gray-100 rounded-lg p-6 border-2 border-dashed border-gray-300 ${className}`}>
-      <div
-        className="relative mx-auto rounded-lg shadow-lg"
-        style={{ width: '680px', height: '400px' }} // ↔ Taille exacte de ton PNG
-      >
-        {/* ✅ Image de fond (optionnelle) */}
+    <div
+      className={`bg-gray-100 rounded-lg p-6 border-2 border-dashed border-gray-300 ${className}`}
+    >
+      <div className="relative w-full max-w-3xl mx-auto rounded-lg shadow-lg overflow-hidden min-h-[300px]">
+        {/* ✅ Image de fond */}
         {gameBackgroundImage && (
           <div
-            className="absolute inset-0 bg-no-repeat bg-center bg-contain z-0"
+            className="absolute inset-0 bg-no-repeat bg-center bg-contain"
             style={{ backgroundImage: `url(${gameBackgroundImage})` }}
           />
         )}
 
-        {/* ✅ Image du modèle (non rognée, taille exacte) */}
-        {jackpotTemplateImage && (
-          <img
-            src={jackpotTemplateImage}
-            alt="Modèle de jackpot"
-            className="absolute top-0 left-0 z-0"
-            style={{ width: '680px', height: 'auto' }}
-          />
-        )}
-
-        {/* ✅ Jeu centré sur les emplacements blancs */}
-        <div
-          className="absolute z-10"
-          style={{
-            top: '160px', // ← Ajuste ici pour centrer verticalement les cases
-            left: '50%',
-            transform: 'translateX(-50%)',
-          }}
-        >
-          {renderGame() || (
-            <div className="text-center text-white backdrop-blur-sm bg-black/30 p-4 rounded">
-              <p className="text-sm font-semibold">Aperçu du jeu</p>
-              <p className="text-xs mt-1">Sélectionnez un type de jeu pour voir l'aperçu</p>
-            </div>
+        {/* ✅ Modèle de jackpot sous les rouleaux */}
+        <div className="relative z-10 w-full h-full flex flex-col items-center justify-center p-4">
+          {jackpotTemplateImage && (
+            <img
+              src={jackpotTemplateImage}
+              alt="Modèle de jackpot"
+              className="w-full max-w-[700px] h-auto object-contain mb-[-80px] z-0"
+            />
           )}
+
+          {/* ✅ Composant de jeu par-dessus */}
+          <div className="relative z-10">
+            {renderGame() || (
+              <div className="text-center text-white backdrop-blur-sm bg-black/30 p-4 rounded">
+                <p className="text-sm font-semibold">Aperçu du jeu</p>
+                <p className="text-xs mt-1">Sélectionnez un type de jeu pour voir l'aperçu</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
