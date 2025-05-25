@@ -100,6 +100,7 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
         return (
           <Scratch 
             config={campaign.gameConfig.scratch}
+            onConfigChange={() => {}}
           />
         );
 
