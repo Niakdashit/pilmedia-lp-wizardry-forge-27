@@ -2,13 +2,13 @@
 import React from 'react';
 import { X } from 'lucide-react';
 
-interface PreviewModalProps {
+interface NewsletterPreviewModalProps {
   isOpen: boolean;
   onClose: () => void;
   campaign: any;
 }
 
-const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }) => {
+const NewsletterPreviewModal: React.FC<NewsletterPreviewModalProps> = ({ isOpen, onClose, campaign }) => {
   if (!isOpen) return null;
 
   return (
@@ -33,4 +33,4 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
   );
 };
 
-export default PreviewModal;
+export default NewsletterPreviewModal;
