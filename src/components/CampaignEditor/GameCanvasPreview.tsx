@@ -12,10 +12,10 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
 }) => {
   // Image de fond générale (pour tout l'arrière-plan)
   const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage;
-
-  // Template de jackpot spécifique (680x400)
+  
+  // Template de jackpot spécifique
   const jackpotTemplateImage = campaign.gameConfig?.[campaign.type]?.customTemplate;
-
+  
   // Configuration du bouton pour le jackpot
   const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel || 'Lancer le Jackpot';
   const buttonColor = campaign.gameConfig?.[campaign.type]?.buttonColor || '#ec4899';
@@ -44,13 +44,13 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   };
 
   return (
-    <div className={`bg-gray-100 rounded-lg p-6 border-2 border-dashed border-gray-300 ${className}`}>
+    <div className={bg-gray-100 rounded-lg p-6 border-2 border-dashed border-gray-300 ${className}}>
       <div className="w-full max-w-3xl mx-auto relative" style={{ minHeight: '500px' }}>
         {/* Container principal du jeu - dimensions fixes 680x400px, centré */}
         <div
           className="absolute bg-white rounded-lg shadow-lg overflow-hidden"
-          style={{
-            width: '680px',
+          style={{ 
+            width: '680px', 
             height: '400px',
             left: '50%',
             top: '50%',
@@ -66,19 +66,19 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
             />
           )}
 
-          {/* Modèle de jackpot - s'affiche uniquement si uploadé (680x400) */}
+          {/* Template de jackpot personnalisé - s'affiche uniquement si uploadé */}
           {jackpotTemplateImage && (
             <img
               src={jackpotTemplateImage}
               className="absolute inset-0 w-full h-full object-contain z-1"
-              alt="Jackpot Template"
+              alt="Template"
             />
           )}
 
           {/* Jeu Jackpot - centré au-dessus de tous les visuels */}
           <div
             className="absolute flex items-center justify-center"
-            style={{
+            style={{ 
               left: '50%',
               top: '50%',
               transform: 'translate(-50%, -50%)',
