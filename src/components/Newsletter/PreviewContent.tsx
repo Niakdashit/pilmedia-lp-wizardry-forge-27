@@ -1,7 +1,8 @@
+
 import React, { useState, useEffect } from 'react';
 import Color from 'color';
 import confetti from 'canvas-confetti';
-import { Quiz, Wheel, Scratch, Memory, Puzzle, Dice, Jackpot } from '../GameTypes';
+import { Wheel, Scratch, Jackpot } from '../GameTypes';
 import MemoryPreview from '../GameTypes/MemoryPreview';
 import PuzzlePreview from '../GameTypes/PuzzlePreview';
 import DicePreview from '../GameTypes/DicePreview';
@@ -88,7 +89,9 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
           <Wheel 
             config={campaign.gameConfig.wheel} 
             onConfigChange={() => {}}
-            isPreview={true}
+            currentWinners={0}
+            maxWinners={100}
+            winRate={10}
             onComplete={handleGameComplete}
           />
         );
@@ -98,8 +101,6 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
           <Scratch 
             config={campaign.gameConfig.scratch} 
             onConfigChange={() => {}}
-            isPreview={true}
-            onComplete={handleGameComplete}
           />
         );
 

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Color from 'color';
 import { Quiz, Wheel, Scratch, Memory, Puzzle, Dice, Jackpot } from './GameTypes';
 
 interface GameFunnelProps {
@@ -36,7 +37,6 @@ const GameFunnel: React.FC<GameFunnelProps> = ({ campaign }) => {
           <Quiz 
             config={campaign.gameConfig.quiz} 
             onConfigChange={() => {}}
-            isPreview={true}
             onComplete={() => handleGameComplete('win')}
           />
         );
@@ -46,7 +46,9 @@ const GameFunnel: React.FC<GameFunnelProps> = ({ campaign }) => {
           <Wheel 
             config={campaign.gameConfig.wheel} 
             onConfigChange={() => {}}
-            isPreview={true}
+            currentWinners={0}
+            maxWinners={100}
+            winRate={10}
             onComplete={() => handleGameComplete('win')}
           />
         );
@@ -56,8 +58,6 @@ const GameFunnel: React.FC<GameFunnelProps> = ({ campaign }) => {
           <Scratch 
             config={campaign.gameConfig.scratch} 
             onConfigChange={() => {}}
-            isPreview={true}
-            onComplete={() => handleGameComplete('win')}
           />
         );
 
@@ -66,7 +66,6 @@ const GameFunnel: React.FC<GameFunnelProps> = ({ campaign }) => {
           <Memory 
             config={campaign.gameConfig.memory} 
             onConfigChange={() => {}}
-            isPreview={true}
             onComplete={() => handleGameComplete('win')}
           />
         );
@@ -76,7 +75,6 @@ const GameFunnel: React.FC<GameFunnelProps> = ({ campaign }) => {
           <Puzzle 
             config={campaign.gameConfig.puzzle} 
             onConfigChange={() => {}}
-            isPreview={true}
             onComplete={() => handleGameComplete('win')}
           />
         );
@@ -86,7 +84,6 @@ const GameFunnel: React.FC<GameFunnelProps> = ({ campaign }) => {
           <Dice 
             config={campaign.gameConfig.dice} 
             onConfigChange={() => {}}
-            isPreview={true}
             onComplete={() => handleGameComplete('win')}
           />
         );
