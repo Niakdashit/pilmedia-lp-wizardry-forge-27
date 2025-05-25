@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Calendar, Download, ChevronRight, Bell, Plus } from 'lucide-react';
+import { Calendar, Download, ChevronRight } from 'lucide-react';
 
 const Studies: React.FC = () => {
   const [selectedEvent, setSelectedEvent] = useState<string[]>([]);

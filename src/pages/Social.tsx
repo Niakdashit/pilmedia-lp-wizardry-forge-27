@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
-import { BarChart2, ChevronDown, AlertCircle, Plus } from 'lucide-react';
+
+import React from 'react';
+import { BarChart2, AlertCircle, Plus } from 'lucide-react';
 
 const Social: React.FC = () => {
-  const [selectedCampaign, setSelectedCampaign] = useState('');
-  
   return (
     <div className="-mx-6 -mt-6">
       <div className="relative h-[100px] bg-[#841b60] overflow-hidden">
