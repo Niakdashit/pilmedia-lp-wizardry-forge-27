@@ -4,7 +4,7 @@ import TabRoulette from '@/components/configurators/TabRoulette';
 import TabJackpot from '@/components/configurators/TabJackpot';
 import ImageUpload from '../common/ImageUpload';
 import GameCanvasPreview from './GameCanvasPreview';
-import { Palette, Type, Square, Box, Image as ImageIcon, Gamepad2 } from 'lucide-react';
+import { Palette, Type, Square, Box, Image as ImageIcon } from 'lucide-react';
 
 interface CampaignContentProps {
   campaign: any;

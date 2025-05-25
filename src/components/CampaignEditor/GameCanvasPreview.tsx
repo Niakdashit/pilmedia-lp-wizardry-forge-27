@@ -1,5 +1,4 @@
 import React from 'react';
-import { Gamepad2 } from 'lucide-react';
 interface GameCanvasPreviewProps {
   campaign: any;
   className?: string;
