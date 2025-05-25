@@ -153,7 +153,7 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
             <GameCanvasPreview campaign={campaign} />
           </div>
 
-          {/* Modèle personnalisé de jackpot */}
+          {/* Modèle personnalisé de jackpot - uniquement pour le type jackpot */}
           {campaign.type === 'jackpot' && (
             <div>
               <h3 className="text-lg font-medium text-gray-900 mb-4">Modèle de jackpot</h3>
@@ -184,7 +184,7 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
           <div>
             <h3 className="text-lg font-medium text-gray-900 mb-4">Image de fond du jeu</h3>
             <ImageUpload
-              value={campaign.gameConfig?.[campaign.type]?.backgroundImage || campaign.design.backgroundImage}
+              value={campaign.gameConfig?.[campaign.type]?.backgroundImage}
               onChange={(value) => {
                 setCampaign((prev: any) => ({
                   ...prev,
