@@ -8,7 +8,7 @@ export const useGameResult = (campaignId: string, config: GameConfig) => {
     if (!config.maxWinners || !config.winRate) return false;
 
     // Get current winners count - using the mock structure
-    const result = await supabase
+    const queryResult = await supabase
       .from('game_results')
       .select('*')
       .eq('campaign_id', campaignId)
