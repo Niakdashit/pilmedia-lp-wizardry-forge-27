@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Color from 'color';
 import confetti from 'canvas-confetti';
@@ -11,9 +10,15 @@ interface PreviewContentProps {
 }
 
 const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game', onComplete }) => {
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [showFeedback, setShowFeedback] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
 
   useEffect(() => {
+    setCurrentQuestionIndex(0);
+    setSelectedAnswer(null);
+    setShowFeedback(false);
     setIsComplete(false);
   }, [step]);
 
@@ -69,19 +74,19 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
       case 'quiz':
         return (
           <Quiz 
-            config={campaign.gameConfig.quiz}
+            config={campaign.gameConfig.quiz} 
             onConfigChange={() => {}}
+            isPreview={true}
+            onComplete={handleGameComplete}
           />
         );
 
       case 'wheel':
         return (
           <Wheel 
-            config={campaign.gameConfig.wheel}
+            config={campaign.gameConfig.wheel} 
+            onConfigChange={() => {}}
             isPreview={true}
-            currentWinners={0}
-            maxWinners={100}
-            winRate={10}
             onComplete={handleGameComplete}
           />
         );
@@ -89,16 +94,19 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
       case 'scratch':
         return (
           <Scratch 
-            config={campaign.gameConfig.scratch}
+            config={campaign.gameConfig.scratch} 
             onConfigChange={() => {}}
+            isPreview={true}
+            onComplete={handleGameComplete}
           />
         );
 
       case 'memory':
         return (
           <Memory 
-            config={campaign.gameConfig.memory}
+            config={campaign.gameConfig.memory} 
             onConfigChange={() => {}}
+            isPreview={true}
             onComplete={handleGameComplete}
           />
         );
@@ -106,8 +114,9 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
       case 'puzzle':
         return (
           <Puzzle 
-            config={campaign.gameConfig.puzzle}
+            config={campaign.gameConfig.puzzle} 
             onConfigChange={() => {}}
+            isPreview={true}
             onComplete={handleGameComplete}
           />
         );
@@ -115,8 +124,9 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
       case 'dice':
         return (
           <Dice 
-            config={campaign.gameConfig.dice}
+            config={campaign.gameConfig.dice} 
             onConfigChange={() => {}}
+            isPreview={true}
             onComplete={handleGameComplete}
           />
         );
