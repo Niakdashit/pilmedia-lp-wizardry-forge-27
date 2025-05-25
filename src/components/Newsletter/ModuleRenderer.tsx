@@ -163,8 +163,8 @@ export const ModuleRenderer: React.FC<ModuleRendererProps> = ({ module }) => {
           <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${module.settings?.columns || 2}, 1fr)` }}>
             {Array.from({ length: module.settings?.columns || 2 }).map((_, index) => {
               const columnContent = Array.isArray(module.content) 
-                ? (module.content[index] || '') 
-                : (index === 0 ? (module.content || '') : '');
+                ? String(module.content[index] || '') 
+                : (index === 0 ? String(module.content || '') : '');
               return (
                 <div key={index} className="border border-gray-200 rounded p-4">
                   <textarea
