@@ -39,16 +39,8 @@ const CampaignEditorContent: React.FC<CampaignEditorContentProps> = ({
             <div className="mt-8">
               <h2 className="text-xl font-bold mb-3 text-[#841b60]">Configuration du Jackpot</h2>
               <TabJackpot
-                config={campaign.config?.jackpot}
-                onConfigChange={(newJackpotConfig: any) =>
-                  setCampaign((prev: any) => ({
-                    ...prev,
-                    config: {
-                      ...prev.config,
-                      jackpot: newJackpotConfig
-                    }
-                  }))
-                }
+                campaign={campaign}
+                setCampaign={setCampaign}
               />
             </div>
           </div>
