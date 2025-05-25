@@ -1,5 +1,5 @@
+
 import React from 'react';
-import { Calendar, CheckCircle, Users, BarChart4 } from 'lucide-react';
 import { getCampaignTypeText, getCampaignTypeIcon } from '../utils/campaignTypes';
 
 const Dashboard: React.FC = () => {
