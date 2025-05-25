@@ -172,7 +172,7 @@ export const ModuleRenderer: React.FC<ModuleRendererProps> = ({ module }) => {
                     onChange={(e) => {
                       const newContent = Array.isArray(module.content) ? [...module.content] : [];
                       newContent[index] = e.target.value;
-                      updateModule(module.id, { content: newContent });
+                      updateModule(module.id, { content: JSON.stringify(newContent) });
                     }}
                     className="w-full p-2 border border-gray-200 rounded resize-y min-h-[100px] focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
                     placeholder={`Contenu de la colonne ${index + 1}...`}
