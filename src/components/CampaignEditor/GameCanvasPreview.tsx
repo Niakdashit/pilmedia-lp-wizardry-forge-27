@@ -42,7 +42,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
     <div
       className={`bg-gray-100 rounded-lg p-6 border-2 border-dashed border-gray-300 ${className}`}
     >
-      <div className="relative w-full max-w-3xl mx-auto rounded-lg shadow-lg overflow-hidden min-h-[300px]">
+      <div className="relative w-full max-w-4xl mx-auto rounded-lg shadow-lg overflow-hidden min-h-[300px]">
         {/* ✅ Image de fond */}
         {gameBackgroundImage && (
           <div
@@ -51,18 +51,19 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
           />
         )}
 
-        {/* ✅ Modèle de jackpot sous les rouleaux */}
+        {/* ✅ Modèle de jackpot en image */}
         <div className="relative z-10 w-full h-full flex flex-col items-center justify-center p-4">
           {jackpotTemplateImage && (
             <img
               src={jackpotTemplateImage}
               alt="Modèle de jackpot"
-              className="w-full max-w-[700px] h-auto object-contain mb-[-80px] z-0"
+              className="w-full h-auto max-w-none object-contain z-0"
+              style={{ maxWidth: '100%' }}
             />
           )}
 
-          {/* ✅ Composant de jeu par-dessus */}
-          <div className="relative z-10">
+          {/* ✅ Jeu par-dessus */}
+          <div className="absolute inset-0 z-10 flex items-center justify-center">
             {renderGame() || (
               <div className="text-center text-white backdrop-blur-sm bg-black/30 p-4 rounded">
                 <p className="text-sm font-semibold">Aperçu du jeu</p>
