@@ -1,7 +1,5 @@
-
 import React from 'react';
 import Color from 'color';
-// FIXED: Update import path to use relative path instead of alias
 import GameFunnel from '../GameFunnel';
 
 interface CampaignPreviewProps {
@@ -11,10 +9,9 @@ interface CampaignPreviewProps {
 const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
   const { design } = campaign;
 
-  // Get game-specific background image or fallback to design background image
+  // Image de fond spécifique au jeu ou fallback design
   const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage || design.backgroundImage;
 
-  // Container style with full height and width
   const containerStyle = {
     width: '100%',
     height: '100%',
@@ -23,25 +20,31 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
     backgroundColor: design.background || '#ebf4f7',
   };
 
-  // Background image wrapper with absolute positioning
   const backgroundStyle = gameBackgroundImage ? {
     position: 'absolute' as const,
     inset: 0,
     backgroundImage: `url(${gameBackgroundImage})`,
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
-    backgroundSize: 'contain',
+    backgroundSize: 'cover', // plein écran ✅
     zIndex: 0,
   } : {};
 
-  // Content wrapper style to ensure content stays above background
   const contentWrapperStyle = {
     position: 'relative' as const,
     zIndex: 1,
-    height: '100%',
     width: '100%',
-    display: 'flex',
-    flexDirection: 'column' as const,
+    height: '100%',
+  };
+
+  const centeredGameStyle = {
+    position: 'absolute' as const,
+    width: '680px',
+    height: '400px',
+    left: '50%',
+    top: '50%',
+    transform: 'translate(-50%, -50%)',
+    zIndex: 2,
   };
 
   const messageStyle = {
@@ -50,30 +53,21 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
     borderRadius: campaign.design.borderRadius || '0.5rem',
     padding: '1rem 1.5rem',
     maxWidth: '90%',
-    margin: '0 auto',
+    margin: '2rem auto 0',
     boxShadow: campaign.design.shadow === 'shadow-xl' 
       ? '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
       : campaign.design.shadow === 'shadow-md'
       ? '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)'
       : 'none',
     border: `1px solid ${campaign.design.borderColor || '#E5E7EB'}`,
+    zIndex: 3,
+    position: 'relative' as const,
   };
 
-  // Game container style
-  const gameContainerStyle = {
-    flex: 1,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '2rem',
-  };
-
-  // Inject custom CSS if provided
   const customStyles = design.customCSS ? (
     <style dangerouslySetInnerHTML={{ __html: design.customCSS }} />
   ) : null;
 
-  // Inject custom HTML if provided
   const customHTML = design.customHTML ? (
     <div dangerouslySetInnerHTML={{ __html: design.customHTML }} />
   ) : null;
@@ -81,18 +75,17 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
   return (
     <div style={containerStyle}>
       {customStyles}
-      
-      {/* Background image */}
+
+      {/* Fond */}
       {gameBackgroundImage && <div style={backgroundStyle} />}
 
-      {/* Content wrapper */}
+      {/* Contenu */}
       <div style={contentWrapperStyle}>
-        {/* Custom HTML */}
         {customHTML}
 
-        {/* Campaign content */}
+        {/* Texte de titre/description */}
         <div style={messageStyle}>
-          <h2 
+          <h2
             className="text-2xl font-bold"
             style={{ color: design.titleColor }}
           >
@@ -105,9 +98,8 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
           )}
         </div>
 
-        {/* Game container */}
-        <div style={gameContainerStyle}>
-          {/* FIXED: Ensure GameFunnel is properly rendered with explicit JSX */}
+        {/* Jeu centré */}
+        <div style={centeredGameStyle}>
           <GameFunnel campaign={campaign} />
         </div>
       </div>
