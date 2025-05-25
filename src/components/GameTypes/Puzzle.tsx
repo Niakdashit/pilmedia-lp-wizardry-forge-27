@@ -15,7 +15,7 @@ const Puzzle: React.FC<PuzzleProps> = ({ config = {}, onConfigChange, isPreview,
   const [pieces, setPieces] = useState<number[]>([]);
   const [solved, setSolved] = useState(false);
   const [moves, setMoves] = useState(0);
-  const [showPreview, setShowPreview] = useState(false);
+  const [showPreview, setShowPreview] = useState(true); // Changé pour afficher par défaut
 
   useEffect(() => {
     if (isPreview || showPreview) {
@@ -109,7 +109,7 @@ const Puzzle: React.FC<PuzzleProps> = ({ config = {}, onConfigChange, isPreview,
           </select>
         </div>
 
-        {/* Canvas de prévisualisation */}
+        {/* Canvas de prévisualisation - toujours visible maintenant */}
         <div className="border-t pt-6">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-medium text-gray-700">Aperçu du jeu</h3>
@@ -171,19 +171,13 @@ const Puzzle: React.FC<PuzzleProps> = ({ config = {}, onConfigChange, isPreview,
 
               <div className="mt-4 text-center">
                 <button
-                  onClick={() => setShowPreview(false)}
-                  className="px-4 py-2 text-sm bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors mr-2"
-                >
-                  Nouveau mélange
-                </button>
-                <button
                   onClick={() => {
                     setShowPreview(false);
                     setTimeout(() => setShowPreview(true), 100);
                   }}
                   className="px-4 py-2 text-sm bg-[#841b60] text-white rounded-lg hover:bg-[#6d164f] transition-colors"
                 >
-                  Redémarrer
+                  Nouveau mélange
                 </button>
               </div>
             </div>
