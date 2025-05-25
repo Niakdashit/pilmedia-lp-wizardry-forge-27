@@ -1,5 +1,6 @@
 
 import React from 'react';
+import Jackpot from '../GameTypes/Jackpot';
 
 interface GameCanvasPreviewProps {
   campaign: any;
@@ -10,32 +11,91 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   campaign,
   className = ""
 }) => {
-  const gameBackgroundImage =
-    campaign.gameConfig?.[campaign.type]?.backgroundImage ||
-    campaign.design.backgroundImage;
+  // Image de fond générale (pour tout l'arrière-plan)
+  const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage;
+  
+  // Template de jackpot spécifique
+  const jackpotTemplateImage = campaign.gameConfig?.[campaign.type]?.customTemplate;
+  
+  // Configuration du bouton pour le jackpot
+  const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel || 'Lancer le Jackpot';
+  const buttonColor = campaign.gameConfig?.[campaign.type]?.buttonColor || '#ec4899';
+
+  const renderGame = () => {
+    switch (campaign.type) {
+      case 'jackpot':
+        return (
+          <Jackpot
+            isPreview={true}
+            instantWinConfig={{
+              mode: 'instant_winner' as const,
+              winProbability: campaign.gameConfig?.jackpot?.instantWin?.winProbability || 0.05,
+              maxWinners: campaign.gameConfig?.jackpot?.instantWin?.maxWinners,
+              winnersCount: 0
+            }}
+            config={campaign.gameConfig?.jackpot}
+            buttonLabel={buttonLabel}
+            buttonColor={buttonColor}
+            hideDefaultTemplate={true}
+          />
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
-    <div
-      className={`bg-gray-100 rounded-lg p-6 border-2 border-dashed border-gray-300 ${className}`}
-    >
-      <div className="w-full max-w-3xl mx-auto">
-        {gameBackgroundImage ? (
-          <img
-            src={gameBackgroundImage}
-            alt="Aperçu du jeu"
-            className="w-full h-auto rounded-lg shadow-lg"
-            style={{ backgroundSize: 'cover' }}
-          />
-        ) : (
-          <div className="rounded-lg shadow-lg h-[300px] flex items-center justify-center text-center text-gray-500 bg-white">
-            <div>
-              <p className="text-sm">Aucune image de fond</p>
-              <p className="text-xs mt-1">
-                Ajoutez une image dans l'onglet "Apparence visuelle"
-              </p>
-            </div>
+    <div className={`bg-gray-100 rounded-lg p-6 border-2 border-dashed border-gray-300 ${className}`}>
+      <div className="w-full max-w-3xl mx-auto relative" style={{ minHeight: '500px' }}>
+        {/* Container principal du jeu - dimensions fixes 680x400px, centré */}
+        <div
+          className="absolute bg-white rounded-lg shadow-lg overflow-hidden"
+          style={{ 
+            width: '680px', 
+            height: '400px',
+            left: '50%',
+            top: '50%',
+            transform: 'translate(-50%, -50%)'
+          }}
+        >
+          {/* Image de fond - s'affiche uniquement si uploadée */}
+          {gameBackgroundImage && (
+            <img
+              src={gameBackgroundImage}
+              className="absolute inset-0 w-full h-full object-contain z-0"
+              alt="Background"
+            />
+          )}
+
+          {/* Template de jackpot personnalisé - s'affiche uniquement si uploadé */}
+          {jackpotTemplateImage && (
+            <img
+              src={jackpotTemplateImage}
+              className="absolute inset-0 w-full h-full object-contain z-1"
+              alt="Template"
+            />
+          )}
+
+          {/* Jeu Jackpot - centré au-dessus de tous les visuels */}
+          <div
+            className="absolute flex items-center justify-center"
+            style={{ 
+              left: '50%',
+              top: '50%',
+              transform: 'translate(-50%, -50%)',
+              zIndex: 10,
+              width: '100%',
+              height: '100%'
+            }}
+          >
+            {renderGame() || (
+              <div className="text-center text-gray-500">
+                <p className="text-sm">Aperçu du jeu Jackpot</p>
+                <p className="text-xs mt-1">Le jeu apparaîtra ici</p>
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
