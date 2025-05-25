@@ -1,78 +1,86 @@
-import React from 'react';
+import React, { useState } from 'react';
+import GameCanvasPreview from './GameCanvasPreview';
 
-interface JackpotAppearanceEditorProps {
+interface CampaignEditorContentProps {
   campaign: any;
-  setCampaign: (data: any) => void;
+  setCampaign: (campaign: any) => void;
 }
 
-const JackpotAppearanceEditor: React.FC<JackpotAppearanceEditorProps> = ({ campaign, setCampaign }) => {
-  const type = campaign.type;
-  const gameConfig = campaign.gameConfig?.[type] || {};
-
-  const handleInputChange = (field: string, value: any) => {
-    setCampaign({
-      ...campaign,
+const CampaignEditorContent: React.FC<CampaignEditorContentProps> = ({ campaign, setCampaign }) => {
+  const handleInputChange = (field: string, value: string) => {
+    setCampaign((prev: any) => ({
+      ...prev,
       gameConfig: {
-        ...campaign.gameConfig,
-        [type]: {
-          ...gameConfig,
-          [field]: value,
-        },
-      },
-    });
+        ...prev.gameConfig,
+        [prev.type]: {
+          ...prev.gameConfig?.[prev.type],
+          [field]: value
+        }
+      }
+    }));
+  };
+
+  const handleFileChange = (field: string, file: File | null) => {
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    setCampaign((prev: any) => ({
+      ...prev,
+      gameConfig: {
+        ...prev.gameConfig,
+        [prev.type]: {
+          ...prev.gameConfig?.[prev.type],
+          [field]: url
+        }
+      }
+    }));
   };
 
   return (
-    <div className="space-y-6">
-      {/* Image de fond */}
-      <div>
-        <label className="block font-medium mb-1">Image de fond du jeu</label>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => {
-            const file = e.target.files?.[0];
-            if (file) handleInputChange('backgroundImage', URL.createObjectURL(file));
-          }}
-        />
-      </div>
+    <div className="space-y-6 p-6">
+      <h2 className="text-xl font-bold">Aperçu du jeu</h2>
+      <GameCanvasPreview campaign={campaign} className="mb-6" />
 
-      {/* Modèle personnalisé du jackpot */}
-      <div>
-        <label className="block font-medium mb-1">Modèle personnalisé du jackpot (680x400)</label>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => {
-            const file = e.target.files?.[0];
-            if (file) handleInputChange('customTemplate', URL.createObjectURL(file));
-          }}
-        />
-      </div>
+      <div className="space-y-4">
+        <div>
+          <label className="block font-medium mb-1">Image de fond du jeu</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => handleFileChange('backgroundImage', e.target.files?.[0] || null)}
+          />
+        </div>
 
-      {/* Texte du bouton */}
-      <div>
-        <label className="block font-medium mb-1">Texte du bouton</label>
-        <input
-          type="text"
-          value={gameConfig.buttonLabel || ''}
-          onChange={(e) => handleInputChange('buttonLabel', e.target.value)}
-          className="border rounded px-3 py-2 w-full"
-        />
-      </div>
+        <div>
+          <label className="block font-medium mb-1">Modèle personnalisé du jackpot (680x400)</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => handleFileChange('customTemplate', e.target.files?.[0] || null)}
+          />
+        </div>
 
-      {/* Couleur du bouton */}
-      <div>
-        <label className="block font-medium mb-1">Couleur du bouton</label>
-        <input
-          type="color"
-          value={gameConfig.buttonColor || '#ec4899'}
-          onChange={(e) => handleInputChange('buttonColor', e.target.value)}
-          className="h-10 w-20 p-0 border rounded"
-        />
+        <div>
+          <label className="block font-medium mb-1">Texte du bouton</label>
+          <input
+            type="text"
+            className="w-full border rounded px-3 py-2"
+            value={campaign.gameConfig?.[campaign.type]?.buttonLabel || ''}
+            onChange={(e) => handleInputChange('buttonLabel', e.target.value)}
+          />
+        </div>
+
+        <div>
+          <label className="block font-medium mb-1">Couleur du bouton</label>
+          <input
+            type="color"
+            className="w-12 h-10 p-0 border-0"
+            value={campaign.gameConfig?.[campaign.type]?.buttonColor || '#ec4899'}
+            onChange={(e) => handleInputChange('buttonColor', e.target.value)}
+          />
+        </div>
       </div>
     </div>
   );
 };
 
-export default JackpotAppearanceEditor;
+export default CampaignEditorContent;
