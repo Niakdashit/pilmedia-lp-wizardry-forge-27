@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Jackpot from '../GameTypes/Jackpot';
 
@@ -35,6 +34,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
             }}
             buttonLabel={buttonLabel}
             buttonColor={buttonColor}
+            hideDefaultTemplate={true} // important pour ne jamais afficher le template SVG
           />
         );
       default:
@@ -65,7 +65,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
             />
           )}
 
-          {/* Modèle de jackpot - s'affiche uniquement si uploadé (680x400) */}
+          {/* Modèle de jackpot (image personnalisée 680x400) - entre le fond et le jeu */}
           {jackpotTemplateImage && (
             <img
               src={jackpotTemplateImage}
@@ -74,7 +74,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
             />
           )}
 
-          {/* Jeu Jackpot - centré au-dessus de tous les visuels */}
+          {/* Jeu Jackpot (rouleaux + bouton) - affiché tout au-dessus */}
           <div
             className="absolute flex items-center justify-center"
             style={{
