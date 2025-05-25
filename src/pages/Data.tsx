@@ -1,126 +1,237 @@
 import React, { useState } from 'react';
-import { Download, Filter, RefreshCw, ChevronDown, Plus } from 'lucide-react';
+import { Search, Filter, Download, Upload } from 'lucide-react';
 
 const Data: React.FC = () => {
-  const [selectedCampaign, setSelectedCampaign] = useState('');
-  
-  return (
-    <div className="-mx-6 -mt-6">
-      <div className="relative h-[100px] bg-[#841b60] overflow-hidden">
-        <div className="absolute inset-10 opacity-[0.15]" 
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-            backgroundSize: '60px 60px',
-          }}
-        />
-        
-        <div className="relative h-full max-w-7xl mx-auto px-6 flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-white">Données</h1>
-          <select 
-            value={selectedCampaign}
-            onChange={(e) => setSelectedCampaign(e.target.value)}
-            className="w-64 bg-white/90 backdrop-blur-sm border-0 text-gray-700 py-2 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-white/20"
-          >
-            <option value="">Sélectionner une campagne</option>
-            <option value="1">Quiz Marketing Digital</option>
-            <option value="2">Roue de la fortune Soldes</option>
-            <option value="3">Carte à gratter</option>
-          </select>
-        </div>
+  const [activeTab, setActiveTab] = useState<'contacts' | 'campaigns' | 'analytics'>('contacts');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedFilter, setSelectedFilter] = useState('all');
 
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg
-            viewBox="0 0 1440 116"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-full"
-            preserveAspectRatio="none"
-            height="10"
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleFilterChange = (filter: string) => {
+    setSelectedFilter(filter);
+  };
+
+  const handleExport = () => {
+    console.log('Exporting data...');
+    // Implementation for exporting data
+  };
+
+  const handleImport = () => {
+    console.log('Importing data...');
+    // Implementation for importing data
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h1 className="text-2xl font-bold text-gray-800">Données</h1>
+        <div className="flex space-x-3">
+          <button
+            onClick={handleExport}
+            className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-lg bg-white hover:bg-gray-50"
           >
-            <path
-              d="M0 116L60 96.3C120 76.7 240 37.3 360 21.7C480 6 600 14 720 34.7C840 55.3 960 89.7 1080 96.3C1200 103 1320 82 1380 71.5L1440 61V116H1380C1320 116 1200 116 1080 116C960 116 840 116 720 116C600 116 480 116 360 116C240 116 120 116 60 116H0Z"
-              fill="#ebf4f7"
-            />
-          </svg>
+            <Download className="w-4 h-4 mr-2" />
+            Exporter
+          </button>
+          <button
+            onClick={handleImport}
+            className="inline-flex items-center px-4 py-2 border border-[#841b60] text-sm font-medium rounded-lg text-[#841b60] bg-white hover:bg-[#f8f0f5]"
+          >
+            <Upload className="w-4 h-4 mr-2" />
+            Importer
+          </button>
         </div>
       </div>
 
-      <div className="px-6 space-y-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-          <div className="bg-white rounded-xl shadow-sm p-6">
-            <h2 className="text-lg font-bold text-gray-800 mb-4">Tirage au sort</h2>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Pool de participants
-                </label>
-                <select className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]">
-                  <option>Tous les participants</option>
-                  <option>Participants du jour</option>
-                  <option>Participants de la semaine</option>
-                </select>
+      <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+        <div className="border-b border-gray-200">
+          <nav className="flex space-x-8 px-6">
+            <button
+              onClick={() => setActiveTab('contacts')}
+              className={`py-4 px-1 font-medium text-sm border-b-2 transition-colors duration-200 ${
+                activeTab === 'contacts' 
+                  ? 'border-[#841b60] text-[#841b60]' 
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Contacts
+            </button>
+            <button
+              onClick={() => setActiveTab('campaigns')}
+              className={`py-4 px-1 font-medium text-sm border-b-2 transition-colors duration-200 ${
+                activeTab === 'campaigns' 
+                  ? 'border-[#841b60] text-[#841b60]' 
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Campagnes
+            </button>
+            <button
+              onClick={() => setActiveTab('analytics')}
+              className={`py-4 px-1 font-medium text-sm border-b-2 transition-colors duration-200 ${
+                activeTab === 'analytics' 
+                  ? 'border-[#841b60] text-[#841b60]' 
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Analytiques
+            </button>
+          </nav>
+        </div>
+
+        <div className="p-6">
+          <div className="flex justify-between mb-6">
+            <div className="relative w-64">
+              <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <Search className="h-4 w-4 text-gray-400" />
               </div>
-              <div className="flex space-x-3">
-                <button className="flex-1 px-4 py-2 bg-[#841b60] text-white font-medium rounded-lg hover:bg-[#6d164f] transition-colors duration-200">
-                  Lancer le tirage
-                </button>
-                <button className="px-4 py-2 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors duration-200">
-                  <Download className="w-5 h-5" />
-                </button>
-              </div>
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={handleSearch}
+                className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md text-sm placeholder-gray-400 focus:outline-none focus:ring-[#841b60] focus:border-[#841b60]"
+                placeholder="Rechercher..."
+              />
+            </div>
+            <div className="relative">
+              <button
+                className="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-lg bg-white hover:bg-gray-50"
+              >
+                <Filter className="w-4 h-4 mr-2" />
+                Filtrer
+              </button>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm p-6">
-            <h2 className="text-lg font-bold text-gray-800 mb-4">Exports</h2>
-            <div className="space-y-3">
-              <button className="w-full px-4 py-2 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors duration-200 flex items-center justify-between">
-                <span>Exporter les participations</span>
-                <Download className="w-5 h-5" />
-              </button>
-              <button className="w-full px-4 py-2 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors duration-200 flex items-center justify-between">
-                <span>Exporter les opt-ins</span>
-                <Download className="w-5 h-5" />
-              </button>
+          {activeTab === 'contacts' && (
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Nom
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Email
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Source
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Date d'inscription
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Statut
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {[1, 2, 3, 4, 5].map((item) => (
+                    <tr key={item} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        Jean Dupont
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        jean.dupont@example.com
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        Quiz Marketing
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        12/05/2023
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                          Actif
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
-          </div>
+          )}
 
-          <div className="bg-white rounded-xl shadow-sm p-6 lg:col-span-2">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-bold text-gray-800">Tableau de bord interactif</h2>
-              <div className="flex space-x-2">
-                <button className="p-2 text-gray-500 hover:text-[#841b60] rounded-lg hover:bg-gray-100">
-                  <Filter className="w-5 h-5" />
-                </button>
-                <button className="p-2 text-gray-500 hover:text-[#841b60] rounded-lg hover:bg-gray-100">
-                  <RefreshCw className="w-5 h-5" />
-                </button>
+          {activeTab === 'campaigns' && (
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Nom
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Type
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Participants
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Date de création
+                    </th>
+                    <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Statut
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {[1, 2, 3].map((item) => (
+                    <tr key={item} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                        Quiz Marketing Digital
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        Quiz
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        245
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        15/03/2023
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800">
+                          En cours
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {activeTab === 'analytics' && (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="bg-white p-6 rounded-lg border border-gray-200">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">Acquisition de contacts</h3>
+                <div className="h-64 bg-gray-100 rounded flex items-center justify-center">
+                  <p className="text-gray-500">Graphique d'acquisition</p>
+                </div>
+              </div>
+              <div className="bg-white p-6 rounded-lg border border-gray-200">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">Engagement</h3>
+                <div className="h-64 bg-gray-100 rounded flex items-center justify-center">
+                  <p className="text-gray-500">Graphique d'engagement</p>
+                </div>
+              </div>
+              <div className="bg-white p-6 rounded-lg border border-gray-200">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">Conversion</h3>
+                <div className="h-64 bg-gray-100 rounded flex items-center justify-center">
+                  <p className="text-gray-500">Graphique de conversion</p>
+                </div>
+              </div>
+              <div className="bg-white p-6 rounded-lg border border-gray-200">
+                <h3 className="text-lg font-medium text-gray-900 mb-4">Rétention</h3>
+                <div className="h-64 bg-gray-100 rounded flex items-center justify-center">
+                  <p className="text-gray-500">Graphique de rétention</p>
+                </div>
               </div>
             </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="border border-gray-200 rounded-lg p-4">
-                <h3 className="text-sm font-medium text-gray-600 mb-2">Top 10 réponses</h3>
-                <div className="h-48 flex items-center justify-center bg-gray-50 rounded">
-                  <span className="text-gray-400">Graphique</span>
-                </div>
-              </div>
-              
-              <div className="border border-gray-200 rounded-lg p-4">
-                <h3 className="text-sm font-medium text-gray-600 mb-2">Répartition H/F</h3>
-                <div className="h-48 flex items-center justify-center bg-gray-50 rounded">
-                  <span className="text-gray-400">Graphique</span>
-                </div>
-              </div>
-              
-              <div className="border border-gray-200 rounded-lg p-4">
-                <h3 className="text-sm font-medium text-gray-600 mb-2">Âges</h3>
-                <div className="h-48 flex items-center justify-center bg-gray-50 rounded">
-                  <span className="text-gray-400">Graphique</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

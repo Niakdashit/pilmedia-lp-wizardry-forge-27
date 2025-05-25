@@ -161,20 +161,23 @@ export const ModuleRenderer: React.FC<ModuleRendererProps> = ({ module }) => {
 
         {module.type === 'columns' && (
           <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${module.settings?.columns || 2}, 1fr)` }}>
-            {Array.from({ length: module.settings?.columns || 2 }).map((_, index) => (
-              <div key={index} className="border border-gray-200 rounded p-4">
-                <textarea
-                  value={Array.isArray(module.content) ? (module.content[index] || '') : (index === 0 ? (module.content || '') : '')}
-                  onChange={(e) => {
-                    const newContent = Array.isArray(module.content) ? [...module.content] : [];
-                    newContent[index] = e.target.value;
-                    updateModule(module.id, { content: newContent });
-                  }}
-                  className="w-full p-2 border border-gray-200 rounded resize-y min-h-[100px] focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-                  placeholder={`Contenu de la colonne ${index + 1}...`}
-                />
-              </div>
-            ))}
+            {Array.from({ length: module.settings?.columns || 2 }).map((_, index) => {
+              const columnContent = Array.isArray(module.content) ? (module.content[index] || '') : (index === 0 ? (module.content || '') : '');
+              return (
+                <div key={index} className="border border-gray-200 rounded p-4">
+                  <textarea
+                    value={columnContent}
+                    onChange={(e) => {
+                      const newContent = Array.isArray(module.content) ? [...module.content] : [];
+                      newContent[index] = e.target.value;
+                      updateModule(module.id, { content: newContent });
+                    }}
+                    className="w-full p-2 border border-gray-200 rounded resize-y min-h-[100px] focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
+                    placeholder={`Contenu de la colonne ${index + 1}...`}
+                  />
+                </div>
+              );
+            })}
           </div>
         )}
 

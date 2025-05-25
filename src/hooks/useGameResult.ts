@@ -10,9 +10,7 @@ export const useGameResult = (campaignId: string, config: GameConfig) => {
     // Get current winners count
     const result = await supabase
       .from('game_results')
-      .select('*')
-      .eq('campaign_id', campaignId)
-      .eq('is_winner', true);
+      .select('*');
 
     const currentWinners = result.count || 0;
 

@@ -123,6 +123,10 @@ const Contacts: React.FC = () => {
     setShowImportModal(false);
   };
 
+  const handleSelectAll = () => {
+    console.log('Select all contacts');
+  };
+
   return (
     <div className="-mx-6 -mt-6">
       <div className="relative h-[100px] bg-[#841b60] overflow-hidden">

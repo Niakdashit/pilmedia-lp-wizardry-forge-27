@@ -184,6 +184,12 @@ const Campaigns: React.FC = () => {
     setSelectedCampaign(campaign);
   };
 
+  const handleTypeFilter = (type: string) => {
+    // Fix line 303 type issue
+    const IconComponent = getCampaignTypeIcon(type as any);
+    return <IconComponent className="w-5 h-5" />;
+  };
+
   return (
     <div className="-mx-6 -mt-6">
       <div className="relative h-[100px] bg-[#841b60] overflow-hidden">
@@ -300,7 +306,7 @@ const Campaigns: React.FC = () => {
                   >
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center justify-center">
-                        {getCampaignTypeIcon(campaign.type)}
+                        {handleTypeFilter(campaign.type)}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
