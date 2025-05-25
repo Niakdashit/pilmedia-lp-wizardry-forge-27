@@ -1,5 +1,6 @@
+
 import React from 'react';
-import Jackpot from '@/components/games/Jackpot'; // ✅ ou adapte ce chemin selon ton projet
+import Jackpot from '@/components/GameTypes/Jackpot';
 
 interface GameCanvasPreviewProps {
   campaign: any;
@@ -18,7 +19,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   const renderGame = () => {
     switch (campaign.type) {
       case 'jackpot':
-        return <Jackpot config={campaign.gameConfig?.jackpot} />;
+        return <Jackpot config={campaign.gameConfig?.jackpot} isPreview={true} />;
       // case 'quiz':
       //   return <Quiz config={campaign.gameConfig?.quiz} />;
       default:
@@ -42,4 +43,13 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
           {renderGame() || (
             <div className="text-center text-white backdrop-blur-sm bg-black/30 p-4 rounded">
               <p className="text-sm font-semibold">Aperçu du jeu</p>
-              <p className="text-xs mt-1">
+              <p className="text-xs mt-1">Sélectionnez un type de jeu pour voir l'aperçu</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default GameCanvasPreview;
