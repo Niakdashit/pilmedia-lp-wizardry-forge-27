@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNewsletterStore } from '@/stores/newsletterStore';
 import { Trash2, GripVertical, ChevronUp, ChevronDown, Copy } from 'lucide-react';
