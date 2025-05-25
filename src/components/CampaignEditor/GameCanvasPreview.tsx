@@ -42,18 +42,18 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   return (
     <div
       className={`bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 relative overflow-hidden ${className}`}
-      style={{ minHeight: '500px' }}
+      style={{ 
+        minHeight: '500px',
+        height: gameBackgroundImage ? 'auto' : '500px'
+      }}
     >
       {/* Image de fond générale - s'adapte à sa taille sans être coupée */}
       {gameBackgroundImage && (
-        <div
-          className="absolute inset-0 rounded-lg flex items-center justify-center"
-          style={{ zIndex: 1 }}
-        >
+        <div className="w-full h-auto">
           <img
             src={gameBackgroundImage}
             alt="Image de fond du jeu"
-            className="max-w-full max-h-full object-contain rounded-lg"
+            className="w-full h-auto object-contain rounded-lg"
           />
         </div>
       )}
