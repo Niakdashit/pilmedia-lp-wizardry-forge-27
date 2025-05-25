@@ -71,6 +71,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
         }}
       >
       
+          />
         )}
 
         {/* Jeu (rouleaux + bouton) - absolument centré AU-DESSUS du template */}
