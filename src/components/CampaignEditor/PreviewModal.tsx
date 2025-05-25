@@ -21,7 +21,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
             onClick={onClose}
             className="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"
           >
-            <X className="w-5 h-5" />
+            <X className="w-full h-full" />
           </button>
         </div>
         
