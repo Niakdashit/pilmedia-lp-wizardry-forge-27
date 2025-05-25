@@ -21,7 +21,6 @@ interface JackpotProps {
   onFinish?: (result: 'win' | 'lose') => void;
   buttonLabel?: string;
   buttonColor?: string;
-  hideDefaultTemplate?: boolean;
 }
 
 const Jackpot: React.FC<JackpotProps> = ({
@@ -29,8 +28,7 @@ const Jackpot: React.FC<JackpotProps> = ({
   instantWinConfig,
   onFinish,
   buttonLabel = "Lancer le Jackpot",
-  buttonColor = "#ec4899",
-  hideDefaultTemplate = false
+  buttonColor = "#ec4899"
 }) => {
   const [slots, setSlots] = useState<string[]>(['🍒', '🍋', '🍊']);
   const [isRolling, setIsRolling] = useState(false);

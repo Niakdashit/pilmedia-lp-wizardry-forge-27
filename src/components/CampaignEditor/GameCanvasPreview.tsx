@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Jackpot from '../GameTypes/Jackpot';
 
@@ -32,10 +33,8 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
               maxWinners: campaign.gameConfig?.jackpot?.instantWin?.maxWinners,
               winnersCount: 0
             }}
-            config={campaign.gameConfig?.jackpot}
             buttonLabel={buttonLabel}
             buttonColor={buttonColor}
-            hideDefaultTemplate={true}
           />
         );
       default:
@@ -44,7 +43,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   };
 
   return (
-    <div className={bg-gray-100 rounded-lg p-6 border-2 border-dashed border-gray-300 ${className}}>
+    <div className={`bg-gray-100 rounded-lg p-6 border-2 border-dashed border-gray-300 ${className}`}>
       <div className="w-full max-w-3xl mx-auto relative" style={{ minHeight: '500px' }}>
         {/* Container principal du jeu - dimensions fixes 680x400px, centré */}
         <div
