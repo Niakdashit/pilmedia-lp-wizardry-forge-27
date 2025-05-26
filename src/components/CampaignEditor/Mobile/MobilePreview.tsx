@@ -1,3 +1,4 @@
+
 import React from 'react';
 import MobileWheelPreview from '../../GameTypes/MobileWheelPreview';
 import { Quiz, Scratch, Memory, Puzzle, Dice, Jackpot } from '../../GameTypes';
@@ -173,12 +174,12 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
         }} />}
 
           {/* Layer 2: Decorative Overlay (above background, below everything else) */}
-          {mobileConfig.decorativeOverlay && <div className="absolute inset-0 z-5 pointer-events-none">
-              <img src={mobileConfig.decorativeOverlay} alt="Decorative overlay" className="w-full h-full object-cover opacity-80" />
+          {mobileConfig.decorativeOverlay && <div className="absolute inset-0 z-10 pointer-events-none">
+              <img src={mobileConfig.decorativeOverlay} alt="Decorative overlay" className="w-full h-full object-contain" />
             </div>}
 
           {/* Layer 3: Logo Overlay */}
-          {mobileConfig.logoOverlay && <div className={`absolute z-10 w-12 h-12 ${mobileConfig.logoPosition === 'top-left' ? 'top-3 left-3' : mobileConfig.logoPosition === 'top-center' ? 'top-3 left-1/2 transform -translate-x-1/2' : mobileConfig.logoPosition === 'top-right' ? 'top-3 right-3' : mobileConfig.logoPosition === 'center' ? 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2' : mobileConfig.logoPosition === 'bottom-left' ? 'bottom-3 left-3' : 'bottom-3 right-3'}`}>
+          {mobileConfig.logoOverlay && <div className={`absolute z-15 w-12 h-12 ${mobileConfig.logoPosition === 'top-left' ? 'top-3 left-3' : mobileConfig.logoPosition === 'top-center' ? 'top-3 left-1/2 transform -translate-x-1/2' : mobileConfig.logoPosition === 'top-right' ? 'top-3 right-3' : mobileConfig.logoPosition === 'center' ? 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2' : mobileConfig.logoPosition === 'bottom-left' ? 'bottom-3 left-3' : 'bottom-3 right-3'}`}>
               <img src={mobileConfig.logoOverlay} alt="Logo" className="w-full h-full object-contain" />
             </div>}
 
