@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface Tab {
@@ -19,6 +18,7 @@ const CampaignEditorTabs: React.FC<CampaignEditorTabsProps> = ({
     { id: 'general', label: 'Général' },
     { id: 'content', label: 'Contenu' },
     { id: 'screens', label: 'Écrans' },
+    { id: 'form', label: 'Formulaire' },       // <--- Ajout de l'onglet Formulaire ici
     { id: 'mobile', label: 'Mobile' },
     { id: 'settings', label: 'Paramétrage' }
   ];
