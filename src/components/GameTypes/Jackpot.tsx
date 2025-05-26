@@ -72,9 +72,9 @@ const Jackpot: React.FC<JackpotProps> = ({
   };
   const slotSize = getSlotSize();
   const slotGap = Math.max(8, slotSize * 0.15);
-  return <div className="flex flex-col items-center justify-center w-full h-full p-2" style={{
+  return <div style={{
     minHeight: '200px'
-  }}>
+  }} className="flex flex-col items-center justify-center w-full h-full p-2">
       {/* Slots */}
       <div className="flex mb-4" style={{
       gap: slotGap,
