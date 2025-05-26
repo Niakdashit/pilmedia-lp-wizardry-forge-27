@@ -8,7 +8,6 @@ interface Funnel2StepsProps {
   formData: any;
   setFormData: (data: any) => void;
   onReset: () => void;
-  viewMode: 'modal' | 'mobile' | 'tablet';
 }
 
 const Funnel2Steps: React.FC<Funnel2StepsProps> = ({
@@ -17,8 +16,7 @@ const Funnel2Steps: React.FC<Funnel2StepsProps> = ({
   setCurrentStep,
   formData,
   setFormData,
-  onReset,
-  viewMode
+  onReset
 }) => {
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
