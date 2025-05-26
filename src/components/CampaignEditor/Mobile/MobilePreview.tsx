@@ -14,20 +14,20 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
     switch (previewMode) {
       case 'mobile':
         return {
-          width: '280px',
-          height: '500px',
+          width: '240px',
+          height: '420px',
           borderRadius: '20px',
-          border: '6px solid #1f1f1f',
-          boxShadow: '0 0 20px rgba(0,0,0,0.3)',
+          border: '4px solid #1f1f1f',
+          boxShadow: '0 0 15px rgba(0,0,0,0.3)',
           backgroundColor: '#000'
         };
       case 'tablet':
         return {
-          width: '340px',
-          height: '480px',
+          width: '280px',
+          height: '380px',
           borderRadius: '14px',
-          border: '4px solid #333',
-          boxShadow: '0 0 15px rgba(0,0,0,0.2)',
+          border: '3px solid #333',
+          boxShadow: '0 0 12px rgba(0,0,0,0.2)',
           backgroundColor: '#000'
         };
     }
@@ -37,12 +37,11 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
     const baseStyle = {
       width: '100%',
       height: '100%',
-      borderRadius: previewMode === 'mobile' ? '14px' : '10px',
+      borderRadius: previewMode === 'mobile' ? '16px' : '11px',
       overflow: 'hidden',
       position: 'relative' as const,
     };
 
-    // Apply mobile-specific background for both mobile and tablet
     if (mobileConfig.backgroundImage) {
       return {
         ...baseStyle,
@@ -67,12 +66,12 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
       case 'top':
         return {
           justifyContent: 'flex-start',
-          paddingTop: '10%'
+          paddingTop: '8%'
         };
       case 'bottom':
         return {
           justifyContent: 'flex-end',
-          paddingBottom: '15%'
+          paddingBottom: '12%'
         };
       default:
         return {
@@ -83,14 +82,14 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
 
   const getGameContainerStyle = () => {
     const maxWidth = mobileConfig.fullscreenGame ? '100%' : `${mobileConfig.gameMaxWidth || 85}%`;
-    const maxHeight = mobileConfig.fullscreenGame ? '100%' : `${mobileConfig.gameMaxHeight || 50}vh`;
+    const maxHeight = mobileConfig.fullscreenGame ? '100%' : `${Math.min(mobileConfig.gameMaxHeight || 50, 60)}%`;
     
     return {
       maxWidth,
       maxHeight,
       width: '100%',
-      minHeight: '200px',
-      padding: `${mobileConfig.gamePaddingY || 8}px ${mobileConfig.gamePaddingX || 8}px`,
+      minHeight: '120px',
+      padding: `${Math.min(mobileConfig.gamePaddingY || 4, 8)}px ${Math.min(mobileConfig.gamePaddingX || 4, 8)}px`,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -101,8 +100,8 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
   const showDescription = mobileConfig.showDescription !== false && (mobileConfig.description || campaign.description);
 
   return (
-    <div className="flex flex-col items-center space-y-4">
-      <div className="text-sm font-medium text-gray-600 capitalize">
+    <div className="flex flex-col items-center space-y-3">
+      <div className="text-xs font-medium text-gray-600 capitalize">
         {previewMode} Preview
       </div>
       
@@ -111,13 +110,13 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
           {/* Logo Overlay */}
           {mobileConfig.logoOverlay && (
             <div 
-              className={`absolute z-10 w-12 h-12 ${
-                mobileConfig.logoPosition === 'top-left' ? 'top-3 left-3' :
-                mobileConfig.logoPosition === 'top-center' ? 'top-3 left-1/2 transform -translate-x-1/2' :
-                mobileConfig.logoPosition === 'top-right' ? 'top-3 right-3' :
+              className={`absolute z-10 w-8 h-8 ${
+                mobileConfig.logoPosition === 'top-left' ? 'top-2 left-2' :
+                mobileConfig.logoPosition === 'top-center' ? 'top-2 left-1/2 transform -translate-x-1/2' :
+                mobileConfig.logoPosition === 'top-right' ? 'top-2 right-2' :
                 mobileConfig.logoPosition === 'center' ? 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2' :
-                mobileConfig.logoPosition === 'bottom-left' ? 'bottom-3 left-3' :
-                'bottom-3 right-3'
+                mobileConfig.logoPosition === 'bottom-left' ? 'bottom-2 left-2' :
+                'bottom-2 right-2'
               }`}
             >
               <img 
@@ -144,19 +143,20 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
             className="flex flex-col h-full relative z-20"
             style={{
               ...getGamePositionStyles(),
-              padding: `${mobileConfig.verticalSpacing || 16}px ${mobileConfig.horizontalPadding || 12}px`,
-              gap: `${mobileConfig.verticalSpacing || 16}px`
+              padding: `${Math.min(mobileConfig.verticalSpacing || 12, 16)}px ${Math.min(mobileConfig.horizontalPadding || 8, 12)}px`,
+              gap: `${Math.min(mobileConfig.verticalSpacing || 12, 16)}px`
             }}
           >
             {/* Title & Description Block */}
             {(showTitle || showDescription) && (
-              <div className="text-center space-y-2 flex-shrink-0">
+              <div className="text-center space-y-1 flex-shrink-0">
                 {showTitle && (
                   <h2 
-                    className={`${mobileConfig.titleSize || 'text-lg'} ${mobileConfig.titleWeight || 'font-bold'} ${mobileConfig.titleAlignment || 'text-center'}`}
+                    className={`text-sm font-bold text-center`}
                     style={{ 
                       color: mobileConfig.titleColor || '#000000',
-                      fontFamily: mobileConfig.fontFamily || 'Inter'
+                      fontFamily: mobileConfig.fontFamily || 'Inter',
+                      fontSize: 'clamp(12px, 3vw, 14px)'
                     }}
                   >
                     {mobileConfig.title || campaign.name}
@@ -164,10 +164,11 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
                 )}
                 {showDescription && (
                   <p 
-                    className={`${mobileConfig.descriptionSize || 'text-sm'} ${mobileConfig.descriptionAlignment || 'text-center'}`}
+                    className={`text-xs text-center`}
                     style={{ 
                       color: mobileConfig.descriptionColor || '#666666',
-                      fontFamily: mobileConfig.fontFamily || 'Inter'
+                      fontFamily: mobileConfig.fontFamily || 'Inter',
+                      fontSize: 'clamp(10px, 2.5vw, 12px)'
                     }}
                   >
                     {mobileConfig.description || campaign.description}
@@ -186,13 +187,13 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
             {/* Mobile Button */}
             {mobileConfig.buttonText && (
               <button
-                className={`${mobileConfig.buttonShape || 'rounded-lg'} ${mobileConfig.buttonShadow || 'shadow-md'} transition-colors px-4 py-2 text-white font-medium flex-shrink-0`}
+                className={`${mobileConfig.buttonShape || 'rounded-lg'} ${mobileConfig.buttonShadow || 'shadow-md'} transition-colors px-3 py-2 text-white font-medium flex-shrink-0`}
                 style={{
                   backgroundColor: mobileConfig.buttonColor || '#841b60',
                   color: mobileConfig.buttonTextColor || '#ffffff',
-                  width: `${mobileConfig.buttonWidth || 80}%`,
+                  width: `${Math.min(mobileConfig.buttonWidth || 80, 90)}%`,
                   margin: '0 auto',
-                  fontSize: '14px'
+                  fontSize: 'clamp(10px, 2.5vw, 12px)'
                 }}
               >
                 {mobileConfig.buttonText}
