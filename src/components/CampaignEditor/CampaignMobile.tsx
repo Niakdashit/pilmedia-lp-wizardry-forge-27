@@ -71,8 +71,8 @@ const CampaignMobile: React.FC<CampaignMobileProps> = ({ campaign, setCampaign }
         </div>
       </div>
 
-      {/* Right Panel - Preview */}
-      <div className="w-96 border-l border-gray-200 bg-gray-50 flex flex-col">
+      {/* Right Panel - Preview - INCREASED HEIGHT */}
+      <div className="w-96 border-l border-gray-200 bg-gray-50 flex flex-col min-h-0">
         {/* Preview Mode Toggle */}
         <div className="p-4 border-b border-gray-200">
           <div className="flex items-center space-x-2 bg-white rounded-lg p-1">
@@ -101,12 +101,14 @@ const CampaignMobile: React.FC<CampaignMobileProps> = ({ campaign, setCampaign }
           </div>
         </div>
 
-        {/* Preview */}
-        <div className="flex-1 p-4 flex items-center justify-center">
-          <MobilePreview
-            campaign={campaign}
-            previewMode={previewMode}
-          />
+        {/* Preview - WITH SCROLLING AND FULL HEIGHT */}
+        <div className="flex-1 p-4 overflow-y-auto" style={{ minHeight: '700px' }}>
+          <div className="flex items-start justify-center h-full">
+            <MobilePreview
+              campaign={campaign}
+              previewMode={previewMode}
+            />
+          </div>
         </div>
       </div>
     </div>
