@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import Modal from '../common/Modal'; // crée ce composant simple si tu ne l’as pas
+import Modal from '../common/Modal';
+import DynamicContactForm, { FieldConfig } from '../forms/DynamicContactForm';
 import { Wheel, Scratch, Jackpot, Dice } from '../GameTypes';
 
 interface FunnelUnlockedGameProps {
@@ -12,8 +13,15 @@ const FunnelUnlockedGame: React.FC<FunnelUnlockedGameProps> = ({ campaign }) => 
   const [gamePlayed, setGamePlayed] = useState(false);
   const [gameResult, setGameResult] = useState<'win' | 'lose' | null>(null);
 
-  const handleFormSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  // Exemple : tu peux rendre ce tableau dynamique selon ta config campagne !
+  const fields: FieldConfig[] = [
+    { name: "prenom", label: "Prénom", required: true },
+    { name: "nom", label: "Nom", required: true },
+    { name: "email", label: "Email", type: "email", required: true }
+    // Ajoute d'autres champs si besoin
+  ];
+
+  const handleFormSubmit = (formData: Record<string, string>) => {
     setShowFormModal(false);
     setTimeout(() => {
       setFormValidated(true);
@@ -103,35 +111,14 @@ const FunnelUnlockedGame: React.FC<FunnelUnlockedGameProps> = ({ campaign }) => 
         </div>
       )}
 
-      {/* Modale formulaire */}
+      {/* Modale formulaire dynamique */}
       {showFormModal && (
         <Modal onClose={() => setShowFormModal(false)} title={campaign.screens[1]?.title || 'Vos informations'}>
-          <form onSubmit={handleFormSubmit} className="space-y-4">
-            <input
-              type="text"
-              placeholder="Prénom"
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded"
-            />
-            <input
-              type="text"
-              placeholder="Nom"
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded"
-            />
-            <input
-              type="email"
-              placeholder="Email"
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded"
-            />
-            <button
-              type="submit"
-              className="w-full bg-[#841b60] text-white py-2 rounded font-medium"
-            >
-              {campaign.screens[1]?.buttonText || 'C’est parti !'}
-            </button>
-          </form>
+          <DynamicContactForm
+            fields={fields}
+            submitLabel={campaign.screens[1]?.buttonText || 'C’est parti !'}
+            onSubmit={handleFormSubmit}
+          />
         </Modal>
       )}
     </div>
