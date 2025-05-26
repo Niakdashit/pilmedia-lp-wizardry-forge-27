@@ -5,6 +5,7 @@ import CampaignEditorTabs from '../components/CampaignEditor/CampaignEditorTabs'
 import CampaignEditorContent from '../components/CampaignEditor/CampaignEditorContent';
 import PreviewModal from '../components/CampaignEditor/PreviewModal';
 import CampaignMobile from '../components/CampaignEditor/CampaignMobile';
+import FormEditor from '../components/campaign/FormEditor'; // ← AJOUTE CETTE LIGNE
 import { CampaignType, getDefaultGameConfig } from '../utils/campaignTypes';
 
 const defaultJackpotConfig = {
@@ -179,6 +180,11 @@ const CampaignEditor: React.FC = () => {
             <CampaignMobile
               campaign={campaign}
               setCampaign={setCampaign}
+            />
+          ) : activeTab === 'form' ? (
+            <FormEditor
+              formFields={campaign.formFields || []}
+              setFormFields={(fields) => setCampaign((prev: any) => ({ ...prev, formFields: fields }))}
             />
           ) : (
             <CampaignEditorContent
