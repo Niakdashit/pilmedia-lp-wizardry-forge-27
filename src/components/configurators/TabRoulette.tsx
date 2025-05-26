@@ -18,8 +18,6 @@ interface InstantWinConfig {
 interface TabRouletteProps {
   campaign: any;
   setCampaign: React.Dispatch<React.SetStateAction<any>>;
-  config: InstantWinConfig;
-  onFinish?: (result: 'win' | 'lose') => void;
 }
 
 const getThemeColors = (theme: string): string[] => {
@@ -47,14 +45,11 @@ const getThemeColors = (theme: string): string[] => {
 
 const TabRoulette: React.FC<TabRouletteProps> = ({
   campaign,
-  setCampaign,
-  config,
-  onFinish
+  setCampaign
 }) => {
   const [segments, setSegments] = useState<Segment[]>(campaign?.config?.roulette?.segments || []);
   const [centerImage, setCenterImage] = useState<File | null>(null);
-  const [rotation, setRotation] = useState(0);
-  const [spinning, setSpinning] = useState(false);
+  const [rotation] = useState(0);
   const [desiredCount, setDesiredCount] = useState<number>(segments.length);
   const [theme, setTheme] = useState<'default' | 'promo' | 'food' | 'casino' | 'child' | 'gaming' | 'luxury' | 'halloween' | 'noel'>('default');
   const [borderColor, setBorderColor] = useState<string>('#841b60');
