@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Color from 'color';
+import DynamicContactForm, { FieldConfig } from '../forms/DynamicContactForm';
 import { Quiz, Wheel, Scratch, Memory, Puzzle, Dice, Jackpot } from './GameTypes';
 
 interface GameFunnelProps {
@@ -8,14 +9,6 @@ interface GameFunnelProps {
 
 const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
   const [step, setStep] = useState<'start' | 'form' | 'game' | 'end'>('start');
-  const [formData, setFormData] = useState({
-    civilite: '',
-    prenom: '',
-    nom: '',
-    email: '',
-    telephone: '',
-    codePostal: ''
-  });
 
   const getContrastColor = (bgColor: string) => {
     try {
@@ -27,8 +20,7 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
   };
 
   const handleStart = () => setStep('form');
-  const handleFormSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleFormSubmit = (formData: Record<string, string>) => {
     setStep('game');
   };
   const handleEnd = () => setStep('end');
@@ -47,6 +39,15 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
         return <div className="text-center text-gray-400">Non compatible avec ce funnel</div>;
     }
   };
+
+  // Exemple de champs dynamiques : à rendre dynamique depuis ta config campagne si besoin !
+  const fields: FieldConfig[] = [
+    { name: "civilite", label: "Civilité", type: "select", options: ["M.", "Mme"], required: false },
+    { name: "prenom", label: "Prénom", required: true },
+    { name: "nom", label: "Nom", required: true },
+    { name: "email", label: "Email", type: "email", required: true }
+    // Ajoute d'autres champs selon ta config
+  ];
 
   return (
     <div className="w-full flex flex-col items-center">
@@ -96,60 +97,11 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
           >
             {campaign.screens[1]?.title || 'Your Information'}
           </h2>
-          <form onSubmit={handleFormSubmit} className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Civilité</label>
-                <select
-                  value={formData.civilite}
-                  onChange={(e) => setFormData({ ...formData, civilite: e.target.value })}
-                  required={campaign.screens[1]?.requiredFields?.includes('civilite')}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                >
-                  <option value="">Sélectionner</option>
-                  <option value="M.">M.</option>
-                  <option value="Mme">Mme</option>
-                </select>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <input
-                type="text"
-                placeholder="Prénom"
-                value={formData.prenom}
-                onChange={(e) => setFormData({ ...formData, prenom: e.target.value })}
-                required
-                className="px-4 py-2 border border-gray-300 rounded-lg"
-              />
-              <input
-                type="text"
-                placeholder="Nom"
-                value={formData.nom}
-                onChange={(e) => setFormData({ ...formData, nom: e.target.value })}
-                required
-                className="px-4 py-2 border border-gray-300 rounded-lg"
-              />
-            </div>
-            <input
-              type="email"
-              placeholder="Email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-            />
-            <button
-              type="submit"
-              className="w-full px-6 py-3 font-medium transition-colors mt-4"
-              style={{
-                backgroundColor: campaign.design.buttonColor,
-                color: getContrastColor(campaign.design.buttonColor),
-                borderRadius: campaign.design.borderRadius
-              }}
-            >
-              {campaign.screens[1]?.buttonText || 'Continue'}
-            </button>
-          </form>
+          <DynamicContactForm
+            fields={fields}
+            submitLabel={campaign.screens[1]?.buttonText || 'Continuer'}
+            onSubmit={handleFormSubmit}
+          />
         </div>
       )}
 
@@ -186,3 +138,27 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
           <p
             className="mb-6"
             style={{
+              color: getContrastColor(campaign.design.blockColor),
+              fontFamily: campaign.design.textFont
+            }}
+          >
+            {campaign.screens[3]?.confirmationMessage || 'Your participation has been recorded.'}
+          </p>
+          <button
+            onClick={() => setStep('start')}
+            className="px-6 py-3 font-medium"
+            style={{
+              backgroundColor: campaign.design.buttonColor,
+              color: getContrastColor(campaign.design.buttonColor),
+              borderRadius: campaign.design.borderRadius
+            }}
+          >
+            {campaign.screens[3]?.replayButtonText || 'Play Again'}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default FunnelStandard;
