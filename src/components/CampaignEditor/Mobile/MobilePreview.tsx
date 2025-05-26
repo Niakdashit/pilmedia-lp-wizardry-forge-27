@@ -19,7 +19,10 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
           borderRadius: '20px',
           border: '6px solid #1f1f1f',
           boxShadow: '0 0 20px rgba(0,0,0,0.3)',
-          backgroundColor: '#000'
+          backgroundColor: '#000',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center'
         };
       case 'tablet':
         return {
@@ -28,7 +31,10 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
           borderRadius: '14px',
           border: '4px solid #333',
           boxShadow: '0 0 15px rgba(0,0,0,0.2)',
-          backgroundColor: '#000'
+          backgroundColor: '#000',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center'
         };
     }
   };
@@ -40,7 +46,10 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
       borderRadius: previewMode === 'mobile' ? '14px' : '10px',
       overflow: 'hidden',
       position: 'relative' as const,
-      backgroundColor: mobileConfig.backgroundColor || '#ebf4f7'
+      backgroundColor: mobileConfig.backgroundColor || '#ebf4f7',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center'
     };
   };
 
@@ -56,7 +65,8 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
       alignItems: 'center',
       padding: `${mobileConfig.verticalSpacing || 16}px ${mobileConfig.horizontalPadding || 12}px`,
       gap: `${mobileConfig.verticalSpacing || 16}px`,
-      height: '100%'
+      height: '100%',
+      flex: 1
     };
   };
 
