@@ -23,8 +23,8 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
         };
       case 'tablet':
         return {
-          width: '340px',
-          height: '480px',
+          width: '360px',
+          height: '540px',
           borderRadius: '14px',
           border: '4px solid #333',
           boxShadow: '0 0 15px rgba(0,0,0,0.2)',
@@ -67,16 +67,19 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
       case 'top':
         return {
           justifyContent: 'flex-start',
-          paddingTop: '10%'
+          alignItems: 'flex-start',
+          paddingTop: '15%'
         };
       case 'bottom':
         return {
           justifyContent: 'flex-end',
+          alignItems: 'flex-end',
           paddingBottom: '15%'
         };
       default:
         return {
-          justifyContent: 'center'
+          justifyContent: 'center',
+          alignItems: 'center'
         };
     }
   };
@@ -89,11 +92,38 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
       maxWidth,
       maxHeight,
       width: '100%',
-      minHeight: '200px',
+      minHeight: previewMode === 'mobile' ? '120px' : '150px',
       padding: `${mobileConfig.gamePaddingY || 8}px ${mobileConfig.gamePaddingX || 8}px`,
       display: 'flex',
-      alignItems: 'center',
+      alignItems: mobileConfig.gameVerticalAlign || 'center',
       justifyContent: 'center',
+    };
+  };
+
+  const getButtonStyles = () => {
+    const buttonSize = mobileConfig.buttonSize || 'medium';
+    let sizeClasses = 'px-6 py-3 text-base';
+    
+    switch (buttonSize) {
+      case 'small':
+        sizeClasses = 'px-4 py-2 text-sm';
+        break;
+      case 'large':
+        sizeClasses = 'px-8 py-4 text-lg';
+        break;
+      default:
+        sizeClasses = 'px-6 py-3 text-base';
+    }
+
+    return {
+      className: `${mobileConfig.buttonShape || 'rounded-lg'} ${mobileConfig.buttonShadow || 'shadow-md'} ${sizeClasses} transition-colors font-medium flex-shrink-0`,
+      style: {
+        backgroundColor: mobileConfig.buttonColor || '#841b60',
+        color: mobileConfig.buttonTextColor || '#ffffff',
+        width: `${mobileConfig.buttonWidth || 80}%`,
+        margin: `${mobileConfig.buttonMargin || 16}px auto`,
+        fontSize: previewMode === 'mobile' ? '12px' : '14px'
+      }
     };
   };
 
@@ -156,7 +186,8 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
                     className={`${mobileConfig.titleSize || 'text-lg'} ${mobileConfig.titleWeight || 'font-bold'} ${mobileConfig.titleAlignment || 'text-center'}`}
                     style={{ 
                       color: mobileConfig.titleColor || '#000000',
-                      fontFamily: mobileConfig.fontFamily || 'Inter'
+                      fontFamily: mobileConfig.fontFamily || 'Inter',
+                      fontSize: previewMode === 'mobile' ? 'clamp(14px, 4vw, 18px)' : 'clamp(16px, 4vw, 20px)'
                     }}
                   >
                     {mobileConfig.title || campaign.name}
@@ -167,7 +198,8 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
                     className={`${mobileConfig.descriptionSize || 'text-sm'} ${mobileConfig.descriptionAlignment || 'text-center'}`}
                     style={{ 
                       color: mobileConfig.descriptionColor || '#666666',
-                      fontFamily: mobileConfig.fontFamily || 'Inter'
+                      fontFamily: mobileConfig.fontFamily || 'Inter',
+                      fontSize: previewMode === 'mobile' ? 'clamp(12px, 3vw, 14px)' : 'clamp(14px, 3vw, 16px)'
                     }}
                   >
                     {mobileConfig.description || campaign.description}
@@ -186,14 +218,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
             {/* Mobile Button */}
             {mobileConfig.buttonText && (
               <button
-                className={`${mobileConfig.buttonShape || 'rounded-lg'} ${mobileConfig.buttonShadow || 'shadow-md'} transition-colors px-4 py-2 text-white font-medium flex-shrink-0`}
-                style={{
-                  backgroundColor: mobileConfig.buttonColor || '#841b60',
-                  color: mobileConfig.buttonTextColor || '#ffffff',
-                  width: `${mobileConfig.buttonWidth || 80}%`,
-                  margin: '0 auto',
-                  fontSize: '14px'
-                }}
+                {...getButtonStyles()}
               >
                 {mobileConfig.buttonText}
               </button>

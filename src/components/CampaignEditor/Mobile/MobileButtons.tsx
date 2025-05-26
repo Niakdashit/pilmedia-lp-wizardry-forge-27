@@ -39,7 +39,7 @@ const MobileButtons: React.FC<MobileButtonsProps> = ({ campaign, setCampaign }) 
               key={position.value}
               onClick={() => updateMobileConfig('buttonPlacement', position.value)}
               className={`p-4 border-2 rounded-lg text-center transition-colors ${
-                mobileConfig.buttonPlacement === position.value
+                (mobileConfig.buttonPlacement || 'bottom') === position.value
                   ? 'border-[#841b60] bg-[#f9f0f5] text-[#841b60]'
                   : 'border-gray-200 hover:border-gray-300'
               }`}
@@ -123,7 +123,7 @@ const MobileButtons: React.FC<MobileButtonsProps> = ({ campaign, setCampaign }) 
               key={shape.value}
               onClick={() => updateMobileConfig('buttonShape', shape.value)}
               className={`p-3 border-2 rounded-lg text-center transition-colors ${
-                mobileConfig.buttonShape === shape.value
+                (mobileConfig.buttonShape || 'rounded-lg') === shape.value
                   ? 'border-[#841b60] bg-[#f9f0f5] text-[#841b60]'
                   : 'border-gray-200 hover:border-gray-300'
               }`}
@@ -149,7 +149,7 @@ const MobileButtons: React.FC<MobileButtonsProps> = ({ campaign, setCampaign }) 
               key={size.value}
               onClick={() => updateMobileConfig('buttonSize', size.value)}
               className={`p-3 border-2 rounded-lg text-center transition-colors ${
-                mobileConfig.buttonSize === size.value
+                (mobileConfig.buttonSize || 'medium') === size.value
                   ? 'border-[#841b60] bg-[#f9f0f5] text-[#841b60]'
                   : 'border-gray-200 hover:border-gray-300'
               }`}
@@ -168,7 +168,7 @@ const MobileButtons: React.FC<MobileButtonsProps> = ({ campaign, setCampaign }) 
         </label>
         <div className="grid grid-cols-3 gap-3">
           {[
-            { value: 'none', label: 'Aucune' },
+            { value: '', label: 'Aucune' },
             { value: 'shadow-md', label: 'Légère' },
             { value: 'shadow-lg', label: 'Forte' }
           ].map((shadow) => (
@@ -176,7 +176,7 @@ const MobileButtons: React.FC<MobileButtonsProps> = ({ campaign, setCampaign }) 
               key={shadow.value}
               onClick={() => updateMobileConfig('buttonShadow', shadow.value)}
               className={`p-3 border-2 rounded-lg text-center transition-colors ${
-                mobileConfig.buttonShadow === shadow.value
+                (mobileConfig.buttonShadow || 'shadow-md') === shadow.value
                   ? 'border-[#841b60] bg-[#f9f0f5] text-[#841b60]'
                   : 'border-gray-200 hover:border-gray-300'
               }`}
@@ -201,7 +201,7 @@ const MobileButtons: React.FC<MobileButtonsProps> = ({ campaign, setCampaign }) 
               max="40"
               value={mobileConfig.buttonMargin || 16}
               onChange={(e) => updateMobileConfig('buttonMargin', Number(e.target.value))}
-              className="w-full"
+              className="w-full accent-[#841b60]"
             />
             <div className="text-xs text-gray-500 mt-1">{mobileConfig.buttonMargin || 16}px</div>
           </div>
@@ -213,7 +213,7 @@ const MobileButtons: React.FC<MobileButtonsProps> = ({ campaign, setCampaign }) 
               max="100"
               value={mobileConfig.buttonWidth || 80}
               onChange={(e) => updateMobileConfig('buttonWidth', Number(e.target.value))}
-              className="w-full"
+              className="w-full accent-[#841b60]"
             />
             <div className="text-xs text-gray-500 mt-1">{mobileConfig.buttonWidth || 80}%</div>
           </div>
