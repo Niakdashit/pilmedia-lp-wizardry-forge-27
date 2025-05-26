@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
@@ -105,7 +104,6 @@ const FunnelPreview: React.FC<FunnelPreviewProps> = ({
                 formData={formData}
                 setFormData={setFormData}
                 onReset={resetFunnel}
-                viewMode={viewMode}
               />
             )}
           </AnimatePresence>
