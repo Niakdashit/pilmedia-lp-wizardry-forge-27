@@ -7,19 +7,23 @@ interface FunnelUnlockedGameProps {
   campaign: any;
 }
 
+const DEFAULT_FIELDS: FieldConfig[] = [
+  { name: "prenom", label: "Prénom", required: true },
+  { name: "nom", label: "Nom", required: true },
+  { name: "email", label: "Email", type: "email", required: true }
+  // Ajoute d'autres champs si besoin
+];
+
 const FunnelUnlockedGame: React.FC<FunnelUnlockedGameProps> = ({ campaign }) => {
   const [formValidated, setFormValidated] = useState(false);
   const [showFormModal, setShowFormModal] = useState(false);
   const [gamePlayed, setGamePlayed] = useState(false);
   const [gameResult, setGameResult] = useState<'win' | 'lose' | null>(null);
 
-  // Exemple : tu peux rendre ce tableau dynamique selon ta config campagne !
-  const fields: FieldConfig[] = [
-    { name: "prenom", label: "Prénom", required: true },
-    { name: "nom", label: "Nom", required: true },
-    { name: "email", label: "Email", type: "email", required: true }
-    // Ajoute d'autres champs si besoin
-  ];
+  // Prend la config dynamique ou fallback
+  const fields: FieldConfig[] = campaign.formConfig && Array.isArray(campaign.formConfig)
+    ? campaign.formConfig
+    : DEFAULT_FIELDS;
 
   const handleFormSubmit = (formData: Record<string, string>) => {
     setShowFormModal(false);
