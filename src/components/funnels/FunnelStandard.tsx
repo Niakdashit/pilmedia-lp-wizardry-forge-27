@@ -12,11 +12,17 @@ const DEFAULT_FIELDS: FieldConfig[] = [
   { name: "prenom", label: "Prénom", required: true },
   { name: "nom", label: "Nom", required: true },
   { name: "email", label: "Email", type: "email", required: true }
-  // Tu peux ajouter plus de champs par défaut ici
+  // Ajoute d'autres champs si tu veux ici
 ];
 
 const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
   const [step, setStep] = useState<'start' | 'form' | 'game' | 'end'>('start');
+
+  // Utilisation de la config dynamique si elle existe
+  const fields: FieldConfig[] =
+    Array.isArray(campaign.formFields) && campaign.formFields.length > 0
+      ? campaign.formFields
+      : DEFAULT_FIELDS;
 
   const getContrastColor = (bgColor: string) => {
     try {
@@ -30,6 +36,7 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
   const handleStart = () => setStep('form');
   const handleFormSubmit = (formData: Record<string, string>) => {
     setStep('game');
+    // Ici tu peux exploiter formData si besoin (tracking, analytics, etc.)
   };
   const handleEnd = () => setStep('end');
 
@@ -47,11 +54,6 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
         return <div className="text-center text-gray-400">Non compatible avec ce funnel</div>;
     }
   };
-
-  // FORMULAIRE DYNAMIQUE = prioritaire depuis la config campagne, fallback si absent
-  const fields: FieldConfig[] = campaign.formConfig && Array.isArray(campaign.formConfig)
-    ? campaign.formConfig
-    : DEFAULT_FIELDS;
 
   return (
     <div className="w-full flex flex-col items-center">
