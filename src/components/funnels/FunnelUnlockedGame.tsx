@@ -1,37 +1,48 @@
 import React, { useState } from 'react';
+import Color from 'color';
 import Modal from '../common/Modal';
 import DynamicContactForm, { FieldConfig } from '../forms/DynamicContactForm';
-import { Wheel, Scratch, Jackpot, Dice } from '../GameTypes';
+import { Wheel, Scratch, Jackpot, Dice } from './GameTypes';
 
-interface FunnelUnlockedGameProps {
+interface GameFunnelProps {
   campaign: any;
 }
 
 const DEFAULT_FIELDS: FieldConfig[] = [
+  { name: "civilite", label: "Civilité", type: "select", options: ["M.", "Mme"], required: false },
   { name: "prenom", label: "Prénom", required: true },
   { name: "nom", label: "Nom", required: true },
   { name: "email", label: "Email", type: "email", required: true }
-  // Ajoute d'autres champs si besoin
+  // Ajoute d'autres champs si tu veux ici
 ];
 
-const FunnelUnlockedGame: React.FC<FunnelUnlockedGameProps> = ({ campaign }) => {
+const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({ campaign }) => {
   const [formValidated, setFormValidated] = useState(false);
   const [showFormModal, setShowFormModal] = useState(false);
   const [gamePlayed, setGamePlayed] = useState(false);
   const [gameResult, setGameResult] = useState<'win' | 'lose' | null>(null);
 
-  // Utilisation de la config dynamique si elle existe
+  // Plug dynamique : utilise campaign.formFields si présent, sinon fallback
   const fields: FieldConfig[] =
     Array.isArray(campaign.formFields) && campaign.formFields.length > 0
       ? campaign.formFields
       : DEFAULT_FIELDS;
 
+  const getContrastColor = (bgColor: string) => {
+    try {
+      const color = Color(bgColor);
+      return color.isLight() ? '#000000' : '#FFFFFF';
+    } catch {
+      return '#000000';
+    }
+  };
+
   const handleFormSubmit = (formData: Record<string, string>) => {
     setShowFormModal(false);
     setTimeout(() => {
       setFormValidated(true);
-      // Ici tu peux exploiter formData (tracking, analytics, etc.)
     }, 400); // petit délai d'effet
+    // Ici tu peux exploiter formData si besoin (tracking, analytics, etc.)
   };
 
   const handleGameFinish = (result: 'win' | 'lose') => {
@@ -53,7 +64,6 @@ const FunnelUnlockedGame: React.FC<FunnelUnlockedGameProps> = ({ campaign }) => 
         </div>
       );
     }
-
     switch (campaign.type) {
       case 'wheel':
         return <Wheel config={campaign.gameConfig.wheel} isPreview={true} onFinish={handleGameFinish} />;
