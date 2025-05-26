@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
 
@@ -31,24 +31,6 @@ const Jackpot: React.FC<JackpotProps> = ({
   const [slots, setSlots] = useState<string[]>(['🍒', '🍋', '🍊']);
   const [isRolling, setIsRolling] = useState(false);
   const [result, setResult] = useState<'win' | 'lose' | null>(null);
-  const [containerSize, setContainerSize] = useState({ width: 300, height: 200 });
-
-  useEffect(() => {
-    const updateSize = () => {
-      const container = document.querySelector('.jackpot-container');
-      if (container) {
-        const rect = container.getBoundingClientRect();
-        setContainerSize({
-          width: Math.max(250, Math.min(400, rect.width)),
-          height: Math.max(150, Math.min(300, rect.height))
-        });
-      }
-    };
-
-    updateSize();
-    window.addEventListener('resize', updateSize);
-    return () => window.removeEventListener('resize', updateSize);
-  }, []);
 
   const roll = () => {
     if (isRolling || result) return;
@@ -96,15 +78,17 @@ const Jackpot: React.FC<JackpotProps> = ({
 
   // Responsive slot size calculation
   const getSlotSize = () => {
-    const baseSize = Math.min(containerSize.width / 5, containerSize.height / 3);
-    return Math.max(40, Math.min(70, baseSize));
+    const containerWidth = window.innerWidth || 400;
+    if (containerWidth < 350) return 50; // Mobile très petit
+    if (containerWidth < 500) return 60; // Mobile standard
+    return 70; // Tablette et plus
   };
 
   const slotSize = getSlotSize();
-  const slotGap = Math.max(6, slotSize * 0.12);
+  const slotGap = Math.max(8, slotSize * 0.15);
 
   return (
-    <div className="jackpot-container flex flex-col items-center justify-center w-full h-full p-2" style={{ minHeight: '150px' }}>
+    <div className="flex flex-col items-center justify-center w-full h-full p-2" style={{ minHeight: '200px' }}>
       {/* Slots */}
       <div 
         className="flex mb-4"
@@ -121,10 +105,10 @@ const Jackpot: React.FC<JackpotProps> = ({
             style={{
               width: slotSize,
               height: slotSize,
-              borderRadius: Math.max(6, slotSize * 0.1),
+              borderRadius: 8,
               border: "2px solid #fff",
               boxShadow: "0 2px 8px 0 rgba(0,0,0,0.09)",
-              fontSize: Math.max(16, slotSize * 0.35),
+              fontSize: Math.max(20, slotSize * 0.4),
               fontWeight: 700
             }}
             animate={{ scale: isRolling ? [1, 0.93, 1] : 1 }}
@@ -136,14 +120,11 @@ const Jackpot: React.FC<JackpotProps> = ({
       </div>
 
       {/* Résultat ou bouton */}
-      <div className="flex flex-col items-center w-full max-w-full">
+      <div className="flex flex-col items-center w-full">
         {result ? (
           <h2 
-            className={`text-sm font-bold mb-2 text-center px-2 ${result === "win" ? "text-green-600" : "text-red-600"}`}
-            style={{ 
-              fontSize: `clamp(12px, ${containerSize.width / 25}px, 16px)`,
-              lineHeight: '1.3'
-            }}
+            className={`text-base font-bold mb-2 text-center ${result === "win" ? "text-green-600" : "text-red-600"}`}
+            style={{ fontSize: 'clamp(14px, 4vw, 18px)' }}
           >
             {result === "win" ? "JACKPOT ! Vous avez gagné !" : "Dommage, pas de jackpot !"}
           </h2>
@@ -151,12 +132,11 @@ const Jackpot: React.FC<JackpotProps> = ({
           <button
             onClick={roll}
             disabled={isRolling}
-            className="px-3 py-2 text-white font-medium rounded-lg shadow-lg hover:opacity-90 transition-all duration-200 disabled:opacity-50 max-w-full text-center"
+            className="px-4 py-2 text-white font-medium rounded-lg shadow-lg hover:opacity-90 transition-all duration-200 disabled:opacity-50 max-w-full"
             style={{
               backgroundColor: buttonColor,
-              fontSize: `clamp(11px, ${containerSize.width / 30}px, 14px)`,
-              minHeight: Math.max(32, containerSize.height / 6),
-              maxWidth: `${Math.min(200, containerSize.width * 0.8)}px`
+              fontSize: 'clamp(12px, 3.5vw, 16px)',
+              minHeight: '40px'
             }}
           >
             {isRolling ? "Roulement..." : buttonLabel}

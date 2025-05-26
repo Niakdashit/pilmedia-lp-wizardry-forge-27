@@ -40,7 +40,7 @@ const MobileGamePlacement: React.FC<MobileGamePlacementProps> = ({ campaign, set
               key={align.value}
               onClick={() => updateMobileConfig('gameVerticalAlign', align.value)}
               className={`p-4 border-2 rounded-lg text-center transition-colors ${
-                (mobileConfig.gameVerticalAlign || 'center') === align.value
+                mobileConfig.gameVerticalAlign === align.value
                   ? 'border-[#841b60] bg-[#f9f0f5] text-[#841b60]'
                   : 'border-gray-200 hover:border-gray-300'
               }`}
@@ -48,34 +48,6 @@ const MobileGamePlacement: React.FC<MobileGamePlacementProps> = ({ campaign, set
               <Move className="w-5 h-5 mx-auto mb-2" />
               <div className="text-sm font-medium">{align.label}</div>
               <div className="text-xs text-gray-500 mt-1">{align.desc}</div>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Game Position */}
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-3">
-          Position du jeu sur l'écran
-        </label>
-        <div className="grid grid-cols-3 gap-3">
-          {[
-            { value: 'top', label: 'Haut', desc: 'Tiers supérieur' },
-            { value: 'center', label: 'Centre', desc: 'Centre de l\'écran' },
-            { value: 'bottom', label: 'Bas', desc: 'Tiers inférieur' }
-          ].map((position) => (
-            <button
-              key={position.value}
-              onClick={() => updateMobileConfig('gamePosition', position.value)}
-              className={`p-4 border-2 rounded-lg text-center transition-colors ${
-                (mobileConfig.gamePosition || 'center') === position.value
-                  ? 'border-[#841b60] bg-[#f9f0f5] text-[#841b60]'
-                  : 'border-gray-200 hover:border-gray-300'
-              }`}
-            >
-              <Move className="w-5 h-5 mx-auto mb-2" />
-              <div className="text-sm font-medium">{position.label}</div>
-              <div className="text-xs text-gray-500 mt-1">{position.desc}</div>
             </button>
           ))}
         </div>
@@ -111,7 +83,7 @@ const MobileGamePlacement: React.FC<MobileGamePlacementProps> = ({ campaign, set
                   max="100"
                   value={mobileConfig.gameMaxWidth || 90}
                   onChange={(e) => updateMobileConfig('gameMaxWidth', Number(e.target.value))}
-                  className="w-full accent-[#841b60]"
+                  className="w-full"
                 />
                 <div className="text-xs text-gray-500 mt-1">{mobileConfig.gameMaxWidth || 90}%</div>
               </div>
@@ -123,7 +95,7 @@ const MobileGamePlacement: React.FC<MobileGamePlacementProps> = ({ campaign, set
                   max="80"
                   value={mobileConfig.gameMaxHeight || 60}
                   onChange={(e) => updateMobileConfig('gameMaxHeight', Number(e.target.value))}
-                  className="w-full accent-[#841b60]"
+                  className="w-full"
                 />
                 <div className="text-xs text-gray-500 mt-1">{mobileConfig.gameMaxHeight || 60}vh</div>
               </div>
@@ -146,7 +118,7 @@ const MobileGamePlacement: React.FC<MobileGamePlacementProps> = ({ campaign, set
               max="32"
               value={mobileConfig.gamePaddingX || 16}
               onChange={(e) => updateMobileConfig('gamePaddingX', Number(e.target.value))}
-              className="w-full accent-[#841b60]"
+              className="w-full"
             />
             <div className="text-xs text-gray-500 mt-1">{mobileConfig.gamePaddingX || 16}px</div>
           </div>
@@ -158,7 +130,7 @@ const MobileGamePlacement: React.FC<MobileGamePlacementProps> = ({ campaign, set
               max="32"
               value={mobileConfig.gamePaddingY || 16}
               onChange={(e) => updateMobileConfig('gamePaddingY', Number(e.target.value))}
-              className="w-full accent-[#841b60]"
+              className="w-full"
             />
             <div className="text-xs text-gray-500 mt-1">{mobileConfig.gamePaddingY || 16}px</div>
           </div>
@@ -169,7 +141,7 @@ const MobileGamePlacement: React.FC<MobileGamePlacementProps> = ({ campaign, set
       <div>
         <ImageUpload
           label="Template mobile personnalisé (optionnel)"
-          value={mobileConfig.customTemplate || ''}
+          value={mobileConfig.customTemplate}
           onChange={(value) => updateMobileConfig('customTemplate', value)}
         />
         <p className="text-xs text-gray-500 mt-2">

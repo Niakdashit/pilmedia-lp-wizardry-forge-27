@@ -25,10 +25,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
         height: '100%', 
         maxWidth: '100%', 
         maxHeight: '100%',
-        overflow: 'hidden',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center'
+        overflow: 'hidden'
       }
     };
 
@@ -52,73 +49,61 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
       case 'quiz':
         return (
           <div style={gameProps.style}>
-            <div className="w-full h-full max-w-sm mx-auto">
-              <Quiz 
-                config={campaign.gameConfig?.quiz || {}} 
-                onConfigChange={() => {}}
-              />
-            </div>
+            <Quiz 
+              config={campaign.gameConfig?.quiz || {}} 
+              onConfigChange={() => {}}
+            />
           </div>
         );
       case 'wheel':
         return (
           <div style={gameProps.style}>
-            <div className="w-full h-full max-w-xs max-h-xs mx-auto">
-              <WheelPreview
-                campaign={campaign}
-                config={{
-                  mode: 'instant_winner' as const,
-                  winProbability: campaign.gameConfig?.wheel?.winProbability || 0.1,
-                  maxWinners: campaign.gameConfig?.wheel?.maxWinners,
-                  winnersCount: 0
-                }}
-                onFinish={() => {}}
-              />
-            </div>
+            <WheelPreview
+              campaign={campaign}
+              config={{
+                mode: 'instant_winner' as const,
+                winProbability: campaign.gameConfig?.wheel?.winProbability || 0.1,
+                maxWinners: campaign.gameConfig?.wheel?.maxWinners,
+                winnersCount: 0
+              }}
+              onFinish={() => {}}
+            />
           </div>
         );
       case 'scratch':
         return (
           <div style={gameProps.style}>
-            <div className="w-full h-full max-w-sm mx-auto">
-              <Scratch 
-                config={campaign.gameConfig?.scratch || {}} 
-                onConfigChange={() => {}}
-              />
-            </div>
+            <Scratch 
+              config={campaign.gameConfig?.scratch || {}} 
+              onConfigChange={() => {}}
+            />
           </div>
         );
       case 'memory':
         return (
           <div style={gameProps.style}>
-            <div className="w-full h-full max-w-sm mx-auto">
-              <Memory 
-                config={campaign.gameConfig?.memory || {}} 
-                onConfigChange={() => {}}
-              />
-            </div>
+            <Memory 
+              config={campaign.gameConfig?.memory || {}} 
+              onConfigChange={() => {}}
+            />
           </div>
         );
       case 'puzzle':
         return (
           <div style={gameProps.style}>
-            <div className="w-full h-full max-w-sm mx-auto">
-              <Puzzle 
-                config={campaign.gameConfig?.puzzle || {}} 
-                onConfigChange={() => {}}
-              />
-            </div>
+            <Puzzle 
+              config={campaign.gameConfig?.puzzle || {}} 
+              onConfigChange={() => {}}
+            />
           </div>
         );
       case 'dice':
         return (
           <div style={gameProps.style}>
-            <div className="w-full h-full max-w-sm mx-auto">
-              <Dice 
-                config={campaign.gameConfig?.dice || {}} 
-                onConfigChange={() => {}}
-              />
-            </div>
+            <Dice 
+              config={campaign.gameConfig?.dice || {}} 
+              onConfigChange={() => {}}
+            />
           </div>
         );
       default:
@@ -131,7 +116,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   };
 
   return (
-    <div className={`relative w-full h-full ${className} flex items-center justify-center`} style={{ minHeight: '120px' }}>
+    <div className={`relative w-full h-full ${className} flex items-center justify-center`} style={{ minHeight: '200px' }}>
       {/* Image de fond plein écran */}
       {gameBackgroundImage && (
         <img
@@ -152,8 +137,8 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
         />
       )}
 
-      {/* Jeu centré avec contraintes de taille et meilleure responsivité */}
-      <div className="relative z-20 w-full h-full flex items-center justify-center p-1" style={{ maxWidth: '100%', maxHeight: '100%' }}>
+      {/* Jeu centré avec contraintes de taille */}
+      <div className="relative z-20 w-full h-full flex items-center justify-center p-2" style={{ maxWidth: '100%', maxHeight: '100%' }}>
         {renderGame()}
       </div>
     </div>
