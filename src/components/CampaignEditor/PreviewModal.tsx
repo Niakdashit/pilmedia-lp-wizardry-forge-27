@@ -1,6 +1,9 @@
 import React from 'react';
 import { X } from 'lucide-react';
-import GameCanvasPreview from './GameCanvasPreview';
+// IMPORTS DES FUNNELS
+import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
+import FunnelStandard from '../funnels/FunnelStandard';
+// import GameCanvasPreview from './GameCanvasPreview'; // tu peux le garder pour l’aperçu custom le cas échéant
 
 interface PreviewModalProps {
   isOpen: boolean;
@@ -10,6 +13,16 @@ interface PreviewModalProps {
 
 const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }) => {
   if (!isOpen) return null;
+
+  // Détermine le funnel à afficher selon le type de campagne
+  const getPreviewFunnel = () => {
+    // Funnel 1 : Jeu visible mais verrouillé tant que le formulaire n’est pas validé
+    if (['wheel', 'scratch', 'jackpot', 'dice'].includes(campaign.type)) {
+      return <FunnelUnlockedGame campaign={campaign} />;
+    }
+    // Funnel 2 : Quiz, memory, puzzle, formulaire dynamique...
+    return <FunnelStandard campaign={campaign} />;
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
@@ -27,8 +40,10 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
 
         {/* Canvas plein écran avec padding top pour la bande */}
         <div className="flex-1 pt-20 overflow-hidden flex justify-center items-center">
-          <div className="w-full h-full">
-            <GameCanvasPreview campaign={campaign} className="h-full" />
+          <div className="w-full h-full flex items-center justify-center">
+            {getPreviewFunnel()}
+            {/* Tu peux garder l’aperçu canvas si besoin */}
+            {/* <GameCanvasPreview campaign={campaign} className="h-full" /> */}
           </div>
         </div>
       </div>
