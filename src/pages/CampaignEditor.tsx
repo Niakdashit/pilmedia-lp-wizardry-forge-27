@@ -8,6 +8,13 @@ import CampaignMobile from '../components/CampaignEditor/CampaignMobile';
 import FormEditor from '../components/campaign/FormEditor'; // ← AJOUTE CETTE LIGNE
 import { CampaignType, getDefaultGameConfig } from '../utils/campaignTypes';
 
+// Champs du formulaire par défaut (peux-tu adapter selon ta logique de champ dynamique si besoin)
+const defaultFormFields = [
+  { id: 'prenom', label: 'Prénom', type: 'text', required: true },
+  { id: 'nom', label: 'Nom', type: 'text', required: true },
+  { id: 'email', label: 'Email', type: 'email', required: true },
+];
+
 const defaultJackpotConfig = {
   symbols: ['🍒', '🍋', '🍊'],
   reels: 3,
@@ -60,6 +67,8 @@ const CampaignEditor: React.FC = () => {
         showReplayButton: true
       }
     },
+    // ====> AJOUT : Clé formFields avec structure initiale
+    formFields: defaultFormFields,
     gameConfig: getDefaultGameConfig(campaignType),
     design: {
       background: '#ebf4f7',
