@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import Color from 'color';
 import Modal from '../common/Modal';
 import DynamicContactForm, { FieldConfig } from '../forms/DynamicContactForm';
-import { Wheel, Scratch, Jackpot, Dice } from './GameTypes';
+import { Wheel, Scratch, Jackpot, Dice } from '../GameTypes';
 import { useParticipations } from '../../hooks/useParticipations';
 
 interface GameFunnelProps {
@@ -131,7 +131,7 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({ campaign }) => {
                 rel="noopener noreferrer"
                 className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors"
               >
-                {campaign.screens[3]?.ctaText || 'Découvrir l'offre'}
+                {campaign.screens[3]?.ctaText || "Découvrir l'offre"}
               </a>
             )}
             <button
@@ -149,7 +149,7 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({ campaign }) => {
         <Modal onClose={() => setShowFormModal(false)} title={campaign.screens[1]?.title || 'Vos informations'}>
           <DynamicContactForm
             fields={fields}
-            submitLabel={participationLoading ? 'Chargement...' : (campaign.screens[1]?.buttonText || 'C\'est parti !')}
+            submitLabel={participationLoading ? 'Chargement...' : (campaign.screens[1]?.buttonText || "C'est parti !")}
             onSubmit={handleFormSubmit}
           />
         </Modal>
