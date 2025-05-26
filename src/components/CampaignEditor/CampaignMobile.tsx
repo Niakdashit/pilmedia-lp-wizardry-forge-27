@@ -101,12 +101,14 @@ const CampaignMobile: React.FC<CampaignMobileProps> = ({ campaign, setCampaign }
           </div>
         </div>
 
-        {/* Preview */}
-        <div className="flex-1 p-4 flex items-center justify-center">
-          <MobilePreview
-            campaign={campaign}
-            previewMode={previewMode}
-          />
+        {/* Preview - Extended height for full visibility */}
+        <div className="flex-1 p-4 flex items-start justify-center overflow-y-auto" style={{ minHeight: '600px' }}>
+          <div className="w-full flex justify-center">
+            <MobilePreview
+              campaign={campaign}
+              previewMode={previewMode}
+            />
+          </div>
         </div>
       </div>
     </div>

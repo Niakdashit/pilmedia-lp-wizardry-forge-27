@@ -41,24 +41,10 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
       borderRadius: previewMode === 'mobile' ? '14px' : '10px',
       overflow: 'hidden',
       position: 'relative' as const,
+      backgroundColor: mobileConfig.backgroundColor || '#ebf4f7',
     };
 
-    // UNIQUEMENT les images mobiles - pas les images du contenu/desktop
-    if (mobileConfig.backgroundImage) {
-      return {
-        ...baseStyle,
-        backgroundImage: `url(${mobileConfig.backgroundImage})`,
-        backgroundSize: mobileConfig.backgroundMode === 'contain' ? 'contain' : 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat',
-        backgroundColor: mobileConfig.backgroundColor || '#ebf4f7',
-      };
-    }
-
-    return {
-      ...baseStyle,
-      backgroundColor: mobileConfig.backgroundColor || '#ebf4f7', // Couleur mobile spécifique
-    };
+    return baseStyle;
   };
 
   const getGamePositionStyles = () => {
@@ -95,22 +81,21 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
+      position: 'relative' as const,
+      zIndex: 30,
     };
   };
 
   const showTitle = mobileConfig.showTitle !== false && (mobileConfig.title || campaign.name);
   const showDescription = mobileConfig.showDescription !== false && (mobileConfig.description || campaign.description);
 
-  // Fonction pour rendre le bon composant de jeu - MOBILE UNIQUEMENT
   const renderGameComponent = () => {
     if (campaign.type === 'wheel') {
-      // Utilise UNIQUEMENT la configuration mobile de la roue
       const hasMobileRouletteConfig = mobileConfig.roulette && mobileConfig.roulette.segments && mobileConfig.roulette.segments.length > 0;
       
       if (hasMobileRouletteConfig) {
         return <MobileWheelPreview campaign={campaign} />;
       } else {
-        // Si pas de config mobile de roue, afficher un placeholder
         return (
           <div className="flex items-center justify-center h-full w-full bg-gray-100 rounded-lg">
             <p className="text-gray-500 text-sm text-center px-4">
@@ -121,7 +106,6 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
       }
     }
     
-    // Pour les autres jeux, créer un aperçu mobile simplifié sans les images du contenu
     return (
       <div className="flex items-center justify-center h-full w-full bg-white rounded-lg border-2 border-gray-200">
         <div className="text-center p-4">
@@ -144,7 +128,20 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
       
       <div style={getDeviceStyle()}>
         <div style={getScreenStyle()}>
-          {/* Logo Overlay MOBILE */}
+          {/* Mobile Background Image - Layer 1 (background) */}
+          {mobileConfig.backgroundImage && (
+            <div 
+              className="absolute inset-0 z-0"
+              style={{
+                backgroundImage: `url(${mobileConfig.backgroundImage})`,
+                backgroundSize: mobileConfig.backgroundMode === 'contain' ? 'contain' : 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+              }}
+            />
+          )}
+
+          {/* Logo Overlay - Layer 2 */}
           {mobileConfig.logoOverlay && (
             <div 
               className={`absolute z-10 w-12 h-12 ${
@@ -164,9 +161,9 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
             </div>
           )}
 
-          {/* Decorative Overlay MOBILE */}
+          {/* Decorative Overlay - Layer 3 */}
           {mobileConfig.decorativeOverlay && (
-            <div className="absolute inset-0 z-5 pointer-events-none">
+            <div className="absolute inset-0 z-15 pointer-events-none">
               <img 
                 src={mobileConfig.decorativeOverlay} 
                 alt="Decorative overlay" 
@@ -175,7 +172,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
             </div>
           )}
 
-          {/* Main Content Container */}
+          {/* Main Content Container - Layer 4 (above background) */}
           <div 
             className="flex flex-col h-full relative z-20"
             style={{
@@ -186,7 +183,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
           >
             {/* Title & Description Block */}
             {(showTitle || showDescription) && (
-              <div className="text-center space-y-2 flex-shrink-0">
+              <div className="text-center space-y-2 flex-shrink-0 relative z-25">
                 {showTitle && (
                   <h2 
                     className={`${mobileConfig.titleSize || 'text-lg'} ${mobileConfig.titleWeight || 'font-bold'} ${mobileConfig.titleAlignment || 'text-center'}`}
@@ -212,17 +209,17 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
               </div>
             )}
 
-            {/* Game Container */}
+            {/* Game Container - Layer 5 (above everything) */}
             <div style={getGameContainerStyle()} className="flex-grow flex items-center justify-center">
-              <div className="w-full h-full max-w-full max-h-full overflow-hidden">
+              <div className="w-full h-full max-w-full max-h-full overflow-hidden relative z-30">
                 {renderGameComponent()}
               </div>
             </div>
 
-            {/* Mobile Button */}
+            {/* Mobile Button - Layer 5 */}
             {mobileConfig.buttonText && (
               <button
-                className={`${mobileConfig.buttonShape || 'rounded-lg'} ${mobileConfig.buttonShadow || 'shadow-md'} transition-colors px-4 py-2 text-white font-medium flex-shrink-0`}
+                className={`${mobileConfig.buttonShape || 'rounded-lg'} ${mobileConfig.buttonShadow || 'shadow-md'} transition-colors px-4 py-2 text-white font-medium flex-shrink-0 relative z-25`}
                 style={{
                   backgroundColor: mobileConfig.buttonColor || '#841b60',
                   color: mobileConfig.buttonTextColor || '#ffffff',
@@ -236,9 +233,9 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
             )}
           </div>
 
-          {/* Custom Mobile Template Overlay */}
+          {/* Custom Mobile Template Overlay - Layer 6 (top layer) */}
           {mobileConfig.customTemplate && (
-            <div className="absolute inset-0 z-30 pointer-events-none">
+            <div className="absolute inset-0 z-40 pointer-events-none">
               <img 
                 src={mobileConfig.customTemplate} 
                 alt="Mobile template" 
