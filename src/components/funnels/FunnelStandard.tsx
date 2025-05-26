@@ -1,22 +1,24 @@
+
 import React, { useState } from 'react';
 import Color from 'color';
 import DynamicContactForm, { FieldConfig } from '../forms/DynamicContactForm';
 import { Quiz, Wheel, Scratch, Memory, Puzzle, Dice, Jackpot } from './GameTypes';
+import { useParticipations } from '../../hooks/useParticipations';
 
 interface GameFunnelProps {
   campaign: any;
 }
 
 const DEFAULT_FIELDS: FieldConfig[] = [
-  { name: "civilite", label: "Civilité", type: "select", options: ["M.", "Mme"], required: false },
-  { name: "prenom", label: "Prénom", required: true },
-  { name: "nom", label: "Nom", required: true },
-  { name: "email", label: "Email", type: "email", required: true }
-  // Ajoute d'autres champs si tu veux ici
+  { id: "civilite", label: "Civilité", type: "select", options: ["M.", "Mme"], required: false },
+  { id: "prenom", label: "Prénom", required: true },
+  { id: "nom", label: "Nom", required: true },
+  { id: "email", label: "Email", type: "email", required: true }
 ];
 
 const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
   const [step, setStep] = useState<'start' | 'form' | 'game' | 'end'>('start');
+  const { createParticipation, loading: participationLoading } = useParticipations();
 
   // Utilisation de la config dynamique si elle existe
   const fields: FieldConfig[] =
@@ -34,10 +36,26 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
   };
 
   const handleStart = () => setStep('form');
-  const handleFormSubmit = (formData: Record<string, string>) => {
+  
+  const handleFormSubmit = async (formData: Record<string, string>) => {
+    console.log('Form data submitted:', formData);
+    
+    // Sauvegarder la participation
+    if (campaign.id) {
+      const participation = await createParticipation({
+        campaign_id: campaign.id,
+        form_data: formData,
+        user_email: formData.email
+      });
+      
+      if (participation) {
+        console.log('Participation sauvegardée:', participation);
+      }
+    }
+    
     setStep('game');
-    // Ici tu peux exploiter formData si besoin (tracking, analytics, etc.)
   };
+  
   const handleEnd = () => setStep('end');
 
   const getGameComponent = () => {
@@ -79,7 +97,7 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
           </p>
           <button
             onClick={handleStart}
-            className="px-8 py-3 font-medium transition-colors duration-200"
+            className="px-8 py-3 font-medium transition-colors duration-200 hover:opacity-90"
             style={{
               backgroundColor: campaign.design.buttonColor,
               color: getContrastColor(campaign.design.buttonColor),
@@ -105,7 +123,7 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
           </h2>
           <DynamicContactForm
             fields={fields}
-            submitLabel={campaign.screens[1]?.buttonText || 'Continuer'}
+            submitLabel={participationLoading ? 'Chargement...' : (campaign.screens[1]?.buttonText || 'Continuer')}
             onSubmit={handleFormSubmit}
           />
         </div>
@@ -117,7 +135,7 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
           <div className="mt-6 text-center">
             <button
               onClick={handleEnd}
-              className="px-6 py-3"
+              className="px-6 py-3 transition-colors duration-200 hover:opacity-90"
               style={{
                 backgroundColor: campaign.design.buttonColor,
                 color: getContrastColor(campaign.design.buttonColor),
@@ -152,7 +170,7 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
           </p>
           <button
             onClick={() => setStep('start')}
-            className="px-6 py-3 font-medium"
+            className="px-6 py-3 font-medium transition-colors duration-200 hover:opacity-90"
             style={{
               backgroundColor: campaign.design.buttonColor,
               color: getContrastColor(campaign.design.buttonColor),
