@@ -1,18 +1,19 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
+// Types des champs disponibles
 type FieldType = 'text' | 'email' | 'tel' | 'select';
 
-interface FormField {
+export interface FormField {
   id: string;
   label: string;
   type: FieldType;
   required: boolean;
-  options?: string[]; // Pour les select uniquement
+  options?: string[]; // pour select uniquement
 }
 
-interface CampaignFormEditorProps {
-  value: FormField[];
-  onChange: (fields: FormField[]) => void;
+interface FormEditorProps {
+  formFields: FormField[];
+  setFormFields: (fields: FormField[]) => void;
 }
 
 const FIELD_TYPES: { value: FieldType; label: string }[] = [
@@ -22,18 +23,20 @@ const FIELD_TYPES: { value: FieldType; label: string }[] = [
   { value: 'select', label: 'Liste déroulante' },
 ];
 
-const generateId = () => Math.random().toString(36).substr(2, 8);
+// Générateur d’id unique simple
+const generateId = () => Math.random().toString(36).substring(2, 10);
 
-const CampaignFormEditor: React.FC<CampaignFormEditorProps> = ({ value, onChange }) => {
-  const [fields, setFields] = useState<FormField[]>(value || []);
+const CampaignFormEditor: React.FC<FormEditorProps> = ({ formFields, setFormFields }) => {
+  const [fields, setFields] = useState<FormField[]>(formFields || []);
 
-  // Synchronise avec le parent
+  // Sync parent <-> local
+  useEffect(() => { setFields(formFields || []); }, [formFields]);
+
   const updateParent = (newFields: FormField[]) => {
     setFields(newFields);
-    onChange(newFields);
+    setFormFields(newFields);
   };
 
-  // Ajouter un champ
   const addField = () => {
     updateParent([
       ...fields,
@@ -41,7 +44,6 @@ const CampaignFormEditor: React.FC<CampaignFormEditorProps> = ({ value, onChange
     ]);
   };
 
-  // Modifier un champ
   const updateField = (idx: number, changes: Partial<FormField>) => {
     const newFields = fields.map((f, i) =>
       i === idx ? { ...f, ...changes } : f
@@ -49,13 +51,11 @@ const CampaignFormEditor: React.FC<CampaignFormEditorProps> = ({ value, onChange
     updateParent(newFields);
   };
 
-  // Supprimer un champ
   const removeField = (idx: number) => {
     const newFields = fields.filter((_, i) => i !== idx);
     updateParent(newFields);
   };
 
-  // Déplacer un champ
   const moveField = (from: number, to: number) => {
     if (to < 0 || to >= fields.length) return;
     const arr = [...fields];
@@ -133,7 +133,7 @@ const CampaignFormEditor: React.FC<CampaignFormEditorProps> = ({ value, onChange
                 <textarea
                   className="w-full border rounded px-2 py-1 text-sm"
                   rows={2}
-                  placeholder="Option 1&#10;Option 2"
+                  placeholder={"Option 1\nOption 2"}
                   value={field.options ? field.options.join('\n') : ''}
                   onChange={e => updateField(idx, { options: e.target.value.split('\n').filter(Boolean) })}
                 />
