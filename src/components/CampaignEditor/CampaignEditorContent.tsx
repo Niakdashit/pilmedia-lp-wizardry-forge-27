@@ -24,7 +24,7 @@ const CampaignEditorContent: React.FC<CampaignEditorContentProps> = ({
         return <CampaignGeneral campaign={campaign} setCampaign={setCampaign} />;
         
       case 'content':
-        return <CampaignContent campaign={campaign} setCampaign={setCampaign} />;
+        return <CampaignContent activeTab={activeTab} campaign={campaign} setCampaign={setCampaign} />;
 
       case 'screens':
         return <CampaignScreens campaign={campaign} setCampaign={setCampaign} />;

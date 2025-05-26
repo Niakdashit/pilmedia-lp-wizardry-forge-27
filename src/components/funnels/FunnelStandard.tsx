@@ -1,30 +1,27 @@
-
 import React, { useState } from 'react';
 import Color from 'color';
-import DynamicContactForm, { FieldConfig } from '../forms/DynamicContactForm';
-import { Quiz, Wheel, Scratch, Memory, Puzzle, Dice, Jackpot } from '../GameTypes';
+import DynamicContactForm from '../forms/DynamicContactForm';
+import { Quiz, Memory, Puzzle } from '../GameTypes';
 import { useParticipations } from '../../hooks/useParticipations';
 
-interface GameFunnelProps {
-  campaign: any;
-}
-
-const DEFAULT_FIELDS: FieldConfig[] = [
+const DEFAULT_FIELDS = [
   { id: "civilite", label: "Civilité", type: "select", options: ["M.", "Mme"], required: false },
   { id: "prenom", label: "Prénom", required: true },
   { id: "nom", label: "Nom", required: true },
   { id: "email", label: "Email", type: "email", required: true }
 ];
 
+interface GameFunnelProps {
+  campaign: any;
+}
+
 const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
   const [step, setStep] = useState<'start' | 'form' | 'game' | 'end'>('start');
   const { createParticipation, loading: participationLoading } = useParticipations();
 
-  // Utilisation de la config dynamique si elle existe
-  const fields: FieldConfig[] =
-    Array.isArray(campaign.formFields) && campaign.formFields.length > 0
-      ? campaign.formFields
-      : DEFAULT_FIELDS;
+  const fields = Array.isArray(campaign.formFields) && campaign.formFields.length > 0 
+    ? campaign.formFields 
+    : DEFAULT_FIELDS;
 
   const getContrastColor = (bgColor: string) => {
     try {
@@ -40,7 +37,6 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
   const handleFormSubmit = async (formData: Record<string, string>) => {
     console.log('Form data submitted:', formData);
     
-    // Sauvegarder la participation
     if (campaign.id) {
       const participation = await createParticipation({
         campaign_id: campaign.id,
@@ -123,7 +119,7 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
           </h2>
           <DynamicContactForm
             fields={fields}
-            submitLabel={participationLoading ? 'Chargement...' : (campaign.screens[1]?.buttonText || 'Continuer')}
+            submitLabel={participationLoading ? "Chargement..." : (campaign.screens[1]?.buttonText || "Continuer")}
             onSubmit={handleFormSubmit}
           />
         </div>

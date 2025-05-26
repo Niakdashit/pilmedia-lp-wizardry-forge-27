@@ -1,7 +1,6 @@
-
 import React, { useState } from 'react';
 import Color from 'color';
-import { Quiz, Wheel, Scratch, Memory, Puzzle, Dice, Jackpot } from './GameTypes';
+import { Quiz, Memory, Puzzle } from './GameTypes';
 
 interface GameFunnelProps {
   campaign: any;

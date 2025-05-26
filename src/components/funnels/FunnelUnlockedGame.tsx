@@ -1,6 +1,5 @@
 
 import React, { useState } from 'react';
-import Color from 'color';
 import Modal from '../common/Modal';
 import DynamicContactForm, { FieldConfig } from '../forms/DynamicContactForm';
 import { Wheel, Scratch, Jackpot, Dice } from '../GameTypes';
@@ -25,25 +24,14 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({ campaign }) => {
   
   const { createParticipation, loading: participationLoading } = useParticipations();
 
-  // Utilise campaign.formFields si présent, sinon fallback sur DEFAULT_FIELDS
   const fields: FieldConfig[] =
     Array.isArray(campaign.formFields) && campaign.formFields.length > 0
       ? campaign.formFields
       : DEFAULT_FIELDS;
 
-  const getContrastColor = (bgColor: string) => {
-    try {
-      const color = Color(bgColor);
-      return color.isLight() ? '#000000' : '#FFFFFF';
-    } catch {
-      return '#000000';
-    }
-  };
-
   const handleFormSubmit = async (formData: Record<string, string>) => {
     console.log('Form data submitted:', formData);
     
-    // Sauvegarder la participation
     if (campaign.id) {
       const participation = await createParticipation({
         campaign_id: campaign.id,
@@ -83,11 +71,11 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({ campaign }) => {
     }
     switch (campaign.type) {
       case 'wheel':
-        return <Wheel config={campaign.gameConfig.wheel} isPreview={true} onFinish={handleGameFinish} />;
+        return <Wheel config={campaign.gameConfig.wheel} isPreview={true} />;
       case 'scratch':
         return <Scratch config={campaign.gameConfig.scratch} onConfigChange={() => {}} />;
       case 'jackpot':
-        return <Jackpot isPreview={true} instantWinConfig={campaign.gameConfig.jackpot?.instantWin} onFinish={handleGameFinish} />;
+        return <Jackpot isPreview={true} />;
       case 'dice':
         return <Dice config={campaign.gameConfig.dice} onConfigChange={() => {}} />;
       default:
@@ -97,7 +85,6 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({ campaign }) => {
 
   return (
     <div className="w-full max-w-lg mx-auto p-6 flex flex-col items-center space-y-6">
-      {/* Écran d'accueil */}
       {!formValidated && !gamePlayed && (
         <>
           <h2 className="text-2xl font-bold text-center">{campaign.screens[0]?.title || 'Tentez votre chance !'}</h2>
@@ -111,10 +98,8 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({ campaign }) => {
         </>
       )}
 
-      {/* Jeu */}
       {renderGame()}
 
-      {/* Résultat */}
       {gamePlayed && (
         <div className="text-center space-y-4">
           <h3 className="text-2xl font-semibold">
@@ -144,7 +129,6 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({ campaign }) => {
         </div>
       )}
 
-      {/* Modale formulaire dynamique */}
       {showFormModal && (
         <Modal onClose={() => setShowFormModal(false)} title={campaign.screens[1]?.title || 'Vos informations'}>
           <DynamicContactForm

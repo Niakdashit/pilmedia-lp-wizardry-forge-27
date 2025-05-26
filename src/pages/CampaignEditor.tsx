@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import CampaignEditorHeader from '../components/CampaignEditor/CampaignEditorHeader';
@@ -10,9 +9,10 @@ import FormEditor from '../components/campaign/FormEditor';
 import ParticipationsViewer from '../components/campaign/ParticipationsViewer';
 import { CampaignType, getDefaultGameConfig } from '../utils/campaignTypes';
 import { useCampaigns } from '../hooks/useCampaigns';
+import { FormField } from '../components/campaign/FormEditor';
 
 // Champs du formulaire par défaut
-const defaultFormFields = [
+const defaultFormFields: FormField[] = [
   { id: 'prenom', label: 'Prénom', type: 'text', required: true },
   { id: 'nom', label: 'Nom', type: 'text', required: true },
   { id: 'email', label: 'Email', type: 'email', required: true },
@@ -39,9 +39,10 @@ const CampaignEditor: React.FC = () => {
 
   const [activeTab, setActiveTab] = useState('general');
   const [showPreviewModal, setShowPreviewModal] = useState(false);
-  const { saveCampaign, getCampaign, loading: campaignLoading } = useCampaigns();
+  const { saveCampaign, getCampaign, loading } = useCampaigns();
 
-  const [campaign, setCampaign] = useState({
+  const [campaign, setCampaign] = useState<any>({
+    id: undefined,
     name: isNewCampaign ? 'Nouvelle Campagne' : 'Quiz Marketing Digital',
     description: isNewCampaign ? '' : 'Quiz pour évaluer les connaissances en marketing digital',
     url: isNewCampaign ? '' : 'quiz-marketing-digital',
@@ -71,7 +72,6 @@ const CampaignEditor: React.FC = () => {
         showReplayButton: true
       }
     },
-    // ====> AJOUT : Clé formFields avec structure initiale
     formFields: defaultFormFields,
     gameConfig: getDefaultGameConfig(campaignType),
     design: {
@@ -177,7 +177,6 @@ const CampaignEditor: React.FC = () => {
     const existingCampaign = await getCampaign(campaignId);
     if (existingCampaign) {
       setCampaign({
-        ...campaign,
         ...existingCampaign,
         formFields: existingCampaign.form_fields || defaultFormFields
       });
@@ -189,13 +188,16 @@ const CampaignEditor: React.FC = () => {
     
     const campaignData = {
       ...campaign,
-      form_fields: campaign.formFields // Mappage vers le nom de colonne DB
+      form_fields: campaign.formFields
     };
     
     const savedCampaign = await saveCampaign(campaignData);
     
     if (savedCampaign && !continueEditing) {
       navigate('/campaigns');
+    } else if (savedCampaign && isNewCampaign) {
+      // Update the campaign state with the returned ID for new campaigns
+      setCampaign((prev: any) => ({ ...prev, id: savedCampaign.id }));
     }
   };
 

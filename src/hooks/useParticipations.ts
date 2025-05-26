@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
 
@@ -35,13 +34,9 @@ export const useParticipations = () => {
     setError(null);
 
     try {
-      // Extraire l'email des form_data s'il existe
       const email = data.form_data.email || data.user_email;
-      
-      // Récupérer des infos côté client
       const userAgent = navigator.userAgent;
       
-      // Extraire les paramètres UTM de l'URL courante
       const urlParams = new URLSearchParams(window.location.search);
       const utm_source = urlParams.get('utm_source') || data.utm_source;
       const utm_medium = urlParams.get('utm_medium') || data.utm_medium;
@@ -113,13 +108,11 @@ export const useParticipations = () => {
       return;
     }
 
-    // Récupérer tous les champs possibles des form_data
     const allFields = new Set<string>();
     participations.forEach(p => {
       Object.keys(p.form_data).forEach(key => allFields.add(key));
     });
 
-    // Créer les en-têtes CSV
     const headers = [
       'Date',
       'Email',
@@ -131,7 +124,6 @@ export const useParticipations = () => {
       ...Array.from(allFields)
     ];
 
-    // Créer les lignes CSV
     const rows = participations.map(p => [
       new Date(p.created_at).toLocaleString('fr-FR'),
       p.user_email || '',
@@ -143,7 +135,6 @@ export const useParticipations = () => {
       ...Array.from(allFields).map(field => p.form_data[field] || '')
     ]);
 
-    // Créer le contenu CSV
     const csvContent = [
       headers.join(','),
       ...rows.map(row => 
@@ -155,7 +146,6 @@ export const useParticipations = () => {
       )
     ].join('\n');
 
-    // Télécharger le fichier
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     const url = URL.createObjectURL(blob);
