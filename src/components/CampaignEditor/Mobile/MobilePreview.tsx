@@ -14,18 +14,18 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
     switch (previewMode) {
       case 'mobile':
         return {
-          width: '320px',
-          height: '568px',
-          borderRadius: '24px',
-          border: '8px solid #1f1f1f',
+          width: '280px',
+          height: '500px',
+          borderRadius: '20px',
+          border: '6px solid #1f1f1f',
           boxShadow: '0 0 20px rgba(0,0,0,0.3)',
           backgroundColor: '#000'
         };
       case 'tablet':
         return {
-          width: '400px',
-          height: '600px',
-          borderRadius: '16px',
+          width: '340px',
+          height: '480px',
+          borderRadius: '14px',
           border: '4px solid #333',
           boxShadow: '0 0 15px rgba(0,0,0,0.2)',
           backgroundColor: '#000'
@@ -37,13 +37,13 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
     const baseStyle = {
       width: '100%',
       height: '100%',
-      borderRadius: previewMode === 'mobile' ? '16px' : '12px',
+      borderRadius: previewMode === 'mobile' ? '14px' : '10px',
       overflow: 'hidden',
       position: 'relative' as const,
     };
 
-    // Apply mobile-specific background
-    if (previewMode === 'mobile' && mobileConfig.backgroundImage) {
+    // Apply mobile-specific background for both mobile and tablet
+    if (mobileConfig.backgroundImage) {
       return {
         ...baseStyle,
         backgroundImage: `url(${mobileConfig.backgroundImage})`,
@@ -60,38 +60,45 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
     };
   };
 
-  const getContentLayout = () => {
+  const getGamePositionStyles = () => {
     const gamePosition = mobileConfig.gamePosition || 'center';
     
-    let justifyContent = 'center';
     switch (gamePosition) {
       case 'top':
-        justifyContent = 'flex-start';
-        break;
+        return {
+          justifyContent: 'flex-start',
+          paddingTop: '10%'
+        };
       case 'bottom':
-        justifyContent = 'flex-end';
-        break;
+        return {
+          justifyContent: 'flex-end',
+          paddingBottom: '15%'
+        };
       default:
-        justifyContent = 'center';
+        return {
+          justifyContent: 'center'
+        };
     }
-
-    return `flex flex-col justify-${justifyContent} items-center h-full p-${mobileConfig.horizontalPadding || 4} gap-${mobileConfig.verticalSpacing || 4}`;
   };
 
   const getGameContainerStyle = () => {
+    const maxWidth = mobileConfig.fullscreenGame ? '100%' : `${mobileConfig.gameMaxWidth || 85}%`;
+    const maxHeight = mobileConfig.fullscreenGame ? '100%' : `${mobileConfig.gameMaxHeight || 50}vh`;
+    
     return {
-      maxWidth: mobileConfig.fullscreenGame ? '100%' : `${mobileConfig.gameMaxWidth || 90}%`,
-      maxHeight: mobileConfig.fullscreenGame ? '100%' : `${mobileConfig.gameMaxHeight || 60}vh`,
-      padding: `${mobileConfig.gamePaddingY || 16}px ${mobileConfig.gamePaddingX || 16}px`,
+      maxWidth,
+      maxHeight,
+      width: '100%',
+      minHeight: '200px',
+      padding: `${mobileConfig.gamePaddingY || 8}px ${mobileConfig.gamePaddingX || 8}px`,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
     };
   };
 
-  // Create enhanced campaign object with mobile config
-  const enhancedCampaign = {
-    ...campaign,
-    name: mobileConfig.title || campaign.name,
-    description: mobileConfig.description || campaign.description,
-  };
+  const showTitle = mobileConfig.showTitle !== false && (mobileConfig.title || campaign.name);
+  const showDescription = mobileConfig.showDescription !== false && (mobileConfig.description || campaign.description);
 
   return (
     <div className="flex flex-col items-center space-y-4">
@@ -101,16 +108,16 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
       
       <div style={getDeviceStyle()}>
         <div style={getScreenStyle()}>
-          {/* Logo Overlay (Mobile only) */}
-          {previewMode === 'mobile' && mobileConfig.logoOverlay && (
+          {/* Logo Overlay */}
+          {mobileConfig.logoOverlay && (
             <div 
-              className={`absolute z-10 w-16 h-16 ${
-                mobileConfig.logoPosition === 'top-left' ? 'top-4 left-4' :
-                mobileConfig.logoPosition === 'top-center' ? 'top-4 left-1/2 transform -translate-x-1/2' :
-                mobileConfig.logoPosition === 'top-right' ? 'top-4 right-4' :
+              className={`absolute z-10 w-12 h-12 ${
+                mobileConfig.logoPosition === 'top-left' ? 'top-3 left-3' :
+                mobileConfig.logoPosition === 'top-center' ? 'top-3 left-1/2 transform -translate-x-1/2' :
+                mobileConfig.logoPosition === 'top-right' ? 'top-3 right-3' :
                 mobileConfig.logoPosition === 'center' ? 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2' :
-                mobileConfig.logoPosition === 'bottom-left' ? 'bottom-4 left-4' :
-                'bottom-4 right-4'
+                mobileConfig.logoPosition === 'bottom-left' ? 'bottom-3 left-3' :
+                'bottom-3 right-3'
               }`}
             >
               <img 
@@ -121,23 +128,30 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
             </div>
           )}
 
-          {/* Decorative Overlay (Mobile only) */}
-          {previewMode === 'mobile' && mobileConfig.decorativeOverlay && (
+          {/* Decorative Overlay */}
+          {mobileConfig.decorativeOverlay && (
             <div className="absolute inset-0 z-5 pointer-events-none">
               <img 
                 src={mobileConfig.decorativeOverlay} 
                 alt="Decorative overlay" 
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover opacity-80"
               />
             </div>
           )}
 
-          {/* Main Content */}
-          <div className={getContentLayout()}>
-            {/* Title & Description */}
-            {(enhancedCampaign.name || enhancedCampaign.description) && (
-              <div className="text-center space-y-2 z-20 relative">
-                {enhancedCampaign.name && (
+          {/* Main Content Container */}
+          <div 
+            className="flex flex-col h-full relative z-20"
+            style={{
+              ...getGamePositionStyles(),
+              padding: `${mobileConfig.verticalSpacing || 16}px ${mobileConfig.horizontalPadding || 12}px`,
+              gap: `${mobileConfig.verticalSpacing || 16}px`
+            }}
+          >
+            {/* Title & Description Block */}
+            {(showTitle || showDescription) && (
+              <div className="text-center space-y-2 flex-shrink-0">
+                {showTitle && (
                   <h2 
                     className={`${mobileConfig.titleSize || 'text-lg'} ${mobileConfig.titleWeight || 'font-bold'} ${mobileConfig.titleAlignment || 'text-center'}`}
                     style={{ 
@@ -145,10 +159,10 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
                       fontFamily: mobileConfig.fontFamily || 'Inter'
                     }}
                   >
-                    {enhancedCampaign.name}
+                    {mobileConfig.title || campaign.name}
                   </h2>
                 )}
-                {enhancedCampaign.description && (
+                {showDescription && (
                   <p 
                     className={`${mobileConfig.descriptionSize || 'text-sm'} ${mobileConfig.descriptionAlignment || 'text-center'}`}
                     style={{ 
@@ -156,26 +170,29 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
                       fontFamily: mobileConfig.fontFamily || 'Inter'
                     }}
                   >
-                    {enhancedCampaign.description}
+                    {mobileConfig.description || campaign.description}
                   </p>
                 )}
               </div>
             )}
 
             {/* Game Container */}
-            <div style={getGameContainerStyle()} className="z-20 relative">
-              <GameCanvasPreview campaign={enhancedCampaign} className="w-full h-full" />
+            <div style={getGameContainerStyle()} className="flex-grow flex items-center justify-center">
+              <div className="w-full h-full max-w-full max-h-full overflow-hidden">
+                <GameCanvasPreview campaign={campaign} className="w-full h-full" />
+              </div>
             </div>
 
-            {/* Mobile Button (if configured) */}
+            {/* Mobile Button */}
             {mobileConfig.buttonText && (
               <button
-                className={`${mobileConfig.buttonShape || 'rounded-lg'} ${mobileConfig.buttonShadow || 'shadow-md'} transition-colors px-6 py-3 text-white font-medium z-20 relative`}
+                className={`${mobileConfig.buttonShape || 'rounded-lg'} ${mobileConfig.buttonShadow || 'shadow-md'} transition-colors px-4 py-2 text-white font-medium flex-shrink-0`}
                 style={{
                   backgroundColor: mobileConfig.buttonColor || '#841b60',
                   color: mobileConfig.buttonTextColor || '#ffffff',
                   width: `${mobileConfig.buttonWidth || 80}%`,
-                  margin: `${mobileConfig.buttonMargin || 16}px 0`,
+                  margin: '0 auto',
+                  fontSize: '14px'
                 }}
               >
                 {mobileConfig.buttonText}
@@ -184,7 +201,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
           </div>
 
           {/* Custom Mobile Template Overlay */}
-          {previewMode === 'mobile' && mobileConfig.customTemplate && (
+          {mobileConfig.customTemplate && (
             <div className="absolute inset-0 z-30 pointer-events-none">
               <img 
                 src={mobileConfig.customTemplate} 

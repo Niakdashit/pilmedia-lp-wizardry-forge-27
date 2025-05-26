@@ -19,72 +19,96 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   const buttonColor = campaign.gameConfig?.[campaign.type]?.buttonColor || '#ec4899';
 
   const renderGame = () => {
+    const gameProps = {
+      style: { 
+        width: '100%', 
+        height: '100%', 
+        maxWidth: '100%', 
+        maxHeight: '100%',
+        overflow: 'hidden'
+      }
+    };
+
     switch (campaign.type) {
       case 'jackpot':
         return (
-          <Jackpot
-            isPreview={true}
-            instantWinConfig={{
-              mode: 'instant_winner' as const,
-              winProbability: campaign.gameConfig?.jackpot?.instantWin?.winProbability || 0.05,
-              maxWinners: campaign.gameConfig?.jackpot?.instantWin?.maxWinners,
-              winnersCount: 0
-            }}
-            buttonLabel={buttonLabel}
-            buttonColor={buttonColor}
-          />
+          <div style={gameProps.style}>
+            <Jackpot
+              isPreview={true}
+              instantWinConfig={{
+                mode: 'instant_winner' as const,
+                winProbability: campaign.gameConfig?.jackpot?.instantWin?.winProbability || 0.05,
+                maxWinners: campaign.gameConfig?.jackpot?.instantWin?.maxWinners,
+                winnersCount: 0
+              }}
+              buttonLabel={buttonLabel}
+              buttonColor={buttonColor}
+            />
+          </div>
         );
       case 'quiz':
         return (
-          <Quiz 
-            config={campaign.gameConfig?.quiz || {}} 
-            onConfigChange={() => {}}
-          />
+          <div style={gameProps.style}>
+            <Quiz 
+              config={campaign.gameConfig?.quiz || {}} 
+              onConfigChange={() => {}}
+            />
+          </div>
         );
       case 'wheel':
         return (
-          <WheelPreview
-            campaign={campaign}
-            config={{
-              mode: 'instant_winner' as const,
-              winProbability: campaign.gameConfig?.wheel?.winProbability || 0.1,
-              maxWinners: campaign.gameConfig?.wheel?.maxWinners,
-              winnersCount: 0
-            }}
-            onFinish={() => {}}
-          />
+          <div style={gameProps.style}>
+            <WheelPreview
+              campaign={campaign}
+              config={{
+                mode: 'instant_winner' as const,
+                winProbability: campaign.gameConfig?.wheel?.winProbability || 0.1,
+                maxWinners: campaign.gameConfig?.wheel?.maxWinners,
+                winnersCount: 0
+              }}
+              onFinish={() => {}}
+            />
+          </div>
         );
       case 'scratch':
         return (
-          <Scratch 
-            config={campaign.gameConfig?.scratch || {}} 
-            onConfigChange={() => {}}
-          />
+          <div style={gameProps.style}>
+            <Scratch 
+              config={campaign.gameConfig?.scratch || {}} 
+              onConfigChange={() => {}}
+            />
+          </div>
         );
       case 'memory':
         return (
-          <Memory 
-            config={campaign.gameConfig?.memory || {}} 
-            onConfigChange={() => {}}
-          />
+          <div style={gameProps.style}>
+            <Memory 
+              config={campaign.gameConfig?.memory || {}} 
+              onConfigChange={() => {}}
+            />
+          </div>
         );
       case 'puzzle':
         return (
-          <Puzzle 
-            config={campaign.gameConfig?.puzzle || {}} 
-            onConfigChange={() => {}}
-          />
+          <div style={gameProps.style}>
+            <Puzzle 
+              config={campaign.gameConfig?.puzzle || {}} 
+              onConfigChange={() => {}}
+            />
+          </div>
         );
       case 'dice':
         return (
-          <Dice 
-            config={campaign.gameConfig?.dice || {}} 
-            onConfigChange={() => {}}
-          />
+          <div style={gameProps.style}>
+            <Dice 
+              config={campaign.gameConfig?.dice || {}} 
+              onConfigChange={() => {}}
+            />
+          </div>
         );
       default:
         return (
-          <div className="text-center text-gray-500">
+          <div className="text-center text-gray-500 flex items-center justify-center h-full">
             <p className="text-sm">Type de jeu non pris en charge</p>
           </div>
         );
@@ -92,8 +116,8 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   };
 
   return (
-    <div className={`relative w-full h-full ${className} overflow-hidden`}>
-      {/* Image de fond plein écran, rognée si besoin */}
+    <div className={`relative w-full h-full ${className} flex items-center justify-center`} style={{ minHeight: '200px' }}>
+      {/* Image de fond plein écran */}
       {gameBackgroundImage && (
         <img
           src={gameBackgroundImage}
@@ -113,8 +137,8 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
         />
       )}
 
-      {/* Jeu centré par-dessus */}
-      <div className="relative z-20 flex items-center justify-center w-full h-full px-4">
+      {/* Jeu centré avec contraintes de taille */}
+      <div className="relative z-20 w-full h-full flex items-center justify-center p-2" style={{ maxWidth: '100%', maxHeight: '100%' }}>
         {renderGame()}
       </div>
     </div>

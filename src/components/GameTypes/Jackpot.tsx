@@ -1,11 +1,10 @@
+
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
 
 // Paramètres slots
 const SYMBOLS = ['🍒', '🍋', '🍊', '🍀', '7️⃣', '💎', '⭐'];
-const SLOT_SIZE = 80; // px
-const SLOT_GAP = 16;  // px
 
 interface JackpotInstantWinConfig {
   mode: 'instant_winner';
@@ -77,24 +76,39 @@ const Jackpot: React.FC<JackpotProps> = ({
     return <div><p>Pas de configuration pour le moment.</p></div>;
   }
 
+  // Responsive slot size calculation
+  const getSlotSize = () => {
+    const containerWidth = window.innerWidth || 400;
+    if (containerWidth < 350) return 50; // Mobile très petit
+    if (containerWidth < 500) return 60; // Mobile standard
+    return 70; // Tablette et plus
+  };
+
+  const slotSize = getSlotSize();
+  const slotGap = Math.max(8, slotSize * 0.15);
+
   return (
-    <div
-      style={{ maxWidth: 400, width: "95%", minHeight: 340 }}
-      className="flex flex-col items-center justify-center w-full h-full px-0"
-    >
-      {/* Slots sans fond blanc autour */}
-      <div style={{ display: "flex", gap: SLOT_GAP, marginBottom: 24 }}>
+    <div className="flex flex-col items-center justify-center w-full h-full p-2" style={{ minHeight: '200px' }}>
+      {/* Slots */}
+      <div 
+        className="flex mb-4"
+        style={{ 
+          gap: slotGap,
+          flexWrap: 'nowrap',
+          maxWidth: '100%'
+        }}
+      >
         {slots.map((symbol, i) => (
           <motion.div
             key={i}
-            className="bg-white shadow-md flex items-center justify-center"
+            className="bg-white shadow-md flex items-center justify-center flex-shrink-0"
             style={{
-              width: SLOT_SIZE,
-              height: SLOT_SIZE,
-              borderRadius: 10,
-              border: "3px solid #fff",
+              width: slotSize,
+              height: slotSize,
+              borderRadius: 8,
+              border: "2px solid #fff",
               boxShadow: "0 2px 8px 0 rgba(0,0,0,0.09)",
-              fontSize: 38,
+              fontSize: Math.max(20, slotSize * 0.4),
               fontWeight: 700
             }}
             animate={{ scale: isRolling ? [1, 0.93, 1] : 1 }}
@@ -106,19 +120,23 @@ const Jackpot: React.FC<JackpotProps> = ({
       </div>
 
       {/* Résultat ou bouton */}
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center w-full">
         {result ? (
-          <h2 className={`text-xl font-bold mb-4 ${result === "win" ? "text-green-600" : "text-red-600"}`}>
+          <h2 
+            className={`text-base font-bold mb-2 text-center ${result === "win" ? "text-green-600" : "text-red-600"}`}
+            style={{ fontSize: 'clamp(14px, 4vw, 18px)' }}
+          >
             {result === "win" ? "JACKPOT ! Vous avez gagné !" : "Dommage, pas de jackpot !"}
           </h2>
         ) : (
           <button
             onClick={roll}
             disabled={isRolling}
-            className="px-8 py-3 text-white font-medium rounded-xl shadow-lg hover:opacity-90 transition-all duration-200 disabled:opacity-50"
+            className="px-4 py-2 text-white font-medium rounded-lg shadow-lg hover:opacity-90 transition-all duration-200 disabled:opacity-50 max-w-full"
             style={{
               backgroundColor: buttonColor,
-              fontSize: 18
+              fontSize: 'clamp(12px, 3.5vw, 16px)',
+              minHeight: '40px'
             }}
           >
             {isRolling ? "Roulement..." : buttonLabel}
