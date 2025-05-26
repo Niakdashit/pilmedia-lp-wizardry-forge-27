@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Quiz, Scratch, Memory, Puzzle, Dice } from '../GameTypes';
 import TabRoulette from '@/components/configurators/TabRoulette';
@@ -5,19 +6,18 @@ import TabJackpot from '@/components/configurators/TabJackpot';
 import JackpotAppearance from '@/components/configurators/JackpotAppearance';
 import ImageUpload from '../common/ImageUpload';
 import GameCanvasPreview from './GameCanvasPreview';
-import CampaignFormEditor, { FormField } from './CampaignFormEditor'; // Ajout ici
-import { Settings, Eye, Palette, List } from 'lucide-react';
+import { Settings, Eye, Palette } from 'lucide-react';
 
 interface CampaignContentProps {
   campaign: any;
   setCampaign: React.Dispatch<React.SetStateAction<any>>;
-  activeTab: string; // <--- ajout pour switcher les onglets
+  activeTab: string;
 }
 
 const CampaignContent: React.FC<CampaignContentProps> = ({
   campaign,
   setCampaign,
-  activeTab, // <-- on récupère l'onglet actif
+  activeTab,
 }) => {
   const [activeSection, setActiveSection] = useState<'game' | 'visual'>('game');
 
@@ -83,28 +83,6 @@ const CampaignContent: React.FC<CampaignContentProps> = ({
     }
   };
 
-  // ====> AJOUT ici : Affichage de l'éditeur de formulaire si onglet actif "form"
-  if (activeTab === 'form') {
-    return (
-      <div className="p-6">
-        <div className="flex items-center mb-4">
-          <List className="w-5 h-5 mr-2 text-[#841b60]" />
-          <h2 className="text-xl font-bold text-[#841b60]">Formulaire de participation</h2>
-        </div>
-        <CampaignFormEditor
-          formFields={campaign.formFields || []}
-          setFormFields={(fields: FormField[]) =>
-            setCampaign((prev: any) => ({
-              ...prev,
-              formFields: fields,
-            }))
-          }
-        />
-      </div>
-    );
-  }
-
-  // ====> Sinon on conserve la logique classique
   return (
     <div className="space-y-6">
       <div className="bg-[#f9f0f5] border border-[#e9d0e5] rounded-lg p-4">
