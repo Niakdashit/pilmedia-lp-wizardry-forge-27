@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 
 interface Segment {
@@ -6,13 +5,6 @@ interface Segment {
   chance: number;
   color?: string;
   image?: File | null;
-}
-
-interface InstantWinConfig {
-  mode: "instant_winner";
-  winProbability: number; // entre 0 et 1
-  maxWinners?: number;
-  winnersCount?: number;
 }
 
 interface TabRouletteProps {

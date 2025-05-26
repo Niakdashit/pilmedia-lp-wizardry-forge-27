@@ -39,7 +39,6 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
           <TabRoulette 
             campaign={campaign}
             setCampaign={setCampaign}
-            config={campaign.gameConfig?.wheel}
           />
         );
       case 'scratch':
