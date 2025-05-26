@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 export type FieldConfig = {
   name: string;                // ex: "email"
   label: string;               // ex: "Email"
-  type?: string;               // ex: "text", "email", "tel", "select"
+  type?: "text" | "email" | "tel" | "select";
   required?: boolean;
   options?: string[];          // pour select (civilité, etc.)
   placeholder?: string;
@@ -54,7 +54,8 @@ const DynamicContactForm: React.FC<DynamicContactFormProps> = ({
       {fields.map(field => (
         <div key={field.name}>
           <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor={field.name}>
-            {field.label}{field.required && <span className="text-red-500">*</span>}
+            {field.label}
+            {field.required && <span className="text-red-500 ml-1">*</span>}
           </label>
           {field.type === "select" && field.options ? (
             <select
@@ -83,7 +84,9 @@ const DynamicContactForm: React.FC<DynamicContactFormProps> = ({
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
             />
           )}
-          {errors[field.name] && <span className="text-xs text-red-500">{errors[field.name]}</span>}
+          {errors[field.name] && (
+            <span className="text-xs text-red-500">{errors[field.name]}</span>
+          )}
         </div>
       ))}
       <button
