@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Quiz, Scratch, Memory, Puzzle, Dice } from '../GameTypes';
 import TabRoulette from '@/components/configurators/TabRoulette';
@@ -11,13 +10,11 @@ import { Settings, Eye, Palette } from 'lucide-react';
 interface CampaignContentProps {
   campaign: any;
   setCampaign: React.Dispatch<React.SetStateAction<any>>;
-  activeTab: string;
 }
 
 const CampaignContent: React.FC<CampaignContentProps> = ({
   campaign,
   setCampaign,
-  activeTab,
 }) => {
   const [activeSection, setActiveSection] = useState<'game' | 'visual'>('game');
 
