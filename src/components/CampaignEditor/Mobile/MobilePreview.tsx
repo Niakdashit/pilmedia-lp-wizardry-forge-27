@@ -1,4 +1,3 @@
-
 import React from 'react';
 import MobileWheelPreview from '../../GameTypes/MobileWheelPreview';
 import { Quiz, Scratch, Memory, Puzzle, Dice, Jackpot } from '../../GameTypes';
@@ -196,7 +195,6 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
   const getLayoutStyle = () => {
     const gamePosition = mobileConfig.gamePosition || 'center';
     const textPosition = mobileConfig.textPosition || 'top';
-    const gameVerticalAlign = mobileConfig.gameVerticalAlign || 'center';
 
     let flexDirection: 'column' | 'column-reverse' = 'column';
     let justifyContent = 'center';
