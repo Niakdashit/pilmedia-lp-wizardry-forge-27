@@ -39,7 +39,7 @@ const CampaignEditor: React.FC = () => {
 
   const [activeTab, setActiveTab] = useState('general');
   const [showPreviewModal, setShowPreviewModal] = useState(false);
-  const { saveCampaign, getCampaign, loading } = useCampaigns();
+  const { saveCampaign, getCampaign } = useCampaigns();
 
   const [campaign, setCampaign] = useState<any>({
     id: undefined,
@@ -166,7 +166,6 @@ const CampaignEditor: React.FC = () => {
     }
   }, [isNewCampaign, searchParams, navigate]);
 
-  // Charger la campagne existante si ce n'est pas une nouvelle
   useEffect(() => {
     if (!isNewCampaign && id) {
       loadCampaign(id);
@@ -196,7 +195,6 @@ const CampaignEditor: React.FC = () => {
     if (savedCampaign && !continueEditing) {
       navigate('/campaigns');
     } else if (savedCampaign && isNewCampaign) {
-      // Update the campaign state with the returned ID for new campaigns
       setCampaign((prev: any) => ({ ...prev, id: savedCampaign.id }));
     }
   };

@@ -50,11 +50,6 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({ campaign }) => {
     }, 400);
   };
 
-  const handleGameFinish = (result: 'win' | 'lose') => {
-    setGamePlayed(true);
-    setGameResult(result);
-  };
-
   const reset = () => {
     setFormValidated(false);
     setGamePlayed(false);
