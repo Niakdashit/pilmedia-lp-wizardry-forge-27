@@ -1,15 +1,18 @@
 import React from 'react';
 import MobileWheelPreview from '../../GameTypes/MobileWheelPreview';
 import { Quiz, Scratch, Memory, Puzzle, Dice, Jackpot } from '../../GameTypes';
+
 interface MobilePreviewProps {
   campaign: any;
   previewMode: 'mobile' | 'tablet';
 }
+
 const MobilePreview: React.FC<MobilePreviewProps> = ({
   campaign,
   previewMode
 }) => {
   const mobileConfig = campaign.mobileConfig || {};
+
   const getDeviceStyle = () => {
     switch (previewMode) {
       case 'mobile':
@@ -32,6 +35,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
         };
     }
   };
+
   const getScreenStyle = () => {
     const baseStyle = {
       width: '100%',
@@ -43,6 +47,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
     };
     return baseStyle;
   };
+
   const getGamePositionStyles = () => {
     const gamePosition = mobileConfig.gamePosition || 'center';
     switch (gamePosition) {
@@ -62,6 +67,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
         };
     }
   };
+
   const getGameContainerStyle = () => {
     const maxWidth = mobileConfig.fullscreenGame ? '100%' : `${mobileConfig.gameMaxWidth || 85}%`;
     const maxHeight = mobileConfig.fullscreenGame ? '100%' : `${mobileConfig.gameMaxHeight || 50}vh`;
@@ -78,8 +84,10 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
       zIndex: 30
     };
   };
+
   const showTitle = mobileConfig.showTitle !== false && (mobileConfig.title || campaign.name);
   const showDescription = mobileConfig.showDescription !== false && (mobileConfig.description || campaign.description);
+
   const renderGameComponent = () => {
     switch (campaign.type) {
       case 'wheel':
@@ -148,6 +156,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
           </div>;
     }
   };
+
   return <div className="flex flex-col items-center space-y-4">
       <div className="text-sm font-medium text-gray-600 capitalize">
         {previewMode} Preview
@@ -155,7 +164,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
       
       <div style={getDeviceStyle()}>
         <div style={getScreenStyle()}>
-          {/* Mobile Background Image - Layer 1 (background) */}
+          {/* Layer 1: Mobile Background Image (bottom layer) */}
           {mobileConfig.backgroundImage && <div className="absolute inset-0 z-0" style={{
           backgroundImage: `url(${mobileConfig.backgroundImage})`,
           backgroundSize: mobileConfig.backgroundMode === 'contain' ? 'contain' : 'cover',
@@ -163,17 +172,17 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
           backgroundRepeat: 'no-repeat'
         }} />}
 
-          {/* Logo Overlay - Layer 2 */}
+          {/* Layer 2: Decorative Overlay (above background, below everything else) */}
+          {mobileConfig.decorativeOverlay && <div className="absolute inset-0 z-5 pointer-events-none">
+              <img src={mobileConfig.decorativeOverlay} alt="Decorative overlay" className="w-full h-full object-cover opacity-80" />
+            </div>}
+
+          {/* Layer 3: Logo Overlay */}
           {mobileConfig.logoOverlay && <div className={`absolute z-10 w-12 h-12 ${mobileConfig.logoPosition === 'top-left' ? 'top-3 left-3' : mobileConfig.logoPosition === 'top-center' ? 'top-3 left-1/2 transform -translate-x-1/2' : mobileConfig.logoPosition === 'top-right' ? 'top-3 right-3' : mobileConfig.logoPosition === 'center' ? 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2' : mobileConfig.logoPosition === 'bottom-left' ? 'bottom-3 left-3' : 'bottom-3 right-3'}`}>
               <img src={mobileConfig.logoOverlay} alt="Logo" className="w-full h-full object-contain" />
             </div>}
 
-          {/* Decorative Overlay - Layer 3 */}
-          {mobileConfig.decorativeOverlay && <div className="absolute inset-0 z-15 pointer-events-none">
-              <img src={mobileConfig.decorativeOverlay} alt="Decorative overlay" className="w-full h-full object-cover opacity-80" />
-            </div>}
-
-          {/* Main Content Container - Layer 4 (above background) */}
+          {/* Layer 4: Main Content Container (above all backgrounds and decorations) */}
           <div className="flex flex-col h-full relative z-20" style={{
           ...getGamePositionStyles(),
           padding: `${mobileConfig.verticalSpacing || 16}px ${mobileConfig.horizontalPadding || 12}px`,
@@ -214,7 +223,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
               </button>}
           </div>
 
-          {/* Custom Mobile Template Overlay - Layer 6 (top layer) */}
+          {/* Layer 6: Custom Mobile Template Overlay (top layer) - only if needed */}
           {mobileConfig.customTemplate && <div className="absolute inset-0 z-40 pointer-events-none">
               <img src={mobileConfig.customTemplate} alt="Mobile template" className="w-full h-full object-contain" />
             </div>}
@@ -222,4 +231,5 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
       </div>
     </div>;
 };
+
 export default MobilePreview;
