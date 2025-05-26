@@ -1,167 +1,197 @@
-
-import React from 'react';
-import { Palette, Type, Image as ImageIcon } from 'lucide-react';
+import React, { useState } from 'react';
+import { Quiz, Scratch, Memory, Puzzle, Dice } from '../GameTypes';
+import TabRoulette from '@/components/configurators/TabRoulette';
+import TabJackpot from '@/components/configurators/TabJackpot';
+import JackpotAppearance from '@/components/configurators/JackpotAppearance';
 import ImageUpload from '../common/ImageUpload';
-import JackpotAppearance from './JackpotAppearance';
+import GameCanvasPreview from './GameCanvasPreview';
+import CampaignFormEditor, { FormField } from './CampaignFormEditor'; // Ajout ici
+import { Settings, Eye, Palette, List } from 'lucide-react';
 
-interface CampaignDesignProps {
+interface CampaignContentProps {
   campaign: any;
   setCampaign: React.Dispatch<React.SetStateAction<any>>;
+  activeTab: string; // <--- ajout pour switcher les onglets
 }
 
-const CampaignDesign: React.FC<CampaignDesignProps> = ({ campaign, setCampaign }) => {
-  const updateDesign = (key: string, value: string) => {
+const CampaignContent: React.FC<CampaignContentProps> = ({
+  campaign,
+  setCampaign,
+  activeTab, // <-- on récupère l'onglet actif
+}) => {
+  const [activeSection, setActiveSection] = useState<'game' | 'visual'>('game');
+
+  const updateGameConfig = (gameType: string, config: any) => {
     setCampaign((prev: any) => ({
       ...prev,
-      design: { ...prev.design, [key]: value }
+      gameConfig: {
+        ...prev.gameConfig,
+        [gameType]: config,
+      },
     }));
   };
 
-  return (
-    <div className="space-y-8">
-      {/* Apparence du jeu spécifique au Jackpot */}
-      {campaign.type === 'jackpot' && (
-        <div>
-          <div className="flex items-center space-x-2 mb-4">
-            <ImageIcon className="w-5 h-5 text-[#841b60]" />
-            <h3 className="text-lg font-medium text-gray-900">Apparence visuelle</h3>
+  const getContentEditor = () => {
+    switch (campaign.type) {
+      case 'quiz':
+        return (
+          <Quiz
+            config={campaign.gameConfig?.quiz}
+            onConfigChange={(config) => updateGameConfig('quiz', config)}
+          />
+        );
+      case 'wheel':
+        return <TabRoulette campaign={campaign} setCampaign={setCampaign} />;
+      case 'scratch':
+        return (
+          <Scratch
+            config={campaign.gameConfig?.scratch}
+            onConfigChange={(config) => updateGameConfig('scratch', config)}
+          />
+        );
+      case 'memory':
+        return (
+          <Memory
+            config={campaign.gameConfig?.memory}
+            onConfigChange={(config) => updateGameConfig('memory', config)}
+          />
+        );
+      case 'puzzle':
+        return (
+          <Puzzle
+            config={campaign.gameConfig?.puzzle}
+            onConfigChange={(config) => updateGameConfig('puzzle', config)}
+          />
+        );
+      case 'dice':
+        return (
+          <Dice
+            config={campaign.gameConfig?.dice}
+            onConfigChange={(config) => updateGameConfig('dice', config)}
+          />
+        );
+      case 'jackpot':
+        return <TabJackpot campaign={campaign} setCampaign={setCampaign} />;
+      default:
+        return (
+          <div className="flex items-center justify-center h-64 bg-gray-50 border border-gray-200 rounded-lg">
+            <p className="text-gray-500">
+              Éditeur de contenu pour le type "{campaign.type}" en cours de développement.
+            </p>
           </div>
-          <JackpotAppearance campaign={campaign} setCampaign={setCampaign} />
+        );
+    }
+  };
+
+  // ====> AJOUT ici : Affichage de l'éditeur de formulaire si onglet actif "form"
+  if (activeTab === 'form') {
+    return (
+      <div className="p-6">
+        <div className="flex items-center mb-4">
+          <List className="w-5 h-5 mr-2 text-[#841b60]" />
+          <h2 className="text-xl font-bold text-[#841b60]">Formulaire de participation</h2>
+        </div>
+        <CampaignFormEditor
+          formFields={campaign.formFields || []}
+          setFormFields={(fields: FormField[]) =>
+            setCampaign((prev: any) => ({
+              ...prev,
+              formFields: fields,
+            }))
+          }
+        />
+      </div>
+    );
+  }
+
+  // ====> Sinon on conserve la logique classique
+  return (
+    <div className="space-y-6">
+      <div className="bg-[#f9f0f5] border border-[#e9d0e5] rounded-lg p-4">
+        <p className="text-[#841b60] text-sm">
+          Configurez le contenu et l'apparence de votre {campaign.type}.
+        </p>
+      </div>
+
+      <div className="flex space-x-4 border-b border-gray-200">
+        <button
+          onClick={() => setActiveSection('game')}
+          className={`py-3 px-4 font-medium text-sm border-b-2 transition-colors duration-200 flex items-center space-x-2 ${
+            activeSection === 'game'
+              ? 'border-[#841b60] text-[#841b60]'
+              : 'border-transparent text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          <Settings className="w-4 h-4" />
+          <span>Configuration du jeu</span>
+        </button>
+        <button
+          onClick={() => setActiveSection('visual')}
+          className={`py-3 px-4 font-medium text-sm border-b-2 transition-colors duration-200 flex items-center space-x-2 ${
+            activeSection === 'visual'
+              ? 'border-[#841b60] text-[#841b60]'
+              : 'border-transparent text-gray-500 hover:text-gray-700'
+          }`}
+        >
+          <Palette className="w-4 h-4" />
+          <span>Apparence visuelle</span>
+        </button>
+      </div>
+
+      {activeSection === 'game' ? (
+        <div className="space-y-6">
+          <div>
+            <div className="flex items-center space-x-2 mb-4">
+              <Eye className="w-5 h-5 text-[#841b60]" />
+              <h3 className="text-lg font-medium text-gray-900">Aperçu du jeu</h3>
+            </div>
+            <GameCanvasPreview campaign={campaign} />
+          </div>
+
+          <div>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">Paramètres du jeu</h3>
+            {getContentEditor()}
+          </div>
+        </div>
+      ) : (
+        <div className="space-y-6">
+          {/* Si le type est jackpot, afficher JackpotAppearance */}
+          {campaign.type === 'jackpot' ? (
+            <JackpotAppearance campaign={campaign} setCampaign={setCampaign} />
+          ) : (
+            <>
+              <div className="flex items-center space-x-2 mb-4">
+                <Eye className="w-5 h-5 text-[#841b60]" />
+                <h3 className="text-lg font-medium text-gray-900">Aperçu du jeu</h3>
+              </div>
+              <GameCanvasPreview campaign={campaign} />
+
+              <div>
+                <h3 className="text-lg font-medium text-gray-900 mb-4">Image de fond du jeu</h3>
+                <ImageUpload
+                  value={campaign.gameConfig?.[campaign.type]?.backgroundImage || campaign.design.backgroundImage}
+                  onChange={(value) => {
+                    setCampaign((prev: any) => ({
+                      ...prev,
+                      gameConfig: {
+                        ...prev.gameConfig,
+                        [campaign.type]: {
+                          ...prev.gameConfig?.[campaign.type],
+                          backgroundImage: value,
+                        },
+                      },
+                    }));
+                  }}
+                  label="Téléchargez ou sélectionnez une image de fond pour votre jeu"
+                  className="w-full"
+                />
+              </div>
+            </>
+          )}
         </div>
       )}
-
-      {/* Couleurs principales */}
-      <div>
-        <div className="flex items-center space-x-2 mb-4">
-          <Palette className="w-5 h-5 text-[#841b60]" />
-          <h3 className="text-lg font-medium text-gray-900">Couleurs</h3>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Couleur principale
-            </label>
-            <div className="flex items-center space-x-3">
-              <input
-                type="color"
-                value={campaign.design.primaryColor}
-                onChange={(e) => updateDesign('primaryColor', e.target.value)}
-                className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
-              />
-              <input
-                type="text"
-                value={campaign.design.primaryColor}
-                onChange={(e) => updateDesign('primaryColor', e.target.value)}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Couleur secondaire
-            </label>
-            <div className="flex items-center space-x-3">
-              <input
-                type="color"
-                value={campaign.design.secondaryColor}
-                onChange={(e) => updateDesign('secondaryColor', e.target.value)}
-                className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
-              />
-              <input
-                type="text"
-                value={campaign.design.secondaryColor}
-                onChange={(e) => updateDesign('secondaryColor', e.target.value)}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Arrière-plan
-            </label>
-            <div className="flex items-center space-x-3">
-              <input
-                type="color"
-                value={campaign.design.background}
-                onChange={(e) => updateDesign('background', e.target.value)}
-                className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
-              />
-              <input
-                type="text"
-                value={campaign.design.background}
-                onChange={(e) => updateDesign('background', e.target.value)}
-                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Typographie */}
-      <div>
-        <div className="flex items-center space-x-2 mb-4">
-          <Type className="w-5 h-5 text-[#841b60]" />
-          <h3 className="text-lg font-medium text-gray-900">Typographie</h3>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Police principale
-            </label>
-            <select
-              value={campaign.design.fontFamily}
-              onChange={(e) => updateDesign('fontFamily', e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
-            >
-              <option value="Inter">Inter</option>
-              <option value="Arial">Arial</option>
-              <option value="Helvetica">Helvetica</option>
-              <option value="Georgia">Georgia</option>
-              <option value="Times New Roman">Times New Roman</option>
-            </select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Taille de police
-            </label>
-            <select
-              value={campaign.design.fontSize}
-              onChange={(e) => updateDesign('fontSize', e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
-            >
-              <option value="small">Petite</option>
-              <option value="normal">Normale</option>
-              <option value="large">Grande</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      {/* Images */}
-      <div>
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Images générales</h3>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <ImageUpload
-            label="Logo"
-            value={campaign.design.logoUrl}
-            onChange={(value) => updateDesign('logoUrl', value)}
-          />
-          
-          <ImageUpload
-            label="Image d'arrière-plan générale"
-            value={campaign.design.backgroundImage}
-            onChange={(value) => updateDesign('backgroundImage', value)}
-          />
-        </div>
-      </div>
     </div>
   );
 };
 
-export default CampaignDesign;
+export default CampaignContent;
