@@ -1,5 +1,7 @@
+
 import React from 'react';
 import MobileWheelPreview from '../../GameTypes/MobileWheelPreview';
+import { Quiz, Scratch, Memory, Puzzle, Dice, Jackpot } from '../../GameTypes';
 
 interface MobilePreviewProps {
   campaign: any;
@@ -88,34 +90,97 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
   const showDescription = mobileConfig.showDescription !== false && (mobileConfig.description || campaign.description);
 
   const renderGameComponent = () => {
-    if (campaign.type === 'wheel') {
-      const hasMobileRouletteConfig = mobileConfig.roulette && mobileConfig.roulette.segments && mobileConfig.roulette.segments.length > 0;
-      
-      if (hasMobileRouletteConfig) {
-        return <MobileWheelPreview campaign={campaign} />;
-      } else {
+    switch (campaign.type) {
+      case 'wheel':
+        const hasMobileRouletteConfig = mobileConfig.roulette && mobileConfig.roulette.segments && mobileConfig.roulette.segments.length > 0;
+        
+        if (hasMobileRouletteConfig) {
+          return <MobileWheelPreview campaign={campaign} />;
+        } else {
+          return (
+            <div className="flex items-center justify-center h-full w-full bg-gray-100 rounded-lg">
+              <p className="text-gray-500 text-sm text-center px-4">
+                Configurez la roue dans l'onglet "Game Placement" pour voir l'aperçu mobile
+              </p>
+            </div>
+          );
+        }
+
+      case 'quiz':
         return (
-          <div className="flex items-center justify-center h-full w-full bg-gray-100 rounded-lg">
-            <p className="text-gray-500 text-sm text-center px-4">
-              Configurez la roue dans l'onglet "Game Placement" pour voir l'aperçu mobile
-            </p>
+          <div className="w-full h-full" style={{ transform: 'scale(0.8)', transformOrigin: 'center' }}>
+            <Quiz 
+              config={campaign.gameConfig.quiz}
+              onConfigChange={() => {}}
+            />
           </div>
         );
-      }
-    }
-    
-    return (
-      <div className="flex items-center justify-center h-full w-full bg-white rounded-lg border-2 border-gray-200">
-        <div className="text-center p-4">
-          <div className="w-16 h-16 bg-[#841b60] rounded-lg mx-auto mb-3 flex items-center justify-center">
-            <span className="text-white text-2xl">🎮</span>
+
+      case 'scratch':
+        return (
+          <div className="w-full h-full" style={{ transform: 'scale(0.8)', transformOrigin: 'center' }}>
+            <Scratch 
+              config={campaign.gameConfig.scratch}
+              onConfigChange={() => {}}
+            />
           </div>
-          <p className="text-gray-600 text-sm">
-            Aperçu {campaign.type} mobile
-          </p>
-        </div>
-      </div>
-    );
+        );
+
+      case 'memory':
+        return (
+          <div className="w-full h-full" style={{ transform: 'scale(0.8)', transformOrigin: 'center' }}>
+            <Memory 
+              config={campaign.gameConfig.memory}
+              onConfigChange={() => {}}
+            />
+          </div>
+        );
+
+      case 'puzzle':
+        return (
+          <div className="w-full h-full" style={{ transform: 'scale(0.8)', transformOrigin: 'center' }}>
+            <Puzzle 
+              config={campaign.gameConfig.puzzle}
+              onConfigChange={() => {}}
+            />
+          </div>
+        );
+
+      case 'dice':
+        return (
+          <div className="w-full h-full" style={{ transform: 'scale(0.8)', transformOrigin: 'center' }}>
+            <Dice 
+              config={campaign.gameConfig.dice}
+              onConfigChange={() => {}}
+            />
+          </div>
+        );
+
+      case 'jackpot':
+        return (
+          <div className="w-full h-full" style={{ transform: 'scale(0.8)', transformOrigin: 'center' }}>
+            <Jackpot
+              isPreview={true}
+              instantWinConfig={campaign.gameConfig?.jackpot?.instantWin}
+              onFinish={() => {}}
+            />
+          </div>
+        );
+
+      default:
+        return (
+          <div className="flex items-center justify-center h-full w-full bg-white rounded-lg border-2 border-gray-200">
+            <div className="text-center p-4">
+              <div className="w-16 h-16 bg-[#841b60] rounded-lg mx-auto mb-3 flex items-center justify-center">
+                <span className="text-white text-2xl">🎮</span>
+              </div>
+              <p className="text-gray-600 text-sm">
+                Aperçu {campaign.type} mobile
+              </p>
+            </div>
+          </div>
+        );
+    }
   };
 
   return (
