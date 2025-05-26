@@ -1,10 +1,10 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import CampaignEditorHeader from '../components/CampaignEditor/CampaignEditorHeader';
 import CampaignEditorTabs from '../components/CampaignEditor/CampaignEditorTabs';
 import CampaignEditorContent from '../components/CampaignEditor/CampaignEditorContent';
 import PreviewModal from '../components/CampaignEditor/PreviewModal';
-import JackpotAppearance from '../components/CampaignEditor/JackpotAppearance'; // ✅ Emplacement correct
 import CampaignMobile from '../components/CampaignEditor/CampaignMobile';
 import { CampaignType, getDefaultGameConfig } from '../utils/campaignTypes';
 

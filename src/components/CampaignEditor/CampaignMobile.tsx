@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Smartphone, Tablet, Monitor } from 'lucide-react';
+import { Smartphone, Tablet } from 'lucide-react';
 import MobileLayout from './Mobile/MobileLayout';
 import MobileVisuals from './Mobile/MobileVisuals';
 import MobileTexts from './Mobile/MobileTexts';
@@ -15,7 +15,7 @@ interface CampaignMobileProps {
 
 const CampaignMobile: React.FC<CampaignMobileProps> = ({ campaign, setCampaign }) => {
   const [activeSubTab, setActiveSubTab] = useState('layout');
-  const [previewMode, setPreviewMode] = useState<'mobile' | 'tablet' | 'desktop'>('mobile');
+  const [previewMode, setPreviewMode] = useState<'mobile' | 'tablet'>('mobile');
 
   const subTabs = [
     { id: 'layout', label: 'Layout' },
@@ -78,7 +78,7 @@ const CampaignMobile: React.FC<CampaignMobileProps> = ({ campaign, setCampaign }
           <div className="flex items-center space-x-2 bg-white rounded-lg p-1">
             <button
               onClick={() => setPreviewMode('mobile')}
-              className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+              className={`flex items-center space-x-2 px-4 py-3 rounded-md text-sm font-medium transition-colors ${
                 previewMode === 'mobile'
                   ? 'bg-[#841b60] text-white'
                   : 'text-gray-600 hover:text-gray-900'
@@ -89,7 +89,7 @@ const CampaignMobile: React.FC<CampaignMobileProps> = ({ campaign, setCampaign }
             </button>
             <button
               onClick={() => setPreviewMode('tablet')}
-              className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+              className={`flex items-center space-x-2 px-4 py-3 rounded-md text-sm font-medium transition-colors ${
                 previewMode === 'tablet'
                   ? 'bg-[#841b60] text-white'
                   : 'text-gray-600 hover:text-gray-900'
@@ -97,17 +97,6 @@ const CampaignMobile: React.FC<CampaignMobileProps> = ({ campaign, setCampaign }
             >
               <Tablet className="w-4 h-4" />
               <span>Tablet</span>
-            </button>
-            <button
-              onClick={() => setPreviewMode('desktop')}
-              className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
-                previewMode === 'desktop'
-                  ? 'bg-[#841b60] text-white'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              <Monitor className="w-4 h-4" />
-              <span>Desktop</span>
             </button>
           </div>
         </div>

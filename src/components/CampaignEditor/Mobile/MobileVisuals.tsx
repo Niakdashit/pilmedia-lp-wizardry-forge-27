@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Image as ImageIcon, Smartphone } from 'lucide-react';
+import { Smartphone } from 'lucide-react';
 import ImageUpload from '../../common/ImageUpload';
 
 interface MobileVisualsProps {

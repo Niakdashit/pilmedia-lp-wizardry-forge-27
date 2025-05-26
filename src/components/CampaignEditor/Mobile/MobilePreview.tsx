@@ -4,7 +4,7 @@ import GameCanvasPreview from '../GameCanvasPreview';
 
 interface MobilePreviewProps {
   campaign: any;
-  previewMode: 'mobile' | 'tablet' | 'desktop';
+  previewMode: 'mobile' | 'tablet';
 }
 
 const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) => {
@@ -30,15 +30,6 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
           boxShadow: '0 0 15px rgba(0,0,0,0.2)',
           backgroundColor: '#000'
         };
-      case 'desktop':
-        return {
-          width: '100%',
-          height: '500px',
-          borderRadius: '8px',
-          border: '2px solid #ddd',
-          boxShadow: '0 0 10px rgba(0,0,0,0.1)',
-          backgroundColor: '#fff'
-        };
     }
   };
 
@@ -46,7 +37,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
     const baseStyle = {
       width: '100%',
       height: '100%',
-      borderRadius: previewMode === 'mobile' ? '16px' : previewMode === 'tablet' ? '12px' : '6px',
+      borderRadius: previewMode === 'mobile' ? '16px' : '12px',
       overflow: 'hidden',
       position: 'relative' as const,
     };
@@ -70,19 +61,9 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
   };
 
   const getContentLayout = () => {
-    if (previewMode !== 'mobile') {
-      return 'flex flex-col justify-center items-center h-full p-4';
-    }
-
-    // Mobile-specific layout based on configuration
     const gamePosition = mobileConfig.gamePosition || 'center';
-    const textPosition = mobileConfig.textPosition || 'top';
-    const buttonPosition = mobileConfig.buttonPosition || 'below';
-
-    let flexDirection = 'flex-col';
+    
     let justifyContent = 'center';
-    let alignItems = 'center';
-
     switch (gamePosition) {
       case 'top':
         justifyContent = 'flex-start';
@@ -94,24 +75,10 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
         justifyContent = 'center';
     }
 
-    return `flex ${flexDirection} justify-${justifyContent} items-${alignItems} h-full p-${mobileConfig.horizontalPadding || 4} gap-${mobileConfig.verticalSpacing || 4}`;
-  };
-
-  const getMobileTextStyle = () => {
-    if (previewMode !== 'mobile') return {};
-
-    return {
-      fontFamily: mobileConfig.fontFamily || 'Inter',
-      color: mobileConfig.titleColor || '#000000',
-      fontSize: mobileConfig.titleSize || 'text-2xl',
-      fontWeight: mobileConfig.titleWeight || 'font-bold',
-      textAlign: mobileConfig.titleAlignment || 'text-center',
-    };
+    return `flex flex-col justify-${justifyContent} items-center h-full p-${mobileConfig.horizontalPadding || 4} gap-${mobileConfig.verticalSpacing || 4}`;
   };
 
   const getGameContainerStyle = () => {
-    if (previewMode !== 'mobile') return {};
-
     return {
       maxWidth: mobileConfig.fullscreenGame ? '100%' : `${mobileConfig.gameMaxWidth || 90}%`,
       maxHeight: mobileConfig.fullscreenGame ? '100%' : `${mobileConfig.gameMaxHeight || 60}vh`,
@@ -122,8 +89,8 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
   // Create enhanced campaign object with mobile config
   const enhancedCampaign = {
     ...campaign,
-    name: previewMode === 'mobile' && mobileConfig.title ? mobileConfig.title : campaign.name,
-    description: previewMode === 'mobile' && mobileConfig.description ? mobileConfig.description : campaign.description,
+    name: mobileConfig.title || campaign.name,
+    description: mobileConfig.description || campaign.description,
   };
 
   return (
@@ -201,7 +168,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
             </div>
 
             {/* Mobile Button (if configured) */}
-            {previewMode === 'mobile' && mobileConfig.buttonText && (
+            {mobileConfig.buttonText && (
               <button
                 className={`${mobileConfig.buttonShape || 'rounded-lg'} ${mobileConfig.buttonShadow || 'shadow-md'} transition-colors px-6 py-3 text-white font-medium z-20 relative`}
                 style={{
