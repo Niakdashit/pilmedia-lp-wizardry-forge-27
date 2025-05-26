@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import CampaignEditorHeader from '../components/CampaignEditor/CampaignEditorHeader';
@@ -86,9 +85,23 @@ const CampaignEditor: React.FC = () => {
       timeSlots: []
     },
     config: {
-      jackpot: defaultJackpotConfig
+      jackpot: defaultJackpotConfig,
+      roulette: {
+        segments: [],
+        centerImage: null,
+        theme: 'default',
+        borderColor: '#841b60',
+        pointerColor: '#841b60'
+      }
     },
     mobileConfig: {
+      roulette: {
+        segments: [],
+        centerImage: null,
+        theme: 'default',
+        borderColor: '#841b60',
+        pointerColor: '#841b60'
+      },
       gamePosition: 'center',
       buttonPosition: 'below',
       textPosition: 'top',
@@ -96,7 +109,16 @@ const CampaignEditor: React.FC = () => {
       verticalSpacing: 20,
       backgroundMode: 'cover',
       backgroundColor: '#ebf4f7',
+      backgroundImage: null,
+      logoOverlay: null,
+      logoPosition: 'top-right',
+      decorativeOverlay: null,
+      customTemplate: null,
       fontFamily: 'Inter',
+      title: null,
+      description: null,
+      showTitle: true,
+      showDescription: true,
       titleColor: '#000000',
       titleSize: 'text-2xl',
       titleWeight: 'font-bold',
@@ -110,7 +132,9 @@ const CampaignEditor: React.FC = () => {
       gamePaddingX: 16,
       gamePaddingY: 16,
       autoResize: true,
+      fullscreenGame: false,
       buttonPlacement: 'bottom',
+      buttonText: null,
       buttonColor: '#841b60',
       buttonTextColor: '#ffffff',
       buttonShape: 'rounded-lg',

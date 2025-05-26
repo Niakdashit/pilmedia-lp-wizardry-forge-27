@@ -1,6 +1,7 @@
 
 import React from 'react';
 import GameCanvasPreview from '../GameCanvasPreview';
+import MobileWheelPreview from '../../GameTypes/MobileWheelPreview';
 
 interface MobilePreviewProps {
   campaign: any;
@@ -100,6 +101,21 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
   const showTitle = mobileConfig.showTitle !== false && (mobileConfig.title || campaign.name);
   const showDescription = mobileConfig.showDescription !== false && (mobileConfig.description || campaign.description);
 
+  // Fonction pour rendre le bon composant de jeu
+  const renderGameComponent = () => {
+    if (campaign.type === 'wheel') {
+      // Utilise la configuration mobile si disponible, sinon fallback sur desktop
+      const hasRouletteConfig = mobileConfig.roulette && mobileConfig.roulette.segments && mobileConfig.roulette.segments.length > 0;
+      
+      if (hasRouletteConfig) {
+        return <MobileWheelPreview campaign={campaign} />;
+      }
+    }
+    
+    // Fallback vers le composant générique pour les autres jeux
+    return <GameCanvasPreview campaign={campaign} className="w-full h-full" />;
+  };
+
   return (
     <div className="flex flex-col items-center space-y-4">
       <div className="text-sm font-medium text-gray-600 capitalize">
@@ -179,7 +195,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
             {/* Game Container */}
             <div style={getGameContainerStyle()} className="flex-grow flex items-center justify-center">
               <div className="w-full h-full max-w-full max-h-full overflow-hidden">
-                <GameCanvasPreview campaign={campaign} className="w-full h-full" />
+                {renderGameComponent()}
               </div>
             </div>
 

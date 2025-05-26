@@ -2,6 +2,7 @@
 import React from 'react';
 import { Gamepad2, Maximize, Move } from 'lucide-react';
 import ImageUpload from '../../common/ImageUpload';
+import MobileTabRoulette from '../../configurators/MobileTabRoulette';
 
 interface MobileGamePlacementProps {
   campaign: any;
@@ -24,6 +25,14 @@ const MobileGamePlacement: React.FC<MobileGamePlacementProps> = ({ campaign, set
         <Gamepad2 className="w-5 h-5 text-[#841b60]" />
         <h3 className="text-lg font-medium text-gray-900">Game Placement</h3>
       </div>
+
+      {/* Configuration spécifique pour la roue mobile */}
+      {campaign.type === 'wheel' && (
+        <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
+          <h4 className="text-md font-semibold text-gray-800 mb-4">Configuration de la roue mobile</h4>
+          <MobileTabRoulette campaign={campaign} setCampaign={setCampaign} />
+        </div>
+      )}
 
       {/* Vertical Alignment */}
       <div>
