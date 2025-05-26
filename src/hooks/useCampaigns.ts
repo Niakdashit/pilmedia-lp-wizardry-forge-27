@@ -48,7 +48,7 @@ export const useCampaigns = () => {
 
         if (error) {
           console.error('Erreur lors de la mise à jour:', error);
-          setError(error.message);
+          setError('Erreur lors de la mise à jour');
           return null;
         }
 
@@ -72,7 +72,7 @@ export const useCampaigns = () => {
 
         if (error) {
           console.error('Erreur lors de la création:', error);
-          setError(error.message);
+          setError('Erreur lors de la création');
           return null;
         }
 
@@ -101,7 +101,7 @@ export const useCampaigns = () => {
 
       if (error) {
         console.error('Erreur lors de la récupération:', error);
-        setError(error.message);
+        setError('Erreur lors de la récupération');
         return null;
       }
 
@@ -127,7 +127,7 @@ export const useCampaigns = () => {
 
       if (error) {
         console.error('Erreur lors de la récupération:', error);
-        setError(error.message);
+        setError('Erreur lors de la récupération');
         return [];
       }
 

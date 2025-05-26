@@ -60,7 +60,7 @@ export const useParticipations = () => {
 
       if (error) {
         console.error('Erreur lors de la création de la participation:', error);
-        setError(error.message);
+        setError('Erreur lors de la création de la participation');
         return null;
       }
 
@@ -88,7 +88,7 @@ export const useParticipations = () => {
 
       if (error) {
         console.error('Erreur lors de la récupération des participations:', error);
-        setError(error.message);
+        setError('Erreur lors de la récupération des participations');
         return [];
       }
 
