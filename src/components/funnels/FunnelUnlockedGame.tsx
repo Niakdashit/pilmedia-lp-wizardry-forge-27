@@ -20,15 +20,17 @@ const FunnelUnlockedGame: React.FC<FunnelUnlockedGameProps> = ({ campaign }) => 
   const [gamePlayed, setGamePlayed] = useState(false);
   const [gameResult, setGameResult] = useState<'win' | 'lose' | null>(null);
 
-  // Prend la config dynamique ou fallback
-  const fields: FieldConfig[] = campaign.formConfig && Array.isArray(campaign.formConfig)
-    ? campaign.formConfig
-    : DEFAULT_FIELDS;
+  // Utilisation de la config dynamique si elle existe
+  const fields: FieldConfig[] =
+    Array.isArray(campaign.formFields) && campaign.formFields.length > 0
+      ? campaign.formFields
+      : DEFAULT_FIELDS;
 
   const handleFormSubmit = (formData: Record<string, string>) => {
     setShowFormModal(false);
     setTimeout(() => {
       setFormValidated(true);
+      // Ici tu peux exploiter formData (tracking, analytics, etc.)
     }, 400); // petit délai d'effet
   };
 
