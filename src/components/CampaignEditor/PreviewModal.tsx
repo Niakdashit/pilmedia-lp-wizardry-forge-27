@@ -18,10 +18,20 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
   const getPreviewFunnel = () => {
     // Funnel 1 : Jeu visible mais verrouillé tant que le formulaire n’est pas validé
     if (['wheel', 'scratch', 'jackpot', 'dice'].includes(campaign.type)) {
-      return <FunnelUnlockedGame campaign={campaign} />;
+      return (
+        <FunnelUnlockedGame
+          campaign={campaign}
+          formFields={campaign.formFields || []} // on passe bien la config dynamique
+        />
+      );
     }
     // Funnel 2 : Quiz, memory, puzzle, formulaire dynamique...
-    return <FunnelStandard campaign={campaign} />;
+    return (
+      <FunnelStandard
+        campaign={campaign}
+        formFields={campaign.formFields || []}
+      />
+    );
   };
 
   return (
