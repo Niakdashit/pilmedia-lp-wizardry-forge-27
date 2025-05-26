@@ -63,8 +63,8 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
       case 'wheel':
         return (
           <MobileWheelPreview
-            config={campaign.config?.roulette || campaign.mobileConfig?.roulette}
-            className="w-full h-auto"
+            campaign={campaign}
+            onFinish={() => {}}
           />
         );
       case 'scratch':
