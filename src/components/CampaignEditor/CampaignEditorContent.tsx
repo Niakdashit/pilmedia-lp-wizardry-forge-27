@@ -3,7 +3,7 @@ import React from 'react';
 import CampaignGeneral from './CampaignGeneral';
 import CampaignContent from './CampaignContent';
 import CampaignScreens from './CampaignScreens';
-import CampaignDesign from './CampaignDesign';
+import CampaignMobile from './CampaignMobile';
 import CampaignSettings from './CampaignSettings';
 import TabJackpot from '../configurators/TabJackpot';
 
@@ -29,8 +29,8 @@ const CampaignEditorContent: React.FC<CampaignEditorContentProps> = ({
       case 'screens':
         return <CampaignScreens campaign={campaign} setCampaign={setCampaign} />;
         
-      case 'design':
-        return <CampaignDesign campaign={campaign} setCampaign={setCampaign} />;
+      case 'mobile':
+        return <CampaignMobile campaign={campaign} setCampaign={setCampaign} />;
 
       case 'settings':
         return (

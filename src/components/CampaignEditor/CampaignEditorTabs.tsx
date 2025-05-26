@@ -19,7 +19,7 @@ const CampaignEditorTabs: React.FC<CampaignEditorTabsProps> = ({
     { id: 'general', label: 'Général' },
     { id: 'content', label: 'Contenu' },
     { id: 'screens', label: 'Écrans' },
-    { id: 'design', label: 'Design' },
+    { id: 'mobile', label: 'Mobile' },
     { id: 'settings', label: 'Paramétrage' }
   ];
 

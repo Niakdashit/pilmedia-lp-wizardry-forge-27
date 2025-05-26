@@ -5,6 +5,7 @@ import CampaignEditorTabs from '../components/CampaignEditor/CampaignEditorTabs'
 import CampaignEditorContent from '../components/CampaignEditor/CampaignEditorContent';
 import PreviewModal from '../components/CampaignEditor/PreviewModal';
 import JackpotAppearance from '../components/CampaignEditor/JackpotAppearance'; // ✅ Emplacement correct
+import CampaignMobile from '../components/CampaignEditor/CampaignMobile';
 import { CampaignType, getDefaultGameConfig } from '../utils/campaignTypes';
 
 const defaultJackpotConfig = {
@@ -86,6 +87,38 @@ const CampaignEditor: React.FC = () => {
     },
     config: {
       jackpot: defaultJackpotConfig
+    },
+    mobileConfig: {
+      gamePosition: 'center',
+      buttonPosition: 'below',
+      textPosition: 'top',
+      horizontalPadding: 16,
+      verticalSpacing: 20,
+      backgroundMode: 'cover',
+      backgroundColor: '#ebf4f7',
+      fontFamily: 'Inter',
+      titleColor: '#000000',
+      titleSize: 'text-2xl',
+      titleWeight: 'font-bold',
+      titleAlignment: 'text-center',
+      descriptionColor: '#666666',
+      descriptionSize: 'text-base',
+      descriptionAlignment: 'text-center',
+      gameVerticalAlign: 'center',
+      gameMaxWidth: 90,
+      gameMaxHeight: 60,
+      gamePaddingX: 16,
+      gamePaddingY: 16,
+      autoResize: true,
+      buttonPlacement: 'bottom',
+      buttonColor: '#841b60',
+      buttonTextColor: '#ffffff',
+      buttonShape: 'rounded-lg',
+      buttonSize: 'medium',
+      buttonShadow: 'shadow-md',
+      buttonMargin: 16,
+      buttonWidth: 80,
+      buttonHoverEffect: true
     }
   });
 
@@ -118,13 +151,11 @@ const CampaignEditor: React.FC = () => {
             onTabChange={setActiveTab}
           />
 
-          {activeTab === 'appearance' && campaign.type === 'jackpot' ? (
-            <div className="p-6 overflow-y-auto">
-              <JackpotAppearance
-                campaign={campaign}
-                setCampaign={setCampaign}
-              />
-            </div>
+          {activeTab === 'mobile' ? (
+            <CampaignMobile
+              campaign={campaign}
+              setCampaign={setCampaign}
+            />
           ) : (
             <CampaignEditorContent
               activeTab={activeTab}
