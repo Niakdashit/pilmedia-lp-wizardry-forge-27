@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 import Funnel1Steps from './Funnel1Steps';
 import Funnel2Steps from './Funnel2Steps';

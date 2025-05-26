@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import confetti from 'canvas-confetti';
@@ -20,8 +19,7 @@ const Funnel1Steps: React.FC<Funnel1StepsProps> = ({
   setCurrentStep,
   formData,
   setFormData,
-  onReset,
-  viewMode
+  onReset
 }) => {
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
