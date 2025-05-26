@@ -29,7 +29,7 @@ export const useCampaigns = () => {
       const isUpdate = !!campaignData.id;
       
       if (isUpdate) {
-        // Mise à jour
+        // Mise à jour avec form_fields
         const { data, error } = await supabase
           .from('campaigns')
           .update({
@@ -56,7 +56,7 @@ export const useCampaigns = () => {
         console.log('Campagne mise à jour avec succès:', data);
         return data;
       } else {
-        // Création
+        // Création avec form_fields
         const { data, error } = await supabase
           .from('campaigns')
           .insert({

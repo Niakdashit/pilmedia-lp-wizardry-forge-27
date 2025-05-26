@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Color from 'color';
 import { Quiz, Wheel, Scratch, Memory, Puzzle, Dice, Jackpot } from './GameTypes';
@@ -186,3 +187,27 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
           <p
             className="mb-6"
             style={{
+              color: getContrastColor(campaign.design.blockColor),
+              fontFamily: campaign.design.textFont
+            }}
+          >
+            {campaign.screens[3]?.confirmationMessage || 'Your participation has been recorded.'}
+          </p>
+          <button
+            onClick={() => setStep('start')}
+            className="px-6 py-3 font-medium transition-colors duration-200 hover:opacity-90"
+            style={{
+              backgroundColor: campaign.design.buttonColor,
+              color: getContrastColor(campaign.design.buttonColor),
+              borderRadius: campaign.design.borderRadius
+            }}
+          >
+            {campaign.screens[3]?.replayButtonText || 'Play Again'}
+          </button>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default FunnelStandard;
