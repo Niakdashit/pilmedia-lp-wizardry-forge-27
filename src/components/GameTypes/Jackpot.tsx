@@ -76,11 +76,11 @@ const Jackpot: React.FC<JackpotProps> = ({
     minHeight: '200px'
   }} className="flex flex-col items-center justify-center w-full h-full p-2 px-0">
       {/* Slots */}
-      <div className="flex mb-4" style={{
+      <div style={{
       gap: slotGap,
       flexWrap: 'nowrap',
       maxWidth: '100%'
-    }}>
+    }} className="flex mb-4 mx-0">
         {slots.map((symbol, i) => <motion.div key={i} style={{
         width: slotSize,
         height: slotSize,
