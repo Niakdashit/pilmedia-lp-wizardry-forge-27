@@ -1,103 +1,87 @@
 import React from 'react';
-import {
-  Users,
-  Target,
-  BarChart,
-  Calendar,
-  ChevronRight,
-  MoreVertical
-} from 'lucide-react';
+import { Users, Target, BarChart, Calendar, ChevronRight, MoreVertical } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { getCampaignTypeIcon, getCampaignTypeText, CampaignType } from '../utils/campaignTypes';
-
 const Dashboard: React.FC = () => {
-  const stats = [
-    {
-      name: 'Campagnes actives',
-      value: '5',
-      change: '+2 cette semaine',
-      icon: <Target className="w-6 h-6 text-[#841b60]" />
-    },
-    {
-      name: 'Participations',
-      value: '1254',
-      change: '+18% ce mois',
-      icon: <Users className="w-6 h-6 text-[#841b60]" />
-    },
-    {
-      name: 'Taux de conversion',
-      value: '42%',
-      change: '+5% ce mois',
-      icon: <BarChart className="w-6 h-6 text-[#841b60]" />
-    },
-    {
-      name: 'Prochaine campagne',
-      value: '2j',
-      change: '10 avril',
-      icon: <Calendar className="w-6 h-6 text-[#841b60]" />
-    }
-  ];
-
-  const recentCampaigns = [
-    {
-      id: '1',
-      name: 'Quiz Marketing Digital',
-      type: 'quiz' as CampaignType,
-      participants: 4,
-      status: 'draft',
-      createdAt: '17 mai 2025',
-      image: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg'
-    },
-    {
-      id: '2',
-      name: 'Roue de la fortune Soldes',
-      type: 'wheel' as CampaignType,
-      participants: 45,
-      status: 'active',
-      createdAt: '16 mai 2025',
-      image: 'https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg'
-    },
-    {
-      id: '3',
-      name: 'Campagne Instagram Été',
-      type: 'dice' as CampaignType,
-      participants: 128,
-      status: 'active',
-      createdAt: '15 mai 2025',
-      image: 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg'
-    }
-  ];
-
+  const stats = [{
+    name: 'Campagnes actives',
+    value: '5',
+    change: '+2 cette semaine',
+    icon: <Target className="w-6 h-6 text-[#841b60]" />
+  }, {
+    name: 'Participations',
+    value: '1254',
+    change: '+18% ce mois',
+    icon: <Users className="w-6 h-6 text-[#841b60]" />
+  }, {
+    name: 'Taux de conversion',
+    value: '42%',
+    change: '+5% ce mois',
+    icon: <BarChart className="w-6 h-6 text-[#841b60]" />
+  }, {
+    name: 'Prochaine campagne',
+    value: '2j',
+    change: '10 avril',
+    icon: <Calendar className="w-6 h-6 text-[#841b60]" />
+  }];
+  const recentCampaigns = [{
+    id: '1',
+    name: 'Quiz Marketing Digital',
+    type: 'quiz' as CampaignType,
+    participants: 4,
+    status: 'draft',
+    createdAt: '17 mai 2025',
+    image: 'https://images.pexels.com/photos/3184291/pexels-photo-3184291.jpeg'
+  }, {
+    id: '2',
+    name: 'Roue de la fortune Soldes',
+    type: 'wheel' as CampaignType,
+    participants: 45,
+    status: 'active',
+    createdAt: '16 mai 2025',
+    image: 'https://images.pexels.com/photos/3184360/pexels-photo-3184360.jpeg'
+  }, {
+    id: '3',
+    name: 'Campagne Instagram Été',
+    type: 'dice' as CampaignType,
+    participants: 128,
+    status: 'active',
+    createdAt: '15 mai 2025',
+    image: 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg'
+  }];
   const getStatusColor = (status: string) => {
     switch (status) {
-      case 'active': return 'text-green-600';
-      case 'draft': return 'text-gray-500';
-      case 'ended': return 'text-red-600';
-      default: return 'text-gray-500';
+      case 'active':
+        return 'text-green-600';
+      case 'draft':
+        return 'text-gray-500';
+      case 'ended':
+        return 'text-red-600';
+      default:
+        return 'text-gray-500';
     }
   };
-
   const getStatusText = (status: string) => {
     switch (status) {
-      case 'active': return 'Active';
-      case 'draft': return 'Brouillon';
-      case 'ended': return 'Terminée';
-      default: return status;
+      case 'active':
+        return 'Active';
+      case 'draft':
+        return 'Brouillon';
+      case 'ended':
+        return 'Terminée';
+      default:
+        return status;
     }
   };
-
-  return (
-    <div className="-mx-6 -mt-6">
+  return <div className="-mx-6 -mt-6">
       <div className="relative h-[100px] bg-[#841b60] overflow-hidden">
-        <div className="absolute inset-10 opacity-[0.15]" 
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-            backgroundSize: '60px 60px'
-          }}
-        />
+        <div className="absolute inset-10 opacity-[0.15]" style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+        backgroundSize: '60px 60px'
+      }} />
         <div className="relative h-full max-w-7xl mx-auto px-6 flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-white">Tableau de bord</h1>
-          <select className="bg-white/90 backdrop-blur-sm border-0 text-gray-700 py-2 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-white/20">
+          <h1 className="text-3xl font-bold text-white mb-3">Tableau de bord</h1>
+          <select className="bg-white/90 backdrop-blur-sm border-0 text-gray-700 py-2 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-white/20 mb-3">
             <option>7 derniers jours</option>
             <option>30 derniers jours</option>
             <option>90 derniers jours</option>
@@ -106,26 +90,15 @@ const Dashboard: React.FC = () => {
         </div>
 
         <div className="absolute bottom-0 left-0 right-0">
-          <svg
-            viewBox="0 0 1440 116"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-full"
-            preserveAspectRatio="none"
-            height="10"
-          >
-            <path
-              d="M0 116L60 96.3C120 76.7 240 37.3 360 21.7C480 6 600 14 720 34.7C840 55.3 960 89.7 1080 96.3C1200 103 1320 82 1380 71.5L1440 61V116H1380C1320 116 1200 116 1080 116C960 116 840 116 720 116C600 116 480 116 360 116C240 116 120 116 60 116H0Z"
-              fill="#ebf4f7"
-            />
+          <svg viewBox="0 0 1440 116" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full" preserveAspectRatio="none" height="10">
+            <path d="M0 116L60 96.3C120 76.7 240 37.3 360 21.7C480 6 600 14 720 34.7C840 55.3 960 89.7 1080 96.3C1200 103 1320 82 1380 71.5L1440 61V116H1380C1320 116 1200 116 1080 116C960 116 840 116 720 116C600 116 480 116 360 116C240 116 120 116 60 116H0Z" fill="#ebf4f7" />
           </svg>
         </div>
       </div>
 
       <div className="px-6 space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
-          {stats.map((stat, index) => (
-            <div key={index} className="bg-white p-6 rounded-2xl shadow-md flex justify-between items-start">
+          {stats.map((stat, index) => <div key={index} className="bg-white p-6 rounded-2xl shadow-md flex justify-between items-start">
               <div>
                 <p className="text-gray-700 font-semibold">{stat.name}</p>
                 <div className="mt-2 flex items-baseline space-x-2">
@@ -136,8 +109,7 @@ const Dashboard: React.FC = () => {
               <div className="bg-[#f8e9f0] rounded-full p-3 flex items-center justify-center">
                 {stat.icon}
               </div>
-            </div>
-          ))}
+            </div>)}
         </div>
  
         <div className="relative">
@@ -151,12 +123,10 @@ const Dashboard: React.FC = () => {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {recentCampaigns.map((campaign) => {
-                const IconComponent = getCampaignTypeIcon(campaign.type);
-                return (
-                  <div key={campaign.id} className="bg-white rounded-xl shadow hover:shadow-md transition-all duration-300 overflow-hidden">
-                    {campaign.image && (
-                      <div className="relative h-40 w-full overflow-hidden">
+              {recentCampaigns.map(campaign => {
+              const IconComponent = getCampaignTypeIcon(campaign.type);
+              return <div key={campaign.id} className="bg-white rounded-xl shadow hover:shadow-md transition-all duration-300 overflow-hidden">
+                    {campaign.image && <div className="relative h-40 w-full overflow-hidden">
                         <img src={campaign.image} alt={campaign.name} className="w-full h-full object-cover" />
 
                         <div className="absolute top-3 left-3">
@@ -166,14 +136,10 @@ const Dashboard: React.FC = () => {
                           </div>
                         </div>
 
-                        <button
-                          className="absolute top-3 right-3 p-1.5 rounded-full bg-white/80 hover:bg-white transition"
-                          aria-label="Options"
-                        >
+                        <button className="absolute top-3 right-3 p-1.5 rounded-full bg-white/80 hover:bg-white transition" aria-label="Options">
                           <MoreVertical className="w-4 h-4 text-gray-600" />
                         </button>
-                      </div>
-                    )}
+                      </div>}
                     <div className="p-4 space-y-2">
                       <h3 className="text-base font-semibold text-gray-800 truncate">{campaign.name}</h3>
                       <div className="flex items-center text-sm text-gray-500">
@@ -188,15 +154,12 @@ const Dashboard: React.FC = () => {
                         </span>
                       </div>
                     </div>
-                  </div>
-                );
-              })}
+                  </div>;
+            })}
             </div>
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Dashboard;
