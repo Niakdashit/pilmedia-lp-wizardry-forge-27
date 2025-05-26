@@ -49,10 +49,14 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
     return {
       display: 'flex',
       flexDirection: 'column' as const,
-      justifyContent: 'center',
-      alignItems: align === 'flex-start' ? 'flex-start' : align === 'flex-end' ? 'flex-end' : 'center',
+      justifyContent:
+        align === 'flex-start' ? 'flex-start' :
+        align === 'flex-end' ? 'flex-end' :
+        'center',
+      alignItems: 'center',
       padding: `${mobileConfig.verticalSpacing || 16}px ${mobileConfig.horizontalPadding || 12}px`,
-      gap: `${mobileConfig.verticalSpacing || 16}px`
+      gap: `${mobileConfig.verticalSpacing || 16}px`,
+      height: '100%'
     };
   };
 
