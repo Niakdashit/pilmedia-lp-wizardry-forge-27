@@ -18,7 +18,7 @@ const CampaignEditorTabs: React.FC<CampaignEditorTabsProps> = ({
     { id: 'general', label: 'Général' },
     { id: 'content', label: 'Contenu' },
     { id: 'screens', label: 'Écrans' },
-    { id: 'form', label: 'Formulaire' },       // <--- Ajout de l'onglet Formulaire ici
+    { id: 'form', label: 'Formulaire' },       // <--- Ajout de l'onglet Formulaire ici (avant Mobile)
     { id: 'mobile', label: 'Mobile' },
     { id: 'settings', label: 'Paramétrage' }
   ];
