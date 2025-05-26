@@ -1,3 +1,4 @@
+
 import React from 'react';
 import MobileWheelPreview from '../../GameTypes/MobileWheelPreview';
 import { Quiz, Scratch, Memory, Puzzle, Dice, Jackpot } from '../../GameTypes';
@@ -44,102 +45,189 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
   };
 
   const getScreenStyle = () => {
-    return {
+    const backgroundStyle: any = {
       width: '100%',
       height: '100%',
       borderRadius: '14px',
       overflow: 'hidden',
-      position: 'relative' as const,
+      position: 'relative',
       backgroundColor: mobileConfig.backgroundColor || '#ebf4f7',
       display: 'flex',
       flexDirection: 'column' as const,
-      justifyContent: 'center'
+      padding: `${mobileConfig.horizontalPadding || 16}px`,
+      fontFamily: mobileConfig.fontFamily || 'Inter'
     };
+
+    if (mobileConfig.backgroundImage) {
+      backgroundStyle.backgroundImage = `url(${mobileConfig.backgroundImage})`;
+      backgroundStyle.backgroundSize = mobileConfig.backgroundMode === 'contain' ? 'contain' : 'cover';
+      backgroundStyle.backgroundPosition = 'center';
+      backgroundStyle.backgroundRepeat = 'no-repeat';
+    }
+
+    return backgroundStyle;
   };
 
   const renderGameComponent = () => {
-    const style = mobileConfig.autoResize === false
-      ? { transform: 'scale(0.8)', transformOrigin: 'center' }
-      : {};
-    switch (campaign.type) {
-      case 'wheel':
-        return <div style={style}><MobileWheelPreview campaign={campaign} onFinish={() => {}} /></div>;
-      case 'scratch':
-        return <div style={style}><Scratch config={campaign.gameConfig?.scratch} onConfigChange={() => {}} /></div>;
-      case 'memory':
-        return <div style={style}><Memory config={campaign.gameConfig?.memory} onConfigChange={() => {}} /></div>;
-      case 'puzzle':
-        return <div style={style}><Puzzle config={campaign.gameConfig?.puzzle} onConfigChange={() => {}} /></div>;
-      case 'dice':
-        return <div style={style}><Dice config={campaign.gameConfig?.dice} onConfigChange={() => {}} /></div>;
-      case 'jackpot':
-        return <div style={style}><Jackpot isPreview={true} instantWinConfig={campaign.gameConfig?.jackpot?.instantWin} onFinish={() => {}} /></div>;
-      case 'quiz':
-        return <div style={style}><Quiz config={campaign.gameConfig?.quiz} onConfigChange={() => {}} /></div>;
-      default:
-        return (
-          <div className="w-full h-32 bg-gray-200 rounded-lg flex items-center justify-center">
-            <span className="text-gray-500">Jeu non configuré</span>
-          </div>
-        );
+    const gameStyles: any = {
+      width: mobileConfig.fullscreenGame ? '100%' : `${mobileConfig.gameMaxWidth || 90}%`,
+      maxHeight: mobileConfig.fullscreenGame ? '100vh' : `${mobileConfig.gameMaxHeight || 60}vh`,
+      padding: `${mobileConfig.gamePaddingY || 16}px ${mobileConfig.gamePaddingX || 16}px`,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
+    };
+
+    if (!mobileConfig.autoResize) {
+      gameStyles.transform = 'scale(0.8)';
+      gameStyles.transformOrigin = 'center';
     }
+
+    const gameContent = (() => {
+      switch (campaign.type) {
+        case 'wheel':
+          return <MobileWheelPreview campaign={campaign} onFinish={() => {}} />;
+        case 'scratch':
+          return <Scratch config={campaign.gameConfig?.scratch} onConfigChange={() => {}} />;
+        case 'memory':
+          return <Memory config={campaign.gameConfig?.memory} onConfigChange={() => {}} />;
+        case 'puzzle':
+          return <Puzzle config={campaign.gameConfig?.puzzle} onConfigChange={() => {}} />;
+        case 'dice':
+          return <Dice config={campaign.gameConfig?.dice} onConfigChange={() => {}} />;
+        case 'jackpot':
+          return <Jackpot isPreview={true} instantWinConfig={campaign.gameConfig?.jackpot?.instantWin} onFinish={() => {}} />;
+        case 'quiz':
+          return <Quiz config={campaign.gameConfig?.quiz} onConfigChange={() => {}} />;
+        default:
+          return (
+            <div className="w-full h-32 bg-gray-200 rounded-lg flex items-center justify-center">
+              <span className="text-gray-500">Jeu non configuré</span>
+            </div>
+          );
+      }
+    })();
+
+    return (
+      <div style={gameStyles}>
+        {gameContent}
+        {mobileConfig.customTemplate && (
+          <div className="absolute inset-0 pointer-events-none">
+            <img
+              src={mobileConfig.customTemplate}
+              alt="Template personnalisé"
+              className="w-full h-full object-contain"
+            />
+          </div>
+        )}
+      </div>
+    );
   };
 
-  const blockText = (
-    <>
-      {mobileConfig.showTitle && (mobileConfig.title || campaign.screens?.[1]?.title) && (
-        <h1
-          className={`${mobileConfig.titleSize || 'text-2xl'} ${mobileConfig.titleWeight || 'font-bold'} ${mobileConfig.titleAlignment || 'text-center'} mb-4`}
-          style={{ color: mobileConfig.titleColor || '#000000' }}
-        >
-          {mobileConfig.title || campaign.screens?.[1]?.title}
-        </h1>
-      )}
-      {mobileConfig.showDescription && (mobileConfig.description || campaign.screens?.[1]?.description) && (
-        <p
-          className={`${mobileConfig.descriptionSize || 'text-base'} ${mobileConfig.descriptionAlignment || 'text-center'} mb-6`}
-          style={{ color: mobileConfig.descriptionColor || '#666666' }}
-        >
-          {mobileConfig.description || campaign.screens?.[1]?.description}
-        </p>
-      )}
-    </>
-  );
+  const getButtonStyles = () => {
+    const buttonSize = mobileConfig.buttonSize || 'medium';
+    let sizeClasses = '';
+    
+    switch (buttonSize) {
+      case 'small':
+        sizeClasses = 'px-4 py-2 text-sm';
+        break;
+      case 'large':
+        sizeClasses = 'px-8 py-4 text-lg';
+        break;
+      default:
+        sizeClasses = 'px-6 py-3 text-base';
+    }
 
-  const button = (
-    mobileConfig.buttonText && (
-      <div className="mt-4 flex justify-center">
+    return {
+      className: `${sizeClasses} ${mobileConfig.buttonShape || 'rounded-lg'} ${mobileConfig.buttonShadow || 'shadow-md'} transition-all duration-200 ${mobileConfig.buttonHoverEffect !== false ? 'hover:opacity-90' : ''}`,
+      style: {
+        backgroundColor: mobileConfig.buttonColor || '#841b60',
+        color: mobileConfig.buttonTextColor || '#ffffff',
+        width: `${mobileConfig.buttonWidth || 80}%`,
+        margin: `${mobileConfig.buttonMargin || 16}px auto`
+      }
+    };
+  };
+
+  const renderButton = () => {
+    if (!mobileConfig.buttonText) return null;
+
+    const buttonStyles = getButtonStyles();
+    
+    return (
+      <div className="flex justify-center">
         <button
-          className={`px-6 py-3 ${mobileConfig.buttonShape || 'rounded-lg'} ${mobileConfig.buttonShadow || 'shadow-md'}`}
-          style={{
-            backgroundColor: mobileConfig.buttonColor || '#841b60',
-            color: mobileConfig.buttonTextColor || '#ffffff',
-            width: `${mobileConfig.buttonWidth || 80}%`
-          }}
+          className={buttonStyles.className}
+          style={buttonStyles.style}
         >
           {mobileConfig.buttonText}
         </button>
       </div>
-    )
-  );
+    );
+  };
+
+  const renderTextContent = () => {
+    const titleToShow = mobileConfig.title || campaign.screens?.[1]?.title || campaign.name;
+    const descriptionToShow = mobileConfig.description || campaign.screens?.[1]?.description || campaign.description;
+
+    return (
+      <div className="text-content" style={{ marginBottom: `${mobileConfig.verticalSpacing || 20}px` }}>
+        {mobileConfig.showTitle !== false && titleToShow && (
+          <h1
+            className={`${mobileConfig.titleSize || 'text-2xl'} ${mobileConfig.titleWeight || 'font-bold'} ${mobileConfig.titleAlignment || 'text-center'} mb-4`}
+            style={{ color: mobileConfig.titleColor || '#000000' }}
+          >
+            {titleToShow}
+          </h1>
+        )}
+        {mobileConfig.showDescription !== false && descriptionToShow && (
+          <p
+            className={`${mobileConfig.descriptionSize || 'text-base'} ${mobileConfig.descriptionAlignment || 'text-center'}`}
+            style={{ color: mobileConfig.descriptionColor || '#666666' }}
+          >
+            {descriptionToShow}
+          </p>
+        )}
+      </div>
+    );
+  };
+
+  const getLayoutStyle = () => {
+    const gamePosition = mobileConfig.gamePosition || 'center';
+    const textPosition = mobileConfig.textPosition || 'top';
+    const gameVerticalAlign = mobileConfig.gameVerticalAlign || 'center';
+
+    let flexDirection: 'column' | 'column-reverse' = 'column';
+    let justifyContent = 'center';
+    let alignItems = 'center';
+
+    // Gérer la position du jeu et du texte
+    if (gamePosition === 'top') {
+      justifyContent = 'flex-start';
+    } else if (gamePosition === 'bottom') {
+      justifyContent = 'flex-end';
+    }
+
+    if (textPosition === 'bottom') {
+      flexDirection = 'column-reverse';
+    }
+
+    return {
+      display: 'flex',
+      flexDirection,
+      justifyContent,
+      alignItems,
+      height: '100%',
+      gap: `${mobileConfig.verticalSpacing || 20}px`
+    };
+  };
 
   return (
     <div style={getDeviceStyle()}>
       <div style={getScreenStyle()}>
-        {/* Background Image */}
-        {mobileConfig.backgroundImage && (
-          <div
-            className="absolute inset-0"
-            style={{
-              backgroundImage: `url(${mobileConfig.backgroundImage})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              backgroundRepeat: 'no-repeat',
-              zIndex: 1
-            }}
-          />
-        )}
-
+        {/* Background Image appliqué via getScreenStyle */}
+        
         {/* Decorative Overlay */}
         {mobileConfig.decorativeOverlay && (
           <div
@@ -154,26 +242,26 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
           </div>
         )}
 
-        {/* Content Layer */}
-        <div className="relative z-10 flex flex-col h-full p-4 justify-between">
-          {/* Titre + Description (placement dynamique) */}
-          {mobileConfig.blockTextPosition === 'bottom' ? null : blockText}
-
-          {/* Bouton au-dessus du jeu */}
-          {mobileConfig.buttonPlacement === 'top' && button}
-
-          {/* Game */}
-          <div className="flex-1 flex items-center justify-center">
-            <div className="w-full max-w-xs">
-              {renderGameComponent()}
-            </div>
+        {/* Content Layer avec layout dynamique */}
+        <div style={getLayoutStyle()} className="relative z-10">
+          {/* Bouton en haut si configuré */}
+          {mobileConfig.buttonPlacement === 'top' && renderButton()}
+          
+          {/* Contenu texte */}
+          {renderTextContent()}
+          
+          {/* Game Component */}
+          <div style={{ 
+            display: 'flex', 
+            alignItems: mobileConfig.gameVerticalAlign || 'center',
+            justifyContent: 'center',
+            flex: mobileConfig.gamePosition === 'center' ? '1' : 'none'
+          }}>
+            {renderGameComponent()}
           </div>
 
-          {/* Bouton en-dessous du jeu */}
-          {mobileConfig.buttonPlacement !== 'top' && button}
-
-          {/* Titre + Description (si placé en bas) */}
-          {mobileConfig.blockTextPosition === 'bottom' && blockText}
+          {/* Bouton en bas par défaut */}
+          {mobileConfig.buttonPlacement !== 'top' && renderButton()}
         </div>
 
         {/* Logo Overlay */}
@@ -181,7 +269,9 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
           <div
             className={`absolute ${
               mobileConfig.logoPosition === 'top-left' ? 'top-4 left-4' :
+              mobileConfig.logoPosition === 'top-center' ? 'top-4 left-1/2 transform -translate-x-1/2' :
               mobileConfig.logoPosition === 'top-right' ? 'top-4 right-4' :
+              mobileConfig.logoPosition === 'center' ? 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2' :
               mobileConfig.logoPosition === 'bottom-left' ? 'bottom-4 left-4' :
               'bottom-4 right-4'
             }`}
