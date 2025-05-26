@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { MousePointer, ArrowUp, ArrowDown, Minus } from 'lucide-react';
+import { MousePointer, ArrowUp, ArrowDown, Minus, ExternalLink, Send } from 'lucide-react';
 
 interface MobileButtonsProps {
   campaign: any;
@@ -63,6 +62,41 @@ const MobileButtons: React.FC<MobileButtonsProps> = ({ campaign, setCampaign }) 
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
           placeholder="Texte spécifique au mobile"
         />
+      </div>
+
+      {/* Button Action Type */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Action du bouton
+        </label>
+        <div className="grid grid-cols-2 gap-3">
+          {[
+            { value: 'submit', label: 'Soumettre', icon: Send },
+            { value: 'link', label: 'Lien externe', icon: ExternalLink }
+          ].map((action) => (
+            <button
+              key={action.value}
+              onClick={() => updateMobileConfig('buttonActionType', action.value)}
+              className={`p-3 border-2 rounded-lg flex items-center justify-center space-x-2 transition-colors ${
+                mobileConfig.buttonActionType === action.value
+                  ? 'border-[#841b60] bg-[#f9f0f5] text-[#841b60]'
+                  : 'border-gray-200 hover:border-gray-300'
+              }`}
+            >
+              <action.icon className="w-4 h-4" />
+              <span className="text-sm font-medium">{action.label}</span>
+            </button>
+          ))}
+        </div>
+        {mobileConfig.buttonActionType === 'link' && (
+          <input
+            type="url"
+            placeholder="https://votre-lien.com"
+            value={mobileConfig.buttonLink || ''}
+            onChange={(e) => updateMobileConfig('buttonLink', e.target.value)}
+            className="mt-2 w-full px-4 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#841b60]"
+          />
+        )}
       </div>
 
       {/* Button Style */}
