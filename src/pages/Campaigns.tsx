@@ -179,9 +179,9 @@ const Campaigns: React.FC = () => {
         {/* Content */}
         <div className="relative h-full max-w-7xl mx-auto px-6 flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-white">Campagnes</h1>
+            <h1 className="text-3xl font-bold text-white mb-3">Campagnes</h1>
           </div>
-          <Link to="/campaign/new" className="inline-flex items-center px-6 py-3 bg-white text-[#841b60] font-medium rounded-xl hover:bg-white/90 transition-all duration-200 shadow-lg hover:shadow-xl">
+          <Link to="/campaign/new" className="inline-flex items-center px-6 py-3 bg-white text-[#841b60] font-medium rounded-xl hover:bg-white/90 transition-all duration-200 shadow-lg hover:shadow-xl mb-3">
             <Plus className="w-5 h-5 mr-2" />
             Nouvelle Campagne
           </Link>
