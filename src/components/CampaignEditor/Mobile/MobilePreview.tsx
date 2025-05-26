@@ -196,7 +196,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
               </div>}
 
             {/* Game Container - Layer 5 (above everything) */}
-            <div style={getGameContainerStyle()} className="Abc">
+            <div style={getGameContainerStyle()} className="">
               <div className="w-full h-full max-w-full max-h-full overflow-hidden relative z-30">
                 {renderGameComponent()}
               </div>
