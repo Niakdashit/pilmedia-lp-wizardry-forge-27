@@ -5,14 +5,20 @@ import TabJackpot from '@/components/configurators/TabJackpot';
 import JackpotAppearance from '@/components/configurators/JackpotAppearance';
 import ImageUpload from '../common/ImageUpload';
 import GameCanvasPreview from './GameCanvasPreview';
-import { Settings, Eye, Palette } from 'lucide-react';
+import CampaignFormEditor, { FormField } from './CampaignFormEditor'; // Ajout ici
+import { Settings, Eye, Palette, List } from 'lucide-react';
 
 interface CampaignContentProps {
   campaign: any;
   setCampaign: React.Dispatch<React.SetStateAction<any>>;
+  activeTab: string; // <--- ajout pour switcher les onglets
 }
 
-const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign }) => {
+const CampaignContent: React.FC<CampaignContentProps> = ({
+  campaign,
+  setCampaign,
+  activeTab, // <-- on récupère l'onglet actif
+}) => {
   const [activeSection, setActiveSection] = useState<'game' | 'visual'>('game');
 
   const updateGameConfig = (gameType: string, config: any) => {
@@ -20,8 +26,8 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
       ...prev,
       gameConfig: {
         ...prev.gameConfig,
-        [gameType]: config
-      }
+        [gameType]: config,
+      },
     }));
   };
 
@@ -29,53 +35,43 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
     switch (campaign.type) {
       case 'quiz':
         return (
-          <Quiz 
-            config={campaign.gameConfig?.quiz} 
-            onConfigChange={(config) => updateGameConfig('quiz', config)} 
+          <Quiz
+            config={campaign.gameConfig?.quiz}
+            onConfigChange={(config) => updateGameConfig('quiz', config)}
           />
         );
       case 'wheel':
-        return (
-          <TabRoulette 
-            campaign={campaign}
-            setCampaign={setCampaign}
-          />
-        );
+        return <TabRoulette campaign={campaign} setCampaign={setCampaign} />;
       case 'scratch':
         return (
-          <Scratch 
-            config={campaign.gameConfig?.scratch} 
-            onConfigChange={(config) => updateGameConfig('scratch', config)} 
+          <Scratch
+            config={campaign.gameConfig?.scratch}
+            onConfigChange={(config) => updateGameConfig('scratch', config)}
           />
         );
       case 'memory':
         return (
-          <Memory 
-            config={campaign.gameConfig?.memory} 
-            onConfigChange={(config) => updateGameConfig('memory', config)} 
+          <Memory
+            config={campaign.gameConfig?.memory}
+            onConfigChange={(config) => updateGameConfig('memory', config)}
           />
         );
       case 'puzzle':
         return (
-          <Puzzle 
-            config={campaign.gameConfig?.puzzle} 
-            onConfigChange={(config) => updateGameConfig('puzzle', config)} 
+          <Puzzle
+            config={campaign.gameConfig?.puzzle}
+            onConfigChange={(config) => updateGameConfig('puzzle', config)}
           />
         );
       case 'dice':
         return (
-          <Dice 
-            config={campaign.gameConfig?.dice} 
-            onConfigChange={(config) => updateGameConfig('dice', config)} 
+          <Dice
+            config={campaign.gameConfig?.dice}
+            onConfigChange={(config) => updateGameConfig('dice', config)}
           />
         );
       case 'jackpot':
-        return (
-          <TabJackpot
-            campaign={campaign}
-            setCampaign={setCampaign}
-          />
-        );
+        return <TabJackpot campaign={campaign} setCampaign={setCampaign} />;
       default:
         return (
           <div className="flex items-center justify-center h-64 bg-gray-50 border border-gray-200 rounded-lg">
@@ -87,6 +83,28 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
     }
   };
 
+  // ====> AJOUT ici : Affichage de l'éditeur de formulaire si onglet actif "form"
+  if (activeTab === 'form') {
+    return (
+      <div className="p-6">
+        <div className="flex items-center mb-4">
+          <List className="w-5 h-5 mr-2 text-[#841b60]" />
+          <h2 className="text-xl font-bold text-[#841b60]">Formulaire de participation</h2>
+        </div>
+        <CampaignFormEditor
+          formFields={campaign.formFields || []}
+          setFormFields={(fields: FormField[]) =>
+            setCampaign((prev: any) => ({
+              ...prev,
+              formFields: fields,
+            }))
+          }
+        />
+      </div>
+    );
+  }
+
+  // ====> Sinon on conserve la logique classique
   return (
     <div className="space-y-6">
       <div className="bg-[#f9f0f5] border border-[#e9d0e5] rounded-lg p-4">
@@ -159,9 +177,9 @@ const CampaignContent: React.FC<CampaignContentProps> = ({ campaign, setCampaign
                         ...prev.gameConfig,
                         [campaign.type]: {
                           ...prev.gameConfig?.[campaign.type],
-                          backgroundImage: value
-                        }
-                      }
+                          backgroundImage: value,
+                        },
+                      },
                     }));
                   }}
                   label="Téléchargez ou sélectionnez une image de fond pour votre jeu"
