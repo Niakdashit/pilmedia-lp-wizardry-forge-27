@@ -1,19 +1,15 @@
-
 import React from 'react';
 import MobileWheelPreview from '../../GameTypes/MobileWheelPreview';
 import { Quiz, Scratch, Memory, Puzzle, Dice, Jackpot } from '../../GameTypes';
-
 interface MobilePreviewProps {
   campaign: any;
   previewMode: 'mobile' | 'tablet';
 }
-
 const MobilePreview: React.FC<MobilePreviewProps> = ({
   campaign,
   previewMode
 }) => {
   const mobileConfig = campaign.mobileConfig || {};
-
   const getDeviceStyle = () => {
     switch (previewMode) {
       case 'mobile':
@@ -36,7 +32,6 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
         };
     }
   };
-
   const getScreenStyle = () => {
     const baseStyle = {
       width: '100%',
@@ -48,7 +43,6 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
     };
     return baseStyle;
   };
-
   const getGamePositionStyles = () => {
     const gamePosition = mobileConfig.gamePosition || 'center';
     switch (gamePosition) {
@@ -68,7 +62,6 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
         };
     }
   };
-
   const getGameContainerStyle = () => {
     const maxWidth = mobileConfig.fullscreenGame ? '100%' : `${mobileConfig.gameMaxWidth || 85}%`;
     const maxHeight = mobileConfig.fullscreenGame ? '100%' : `${mobileConfig.gameMaxHeight || 50}vh`;
@@ -85,10 +78,8 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
       zIndex: 30
     };
   };
-
   const showTitle = mobileConfig.showTitle !== false && (mobileConfig.title || campaign.name);
   const showDescription = mobileConfig.showDescription !== false && (mobileConfig.description || campaign.description);
-
   const renderGameComponent = () => {
     switch (campaign.type) {
       case 'wheel':
@@ -157,7 +148,6 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
           </div>;
     }
   };
-
   return <div className="flex flex-col items-center space-y-4">
       <div className="text-sm font-medium text-gray-600 capitalize">
         {previewMode} Preview
@@ -206,7 +196,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
               </div>}
 
             {/* Game Container - Layer 5 (above everything) */}
-            <div style={getGameContainerStyle()} className="">
+            <div style={getGameContainerStyle()} className="Abc">
               <div className="w-full h-full max-w-full max-h-full overflow-hidden relative z-30">
                 {renderGameComponent()}
               </div>
@@ -232,5 +222,4 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
       </div>
     </div>;
 };
-
 export default MobilePreview;
