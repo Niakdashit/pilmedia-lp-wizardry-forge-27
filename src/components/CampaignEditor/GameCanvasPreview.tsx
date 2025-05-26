@@ -25,10 +25,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
         height: '100%', 
         maxWidth: '100%', 
         maxHeight: '100%',
-        overflow: 'hidden',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center'
+        overflow: 'hidden'
       }
     };
 
@@ -112,14 +109,14 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
       default:
         return (
           <div className="text-center text-gray-500 flex items-center justify-center h-full">
-            <p className="text-xs">Type de jeu non pris en charge</p>
+            <p className="text-sm">Type de jeu non pris en charge</p>
           </div>
         );
     }
   };
 
   return (
-    <div className={`relative w-full h-full ${className} flex items-center justify-center`} style={{ minHeight: '120px' }}>
+    <div className={`relative w-full h-full ${className} flex items-center justify-center`} style={{ minHeight: '200px' }}>
       {/* Image de fond plein écran */}
       {gameBackgroundImage && (
         <img
@@ -141,7 +138,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
       )}
 
       {/* Jeu centré avec contraintes de taille */}
-      <div className="relative z-20 w-full h-full flex items-center justify-center" style={{ maxWidth: '100%', maxHeight: '100%' }}>
+      <div className="relative z-20 w-full h-full flex items-center justify-center p-2" style={{ maxWidth: '100%', maxHeight: '100%' }}>
         {renderGame()}
       </div>
     </div>
