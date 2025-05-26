@@ -1,3 +1,4 @@
+
 import React from 'react';
 import MobileWheelPreview from '../../GameTypes/MobileWheelPreview';
 import { Quiz, Scratch, Memory, Puzzle, Dice, Jackpot } from '../../GameTypes';
@@ -21,7 +22,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
           boxShadow: '0 0 20px rgba(0,0,0,0.3)',
           backgroundColor: '#000',
           display: 'flex',
-          flexDirection: 'column',
+          flexDirection: 'column' as const,
           justifyContent: 'center'
         };
       case 'tablet':
@@ -33,7 +34,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
           boxShadow: '0 0 15px rgba(0,0,0,0.2)',
           backgroundColor: '#000',
           display: 'flex',
-          flexDirection: 'column',
+          flexDirection: 'column' as const,
           justifyContent: 'center'
         };
     }
@@ -48,7 +49,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
       position: 'relative' as const,
       backgroundColor: mobileConfig.backgroundColor || '#ebf4f7',
       display: 'flex',
-      flexDirection: 'column',
+      flexDirection: 'column' as const,
       justifyContent: 'center'
     };
   };
