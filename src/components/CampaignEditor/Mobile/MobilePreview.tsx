@@ -43,7 +43,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
       position: 'relative' as const,
     };
 
-    // Apply mobile-specific background for both mobile and tablet
+    // UNIQUEMENT les images mobiles - pas les images du contenu/desktop
     if (mobileConfig.backgroundImage) {
       return {
         ...baseStyle,
@@ -57,7 +57,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
 
     return {
       ...baseStyle,
-      backgroundColor: mobileConfig.backgroundColor || campaign.design?.background || '#ebf4f7',
+      backgroundColor: mobileConfig.backgroundColor || '#ebf4f7', // Couleur mobile spécifique
     };
   };
 
@@ -101,19 +101,39 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
   const showTitle = mobileConfig.showTitle !== false && (mobileConfig.title || campaign.name);
   const showDescription = mobileConfig.showDescription !== false && (mobileConfig.description || campaign.description);
 
-  // Fonction pour rendre le bon composant de jeu
+  // Fonction pour rendre le bon composant de jeu - MOBILE UNIQUEMENT
   const renderGameComponent = () => {
     if (campaign.type === 'wheel') {
-      // Utilise la configuration mobile si disponible, sinon fallback sur desktop
-      const hasRouletteConfig = mobileConfig.roulette && mobileConfig.roulette.segments && mobileConfig.roulette.segments.length > 0;
+      // Utilise UNIQUEMENT la configuration mobile de la roue
+      const hasMobileRouletteConfig = mobileConfig.roulette && mobileConfig.roulette.segments && mobileConfig.roulette.segments.length > 0;
       
-      if (hasRouletteConfig) {
+      if (hasMobileRouletteConfig) {
         return <MobileWheelPreview campaign={campaign} />;
+      } else {
+        // Si pas de config mobile de roue, afficher un placeholder
+        return (
+          <div className="flex items-center justify-center h-full w-full bg-gray-100 rounded-lg">
+            <p className="text-gray-500 text-sm text-center px-4">
+              Configurez la roue dans l'onglet "Game Placement" pour voir l'aperçu mobile
+            </p>
+          </div>
+        );
       }
     }
     
-    // Fallback vers le composant générique pour les autres jeux
-    return <GameCanvasPreview campaign={campaign} className="w-full h-full" />;
+    // Pour les autres jeux, créer un aperçu mobile simplifié sans les images du contenu
+    return (
+      <div className="flex items-center justify-center h-full w-full bg-white rounded-lg border-2 border-gray-200">
+        <div className="text-center p-4">
+          <div className="w-16 h-16 bg-[#841b60] rounded-lg mx-auto mb-3 flex items-center justify-center">
+            <span className="text-white text-2xl">🎮</span>
+          </div>
+          <p className="text-gray-600 text-sm">
+            Aperçu {campaign.type} mobile
+          </p>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -124,7 +144,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
       
       <div style={getDeviceStyle()}>
         <div style={getScreenStyle()}>
-          {/* Logo Overlay */}
+          {/* Logo Overlay MOBILE */}
           {mobileConfig.logoOverlay && (
             <div 
               className={`absolute z-10 w-12 h-12 ${
@@ -144,7 +164,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
             </div>
           )}
 
-          {/* Decorative Overlay */}
+          {/* Decorative Overlay MOBILE */}
           {mobileConfig.decorativeOverlay && (
             <div className="absolute inset-0 z-5 pointer-events-none">
               <img 

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Color from 'color';
 import GameFunnel from '../GameFunnel';
@@ -9,7 +10,7 @@ interface CampaignPreviewProps {
 const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
   const { design } = campaign;
 
-  // Image de fond spécifique au jeu ou fallback design
+  // UNIQUEMENT les images de fond du mode desktop/contenu - pas les images mobiles
   const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage || design.backgroundImage;
 
   const containerStyle = {
@@ -17,7 +18,7 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
     height: '100%',
     position: 'relative' as const,
     overflow: 'hidden',
-    backgroundColor: design.background || '#ebf4f7',
+    backgroundColor: design.background || '#ebf4f7', // Configuration desktop uniquement
   };
 
   const backgroundStyle = gameBackgroundImage ? {
@@ -26,7 +27,7 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
     backgroundImage: `url(${gameBackgroundImage})`,
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
-    backgroundSize: 'cover', // plein écran ✅
+    backgroundSize: 'cover',
     zIndex: 0,
   } : {};
 
@@ -76,14 +77,14 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
     <div style={containerStyle}>
       {customStyles}
 
-      {/* Fond */}
+      {/* Fond DESKTOP uniquement */}
       {gameBackgroundImage && <div style={backgroundStyle} />}
 
-      {/* Contenu */}
+      {/* Contenu DESKTOP */}
       <div style={contentWrapperStyle}>
         {customHTML}
 
-        {/* Texte de titre/description */}
+        {/* Texte de titre/description DESKTOP */}
         <div style={messageStyle}>
           <h2
             className="text-2xl font-bold"
@@ -98,7 +99,7 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
           )}
         </div>
 
-        {/* Jeu centré */}
+        {/* Jeu centré DESKTOP */}
         <div style={centeredGameStyle}>
           <GameFunnel campaign={campaign} />
         </div>
