@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Gamepad2, Maximize, Move } from 'lucide-react';
 import ImageUpload from '../../common/ImageUpload';
@@ -34,7 +33,7 @@ const MobileGamePlacement: React.FC<MobileGamePlacementProps> = ({ campaign, set
         </div>
       )}
 
-      {/* Vertical Alignment */}
+      {/* Alignement vertical du jeu */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-3">
           Alignement vertical du jeu
@@ -62,7 +61,7 @@ const MobileGamePlacement: React.FC<MobileGamePlacementProps> = ({ campaign, set
         </div>
       </div>
 
-      {/* Game Sizing */}
+      {/* Dimensionnement du jeu */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-3">
           Dimensionnement du jeu
@@ -81,7 +80,7 @@ const MobileGamePlacement: React.FC<MobileGamePlacementProps> = ({ campaign, set
               <span className="text-sm font-medium">Jeu plein écran mobile</span>
             </label>
           </div>
-          
+
           {!mobileConfig.fullscreenGame && (
             <div className="grid grid-cols-2 gap-4 pl-7">
               <div>
@@ -113,7 +112,7 @@ const MobileGamePlacement: React.FC<MobileGamePlacementProps> = ({ campaign, set
         </div>
       </div>
 
-      {/* Internal Padding */}
+      {/* Padding interne */}
       <div>
         <label className="block text-sm font-medium text-gray-700 mb-3">
           Padding interne du jeu
@@ -146,7 +145,7 @@ const MobileGamePlacement: React.FC<MobileGamePlacementProps> = ({ campaign, set
         </div>
       </div>
 
-      {/* Mobile Template */}
+      {/* Template personnalisé mobile */}
       <div>
         <ImageUpload
           label="Template mobile personnalisé (optionnel)"
@@ -158,7 +157,7 @@ const MobileGamePlacement: React.FC<MobileGamePlacementProps> = ({ campaign, set
         </p>
       </div>
 
-      {/* Auto-resize */}
+      {/* Redimensionnement automatique */}
       <div>
         <div className="flex items-center space-x-3">
           <input
