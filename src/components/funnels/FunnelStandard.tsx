@@ -7,6 +7,14 @@ interface GameFunnelProps {
   campaign: any;
 }
 
+const DEFAULT_FIELDS: FieldConfig[] = [
+  { name: "civilite", label: "Civilité", type: "select", options: ["M.", "Mme"], required: false },
+  { name: "prenom", label: "Prénom", required: true },
+  { name: "nom", label: "Nom", required: true },
+  { name: "email", label: "Email", type: "email", required: true }
+  // Tu peux ajouter plus de champs par défaut ici
+];
+
 const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
   const [step, setStep] = useState<'start' | 'form' | 'game' | 'end'>('start');
 
@@ -40,14 +48,10 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
     }
   };
 
-  // Exemple de champs dynamiques : à rendre dynamique depuis ta config campagne si besoin !
-  const fields: FieldConfig[] = [
-    { name: "civilite", label: "Civilité", type: "select", options: ["M.", "Mme"], required: false },
-    { name: "prenom", label: "Prénom", required: true },
-    { name: "nom", label: "Nom", required: true },
-    { name: "email", label: "Email", type: "email", required: true }
-    // Ajoute d'autres champs selon ta config
-  ];
+  // FORMULAIRE DYNAMIQUE = prioritaire depuis la config campagne, fallback si absent
+  const fields: FieldConfig[] = campaign.formConfig && Array.isArray(campaign.formConfig)
+    ? campaign.formConfig
+    : DEFAULT_FIELDS;
 
   return (
     <div className="w-full flex flex-col items-center">
