@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import Color from 'color';
 import DynamicContactForm, { FieldConfig } from '../forms/DynamicContactForm';
-import { Quiz, Wheel, Scratch, Memory, Puzzle, Dice, Jackpot } from './GameTypes';
+import { Quiz, Wheel, Scratch, Memory, Puzzle, Dice, Jackpot } from '../GameTypes';
 import { useParticipations } from '../../hooks/useParticipations';
 
 interface GameFunnelProps {
