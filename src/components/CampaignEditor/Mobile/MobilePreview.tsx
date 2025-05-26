@@ -1,6 +1,4 @@
-
 import React from 'react';
-import GameCanvasPreview from '../GameCanvasPreview';
 import MobileWheelPreview from '../../GameTypes/MobileWheelPreview';
 
 interface MobilePreviewProps {
