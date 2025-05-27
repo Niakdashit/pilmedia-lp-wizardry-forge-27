@@ -78,7 +78,7 @@ const FormEditor: React.FC<FormEditorProps> = ({
     console.log('Preview form data:', formData);
     // Dans un vrai cas, on pourrait envoyer ça à une API de test
   };
-  return <div className="max-w-4xl p-6 px-0 py-[23px]">
+  return <div className="max-w-4xl p-6 py-[23px] mx-[50px] px-0">
       <div className="bg-[#f9f0f5] border border-[#e9d0e5] rounded-lg p-4 mb-6">
         <h2 className="text-[#841b60] text-lg font-semibold mb-2">Éditeur de formulaire dynamique</h2>
         <p className="text-[#841b60] text-sm">
