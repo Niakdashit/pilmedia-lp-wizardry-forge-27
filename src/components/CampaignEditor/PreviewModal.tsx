@@ -106,7 +106,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
-                <Tablet className="w-5 h-4" />
+                <Tablet className="w-10 h-4" />
                 <span>Tablette</span>
               </button>
               <button
