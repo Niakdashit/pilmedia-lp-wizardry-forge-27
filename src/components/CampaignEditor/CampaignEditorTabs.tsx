@@ -10,9 +10,9 @@ const CampaignEditorTabs: React.FC<CampaignEditorTabsProps> = ({ activeTab, onTa
   const tabs = [
     { id: 'general', label: 'Général', icon: '⚙️' },
     { id: 'content', label: 'Contenu', icon: '📝' },
+    { id: 'mobile', label: 'Mobile', icon: '📱' },    
     { id: 'screens', label: 'Écrans', icon: '📱' },
     { id: 'form', label: 'Formulaire', icon: '📝' },
-    { id: 'mobile', label: 'Mobile', icon: '📱' },
     { id: 'participations', label: 'Participations', icon: '👥' },
   ];
 
