@@ -3,11 +3,9 @@ import Modal from '../common/Modal';
 import DynamicContactForm, { FieldConfig } from '../forms/DynamicContactForm';
 import { Wheel, Scratch, Jackpot, Dice } from '../GameTypes';
 import { useParticipations } from '../../hooks/useParticipations';
-
 interface GameFunnelProps {
   campaign: any;
 }
-
 const DEFAULT_FIELDS: FieldConfig[] = [{
   id: "civilite",
   label: "Civilité",
@@ -28,7 +26,6 @@ const DEFAULT_FIELDS: FieldConfig[] = [{
   type: "email",
   required: true
 }];
-
 const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
   campaign
 }) => {
@@ -40,9 +37,7 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
     createParticipation,
     loading: participationLoading
   } = useParticipations();
-  
   const fields: FieldConfig[] = Array.isArray(campaign.formFields) && campaign.formFields.length > 0 ? campaign.formFields : DEFAULT_FIELDS;
-  
   const handleFormSubmit = async (formData: Record<string, string>) => {
     console.log('Form data submitted:', formData);
     if (campaign.id) {
@@ -60,12 +55,10 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
       setFormValidated(true);
     }, 400);
   };
-
   const handleGameFinish = (result: 'win' | 'lose') => {
     setGameResult(result);
     setGamePlayed(true);
   };
-
   const handleGameButtonClick = () => {
     // Si le formulaire n'est pas validé, ouvrir la modale
     if (!formValidated) {
@@ -74,13 +67,11 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
     }
     // Si validé, le jeu se lance (géré par le composant de jeu lui-même)
   };
-
   const reset = () => {
     setGamePlayed(false);
     setGameResult(null);
     // On garde formValidated à true pour ne pas redemander le formulaire
   };
-  
   const renderGame = () => {
     const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage;
     const customTemplate = campaign.gameConfig?.[campaign.type]?.customTemplate;
@@ -98,7 +89,6 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
       gameContainerStyle.backgroundPosition = 'center';
       gameContainerStyle.backgroundRepeat = 'no-repeat';
     }
-
     const gameComponent = (() => {
       const commonProps = {
         disabled: !formValidated,
@@ -110,22 +100,13 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
         case 'scratch':
           return <Scratch config={campaign.gameConfig.scratch} onConfigChange={() => {}} {...commonProps} />;
         case 'jackpot':
-          return <Jackpot 
-            isPreview={true} 
-            instantWinConfig={campaign.gameConfig?.jackpot?.instantWin} 
-            buttonLabel={buttonLabel} 
-            buttonColor={buttonColor} 
-            backgroundImage={gameBackgroundImage} 
-            customTemplate={customTemplate} 
-            {...commonProps} 
-          />;
+          return <Jackpot isPreview={true} instantWinConfig={campaign.gameConfig?.jackpot?.instantWin} buttonLabel={buttonLabel} buttonColor={buttonColor} backgroundImage={gameBackgroundImage} customTemplate={customTemplate} {...commonProps} />;
         case 'dice':
           return <Dice config={campaign.gameConfig.dice} onConfigChange={() => {}} {...commonProps} />;
         default:
           return <div className="text-center text-gray-500">Jeu non supporté</div>;
       }
     })();
-    
     return <div style={gameContainerStyle} className="rounded-lg overflow-hidden">
         {customTemplate && <img src={customTemplate} alt="Game template" className="absolute inset-0 w-full h-full object-contain pointer-events-none z-10" />}
         
@@ -134,18 +115,11 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
         </div>
 
         {/* Overlay si formulaire pas validé avec intercept du clic */}
-        {!formValidated && <div 
-            className="absolute inset-0 bg-black/30 flex items-center justify-center z-30 rounded-lg cursor-pointer"
-            onClick={handleGameButtonClick}
-          >
-            <div className="text-center text-white p-6 bg-black/50 rounded-lg">
-              <p className="text-lg font-medium mb-2">🔒 Jeu verrouillé</p>
-              <p className="text-sm">Cliquez pour participer</p>
-            </div>
+        {!formValidated && <div onClick={handleGameButtonClick} className="absolute inset-0 flex items-center justify-center z-30 rounded-lg cursor-pointer bg-black/0">
+            
           </div>}
       </div>;
   };
-  
   if (gamePlayed) {
     return <div className="w-full max-w-lg mx-auto p-6 flex flex-col items-center space-y-6">
         <div className="text-center space-y-4">
@@ -164,7 +138,6 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
         </div>
       </div>;
   }
-  
   return <div className="w-full max-w-lg mx-auto p-6 flex flex-col items-center space-y-6">
       {/* Titre et description */}
       <div className="text-center space-y-4">
@@ -192,5 +165,4 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
         </Modal>}
     </div>;
 };
-
 export default FunnelUnlockedGame;
