@@ -1,19 +1,15 @@
-
 import React from 'react';
 import FunnelUnlockedGame from '../../funnels/FunnelUnlockedGame';
 import FunnelStandard from '../../funnels/FunnelStandard';
-
 interface MobilePreviewProps {
   campaign: any;
   previewMode: 'mobile' | 'tablet';
 }
-
 const MobilePreview: React.FC<MobilePreviewProps> = ({
   campaign,
   previewMode
 }) => {
   const mobileConfig = campaign.mobileConfig || {};
-
   const getDeviceStyle = () => {
     switch (previewMode) {
       case 'mobile':
@@ -42,7 +38,6 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
         };
     }
   };
-
   const getScreenStyle = () => {
     const backgroundStyle: any = {
       width: '100%',
@@ -55,79 +50,51 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
       flexDirection: 'column' as const,
       fontFamily: mobileConfig.fontFamily || 'Inter'
     };
-
     if (mobileConfig.backgroundImage) {
       backgroundStyle.backgroundImage = `url(${mobileConfig.backgroundImage})`;
       backgroundStyle.backgroundSize = mobileConfig.backgroundMode === 'contain' ? 'contain' : 'cover';
       backgroundStyle.backgroundPosition = 'center';
       backgroundStyle.backgroundRepeat = 'no-repeat';
     }
-
     return backgroundStyle;
   };
-
   const getFunnelComponent = () => {
     if (['wheel', 'scratch', 'jackpot', 'dice'].includes(campaign.type)) {
       return <FunnelUnlockedGame campaign={campaign} />;
     }
     return <FunnelStandard campaign={campaign} />;
   };
-
-  return (
-    <div style={getDeviceStyle()}>
+  return <div style={getDeviceStyle()}>
       <div style={getScreenStyle()}>
         {/* Logo Overlay */}
-        {mobileConfig.logoOverlay && (
-          <div 
-            className={`absolute ${
-              mobileConfig.logoPosition === 'top-left' ? 'top-4 left-4' :
-              mobileConfig.logoPosition === 'top-center' ? 'top-4 left-1/2 transform -translate-x-1/2' :
-              mobileConfig.logoPosition === 'top-right' ? 'top-4 right-4' :
-              mobileConfig.logoPosition === 'center' ? 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2' :
-              mobileConfig.logoPosition === 'bottom-left' ? 'bottom-4 left-4' :
-              'bottom-4 right-4'
-            }`}
-            style={{ zIndex: 20 }}
-          >
-            <img 
-              src={mobileConfig.logoOverlay} 
-              alt="Logo" 
-              className="w-16 h-16 object-contain" 
-            />
-          </div>
-        )}
+        {mobileConfig.logoOverlay && <div className={`absolute ${mobileConfig.logoPosition === 'top-left' ? 'top-4 left-4' : mobileConfig.logoPosition === 'top-center' ? 'top-4 left-1/2 transform -translate-x-1/2' : mobileConfig.logoPosition === 'top-right' ? 'top-4 right-4' : mobileConfig.logoPosition === 'center' ? 'top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2' : mobileConfig.logoPosition === 'bottom-left' ? 'bottom-4 left-4' : 'bottom-4 right-4'}`} style={{
+        zIndex: 20
+      }}>
+            <img src={mobileConfig.logoOverlay} alt="Logo" className="w-16 h-16 object-contain" />
+          </div>}
 
         {/* Decorative Overlay */}
-        {mobileConfig.decorativeOverlay && (
-          <div 
-            className="absolute inset-0 flex items-center justify-center" 
-            style={{ zIndex: 2 }}
-          >
-            <img 
-              src={mobileConfig.decorativeOverlay} 
-              alt="Decorative overlay" 
-              className="w-full h-full object-contain" 
-            />
-          </div>
-        )}
+        {mobileConfig.decorativeOverlay && <div className="absolute inset-0 flex items-center justify-center" style={{
+        zIndex: 2
+      }}>
+            <img src={mobileConfig.decorativeOverlay} alt="Decorative overlay" className="w-full h-full object-contain" />
+          </div>}
 
         {/* Main Content with Funnel - Scrollable with proper overflow */}
-        <div 
-          className="flex-1 relative z-10"
-          style={{ 
-            padding: `${mobileConfig.horizontalPadding || 16}px`,
-            overflowY: 'auto',
-            overflowX: 'hidden',
-            height: '100%'
-          }}
-        >
-          <div style={{ minHeight: '100%', paddingBottom: '20px' }}>
+        <div style={{
+        padding: `${mobileConfig.horizontalPadding || 16}px`,
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        height: '100%'
+      }} className="flex-1 relative z-0">
+          <div style={{
+          minHeight: '100%',
+          paddingBottom: '20px'
+        }}>
             {getFunnelComponent()}
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default MobilePreview;
