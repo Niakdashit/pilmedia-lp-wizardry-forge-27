@@ -8,7 +8,7 @@ interface CampaignEditorTabsProps {
 
 const CampaignEditorTabs: React.FC<CampaignEditorTabsProps> = ({ activeTab, onTabChange }) => {
   const tabs = [
-    { id: 'general', label: 'Général', icon: '' },
+    { id: 'general', label: 'Général', icon: '⚙️' },
     { id: 'content', label: 'Contenu', icon: '📝' },
     { id: 'screens', label: 'Écrans', icon: '📱' },
     { id: 'form', label: 'Formulaire', icon: '📝' },
