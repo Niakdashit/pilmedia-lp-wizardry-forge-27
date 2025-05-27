@@ -12,12 +12,22 @@ import { useCampaigns } from '../hooks/useCampaigns';
 import { FormField } from '../components/campaign/FormEditor';
 
 // Champs du formulaire par défaut
-const defaultFormFields: FormField[] = [
-  { id: 'prenom', label: 'Prénom', type: 'text', required: true },
-  { id: 'nom', label: 'Nom', type: 'text', required: true },
-  { id: 'email', label: 'Email', type: 'email', required: true },
-];
-
+const defaultFormFields: FormField[] = [{
+  id: 'prenom',
+  label: 'Prénom',
+  type: 'text',
+  required: true
+}, {
+  id: 'nom',
+  label: 'Nom',
+  type: 'text',
+  required: true
+}, {
+  id: 'email',
+  label: 'Email',
+  type: 'email',
+  required: true
+}];
 const defaultJackpotConfig = {
   symbols: ['🍒', '🍋', '🍊'],
   reels: 3,
@@ -26,21 +36,23 @@ const defaultJackpotConfig = {
   instantWin: {
     enabled: false,
     winProbability: 0.05,
-    maxWinners: undefined,
+    maxWinners: undefined
   }
 };
-
 const CampaignEditor: React.FC = () => {
-  const { id } = useParams();
+  const {
+    id
+  } = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const isNewCampaign = id === 'new';
   const campaignType = searchParams.get('type') as CampaignType || 'quiz';
-
   const [activeTab, setActiveTab] = useState('general');
   const [showPreviewModal, setShowPreviewModal] = useState(false);
-  const { saveCampaign, getCampaign } = useCampaigns();
-
+  const {
+    saveCampaign,
+    getCampaign
+  } = useCampaigns();
   const [campaign, setCampaign] = useState<any>({
     id: undefined,
     name: isNewCampaign ? 'Nouvelle Campagne' : 'Quiz Marketing Digital',
@@ -159,19 +171,16 @@ const CampaignEditor: React.FC = () => {
       buttonHoverEffect: true
     }
   });
-
   useEffect(() => {
     if (isNewCampaign && !searchParams.get('type')) {
       navigate('/campaigns');
     }
   }, [isNewCampaign, searchParams, navigate]);
-
   useEffect(() => {
     if (!isNewCampaign && id) {
       loadCampaign(id);
     }
   }, [id, isNewCampaign]);
-
   const loadCampaign = async (campaignId: string) => {
     const existingCampaign = await getCampaign(campaignId);
     if (existingCampaign) {
@@ -181,74 +190,37 @@ const CampaignEditor: React.FC = () => {
       });
     }
   };
-
   const handleSave = async (continueEditing = false) => {
     console.log('Saving campaign:', campaign);
-    
     const campaignData = {
       ...campaign,
       form_fields: campaign.formFields
     };
-    
     const savedCampaign = await saveCampaign(campaignData);
-    
     if (savedCampaign && !continueEditing) {
       navigate('/campaigns');
     } else if (savedCampaign && isNewCampaign) {
-      setCampaign((prev: any) => ({ ...prev, id: savedCampaign.id }));
+      setCampaign((prev: any) => ({
+        ...prev,
+        id: savedCampaign.id
+      }));
     }
   };
-
-  return (
-    <div className="h-[calc(100vh-3rem)] flex flex-col">
-      <CampaignEditorHeader
-        isNewCampaign={isNewCampaign}
-        campaignName={campaign.name}
-        onPreview={() => setShowPreviewModal(true)}
-        onSave={handleSave}
-      />
+  return <div className="h-[calc(100vh-3rem)] flex flex-col">
+      <CampaignEditorHeader isNewCampaign={isNewCampaign} campaignName={campaign.name} onPreview={() => setShowPreviewModal(true)} onSave={handleSave} />
 
       <div className="flex flex-1 overflow-hidden bg-white rounded-xl shadow-sm">
-        <div className="flex flex-col w-full">
-          <CampaignEditorTabs
-            activeTab={activeTab}
-            onTabChange={setActiveTab}
-          />
+        <div className="flex flex-col w-full py-0">
+          <CampaignEditorTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
-          {activeTab === 'mobile' ? (
-            <CampaignMobile
-              campaign={campaign}
-              setCampaign={setCampaign}
-            />
-          ) : activeTab === 'form' ? (
-            <FormEditor
-              formFields={campaign.formFields || []}
-              setFormFields={(fields) => setCampaign((prev: any) => ({ ...prev, formFields: fields }))}
-            />
-          ) : activeTab === 'participations' ? (
-            <ParticipationsViewer
-              campaignId={campaign.id || ''}
-              campaignName={campaign.name}
-            />
-          ) : (
-            <CampaignEditorContent
-              activeTab={activeTab}
-              campaign={campaign}
-              setCampaign={setCampaign}
-            />
-          )}
+          {activeTab === 'mobile' ? <CampaignMobile campaign={campaign} setCampaign={setCampaign} /> : activeTab === 'form' ? <FormEditor formFields={campaign.formFields || []} setFormFields={fields => setCampaign((prev: any) => ({
+          ...prev,
+          formFields: fields
+        }))} /> : activeTab === 'participations' ? <ParticipationsViewer campaignId={campaign.id || ''} campaignName={campaign.name} /> : <CampaignEditorContent activeTab={activeTab} campaign={campaign} setCampaign={setCampaign} />}
         </div>
       </div>
 
-      {showPreviewModal && (
-        <PreviewModal
-          isOpen={showPreviewModal}
-          onClose={() => setShowPreviewModal(false)}
-          campaign={campaign}
-        />
-      )}
-    </div>
-  );
+      {showPreviewModal && <PreviewModal isOpen={showPreviewModal} onClose={() => setShowPreviewModal(false)} campaign={campaign} />}
+    </div>;
 };
-
 export default CampaignEditor;
