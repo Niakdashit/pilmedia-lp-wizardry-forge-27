@@ -6,12 +6,13 @@ interface WheelProps {
   config: any;
   isPreview?: boolean;
   onComplete?: (prize: string) => void;
+  onFinish?: (result: 'win' | 'lose') => void;
   currentWinners?: number;
   maxWinners?: number;
   winRate?: number;
 }
 
-const Wheel: React.FC<WheelProps> = ({ config, isPreview, onComplete }) => {
+const Wheel: React.FC<WheelProps> = ({ config, isPreview, onComplete, onFinish }) => {
   const wheelRef = useRef<HTMLDivElement>(null);
   const [isSpinning, setIsSpinning] = useState(false);
   const [selectedStyle, setSelectedStyle] = useState('roulette_casino.svg');
@@ -31,7 +32,16 @@ const Wheel: React.FC<WheelProps> = ({ config, isPreview, onComplete }) => {
       setIsSpinning(false);
       const prizeIndex = Math.floor((360 - (randomRotation % 360)) / (360 / prizes.length));
       const selectedPrize = prizes[prizeIndex] || prizes[0];
+      
+      // Appeler onComplete si fourni (pour la compatibilité)
       onComplete?.(selectedPrize);
+      
+      // Appeler onFinish si fourni (pour la cohérence avec les autres jeux)
+      if (onFinish) {
+        // Simuler un résultat win/lose basé sur le prix
+        const result = Math.random() > 0.5 ? 'win' : 'lose';
+        onFinish(result);
+      }
     }, 3000);
   };
 
