@@ -63,14 +63,6 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({ campaign }) => {
   };
 
   const renderGame = () => {
-    if (!formValidated) {
-      return (
-        <div className="w-full h-96 bg-gray-100 flex items-center justify-center rounded-lg text-gray-400 text-xl">
-          Jeu verrouillé
-        </div>
-      );
-    }
-
     // Récupérer les props visuelles pour chaque type de jeu
     const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage;
     const customTemplate = campaign.gameConfig?.[campaign.type]?.customTemplate;
@@ -80,7 +72,8 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({ campaign }) => {
     const gameContainerStyle: any = {
       position: 'relative',
       width: '100%',
-      height: '100%'
+      height: '400px',
+      minHeight: '400px'
     };
 
     if (gameBackgroundImage) {
@@ -90,110 +83,90 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({ campaign }) => {
       gameContainerStyle.backgroundRepeat = 'no-repeat';
     }
 
-    switch (campaign.type) {
-      case 'wheel':
-        return (
-          <div style={gameContainerStyle}>
-            {customTemplate && (
-              <img
-                src={customTemplate}
-                alt="Wheel template"
-                className="absolute inset-0 w-full h-full object-contain pointer-events-none z-10"
-              />
-            )}
-            <div className="relative z-20">
-              <Wheel 
-                config={campaign.gameConfig.wheel} 
-                isPreview={true}
-                onFinish={handleGameFinish}
-              />
+    const gameComponent = (() => {
+      const commonProps = {
+        disabled: !formValidated
+      };
+
+      switch (campaign.type) {
+        case 'wheel':
+          return (
+            <Wheel 
+              config={campaign.gameConfig.wheel} 
+              isPreview={true}
+              onFinish={handleGameFinish}
+              {...commonProps}
+            />
+          );
+        case 'scratch':
+          return (
+            <Scratch 
+              config={campaign.gameConfig.scratch} 
+              onConfigChange={() => {}}
+              onFinish={handleGameFinish}
+              {...commonProps}
+            />
+          );
+        case 'jackpot':
+          return (
+            <Jackpot 
+              isPreview={true}
+              instantWinConfig={campaign.gameConfig?.jackpot?.instantWin}
+              buttonLabel={buttonLabel}
+              buttonColor={buttonColor}
+              backgroundImage={gameBackgroundImage}
+              customTemplate={customTemplate}
+              onFinish={handleGameFinish}
+              {...commonProps}
+            />
+          );
+        case 'dice':
+          return (
+            <Dice 
+              config={campaign.gameConfig.dice} 
+              onConfigChange={() => {}}
+              onFinish={handleGameFinish}
+              {...commonProps}
+            />
+          );
+        default:
+          return <div className="text-center text-gray-500">Jeu non supporté</div>;
+      }
+    })();
+
+    return (
+      <div style={gameContainerStyle} className="rounded-lg overflow-hidden">
+        {customTemplate && (
+          <img
+            src={customTemplate}
+            alt="Game template"
+            className="absolute inset-0 w-full h-full object-contain pointer-events-none z-10"
+          />
+        )}
+        
+        <div className="relative z-20 h-full">
+          {gameComponent}
+        </div>
+
+        {/* Overlay de verrouillage */}
+        {!formValidated && (
+          <div className="absolute inset-0 bg-black bg-opacity-60 flex items-center justify-center z-30 rounded-lg">
+            <div className="text-center text-white p-6">
+              <div className="text-6xl mb-4">🔒</div>
+              <h3 className="text-xl font-bold mb-2">Jeu verrouillé</h3>
+              <p className="text-sm opacity-90">
+                Veuillez remplir le formulaire pour jouer
+              </p>
             </div>
           </div>
-        );
-      case 'scratch':
-        return (
-          <div style={gameContainerStyle}>
-            {customTemplate && (
-              <img
-                src={customTemplate}
-                alt="Scratch template"
-                className="absolute inset-0 w-full h-full object-contain pointer-events-none z-10"
-              />
-            )}
-            <div className="relative z-20">
-              <Scratch 
-                config={campaign.gameConfig.scratch} 
-                onConfigChange={() => {}}
-                onFinish={handleGameFinish}
-              />
-            </div>
-          </div>
-        );
-      case 'jackpot':
-        return (
-          <div style={gameContainerStyle}>
-            {customTemplate && (
-              <img
-                src={customTemplate}
-                alt="Jackpot template"
-                className="absolute inset-0 w-full h-full object-contain pointer-events-none z-10"
-              />
-            )}
-            <div className="relative z-20">
-              <Jackpot 
-                isPreview={true}
-                instantWinConfig={campaign.gameConfig?.jackpot?.instantWin}
-                buttonLabel={buttonLabel}
-                buttonColor={buttonColor}
-                backgroundImage={gameBackgroundImage}
-                customTemplate={customTemplate}
-                onFinish={handleGameFinish}
-              />
-            </div>
-          </div>
-        );
-      case 'dice':
-        return (
-          <div style={gameContainerStyle}>
-            {customTemplate && (
-              <img
-                src={customTemplate}
-                alt="Dice template"
-                className="absolute inset-0 w-full h-full object-contain pointer-events-none z-10"
-              />
-            )}
-            <div className="relative z-20">
-              <Dice 
-                config={campaign.gameConfig.dice} 
-                onConfigChange={() => {}}
-                onFinish={handleGameFinish}
-              />
-            </div>
-          </div>
-        );
-      default:
-        return <div className="text-center text-gray-500">Jeu non supporté</div>;
-    }
+        )}
+      </div>
+    );
   };
 
-  return (
-    <div className="w-full max-w-lg mx-auto p-6 flex flex-col items-center space-y-6">
-      {!formValidated && !gamePlayed && (
-        <>
-          <h2 className="text-2xl font-bold text-center">{campaign.screens[0]?.title || 'Tentez votre chance !'}</h2>
-          <p className="text-center text-gray-600">{campaign.screens[0]?.description || 'Cliquez sur participer pour débloquer le jeu.'}</p>
-          <button
-            onClick={() => setShowFormModal(true)}
-            className="px-6 py-3 bg-[#841b60] text-white rounded-lg shadow-md hover:bg-[#6d1550] transition-colors"
-          >
-            {campaign.screens[0]?.buttonText || 'Participer'}
-          </button>
-        </>
-      )}
-
-      {formValidated && !gamePlayed && renderGame()}
-
-      {gamePlayed && (
+  if (gamePlayed) {
+    return (
+      <div className="w-full max-w-lg mx-auto p-6 flex flex-col items-center space-y-6">
         <div className="text-center space-y-4">
           <h3 className="text-2xl font-semibold">
             {gameResult === 'win'
@@ -220,8 +193,45 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({ campaign }) => {
             </button>
           </div>
         </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full max-w-lg mx-auto p-6 flex flex-col items-center space-y-6">
+      {/* Titre et description */}
+      <div className="text-center space-y-4">
+        <h2 className="text-2xl font-bold">
+          {campaign.screens[0]?.title || 'Tentez votre chance !'}
+        </h2>
+        <p className="text-gray-600">
+          {campaign.screens[0]?.description || 'Participez pour avoir une chance de gagner !'}
+        </p>
+      </div>
+
+      {/* Jeu avec overlay si non validé */}
+      {renderGame()}
+
+      {/* Bouton Participer */}
+      {!formValidated && (
+        <button
+          onClick={() => setShowFormModal(true)}
+          className="px-8 py-3 bg-[#841b60] text-white rounded-lg shadow-md hover:bg-[#6d1550] transition-colors font-medium"
+        >
+          {campaign.screens[0]?.buttonText || 'Participer'}
+        </button>
       )}
 
+      {/* Message de confirmation après validation */}
+      {formValidated && !gamePlayed && (
+        <div className="text-center">
+          <p className="text-green-600 font-medium">
+            ✅ Formulaire validé ! Vous pouvez maintenant jouer.
+          </p>
+        </div>
+      )}
+
+      {/* Modale du formulaire */}
       {showFormModal && (
         <Modal onClose={() => setShowFormModal(false)} title={campaign.screens[1]?.title || 'Vos informations'}>
           <DynamicContactForm
