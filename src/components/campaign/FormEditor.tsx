@@ -80,7 +80,7 @@ const FormEditor: React.FC<FormEditorProps> = ({
   };
   return <div className="h-[calc(150vh-3rem)] flex flex-col my-[24px] mx-[21px]">
       <div className="bg-[#f9f0f5] border border-[#e9d0e5] rounded-lg p-4 mb-6">
-        <h2 className="text-[#841b60] text-lg font-semibold mb-2">Éditeur de formulaire dynamique</h2>
+        
         <p className="text-[#841b60] text-sm">
           Créez et personnalisez les champs de votre formulaire. Les utilisateurs rempliront ce formulaire avant d'accéder au jeu.
         </p>
