@@ -64,15 +64,92 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({ campaign }) => {
         </div>
       );
     }
+
+    // Récupérer les props visuelles pour chaque type de jeu
+    const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage;
+    const customTemplate = campaign.gameConfig?.[campaign.type]?.customTemplate;
+    const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel;
+    const buttonColor = campaign.gameConfig?.[campaign.type]?.buttonColor;
+
+    const gameContainerStyle: any = {
+      position: 'relative',
+      width: '100%',
+      height: '100%'
+    };
+
+    if (gameBackgroundImage) {
+      gameContainerStyle.backgroundImage = `url(${gameBackgroundImage})`;
+      gameContainerStyle.backgroundSize = 'cover';
+      gameContainerStyle.backgroundPosition = 'center';
+      gameContainerStyle.backgroundRepeat = 'no-repeat';
+    }
+
     switch (campaign.type) {
       case 'wheel':
-        return <Wheel config={campaign.gameConfig.wheel} isPreview={true} />;
+        return (
+          <div style={gameContainerStyle}>
+            {customTemplate && (
+              <img
+                src={customTemplate}
+                alt="Wheel template"
+                className="absolute inset-0 w-full h-full object-contain pointer-events-none z-10"
+              />
+            )}
+            <div className="relative z-20">
+              <Wheel config={campaign.gameConfig.wheel} isPreview={true} />
+            </div>
+          </div>
+        );
       case 'scratch':
-        return <Scratch config={campaign.gameConfig.scratch} onConfigChange={() => {}} />;
+        return (
+          <div style={gameContainerStyle}>
+            {customTemplate && (
+              <img
+                src={customTemplate}
+                alt="Scratch template"
+                className="absolute inset-0 w-full h-full object-contain pointer-events-none z-10"
+              />
+            )}
+            <div className="relative z-20">
+              <Scratch config={campaign.gameConfig.scratch} onConfigChange={() => {}} />
+            </div>
+          </div>
+        );
       case 'jackpot':
-        return <Jackpot isPreview={true} />;
+        return (
+          <div style={gameContainerStyle}>
+            {customTemplate && (
+              <img
+                src={customTemplate}
+                alt="Jackpot template"
+                className="absolute inset-0 w-full h-full object-contain pointer-events-none z-10"
+              />
+            )}
+            <div className="relative z-20">
+              <Jackpot 
+                isPreview={true}
+                instantWinConfig={campaign.gameConfig?.jackpot?.instantWin}
+                buttonLabel={buttonLabel}
+                buttonColor={buttonColor}
+              />
+            </div>
+          </div>
+        );
       case 'dice':
-        return <Dice config={campaign.gameConfig.dice} onConfigChange={() => {}} />;
+        return (
+          <div style={gameContainerStyle}>
+            {customTemplate && (
+              <img
+                src={customTemplate}
+                alt="Dice template"
+                className="absolute inset-0 w-full h-full object-contain pointer-events-none z-10"
+              />
+            )}
+            <div className="relative z-20">
+              <Dice config={campaign.gameConfig.dice} onConfigChange={() => {}} />
+            </div>
+          </div>
+        );
       default:
         return <div className="text-center text-gray-500">Jeu non supporté</div>;
     }

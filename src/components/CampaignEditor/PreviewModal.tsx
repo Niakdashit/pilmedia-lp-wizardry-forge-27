@@ -20,6 +20,32 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
     return <FunnelStandard campaign={campaign} />;
   };
 
+  // Récupérer l'image de fond du jeu
+  const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage || 
+                              campaign.design?.backgroundImage;
+  
+  // Récupérer le template personnalisé (notamment pour jackpot)
+  const customTemplate = campaign.gameConfig?.[campaign.type]?.customTemplate ||
+                         campaign.gameConfig?.[campaign.type]?.jackpotTemplate;
+
+  const getBackgroundStyle = () => {
+    const style: any = {
+      position: 'relative',
+      width: '100%',
+      height: '100%',
+      backgroundColor: campaign.design?.background || '#ebf4f7'
+    };
+
+    if (gameBackgroundImage) {
+      style.backgroundImage = `url(${gameBackgroundImage})`;
+      style.backgroundSize = 'cover';
+      style.backgroundPosition = 'center';
+      style.backgroundRepeat = 'no-repeat';
+    }
+
+    return style;
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
       <div className="bg-white w-full h-full flex flex-col relative overflow-hidden">
@@ -33,9 +59,23 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
           </button>
         </div>
 
-        <div className="flex-1 pt-20 overflow-auto flex justify-center items-start">
-          <div className="w-full h-full flex items-center justify-center">
-            {getPreviewFunnel()}
+        <div className="flex-1 pt-20 overflow-auto">
+          <div style={getBackgroundStyle()}>
+            {/* Template personnalisé overlay (pour jackpot, etc.) */}
+            {customTemplate && (
+              <div className="absolute inset-0 z-10 pointer-events-none">
+                <img
+                  src={customTemplate}
+                  alt="Custom template"
+                  className="w-full h-full object-contain"
+                />
+              </div>
+            )}
+
+            {/* Contenu du funnel avec z-index plus élevé */}
+            <div className="relative z-20 w-full h-full flex items-center justify-center">
+              {getPreviewFunnel()}
+            </div>
           </div>
         </div>
       </div>
