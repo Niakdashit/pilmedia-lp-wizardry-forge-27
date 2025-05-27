@@ -100,13 +100,13 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
               </button>
               <button
                 onClick={() => setSelectedDevice('tablet')}
-                className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                className={`flex items-center space-x-2 px-8 py-2 rounded-md text-sm font-medium transition-colors ${
                   selectedDevice === 'tablet'
                     ? 'bg-white text-[#841b60] shadow-sm'
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
-                <Tablet className="w-10 h-4" />
+                <Tablet className="w-4 h-4" />
                 <span>Tablette</span>
               </button>
               <button
