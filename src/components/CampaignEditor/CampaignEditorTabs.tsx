@@ -7,14 +7,16 @@ interface CampaignEditorTabsProps {
 }
 
 const CampaignEditorTabs: React.FC<CampaignEditorTabsProps> = ({ activeTab, onTabChange }) => {
-  const tabs = [
-    { id: 'general', label: 'Général', icon: '⚙️' },
-    { id: 'screens', label: 'Écrans', icon: '📱' },
-    { id: 'form', label: 'Formulaire', icon: '📝' },
-    { id: 'design', label: 'Design', icon: '🎨' },
-    { id: 'mobile', label: 'Mobile', icon: '📱' },
-    { id: 'participations', label: 'Participations', icon: '👥' },
-  ];
+ const tabs = [
+  { id: 'general', label: 'Général', icon: '⚙️' },
+  { id: 'content', label: 'Contenu', icon: '📝' },    // <--- À AJOUTER
+  { id: 'screens', label: 'Écrans', icon: '📱' },
+  { id: 'form', label: 'Formulaire', icon: '📝' },
+  // { id: 'design', label: 'Design', icon: '🎨' },   // (optionnel, tu peux retirer si vide)
+  { id: 'mobile', label: 'Mobile', icon: '📱' },
+  { id: 'participations', label: 'Participations', icon: '👥' },
+];
+
 
   return (
     <div className="border-b border-gray-200 bg-white">
