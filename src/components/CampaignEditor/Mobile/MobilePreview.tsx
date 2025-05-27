@@ -86,7 +86,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
         overflowY: 'auto',
         overflowX: 'hidden',
         height: '100%'
-      }} className="flex-1 relative z-0">
+      }} className="flex-1 relative z-1">
           <div style={{
           minHeight: '100%',
           paddingBottom: '20px'
