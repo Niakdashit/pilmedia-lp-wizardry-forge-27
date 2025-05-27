@@ -1,8 +1,9 @@
 
-import React from 'react';
-import { X } from 'lucide-react';
+import React, { useState } from 'react';
+import { X, Monitor, Tablet, Smartphone } from 'lucide-react';
 import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
 import FunnelStandard from '../funnels/FunnelStandard';
+import MobilePreview from './Mobile/MobilePreview';
 
 interface PreviewModalProps {
   isOpen: boolean;
@@ -11,6 +12,8 @@ interface PreviewModalProps {
 }
 
 const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }) => {
+  const [selectedDevice, setSelectedDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
+
   if (!isOpen) return null;
 
   const getPreviewFunnel = () => {
@@ -46,11 +49,80 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
     return style;
   };
 
+  const renderDesktopPreview = () => (
+    <div style={getBackgroundStyle()}>
+      {/* Template personnalisé overlay (pour jackpot, etc.) */}
+      {customTemplate && (
+        <div className="absolute inset-0 z-10 pointer-events-none">
+          <img
+            src={customTemplate}
+            alt="Custom template"
+            className="w-full h-full object-contain"
+          />
+        </div>
+      )}
+
+      {/* Contenu du funnel avec z-index plus élevé */}
+      <div className="relative z-20 w-full h-full flex items-center justify-center">
+        {getPreviewFunnel()}
+      </div>
+    </div>
+  );
+
+  const renderMobilePreview = () => (
+    <div className="w-full h-full flex items-center justify-center p-4">
+      <MobilePreview
+        campaign={campaign}
+        previewMode={selectedDevice === 'tablet' ? 'tablet' : 'mobile'}
+      />
+    </div>
+  );
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
       <div className="bg-white w-full h-full flex flex-col relative overflow-hidden">
         <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-6 py-4 bg-white border-b border-gray-200 shadow-sm">
-          <h2 className="text-lg font-semibold text-gray-800">Aperçu de la campagne</h2>
+          <div className="flex items-center space-x-4">
+            <h2 className="text-lg font-semibold text-gray-800">Aperçu de la campagne</h2>
+            
+            {/* Device Selector */}
+            <div className="flex items-center space-x-1 bg-gray-100 rounded-lg p-1">
+              <button
+                onClick={() => setSelectedDevice('desktop')}
+                className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  selectedDevice === 'desktop'
+                    ? 'bg-white text-[#841b60] shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                <Monitor className="w-4 h-4" />
+                <span>Desktop</span>
+              </button>
+              <button
+                onClick={() => setSelectedDevice('tablet')}
+                className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  selectedDevice === 'tablet'
+                    ? 'bg-white text-[#841b60] shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                <Tablet className="w-4 h-4" />
+                <span>Tablette</span>
+              </button>
+              <button
+                onClick={() => setSelectedDevice('mobile')}
+                className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  selectedDevice === 'mobile'
+                    ? 'bg-white text-[#841b60] shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                <Smartphone className="w-4 h-4" />
+                <span>Mobile</span>
+              </button>
+            </div>
+          </div>
+
           <button
             onClick={onClose}
             className="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"
@@ -60,23 +132,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
         </div>
 
         <div className="flex-1 pt-20 overflow-auto">
-          <div style={getBackgroundStyle()}>
-            {/* Template personnalisé overlay (pour jackpot, etc.) */}
-            {customTemplate && (
-              <div className="absolute inset-0 z-10 pointer-events-none">
-                <img
-                  src={customTemplate}
-                  alt="Custom template"
-                  className="w-full h-full object-contain"
-                />
-              </div>
-            )}
-
-            {/* Contenu du funnel avec z-index plus élevé */}
-            <div className="relative z-20 w-full h-full flex items-center justify-center">
-              {getPreviewFunnel()}
-            </div>
-          </div>
+          {selectedDevice === 'desktop' ? renderDesktopPreview() : renderMobilePreview()}
         </div>
       </div>
     </div>
