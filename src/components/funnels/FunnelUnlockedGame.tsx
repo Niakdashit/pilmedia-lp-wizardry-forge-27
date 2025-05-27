@@ -138,7 +138,7 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
         </div>
       </div>;
   }
-  return <div className="w-full max-w-lg mx-auto p-6 flex flex-col items-center space-y-6">
+  return <div className="w-full max-w-lg mx-auto p-6 flex flex-col items-center space-y-6 px-0 py-[23px]">
       {/* Titre et description */}
       <div className="text-center space-y-4">
         <h2 className="text-2xl font-bold">
