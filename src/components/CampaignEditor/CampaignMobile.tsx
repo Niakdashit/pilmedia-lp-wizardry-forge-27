@@ -70,7 +70,7 @@ const CampaignMobile: React.FC<CampaignMobileProps> = ({
       <div className="w-96 border-l border-gray-200 bg-gray-50 flex flex-col">
         {/* Preview Mode Toggle */}
         <div className="p-4 border-b border-gray-200 py-0">
-          <div className="flex items-center space-x-2 bg-white rounded-lg p-1">
+          <div className="flex items-center space-x-2 bg-white rounded-lg p-1 px-0 mx-[70px]">
             <button onClick={() => setPreviewMode('mobile')} className={`flex items-center space-x-2 px-4 py-3 rounded-md text-sm font-medium transition-colors ${previewMode === 'mobile' ? 'bg-[#841b60] text-white' : 'text-gray-600 hover:text-gray-900'}`}>
               <Smartphone className="w-4 h-4" />
               <span>Mobile</span>
