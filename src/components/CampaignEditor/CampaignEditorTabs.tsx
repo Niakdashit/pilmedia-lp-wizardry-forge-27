@@ -12,7 +12,6 @@ const CampaignEditorTabs: React.FC<CampaignEditorTabsProps> = ({ activeTab, onTa
     { id: 'content', label: 'Contenu', icon: '📝' },
     { id: 'screens', label: 'Écrans', icon: '📱' },
     { id: 'form', label: 'Formulaire', icon: '📝' },
-    { id: 'design', label: 'Design', icon: '🎨' },
     { id: 'mobile', label: 'Mobile', icon: '📱' },
     { id: 'participations', label: 'Participations', icon: '👥' },
   ];
