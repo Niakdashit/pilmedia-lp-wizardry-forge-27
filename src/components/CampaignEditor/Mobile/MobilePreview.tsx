@@ -19,9 +19,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
       case 'mobile':
         return {
           width: '280px',
-          minHeight: '500px',
-          height: 'auto',
-          maxHeight: '700px',
+          height: '600px',
           borderRadius: '20px',
           border: '6px solid #1f1f1f',
           boxShadow: '0 0 20px rgba(0,0,0,0.3)',
@@ -33,9 +31,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
       case 'tablet':
         return {
           width: '340px',
-          minHeight: '520px',
-          height: 'auto',
-          maxHeight: '720px',
+          height: '650px',
           borderRadius: '14px',
           border: '4px solid #333',
           boxShadow: '0 0 15px rgba(0,0,0,0.2)',
@@ -115,15 +111,19 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
           </div>
         )}
 
-        {/* Main Content with Funnel - Scrollable */}
+        {/* Main Content with Funnel - Scrollable with proper overflow */}
         <div 
-          className="flex-1 relative z-10 overflow-y-auto"
+          className="flex-1 relative z-10"
           style={{ 
             padding: `${mobileConfig.horizontalPadding || 16}px`,
-            paddingBottom: '20px' // Extra padding at bottom for scrolling
+            overflowY: 'auto',
+            overflowX: 'hidden',
+            height: '100%'
           }}
         >
-          {getFunnelComponent()}
+          <div style={{ minHeight: '100%', paddingBottom: '20px' }}>
+            {getFunnelComponent()}
+          </div>
         </div>
       </div>
     </div>

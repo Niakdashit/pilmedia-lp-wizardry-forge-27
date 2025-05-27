@@ -50,10 +50,16 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({ campaign }) => {
     }, 400);
   };
 
+  const handleGameFinish = (result: 'win' | 'lose') => {
+    setGameResult(result);
+    setGamePlayed(true);
+  };
+
   const reset = () => {
     setFormValidated(false);
     setGamePlayed(false);
     setGameResult(null);
+    setShowFormModal(false);
   };
 
   const renderGame = () => {
@@ -96,7 +102,11 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({ campaign }) => {
               />
             )}
             <div className="relative z-20">
-              <Wheel config={campaign.gameConfig.wheel} isPreview={true} />
+              <Wheel 
+                config={campaign.gameConfig.wheel} 
+                isPreview={true}
+                onFinish={handleGameFinish}
+              />
             </div>
           </div>
         );
@@ -111,7 +121,11 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({ campaign }) => {
               />
             )}
             <div className="relative z-20">
-              <Scratch config={campaign.gameConfig.scratch} onConfigChange={() => {}} />
+              <Scratch 
+                config={campaign.gameConfig.scratch} 
+                onConfigChange={() => {}}
+                onFinish={handleGameFinish}
+              />
             </div>
           </div>
         );
@@ -131,6 +145,9 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({ campaign }) => {
                 instantWinConfig={campaign.gameConfig?.jackpot?.instantWin}
                 buttonLabel={buttonLabel}
                 buttonColor={buttonColor}
+                backgroundImage={gameBackgroundImage}
+                customTemplate={customTemplate}
+                onFinish={handleGameFinish}
               />
             </div>
           </div>
@@ -146,7 +163,11 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({ campaign }) => {
               />
             )}
             <div className="relative z-20">
-              <Dice config={campaign.gameConfig.dice} onConfigChange={() => {}} />
+              <Dice 
+                config={campaign.gameConfig.dice} 
+                onConfigChange={() => {}}
+                onFinish={handleGameFinish}
+              />
             </div>
           </div>
         );
@@ -170,7 +191,7 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({ campaign }) => {
         </>
       )}
 
-      {renderGame()}
+      {formValidated && !gamePlayed && renderGame()}
 
       {gamePlayed && (
         <div className="text-center space-y-4">
