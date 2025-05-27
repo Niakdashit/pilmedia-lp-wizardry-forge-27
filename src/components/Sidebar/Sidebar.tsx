@@ -54,7 +54,7 @@ const Sidebar: React.FC = () => {
   return <div className={`fixed inset-y-0 left-0 z-10 flex flex-col bg-white/95 backdrop-blur-sm border-r border-gray-200/50 transition-all duration-300 ease-in-out ${sidebarCollapsed ? 'w-20' : 'w-64'}`}>
       {/* Logo section */}
       <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200/50">
-        {!sidebarCollapsed ? <img src={logo} alt="Leadya Logo" className="h-14 w-auto ml-8 mt-4" /> : <div className="w-full flex items-center justify-center">
+        {!sidebarCollapsed ? <img src={logo} alt="Leadya Logo" className="h-11 w-auto ml-14 mt-2" /> : <div className="w-full flex items-center justify-center">
             <img src={logoIcon} alt="Leadya Icon" className="h-8 w-8 object-contain" />
           </div>}
         <button onClick={toggleSidebar} className="w-6 h-6 flex items-center justify-center text-gray-400 hover:text-[#841b60] focus:outline-none transition-colors duration-200">
