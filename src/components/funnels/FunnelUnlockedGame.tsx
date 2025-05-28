@@ -1,10 +1,11 @@
-
 import React, { useState } from 'react';
 import Modal from '../common/Modal';
 import ValidationMessage from '../common/ValidationMessage';
 import ContrastBackground from '../common/ContrastBackground';
 import DynamicContactForm, { FieldConfig } from '../forms/DynamicContactForm';
 import { Wheel, Scratch, Jackpot, Dice } from '../GameTypes';
+import ScratchPreview from '../GameTypes/ScratchPreview';
+import DicePreview from '../GameTypes/DicePreview';
 import { useParticipations } from '../../hooks/useParticipations';
 
 interface GameFunnelProps {
@@ -132,11 +133,11 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
         case 'wheel':
           return <Wheel config={campaign.gameConfig.wheel} isPreview={true} {...commonProps} />;
         case 'scratch':
-          return <Scratch config={campaign.gameConfig.scratch} onConfigChange={() => {}} {...commonProps} />;
+          return <ScratchPreview config={campaign.gameConfig.scratch} />;
         case 'jackpot':
           return <Jackpot isPreview={true} instantWinConfig={campaign.gameConfig?.jackpot?.instantWin} buttonLabel={buttonLabel} buttonColor={buttonColor} backgroundImage={gameBackgroundImage} customTemplate={customTemplate} {...commonProps} />;
         case 'dice':
-          return <Dice config={campaign.gameConfig.dice} onConfigChange={() => {}} {...commonProps} />;
+          return <DicePreview config={campaign.gameConfig.dice} />;
         default:
           return <div className="text-center text-gray-500">Jeu non supporté</div>;
       }

@@ -3,6 +3,10 @@ import React from 'react';
 import Jackpot from '../GameTypes/Jackpot';
 import { Quiz, Scratch, Memory, Puzzle, Dice } from '../GameTypes';
 import WheelPreview from '../GameTypes/WheelPreview';
+import MemoryPreview from '../GameTypes/MemoryPreview';
+import PuzzlePreview from '../GameTypes/PuzzlePreview';
+import ScratchPreview from '../GameTypes/ScratchPreview';
+import DicePreview from '../GameTypes/DicePreview';
 
 interface GameCanvasPreviewProps {
   campaign: any;
@@ -52,6 +56,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
             <Quiz 
               config={campaign.gameConfig?.quiz || {}} 
               onConfigChange={() => {}}
+              isPreview={true}
             />
           </div>
         );
@@ -73,36 +78,32 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
       case 'scratch':
         return (
           <div style={gameProps.style}>
-            <Scratch 
+            <ScratchPreview 
               config={campaign.gameConfig?.scratch || {}} 
-              onConfigChange={() => {}}
             />
           </div>
         );
       case 'memory':
         return (
           <div style={gameProps.style}>
-            <Memory 
+            <MemoryPreview 
               config={campaign.gameConfig?.memory || {}} 
-              onConfigChange={() => {}}
             />
           </div>
         );
       case 'puzzle':
         return (
           <div style={gameProps.style}>
-            <Puzzle 
+            <PuzzlePreview 
               config={campaign.gameConfig?.puzzle || {}} 
-              onConfigChange={() => {}}
             />
           </div>
         );
       case 'dice':
         return (
           <div style={gameProps.style}>
-            <Dice 
+            <DicePreview 
               config={campaign.gameConfig?.dice || {}} 
-              onConfigChange={() => {}}
             />
           </div>
         );
@@ -116,7 +117,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   };
 
   return (
-    <div className={`relative w-full h-full ${className} flex items-center justify-center`} style={{ minHeight: '200px' }}>
+    <div className={`relative w-full h-full ${className} flex items-center justify-center`} style={{ minHeight: '400px' }}>
       {/* Image de fond plein écran */}
       {gameBackgroundImage && (
         <img
@@ -138,7 +139,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
       )}
 
       {/* Jeu centré avec contraintes de taille */}
-      <div className="relative z-20 w-full h-full flex items-center justify-center p-2" style={{ maxWidth: '100%', maxHeight: '100%' }}>
+      <div className="relative z-20 w-full h-full flex items-center justify-center p-4" style={{ maxWidth: '100%', maxHeight: '100%' }}>
         {renderGame()}
       </div>
     </div>

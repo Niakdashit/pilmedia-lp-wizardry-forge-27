@@ -1,129 +1,127 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import confetti from 'canvas-confetti';
 
 interface PuzzlePreviewProps {
-  config: {
-    image: string;
-    gridSize: number;
-    difficulty: 'easy' | 'medium' | 'hard';
-    timeLimit?: number;
-  };
-  onComplete?: (result: 'win' | 'lose') => void;
+  config?: any;
 }
 
-const PuzzlePreview: React.FC<PuzzlePreviewProps> = ({ config, onComplete }) => {
+const PuzzlePreview: React.FC<PuzzlePreviewProps> = ({ config = {} }) => {
   const [pieces, setPieces] = useState<number[]>([]);
-  const [emptyIndex, setEmptyIndex] = useState<number>(0);
+  const [solved, setSolved] = useState(false);
   const [moves, setMoves] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(config.timeLimit || 0);
-  const [gameStarted, setGameStarted] = useState(false);
+
+  const gridSize = Math.sqrt(config?.gridSize || 9);
+  const totalPieces = config?.gridSize || 9;
 
   useEffect(() => {
-    const size = config.gridSize * config.gridSize;
-    const initialPieces = Array.from({ length: size }, (_, i) => i);
+    // Initialize puzzle with shuffled pieces
+    const initialPieces = Array.from({ length: totalPieces }, (_, i) => i);
     
-    // Shuffle based on difficulty
-    let shuffleCount;
-    switch (config.difficulty) {
-      case 'easy': shuffleCount = 20; break;
-      case 'medium': shuffleCount = 40; break;
-      case 'hard': shuffleCount = 60; break;
-      default: shuffleCount = 30;
+    // Shuffle the array (except the last piece which is the empty space)
+    const shuffled = [...initialPieces];
+    for (let i = shuffled.length - 2; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
     }
-
-    for (let i = 0; i < shuffleCount; i++) {
-      const randomIndex = Math.floor(Math.random() * size);
-      [initialPieces[0], initialPieces[randomIndex]] = 
-      [initialPieces[randomIndex], initialPieces[0]];
-    }
-
-    setPieces(initialPieces);
-    setEmptyIndex(initialPieces.indexOf(size - 1));
-  }, [config.gridSize, config.difficulty]);
-
-  useEffect(() => {
-    if (gameStarted && config.timeLimit && config.timeLimit > 0) {
-      const timer = setInterval(() => {
-        setTimeLeft(prev => {
-          if (prev <= 1) {
-            clearInterval(timer);
-            onComplete?.('lose');
-            return 0;
-          }
-          return prev - 1;
-        });
-      }, 1000);
-
-      return () => clearInterval(timer);
-    }
-  }, [gameStarted, config.timeLimit]);
+    
+    setPieces(shuffled);
+    setSolved(false);
+    setMoves(0);
+  }, [config?.gridSize]);
 
   const handlePieceClick = (index: number) => {
-    if (!gameStarted) {
-      setGameStarted(true);
-    }
+    if (solved) return;
 
-    const isAdjacent = (
-      (Math.abs(index - emptyIndex) === 1 && Math.floor(index / config.gridSize) === Math.floor(emptyIndex / config.gridSize)) ||
-      Math.abs(index - emptyIndex) === config.gridSize
-    );
+    const newPieces = [...pieces];
+    const emptyIndex = newPieces.findIndex(piece => piece === totalPieces - 1);
+    
+    // Check if clicked piece is adjacent to empty space
+    const row = Math.floor(index / gridSize);
+    const col = index % gridSize;
+    const emptyRow = Math.floor(emptyIndex / gridSize);
+    const emptyCol = emptyIndex % gridSize;
+    
+    const isAdjacent = 
+      (Math.abs(row - emptyRow) === 1 && col === emptyCol) ||
+      (Math.abs(col - emptyCol) === 1 && row === emptyRow);
 
     if (isAdjacent) {
-      const newPieces = [...pieces];
+      // Swap pieces
       [newPieces[index], newPieces[emptyIndex]] = [newPieces[emptyIndex], newPieces[index]];
       setPieces(newPieces);
-      setEmptyIndex(index);
       setMoves(moves + 1);
 
       // Check if puzzle is solved
       const isSolved = newPieces.every((piece, i) => piece === i);
       if (isSolved) {
-        confetti({
-          particleCount: 100,
-          spread: 70,
-          origin: { y: 0.6 }
-        });
-        onComplete?.('win');
+        setSolved(true);
       }
     }
   };
 
+  const getDifficultyColor = () => {
+    const difficulty = config?.difficulty || 'medium';
+    switch (difficulty) {
+      case 'easy': return 'text-green-600';
+      case 'hard': return 'text-red-600';
+      default: return 'text-yellow-600';
+    }
+  };
+
   return (
-    <div className="max-w-2xl mx-auto p-4">
-      <div className="flex justify-between items-center mb-4">
-        <div className="text-lg font-bold">Mouvements: {moves}</div>
-        {config.timeLimit && config.timeLimit > 0 && (
-          <div className="text-lg font-bold">
-            Temps: {Math.floor(timeLeft / 60)}:{(timeLeft % 60).toString().padStart(2, '0')}
-          </div>
-        )}
+    <div className="w-full max-w-md mx-auto p-4">
+      <div className="mb-4 text-center">
+        <div className="flex justify-between items-center text-sm text-gray-600 mb-2">
+          <span>Mouvements: {moves}</span>
+          <span className={`font-medium ${getDifficultyColor()}`}>
+            {config?.difficulty || 'medium'}
+          </span>
+        </div>
       </div>
 
       <div 
-        className="grid gap-1 bg-gray-200 p-1 rounded-lg"
+        className="grid gap-1 bg-gray-200 p-2 rounded-lg mx-auto"
         style={{
-          gridTemplateColumns: `repeat(${config.gridSize}, 1fr)`
+          gridTemplateColumns: `repeat(${gridSize}, 1fr)`,
+          maxWidth: '280px'
         }}
       >
         {pieces.map((piece, index) => (
           <motion.div
             key={index}
-            className={`aspect-square rounded-sm cursor-move ${
-              piece === pieces.length - 1 ? 'invisible' : 'bg-white shadow-md'
+            className={`aspect-square rounded-sm cursor-pointer flex items-center justify-center text-white font-bold text-lg ${
+              piece === totalPieces - 1 
+                ? 'invisible' 
+                : solved
+                ? 'bg-green-500'
+                : 'bg-[#841b60] hover:bg-[#6d1650]'
             }`}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={piece !== totalPieces - 1 ? { scale: 1.05 } : {}}
+            whileTap={piece !== totalPieces - 1 ? { scale: 0.95 } : {}}
             onClick={() => handlePieceClick(index)}
             style={{
-              backgroundImage: config.image ? `url(${config.image})` : undefined,
-              backgroundSize: `${config.gridSize * 100}%`,
-              backgroundPosition: `${(piece % config.gridSize) * 100}% ${Math.floor(piece / config.gridSize) * 100}%`
+              backgroundImage: config?.image ? `url(${config.image})` : undefined,
+              backgroundSize: config?.image ? `${gridSize * 100}%` : undefined,
+              backgroundPosition: config?.image ? `${(piece % gridSize) * (100 / (gridSize - 1))}% ${Math.floor(piece / gridSize) * (100 / (gridSize - 1))}%` : undefined,
+              backgroundRepeat: 'no-repeat'
             }}
-          />
+          >
+            {!config?.image && piece !== totalPieces - 1 && (piece + 1)}
+          </motion.div>
         ))}
       </div>
+
+      {solved && (
+        <motion.div
+          initial={{ opacity: 0, scale: 0.5 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-center mt-4 p-4 bg-green-100 rounded-lg"
+        >
+          <h3 className="text-lg font-bold text-green-800">Puzzle résolu !</h3>
+          <p className="text-green-600">Terminé en {moves} mouvements</p>
+        </motion.div>
+      )}
     </div>
   );
 };

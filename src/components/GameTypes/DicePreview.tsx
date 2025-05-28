@@ -1,144 +1,152 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import confetti from 'canvas-confetti';
 
 interface DicePreviewProps {
-  config: {
-    diceCount: number;
-    winningCombinations: number[][];
-    diceColor: string;
-    dotColor: string;
-  };
-  onComplete?: (result: 'win' | 'lose') => void;
+  config?: any;
 }
 
-const DicePreview: React.FC<DicePreviewProps> = ({ config, onComplete }) => {
-  const [diceValues, setDiceValues] = useState<number[]>([]);
+const DicePreview: React.FC<DicePreviewProps> = ({ config = {} }) => {
+  const [diceValues, setDiceValues] = useState<number[]>([1, 1]);
   const [isRolling, setIsRolling] = useState(false);
-  const [hasResult, setHasResult] = useState(false);
+  const [result, setResult] = useState<'win' | 'lose' | null>(null);
+  const [rollCount, setRollCount] = useState(0);
 
-  const getDiceDots = (value: number) => {
-    const dots = [];
-    switch (value) {
-      case 1:
-        dots.push(<div key="center" className="absolute inset-0 m-auto w-2 h-2 rounded-full" style={{ background: config.dotColor || 'white' }} />);
-        break;
-      case 2:
-        dots.push(
-          <div key="top-right" className="absolute top-2 right-2 w-2 h-2 rounded-full" style={{ background: config.dotColor || 'white' }} />,
-          <div key="bottom-left" className="absolute bottom-2 left-2 w-2 h-2 rounded-full" style={{ background: config.dotColor || 'white' }} />
-        );
-        break;
-      case 3:
-        dots.push(
-          <div key="top-right" className="absolute top-2 right-2 w-2 h-2 rounded-full" style={{ background: config.dotColor || 'white' }} />,
-          <div key="center" className="absolute inset-0 m-auto w-2 h-2 rounded-full" style={{ background: config.dotColor || 'white' }} />,
-          <div key="bottom-left" className="absolute bottom-2 left-2 w-2 h-2 rounded-full" style={{ background: config.dotColor || 'white' }} />
-        );
-        break;
-      case 4:
-        dots.push(
-          <div key="top-left" className="absolute top-2 left-2 w-2 h-2 rounded-full" style={{ background: config.dotColor || 'white' }} />,
-          <div key="top-right" className="absolute top-2 right-2 w-2 h-2 rounded-full" style={{ background: config.dotColor || 'white' }} />,
-          <div key="bottom-left" className="absolute bottom-2 left-2 w-2 h-2 rounded-full" style={{ background: config.dotColor || 'white' }} />,
-          <div key="bottom-right" className="absolute bottom-2 right-2 w-2 h-2 rounded-full" style={{ background: config.dotColor || 'white' }} />
-        );
-        break;
-      case 5:
-        dots.push(
-          <div key="top-left" className="absolute top-2 left-2 w-2 h-2 rounded-full" style={{ background: config.dotColor || 'white' }} />,
-          <div key="top-right" className="absolute top-2 right-2 w-2 h-2 rounded-full" style={{ background: config.dotColor || 'white' }} />,
-          <div key="center" className="absolute inset-0 m-auto w-2 h-2 rounded-full" style={{ background: config.dotColor || 'white' }} />,
-          <div key="bottom-left" className="absolute bottom-2 left-2 w-2 h-2 rounded-full" style={{ background: config.dotColor || 'white' }} />,
-          <div key="bottom-right" className="absolute bottom-2 right-2 w-2 h-2 rounded-full" style={{ background: config.dotColor || 'white' }} />
-        );
-        break;
-      case 6:
-        dots.push(
-          <div key="top-left" className="absolute top-2 left-2 w-2 h-2 rounded-full" style={{ background: config.dotColor || 'white' }} />,
-          <div key="top-right" className="absolute top-2 right-2 w-2 h-2 rounded-full" style={{ background: config.dotColor || 'white' }} />,
-          <div key="middle-left" className="absolute top-1/2 -translate-y-1/2 left-2 w-2 h-2 rounded-full" style={{ background: config.dotColor || 'white' }} />,
-          <div key="middle-right" className="absolute top-1/2 -translate-y-1/2 right-2 w-2 h-2 rounded-full" style={{ background: config.dotColor || 'white' }} />,
-          <div key="bottom-left" className="absolute bottom-2 left-2 w-2 h-2 rounded-full" style={{ background: config.dotColor || 'white' }} />,
-          <div key="bottom-right" className="absolute bottom-2 right-2 w-2 h-2 rounded-full" style={{ background: config.dotColor || 'white' }} />
-        );
-        break;
-    }
-    return dots;
-  };
+  const numberOfDice = config?.numberOfDice || 2;
+  const winningCombinations = config?.winningCombinations || [7, 11];
 
   const rollDice = () => {
-    if (isRolling || hasResult) return;
-    setIsRolling(true);
+    if (isRolling) return;
 
+    setIsRolling(true);
+    setResult(null);
+
+    // Animate rolling for 1 second
     const rollInterval = setInterval(() => {
-      const newValues = Array.from(
-        { length: config.diceCount },
-        () => Math.floor(Math.random() * 6) + 1
-      );
-      setDiceValues(newValues);
+      setDiceValues(Array.from({ length: numberOfDice }, () => Math.floor(Math.random() * 6) + 1));
     }, 100);
 
     setTimeout(() => {
       clearInterval(rollInterval);
-      const finalValues = Array.from(
-        { length: config.diceCount },
-        () => Math.floor(Math.random() * 6) + 1
-      );
+      const finalValues = Array.from({ length: numberOfDice }, () => Math.floor(Math.random() * 6) + 1);
       setDiceValues(finalValues);
       setIsRolling(false);
-      setHasResult(true);
+      setRollCount(rollCount + 1);
 
-      const isWinning = config.winningCombinations.some(combo => 
-        combo.length === finalValues.length && 
-        combo.every((val, idx) => val === finalValues[idx])
+      const sum = finalValues.reduce((a, b) => a + b, 0);
+      const isWin = winningCombinations.includes(sum);
+      setResult(isWin ? 'win' : 'lose');
+    }, 1000);
+  };
+
+  const getDiceFace = (value: number) => {
+    const dots = [];
+    const dotPositions = {
+      1: [[50, 50]],
+      2: [[25, 25], [75, 75]],
+      3: [[25, 25], [50, 50], [75, 75]],
+      4: [[25, 25], [75, 25], [25, 75], [75, 75]],
+      5: [[25, 25], [75, 25], [50, 50], [25, 75], [75, 75]],
+      6: [[25, 25], [75, 25], [25, 50], [75, 50], [25, 75], [75, 75]]
+    };
+
+    (dotPositions[value as keyof typeof dotPositions] || []).forEach((pos, i) => {
+      dots.push(
+        <circle
+          key={i}
+          cx={pos[0]}
+          cy={pos[1]}
+          r="8"
+          fill="white"
+        />
       );
+    });
 
-      if (isWinning) {
-        confetti({
-          particleCount: 100,
-          spread: 70,
-          origin: { y: 0.6 }
-        });
-        onComplete?.('win');
-      } else {
-        onComplete?.('lose');
-      }
-    }, 2000);
+    return dots;
   };
 
   return (
-    <div className="max-w-md mx-auto p-4">
-      <div className="flex flex-wrap justify-center gap-8 mb-8">
-        {(diceValues.length ? diceValues : Array(config.diceCount).fill(1)).map((value, index) => (
+    <div className="w-full max-w-md mx-auto p-4 text-center">
+      <div className="mb-6">
+        <h3 className="text-lg font-bold text-gray-800 mb-2">Jeu de Dés</h3>
+        <div className="text-sm text-gray-600">
+          <p>Combinaisons gagnantes: {winningCombinations.join(', ')}</p>
+          <p>Lancers: {rollCount}</p>
+        </div>
+      </div>
+
+      <div className="flex justify-center space-x-4 mb-6">
+        {diceValues.slice(0, numberOfDice).map((value, index) => (
           <motion.div
             key={index}
-            className="w-24 h-24 relative rounded-2xl shadow-xl"
-            style={{ background: config.diceColor || '#841b60' }}
-            animate={{
-              rotate: isRolling ? [0, 360] : 0,
-              scale: isRolling ? [1, 0.8, 1] : 1
-            }}
-            transition={{
-              duration: 0.3,
-              repeat: isRolling ? Infinity : 0
+            className="relative"
+            animate={isRolling ? { rotate: 360 } : { rotate: 0 }}
+            transition={{ 
+              duration: isRolling ? 0.1 : 0.5,
+              repeat: isRolling ? Infinity : 0,
+              ease: "linear"
             }}
           >
-            {getDiceDots(value)}
+            <svg
+              width="80"
+              height="80"
+              viewBox="0 0 100 100"
+              className="drop-shadow-lg"
+            >
+              <rect
+                x="5"
+                y="5"
+                width="90"
+                height="90"
+                rx="15"
+                fill="#841b60"
+                stroke="#6d1650"
+                strokeWidth="2"
+              />
+              {getDiceFace(value)}
+            </svg>
           </motion.div>
         ))}
       </div>
 
-      <div className="text-center">
-        <button
-          onClick={rollDice}
-          disabled={isRolling || hasResult}
-          className="px-8 py-3 bg-[#841b60] text-white font-medium rounded-xl hover:bg-[#6d164f] transition-colors duration-200 disabled:opacity-50"
-        >
-          {isRolling ? 'Lancement...' : 'Lancer les dés'}
-        </button>
+      <div className="mb-4">
+        <div className="text-lg font-semibold text-gray-700 mb-2">
+          Total: {diceValues.slice(0, numberOfDice).reduce((a, b) => a + b, 0)}
+        </div>
+        
+        {result && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.5 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className={`p-3 rounded-lg ${
+              result === 'win' 
+                ? 'bg-green-100 text-green-800' 
+                : 'bg-red-100 text-red-800'
+            }`}
+          >
+            <div className="text-2xl mb-1">
+              {result === 'win' ? '🎉' : '😔'}
+            </div>
+            <p className="font-bold">
+              {result === 'win' 
+                ? config?.winMessage || 'Vous avez gagné !' 
+                : config?.loseMessage || 'Dommage, réessayez !'}
+            </p>
+          </motion.div>
+        )}
       </div>
+
+      <button
+        onClick={rollDice}
+        disabled={isRolling}
+        className={`px-6 py-3 rounded-lg font-bold text-white transition-all ${
+          isRolling
+            ? 'bg-gray-400 cursor-not-allowed'
+            : 'bg-[#841b60] hover:bg-[#6d1650] transform hover:scale-105'
+        }`}
+      >
+        {isRolling ? 'Lancement...' : 'Lancer les dés'}
+      </button>
     </div>
   );
 };
