@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Plus, Filter, Eye, Copy, Archive, Trash2, ChevronDown, BarChart2, ExternalLink, MoreVertical } from 'lucide-react';
+import { Search, Plus, Filter, Eye, Copy, Archive, Trash2, ChevronDown, BarChart2, ExternalLink, MoreVertical, Zap } from 'lucide-react';
 import { getCampaignTypeIcon, CampaignType } from '../utils/campaignTypes';
+
 interface ActionModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -181,10 +182,22 @@ const Campaigns: React.FC = () => {
           <div>
             <h1 className="text-3xl font-bold text-white mb-3">Campagnes</h1>
           </div>
-          <Link to="/campaign/new" className="inline-flex items-center px-6 py-3 bg-white text-[#841b60] font-medium rounded-xl hover:bg-white/90 transition-all duration-200 shadow-lg hover:shadow-xl mb-3">
-            <Plus className="w-5 h-5 mr-2" />
-            Nouvelle Campagne
-          </Link>
+          <div className="flex items-center space-x-3 mb-3">
+            <Link 
+              to="/campaign/quick" 
+              className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-yellow-400 to-orange-500 text-white font-medium rounded-xl hover:from-yellow-500 hover:to-orange-600 transition-all duration-200 shadow-lg hover:shadow-xl"
+            >
+              <Zap className="w-5 h-5 mr-2" />
+              Création rapide
+            </Link>
+            <Link 
+              to="/campaign/new" 
+              className="inline-flex items-center px-6 py-3 bg-white text-[#841b60] font-medium rounded-xl hover:bg-white/90 transition-all duration-200 shadow-lg hover:shadow-xl"
+            >
+              <Plus className="w-5 h-5 mr-2" />
+              Éditeur avancé
+            </Link>
+          </div>
         </div>
 
         {/* Decorative bottom curve */}

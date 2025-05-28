@@ -1,8 +1,9 @@
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Upload, Eye, Settings, Sparkles } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
+import { useCampaigns } from '../../hooks/useCampaigns';
 
 const themes = [
   {
@@ -41,15 +42,25 @@ const themes = [
 ];
 
 const Step3VisualStyle: React.FC = () => {
+  const navigate = useNavigate();
+  const { saveCampaign } = useCampaigns();
+  
   const {
+    selectedGameType,
+    campaignName,
+    launchDate,
+    marketingGoal,
+    logoFile,
     selectedTheme,
     backgroundImage,
     setSelectedTheme,
     setBackgroundImage,
-    setCurrentStep
+    setCurrentStep,
+    reset
   } = useQuickCampaignStore();
   
   const [showFinalStep, setShowFinalStep] = useState(false);
+  const [isCreating, setIsCreating] = useState(false);
 
   const handleFileUpload = (files: FileList | null) => {
     if (files && files[0]) {
@@ -59,6 +70,76 @@ const Step3VisualStyle: React.FC = () => {
 
   const handleFinish = () => {
     setShowFinalStep(true);
+  };
+
+  const handleCreateCampaign = async () => {
+    setIsCreating(true);
+    
+    try {
+      const campaignData = {
+        name: campaignName,
+        description: `Campagne ${selectedGameType} - ${marketingGoal}`,
+        type: selectedGameType || 'quiz',
+        game_config: {
+          theme: selectedTheme,
+          launchDate,
+          marketingGoal,
+          hasLogo: !!logoFile,
+          hasBackgroundImage: !!backgroundImage
+        },
+        design: {
+          theme: selectedTheme,
+          colors: themes.find(t => t.id === selectedTheme)?.colors
+        },
+        status: 'draft' as const
+      };
+
+      const result = await saveCampaign(campaignData);
+      
+      if (result) {
+        reset();
+        navigate('/campaigns');
+      }
+    } catch (error) {
+      console.error('Erreur lors de la création:', error);
+    } finally {
+      setIsCreating(false);
+    }
+  };
+
+  const handleAdvancedSettings = async () => {
+    setIsCreating(true);
+    
+    try {
+      const campaignData = {
+        name: campaignName,
+        description: `Campagne ${selectedGameType} - ${marketingGoal}`,
+        type: selectedGameType || 'quiz',
+        game_config: {
+          theme: selectedTheme,
+          launchDate,
+          marketingGoal,
+          hasLogo: !!logoFile,
+          hasBackgroundImage: !!backgroundImage
+        },
+        design: {
+          theme: selectedTheme,
+          colors: themes.find(t => t.id === selectedTheme)?.colors
+        },
+        status: 'draft' as const
+      };
+
+      const result = await saveCampaign(campaignData);
+      
+      if (result) {
+        reset();
+        navigate(`/campaign/${result.id}`);
+      }
+    } catch (error) {
+      console.error('Erreur lors de la création:', error);
+    } finally {
+      setIsCreating(false);
+    }
   };
 
   if (showFinalStep) {
@@ -90,6 +171,7 @@ const Step3VisualStyle: React.FC = () => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                onClick={() => navigate('/campaigns')}
                 className="w-full py-4 bg-blue-500 text-white font-semibold rounded-xl hover:bg-blue-600 transition-colors flex items-center justify-center space-x-2"
               >
                 <Eye className="w-5 h-5" />
@@ -99,15 +181,19 @@ const Step3VisualStyle: React.FC = () => {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="w-full py-4 bg-green-500 text-white font-semibold rounded-xl hover:bg-green-600 transition-colors"
+                onClick={handleCreateCampaign}
+                disabled={isCreating}
+                className="w-full py-4 bg-green-500 text-white font-semibold rounded-xl hover:bg-green-600 transition-colors disabled:opacity-50"
               >
-                Créer la campagne
+                {isCreating ? 'Création...' : 'Créer la campagne'}
               </motion.button>
 
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="w-full py-4 bg-white text-gray-700 font-semibold rounded-xl border-2 border-gray-200 hover:border-gray-300 transition-colors flex items-center justify-center space-x-2"
+                onClick={handleAdvancedSettings}
+                disabled={isCreating}
+                className="w-full py-4 bg-white text-gray-700 font-semibold rounded-xl border-2 border-gray-200 hover:border-gray-300 transition-colors flex items-center justify-center space-x-2 disabled:opacity-50"
               >
                 <Settings className="w-5 h-5" />
                 <span>Réglages avancés</span>

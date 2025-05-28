@@ -1,7 +1,8 @@
 import React from 'react';
-import { Users, Target, BarChart, Calendar, ChevronRight, MoreVertical } from 'lucide-react';
+import { Users, Target, BarChart, Calendar, ChevronRight, MoreVertical, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { getCampaignTypeIcon, getCampaignTypeText, CampaignType } from '../utils/campaignTypes';
+
 const Dashboard: React.FC = () => {
   const stats = [{
     name: 'Campagnes actives',
@@ -73,7 +74,8 @@ const Dashboard: React.FC = () => {
         return status;
     }
   };
-  return <div className="-mx-6 -mt-6">
+  return (
+    <div className="-mx-6 -mt-6">
       <div className="relative h-[100px] bg-[#841b60] overflow-hidden">
         <div className="absolute inset-10 opacity-[0.15]" style={{
         backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
@@ -97,6 +99,17 @@ const Dashboard: React.FC = () => {
       </div>
 
       <div className="px-6 space-y-6">
+        {/* Quick Action Section */}
+        <div className="flex justify-center mt-6">
+          <Link 
+            to="/campaign/quick"
+            className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-[#841b60] to-[#a855f7] text-white font-semibold rounded-2xl hover:from-[#6d164f] hover:to-[#9333ea] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+          >
+            <Zap className="w-6 h-6 mr-3" />
+            Création rapide de campagne
+          </Link>
+        </div>
+
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
           {stats.map((stat, index) => <div key={index} className="bg-white p-6 rounded-2xl shadow-md flex justify-between items-start">
               <div>
@@ -160,6 +173,8 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default Dashboard;
