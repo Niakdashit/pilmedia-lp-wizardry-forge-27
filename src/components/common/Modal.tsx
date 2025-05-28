@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 interface ModalProps {
@@ -5,12 +6,13 @@ interface ModalProps {
   children: React.ReactNode;
   onClose: () => void;
   width?: string;
+  contained?: boolean; // Nouvelle prop pour limiter la modale au conteneur
 }
 
-const Modal: React.FC<ModalProps> = ({ title, children, onClose, width = 'max-w-md' }) => {
+const Modal: React.FC<ModalProps> = ({ title, children, onClose, width = 'max-w-md', contained = false }) => {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-      <div className={`bg-white rounded-xl shadow-xl w-full ${width} relative`}>
+    <div className={`${contained ? 'absolute' : 'fixed'} inset-0 ${contained ? 'z-30' : 'z-50'} flex items-center justify-center bg-black/40`}>
+      <div className={`bg-white rounded-xl shadow-xl w-full ${width} relative mx-4`}>
         {/* Bouton de fermeture */}
         <button
           className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-xl font-bold"
@@ -27,7 +29,7 @@ const Modal: React.FC<ModalProps> = ({ title, children, onClose, width = 'max-w-
           </div>
         )}
         {/* Contenu */}
-        <div className="px-6 pb-6 pt-2">{children}</div>
+        <div className="px-6 pb-6 pt-2 max-h-96 overflow-y-auto">{children}</div>
       </div>
     </div>
   );

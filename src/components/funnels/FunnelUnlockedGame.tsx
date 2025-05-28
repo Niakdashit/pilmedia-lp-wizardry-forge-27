@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Modal from '../common/Modal';
 import DynamicContactForm, { FieldConfig } from '../forms/DynamicContactForm';
@@ -7,6 +6,7 @@ import { useParticipations } from '../../hooks/useParticipations';
 
 interface GameFunnelProps {
   campaign: any;
+  modalContained?: boolean; // Nouvelle prop pour les modales contenues
 }
 
 const DEFAULT_FIELDS: FieldConfig[] = [{
@@ -31,7 +31,8 @@ const DEFAULT_FIELDS: FieldConfig[] = [{
 }];
 
 const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
-  campaign
+  campaign,
+  modalContained = false
 }) => {
   const [formValidated, setFormValidated] = useState(false);
   const [showFormModal, setShowFormModal] = useState(false);
@@ -161,7 +162,8 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
       </div>;
   }
   
-  return <div className="w-full max-w-lg mx-auto p-6 flex flex-col items-center space-y-6 px-0 py-[23px]">
+  return (
+    <div className="w-full max-w-lg mx-auto p-6 flex flex-col items-center space-y-6 px-0 py-[23px]">
       {/* Titre et description */}
       <div className="text-center space-y-4">
         <h2 className="text-2xl font-bold">
@@ -176,17 +178,30 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
       {renderGame()}
 
       {/* Message de confirmation après validation - disparaît après le début du jeu */}
-      {formValidated && !gamePlayed && !gameStarted && <div className="text-center">
+      {formValidated && !gamePlayed && !gameStarted && (
+        <div className="text-center">
           <p className="text-green-600 font-medium">
             ✅ Formulaire validé ! Vous pouvez maintenant jouer.
           </p>
-        </div>}
+        </div>
+      )}
 
       {/* Modale du formulaire */}
-      {showFormModal && <Modal onClose={() => setShowFormModal(false)} title={campaign.screens[1]?.title || 'Vos informations'}>
-          <DynamicContactForm fields={fields} submitLabel={participationLoading ? 'Chargement...' : campaign.screens[1]?.buttonText || "C'est parti !"} onSubmit={handleFormSubmit} />
-        </Modal>}
-    </div>;
+      {showFormModal && (
+        <Modal 
+          onClose={() => setShowFormModal(false)} 
+          title={campaign.screens[1]?.title || 'Vos informations'}
+          contained={modalContained}
+        >
+          <DynamicContactForm 
+            fields={fields} 
+            submitLabel={participationLoading ? 'Chargement...' : campaign.screens[1]?.buttonText || "C'est parti !"} 
+            onSubmit={handleFormSubmit} 
+          />
+        </Modal>
+      )}
+    </div>
+  );
 };
 
 export default FunnelUnlockedGame;
