@@ -3,16 +3,10 @@ import Modal from '../common/Modal';
 import ValidationMessage from '../common/ValidationMessage';
 import ContrastBackground from '../common/ContrastBackground';
 import DynamicContactForm, { FieldConfig } from '../forms/DynamicContactForm';
-import { Wheel, Scratch, Jackpot, Dice } from '../GameTypes';
+import { Wheel, Jackpot } from '../GameTypes';
 import ScratchPreview from '../GameTypes/ScratchPreview';
 import DicePreview from '../GameTypes/DicePreview';
 import { useParticipations } from '../../hooks/useParticipations';
-
-interface GameFunnelProps {
-  campaign: any;
-  modalContained?: boolean;
-  mobileConfig?: any;
-}
 
 const DEFAULT_FIELDS: FieldConfig[] = [{
   id: "civilite",
@@ -34,6 +28,12 @@ const DEFAULT_FIELDS: FieldConfig[] = [{
   type: "email",
   required: true
 }];
+
+interface GameFunnelProps {
+  campaign: any;
+  modalContained?: boolean;
+  mobileConfig?: any;
+}
 
 const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
   campaign,

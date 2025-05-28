@@ -20,7 +20,7 @@ const MemoryPreview: React.FC<MemoryPreviewProps> = ({ config = {} }) => {
     setMatched([]);
   }, [config?.pairs]);
 
-  const getThemeContent = (card: number) => {
+  const getThemeContent = (card: number): React.ReactNode => {
     const theme = config?.theme || 'numbers';
     switch (theme) {
       case 'emojis':
@@ -28,7 +28,8 @@ const MemoryPreview: React.FC<MemoryPreviewProps> = ({ config = {} }) => {
         return emojis[card - 1] || '🎯';
       case 'colors':
         const colors = ['#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7', '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9', '#F8C471', '#82E0AA'];
-        return { backgroundColor: colors[card - 1] || '#FF6B6B', width: '30px', height: '30px', borderRadius: '50%' };
+        const colorStyle = { backgroundColor: colors[card - 1] || '#FF6B6B', width: '30px', height: '30px', borderRadius: '50%' };
+        return <div style={colorStyle} />;
       default:
         return card.toString();
     }
@@ -86,11 +87,7 @@ const MemoryPreview: React.FC<MemoryPreviewProps> = ({ config = {} }) => {
             >
               {isFlipped && (
                 <div className="text-[#841b60] flex items-center justify-center">
-                  {config?.theme === 'colors' ? (
-                    <div style={getThemeContent(card) as any} />
-                  ) : (
-                    getThemeContent(card)
-                  )}
+                  {getThemeContent(card)}
                 </div>
               )}
             </motion.div>

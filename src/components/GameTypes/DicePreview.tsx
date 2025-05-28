@@ -39,9 +39,9 @@ const DicePreview: React.FC<DicePreviewProps> = ({ config = {} }) => {
     }, 1000);
   };
 
-  const getDiceFace = (value: number) => {
-    const dots = [];
-    const dotPositions = {
+  const getDiceFace = (value: number): React.ReactElement[] => {
+    const dots: React.ReactElement[] = [];
+    const dotPositions: Record<number, [number, number][]> = {
       1: [[50, 50]],
       2: [[25, 25], [75, 75]],
       3: [[25, 25], [50, 50], [75, 75]],
@@ -50,7 +50,8 @@ const DicePreview: React.FC<DicePreviewProps> = ({ config = {} }) => {
       6: [[25, 25], [75, 25], [25, 50], [75, 50], [25, 75], [75, 75]]
     };
 
-    (dotPositions[value as keyof typeof dotPositions] || []).forEach((pos, i) => {
+    const positions = dotPositions[value] || [];
+    positions.forEach((pos, i) => {
       dots.push(
         <circle
           key={i}

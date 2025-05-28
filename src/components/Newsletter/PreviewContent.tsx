@@ -64,7 +64,6 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
         return (
           <MemoryPreview
             config={campaign.gameConfig.memory}
-            onComplete={handleGameComplete}
           />
         );
 
@@ -72,7 +71,6 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
         return (
           <PuzzlePreview
             config={campaign.gameConfig.puzzle}
-            onComplete={handleGameComplete}
           />
         );
 
@@ -80,7 +78,6 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
         return (
           <DicePreview
             config={campaign.gameConfig.dice}
-            onComplete={handleGameComplete}
           />
         );
 

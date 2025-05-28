@@ -1,7 +1,7 @@
 
 import React from 'react';
 import Jackpot from '../GameTypes/Jackpot';
-import { Quiz, Scratch, Memory, Puzzle, Dice } from '../GameTypes';
+import { Quiz } from '../GameTypes';
 import WheelPreview from '../GameTypes/WheelPreview';
 import MemoryPreview from '../GameTypes/MemoryPreview';
 import PuzzlePreview from '../GameTypes/PuzzlePreview';
@@ -56,7 +56,6 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
             <Quiz 
               config={campaign.gameConfig?.quiz || {}} 
               onConfigChange={() => {}}
-              isPreview={true}
             />
           </div>
         );
