@@ -73,7 +73,6 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
     const textPosition = mobileConfig.textPosition || 'top';
     const verticalSpacing = mobileConfig.verticalSpacing || 20;
 
-    // Configuration de l'ordre et justification selon les positions
     let flexDirection: 'column' | 'column-reverse' = 'column';
     let justifyContent = 'flex-start';
 
@@ -128,7 +127,8 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
       maxWidth: '100%',
       display: 'flex',
       justifyContent: 'center',
-      alignItems: 'center'
+      alignItems: 'center',
+      position: 'relative'
     };
 
     if (contrastBg.enabled && contrastBg.applyToGame) {
@@ -155,34 +155,44 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
     return <FunnelStandard {...sharedProps} />;
   };
 
-  // Déterminer l'ordre des éléments selon les positions configurées
   const renderOrderedContent = () => {
     const gamePosition = mobileConfig.gamePosition || 'center';
     const textPosition = mobileConfig.textPosition || 'top';
     
-    const textBlock = (
+    const textBlock = (mobileConfig.showTitle !== false || mobileConfig.showDescription !== false) ? (
       <div style={getTextBlockStyle()}>
-        <h2 
-          className="text-2xl font-bold mb-4"
-          style={{ 
-            color: mobileConfig.titleColor || '#000000',
-            fontSize: mobileConfig.titleSize === 'text-xl' ? '1.25rem' : 
-                     mobileConfig.titleSize === 'text-3xl' ? '1.875rem' : '1.5rem'
-          }}
-        >
-          {mobileConfig.title || campaign.screens[0]?.title || 'Tentez votre chance !'}
-        </h2>
-        <p 
-          style={{ 
-            color: mobileConfig.descriptionColor || '#666666',
-            fontSize: mobileConfig.descriptionSize === 'text-sm' ? '0.875rem' : 
-                     mobileConfig.descriptionSize === 'text-lg' ? '1.125rem' : '1rem'
-          }}
-        >
-          {mobileConfig.description || campaign.screens[0]?.description || 'Participez pour avoir une chance de gagner !'}
-        </p>
+        {mobileConfig.showTitle !== false && (
+          <h2 
+            className={`font-bold mb-4 ${mobileConfig.titleAlignment || 'text-center'}`}
+            style={{ 
+              color: mobileConfig.titleColor || '#000000',
+              fontSize: mobileConfig.titleSize === 'text-xl' ? '1.25rem' : 
+                       mobileConfig.titleSize === 'text-3xl' ? '1.875rem' : 
+                       mobileConfig.titleSize === 'text-lg' ? '1.125rem' : '1.5rem',
+              fontWeight: mobileConfig.titleWeight === 'font-normal' ? 'normal' :
+                         mobileConfig.titleWeight === 'font-medium' ? '500' :
+                         mobileConfig.titleWeight === 'font-semibold' ? '600' :
+                         mobileConfig.titleWeight === 'font-extrabold' ? '800' : 'bold'
+            }}
+          >
+            {mobileConfig.title || campaign.screens?.[1]?.title || 'Tentez votre chance !'}
+          </h2>
+        )}
+        {mobileConfig.showDescription !== false && (
+          <p 
+            className={mobileConfig.descriptionAlignment || 'text-center'}
+            style={{ 
+              color: mobileConfig.descriptionColor || '#666666',
+              fontSize: mobileConfig.descriptionSize === 'text-sm' ? '0.875rem' : 
+                       mobileConfig.descriptionSize === 'text-lg' ? '1.125rem' :
+                       mobileConfig.descriptionSize === 'text-xs' ? '0.75rem' : '1rem'
+            }}
+          >
+            {mobileConfig.description || campaign.screens?.[1]?.description || 'Participez pour avoir une chance de gagner !'}
+          </p>
+        )}
       </div>
-    );
+    ) : null;
 
     const gameBlock = (
       <div style={getGameContainerStyle()}>
@@ -190,16 +200,23 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
       </div>
     );
 
-    // Retourner les éléments dans l'ordre selon la configuration
+    const elements = [];
+    
     if (textPosition === 'top' && gamePosition !== 'top') {
-      return [textBlock, gameBlock];
+      if (textBlock) elements.push(textBlock);
+      elements.push(gameBlock);
     } else if (textPosition === 'bottom' && gamePosition !== 'bottom') {
-      return [gameBlock, textBlock];
+      elements.push(gameBlock);
+      if (textBlock) elements.push(textBlock);
     } else if (gamePosition === 'top') {
-      return [gameBlock, textBlock];
+      elements.push(gameBlock);
+      if (textBlock) elements.push(textBlock);
     } else {
-      return [textBlock, gameBlock];
+      if (textBlock) elements.push(textBlock);
+      elements.push(gameBlock);
     }
+
+    return elements;
   };
 
   return (

@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { Save, Monitor, Play, Flag } from 'lucide-react';
+import { Save, Monitor, Play, Flag, Layers } from 'lucide-react';
 
 interface CampaignScreensProps {
   campaign: any;
@@ -36,11 +35,116 @@ const CampaignScreens: React.FC<CampaignScreensProps> = ({ campaign, setCampaign
     }));
   };
 
+  const updateScreenContrastBg = (screenNumber: number, key: string, value: any) => {
+    setCampaign((prev: any) => ({
+      ...prev,
+      screens: {
+        ...prev.screens,
+        [screenNumber]: {
+          ...prev.screens[screenNumber],
+          contrastBackground: {
+            ...prev.screens[screenNumber]?.contrastBackground,
+            [key]: value
+          }
+        }
+      }
+    }));
+  };
+
   const screens = [
     { id: 1, title: 'Écran d\'accueil', icon: Monitor, description: 'Premier contact avec vos utilisateurs' },
     { id: 2, title: 'Écran de jeu', icon: Play, description: 'Configuration automatique selon le type de jeu' },
     { id: 3, title: 'Écran de fin', icon: Flag, description: 'Message de fin et actions utilisateur' }
   ];
+
+  const renderContrastBackgroundControls = (screenNumber: number) => {
+    const contrastBg = campaign.screens[screenNumber]?.contrastBackground || {};
+    
+    return (
+      <div className="border-t pt-4 mt-4">
+        <div className="flex items-center space-x-2 mb-4">
+          <Layers className="w-4 h-4 text-[#841b60]" />
+          <h4 className="text-sm font-medium text-gray-700">Fond de contraste</h4>
+        </div>
+
+        <div className="mb-4">
+          <label className="flex items-center space-x-3">
+            <input
+              type="checkbox"
+              checked={contrastBg.enabled || false}
+              onChange={(e) => updateScreenContrastBg(screenNumber, 'enabled', e.target.checked)}
+              className="w-4 h-4 text-[#841b60] rounded focus:ring-[#841b60]"
+            />
+            <span className="text-sm font-medium text-gray-700">
+              Afficher un fond de contraste
+            </span>
+          </label>
+        </div>
+
+        {contrastBg.enabled && (
+          <div className="space-y-4 bg-gray-50 p-4 rounded-lg">
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Couleur de fond</label>
+              <div className="flex space-x-2">
+                <input
+                  type="color"
+                  value={contrastBg.color?.replace(/rgba?\([^)]+\)/, '') || '#ffffff'}
+                  onChange={(e) => updateScreenContrastBg(screenNumber, 'color', `${e.target.value}90`)}
+                  className="w-12 h-8 rounded border"
+                />
+                <input
+                  type="text"
+                  value={contrastBg.color || 'rgba(255, 255, 255, 0.9)'}
+                  onChange={(e) => updateScreenContrastBg(screenNumber, 'color', e.target.value)}
+                  className="flex-1 px-3 py-1 text-sm border rounded"
+                  placeholder="rgba(255, 255, 255, 0.9)"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Opacité (%)</label>
+              <input
+                type="range"
+                min="0"
+                max="100"
+                value={contrastBg.opacity || 90}
+                onChange={(e) => updateScreenContrastBg(screenNumber, 'opacity', Number(e.target.value))}
+                className="w-full"
+              />
+              <div className="text-xs text-gray-500 mt-1">{contrastBg.opacity || 90}%</div>
+            </div>
+
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Padding interne</label>
+              <input
+                type="range"
+                min="0"
+                max="40"
+                value={contrastBg.padding || 16}
+                onChange={(e) => updateScreenContrastBg(screenNumber, 'padding', Number(e.target.value))}
+                className="w-full"
+              />
+              <div className="text-xs text-gray-500 mt-1">{contrastBg.padding || 16}px</div>
+            </div>
+
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Arrondi des angles</label>
+              <input
+                type="range"
+                min="0"
+                max="20"
+                value={contrastBg.borderRadius || 8}
+                onChange={(e) => updateScreenContrastBg(screenNumber, 'borderRadius', Number(e.target.value))}
+                className="w-full"
+              />
+              <div className="text-xs text-gray-500 mt-1">{contrastBg.borderRadius || 8}px</div>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <div className="space-y-6">
@@ -148,7 +252,7 @@ const CampaignScreens: React.FC<CampaignScreensProps> = ({ campaign, setCampaign
 
             <div className="border-t pt-4">
               <h4 className="text-sm font-medium text-gray-700 mb-3">Options d'affichage</h4>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <label className="inline-flex items-center space-x-3">
                   <input
                     type="checkbox"
@@ -168,8 +272,20 @@ const CampaignScreens: React.FC<CampaignScreensProps> = ({ campaign, setCampaign
                   />
                   <span className="text-gray-700 text-sm">Afficher la description</span>
                 </label>
+
+                <label className="inline-flex items-center space-x-3">
+                  <input
+                    type="checkbox"
+                    checked={campaign.screens[1].hideAfterGameStart}
+                    onChange={() => updateScreenToggle(1, 'hideAfterGameStart')}
+                    className="h-5 w-5 text-[#841b60] rounded focus:ring-0 focus:ring-offset-0"
+                  />
+                  <span className="text-gray-700 text-sm">Masquer après le jeu</span>
+                </label>
               </div>
             </div>
+
+            {renderContrastBackgroundControls(1)}
           </div>
         </div>
       )}
@@ -182,12 +298,14 @@ const CampaignScreens: React.FC<CampaignScreensProps> = ({ campaign, setCampaign
             <h2 className="text-xl font-semibold text-gray-900">Configuration de l'écran de jeu</h2>
           </div>
           
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
             <p className="text-blue-800 text-sm">
               L'écran de jeu est automatiquement configuré en fonction du type de campagne que vous avez sélectionné ({campaign.type}). 
               Vous pouvez personnaliser les paramètres du jeu dans l'onglet "Contenu".
             </p>
           </div>
+
+          {renderContrastBackgroundControls(2)}
         </div>
       )}
 
@@ -292,6 +410,8 @@ const CampaignScreens: React.FC<CampaignScreensProps> = ({ campaign, setCampaign
                 </label>
               </div>
             </div>
+
+            {renderContrastBackgroundControls(3)}
           </div>
         </div>
       )}
