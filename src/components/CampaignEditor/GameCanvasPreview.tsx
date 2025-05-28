@@ -1,11 +1,8 @@
 
 import React from 'react';
 import Jackpot from '../GameTypes/Jackpot';
-import { Quiz, Scratch } from '../GameTypes';
+import { Quiz, Scratch, Memory, Puzzle, Dice } from '../GameTypes';
 import WheelPreview from '../GameTypes/WheelPreview';
-import MemoryPreview from '../GameTypes/MemoryPreview';
-import PuzzlePreview from '../GameTypes/PuzzlePreview';
-import DicePreview from '../GameTypes/DicePreview';
 
 interface GameCanvasPreviewProps {
   campaign: any;
@@ -49,7 +46,6 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
             />
           </div>
         );
-
       case 'quiz':
         return (
           <div style={gameProps.style}>
@@ -59,7 +55,6 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
             />
           </div>
         );
-
       case 'wheel':
         return (
           <div style={gameProps.style}>
@@ -75,7 +70,6 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
             />
           </div>
         );
-
       case 'scratch':
         return (
           <div style={gameProps.style}>
@@ -85,51 +79,33 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
             />
           </div>
         );
-
       case 'memory':
         return (
           <div style={gameProps.style}>
-            <MemoryPreview
-              config={{
-                pairs: campaign.gameConfig?.memory?.pairs || 8,
-                theme: campaign.gameConfig?.memory?.theme || 'numbers',
-                timeLimit: campaign.gameConfig?.memory?.timeLimit || 120,
-                cardBackColor: campaign.gameConfig?.memory?.cardBackColor || '#841b60',
-                cardFrontColor: campaign.gameConfig?.memory?.cardFrontColor || '#ffffff',
-                symbols: campaign.gameConfig?.memory?.symbols || ['🎮', '🎲', '🎯', '🎪', '🎨', '🎭', '🎪', '🎯']
-              }}
+            <Memory 
+              config={campaign.gameConfig?.memory || {}} 
+              onConfigChange={() => {}}
             />
           </div>
         );
-
       case 'puzzle':
         return (
           <div style={gameProps.style}>
-            <PuzzlePreview
-              config={{
-                image: campaign.gameConfig?.puzzle?.image || '',
-                gridSize: campaign.gameConfig?.puzzle?.gridSize || 3,
-                difficulty: campaign.gameConfig?.puzzle?.difficulty || 'medium',
-                timeLimit: campaign.gameConfig?.puzzle?.timeLimit
-              }}
+            <Puzzle 
+              config={campaign.gameConfig?.puzzle || {}} 
+              onConfigChange={() => {}}
             />
           </div>
         );
-
       case 'dice':
         return (
           <div style={gameProps.style}>
-            <DicePreview
-              config={{
-                diceCount: campaign.gameConfig?.dice?.diceCount || 2,
-                winningCombinations: campaign.gameConfig?.dice?.winningCombinations || [[6, 6]],
-                diceColor: campaign.gameConfig?.dice?.diceColor || '#841b60',
-                dotColor: campaign.gameConfig?.dice?.dotColor || '#ffffff'
-              }}
+            <Dice 
+              config={campaign.gameConfig?.dice || {}} 
+              onConfigChange={() => {}}
             />
           </div>
         );
-
       default:
         return (
           <div className="text-center text-gray-500 flex items-center justify-center h-full">
@@ -140,7 +116,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   };
 
   return (
-    <div className={`relative w-full h-full ${className} flex items-center justify-center`} style={{ minHeight: '400px' }}>
+    <div className={`relative w-full h-full ${className} flex items-center justify-center`} style={{ minHeight: '200px' }}>
       {/* Image de fond plein écran */}
       {gameBackgroundImage && (
         <img

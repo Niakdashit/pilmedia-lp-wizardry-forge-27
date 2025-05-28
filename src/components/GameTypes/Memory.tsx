@@ -25,18 +25,6 @@ const Memory: React.FC<MemoryProps> = ({ config = {}, onConfigChange, isPreview,
     }
   }, [isPreview, config?.pairs]);
 
-  const getSymbol = (value: number) => {
-    if (config?.theme === 'emojis') {
-      const emojis = ['🎮', '🎲', '🎯', '🎪', '🎨', '🎭', '🎵', '🎸'];
-      return emojis[value - 1] || value;
-    }
-    if (config?.theme === 'colors') {
-      const colors = ['🔴', '🟡', '🟢', '🔵', '🟣', '🟠', '⚫', '⚪'];
-      return colors[value - 1] || value;
-    }
-    return value;
-  };
-
   const handleCardClick = (index: number) => {
     if (disabled || flipped.includes(index) || matched.includes(index)) return;
 
@@ -114,56 +102,28 @@ const Memory: React.FC<MemoryProps> = ({ config = {}, onConfigChange, isPreview,
             <option value="colors">Couleurs</option>
           </select>
         </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Couleur des cartes dos
-          </label>
-          <input
-            type="color"
-            value={config?.cardBackColor || '#841b60'}
-            onChange={(e) => onConfigChange({ ...config, cardBackColor: e.target.value })}
-            className="w-full h-10 border border-gray-300 rounded-lg"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Couleur des cartes face
-          </label>
-          <input
-            type="color"
-            value={config?.cardFrontColor || '#ffffff'}
-            onChange={(e) => onConfigChange({ ...config, cardFrontColor: e.target.value })}
-            className="w-full h-10 border border-gray-300 rounded-lg"
-          />
-        </div>
       </div>
     );
   }
 
   return (
     <div className="max-w-2xl mx-auto p-4">
-      <div className={`grid gap-4 ${
-        (config?.pairs || 8) <= 8 ? 'grid-cols-4' : 
-        (config?.pairs || 8) <= 12 ? 'grid-cols-5' : 
-        'grid-cols-6'
-      }`}>
+      <div className="grid grid-cols-4 gap-4">
         {cards.map((card, index) => (
           <motion.div
             key={index}
-            className={`aspect-square rounded-lg cursor-pointer shadow-lg ${
+            className={`aspect-square rounded-lg cursor-pointer ${
               flipped.includes(index) || matched.includes(index)
-                ? config?.cardFrontColor || 'bg-white'
-                : config?.cardBackColor || 'bg-[#841b60]'
+                ? 'bg-white'
+                : 'bg-[#841b60]'
             }`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             onClick={() => handleCardClick(index)}
           >
             {(flipped.includes(index) || matched.includes(index)) && (
-              <div className="w-full h-full flex items-center justify-center text-3xl font-bold">
-                {getSymbol(card)}
+              <div className="w-full h-full flex items-center justify-center text-2xl font-bold text-[#841b60]">
+                {card}
               </div>
             )}
           </motion.div>
