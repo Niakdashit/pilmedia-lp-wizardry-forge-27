@@ -238,7 +238,7 @@ const Step3VisualStyle: React.FC = () => {
             <div className="w-8 h-1 bg-blue-500 rounded-full"></div>
           </div>
           <p className="mt-2 text-sm text-gray-500">Étape 3 sur 3</p>
-        </div>
+        </motion.div>
       </div>
     </div>
   );
