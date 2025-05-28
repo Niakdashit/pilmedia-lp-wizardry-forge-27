@@ -1,5 +1,8 @@
+
 import React, { useState } from 'react';
 import Modal from '../common/Modal';
+import ValidationMessage from '../common/ValidationMessage';
+import ContrastBackground from '../common/ContrastBackground';
 import DynamicContactForm, { FieldConfig } from '../forms/DynamicContactForm';
 import { Wheel, Scratch, Jackpot, Dice } from '../GameTypes';
 import { useParticipations } from '../../hooks/useParticipations';
@@ -41,6 +44,7 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
   const [gamePlayed, setGamePlayed] = useState(false);
   const [gameResult, setGameResult] = useState<'win' | 'lose' | null>(null);
   const [gameStarted, setGameStarted] = useState(false);
+  const [showValidationMessage, setShowValidationMessage] = useState(false);
   
   const {
     createParticipation,
@@ -62,9 +66,13 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
       }
     }
     setShowFormModal(false);
+    
+    // Afficher le message de validation avec animation
+    setShowValidationMessage(true);
     setTimeout(() => {
       setFormValidated(true);
-    }, 400);
+      setShowValidationMessage(false);
+    }, 2000);
   };
   
   const handleGameFinish = (result: 'win' | 'lose') => {
@@ -89,6 +97,7 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
     setGamePlayed(false);
     setGameResult(null);
     setGameStarted(false);
+    setFormValidated(false);
   };
   
   const renderGame = () => {
@@ -96,6 +105,7 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
     const customTemplate = campaign.gameConfig?.[campaign.type]?.customTemplate;
     const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel;
     const buttonColor = campaign.gameConfig?.[campaign.type]?.buttonColor;
+    const contrastBg = mobileConfig?.contrastBackground || campaign.screens?.[2]?.contrastBackground;
     
     const gameContainerStyle: any = {
       position: 'relative',
@@ -139,7 +149,13 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
         )}
         
         <div className="relative z-20 h-full">
-          {gameComponent}
+          <ContrastBackground
+            enabled={contrastBg?.enabled && contrastBg?.applyToGame}
+            config={contrastBg}
+            className="h-full flex items-center justify-center"
+          >
+            {gameComponent}
+          </ContrastBackground>
         </div>
 
         {/* Overlay si formulaire pas validé */}
@@ -148,38 +164,42 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
           </div>
         )}
 
-        {/* Message de validation en overlay - ne perturbe pas le layout */}
-        {formValidated && !gamePlayed && !gameStarted && (
-          <div className="absolute top-2 left-1/2 transform -translate-x-1/2 z-40 animate-fade-in">
-            <div className="bg-green-600 text-white px-4 py-2 rounded-lg shadow-lg text-sm font-medium flex items-center space-x-2">
-              <span>✅</span>
-              <span>Formulaire validé ! Vous pouvez maintenant jouer.</span>
-            </div>
-          </div>
-        )}
+        {/* Message de validation en overlay - position absolue sans affecter le layout */}
+        <ValidationMessage
+          show={showValidationMessage}
+          message="Formulaire validé ! Vous pouvez maintenant jouer."
+          type="success"
+        />
       </div>
     );
   };
   
   if (gamePlayed) {
+    const resultScreen = campaign.screens?.[3] || {};
+    const contrastBg = mobileConfig?.contrastBackground || resultScreen.contrastBackground;
+    
     return (
       <div className="w-full max-w-lg mx-auto p-6 flex flex-col items-center space-y-6">
-        <div className="text-center space-y-4">
+        <ContrastBackground
+          enabled={contrastBg?.enabled}
+          config={contrastBg}
+          className="text-center space-y-4 w-full"
+        >
           <h3 className="text-2xl font-semibold">
-            {gameResult === 'win' ? campaign.screens[3]?.winMessage || 'Félicitations, vous avez gagné !' : campaign.screens[3]?.loseMessage || 'Dommage, réessayez !'}
+            {gameResult === 'win' ? resultScreen?.winMessage || 'Félicitations, vous avez gagné !' : resultScreen?.loseMessage || 'Dommage, réessayez !'}
           </h3>
-          <p>{campaign.screens[3]?.ctaMessage || 'Découvrez nos offres ou partagez votre participation.'}</p>
+          <p>{resultScreen?.ctaMessage || 'Découvrez nos offres ou partagez votre participation.'}</p>
           <div className="flex flex-col space-y-3">
-            {campaign.screens[3]?.ctaLink && (
-              <a href={campaign.screens[3].ctaLink} target="_blank" rel="noopener noreferrer" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">
-                {campaign.screens[3]?.ctaText || "Découvrir l'offre"}
+            {resultScreen?.ctaLink && (
+              <a href={resultScreen.ctaLink} target="_blank" rel="noopener noreferrer" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">
+                {resultScreen?.ctaText || "Découvrir l'offre"}
               </a>
             )}
             <button onClick={reset} className="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900 transition-colors">
-              {campaign.screens[3]?.replayButtonText || 'Rejouer'}
+              {resultScreen?.replayButtonText || 'Rejouer'}
             </button>
           </div>
-        </div>
+        </ContrastBackground>
       </div>
     );
   }
@@ -209,18 +229,33 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
     );
   }
   
-  // Mode desktop : affichage complet
+  // Mode desktop : affichage complet avec respect du funnel
+  const entryScreen = campaign.screens?.[0] || {};
+  const contrastBg = entryScreen.contrastBackground;
+  const showTitle = entryScreen.showTitle !== false && !gameStarted;
+  const showDescription = entryScreen.showDescription !== false && !gameStarted;
+  
   return (
     <div className="w-full max-w-lg mx-auto p-6 flex flex-col items-center space-y-6 px-0 py-[23px]">
-      {/* Titre et description */}
-      <div className="text-center space-y-4">
-        <h2 className="text-2xl font-bold">
-          {campaign.screens[0]?.title || 'Tentez votre chance !'}
-        </h2>
-        <p className="text-gray-600">
-          {campaign.screens[0]?.description || 'Participez pour avoir une chance de gagner !'}
-        </p>
-      </div>
+      {/* Titre et description - visibles uniquement avant le lancement */}
+      {(showTitle || showDescription) && (
+        <ContrastBackground
+          enabled={contrastBg?.enabled}
+          config={contrastBg}
+          className="text-center space-y-4 w-full"
+        >
+          {showTitle && (
+            <h2 className="text-2xl font-bold">
+              {entryScreen?.title || 'Tentez votre chance !'}
+            </h2>
+          )}
+          {showDescription && (
+            <p className="text-gray-600">
+              {entryScreen?.description || 'Participez pour avoir une chance de gagner !'}
+            </p>
+          )}
+        </ContrastBackground>
+      )}
 
       {/* Jeu avec overlay si non validé */}
       {renderGame()}

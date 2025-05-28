@@ -2,6 +2,7 @@
 import React from 'react';
 import FunnelUnlockedGame from '../../funnels/FunnelUnlockedGame';
 import FunnelStandard from '../../funnels/FunnelStandard';
+import ContrastBackground from '../../common/ContrastBackground';
 
 interface MobilePreviewProps {
   campaign: any;
@@ -72,6 +73,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
     const gamePosition = mobileConfig.gamePosition || 'center';
     const textPosition = mobileConfig.textPosition || 'top';
     const verticalSpacing = mobileConfig.verticalSpacing || 20;
+    const horizontalPadding = mobileConfig.horizontalPadding || 16;
 
     let flexDirection: 'column' | 'column-reverse' = 'column';
     let justifyContent = 'flex-start';
@@ -93,7 +95,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
       alignItems: 'center',
       height: '100%',
       gap: `${verticalSpacing}px`,
-      padding: `${mobileConfig.horizontalPadding || 16}px`,
+      padding: `${horizontalPadding}px`,
       overflowY: 'auto' as const,
       position: 'relative' as const,
       zIndex: 10
@@ -108,20 +110,10 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
       maxWidth: '100%'
     };
 
-    if (contrastBg.enabled) {
-      baseStyle.backgroundColor = contrastBg.color || 'rgba(255, 255, 255, 0.9)';
-      baseStyle.padding = `${contrastBg.padding || 16}px`;
-      baseStyle.borderRadius = `${contrastBg.borderRadius || 8}px`;
-      baseStyle.backdropFilter = 'blur(8px)';
-      baseStyle.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
-    }
-
     return baseStyle;
   };
 
   const getGameContainerStyle = () => {
-    const contrastBg = mobileConfig.contrastBackground || {};
-    
     const baseStyle: any = {
       width: '100%',
       maxWidth: '100%',
@@ -130,14 +122,6 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
       alignItems: 'center',
       position: 'relative'
     };
-
-    if (contrastBg.enabled && contrastBg.applyToGame) {
-      baseStyle.backgroundColor = contrastBg.color || 'rgba(255, 255, 255, 0.9)';
-      baseStyle.padding = `${contrastBg.padding || 16}px`;
-      baseStyle.borderRadius = `${contrastBg.borderRadius || 8}px`;
-      baseStyle.backdropFilter = 'blur(8px)';
-      baseStyle.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.1)';
-    }
 
     return baseStyle;
   };
@@ -158,9 +142,14 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
   const renderOrderedContent = () => {
     const gamePosition = mobileConfig.gamePosition || 'center';
     const textPosition = mobileConfig.textPosition || 'top';
+    const contrastBg = mobileConfig.contrastBackground || {};
     
     const textBlock = (mobileConfig.showTitle !== false || mobileConfig.showDescription !== false) ? (
-      <div style={getTextBlockStyle()}>
+      <ContrastBackground
+        enabled={contrastBg.enabled}
+        config={contrastBg}
+        className={getTextBlockStyle()}
+      >
         {mobileConfig.showTitle !== false && (
           <h2 
             className={`font-bold mb-4 ${mobileConfig.titleAlignment || 'text-center'}`}
@@ -191,7 +180,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
             {mobileConfig.description || campaign.screens?.[1]?.description || 'Participez pour avoir une chance de gagner !'}
           </p>
         )}
-      </div>
+      </ContrastBackground>
     ) : null;
 
     const gameBlock = (
