@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Move, ArrowUp, ArrowDown } from 'lucide-react';
+import { Move, ArrowUp, ArrowDown, Layers } from 'lucide-react';
 
 interface MobileLayoutProps {
   campaign: any;
@@ -9,11 +9,25 @@ interface MobileLayoutProps {
 
 const MobileLayout: React.FC<MobileLayoutProps> = ({ campaign, setCampaign }) => {
   const mobileConfig = campaign.mobileConfig || {};
+  const contrastBg = mobileConfig.contrastBackground || {};
 
   const updateMobileConfig = (key: string, value: any) => {
     setCampaign((prev: any) => ({
       ...prev,
       mobileConfig: { ...prev.mobileConfig, [key]: value }
+    }));
+  };
+
+  const updateContrastBackground = (key: string, value: any) => {
+    setCampaign((prev: any) => ({
+      ...prev,
+      mobileConfig: { 
+        ...prev.mobileConfig, 
+        contrastBackground: { 
+          ...prev.mobileConfig?.contrastBackground, 
+          [key]: value 
+        }
+      }
     }));
   };
 
@@ -135,6 +149,96 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({ campaign, setCampaign }) =>
             <div className="text-xs text-gray-500 mt-1">{mobileConfig.verticalSpacing || 20}px</div>
           </div>
         </div>
+      </div>
+
+      {/* Contrast Background Section */}
+      <div className="border-t pt-6">
+        <div className="flex items-center space-x-2 mb-4">
+          <Layers className="w-5 h-5 text-[#841b60]" />
+          <h4 className="text-lg font-medium text-gray-900">Fond de contraste</h4>
+        </div>
+
+        {/* Enable/Disable Toggle */}
+        <div className="mb-4">
+          <label className="flex items-center space-x-3">
+            <input
+              type="checkbox"
+              checked={contrastBg.enabled || false}
+              onChange={(e) => updateContrastBackground('enabled', e.target.checked)}
+              className="w-4 h-4 text-[#841b60] rounded focus:ring-[#841b60]"
+            />
+            <span className="text-sm font-medium text-gray-700">
+              Afficher un fond de contraste
+            </span>
+          </label>
+        </div>
+
+        {contrastBg.enabled && (
+          <div className="space-y-4 bg-gray-50 p-4 rounded-lg">
+            {/* Background Color */}
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Couleur de fond</label>
+              <div className="flex space-x-2">
+                <input
+                  type="color"
+                  value={contrastBg.color?.replace(/rgba?\([^)]+\)/, '') || '#ffffff'}
+                  onChange={(e) => updateContrastBackground('color', `${e.target.value}90`)}
+                  className="w-12 h-8 rounded border"
+                />
+                <input
+                  type="text"
+                  value={contrastBg.color || 'rgba(255, 255, 255, 0.9)'}
+                  onChange={(e) => updateContrastBackground('color', e.target.value)}
+                  className="flex-1 px-3 py-1 text-sm border rounded"
+                  placeholder="rgba(255, 255, 255, 0.9)"
+                />
+              </div>
+            </div>
+
+            {/* Padding */}
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Padding interne</label>
+              <input
+                type="range"
+                min="0"
+                max="40"
+                value={contrastBg.padding || 16}
+                onChange={(e) => updateContrastBackground('padding', Number(e.target.value))}
+                className="w-full"
+              />
+              <div className="text-xs text-gray-500 mt-1">{contrastBg.padding || 16}px</div>
+            </div>
+
+            {/* Border Radius */}
+            <div>
+              <label className="block text-xs text-gray-600 mb-1">Arrondi des angles</label>
+              <input
+                type="range"
+                min="0"
+                max="20"
+                value={contrastBg.borderRadius || 8}
+                onChange={(e) => updateContrastBackground('borderRadius', Number(e.target.value))}
+                className="w-full"
+              />
+              <div className="text-xs text-gray-500 mt-1">{contrastBg.borderRadius || 8}px</div>
+            </div>
+
+            {/* Apply to Game */}
+            <div>
+              <label className="flex items-center space-x-3">
+                <input
+                  type="checkbox"
+                  checked={contrastBg.applyToGame || false}
+                  onChange={(e) => updateContrastBackground('applyToGame', e.target.checked)}
+                  className="w-4 h-4 text-[#841b60] rounded focus:ring-[#841b60]"
+                />
+                <span className="text-sm text-gray-700">
+                  Appliquer aussi au jeu
+                </span>
+              </label>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

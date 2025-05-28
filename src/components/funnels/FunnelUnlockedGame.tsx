@@ -7,6 +7,7 @@ import { useParticipations } from '../../hooks/useParticipations';
 interface GameFunnelProps {
   campaign: any;
   modalContained?: boolean; // Nouvelle prop pour les modales contenues
+  mobileConfig?: any; // Configuration mobile pour personnaliser l'affichage
 }
 
 const DEFAULT_FIELDS: FieldConfig[] = [{
@@ -32,7 +33,8 @@ const DEFAULT_FIELDS: FieldConfig[] = [{
 
 const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
   campaign,
-  modalContained = false
+  modalContained = false,
+  mobileConfig
 }) => {
   const [formValidated, setFormValidated] = useState(false);
   const [showFormModal, setShowFormModal] = useState(false);
@@ -162,6 +164,41 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
       </div>;
   }
   
+  // Mode mobile : affichage simplifié sans répéter le texte
+  if (mobileConfig) {
+    return (
+      <div className="w-full flex flex-col items-center space-y-4">
+        {/* Jeu avec overlay si non validé */}
+        {renderGame()}
+
+        {/* Message de confirmation après validation - disparaît après le début du jeu */}
+        {formValidated && !gamePlayed && !gameStarted && (
+          <div className="text-center">
+            <p className="text-green-600 font-medium text-sm">
+              ✅ Formulaire validé ! Vous pouvez maintenant jouer.
+            </p>
+          </div>
+        )}
+
+        {/* Modale du formulaire */}
+        {showFormModal && (
+          <Modal 
+            onClose={() => setShowFormModal(false)} 
+            title={campaign.screens[1]?.title || 'Vos informations'}
+            contained={modalContained}
+          >
+            <DynamicContactForm 
+              fields={fields} 
+              submitLabel={participationLoading ? 'Chargement...' : campaign.screens[1]?.buttonText || "C'est parti !"} 
+              onSubmit={handleFormSubmit} 
+            />
+          </Modal>
+        )}
+      </div>
+    );
+  }
+  
+  // Mode desktop : affichage complet
   return (
     <div className="w-full max-w-lg mx-auto p-6 flex flex-col items-center space-y-6 px-0 py-[23px]">
       {/* Titre et description */}
