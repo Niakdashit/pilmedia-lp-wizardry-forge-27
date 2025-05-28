@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import confetti from 'canvas-confetti';
@@ -12,34 +13,50 @@ interface PuzzleProps {
 
 const Puzzle: React.FC<PuzzleProps> = ({ config = {}, onConfigChange, isPreview, onComplete }) => {
   const [pieces, setPieces] = useState<number[]>([]);
+  const [emptyIndex, setEmptyIndex] = useState<number>(0);
+  const [moves, setMoves] = useState(0);
   const [solved, setSolved] = useState(false);
 
   useEffect(() => {
     if (isPreview) {
       const size = config?.gridSize || 9;
       const initialPieces = Array.from({ length: size }, (_, i) => i);
-      setPieces(initialPieces.sort(() => Math.random() - 0.5));
+      
+      // Shuffle based on difficulty
+      let shuffleCount;
+      switch (config?.difficulty) {
+        case 'easy': shuffleCount = 20; break;
+        case 'medium': shuffleCount = 40; break;
+        case 'hard': shuffleCount = 60; break;
+        default: shuffleCount = 30;
+      }
+
+      for (let i = 0; i < shuffleCount; i++) {
+        const randomIndex = Math.floor(Math.random() * size);
+        [initialPieces[0], initialPieces[randomIndex]] = 
+        [initialPieces[randomIndex], initialPieces[0]];
+      }
+
+      setPieces(initialPieces);
+      setEmptyIndex(initialPieces.indexOf(size - 1));
     }
-  }, [isPreview, config?.gridSize]);
+  }, [isPreview, config?.gridSize, config?.difficulty]);
 
   const handlePieceClick = (index: number) => {
     if (solved) return;
 
-    const newPieces = [...pieces];
-    const emptyIndex = newPieces.indexOf(newPieces.length - 1);
-    
-    // Check if piece is adjacent to empty space
+    const gridSize = Math.sqrt(pieces.length);
     const isAdjacent = (
-      index === emptyIndex - 1 || // Left
-      index === emptyIndex + 1 || // Right
-      index === emptyIndex - 3 || // Above
-      index === emptyIndex + 3    // Below
+      (Math.abs(index - emptyIndex) === 1 && Math.floor(index / gridSize) === Math.floor(emptyIndex / gridSize)) ||
+      Math.abs(index - emptyIndex) === gridSize
     );
 
     if (isAdjacent) {
-      // Swap pieces
+      const newPieces = [...pieces];
       [newPieces[index], newPieces[emptyIndex]] = [newPieces[emptyIndex], newPieces[index]];
       setPieces(newPieces);
+      setEmptyIndex(index);
+      setMoves(moves + 1);
 
       // Check if puzzle is solved
       const isSolved = newPieces.every((piece, i) => piece === i);
@@ -97,6 +114,21 @@ const Puzzle: React.FC<PuzzleProps> = ({ config = {}, onConfigChange, isPreview,
             <option value="hard">Difficile</option>
           </select>
         </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Temps limite (minutes)
+          </label>
+          <input
+            type="number"
+            min="0"
+            max="60"
+            value={config?.timeLimit || 0}
+            onChange={(e) => onConfigChange({ ...config, timeLimit: parseInt(e.target.value) })}
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
+            placeholder="0 = sans limite"
+          />
+        </div>
       </div>
     );
   }
@@ -105,6 +137,13 @@ const Puzzle: React.FC<PuzzleProps> = ({ config = {}, onConfigChange, isPreview,
 
   return (
     <div className="max-w-md mx-auto p-4">
+      <div className="flex justify-between items-center mb-4">
+        <div className="text-lg font-bold">Mouvements: {moves}</div>
+        {solved && (
+          <div className="text-green-600 font-bold">Résolu !</div>
+        )}
+      </div>
+
       <div 
         className="grid gap-1 bg-gray-200 p-1 rounded-lg"
         style={{
@@ -115,7 +154,7 @@ const Puzzle: React.FC<PuzzleProps> = ({ config = {}, onConfigChange, isPreview,
           <motion.div
             key={index}
             className={`aspect-square rounded-sm cursor-move ${
-              piece === pieces.length - 1 ? 'invisible' : 'bg-[#841b60]'
+              piece === pieces.length - 1 ? 'invisible' : 'bg-white shadow-md'
             }`}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
@@ -123,9 +162,16 @@ const Puzzle: React.FC<PuzzleProps> = ({ config = {}, onConfigChange, isPreview,
             style={{
               backgroundImage: config?.image ? `url(${config.image})` : undefined,
               backgroundSize: `${gridSize * 100}%`,
-              backgroundPosition: `${(piece % gridSize) * 100}% ${Math.floor(piece / gridSize) * 100}%`
+              backgroundPosition: `${(piece % gridSize) * 100 / (gridSize - 1)}% ${Math.floor(piece / gridSize) * 100 / (gridSize - 1)}%`,
+              backgroundColor: !config?.image ? '#841b60' : undefined
             }}
-          />
+          >
+            {!config?.image && piece !== pieces.length - 1 && (
+              <div className="w-full h-full flex items-center justify-center text-white font-bold text-lg">
+                {piece + 1}
+              </div>
+            )}
+          </motion.div>
         ))}
       </div>
     </div>

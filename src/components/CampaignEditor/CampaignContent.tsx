@@ -1,11 +1,9 @@
-import React, { useState } from 'react';
-import { Quiz, Scratch, Memory, Puzzle, Dice } from '../GameTypes';
-import TabRoulette from '@/components/configurators/TabRoulette';
-import TabJackpot from '@/components/configurators/TabJackpot';
-import JackpotAppearance from '@/components/configurators/JackpotAppearance';
-import ImageUpload from '../common/ImageUpload';
+
+import React from 'react';
 import GameCanvasPreview from './GameCanvasPreview';
-import { Settings, Eye, Palette } from 'lucide-react';
+import TabJackpot from '../configurators/TabJackpot';
+import TabRoulette from '../configurators/TabRoulette';
+import { Quiz, Memory, Puzzle, Dice, Scratch } from '../GameTypes';
 
 interface CampaignContentProps {
   campaign: any;
@@ -14,157 +12,106 @@ interface CampaignContentProps {
 
 const CampaignContent: React.FC<CampaignContentProps> = ({
   campaign,
-  setCampaign,
+  setCampaign
 }) => {
-  const [activeSection, setActiveSection] = useState<'game' | 'visual'>('game');
-
-  const updateGameConfig = (gameType: string, config: any) => {
+  const updateGameConfig = (newConfig: any) => {
     setCampaign((prev: any) => ({
       ...prev,
       gameConfig: {
         ...prev.gameConfig,
-        [gameType]: config,
-      },
+        [campaign.type]: newConfig
+      }
     }));
   };
 
-  const getContentEditor = () => {
+  const renderGameConfiguration = () => {
     switch (campaign.type) {
+      case 'jackpot':
+        return (
+          <TabJackpot
+            campaign={campaign}
+            setCampaign={setCampaign}
+          />
+        );
+
+      case 'wheel':
+        return (
+          <TabRoulette
+            campaign={campaign}
+            setCampaign={setCampaign}
+          />
+        );
+
       case 'quiz':
         return (
           <Quiz
-            config={campaign.gameConfig?.quiz}
-            onConfigChange={(config) => updateGameConfig('quiz', config)}
+            config={campaign.gameConfig?.quiz || {}}
+            onConfigChange={updateGameConfig}
           />
         );
-      case 'wheel':
-        return <TabRoulette campaign={campaign} setCampaign={setCampaign} />;
-      case 'scratch':
-        return (
-          <Scratch
-            config={campaign.gameConfig?.scratch}
-            onConfigChange={(config) => updateGameConfig('scratch', config)}
-          />
-        );
+
       case 'memory':
         return (
           <Memory
-            config={campaign.gameConfig?.memory}
-            onConfigChange={(config) => updateGameConfig('memory', config)}
+            config={campaign.gameConfig?.memory || {}}
+            onConfigChange={updateGameConfig}
           />
         );
+
       case 'puzzle':
         return (
           <Puzzle
-            config={campaign.gameConfig?.puzzle}
-            onConfigChange={(config) => updateGameConfig('puzzle', config)}
+            config={campaign.gameConfig?.puzzle || {}}
+            onConfigChange={updateGameConfig}
           />
         );
+
       case 'dice':
         return (
           <Dice
-            config={campaign.gameConfig?.dice}
-            onConfigChange={(config) => updateGameConfig('dice', config)}
+            config={campaign.gameConfig?.dice || {}}
+            onConfigChange={updateGameConfig}
           />
         );
-      case 'jackpot':
-        return <TabJackpot campaign={campaign} setCampaign={setCampaign} />;
+
+      case 'scratch':
+        return (
+          <Scratch
+            config={campaign.gameConfig?.scratch || {}}
+            onConfigChange={updateGameConfig}
+          />
+        );
+
       default:
         return (
-          <div className="flex items-center justify-center h-64 bg-gray-50 border border-gray-200 rounded-lg">
-            <p className="text-gray-500">
-              Éditeur de contenu pour le type "{campaign.type}" en cours de développement.
-            </p>
+          <div className="text-center text-gray-500 p-8">
+            Configuration non disponible pour ce type de jeu
           </div>
         );
     }
   };
 
   return (
-    <div className="space-y-6">
-      <div className="bg-[#f9f0f5] border border-[#e9d0e5] rounded-lg p-4">
-        <p className="text-[#841b60] text-sm">
-          Configurez le contenu et l'apparence de votre {campaign.type}.
-        </p>
+    <div className="flex flex-1 gap-6 overflow-hidden">
+      {/* Configuration du jeu - 50% */}
+      <div className="w-1/2 overflow-y-auto bg-gray-50 rounded-lg p-6">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-2 h-2 bg-[#841b60] rounded-full"></div>
+          <h2 className="text-xl font-bold text-[#841b60]">Configuration du jeu</h2>
+        </div>
+        {renderGameConfiguration()}
       </div>
 
-      <div className="flex space-x-4 border-b border-gray-200">
-        <button
-          onClick={() => setActiveSection('game')}
-          className={`py-3 px-4 font-medium text-sm border-b-2 transition-colors duration-200 flex items-center space-x-2 ${
-            activeSection === 'game'
-              ? 'border-[#841b60] text-[#841b60]'
-              : 'border-transparent text-gray-500 hover:text-gray-700'
-          }`}
-        >
-          <Settings className="w-4 h-4" />
-          <span>Configuration du jeu</span>
-        </button>
-        <button
-          onClick={() => setActiveSection('visual')}
-          className={`py-3 px-4 font-medium text-sm border-b-2 transition-colors duration-200 flex items-center space-x-2 ${
-            activeSection === 'visual'
-              ? 'border-[#841b60] text-[#841b60]'
-              : 'border-transparent text-gray-500 hover:text-gray-700'
-          }`}
-        >
-          <Palette className="w-4 h-4" />
-          <span>Apparence visuelle</span>
-        </button>
+      {/* Aperçu du jeu - 50% */}
+      <div className="w-1/2 overflow-y-auto bg-gray-50 rounded-lg p-6">
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-2 h-2 bg-[#841b60] rounded-full"></div>
+          <h2 className="text-xl font-bold text-[#841b60]">Aperçu du jeu</h2>
+        </div>
+        <div className="bg-white rounded-lg border shadow-sm" style={{ minHeight: '400px' }}>
+          <GameCanvasPreview campaign={campaign} />
+        </div>
       </div>
-
-      {activeSection === 'game' ? (
-        <div className="space-y-6">
-          <div>
-            <div className="flex items-center space-x-2 mb-4">
-              <Eye className="w-5 h-5 text-[#841b60]" />
-              <h3 className="text-lg font-medium text-gray-900">Aperçu du jeu</h3>
-            </div>
-            <GameCanvasPreview campaign={campaign} />
-          </div>
-
-          <div>
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Paramètres du jeu</h3>
-            {getContentEditor()}
-          </div>
-        </div>
-      ) : (
-        <div className="space-y-6">
-          {/* Si le type est jackpot, afficher JackpotAppearance */}
-          {campaign.type === 'jackpot' ? (
-            <JackpotAppearance campaign={campaign} setCampaign={setCampaign} />
-          ) : (
-            <>
-              <div className="flex items-center space-x-2 mb-4">
-                <Eye className="w-5 h-5 text-[#841b60]" />
-                <h3 className="text-lg font-medium text-gray-900">Aperçu du jeu</h3>
-              </div>
-              <GameCanvasPreview campaign={campaign} />
-
-              <div>
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Image de fond du jeu</h3>
-                <ImageUpload
-                  value={campaign.gameConfig?.[campaign.type]?.backgroundImage || campaign.design.backgroundImage}
-                  onChange={(value) => {
-                    setCampaign((prev: any) => ({
-                      ...prev,
-                      gameConfig: {
-                        ...prev.gameConfig,
-                        [campaign.type]: {
-                          ...prev.gameConfig?.[campaign.type],
-                          backgroundImage: value,
-                        },
-                      },
-                    }));
-                  }}
-                  label="Téléchargez ou sélectionnez une image de fond pour votre jeu"
-                  className="w-full"
-                />
-              </div>
-            </>
-          )}
-        </div>
-      )}
     </div>
   );
 };
