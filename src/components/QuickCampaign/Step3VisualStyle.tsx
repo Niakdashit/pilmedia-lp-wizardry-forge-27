@@ -126,7 +126,7 @@ const Step3VisualStyle: React.FC = () => {
     }
   };
   if (showFinalStep) {
-    return <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center p-6">
+    return <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-[#faf6fa] via-[#f6eff7] to-[#841b60]/5 p-6\\n">
         <motion.div initial={{
         opacity: 0,
         scale: 0.9
