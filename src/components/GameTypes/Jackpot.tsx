@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
@@ -17,6 +16,7 @@ interface JackpotProps {
   isPreview?: boolean;
   instantWinConfig?: JackpotInstantWinConfig;
   onFinish?: (result: 'win' | 'lose') => void;
+  onStart?: () => void;
   buttonLabel?: string;
   buttonColor?: string;
   backgroundImage?: string;
@@ -27,6 +27,7 @@ const Jackpot: React.FC<JackpotProps> = ({
   isPreview,
   instantWinConfig,
   onFinish,
+  onStart,
   buttonLabel = "Lancer le Jackpot",
   buttonColor = "#ec4899",
   backgroundImage,
@@ -38,6 +39,10 @@ const Jackpot: React.FC<JackpotProps> = ({
 
   const roll = () => {
     if (isRolling || result) return;
+    
+    // Appeler onStart dès que le jeu commence
+    onStart?.();
+    
     setIsRolling(true);
     let currentSlots = [...slots];
     
@@ -70,10 +75,9 @@ const Jackpot: React.FC<JackpotProps> = ({
           spread: 100,
           origin: { y: 0.7 }
         });
-        onFinish?.('win');
-      } else {
-        onFinish?.('lose');
       }
+      
+      onFinish?.(win ? 'win' : 'lose');
     }, 1800);
   };
 
