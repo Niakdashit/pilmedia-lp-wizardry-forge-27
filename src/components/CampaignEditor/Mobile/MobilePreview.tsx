@@ -1,4 +1,3 @@
-
 import React from 'react';
 import FunnelUnlockedGame from '../../funnels/FunnelUnlockedGame';
 import FunnelStandard from '../../funnels/FunnelStandard';
@@ -103,8 +102,6 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
   };
 
   const getTextBlockStyle = () => {
-    const contrastBg = mobileConfig.contrastBackground || {};
-    
     const baseStyle: any = {
       textAlign: 'center',
       maxWidth: '100%'
