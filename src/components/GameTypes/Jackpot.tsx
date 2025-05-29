@@ -150,7 +150,7 @@ const Jackpot: React.FC<JackpotProps> = ({
           style={{
             width: '620px',         // ↖️ Modifie ici la largeur souhaitée pour desktop
             maxWidth: '90vw',
-            height: '580px',        // ↖️ Modifie ici la hauteur souhaitée pour desktop
+            height: '600px',        // ↖️ Modifie ici la hauteur souhaitée pour desktop
             maxHeight: '75vh',
             objectFit: 'contain',
             opacity: 0.97
