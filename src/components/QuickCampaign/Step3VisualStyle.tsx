@@ -200,7 +200,7 @@ const Step3VisualStyle: React.FC = () => {
           <h1 className="text-5xl font-bold mb-4 text-[#841b60]">
             Choisissez un thème pour votre campagne
           </h1>
-          <p className="text-xl text-gray-600">
+          <p className="text-xl text-[#841b60]">
             Donnez vie à votre expérience avec un style visuel adapté.
           </p>
         </motion.div>
