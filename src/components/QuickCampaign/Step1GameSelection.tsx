@@ -73,13 +73,13 @@ const Step1GameSelection: React.FC = () => {
       }} transition={{
         duration: 0.6
       }} className="text-center mb-16 bg-white/0">
-          <h1 className="text-6xl font-bold mb-6 text-white">
+          <h1 className="font-bold mb-6 text-white text-2xl">
             Quel type d'expérience voulez-vous créer ?
           </h1>
-          <p className="text-2xl mb-3 text-white">
+          <p className="mb-3 text-white text-xl">
             Vous êtes à 2 clics de lancer une campagne interactive.
           </p>
-          <p className="text-xl text-white">
+          <p className="text-white text-base">
             Aucune compétence technique requise.
           </p>
         </motion.div>
