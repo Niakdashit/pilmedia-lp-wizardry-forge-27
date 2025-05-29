@@ -1,6 +1,23 @@
+
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
+
+// Imports des templates SVG
+import Tjackpot1 from '../../assets/templates/Tjackpot1.svg';
+import Tjackpot2 from '../../assets/templates/Tjackpot2.svg';
+import Tjackpot3 from '../../assets/templates/Tjackpot3.svg';
+import Tjackpot4 from '../../assets/templates/Tjackpot4.svg';
+import Tjackpot5 from '../../assets/templates/Tjackpot5.svg';
+
+// Mapping des templates
+const jackpotTemplates: Record<string, any> = {
+  Tjackpot1,
+  Tjackpot2,
+  Tjackpot3,
+  Tjackpot4,
+  Tjackpot5
+};
 
 // Paramètres slots
 const SYMBOLS = ['🍒', '🍋', '🍊', '🍀', '7️⃣', '💎', '⭐'];
@@ -21,6 +38,7 @@ interface JackpotProps {
   buttonColor?: string;
   backgroundImage?: string;
   customTemplate?: string;
+  selectedTemplate?: string; // Nouveau prop pour le template
 }
 
 const Jackpot: React.FC<JackpotProps> = ({
@@ -31,7 +49,8 @@ const Jackpot: React.FC<JackpotProps> = ({
   buttonLabel = "Lancer le Jackpot",
   buttonColor = "#ec4899",
   backgroundImage,
-  customTemplate
+  customTemplate,
+  selectedTemplate
 }) => {
   const [slots, setSlots] = useState<string[]>(['🍒', '🍋', '🍊']);
   const [isRolling, setIsRolling] = useState(false);
@@ -85,6 +104,9 @@ const Jackpot: React.FC<JackpotProps> = ({
     return <div><p>Pas de configuration pour le moment.</p></div>;
   }
 
+  // Récupération du template SVG
+  const templateImg = selectedTemplate ? jackpotTemplates[selectedTemplate] : undefined;
+
   // Responsive slot size calculation
   const getSlotSize = () => {
     const containerWidth = window.innerWidth || 400;
@@ -112,11 +134,20 @@ const Jackpot: React.FC<JackpotProps> = ({
 
   return (
     <div style={containerStyle} className="flex flex-col items-center justify-center w-full h-full p-2 px-0">
-      {/* Template personnalisé overlay */}
+      {/* Template SVG en arrière-plan */}
+      {templateImg && (
+        <img
+          src={templateImg}
+          alt="Template jackpot"
+          className="absolute inset-0 w-full h-full object-contain pointer-events-none z-0"
+        />
+      )}
+
+      {/* Template personnalisé overlay (au-dessus du template SVG) */}
       {customTemplate && (
         <img
           src={customTemplate}
-          alt="Jackpot template"
+          alt="Jackpot template personnalisé"
           className="absolute inset-0 w-full h-full object-contain pointer-events-none z-10"
         />
       )}

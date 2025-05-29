@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Jackpot from '../GameTypes/Jackpot';
 import { Quiz } from '../GameTypes';
@@ -21,6 +20,9 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   const jackpotTemplateImage = campaign.gameConfig?.[campaign.type]?.customTemplate;
   const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel || 'Lancer le Jackpot';
   const buttonColor = campaign.gameConfig?.[campaign.type]?.buttonColor || '#ec4899';
+  
+  // Récupération du template sélectionné
+  const selectedTemplateId = campaign?.design?.template || campaign?.gameConfig?.jackpot?.template;
 
   const renderGame = () => {
     const gameProps = {
@@ -47,6 +49,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
               }}
               buttonLabel={buttonLabel}
               buttonColor={buttonColor}
+              selectedTemplate={selectedTemplateId}
             />
           </div>
         );
@@ -123,16 +126,6 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
           src={gameBackgroundImage}
           alt="Background"
           className="absolute inset-0 w-full h-full object-cover z-0"
-          style={{ pointerEvents: 'none' }}
-        />
-      )}
-
-      {/* Template jackpot au-dessus (uniquement pour le jackpot) */}
-      {campaign.type === 'jackpot' && jackpotTemplateImage && (
-        <img
-          src={jackpotTemplateImage}
-          alt="Jackpot Template"
-          className="absolute inset-0 w-full h-full object-contain z-10"
           style={{ pointerEvents: 'none' }}
         />
       )}

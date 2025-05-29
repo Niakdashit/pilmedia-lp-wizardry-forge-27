@@ -178,11 +178,17 @@ const Step3VisualStyle: React.FC = () => {
           launchDate,
           marketingGoal,
           hasLogo: !!logoFile,
-          hasBackgroundImage: !!backgroundImage
+          hasBackgroundImage: !!backgroundImage,
+          [selectedGameType || 'quiz']: {
+            ...(selectedGameType === 'jackpot' && {
+              template: selectedTheme // Sauvegarde du template sélectionné
+            })
+          }
         },
         design: {
           theme: selectedTheme,
-          colors: selectedTemplate?.colors
+          colors: selectedTemplate?.colors,
+          template: selectedTheme // Aussi dans design pour l'accès facile
         },
         status: 'draft' as const
       };
@@ -215,11 +221,17 @@ const Step3VisualStyle: React.FC = () => {
           launchDate,
           marketingGoal,
           hasLogo: !!logoFile,
-          hasBackgroundImage: !!backgroundImage
+          hasBackgroundImage: !!backgroundImage,
+          [selectedGameType || 'quiz']: {
+            ...(selectedGameType === 'jackpot' && {
+              template: selectedTheme // Sauvegarde du template sélectionné
+            })
+          }
         },
         design: {
           theme: selectedTheme,
-          colors: selectedTemplate?.colors
+          colors: selectedTemplate?.colors,
+          template: selectedTheme // Aussi dans design pour l'accès facile
         },
         status: 'draft' as const
       };

@@ -157,7 +157,16 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
         case 'scratch':
           return <ScratchPreview config={campaign.gameConfig.scratch} />;
         case 'jackpot':
-          return <Jackpot isPreview={true} instantWinConfig={campaign.gameConfig?.jackpot?.instantWin} buttonLabel={buttonLabel} buttonColor={buttonColor} backgroundImage={gameBackgroundImage} customTemplate={customTemplate} {...commonProps} />;
+          return <Jackpot 
+            isPreview={true} 
+            instantWinConfig={campaign.gameConfig?.jackpot?.instantWin} 
+            buttonLabel={buttonLabel} 
+            buttonColor={buttonColor} 
+            backgroundImage={gameBackgroundImage} 
+            customTemplate={customTemplate}
+            selectedTemplate={selectedTemplateId}
+            {...commonProps} 
+          />;
         case 'dice':
           return <DicePreview config={campaign.gameConfig.dice} />;
         default:
@@ -167,26 +176,7 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
 
     return (
       <div style={gameContainerStyle} className="rounded-lg overflow-hidden relative">
-        {/* --- Affichage du TEMPLATE SVG --- */}
-        {campaign.type === 'jackpot' && jackpotTemplateImg && (
-          typeof jackpotTemplateImg === 'string'
-            ? (
-                <img
-                  src={jackpotTemplateImg}
-                  alt="Template visuel jackpot"
-                  className="absolute inset-0 w-full h-full object-contain pointer-events-none z-10"
-                />
-              )
-            : (
-                <span className="absolute inset-0 w-full h-full pointer-events-none z-10 flex items-center justify-center">
-                  {React.createElement(jackpotTemplateImg, {
-                    className: "w-full h-full object-contain"
-                  })}
-                </span>
-              )
-        )}
-
-        {/* -- Le composant jeu principal, par-dessus le template -- */}
+        {/* Le composant jeu principal avec le template intégré */}
         <div className="relative z-20 h-full">
           <ContrastBackground
             enabled={contrastBg?.enabled && contrastBg?.applyToGame}
