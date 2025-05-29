@@ -380,7 +380,7 @@ const Step3VisualStyle: React.FC = () => {
                     <img
                       src={template.image}
                       alt={template.name}
-                      className="w-full h-32 object-contain rounded-2xl mb-6 shadow-lg bg-white"
+                      className="w-full h-52 object-contain rounded-2xl mb-6 shadow-lg bg-white"
                     />
                   ) : (
                     <div
