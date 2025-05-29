@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { X, Monitor, Tablet, Smartphone } from 'lucide-react';
 import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
 import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
+import MobilePreview from '../CampaignEditor/Mobile/MobilePreview';
 
 interface CampaignPreviewModalProps {
   isOpen: boolean;
@@ -86,7 +87,29 @@ const CampaignPreviewModal: React.FC<CampaignPreviewModalProps> = ({
         type: "email",
         required: true
       }
-    ]
+    ],
+    // Configuration mobile par défaut
+    mobileConfig: {
+      backgroundColor: '#ebf4f7',
+      gamePosition: 'center',
+      textPosition: 'top',
+      verticalSpacing: 20,
+      horizontalPadding: 16,
+      showTitle: true,
+      showDescription: true,
+      title: 'Tentez votre chance !',
+      description: 'Participez pour avoir une chance de gagner !',
+      titleColor: '#000000',
+      descriptionColor: '#666666',
+      titleSize: 'text-2xl',
+      descriptionSize: 'text-base',
+      titleAlignment: 'text-center',
+      descriptionAlignment: 'text-center',
+      fontFamily: 'Inter',
+      contrastBackground: {
+        enabled: false
+      }
+    }
   };
 
   console.log('Preview campaign data:', mockCampaign);
@@ -105,17 +128,10 @@ const CampaignPreviewModal: React.FC<CampaignPreviewModalProps> = ({
 
   const renderMobilePreview = () => (
     <div className="w-full h-full flex items-center justify-center p-4 bg-gray-50">
-      <div className={`bg-white rounded-3xl shadow-2xl overflow-hidden ${
-        selectedDevice === 'tablet' ? 'w-80 h-96' : 'w-72 h-[500px]'
-      }`}>
-        <div className="w-full h-full">
-          <FunnelUnlockedGame
-            campaign={mockCampaign}
-            modalContained={true}
-            mobileConfig={{ contrastBackground: { enabled: true } }}
-          />
-        </div>
-      </div>
+      <MobilePreview
+        campaign={mockCampaign}
+        previewMode={selectedDevice === 'tablet' ? 'tablet' : 'mobile'}
+      />
     </div>
   );
 
