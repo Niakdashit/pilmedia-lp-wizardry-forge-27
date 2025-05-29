@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Upload, Eye, Settings, Sparkles, CheckCircle } from 'lucide-react';
@@ -6,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
 import { useCampaigns } from '../../hooks/useCampaigns';
 import CampaignPreviewModal from './CampaignPreviewModal';
+import Tjackpot1 from '../../assets/templates/Tjackpot1.svg';
+import Tjackpot2 from '../../assets/templates/Tjackpot2.svg';
 
 // ----------- MAPPING CORRIGÉ : Jackpot a des images réelles ----------- //
 const templatesByMechanic: Record<string, Array<{
@@ -23,7 +24,7 @@ const templatesByMechanic: Record<string, Array<{
       id: 'Tjackpot1',
       name: 'Jackpot Casino',
       description: 'Effet machine à sous casino, ambiance festive.',
-      image: require('../../assets/templates/Tjackpot1.svg').default,
+      image: Tjackpot1,
       borderColor: 'border-yellow-400',
       glowColor: 'shadow-yellow-400/30'
     },
@@ -31,7 +32,7 @@ const templatesByMechanic: Record<string, Array<{
       id: 'Tjackpot2',
       name: 'Jackpot Vegas',
       description: 'Look Vegas, couleurs néon, lumière.',
-      image: require('../../assets/templates/Tjackpot2.svg').default,
+      image: Tjackpot2,
       borderColor: 'border-pink-400',
       glowColor: 'shadow-pink-400/30'
     }
