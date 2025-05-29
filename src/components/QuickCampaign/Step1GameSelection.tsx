@@ -146,7 +146,7 @@ const Step1GameSelection: React.FC = () => {
                   >
                     {game.icon}
                   </motion.span>
-                </div>
+                </motion.div>
 
                 {/* Title */}
                 <h3 className="text-2xl font-bold text-gray-900 mb-3">
