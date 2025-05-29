@@ -195,7 +195,7 @@ const Step1GameSelection: React.FC = () => {
             <div className="w-12 h-2 bg-gray-300 rounded-full"></div>
             <div className="w-12 h-2 bg-gray-300 rounded-full"></div>
           </div>
-          <p className="text-lg text-gray-500 font-medium">Étape 1 sur 3</p>
+          <p className="text-lg font-medium text-white">Étape 1 sur 3</p>
         </motion.div>
       </div>
     </div>;
