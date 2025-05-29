@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Modal from '../common/Modal';
 import ValidationMessage from '../common/ValidationMessage';
@@ -65,13 +66,18 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
         // Optionnel : traiter la participation
       }
     }
+    
+    // Fermer le modal immédiatement
     setShowFormModal(false);
-
+    
+    // Valider le formulaire immédiatement sans délai
+    setFormValidated(true);
+    
+    // Afficher brièvement le message de validation
     setShowValidationMessage(true);
     setTimeout(() => {
-      setFormValidated(true);
       setShowValidationMessage(false);
-    }, 2000);
+    }, 1500);
   };
 
   const handleGameFinish = (result: 'win' | 'lose') => {
@@ -118,8 +124,9 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
     const gameContainerStyle: any = {
       position: 'relative',
       width: '100%',
-      height: '400px',
-      minHeight: '400px'
+      height: mobileConfig ? 'auto' : '400px',
+      minHeight: mobileConfig ? '200px' : '400px',
+      maxHeight: mobileConfig ? '300px' : 'none'
     };
 
     if (gameBackgroundImage) {
@@ -190,23 +197,23 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
     const contrastBg = mobileConfig?.contrastBackground || resultScreen.contrastBackground;
 
     return (
-      <div className="w-full max-w-lg mx-auto p-6 flex flex-col items-center space-y-6">
+      <div className="w-full max-w-lg mx-auto p-4 flex flex-col items-center space-y-4">
         <ContrastBackground
           enabled={contrastBg?.enabled}
           config={contrastBg}
-          className="text-center space-y-4 w-full"
+          className="text-center space-y-3 w-full"
         >
-          <h3 className="text-2xl font-semibold">
+          <h3 className="text-xl font-semibold">
             {gameResult === 'win' ? resultScreen?.winMessage || 'Félicitations, vous avez gagné !' : resultScreen?.loseMessage || 'Dommage, réessayez !'}
           </h3>
-          <p>{resultScreen?.ctaMessage || 'Découvrez nos offres ou partagez votre participation.'}</p>
-          <div className="flex flex-col space-y-3">
+          <p className="text-sm">{resultScreen?.ctaMessage || 'Découvrez nos offres ou partagez votre participation.'}</p>
+          <div className="flex flex-col space-y-2">
             {resultScreen?.ctaLink && (
-              <a href={resultScreen.ctaLink} target="_blank" rel="noopener noreferrer" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">
+              <a href={resultScreen.ctaLink} target="_blank" rel="noopener noreferrer" className="bg-blue-600 text-white px-4 py-2 text-sm rounded hover:bg-blue-700 transition-colors">
                 {resultScreen?.ctaText || "Découvrir l'offre"}
               </a>
             )}
-            <button onClick={reset} className="bg-gray-800 text-white px-4 py-2 rounded hover:bg-gray-900 transition-colors">
+            <button onClick={reset} className="bg-gray-800 text-white px-4 py-2 text-sm rounded hover:bg-gray-900 transition-colors">
               {resultScreen?.replayButtonText || 'Rejouer'}
             </button>
           </div>
@@ -217,7 +224,7 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
 
   if (mobileConfig) {
     return (
-      <div className="w-full flex flex-col items-center space-y-4">
+      <div className="w-full flex flex-col items-center space-y-3">
         {renderGame()}
 
         {showFormModal && (
@@ -243,12 +250,12 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
   const showDescription = entryScreen.showDescription !== false && !gameStarted;
 
   return (
-    <div className="w-full max-w-lg mx-auto p-6 flex flex-col items-center space-y-6 px-0 py-[23px]">
+    <div className="w-full max-w-lg mx-auto p-4 flex flex-col items-center space-y-4">
       {(showTitle || showDescription) && (
         <ContrastBackground
           enabled={contrastBg?.enabled}
           config={contrastBg}
-          className="text-center space-y-4 w-full"
+          className="text-center space-y-3 w-full"
         >
           {showTitle && (
             <h2 className="text-2xl font-bold">

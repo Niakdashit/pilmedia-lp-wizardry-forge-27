@@ -1,3 +1,4 @@
+
 import React from 'react';
 import FunnelUnlockedGame from '../../funnels/FunnelUnlockedGame';
 import FunnelStandard from '../../funnels/FunnelStandard';
@@ -18,11 +19,11 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
     switch (previewMode) {
       case 'mobile':
         return {
-          width: '280px',
-          height: '600px',
-          borderRadius: '20px',
-          border: '6px solid #1f1f1f',
-          boxShadow: '0 0 20px rgba(0,0,0,0.3)',
+          width: '320px',
+          height: '640px',
+          borderRadius: '24px',
+          border: '8px solid #1f1f1f',
+          boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
           backgroundColor: '#000',
           display: 'flex',
           flexDirection: 'column' as const,
@@ -31,11 +32,11 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
         };
       case 'tablet':
         return {
-          width: '340px',
-          height: '650px',
-          borderRadius: '14px',
-          border: '4px solid #333',
-          boxShadow: '0 0 15px rgba(0,0,0,0.2)',
+          width: '400px',
+          height: '720px',
+          borderRadius: '20px',
+          border: '6px solid #333',
+          boxShadow: '0 6px 24px rgba(0,0,0,0.25)',
           backgroundColor: '#000',
           display: 'flex',
           flexDirection: 'column' as const,
@@ -49,7 +50,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
     const backgroundStyle: any = {
       width: '100%',
       height: '100%',
-      borderRadius: '14px',
+      borderRadius: previewMode === 'mobile' ? '16px' : '14px',
       overflow: 'hidden',
       position: 'relative',
       backgroundColor: mobileConfig.backgroundColor || '#ebf4f7',
@@ -72,7 +73,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
     const gamePosition = mobileConfig.gamePosition || 'center';
     const textPosition = mobileConfig.textPosition || 'top';
     const verticalSpacing = mobileConfig.verticalSpacing || 20;
-    const horizontalPadding = mobileConfig.horizontalPadding || 16;
+    const horizontalPadding = Math.max(12, mobileConfig.horizontalPadding || 16);
 
     let flexDirection: 'column' | 'column-reverse' = 'column';
     let justifyContent = 'flex-start';
@@ -93,34 +94,36 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
       justifyContent,
       alignItems: 'center',
       height: '100%',
-      gap: `${verticalSpacing}px`,
+      gap: `${Math.max(12, verticalSpacing)}px`,
       padding: `${horizontalPadding}px`,
       overflowY: 'auto' as const,
       position: 'relative' as const,
-      zIndex: 10
+      zIndex: 10,
+      minHeight: '100%'
     };
   };
 
   const getTextBlockStyle = () => {
-    const baseStyle: any = {
-      textAlign: 'center',
-      maxWidth: '100%'
+    return {
+      textAlign: 'center' as const,
+      maxWidth: '100%',
+      width: '100%',
+      flexShrink: 0
     };
-
-    return baseStyle;
   };
 
   const getGameContainerStyle = () => {
-    const baseStyle: any = {
+    return {
       width: '100%',
       maxWidth: '100%',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      position: 'relative'
+      position: 'relative' as const,
+      flexGrow: 1,
+      minHeight: previewMode === 'mobile' ? '250px' : '300px',
+      maxHeight: previewMode === 'mobile' ? '350px' : '400px'
     };
-
-    return baseStyle;
   };
 
   const getFunnelComponent = () => {
@@ -145,16 +148,15 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
       <ContrastBackground
         enabled={contrastBg.enabled}
         config={contrastBg}
-        className={getTextBlockStyle()}
+        style={getTextBlockStyle()}
       >
         {mobileConfig.showTitle !== false && (
           <h2 
-            className={`font-bold mb-4 ${mobileConfig.titleAlignment || 'text-center'}`}
+            className={`font-bold mb-3 ${mobileConfig.titleAlignment || 'text-center'}`}
             style={{ 
               color: mobileConfig.titleColor || '#000000',
-              fontSize: mobileConfig.titleSize === 'text-xl' ? '1.25rem' : 
-                       mobileConfig.titleSize === 'text-3xl' ? '1.875rem' : 
-                       mobileConfig.titleSize === 'text-lg' ? '1.125rem' : '1.5rem',
+              fontSize: previewMode === 'mobile' ? '1.25rem' : '1.5rem',
+              lineHeight: '1.3',
               fontWeight: mobileConfig.titleWeight === 'font-normal' ? 'normal' :
                          mobileConfig.titleWeight === 'font-medium' ? '500' :
                          mobileConfig.titleWeight === 'font-semibold' ? '600' :
@@ -169,9 +171,8 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
             className={mobileConfig.descriptionAlignment || 'text-center'}
             style={{ 
               color: mobileConfig.descriptionColor || '#666666',
-              fontSize: mobileConfig.descriptionSize === 'text-sm' ? '0.875rem' : 
-                       mobileConfig.descriptionSize === 'text-lg' ? '1.125rem' :
-                       mobileConfig.descriptionSize === 'text-xs' ? '0.75rem' : '1rem'
+              fontSize: previewMode === 'mobile' ? '0.875rem' : '1rem',
+              lineHeight: '1.4'
             }}
           >
             {mobileConfig.description || campaign.screens?.[1]?.description || 'Participez pour avoir une chance de gagner !'}
@@ -220,7 +221,15 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
             }`}
             style={{ zIndex: 20 }}
           >
-            <img src={mobileConfig.logoOverlay} alt="Logo" className="w-16 h-16 object-contain" />
+            <img 
+              src={mobileConfig.logoOverlay} 
+              alt="Logo" 
+              className="object-contain"
+              style={{
+                width: previewMode === 'mobile' ? '48px' : '64px',
+                height: previewMode === 'mobile' ? '48px' : '64px'
+              }}
+            />
           </div>
         )}
 
