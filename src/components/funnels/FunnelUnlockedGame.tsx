@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Modal from '../common/Modal';
 import ValidationMessage from '../common/ValidationMessage';
@@ -100,11 +99,14 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
     setFormValidated(false);
   };
 
-  // --- AJOUT : gestion du template SVG pour Jackpot ---
-  const selectedTemplateId =
+  // Récupération du template sélectionné avec plusieurs sources possibles
+  const selectedTemplateId = 
     campaign?.design?.template ||
     campaign?.gameConfig?.jackpot?.template ||
-    campaign?.selectedTemplate; // selon ta logique d'enregistrement
+    campaign?.gameConfig?.[campaign.type]?.template ||
+    campaign?.selectedTemplate;
+
+  console.log('Selected template ID in FunnelUnlockedGame:', selectedTemplateId);
 
   const renderGame = () => {
     const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage;
