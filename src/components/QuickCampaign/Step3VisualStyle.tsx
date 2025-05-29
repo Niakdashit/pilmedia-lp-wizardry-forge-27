@@ -187,7 +187,7 @@ const Step3VisualStyle: React.FC = () => {
       </div>;
   }
   return <div className="items-center justify-center ">
-      <div className="max-w-5xl w-full rounded-3xl bg-slate-50 px-[21px]">
+      <div className="max-w-5xl w-full rounded-3xl bg-slate-50 px-[12px] my-0 py-[10px] position-center">
         <motion.div initial={{
         opacity: 0,
         y: 30
