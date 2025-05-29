@@ -50,7 +50,7 @@ const Step1GameSelection: React.FC = () => {
       setCurrentStep(2);
     }, 300);
   };
-  return <div className="background: linear-gradient(135deg, #841b60 0%, #3a78db 100%);">
+  return <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-[#faf6fa] via-[#f6eff7] to-[#841b60]/5 p-6\\n">
       <div className="max-w-6xl w-full">
         <motion.div initial={{
         opacity: 0,
