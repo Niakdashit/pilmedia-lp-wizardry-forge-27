@@ -1,7 +1,9 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { X, Monitor, Smartphone } from 'lucide-react';
+import { X, Monitor, Smartphone, Tablet } from 'lucide-react';
+import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
+import PreviewContent from '../Newsletter/PreviewContent';
 
 interface CampaignPreviewModalProps {
   isOpen: boolean;
@@ -14,7 +16,130 @@ const CampaignPreviewModal: React.FC<CampaignPreviewModalProps> = ({
   onClose,
   campaign
 }) => {
+  const [selectedDevice, setSelectedDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
+  const { selectedGameType, campaignName, selectedTheme } = useQuickCampaignStore();
+
   if (!isOpen) return null;
+
+  // Créer un objet campagne basé sur les données du quick campaign store
+  const previewCampaign = {
+    id: 'quick-campaign-preview',
+    name: campaignName || 'Ma Campagne',
+    type: selectedGameType || 'jackpot',
+    design: {
+      theme: selectedTheme || 'moderne',
+      background: selectedTheme === 'creatif' ? '#f0f9ff' :
+                 selectedTheme === 'elegant' ? '#faf7ff' :
+                 selectedTheme === 'ludique' ? '#fff7ed' : '#ebf4f7',
+      titleColor: selectedTheme === 'creatif' ? '#8b5cf6' :
+                 selectedTheme === 'elegant' ? '#6366f1' :
+                 selectedTheme === 'ludique' ? '#f59e0b' : '#0ea5e9',
+      blockColor: '#ffffff'
+    },
+    screens: {
+      1: {
+        title: 'Tentez votre chance !',
+        description: 'Participez pour avoir une chance de gagner des prix incroyables !'
+      },
+      3: {
+        title: 'Félicitations !',
+        description: 'Merci pour votre participation !'
+      }
+    },
+    gameConfig: {
+      [selectedGameType || 'jackpot']: {
+        // Configuration par défaut selon le type de jeu
+        ...(selectedGameType === 'wheel' && {
+          segments: [
+            { label: 'Prix 1', value: 'prize1', color: '#ff6b6b' },
+            { label: 'Prix 2', value: 'prize2', color: '#4ecdc4' },
+            { label: 'Prix 3', value: 'prize3', color: '#45b7d1' },
+            { label: 'Perdu', value: 'lose', color: '#96ceb4' }
+          ]
+        }),
+        ...(selectedGameType === 'scratch' && {
+          backgroundImage: null,
+          revealPercentage: 50
+        }),
+        ...(selectedGameType === 'jackpot' && {
+          instantWin: {
+            enabled: true,
+            probability: 10
+          }
+        })
+      }
+    }
+  };
+
+  const getDevicePreviewStyle = () => {
+    switch (selectedDevice) {
+      case 'mobile':
+        return {
+          width: '280px',
+          height: '600px',
+          borderRadius: '20px',
+          border: '6px solid #1f1f1f',
+          backgroundColor: '#000',
+          padding: '8px'
+        };
+      case 'tablet':
+        return {
+          width: '400px',
+          height: '650px',
+          borderRadius: '14px',
+          border: '4px solid #333',
+          backgroundColor: '#000',
+          padding: '6px'
+        };
+      default:
+        return {
+          width: '100%',
+          height: '500px',
+          borderRadius: '8px',
+          border: '2px solid #e5e7eb',
+          backgroundColor: '#fff'
+        };
+    }
+  };
+
+  const renderPreview = () => {
+    if (selectedDevice === 'desktop') {
+      return (
+        <div 
+          className="w-full h-full flex items-center justify-center"
+          style={{ 
+            backgroundColor: previewCampaign.design.background,
+            borderRadius: '8px'
+          }}
+        >
+          <PreviewContent 
+            campaign={previewCampaign}
+            step="game"
+          />
+        </div>
+      );
+    }
+
+    // Mobile/Tablet preview avec device frame
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div style={getDevicePreviewStyle()}>
+          <div 
+            className="w-full h-full overflow-hidden"
+            style={{ 
+              backgroundColor: previewCampaign.design.background,
+              borderRadius: selectedDevice === 'mobile' ? '14px' : '8px'
+            }}
+          >
+            <PreviewContent 
+              campaign={previewCampaign}
+              step="game"
+            />
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
     <motion.div
@@ -35,7 +160,7 @@ const CampaignPreviewModal: React.FC<CampaignPreviewModalProps> = ({
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
         transition={{ duration: 0.3 }}
-        className="relative bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl w-full max-w-4xl mx-4 max-h-[90vh] overflow-hidden"
+        className="relative bg-white/95 backdrop-blur-lg rounded-3xl shadow-2xl w-full max-w-6xl mx-4 max-h-[90vh] overflow-hidden"
       >
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200/50">
@@ -44,7 +169,48 @@ const CampaignPreviewModal: React.FC<CampaignPreviewModalProps> = ({
             <h2 className="text-2xl font-bold text-gray-900">
               Aperçu de la campagne
             </h2>
+            <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
+              {campaignName || 'Ma Campagne'}
+            </span>
           </div>
+
+          {/* Device Selector */}
+          <div className="flex items-center space-x-1 bg-gray-100 rounded-lg p-1 mr-4">
+            <button
+              onClick={() => setSelectedDevice('desktop')}
+              className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                selectedDevice === 'desktop'
+                  ? 'bg-white text-blue-600 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <Monitor className="w-4 h-4" />
+              <span>Desktop</span>
+            </button>
+            <button
+              onClick={() => setSelectedDevice('tablet')}
+              className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                selectedDevice === 'tablet'
+                  ? 'bg-white text-blue-600 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <Tablet className="w-4 h-4" />
+              <span>Tablette</span>
+            </button>
+            <button
+              onClick={() => setSelectedDevice('mobile')}
+              className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                selectedDevice === 'mobile'
+                  ? 'bg-white text-blue-600 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <Smartphone className="w-4 h-4" />
+              <span>Mobile</span>
+            </button>
+          </div>
+
           <button
             onClick={onClose}
             className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
@@ -54,38 +220,8 @@ const CampaignPreviewModal: React.FC<CampaignPreviewModalProps> = ({
         </div>
 
         {/* Preview content */}
-        <div className="p-8">
-          {campaign ? (
-            <div className="text-center space-y-6">
-              <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-8">
-                <div className="text-6xl mb-4">🎮</div>
-                <h3 className="text-2xl font-bold text-gray-900 mb-2">
-                  {campaign.name || 'Ma Campagne'}
-                </h3>
-                <p className="text-gray-600 mb-4">
-                  Type: {campaign.selectedGameType || 'Non défini'}
-                </p>
-                <div className="inline-flex items-center space-x-2 bg-green-100 text-green-800 px-4 py-2 rounded-full">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className="font-medium">Campagne configurée</span>
-                </div>
-              </div>
-              
-              <p className="text-gray-500">
-                Votre campagne est prête à être déployée. Vous pourrez la personnaliser davantage après sa création.
-              </p>
-            </div>
-          ) : (
-            <div className="text-center py-12">
-              <Smartphone className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-              <h3 className="text-xl font-semibold text-gray-600 mb-2">
-                Prévisualisation non disponible
-              </h3>
-              <p className="text-gray-500">
-                Terminez la configuration pour voir l'aperçu de votre campagne.
-              </p>
-            </div>
-          )}
+        <div className="flex-1 overflow-auto" style={{ height: '70vh' }}>
+          {renderPreview()}
         </div>
       </motion.div>
     </motion.div>
