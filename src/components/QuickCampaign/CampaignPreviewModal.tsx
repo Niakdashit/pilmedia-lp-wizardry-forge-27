@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { X, Monitor, Smartphone, Tablet } from 'lucide-react';
@@ -8,13 +7,11 @@ import PreviewContent from '../Newsletter/PreviewContent';
 interface CampaignPreviewModalProps {
   isOpen: boolean;
   onClose: () => void;
-  campaign: any;
 }
 
 const CampaignPreviewModal: React.FC<CampaignPreviewModalProps> = ({
   isOpen,
-  onClose,
-  campaign
+  onClose
 }) => {
   const [selectedDevice, setSelectedDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
   const { selectedGameType, campaignName, selectedTheme } = useQuickCampaignStore();
