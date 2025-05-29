@@ -57,7 +57,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
           <div style={gameProps.style}>
             <Quiz 
               config={campaign.gameConfig?.quiz || {}} 
-              onConfigChange={() => {}}
+              campaign={campaign}
             />
           </div>
         );

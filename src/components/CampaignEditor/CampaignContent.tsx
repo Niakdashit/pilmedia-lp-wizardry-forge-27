@@ -34,7 +34,7 @@ const CampaignContent: React.FC<CampaignContentProps> = ({
         return (
           <Quiz
             config={campaign.gameConfig?.quiz}
-            onConfigChange={(config) => updateGameConfig('quiz', config)}
+            campaign={campaign}
           />
         );
       case 'wheel':
