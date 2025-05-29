@@ -23,7 +23,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
     return <FunnelStandard campaign={campaign} />;
   };
 
-  // Récupérer l'image de fond du jeu
+  // Récupérer l'image de fond du jeu et de la conception générale
   const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage || 
                               campaign.design?.backgroundImage;
   
