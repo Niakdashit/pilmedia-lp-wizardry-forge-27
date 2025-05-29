@@ -10,28 +10,28 @@ const QuickCampaignCreator: React.FC = () => {
   const { currentStep } = useQuickCampaignStore();
 
   const slideVariants = {
-    enter: {
-      y: '100vh',
+    enter: (direction: number) => ({
+      y: direction > 0 ? '100vh' : '-100vh',
       opacity: 0,
-      scale: 0.8
-    },
+      scale: 0.95
+    }),
     center: {
       y: 0,
       opacity: 1,
       scale: 1
     },
-    exit: {
-      y: '-100vh',
+    exit: (direction: number) => ({
+      y: direction < 0 ? '100vh' : '-100vh',
       opacity: 0,
-      scale: 1.1
-    }
+      scale: 1.05
+    })
   };
 
   const transition = {
     type: "spring",
-    stiffness: 260,
-    damping: 20,
-    duration: 0.8
+    stiffness: 300,
+    damping: 30,
+    duration: 0.6
   };
 
   const renderCurrentStep = () => {
@@ -48,17 +48,17 @@ const QuickCampaignCreator: React.FC = () => {
   };
 
   return (
-    <div className="w-full h-full overflow-hidden relative">
-      <AnimatePresence mode="wait">
+    <div className="w-full h-full overflow-hidden">
+      <AnimatePresence mode="wait" custom={1}>
         <motion.div
           key={currentStep}
+          custom={1}
           variants={slideVariants}
           initial="enter"
           animate="center"
           exit="exit"
           transition={transition}
-          className="w-full h-full absolute inset-0"
-          style={{ willChange: 'transform, opacity' }}
+          className="w-full h-full"
         >
           {renderCurrentStep()}
         </motion.div>
