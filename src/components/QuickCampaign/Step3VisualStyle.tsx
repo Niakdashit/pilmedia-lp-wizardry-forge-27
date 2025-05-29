@@ -233,11 +233,6 @@ const Step3VisualStyle: React.FC = () => {
         <CampaignPreviewModal
           isOpen={showPreview}
           onClose={() => setShowPreview(false)}
-          campaign={{
-            name: campaignName,
-            selectedGameType,
-            theme: selectedTheme
-          }}
         />
       </div>
     );
