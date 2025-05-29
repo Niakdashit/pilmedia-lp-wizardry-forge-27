@@ -18,23 +18,23 @@ const templatesByMechanic: Record<string, Array<{
   image?: string; // <-- Ajout pour afficher le mockup réel
 }>> = {
   jackpot: [
-    {
-      id: 'Tjackpot1',
-      name: 'Jackpot Casino',
-      description: 'Effet machine à sous casino, ambiance festive.',
-      image: require('../../assets/templates/Tjackpot1.svg').default,
-      borderColor: 'border-yellow-400',
-      glowColor: 'shadow-yellow-400/30'
-    },
-    {
-      id: 'Tjackpot2',
-      name: 'Jackpot Vegas',
-      description: 'Look Vegas, couleurs néon, lumière.',
-      image: require('../../assets/templates/Tjackpot2.svg').default,
-      borderColor: 'border-pink-400',
-      glowColor: 'shadow-pink-400/30'
-    }
-  ],
+  {
+    id: 'Tjackpot1',
+    name: 'Jackpot Casino',
+    description: 'Effet machine à sous casino, ambiance festive.',
+    image: require('../../assets/templates/Tjackpot1.svg').default,
+    borderColor: 'border-yellow-400',
+    glowColor: 'shadow-yellow-400/30'
+  },
+  {
+    id: 'Tjackpot2',
+    name: 'Jackpot Vegas',
+    description: 'Look Vegas, couleurs néon, lumière.',
+    image: require('../../assets/templates/Tjackpot2.svg').default,
+    borderColor: 'border-pink-400',
+    glowColor: 'shadow-pink-400/30'
+  }
+]
   quiz: [
     {
       id: 'modern',
