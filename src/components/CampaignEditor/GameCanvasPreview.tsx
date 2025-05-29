@@ -17,7 +17,6 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   className = ""
 }) => {
   const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage;
-  const jackpotTemplateImage = campaign.gameConfig?.[campaign.type]?.customTemplate;
   const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel || 'Lancer le Jackpot';
   const buttonColor = campaign.gameConfig?.[campaign.type]?.buttonColor || '#ec4899';
   

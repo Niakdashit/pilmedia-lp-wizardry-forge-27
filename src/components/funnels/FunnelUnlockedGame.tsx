@@ -121,8 +121,6 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
     campaign?.gameConfig?.jackpot?.template ||
     campaign?.selectedTemplate; // selon ta logique d'enregistrement
 
-  const jackpotTemplateImg = selectedTemplateId ? jackpotTemplates[selectedTemplateId] : undefined;
-
   const renderGame = () => {
     const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage;
     const customTemplate = campaign.gameConfig?.[campaign.type]?.customTemplate;
