@@ -96,7 +96,7 @@ const Step1GameSelection: React.FC = () => {
               whileHover={{ scale: 1.05, y: -5 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => handleGameSelect(game.id)}
-              className={`relative p-8 rounded-10xl bg-white/60 backdrop-blur-md shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border-2 ${
+              className={`relative p-8 rounded-2xl bg-white/60 backdrop-blur-md shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border-2 ${
                 selectedGameType === game.id
                   ? 'border-blue-500'
                   : 'border-transparent'
