@@ -140,6 +140,15 @@ const QuizGame: React.FC<QuizGameProps> = ({
     return 'Il faut réviser ! 📚';
   };
 
+  // Ensure we have valid questions and current question
+  if (!questions || questions.length === 0 || !currentQuestion) {
+    return (
+      <div className="w-full max-w-2xl mx-auto p-6 text-center">
+        <p className="text-gray-500">Aucune question disponible</p>
+      </div>
+    );
+  }
+
   if (isComplete) {
     return (
       <div className="w-full max-w-2xl mx-auto p-6 text-center space-y-6">
@@ -234,38 +243,43 @@ const QuizGame: React.FC<QuizGameProps> = ({
 
           {/* Options */}
           <div className="space-y-3">
-            {currentQuestion.options.map((option, index) => (
-              <motion.button
-                key={index}
-                onClick={() => handleAnswer(index)}
-                disabled={answered}
-                className={`w-full p-4 rounded-lg border-2 text-left transition-all duration-200 ${
-                  answered
-                    ? index === currentQuestion.correctAnswer
-                      ? 'bg-green-100 border-green-500 text-green-800'
-                      : index === selectedAnswer && index !== currentQuestion.correctAnswer
-                      ? 'bg-red-100 border-red-500 text-red-800'
-                      : 'bg-gray-100 border-gray-300 text-gray-600'
-                    : 'bg-white border-gray-300 hover:border-purple-300 hover:bg-purple-50'
-                }`}
-                whileHover={!answered ? { scale: 1.02 } : {}}
-                whileTap={!answered ? { scale: 0.98 } : {}}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="font-medium">{option}</span>
-                  {answered && (
-                    <div>
-                      {index === currentQuestion.correctAnswer && (
-                        <CheckCircle className="w-5 h-5 text-green-600" />
-                      )}
-                      {index === selectedAnswer && index !== currentQuestion.correctAnswer && (
-                        <XCircle className="w-5 h-5 text-red-600" />
-                      )}
-                    </div>
-                  )}
-                </div>
-              </motion.button>
-            ))}
+            {currentQuestion.options.map((option, index) => {
+              // Ensure option is a string
+              const optionText = typeof option === 'string' ? option : String(option);
+              
+              return (
+                <motion.button
+                  key={index}
+                  onClick={() => handleAnswer(index)}
+                  disabled={answered}
+                  className={`w-full p-4 rounded-lg border-2 text-left transition-all duration-200 ${
+                    answered
+                      ? index === currentQuestion.correctAnswer
+                        ? 'bg-green-100 border-green-500 text-green-800'
+                        : index === selectedAnswer && index !== currentQuestion.correctAnswer
+                        ? 'bg-red-100 border-red-500 text-red-800'
+                        : 'bg-gray-100 border-gray-300 text-gray-600'
+                      : 'bg-white border-gray-300 hover:border-purple-300 hover:bg-purple-50'
+                  }`}
+                  whileHover={!answered ? { scale: 1.02 } : {}}
+                  whileTap={!answered ? { scale: 0.98 } : {}}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className="font-medium">{optionText}</span>
+                    {answered && (
+                      <div>
+                        {index === currentQuestion.correctAnswer && (
+                          <CheckCircle className="w-5 h-5 text-green-600" />
+                        )}
+                        {index === selectedAnswer && index !== currentQuestion.correctAnswer && (
+                          <XCircle className="w-5 h-5 text-red-600" />
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </motion.button>
+              );
+            })}
           </div>
 
           {/* Explanation */}
