@@ -36,7 +36,6 @@ interface JackpotProps {
   onStart?: () => void;
   buttonLabel?: string;
   buttonColor?: string;
-  backgroundImage?: string;
   customTemplate?: string;
   selectedTemplate?: string;
 }
@@ -48,7 +47,6 @@ const Jackpot: React.FC<JackpotProps> = ({
   onStart,
   buttonLabel = "Lancer le Jackpot",
   buttonColor = "#ec4899",
-  backgroundImage,
   customTemplate,
   selectedTemplate
 }) => {
@@ -127,23 +125,23 @@ const Jackpot: React.FC<JackpotProps> = ({
     justifyContent: 'center'
   };
 
-  // NE PAS appliquer l'image de fond ici pour éviter la duplication
-  // L'image de fond est gérée par le conteneur parent
-
   return (
     <div style={containerStyle} className="flex flex-col items-center justify-center w-full h-full p-2 px-0">
-      {/* Template SVG responsive */}
+      {/* Template SVG responsive - utilise les mêmes dimensions que QuickCampaign */}
       {templateImg && (
         <img
           src={templateImg}
           alt="Template jackpot"
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0 w-full h-full object-contain max-w-none"
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0"
           style={{
-            maxWidth: '95vw',
-            maxHeight: '85vh',
-            minWidth: '320px',
-            minHeight: '300px',
-            opacity: 0.97
+            width: '100%',
+            height: '100%',
+            maxWidth: '100vw',
+            maxHeight: '100vh',
+            minWidth: '300px',
+            minHeight: '250px',
+            objectFit: 'contain',
+            opacity: 0.95
           }}
         />
       )}

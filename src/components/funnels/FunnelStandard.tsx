@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Color from 'color';
 import DynamicContactForm from '../forms/DynamicContactForm';
@@ -17,6 +18,7 @@ interface GameFunnelProps {
 
 const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
   const [step, setStep] = useState<'start' | 'form' | 'game' | 'end'>('start');
+  const [gameScore, setGameScore] = useState<{ score: number; total: number } | null>(null);
   const { createParticipation, loading: participationLoading } = useParticipations();
 
   const fields = Array.isArray(campaign.formFields) && campaign.formFields.length > 0 
@@ -52,21 +54,47 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
     setStep('game');
   };
   
-  const handleEnd = () => setStep('end');
+  const handleGameComplete = (score?: number, total?: number) => {
+    if (score !== undefined && total !== undefined) {
+      setGameScore({ score, total });
+    }
+    setStep('end');
+  };
 
   const getGameComponent = () => {
+    const commonProps = {
+      campaign,
+      onComplete: handleGameComplete,
+      onStart: () => console.log('Game started')
+    };
+
     switch (campaign.type) {
       case 'quiz':
-        return <Quiz config={campaign.gameConfig.quiz} onConfigChange={() => {}} />;
+        return <Quiz 
+          config={campaign.gameConfig?.quiz || {}} 
+          onConfigChange={() => {}}
+          {...commonProps}
+        />;
       case 'memory':
-        return <Memory config={campaign.gameConfig.memory} onConfigChange={() => {}} />;
+        return <Memory config={campaign.gameConfig?.memory || {}} onConfigChange={() => {}} />;
       case 'puzzle':
-        return <Puzzle config={campaign.gameConfig.puzzle} onConfigChange={() => {}} />;
+        return <Puzzle config={campaign.gameConfig?.puzzle || {}} onConfigChange={() => {}} />;
       case 'form':
         return <div className="text-center text-gray-500">Formulaire dynamique</div>;
       default:
         return <div className="text-center text-gray-400">Non compatible avec ce funnel</div>;
     }
+  };
+
+  const getResultMessage = () => {
+    if (gameScore && campaign.type === 'quiz') {
+      const percentage = (gameScore.score / gameScore.total) * 100;
+      if (percentage >= 80) return 'Excellent résultat !';
+      if (percentage >= 60) return 'Bon travail !';
+      if (percentage >= 40) return 'Résultat correct !';
+      return 'Continuez vos efforts !';
+    }
+    return campaign.screens[3]?.confirmationMessage || 'Votre participation a été enregistrée.';
   };
 
   return (
@@ -80,7 +108,7 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
               fontFamily: campaign.design.titleFont
             }}
           >
-            {campaign.screens[0]?.title || 'Ready to Play?'}
+            {campaign.screens[0]?.title || 'Prêt à jouer ?'}
           </h2>
           <p
             className="mb-6"
@@ -89,7 +117,7 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
               fontFamily: campaign.design.textFont
             }}
           >
-            {campaign.screens[0]?.description || 'Click below to participate'}
+            {campaign.screens[0]?.description || 'Cliquez ci-dessous pour participer'}
           </p>
           <button
             onClick={handleStart}
@@ -101,7 +129,7 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
               fontFamily: campaign.design.textFont
             }}
           >
-            {campaign.screens[0]?.buttonText || 'Participate'}
+            {campaign.screens[0]?.buttonText || 'Participer'}
           </button>
         </div>
       )}
@@ -115,7 +143,7 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
               fontFamily: campaign.design.titleFont
             }}
           >
-            {campaign.screens[1]?.title || 'Your Information'}
+            {campaign.screens[1]?.title || 'Vos informations'}
           </h2>
           <DynamicContactForm
             fields={fields}
@@ -127,20 +155,29 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
 
       {step === 'game' && (
         <div className="w-full p-6">
-          {getGameComponent()}
-          <div className="mt-6 text-center">
-            <button
-              onClick={handleEnd}
-              className="px-6 py-3 transition-colors duration-200 hover:opacity-90"
+          <div className="mb-6">
+            <h2
+              className="text-2xl font-bold mb-2 text-center"
               style={{
-                backgroundColor: campaign.design.buttonColor,
-                color: getContrastColor(campaign.design.buttonColor),
-                borderRadius: campaign.design.borderRadius
+                color: campaign.design.titleColor,
+                fontFamily: campaign.design.titleFont
               }}
             >
-              {campaign.screens[2]?.buttonText || 'Submit'}
-            </button>
+              {campaign.screens[2]?.title || 'À vous de jouer !'}
+            </h2>
+            {campaign.screens[2]?.description && (
+              <p
+                className="text-center"
+                style={{
+                  color: getContrastColor(campaign.design.blockColor),
+                  fontFamily: campaign.design.textFont
+                }}
+              >
+                {campaign.screens[2].description}
+              </p>
+            )}
           </div>
+          {getGameComponent()}
         </div>
       )}
 
@@ -153,8 +190,23 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
               fontFamily: campaign.design.titleFont
             }}
           >
-            {campaign.screens[3]?.confirmationTitle || 'Thank you!'}
+            {campaign.screens[3]?.confirmationTitle || 'Merci !'}
           </h2>
+          
+          {gameScore && (
+            <div className="mb-4 p-4 bg-gray-50 rounded-lg">
+              <div 
+                className="text-2xl font-bold mb-2"
+                style={{ color: campaign.design.primaryColor }}
+              >
+                Score: {gameScore.score}/{gameScore.total}
+              </div>
+              <div className="text-lg text-gray-600">
+                {Math.round((gameScore.score / gameScore.total) * 100)}%
+              </div>
+            </div>
+          )}
+          
           <p
             className="mb-6"
             style={{
@@ -162,7 +214,7 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
               fontFamily: campaign.design.textFont
             }}
           >
-            {campaign.screens[3]?.confirmationMessage || 'Your participation has been recorded.'}
+            {getResultMessage()}
           </p>
           <button
             onClick={() => setStep('start')}
@@ -173,7 +225,7 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
               borderRadius: campaign.design.borderRadius
             }}
           >
-            {campaign.screens[3]?.replayButtonText || 'Play Again'}
+            {campaign.screens[3]?.replayButtonText || 'Rejouer'}
           </button>
         </div>
       )}

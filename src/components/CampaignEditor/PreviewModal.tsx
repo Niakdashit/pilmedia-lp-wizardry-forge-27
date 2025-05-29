@@ -23,7 +23,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
     return <FunnelStandard campaign={campaign} />;
   };
 
-  // Récupérer UNIQUEMENT l'image de fond générale (pas celle du jeu pour éviter la duplication)
+  // Récupérer l'image de fond générale (sans duplication avec le jeu)
   const backgroundImage = campaign.design?.backgroundImage;
 
   const getBackgroundStyle = () => {
@@ -34,7 +34,8 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
       backgroundColor: campaign.design?.background || '#ebf4f7'
     };
 
-    if (backgroundImage) {
+    // Appliquer l'image de fond seulement en mode desktop et pour les types compatibles
+    if (backgroundImage && selectedDevice === 'desktop') {
       style.backgroundImage = `url(${backgroundImage})`;
       style.backgroundSize = 'cover';
       style.backgroundPosition = 'center';
