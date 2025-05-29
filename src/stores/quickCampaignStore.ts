@@ -13,7 +13,6 @@ interface QuickCampaignState {
   
   // Étape 3 - Style visuel
   selectedTheme: string | null;
-  selectedTemplate: string | null;
   backgroundImage: File | null;
   
   // État général
@@ -26,7 +25,6 @@ interface QuickCampaignState {
   setMarketingGoal: (goal: string) => void;
   setLogoFile: (file: File | null) => void;
   setSelectedTheme: (theme: string) => void;
-  setSelectedTemplate: (template: string) => void;
   setBackgroundImage: (file: File | null) => void;
   setCurrentStep: (step: number) => void;
   reset: () => void;
@@ -40,7 +38,6 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set) => ({
   marketingGoal: '',
   logoFile: null,
   selectedTheme: null,
-  selectedTemplate: null,
   backgroundImage: null,
   currentStep: 1,
   
@@ -51,7 +48,6 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set) => ({
   setMarketingGoal: (goal) => set({ marketingGoal: goal }),
   setLogoFile: (file) => set({ logoFile: file }),
   setSelectedTheme: (theme) => set({ selectedTheme: theme }),
-  setSelectedTemplate: (template) => set({ selectedTemplate: template }),
   setBackgroundImage: (file) => set({ backgroundImage: file }),
   setCurrentStep: (step) => set({ currentStep: step }),
   reset: () => set({
@@ -61,7 +57,6 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set) => ({
     marketingGoal: '',
     logoFile: null,
     selectedTheme: null,
-    selectedTemplate: null,
     backgroundImage: null,
     currentStep: 1,
   }),
