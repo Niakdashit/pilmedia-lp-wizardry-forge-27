@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
@@ -96,13 +97,14 @@ const Step1GameSelection: React.FC = () => {
               whileHover={{ scale: 1.05, y: -5 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => handleGameSelect(game.id)}
-              className={`relative p-8 rounded-2xl bg-white/60 backdrop-blur-md shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border-2 ${
+              className={`relative p-8 rounded-3xl bg-white shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer border-2 ${
                 selectedGameType === game.id
                   ? 'border-blue-500'
                   : 'border-transparent'
               }`}
             >
-              <div className={`absolute inset-0 bg-gradient-to-br ${game.gradient} opacity-5 rounded-2xl`} />
+              <div className={`absolute inset-0 bg-gradient-to-br ${game.gradient} opacity-5 rounded-3xl`} />
+              
               <div className="relative z-10">
                 <div className="text-4xl mb-4">{game.icon}</div>
                 <h3 className="text-xl font-bold text-gray-900 mb-2">
