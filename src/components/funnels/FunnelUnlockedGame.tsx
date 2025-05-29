@@ -8,7 +8,7 @@ import ScratchPreview from '../GameTypes/ScratchPreview';
 import DicePreview from '../GameTypes/DicePreview';
 import { useParticipations } from '../../hooks/useParticipations';
 
-// AJOUT : imports SVG templates pour Jackpot (adaptable à d'autres mécaniques si besoin)
+// --- AJOUTS IMPORTS SVG TEMPLATES (mets à jour les chemins/ajouts si besoin) ---
 import Tjackpot1 from '../../assets/templates/Tjackpot1.svg';
 import Tjackpot2 from '../../assets/templates/Tjackpot2.svg';
 import Tjackpot3 from '../../assets/templates/Tjackpot3.svg';
@@ -36,20 +36,20 @@ const DEFAULT_FIELDS: FieldConfig[] = [{
   required: true
 }];
 
+// --- MAPPING ID <=> SVG ---
+const jackpotTemplates: Record<string, any> = {
+  Tjackpot1,
+  Tjackpot2,
+  Tjackpot3,
+  Tjackpot4,
+  Tjackpot5
+};
+
 interface GameFunnelProps {
   campaign: any;
   modalContained?: boolean;
   mobileConfig?: any;
 }
-
-// --- MAPPING des templates SVG par ID (à étendre si besoin)
-const jackpotTemplates: Record<string, string> = {
-  Tjackpot1,
-  Tjackpot2,
-  Tjackpot3,
-  Tjackpot4,
-  Tjackpot5,
-};
 
 const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
   campaign,
@@ -77,6 +77,9 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
         form_data: formData,
         user_email: formData.email
       });
+      if (participation) {
+        // Optionnel : traiter la participation
+      }
     }
     setShowFormModal(false);
 
@@ -112,9 +115,13 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
     setFormValidated(false);
   };
 
-  // --- Récupère le template jackpot à afficher via la config de campagne
-  const selectedTemplateId = campaign?.design?.template || campaign?.selectedTemplate;
-  const jackpotTemplateImg = selectedTemplateId ? jackpotTemplates[selectedTemplateId] : null;
+  // --- AJOUT : gestion du template SVG pour Jackpot ---
+  const selectedTemplateId =
+    campaign?.design?.template ||
+    campaign?.gameConfig?.jackpot?.template ||
+    campaign?.selectedTemplate; // selon ta logique d'enregistrement
+
+  const jackpotTemplateImg = selectedTemplateId ? jackpotTemplates[selectedTemplateId] : undefined;
 
   const renderGame = () => {
     const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage;
@@ -150,17 +157,7 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
         case 'scratch':
           return <ScratchPreview config={campaign.gameConfig.scratch} />;
         case 'jackpot':
-          return (
-            <Jackpot
-              isPreview={true}
-              instantWinConfig={campaign.gameConfig?.jackpot?.instantWin}
-              buttonLabel={buttonLabel}
-              buttonColor={buttonColor}
-              backgroundImage={gameBackgroundImage}
-              customTemplate={customTemplate}
-              {...commonProps}
-            />
-          );
+          return <Jackpot isPreview={true} instantWinConfig={campaign.gameConfig?.jackpot?.instantWin} buttonLabel={buttonLabel} buttonColor={buttonColor} backgroundImage={gameBackgroundImage} customTemplate={customTemplate} {...commonProps} />;
         case 'dice':
           return <DicePreview config={campaign.gameConfig.dice} />;
         default:
@@ -169,17 +166,27 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
     })();
 
     return (
-      <div style={gameContainerStyle} className="rounded-lg overflow-hidden">
-        {/* AJOUT : Affiche le template SVG sélectionné en arrière-plan pour le jackpot */}
+      <div style={gameContainerStyle} className="rounded-lg overflow-hidden relative">
+        {/* --- Affichage du TEMPLATE SVG --- */}
         {campaign.type === 'jackpot' && jackpotTemplateImg && (
-          <img
-            src={jackpotTemplateImg}
-            alt="Template visuel jackpot"
-            className="absolute inset-0 w-full h-full object-contain pointer-events-none z-10"
-          />
+          typeof jackpotTemplateImg === 'string'
+            ? (
+                <img
+                  src={jackpotTemplateImg}
+                  alt="Template visuel jackpot"
+                  className="absolute inset-0 w-full h-full object-contain pointer-events-none z-10"
+                />
+              )
+            : (
+                <span className="absolute inset-0 w-full h-full pointer-events-none z-10 flex items-center justify-center">
+                  {React.createElement(jackpotTemplateImg, {
+                    className: "w-full h-full object-contain"
+                  })}
+                </span>
+              )
         )}
 
-        {/* Garde la mécanique de jeu par-dessus */}
+        {/* -- Le composant jeu principal, par-dessus le template -- */}
         <div className="relative z-20 h-full">
           <ContrastBackground
             enabled={contrastBg?.enabled && contrastBg?.applyToGame}
@@ -237,16 +244,17 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
     return (
       <div className="w-full flex flex-col items-center space-y-4">
         {renderGame()}
+
         {showFormModal && (
-          <Modal
-            onClose={() => setShowFormModal(false)}
+          <Modal 
+            onClose={() => setShowFormModal(false)} 
             title={campaign.screens[1]?.title || 'Vos informations'}
             contained={modalContained}
           >
-            <DynamicContactForm
-              fields={fields}
-              submitLabel={participationLoading ? 'Chargement...' : campaign.screens[1]?.buttonText || "C'est parti !"}
-              onSubmit={handleFormSubmit}
+            <DynamicContactForm 
+              fields={fields} 
+              submitLabel={participationLoading ? 'Chargement...' : campaign.screens[1]?.buttonText || "C'est parti !"} 
+              onSubmit={handleFormSubmit} 
             />
           </Modal>
         )}
@@ -279,17 +287,19 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
           )}
         </ContrastBackground>
       )}
+
       {renderGame()}
+
       {showFormModal && (
-        <Modal
-          onClose={() => setShowFormModal(false)}
+        <Modal 
+          onClose={() => setShowFormModal(false)} 
           title={campaign.screens[1]?.title || 'Vos informations'}
           contained={modalContained}
         >
-          <DynamicContactForm
-            fields={fields}
-            submitLabel={participationLoading ? 'Chargement...' : campaign.screens[1]?.buttonText || "C'est parti !"}
-            onSubmit={handleFormSubmit}
+          <DynamicContactForm 
+            fields={fields} 
+            submitLabel={participationLoading ? 'Chargement...' : campaign.screens[1]?.buttonText || "C'est parti !"} 
+            onSubmit={handleFormSubmit} 
           />
         </Modal>
       )}
