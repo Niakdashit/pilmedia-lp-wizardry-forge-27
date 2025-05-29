@@ -38,7 +38,7 @@ interface JackpotProps {
   buttonColor?: string;
   backgroundImage?: string;
   customTemplate?: string;
-  selectedTemplate?: string; // Nouveau prop pour le template
+  selectedTemplate?: string;
 }
 
 const Jackpot: React.FC<JackpotProps> = ({
@@ -56,10 +56,13 @@ const Jackpot: React.FC<JackpotProps> = ({
   const [isRolling, setIsRolling] = useState(false);
   const [result, setResult] = useState<'win' | 'lose' | null>(null);
 
+  // Debug logs pour vérifier la réception du template
+  console.log('Jackpot component - selectedTemplate:', selectedTemplate);
+  console.log('Jackpot component - available templates:', Object.keys(jackpotTemplates));
+
   const roll = () => {
     if (isRolling || result) return;
     
-    // Appeler onStart dès que le jeu commence
     onStart?.();
     
     setIsRolling(true);
@@ -105,61 +108,57 @@ const Jackpot: React.FC<JackpotProps> = ({
   }
 
   // Récupération du template SVG
-  const templateImg = selectedTemplate ? jackpotTemplates[selectedTemplate] : undefined;
+  const templateImg = selectedTemplate && jackpotTemplates[selectedTemplate] ? jackpotTemplates[selectedTemplate] : null;
+  console.log('Template image selected:', templateImg);
 
   // Responsive slot size calculation
   const getSlotSize = () => {
     const containerWidth = window.innerWidth || 400;
-    if (containerWidth < 350) return 50; // Mobile très petit
-    if (containerWidth < 500) return 60; // Mobile standard
-    return 70; // Tablette et plus
+    if (containerWidth < 350) return 50;
+    if (containerWidth < 500) return 60;
+    return 70;
   };
 
   const slotSize = getSlotSize();
   const slotGap = Math.max(8, slotSize * 0.15);
 
-  const containerStyle: any = {
-    minHeight: '200px',
-    position: 'relative',
-    width: '100%',
-    height: '100%'
-  };
-
-  if (backgroundImage) {
-    containerStyle.backgroundImage = `url(${backgroundImage})`;
-    containerStyle.backgroundSize = 'cover';
-    containerStyle.backgroundPosition = 'center';
-    containerStyle.backgroundRepeat = 'no-repeat';
-  }
-
   return (
-    <div style={containerStyle} className="flex flex-col items-center justify-center w-full h-full p-2 px-0">
-      {/* Template SVG en arrière-plan */}
+    <div className="relative w-full h-full min-h-[400px] flex items-center justify-center p-4">
+      {/* Template SVG en arrière-plan - Position absolue pour couvrir tout le conteneur */}
       {templateImg && (
-        <img
-          src={templateImg}
-          alt="Template jackpot"
-          className="absolute inset-0 w-full h-full object-contain pointer-events-none z-0"
+        <div className="absolute inset-0 w-full h-full flex items-center justify-center">
+          <img
+            src={templateImg}
+            alt="Template jackpot"
+            className="w-full h-full object-contain opacity-90"
+            style={{ maxWidth: '100%', maxHeight: '100%' }}
+          />
+        </div>
+      )}
+
+      {/* Image de fond personnalisée */}
+      {backgroundImage && (
+        <div
+          className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat"
+          style={{ backgroundImage: `url(${backgroundImage})` }}
         />
       )}
 
-      {/* Template personnalisé overlay (au-dessus du template SVG) */}
+      {/* Template personnalisé overlay */}
       {customTemplate && (
-        <img
-          src={customTemplate}
-          alt="Jackpot template personnalisé"
-          className="absolute inset-0 w-full h-full object-contain pointer-events-none z-10"
-        />
+        <div className="absolute inset-0 w-full h-full flex items-center justify-center">
+          <img
+            src={customTemplate}
+            alt="Jackpot template personnalisé"
+            className="w-full h-full object-contain"
+          />
+        </div>
       )}
 
-      {/* Contenu du jeu avec z-index élevé */}
+      {/* Contenu du jeu avec z-index élevé pour être au-dessus des templates */}
       <div className="relative z-20 flex flex-col items-center justify-center">
         {/* Slots */}
-        <div style={{
-          gap: slotGap,
-          flexWrap: 'nowrap',
-          maxWidth: '100%'
-        }} className="flex mb-4 mx-0">
+        <div style={{ gap: slotGap }} className="flex mb-6 mx-0">
           {slots.map((symbol, i) => 
             <motion.div 
               key={i} 
@@ -168,7 +167,7 @@ const Jackpot: React.FC<JackpotProps> = ({
                 height: slotSize,
                 borderRadius: 8,
                 border: "2px solid #fff",
-                boxShadow: "0 2px 8px 0 rgba(0,0,0,0.09)",
+                boxShadow: "0 4px 12px 0 rgba(0,0,0,0.15)",
                 fontSize: Math.max(20, slotSize * 0.4),
                 fontWeight: 700
               }} 
@@ -179,7 +178,7 @@ const Jackpot: React.FC<JackpotProps> = ({
                 duration: 0.32,
                 repeat: isRolling ? Infinity : 0
               }} 
-              className="bg-white shadow-md flex items-center justify-center flex-shrink-0 aspect-[9/16]"
+              className="bg-white shadow-lg flex items-center justify-center flex-shrink-0"
             >
               {symbol}
             </motion.div>
@@ -197,11 +196,11 @@ const Jackpot: React.FC<JackpotProps> = ({
             <button 
               onClick={roll} 
               disabled={isRolling} 
-              className="px-4 py-2 text-white font-medium rounded-lg shadow-lg hover:opacity-90 transition-all duration-200 disabled:opacity-50 max-w-full" 
+              className="px-6 py-3 text-white font-medium rounded-lg shadow-lg hover:opacity-90 transition-all duration-200 disabled:opacity-50 max-w-full" 
               style={{
                 backgroundColor: buttonColor,
                 fontSize: 'clamp(12px, 3.5vw, 16px)',
-                minHeight: '40px'
+                minHeight: '44px'
               }}
             >
               {isRolling ? "Roulement..." : buttonLabel}
