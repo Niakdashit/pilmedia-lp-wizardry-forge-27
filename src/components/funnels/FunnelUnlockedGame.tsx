@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Modal from '../common/Modal';
 import ValidationMessage from '../common/ValidationMessage';
@@ -66,14 +65,8 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
         // Optionnel : traiter la participation
       }
     }
-    
-    // Fermer le modal immédiatement
     setShowFormModal(false);
-    
-    // Valider le formulaire immédiatement sans délai
     setFormValidated(true);
-    
-    // Afficher brièvement le message de validation
     setShowValidationMessage(true);
     setTimeout(() => {
       setShowValidationMessage(false);
@@ -105,14 +98,11 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
     setFormValidated(false);
   };
 
-  // Récupération du template sélectionné avec plusieurs sources possibles
   const selectedTemplateId = 
     campaign?.design?.template ||
     campaign?.gameConfig?.jackpot?.template ||
     campaign?.gameConfig?.[campaign.type]?.template ||
     campaign?.selectedTemplate;
-
-  console.log('Selected template ID in FunnelUnlockedGame:', selectedTemplateId);
 
   const renderGame = () => {
     const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage;
@@ -168,7 +158,6 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
 
     return (
       <div style={gameContainerStyle} className="rounded-lg overflow-hidden relative">
-        {/* Le composant jeu principal avec le template intégré */}
         <div className="relative z-20 h-full">
           <ContrastBackground
             enabled={contrastBg?.enabled && contrastBg?.applyToGame}
@@ -178,11 +167,9 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
             {gameComponent}
           </ContrastBackground>
         </div>
-
         {!formValidated && (
           <div onClick={handleGameButtonClick} className="absolute inset-0 flex items-center justify-center z-30 rounded-lg cursor-pointer bg-black/0" />
         )}
-
         <ValidationMessage
           show={showValidationMessage}
           message="Formulaire validé ! Vous pouvez maintenant jouer."
@@ -222,16 +209,17 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
     );
   }
 
+  // --- MODIF ICI : Ajout de la prop noOverlay au Modal sur mobile/tablette
   if (mobileConfig) {
     return (
       <div className="w-full flex flex-col items-center space-y-3">
         {renderGame()}
-
         {showFormModal && (
           <Modal 
             onClose={() => setShowFormModal(false)} 
             title={campaign.screens[1]?.title || 'Vos informations'}
             contained={modalContained}
+            noOverlay // <-- AJOUT ICI pour retirer le masque sur mobile/tablette
           >
             <DynamicContactForm 
               fields={fields} 
@@ -269,9 +257,7 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
           )}
         </ContrastBackground>
       )}
-
       {renderGame()}
-
       {showFormModal && (
         <Modal 
           onClose={() => setShowFormModal(false)} 
