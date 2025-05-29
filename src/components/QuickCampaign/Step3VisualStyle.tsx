@@ -186,7 +186,7 @@ const Step3VisualStyle: React.FC = () => {
         </motion.div>
       </div>;
   }
-  return <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-[#faf6fa] via-[#f6eff7] to-[#841b60]/5 p-6\n">
+  return <div className="items-center justify-center ">
       <div className="max-w-5xl w-full rounded-3xl bg-slate-50 px-[21px]">
         <motion.div initial={{
         opacity: 0,
