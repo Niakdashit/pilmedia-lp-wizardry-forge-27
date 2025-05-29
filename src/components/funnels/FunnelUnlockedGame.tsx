@@ -180,7 +180,7 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
         </div>
 
         {!formValidated && (
-          <div onClick={handleGameButtonClick} className="absolute inset-0 flex items-center justify-center z-30 rounded-lg cursor-pointer" />
+          <div onClick={handleGameButtonClick} className="absolute inset-0 flex items-center justify-center z-30 rounded-lg cursor-pointer bg-black/0" />
         )}
 
         <ValidationMessage
