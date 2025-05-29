@@ -107,9 +107,13 @@ const Jackpot: React.FC<JackpotProps> = ({
     return <div><p>Pas de configuration pour le moment.</p></div>;
   }
 
-  // Récupération du template SVG
-  const templateImg = selectedTemplate && jackpotTemplates[selectedTemplate] ? jackpotTemplates[selectedTemplate] : null;
+  // Récupération du template SVG - vérifier que c'est une chaîne valide
+  const templateImg = selectedTemplate && typeof selectedTemplate === 'string' && jackpotTemplates[selectedTemplate] 
+    ? jackpotTemplates[selectedTemplate] 
+    : null;
+
   console.log('Template image selected:', templateImg);
+  console.log('Template type check:', typeof selectedTemplate, selectedTemplate);
 
   // Responsive slot size calculation
   const getSlotSize = () => {
@@ -126,7 +130,7 @@ const Jackpot: React.FC<JackpotProps> = ({
     <div className="relative w-full h-full min-h-[400px] flex items-center justify-center p-4">
       {/* Template SVG en arrière-plan - Position absolue pour couvrir tout le conteneur */}
       {templateImg && (
-        <div className="absolute inset-0 w-full h-full flex items-center justify-center">
+        <div className="absolute inset-0 w-full h-full flex items-center justify-center z-10">
           <img
             src={templateImg}
             alt="Template jackpot"
@@ -139,14 +143,14 @@ const Jackpot: React.FC<JackpotProps> = ({
       {/* Image de fond personnalisée */}
       {backgroundImage && (
         <div
-          className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat"
+          className="absolute inset-0 w-full h-full bg-cover bg-center bg-no-repeat z-0"
           style={{ backgroundImage: `url(${backgroundImage})` }}
         />
       )}
 
       {/* Template personnalisé overlay */}
       {customTemplate && (
-        <div className="absolute inset-0 w-full h-full flex items-center justify-center">
+        <div className="absolute inset-0 w-full h-full flex items-center justify-center z-10">
           <img
             src={customTemplate}
             alt="Jackpot template personnalisé"

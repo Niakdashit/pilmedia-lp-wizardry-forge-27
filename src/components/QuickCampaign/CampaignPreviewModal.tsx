@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { X, Monitor, Smartphone, Tablet } from 'lucide-react';
@@ -15,12 +14,14 @@ const CampaignPreviewModal: React.FC<CampaignPreviewModalProps> = ({
   onClose
 }) => {
   const [selectedDevice, setSelectedDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
-  const { selectedGameType, campaignName, selectedTheme, backgroundImage } = useQuickCampaignStore();
+  const { selectedGameType, campaignName, selectedTheme, selectedTemplate, backgroundImage } = useQuickCampaignStore();
 
   if (!isOpen) return null;
 
   // Convertir le File en URL si une image de fond est présente
   const backgroundImageUrl = backgroundImage ? URL.createObjectURL(backgroundImage) : null;
+
+  console.log('CampaignPreviewModal - selectedTemplate from store:', selectedTemplate);
 
   // Créer un objet campagne basé sur les données du quick campaign store
   const previewCampaign = {
@@ -29,6 +30,7 @@ const CampaignPreviewModal: React.FC<CampaignPreviewModalProps> = ({
     type: selectedGameType || 'jackpot',
     design: {
       theme: selectedTheme || 'moderne',
+      template: selectedTemplate, // Template directement depuis le store
       background: selectedTheme === 'creatif' ? '#f0f9ff' :
                  selectedTheme === 'elegant' ? '#faf7ff' :
                  selectedTheme === 'ludique' ? '#fff7ed' : '#ebf4f7',
@@ -36,7 +38,7 @@ const CampaignPreviewModal: React.FC<CampaignPreviewModalProps> = ({
                  selectedTheme === 'elegant' ? '#6366f1' :
                  selectedTheme === 'ludique' ? '#f59e0b' : '#0ea5e9',
       blockColor: '#ffffff',
-      backgroundImage: backgroundImageUrl // Ajouter l'image de fond
+      backgroundImage: backgroundImageUrl
     },
     screens: {
       1: {
@@ -50,6 +52,7 @@ const CampaignPreviewModal: React.FC<CampaignPreviewModalProps> = ({
     },
     gameConfig: {
       [selectedGameType || 'jackpot']: {
+        template: selectedTemplate, // Template aussi dans gameConfig pour jackpot
         // Configuration par défaut selon le type de jeu
         ...(selectedGameType === 'wheel' && {
           segments: [
@@ -60,11 +63,11 @@ const CampaignPreviewModal: React.FC<CampaignPreviewModalProps> = ({
           ]
         }),
         ...(selectedGameType === 'scratch' && {
-          backgroundImage: backgroundImageUrl, // Ajouter l'image de fond pour scratch aussi
+          backgroundImage: backgroundImageUrl,
           revealPercentage: 50
         }),
         ...(selectedGameType === 'jackpot' && {
-          backgroundImage: backgroundImageUrl, // Ajouter l'image de fond pour jackpot
+          backgroundImage: backgroundImageUrl,
           instantWin: {
             enabled: true,
             probability: 10
@@ -73,6 +76,8 @@ const CampaignPreviewModal: React.FC<CampaignPreviewModalProps> = ({
       }
     }
   };
+
+  console.log('Preview campaign object:', previewCampaign);
 
   const getDevicePreviewStyle = () => {
     switch (selectedDevice) {
