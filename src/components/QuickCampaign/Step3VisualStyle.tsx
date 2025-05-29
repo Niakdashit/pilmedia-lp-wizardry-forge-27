@@ -186,8 +186,8 @@ const Step3VisualStyle: React.FC = () => {
         </motion.div>
       </div>;
   }
-  return <div className="items-center justify-center ">
-      <div className="max-w-5xl w-full rounded-3xl bg-slate-50 px-[12px] my-0 py-[10px] position-center">
+  return <div className="min-h-screen w-full flex items-center justify-center bg-gradient-to-br from-[#faf6fa] via-[#f6eff7] to-[#841b60]/5 p-6\n">
+      <div className="max-w-5xl w-full">
         <motion.div initial={{
         opacity: 0,
         y: 30
@@ -197,10 +197,10 @@ const Step3VisualStyle: React.FC = () => {
       }} transition={{
         duration: 0.6
       }} className="text-center mb-12">
-          <h1 className="text-5xl font-bold mb-4 my-[22px] text-[#841b60]">
+          <h1 className="text-5xl font-bold text-gray-900 mb-4">
             Choisissez un thème pour votre campagne
           </h1>
-          <p className="text-xl text-[#841b60] font-normal">
+          <p className="text-xl text-gray-600">
             Donnez vie à votre expérience avec un style visuel adapté.
           </p>
         </motion.div>
@@ -214,7 +214,7 @@ const Step3VisualStyle: React.FC = () => {
       }} transition={{
         duration: 0.5,
         delay: 0.2
-      }} className="bg-white rounded-3xl shadow-xl p-8 space-y-8 px-[29px]">
+      }} className="bg-white rounded-3xl shadow-xl p-8 space-y-8">
           {/* Choix des thèmes */}
           <div>
             <h3 className="text-xl font-semibold text-gray-900 mb-6">Thèmes prédéfinis</h3>
@@ -280,7 +280,7 @@ const Step3VisualStyle: React.FC = () => {
             <div className="w-8 h-1 bg-gray-300 rounded-full"></div>
             <div className="w-8 h-1 bg-blue-500 rounded-full"></div>
           </div>
-          <p className="mt-2 text-sm text-gray-500 font-normal">Étape 3 sur 3</p>
+          <p className="mt-2 text-sm text-gray-500">Étape 3 sur 3</p>
         </motion.div>
       </div>
     </div>;
