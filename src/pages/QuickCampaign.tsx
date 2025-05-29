@@ -1,6 +1,8 @@
 import React, { useEffect } from 'react';
 import QuickCampaignCreator from '../components/QuickCampaign/QuickCampaignCreator';
 import { useQuickCampaignStore } from '../stores/quickCampaignStore';
+// 👇 Importe l'image depuis les assets
+import FondQuick from '../assets/FondQuick.jpg';
 
 const QuickCampaign: React.FC = () => {
   const { reset } = useQuickCampaignStore();
@@ -13,10 +15,10 @@ const QuickCampaign: React.FC = () => {
     <div
       className="min-h-screen flex items-center justify-center p-6"
       style={{
-        backgroundImage: 'url("/bg-photo.png")', // Chemin relatif au dossier public
+        backgroundImage: `url(${FondQuick})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
+        backgroundRepeat: 'no-repeat',
       }}
     >
       <div className="w-full">
