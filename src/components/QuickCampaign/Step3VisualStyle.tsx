@@ -5,8 +5,13 @@ import { useNavigate } from 'react-router-dom';
 import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
 import { useCampaigns } from '../../hooks/useCampaigns';
 import CampaignPreviewModal from './CampaignPreviewModal';
+
+// 👉 IMPORTS SVG
 import Tjackpot1 from '../../assets/templates/Tjackpot1.svg';
 import Tjackpot2 from '../../assets/templates/Tjackpot2.svg';
+import Tjackpot3 from '../../assets/templates/Tjackpot3.svg';
+import Tjackpot4 from '../../assets/templates/Tjackpot4.svg';
+import Tjackpot5 from '../../assets/templates/Tjackpot5.svg';
 
 // ----------- MAPPING CORRIGÉ : Jackpot a des images réelles ----------- //
 const templatesByMechanic: Record<string, Array<{
@@ -17,13 +22,13 @@ const templatesByMechanic: Record<string, Array<{
   preview?: string;
   borderColor: string;
   glowColor: string;
-  image?: string; // <-- Ajout pour afficher le mockup réel
+  image?: string;
 }>> = {
   jackpot: [
     {
       id: 'Tjackpot1',
-      name: 'Jackpot Casino',
-      description: 'Effet machine à sous casino, ambiance festive.',
+      name: 'Jackpot Classic',
+      description: 'Template classique de machine à sous.',
       image: Tjackpot1,
       borderColor: 'border-yellow-400',
       glowColor: 'shadow-yellow-400/30'
@@ -31,10 +36,34 @@ const templatesByMechanic: Record<string, Array<{
     {
       id: 'Tjackpot2',
       name: 'Jackpot Vegas',
-      description: 'Look Vegas, couleurs néon, lumière.',
+      description: 'Ambiance Vegas, couleurs néon.',
       image: Tjackpot2,
       borderColor: 'border-pink-400',
       glowColor: 'shadow-pink-400/30'
+    },
+    {
+      id: 'Tjackpot3',
+      name: 'Jackpot Luxe',
+      description: 'Version haut de gamme, effet doré.',
+      image: Tjackpot3,
+      borderColor: 'border-yellow-500',
+      glowColor: 'shadow-yellow-500/30'
+    },
+    {
+      id: 'Tjackpot4',
+      name: 'Jackpot Fun',
+      description: 'Style cartoon, parfait pour les familles.',
+      image: Tjackpot4,
+      borderColor: 'border-blue-400',
+      glowColor: 'shadow-blue-400/30'
+    },
+    {
+      id: 'Tjackpot5',
+      name: 'Jackpot Minimal',
+      description: 'Design minimaliste et épuré.',
+      image: Tjackpot5,
+      borderColor: 'border-gray-400',
+      glowColor: 'shadow-gray-400/30'
     }
   ],
   quiz: [
@@ -94,8 +123,7 @@ const templatesByMechanic: Record<string, Array<{
       borderColor: 'border-blue-400',
       glowColor: 'shadow-blue-300/30'
     }
-  ],
-  // ...autres mécaniques à compléter
+  ]
 };
 
 const Step3VisualStyle: React.FC = () => {
