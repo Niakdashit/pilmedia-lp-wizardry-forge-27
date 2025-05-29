@@ -148,7 +148,7 @@ const Jackpot: React.FC<JackpotProps> = ({
           alt="Template jackpot"
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0"
           style={{
-            width: '620px',         // ↖️ Modifie ici la largeur souhaitée pour desktop
+            width: '640px',         // ↖️ Modifie ici la largeur souhaitée pour desktop
             maxWidth: '90vw',
             height: '600px',        // ↖️ Modifie ici la hauteur souhaitée pour desktop
             maxHeight: '75vh',
