@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Upload, Eye, Settings, Sparkles, CheckCircle } from 'lucide-react';
@@ -78,12 +77,6 @@ const Step3VisualStyle: React.FC = () => {
   };
 
   const handlePreview = () => {
-    const campaignData = {
-      name: campaignName,
-      selectedGameType,
-      theme: selectedTheme,
-      configured: true
-    };
     setShowPreview(true);
   };
 
