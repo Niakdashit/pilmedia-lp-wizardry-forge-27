@@ -124,7 +124,7 @@ const Jackpot: React.FC<JackpotProps> = ({
   const slotGap = Math.max(8, slotSize * 0.15);
 
   const containerStyle: any = {
-    minHeight: '200px',
+    minHeight: '400px',
     position: 'relative',
     width: '100%',
     height: '100%'
@@ -139,13 +139,13 @@ const Jackpot: React.FC<JackpotProps> = ({
 
   return (
     <div style={containerStyle} className="flex flex-col items-center justify-center w-full h-full p-2 px-0">
-      {/* Template SVG en arrière-plan */}
+      {/* Template SVG en arrière-plan avec taille correcte */}
       {templateImg && (
         <img
           src={templateImg}
           alt="Template jackpot"
-          className="absolute inset-0 w-full h-full object-contain pointer-events-none z-0"
-          style={{ opacity: 0.8 }}
+          className="absolute inset-0 w-full h-full object-cover pointer-events-none z-0"
+          style={{ opacity: 0.9 }}
         />
       )}
 
@@ -154,7 +154,7 @@ const Jackpot: React.FC<JackpotProps> = ({
         <img
           src={customTemplate}
           alt="Jackpot template personnalisé"
-          className="absolute inset-0 w-full h-full object-contain pointer-events-none z-10"
+          className="absolute inset-0 w-full h-full object-cover pointer-events-none z-10"
         />
       )}
 

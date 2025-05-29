@@ -1,7 +1,7 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { X } from 'lucide-react';
+import { X, Monitor, Tablet, Smartphone } from 'lucide-react';
 import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
 import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
 
@@ -14,6 +14,8 @@ const CampaignPreviewModal: React.FC<CampaignPreviewModalProps> = ({
   isOpen,
   onClose
 }) => {
+  const [selectedDevice, setSelectedDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
+  
   const {
     selectedGameType,
     campaignName,
@@ -90,34 +92,96 @@ const CampaignPreviewModal: React.FC<CampaignPreviewModalProps> = ({
   console.log('Preview campaign data:', mockCampaign);
   console.log('Selected theme in preview:', selectedTheme);
 
+  const renderDesktopPreview = () => (
+    <div className="w-full h-full flex items-center justify-center bg-gray-50">
+      <div className="max-w-lg mx-auto">
+        <FunnelUnlockedGame
+          campaign={mockCampaign}
+          modalContained={true}
+        />
+      </div>
+    </div>
+  );
+
+  const renderMobilePreview = () => (
+    <div className="w-full h-full flex items-center justify-center p-4 bg-gray-50">
+      <div className={`bg-white rounded-3xl shadow-2xl overflow-hidden ${
+        selectedDevice === 'tablet' ? 'w-80 h-96' : 'w-72 h-[500px]'
+      }`}>
+        <div className="w-full h-full">
+          <FunnelUnlockedGame
+            campaign={mockCampaign}
+            modalContained={true}
+            mobileConfig={{ contrastBackground: { enabled: true } }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <motion.div
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.9 }}
-        className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden"
+        className="bg-white w-full h-full flex flex-col relative overflow-hidden rounded-3xl shadow-2xl max-w-7xl max-h-[90vh]"
       >
-        {/* Header */}
-        <div className="bg-gradient-to-r from-[#841b60] to-pink-500 p-6 text-white relative">
+        {/* Header avec sélecteur d'appareils */}
+        <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-6 py-4 bg-white border-b border-gray-200 shadow-sm">
+          <div className="flex items-center space-x-4">
+            <h2 className="text-lg font-semibold text-gray-800">Aperçu de la campagne</h2>
+            <span className="text-sm text-gray-500">{campaignName}</span>
+            
+            {/* Device Selector */}
+            <div className="flex items-center space-x-1 bg-gray-100 rounded-lg p-1">
+              <button
+                onClick={() => setSelectedDevice('desktop')}
+                className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  selectedDevice === 'desktop'
+                    ? 'bg-white text-[#841b60] shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                <Monitor className="w-4 h-4" />
+                <span>Desktop</span>
+              </button>
+              <button
+                onClick={() => setSelectedDevice('tablet')}
+                className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  selectedDevice === 'tablet'
+                    ? 'bg-white text-[#841b60] shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                <Tablet className="w-4 h-4" />
+                <span>Tablette</span>
+              </button>
+              <button
+                onClick={() => setSelectedDevice('mobile')}
+                className={`flex items-center space-x-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${
+                  selectedDevice === 'mobile'
+                    ? 'bg-white text-[#841b60] shadow-sm'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                <Smartphone className="w-4 h-4" />
+                <span>Mobile</span>
+              </button>
+            </div>
+          </div>
+
           <button
             onClick={onClose}
-            className="absolute top-6 right-6 text-white hover:text-gray-200 transition-colors"
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"
           >
-            <X className="w-6 h-6" />
+            <X className="w-5 h-5" />
           </button>
-          <h2 className="text-2xl font-bold">Aperçu de la campagne</h2>
-          <p className="text-pink-100 mt-2">{campaignName}</p>
         </div>
 
         {/* Preview Content */}
-        <div className="p-8 overflow-y-auto max-h-[70vh]">
-          <div className="max-w-lg mx-auto">
-            <FunnelUnlockedGame
-              campaign={mockCampaign}
-              modalContained={true}
-            />
-          </div>
+        <div className="flex-1 pt-20 overflow-auto">
+          {selectedDevice === 'desktop' ? renderDesktopPreview() : renderMobilePreview()}
         </div>
       </motion.div>
     </div>
