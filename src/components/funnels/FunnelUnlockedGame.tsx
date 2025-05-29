@@ -36,15 +36,6 @@ const DEFAULT_FIELDS: FieldConfig[] = [{
   required: true
 }];
 
-// --- MAPPING ID <=> SVG ---
-const jackpotTemplates: Record<string, any> = {
-  Tjackpot1,
-  Tjackpot2,
-  Tjackpot3,
-  Tjackpot4,
-  Tjackpot5
-};
-
 interface GameFunnelProps {
   campaign: any;
   modalContained?: boolean;
