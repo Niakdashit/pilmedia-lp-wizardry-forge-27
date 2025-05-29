@@ -63,7 +63,7 @@ const Step1GameSelection: React.FC = () => {
     }, 300);
   };
   return <div className="min-h-screen w-full flex items-center justify-center p-6">
-      <div className="max-w-7xl w-full">
+      <div className="max-w-7xl w-full py-0">
         <motion.div initial={{
         opacity: 0,
         y: 30
@@ -79,9 +79,7 @@ const Step1GameSelection: React.FC = () => {
           <p className="mb-3 text-white text-xl">
             Vous êtes à 2 clics de lancer une campagne interactive.
           </p>
-          <p className="text-white text-base">
-            Aucune compétence technique requise.
-          </p>
+          
         </motion.div>
 
         <motion.div initial={{
