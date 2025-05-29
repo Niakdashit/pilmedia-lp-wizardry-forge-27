@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
@@ -127,7 +126,10 @@ const Jackpot: React.FC<JackpotProps> = ({
     minHeight: '400px',
     position: 'relative',
     width: '100%',
-    height: '100%'
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
   };
 
   if (backgroundImage) {
@@ -139,13 +141,20 @@ const Jackpot: React.FC<JackpotProps> = ({
 
   return (
     <div style={containerStyle} className="flex flex-col items-center justify-center w-full h-full p-2 px-0">
-      {/* Template SVG en arrière-plan avec taille correcte */}
+      {/* Template SVG en arrière-plan AVEC taille agrandie, centrée, object-contain */}
       {templateImg && (
         <img
           src={templateImg}
           alt="Template jackpot"
-          className="absolute inset-0 w-full h-full object-cover pointer-events-none z-0"
-          style={{ opacity: 0.9 }}
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0"
+          style={{
+            width: '420px',         // ↖️ Modifie ici la largeur souhaitée pour desktop
+            maxWidth: '90vw',
+            height: '380px',        // ↖️ Modifie ici la hauteur souhaitée pour desktop
+            maxHeight: '75vh',
+            objectFit: 'contain',
+            opacity: 0.97
+          }}
         />
       )}
 
