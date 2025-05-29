@@ -6,42 +6,33 @@ import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
 import { useCampaigns } from '../../hooks/useCampaigns';
 import CampaignPreviewModal from './CampaignPreviewModal';
 
-// ----------- AJOUT: Mapping des templates par mécanique ----------- //
+// ----------- MAPPING CORRIGÉ : Jackpot a des images réelles ----------- //
 const templatesByMechanic: Record<string, Array<{
   id: string;
   name: string;
   description: string;
-  colors: { primary: string; secondary: string; background: string };
-  preview: string; // className Tailwind, ou chemin image si tu préfères
+  colors?: { primary: string; secondary: string; background: string };
+  preview?: string;
   borderColor: string;
   glowColor: string;
+  image?: string; // <-- Ajout pour afficher le mockup réel
 }>> = {
   jackpot: [
     {
-      id: 'casino',
-      name: 'Casino Festif',
-      description: 'Ambiance casino, couleurs vives, effet jackpot.',
-      colors: {
-        primary: '#ec4899',
-        secondary: '#f59e0b',
-        background: '#fef3c7'
-      },
-      preview: 'bg-gradient-to-br from-pink-500 to-yellow-400',
-      borderColor: 'border-pink-400',
-      glowColor: 'shadow-pink-500/30'
-    },
-    {
-      id: 'premium',
-      name: 'Premium Gold',
-      description: 'Style haut de gamme, dorures et élégance.',
-      colors: {
-        primary: '#ffd700',
-        secondary: '#b58900',
-        background: '#fffbe6'
-      },
-      preview: 'bg-gradient-to-br from-yellow-400 to-amber-200',
+      id: 'Tjackpot1',
+      name: 'Jackpot Casino',
+      description: 'Effet machine à sous casino, ambiance festive.',
+      image: require('../../assets/templates/Tjackpot1.svg').default,
       borderColor: 'border-yellow-400',
       glowColor: 'shadow-yellow-400/30'
+    },
+    {
+      id: 'Tjackpot2',
+      name: 'Jackpot Vegas',
+      description: 'Look Vegas, couleurs néon, lumière.',
+      image: require('../../assets/templates/Tjackpot2.svg').default,
+      borderColor: 'border-pink-400',
+      glowColor: 'shadow-pink-400/30'
     }
   ],
   quiz: [
@@ -102,7 +93,7 @@ const templatesByMechanic: Record<string, Array<{
       glowColor: 'shadow-blue-300/30'
     }
   ],
-  // Ajoute ici d’autres mécaniques comme 'formulaire', 'scratch', etc. si besoin
+  // ...autres mécaniques à compléter
 };
 
 const Step3VisualStyle: React.FC = () => {
@@ -127,7 +118,6 @@ const Step3VisualStyle: React.FC = () => {
   const [showPreview, setShowPreview] = useState(false);
   const [creationSuccess, setCreationSuccess] = useState(false);
 
-  // ----------- AJOUT: Afficher les templates selon la mécanique sélectionnée ----------- //
   const currentTemplates =
     templatesByMechanic[selectedGameType || 'quiz'] ||
     templatesByMechanic['quiz'];
@@ -344,9 +334,17 @@ const Step3VisualStyle: React.FC = () => {
                     }
                   `}
                 >
-                  <div
-                    className={`w-full h-32 rounded-2xl mb-6 ${template.preview} shadow-lg`}
-                  />
+                  {template.image ? (
+                    <img
+                      src={template.image}
+                      alt={template.name}
+                      className="w-full h-32 object-contain rounded-2xl mb-6 shadow-lg bg-white"
+                    />
+                  ) : (
+                    <div
+                      className={`w-full h-32 rounded-2xl mb-6 ${template.preview} shadow-lg`}
+                    />
+                  )}
                   <h4 className="font-bold text-xl text-gray-900 mb-3">
                     {template.name}
                   </h4>
