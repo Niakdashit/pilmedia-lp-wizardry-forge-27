@@ -63,7 +63,7 @@ const Step1GameSelection: React.FC = () => {
     }, 300);
   };
   return <div className="min-h-screen w-full flex items-center justify-center p-6">
-      <div className="max-w-7xl w-full py-0">
+      <div className="max-w-7xl w-full">
         <motion.div initial={{
         opacity: 0,
         y: 30
@@ -73,13 +73,15 @@ const Step1GameSelection: React.FC = () => {
       }} transition={{
         duration: 0.6
       }} className="text-center mb-16 bg-white/0">
-          <h1 className="font-bold mb-6 text-white text-2xl">
+          <h1 className="text-6xl font-bold mb-6 text-white">
             Quel type d'expérience voulez-vous créer ?
           </h1>
-          <p className="mb-3 text-white text-xl">
+          <p className="text-2xl mb-3 text-white">
             Vous êtes à 2 clics de lancer une campagne interactive.
           </p>
-          
+          <p className="text-xl text-white">
+            Aucune compétence technique requise.
+          </p>
         </motion.div>
 
         <motion.div initial={{
