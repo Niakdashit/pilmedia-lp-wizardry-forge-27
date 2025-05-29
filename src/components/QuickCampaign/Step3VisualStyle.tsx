@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Upload, Eye, Settings, Sparkles, CheckCircle } from 'lucide-react';
@@ -248,10 +247,10 @@ const Step3VisualStyle: React.FC = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h1 className="text-6xl font-bold mb-6 text-gray-900">
+          <h1 className="text-6xl font-bold mb-6 text-[#841b60]">
             Choisissez un thème pour votre campagne
           </h1>
-          <p className="text-2xl text-gray-700">
+          <p className="text-2xl text-[#841b60]/80">
             Donnez vie à votre expérience avec un style visuel adapté.
           </p>
         </motion.div>
@@ -367,7 +366,7 @@ const Step3VisualStyle: React.FC = () => {
             <div className="w-12 h-2 bg-gray-300 rounded-full"></div>
             <div className="w-12 h-2 bg-gradient-to-r from-[#841b60] to-pink-500 rounded-full"></div>
           </div>
-          <p className="text-lg text-gray-700 font-medium">Étape 3 sur 3</p>
+          <p className="text-lg text-gray-500 font-medium">Étape 3 sur 3</p>
         </motion.div>
       </div>
     </div>
