@@ -56,6 +56,10 @@ const Jackpot: React.FC<JackpotProps> = ({
   const [isRolling, setIsRolling] = useState(false);
   const [result, setResult] = useState<'win' | 'lose' | null>(null);
 
+  // Debug logs
+  console.log('Jackpot component - selectedTemplate:', selectedTemplate);
+  console.log('Jackpot component - available templates:', Object.keys(jackpotTemplates));
+
   const roll = () => {
     if (isRolling || result) return;
     
@@ -106,6 +110,7 @@ const Jackpot: React.FC<JackpotProps> = ({
 
   // Récupération du template SVG
   const templateImg = selectedTemplate ? jackpotTemplates[selectedTemplate] : undefined;
+  console.log('Template image selected:', templateImg);
 
   // Responsive slot size calculation
   const getSlotSize = () => {
@@ -140,6 +145,7 @@ const Jackpot: React.FC<JackpotProps> = ({
           src={templateImg}
           alt="Template jackpot"
           className="absolute inset-0 w-full h-full object-contain pointer-events-none z-0"
+          style={{ opacity: 0.8 }}
         />
       )}
 
