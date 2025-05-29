@@ -19,9 +19,9 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
     switch (previewMode) {
       case 'mobile':
         return {
-          width: '320px',
-          height: '640px',
-          borderRadius: '24px',
+          width: '375px',
+          height: '667px',
+          borderRadius: '36px',
           border: '8px solid #1f1f1f',
           boxShadow: '0 8px 32px rgba(0,0,0,0.3)',
           backgroundColor: '#000',
@@ -32,9 +32,9 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
         };
       case 'tablet':
         return {
-          width: '400px',
-          height: '720px',
-          borderRadius: '20px',
+          width: '450px',
+          height: '600px',
+          borderRadius: '24px',
           border: '6px solid #333',
           boxShadow: '0 6px 24px rgba(0,0,0,0.25)',
           backgroundColor: '#000',
@@ -50,7 +50,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
     const backgroundStyle: any = {
       width: '100%',
       height: '100%',
-      borderRadius: previewMode === 'mobile' ? '16px' : '14px',
+      borderRadius: previewMode === 'mobile' ? '28px' : '18px',
       overflow: 'hidden',
       position: 'relative',
       backgroundColor: mobileConfig.backgroundColor || '#ebf4f7',
@@ -72,8 +72,8 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
   const getContentLayoutStyle = () => {
     const gamePosition = mobileConfig.gamePosition || 'center';
     const textPosition = mobileConfig.textPosition || 'top';
-    const verticalSpacing = mobileConfig.verticalSpacing || 20;
-    const horizontalPadding = Math.max(12, mobileConfig.horizontalPadding || 16);
+    const verticalSpacing = mobileConfig.verticalSpacing || 24;
+    const horizontalPadding = Math.max(16, mobileConfig.horizontalPadding || 20);
 
     let flexDirection: 'column' | 'column-reverse' = 'column';
     let justifyContent = 'flex-start';
@@ -94,21 +94,12 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
       justifyContent,
       alignItems: 'center',
       height: '100%',
-      gap: `${Math.max(12, verticalSpacing)}px`,
+      gap: `${Math.max(16, verticalSpacing)}px`,
       padding: `${horizontalPadding}px`,
       overflowY: 'auto' as const,
       position: 'relative' as const,
       zIndex: 10,
       minHeight: '100%'
-    };
-  };
-
-  const getTextBlockStyle = () => {
-    return {
-      textAlign: 'center' as const,
-      maxWidth: '100%',
-      width: '100%',
-      flexShrink: 0
     };
   };
 
@@ -121,8 +112,8 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
       alignItems: 'center',
       position: 'relative' as const,
       flexGrow: 1,
-      minHeight: previewMode === 'mobile' ? '250px' : '300px',
-      maxHeight: previewMode === 'mobile' ? '350px' : '400px'
+      minHeight: previewMode === 'mobile' ? '280px' : '320px',
+      maxHeight: previewMode === 'mobile' ? '400px' : '450px'
     };
   };
 
@@ -148,14 +139,14 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
       <ContrastBackground
         enabled={contrastBg.enabled}
         config={contrastBg}
-        style={getTextBlockStyle()}
+        className="text-center max-w-full w-full flex-shrink-0 px-2"
       >
         {mobileConfig.showTitle !== false && (
           <h2 
             className={`font-bold mb-3 ${mobileConfig.titleAlignment || 'text-center'}`}
             style={{ 
               color: mobileConfig.titleColor || '#000000',
-              fontSize: previewMode === 'mobile' ? '1.25rem' : '1.5rem',
+              fontSize: previewMode === 'mobile' ? '1.4rem' : '1.6rem',
               lineHeight: '1.3',
               fontWeight: mobileConfig.titleWeight === 'font-normal' ? 'normal' :
                          mobileConfig.titleWeight === 'font-medium' ? '500' :
@@ -171,7 +162,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
             className={mobileConfig.descriptionAlignment || 'text-center'}
             style={{ 
               color: mobileConfig.descriptionColor || '#666666',
-              fontSize: previewMode === 'mobile' ? '0.875rem' : '1rem',
+              fontSize: previewMode === 'mobile' ? '0.95rem' : '1.1rem',
               lineHeight: '1.4'
             }}
           >
@@ -226,8 +217,8 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
               alt="Logo" 
               className="object-contain"
               style={{
-                width: previewMode === 'mobile' ? '48px' : '64px',
-                height: previewMode === 'mobile' ? '48px' : '64px'
+                width: previewMode === 'mobile' ? '56px' : '72px',
+                height: previewMode === 'mobile' ? '56px' : '72px'
               }}
             />
           </div>
