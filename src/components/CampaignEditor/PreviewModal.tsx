@@ -23,13 +23,8 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
     return <FunnelStandard campaign={campaign} />;
   };
 
-  // Récupérer l'image de fond du jeu et de la conception générale
-  const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage || 
-                              campaign.design?.backgroundImage;
-  
-  // Récupérer le template personnalisé (notamment pour jackpot)
-  const customTemplate = campaign.gameConfig?.[campaign.type]?.customTemplate ||
-                         campaign.gameConfig?.[campaign.type]?.jackpotTemplate;
+  // Récupérer UNIQUEMENT l'image de fond générale (pas celle du jeu pour éviter la duplication)
+  const backgroundImage = campaign.design?.backgroundImage;
 
   const getBackgroundStyle = () => {
     const style: any = {
@@ -39,8 +34,8 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
       backgroundColor: campaign.design?.background || '#ebf4f7'
     };
 
-    if (gameBackgroundImage) {
-      style.backgroundImage = `url(${gameBackgroundImage})`;
+    if (backgroundImage) {
+      style.backgroundImage = `url(${backgroundImage})`;
       style.backgroundSize = 'cover';
       style.backgroundPosition = 'center';
       style.backgroundRepeat = 'no-repeat';
@@ -51,18 +46,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
 
   const renderDesktopPreview = () => (
     <div style={getBackgroundStyle()}>
-      {/* Template personnalisé overlay (pour jackpot, etc.) */}
-      {customTemplate && (
-        <div className="absolute inset-0 z-10 pointer-events-none">
-          <img
-            src={customTemplate}
-            alt="Custom template"
-            className="w-full h-full object-contain"
-          />
-        </div>
-      )}
-
-      {/* Contenu du funnel avec z-index plus élevé */}
+      {/* Contenu du funnel avec z-index élevé pour être au-dessus du background */}
       <div className="relative z-20 w-full h-full flex items-center justify-center">
         {getPreviewFunnel()}
       </div>

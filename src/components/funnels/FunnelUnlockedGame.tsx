@@ -105,8 +105,8 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
     campaign?.selectedTemplate;
 
   const renderGame = () => {
-    const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage;
-    const customTemplate = campaign.gameConfig?.[campaign.type]?.customTemplate;
+    // Pour éviter la duplication d'image, ne pas passer backgroundImage au jeu
+    // L'image de fond est gérée par le conteneur parent
     const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel;
     const buttonColor = campaign.gameConfig?.[campaign.type]?.buttonColor;
     const contrastBg = mobileConfig?.contrastBackground || campaign.screens?.[2]?.contrastBackground;
@@ -118,13 +118,6 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
       minHeight: mobileConfig ? '200px' : '400px',
       maxHeight: mobileConfig ? '300px' : 'none'
     };
-
-    if (gameBackgroundImage) {
-      gameContainerStyle.backgroundImage = `url(${gameBackgroundImage})`;
-      gameContainerStyle.backgroundSize = 'cover';
-      gameContainerStyle.backgroundPosition = 'center';
-      gameContainerStyle.backgroundRepeat = 'no-repeat';
-    }
 
     const gameComponent = (() => {
       const commonProps = {
@@ -144,8 +137,6 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
             instantWinConfig={campaign.gameConfig?.jackpot?.instantWin} 
             buttonLabel={buttonLabel} 
             buttonColor={buttonColor} 
-            backgroundImage={gameBackgroundImage} 
-            customTemplate={customTemplate}
             selectedTemplate={selectedTemplateId}
             {...commonProps} 
           />;
@@ -209,7 +200,6 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
     );
   }
 
-  // --- MODIF ICI : Ajout de la prop noOverlay au Modal sur mobile/tablette
   if (mobileConfig) {
     return (
       <div className="w-full flex flex-col items-center space-y-3">
@@ -219,7 +209,7 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
             onClose={() => setShowFormModal(false)} 
             title={campaign.screens[1]?.title || 'Vos informations'}
             contained={modalContained}
-            noOverlay // <-- AJOUT ICI pour retirer le masque sur mobile/tablette
+            noOverlay
           >
             <DynamicContactForm 
               fields={fields} 
