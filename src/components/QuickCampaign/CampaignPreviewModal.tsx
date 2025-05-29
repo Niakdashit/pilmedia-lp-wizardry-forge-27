@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { X, Monitor, Smartphone, Tablet } from 'lucide-react';
@@ -14,9 +15,12 @@ const CampaignPreviewModal: React.FC<CampaignPreviewModalProps> = ({
   onClose
 }) => {
   const [selectedDevice, setSelectedDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
-  const { selectedGameType, campaignName, selectedTheme } = useQuickCampaignStore();
+  const { selectedGameType, campaignName, selectedTheme, backgroundImage } = useQuickCampaignStore();
 
   if (!isOpen) return null;
+
+  // Convertir le File en URL si une image de fond est présente
+  const backgroundImageUrl = backgroundImage ? URL.createObjectURL(backgroundImage) : null;
 
   // Créer un objet campagne basé sur les données du quick campaign store
   const previewCampaign = {
@@ -31,7 +35,8 @@ const CampaignPreviewModal: React.FC<CampaignPreviewModalProps> = ({
       titleColor: selectedTheme === 'creatif' ? '#8b5cf6' :
                  selectedTheme === 'elegant' ? '#6366f1' :
                  selectedTheme === 'ludique' ? '#f59e0b' : '#0ea5e9',
-      blockColor: '#ffffff'
+      blockColor: '#ffffff',
+      backgroundImage: backgroundImageUrl // Ajouter l'image de fond
     },
     screens: {
       1: {
@@ -55,10 +60,11 @@ const CampaignPreviewModal: React.FC<CampaignPreviewModalProps> = ({
           ]
         }),
         ...(selectedGameType === 'scratch' && {
-          backgroundImage: null,
+          backgroundImage: backgroundImageUrl, // Ajouter l'image de fond pour scratch aussi
           revealPercentage: 50
         }),
         ...(selectedGameType === 'jackpot' && {
+          backgroundImage: backgroundImageUrl, // Ajouter l'image de fond pour jackpot
           instantWin: {
             enabled: true,
             probability: 10
@@ -100,14 +106,20 @@ const CampaignPreviewModal: React.FC<CampaignPreviewModalProps> = ({
   };
 
   const renderPreview = () => {
+    const containerStyle = {
+      backgroundColor: previewCampaign.design.background,
+      borderRadius: selectedDevice === 'desktop' ? '8px' : selectedDevice === 'mobile' ? '14px' : '8px',
+      backgroundImage: backgroundImageUrl ? `url(${backgroundImageUrl})` : undefined,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat'
+    };
+
     if (selectedDevice === 'desktop') {
       return (
         <div 
           className="w-full h-full flex items-center justify-center"
-          style={{ 
-            backgroundColor: previewCampaign.design.background,
-            borderRadius: '8px'
-          }}
+          style={containerStyle}
         >
           <PreviewContent 
             campaign={previewCampaign}
@@ -123,10 +135,7 @@ const CampaignPreviewModal: React.FC<CampaignPreviewModalProps> = ({
         <div style={getDevicePreviewStyle()}>
           <div 
             className="w-full h-full overflow-hidden"
-            style={{ 
-              backgroundColor: previewCampaign.design.background,
-              borderRadius: selectedDevice === 'mobile' ? '14px' : '8px'
-            }}
+            style={containerStyle}
           >
             <PreviewContent 
               campaign={previewCampaign}
