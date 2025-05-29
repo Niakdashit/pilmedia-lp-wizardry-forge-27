@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Modal from '../common/Modal';
 import ValidationMessage from '../common/ValidationMessage';
@@ -7,13 +8,6 @@ import { Wheel, Jackpot } from '../GameTypes';
 import ScratchPreview from '../GameTypes/ScratchPreview';
 import DicePreview from '../GameTypes/DicePreview';
 import { useParticipations } from '../../hooks/useParticipations';
-
-// --- AJOUTS IMPORTS SVG TEMPLATES (mets à jour les chemins/ajouts si besoin) ---
-import Tjackpot1 from '../../assets/templates/Tjackpot1.svg';
-import Tjackpot2 from '../../assets/templates/Tjackpot2.svg';
-import Tjackpot3 from '../../assets/templates/Tjackpot3.svg';
-import Tjackpot4 from '../../assets/templates/Tjackpot4.svg';
-import Tjackpot5 from '../../assets/templates/Tjackpot5.svg';
 
 const DEFAULT_FIELDS: FieldConfig[] = [{
   id: "civilite",
@@ -69,7 +63,7 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
         user_email: formData.email
       });
       if (participation) {
-        // Optionnel : traiter la participation
+        // Optionnel : traiter la participation
       }
     }
     setShowFormModal(false);
