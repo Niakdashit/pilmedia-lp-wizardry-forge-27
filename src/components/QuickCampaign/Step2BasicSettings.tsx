@@ -1,14 +1,38 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Upload, ArrowLeft } from 'lucide-react';
+import { Upload, ArrowLeft, Calendar, Target, FileText, Image } from 'lucide-react';
 import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
 
 const marketingGoals = [
-  { id: 'acquisition', label: 'Acquisition de prospects', description: 'Générer des leads qualifiés' },
-  { id: 'notoriete', label: 'Notoriété de marque', description: 'Faire connaître votre marque' },
-  { id: 'engagement', label: 'Engagement communauté', description: 'Fidéliser votre audience' },
-  { id: 'autre', label: 'Autre objectif', description: 'Objectif personnalisé' }
+  { 
+    id: 'acquisition', 
+    label: 'Acquisition de prospects', 
+    description: 'Générer des leads qualifiés',
+    icon: '🎯',
+    gradient: 'from-blue-500 to-cyan-500'
+  },
+  { 
+    id: 'notoriete', 
+    label: 'Notoriété de marque', 
+    description: 'Faire connaître votre marque',
+    icon: '📢',
+    gradient: 'from-purple-500 to-pink-500'
+  },
+  { 
+    id: 'engagement', 
+    label: 'Engagement communauté', 
+    description: 'Fidéliser votre audience',
+    icon: '❤️',
+    gradient: 'from-red-500 to-orange-500'
+  },
+  { 
+    id: 'autre', 
+    label: 'Autre objectif', 
+    description: 'Objectif personnalisé',
+    icon: '⚡',
+    gradient: 'from-green-500 to-teal-500'
+  }
 ];
 
 const Step2BasicSettings: React.FC = () => {
@@ -41,18 +65,18 @@ const Step2BasicSettings: React.FC = () => {
   const canProceed = campaignName.trim() && launchDate && marketingGoal;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center p-6">
-      <div className="max-w-4xl w-full">
+    <div className="min-h-screen w-full flex items-center justify-center p-6">
+      <div className="max-w-5xl w-full">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-12"
+          className="text-center mb-16"
         >
-          <h1 className="text-5xl font-bold text-gray-900 mb-4">
+          <h1 className="text-6xl font-bold text-[#841b60] mb-6">
             Paramétrez votre campagne en quelques secondes
           </h1>
-          <p className="text-xl text-gray-600">
+          <p className="text-2xl text-[#841b60]/80">
             Vos réglages sont personnalisables à tout moment.
           </p>
         </motion.div>
@@ -61,95 +85,124 @@ const Step2BasicSettings: React.FC = () => {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="bg-white rounded-3xl shadow-xl p-8 space-y-8"
+          className="bg-white/80 backdrop-blur-lg rounded-[32px] shadow-2xl p-10 space-y-10 border border-white/20"
         >
           {/* Nom de la campagne */}
           <div>
-            <label className="block text-lg font-semibold text-gray-900 mb-3">
-              Nom de votre campagne *
-            </label>
+            <div className="flex items-center space-x-3 mb-6">
+              <FileText className="w-8 h-8 text-[#841b60]" />
+              <label className="block text-2xl font-bold text-gray-900">
+                Nom de votre campagne *
+              </label>
+            </div>
             <input
               type="text"
               value={campaignName}
               onChange={(e) => setCampaignName(e.target.value)}
               placeholder="Ex: Jeu de Noël 2024"
-              className="w-full px-6 py-4 text-lg border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors"
+              className="w-full px-8 py-5 text-xl border-2 border-gray-200 rounded-2xl focus:border-[#841b60] focus:outline-none transition-all bg-white/80 backdrop-blur-sm"
             />
           </div>
 
           {/* Date de lancement */}
           <div>
-            <label className="block text-lg font-semibold text-gray-900 mb-3">
-              Date de lancement *
-            </label>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex items-center space-x-3 mb-6">
+              <Calendar className="w-8 h-8 text-[#841b60]" />
+              <label className="block text-2xl font-bold text-gray-900">
+                Date de lancement *
+              </label>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <input
                 type="date"
                 value={launchDate}
                 onChange={(e) => setLaunchDate(e.target.value)}
-                className="px-6 py-4 text-lg border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors"
+                className="px-8 py-5 text-xl border-2 border-gray-200 rounded-2xl focus:border-[#841b60] focus:outline-none transition-all bg-white/80 backdrop-blur-sm"
               />
-              <button
+              <motion.button
+                whileHover={{ scale: 1.02 }}
+                whileTap={{ scale: 0.98 }}
                 onClick={() => setLaunchDate(new Date().toISOString().split('T')[0])}
-                className="px-6 py-4 bg-blue-50 text-blue-600 font-semibold rounded-xl hover:bg-blue-100 transition-colors"
+                className="px-8 py-5 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold rounded-2xl hover:shadow-lg transition-all"
               >
                 Commencer maintenant
-              </button>
+              </motion.button>
             </div>
           </div>
 
           {/* Objectif marketing */}
           <div>
-            <label className="block text-lg font-semibold text-gray-900 mb-3">
-              Objectif marketing *
-            </label>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="flex items-center space-x-3 mb-6">
+              <Target className="w-8 h-8 text-[#841b60]" />
+              <label className="block text-2xl font-bold text-gray-900">
+                Objectif marketing *
+              </label>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {marketingGoals.map((goal) => (
-                <button
+                <motion.button
                   key={goal.id}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={() => setMarketingGoal(goal.id)}
-                  className={`p-4 text-left rounded-xl border-2 transition-all ${
-                    marketingGoal === goal.id
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:border-gray-300'
-                  }`}
+                  className={`
+                    p-6 text-left rounded-2xl border-2 transition-all
+                    bg-white/60 backdrop-blur-sm shadow-lg
+                    ${marketingGoal === goal.id
+                      ? 'border-[#841b60] bg-[#841b60]/10 shadow-xl'
+                      : 'border-gray-200 hover:border-gray-300 hover:shadow-xl'
+                    }
+                  `}
                 >
-                  <div className="font-semibold text-gray-900">{goal.label}</div>
-                  <div className="text-sm text-gray-600 mt-1">{goal.description}</div>
-                </button>
+                  <div className="flex items-start space-x-4">
+                    <div className={`p-3 rounded-xl bg-gradient-to-r ${goal.gradient} text-white text-2xl`}>
+                      {goal.icon}
+                    </div>
+                    <div>
+                      <div className="font-bold text-gray-900 text-lg mb-2">{goal.label}</div>
+                      <div className="text-gray-600">{goal.description}</div>
+                    </div>
+                  </div>
+                </motion.button>
               ))}
             </div>
           </div>
 
           {/* Upload logo */}
           <div>
-            <label className="block text-lg font-semibold text-gray-900 mb-3">
-              Logo (optionnel)
-            </label>
+            <div className="flex items-center space-x-3 mb-6">
+              <Image className="w-8 h-8 text-[#841b60]" />
+              <label className="block text-2xl font-bold text-gray-900">
+                Logo (optionnel)
+              </label>
+            </div>
             <div
               onDrop={handleDrop}
               onDragOver={(e) => { e.preventDefault(); setDragActive(true); }}
               onDragLeave={() => setDragActive(false)}
-              className={`border-2 border-dashed rounded-xl p-8 text-center transition-colors ${
-                dragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300'
-              }`}
+              className={`
+                border-2 border-dashed rounded-3xl p-10 text-center transition-all
+                bg-white/40 backdrop-blur-sm
+                ${dragActive ? 'border-[#841b60] bg-[#841b60]/10' : 'border-gray-300'}
+              `}
             >
-              <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+              <Upload className="w-16 h-16 text-gray-400 mx-auto mb-6" />
               {logoFile ? (
                 <div>
-                  <p className="text-green-600 font-semibold">{logoFile.name}</p>
-                  <button
+                  <p className="text-green-600 font-bold text-lg">{logoFile.name}</p>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
                     onClick={() => setLogoFile(null)}
-                    className="text-sm text-gray-500 hover:text-red-500 mt-2"
+                    className="text-gray-500 hover:text-red-500 mt-3 font-medium"
                   >
                     Supprimer
-                  </button>
+                  </motion.button>
                 </div>
               ) : (
                 <>
-                  <p className="text-gray-600 mb-2">
+                  <p className="text-gray-600 mb-3 text-lg">
                     Glissez votre logo ici ou{' '}
-                    <label className="text-blue-500 cursor-pointer hover:underline">
+                    <label className="text-[#841b60] cursor-pointer hover:underline font-medium">
                       parcourez
                       <input
                         type="file"
@@ -159,48 +212,55 @@ const Step2BasicSettings: React.FC = () => {
                       />
                     </label>
                   </p>
-                  <p className="text-sm text-gray-400">PNG, JPG jusqu'à 5MB</p>
+                  <p className="text-gray-400">PNG, JPG jusqu'à 5MB</p>
                 </>
               )}
             </div>
           </div>
 
           {/* Navigation */}
-          <div className="flex justify-between items-center pt-6">
-            <button
+          <div className="flex justify-between items-center pt-8">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setCurrentStep(1)}
-              className="flex items-center space-x-2 px-6 py-3 text-gray-600 hover:text-gray-900 transition-colors"
+              className="flex items-center space-x-3 px-8 py-4 text-gray-600 hover:text-gray-900 transition-colors font-medium rounded-2xl hover:bg-gray-100"
             >
-              <ArrowLeft className="w-5 h-5" />
+              <ArrowLeft className="w-6 h-6" />
               <span>Retour</span>
-            </button>
+            </motion.button>
 
-            <button
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               onClick={() => setCurrentStep(3)}
               disabled={!canProceed}
-              className={`px-8 py-4 rounded-xl font-semibold transition-all ${
-                canProceed
-                  ? 'bg-blue-500 text-white hover:bg-blue-600'
+              className={`
+                px-12 py-4 rounded-2xl font-bold text-lg transition-all
+                ${canProceed
+                  ? 'bg-gradient-to-r from-[#841b60] to-pink-500 text-white hover:shadow-xl'
                   : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-              }`}
+                }
+              `}
             >
               Continuer
-            </button>
+            </motion.button>
           </div>
         </motion.div>
 
+        {/* Progress indicator */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}
-          className="text-center mt-8"
+          className="text-center mt-12"
         >
-          <div className="flex items-center justify-center space-x-2 text-gray-400">
-            <div className="w-8 h-1 bg-gray-300 rounded-full"></div>
-            <div className="w-8 h-1 bg-blue-500 rounded-full"></div>
-            <div className="w-8 h-1 bg-gray-300 rounded-full"></div>
+          <div className="flex items-center justify-center space-x-3 mb-4">
+            <div className="w-12 h-2 bg-gray-300 rounded-full"></div>
+            <div className="w-12 h-2 bg-gradient-to-r from-[#841b60] to-pink-500 rounded-full"></div>
+            <div className="w-12 h-2 bg-gray-300 rounded-full"></div>
           </div>
-          <p className="mt-2 text-sm text-gray-500">Étape 2 sur 3</p>
+          <p className="text-lg text-gray-500 font-medium">Étape 2 sur 3</p>
         </motion.div>
       </div>
     </div>
