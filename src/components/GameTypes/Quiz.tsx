@@ -11,7 +11,6 @@ interface QuizConfig {
 
 interface QuizProps {
   config?: QuizConfig;
-  onConfigChange?: (config: QuizConfig) => void;
   campaign?: any;
   onComplete?: (score: number, totalQuestions: number) => void;
   onStart?: () => void;
@@ -19,7 +18,6 @@ interface QuizProps {
 
 const Quiz: React.FC<QuizProps> = ({ 
   config = {}, 
-  onConfigChange, 
   campaign,
   onComplete,
   onStart 
