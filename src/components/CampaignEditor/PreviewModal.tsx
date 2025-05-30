@@ -17,7 +17,35 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
   if (!isOpen) return null;
 
   const getPreviewFunnel = () => {
-    if (['wheel', 'scratch', 'jackpot', 'dice'].includes(campaign.type)) {
+    // Pour les jeux avec roue, on passe la configuration complète
+    if (campaign.type === 'wheel') {
+      return <FunnelUnlockedGame campaign={{
+        ...campaign,
+        // S'assurer que la config de la roue est bien transmise
+        config: {
+          ...campaign.config,
+          roulette: campaign.config?.roulette || {
+            segments: [],
+            centerImage: null,
+            theme: 'default',
+            borderColor: '#841b60',
+            pointerColor: '#841b60'
+          }
+        },
+        gameConfig: {
+          ...campaign.gameConfig,
+          wheel: campaign.config?.roulette || campaign.gameConfig?.wheel || {
+            segments: [],
+            centerImage: null,
+            theme: 'default',
+            borderColor: '#841b60',
+            pointerColor: '#841b60'
+          }
+        }
+      }} />;
+    }
+    
+    if (['scratch', 'jackpot', 'dice'].includes(campaign.type)) {
       return <FunnelUnlockedGame campaign={campaign} />;
     }
     return <FunnelStandard campaign={campaign} />;
