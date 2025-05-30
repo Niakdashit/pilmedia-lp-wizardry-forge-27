@@ -34,7 +34,7 @@ const CampaignContent: React.FC<CampaignContentProps> = ({
         return (
           <Quiz
             config={campaign.gameConfig?.quiz}
-            onConfigChange={(config) => updateGameConfig('quiz', config)}
+            campaign={campaign}
           />
         );
       case 'wheel':
@@ -43,28 +43,28 @@ const CampaignContent: React.FC<CampaignContentProps> = ({
         return (
           <Scratch
             config={campaign.gameConfig?.scratch}
-            onConfigChange={(config) => updateGameConfig('scratch', config)}
+            onConfigChange={(config: any) => updateGameConfig('scratch', config)}
           />
         );
       case 'memory':
         return (
           <Memory
             config={campaign.gameConfig?.memory}
-            onConfigChange={(config) => updateGameConfig('memory', config)}
+            onConfigChange={(config: any) => updateGameConfig('memory', config)}
           />
         );
       case 'puzzle':
         return (
           <Puzzle
             config={campaign.gameConfig?.puzzle}
-            onConfigChange={(config) => updateGameConfig('puzzle', config)}
+            onConfigChange={(config: any) => updateGameConfig('puzzle', config)}
           />
         );
       case 'dice':
         return (
           <Dice
             config={campaign.gameConfig?.dice}
-            onConfigChange={(config) => updateGameConfig('dice', config)}
+            onConfigChange={(config: any) => updateGameConfig('dice', config)}
           />
         );
       case 'jackpot':
