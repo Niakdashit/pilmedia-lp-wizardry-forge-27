@@ -133,16 +133,7 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
     if (!footerText?.enabled || !footerText?.text) {
       return null;
     }
-    const getTextSize = () => {
-      switch (footerText.size) {
-        case 'small':
-          return 'text-sm';
-        case 'large':
-          return 'text-2xl';
-        default:
-          return 'text-lg';
-      }
-    };
+
     const frameStyles = footerText.showFrame ? {
       backgroundColor: footerText.frameColor || '#ffffff',
       border: `1px solid ${footerText.frameBorderColor || '#e5e7eb'}`,
