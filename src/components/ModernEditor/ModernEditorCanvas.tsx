@@ -68,6 +68,7 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
             config={gameConfig.wheel}
             gameSize={gameSize}
             gamePosition={gamePosition}
+            previewDevice={previewDevice}
           />
         );
       case 'scratch':
@@ -97,6 +98,130 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
           </div>
         );
     }
+  };
+
+  const renderHeaderBanner = () => {
+    const headerBanner = campaign.design?.headerBanner;
+    if (!headerBanner?.enabled || !headerBanner?.image) {
+      return null;
+    }
+
+    return (
+      <div className="w-full bg-cover bg-center bg-no-repeat" 
+           style={{ 
+             backgroundImage: `url(${headerBanner.image})`,
+             height: headerBanner.height || '120px'
+           }}>
+        {headerBanner.overlay && (
+          <div className="w-full h-full bg-black/20"></div>
+        )}
+      </div>
+    );
+  };
+
+  const renderFooterBanner = () => {
+    const footerBanner = campaign.design?.footerBanner;
+    if (!footerBanner?.enabled || !footerBanner?.image) {
+      return null;
+    }
+
+    return (
+      <div className="w-full bg-cover bg-center bg-no-repeat" 
+           style={{ 
+             backgroundImage: `url(${footerBanner.image})`,
+             height: footerBanner.height || '120px'
+           }}>
+        {footerBanner.overlay && (
+          <div className="w-full h-full bg-black/20"></div>
+        )}
+      </div>
+    );
+  };
+
+  const renderHeaderCustomText = () => {
+    const headerText = campaign.design?.headerText;
+    if (!headerText?.enabled || !headerText?.text) {
+      return null;
+    }
+
+    const getTextSize = () => {
+      switch (headerText.size) {
+        case 'small':
+          return 'text-sm';
+        case 'large':
+          return 'text-2xl';
+        default:
+          return 'text-lg';
+      }
+    };
+
+    const frameStyles = headerText.showFrame ? {
+      backgroundColor: headerText.frameColor || '#ffffff',
+      border: `1px solid ${headerText.frameBorderColor || '#e5e7eb'}`,
+      borderRadius: '8px',
+      padding: '12px 16px',
+      margin: '0 16px',
+      boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+    } : {
+      padding: '12px 16px'
+    };
+
+    return (
+      <div className="w-full flex justify-center" style={frameStyles}>
+        <p
+          className={`${getTextSize()} font-medium text-center`}
+          style={{
+            color: headerText.color || '#000000',
+            fontFamily: campaign.design?.fontFamily || 'Inter'
+          }}
+        >
+          {headerText.text}
+        </p>
+      </div>
+    );
+  };
+
+  const renderFooterCustomText = () => {
+    const footerText = campaign.design?.footerText;
+    if (!footerText?.enabled || !footerText?.text) {
+      return null;
+    }
+
+    const getTextSize = () => {
+      switch (footerText.size) {
+        case 'small':
+          return 'text-sm';
+        case 'large':
+          return 'text-2xl';
+        default:
+          return 'text-lg';
+      }
+    };
+
+    const frameStyles = footerText.showFrame ? {
+      backgroundColor: footerText.frameColor || '#ffffff',
+      border: `1px solid ${footerText.frameBorderColor || '#e5e7eb'}`,
+      borderRadius: '8px',
+      padding: '12px 16px',
+      margin: '0 16px',
+      boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+    } : {
+      padding: '12px 16px'
+    };
+
+    return (
+      <div className="w-full flex justify-center" style={frameStyles}>
+        <p
+          className={`${getTextSize()} font-medium text-center`}
+          style={{
+            color: footerText.color || '#000000',
+            fontFamily: campaign.design?.fontFamily || 'Inter'
+          }}
+        >
+          {footerText.text}
+        </p>
+      </div>
+    );
   };
 
   const renderCustomText = () => {
@@ -182,17 +307,24 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
               <div className="absolute inset-0 bg-black/10"></div>
             )}
             
-            {/* Texte personnalisé */}
-            {renderCustomText()}
-            
-            {/* Contenu par défaut - titre et description */}
-            <div className="relative z-10 p-6 text-center">
-              
+            {/* Header Section */}
+            <div className="relative z-10 w-full">
+              {renderHeaderBanner()}
+              {renderHeaderCustomText()}
             </div>
+            
+            {/* Texte personnalisé (legacy positioning) */}
+            {renderCustomText()}
             
             {/* Zone de jeu repositionnable */}
             <div className="flex-1 relative">
               {renderGamePreview()}
+            </div>
+
+            {/* Footer Section */}
+            <div className="relative z-10 w-full">
+              {renderFooterCustomText()}
+              {renderFooterBanner()}
             </div>
           </div>
         </div>

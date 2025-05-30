@@ -27,6 +27,7 @@ interface WheelPreviewProps {
   onStart?: () => void;
   gameSize?: 'small' | 'medium' | 'large' | 'xlarge';
   gamePosition?: 'top' | 'center' | 'bottom' | 'left' | 'right';
+  previewDevice?: 'desktop' | 'tablet' | 'mobile';
 }
 
 const DEFAULT_FIELDS: FieldConfig[] = [
@@ -68,7 +69,8 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   disabled = false,
   onStart,
   gameSize = 'small',
-  gamePosition = 'center'
+  gamePosition = 'center',
+  previewDevice = 'desktop'
 }) => {
   const segments = campaign?.config?.roulette?.segments || [];
   const centerImage = campaign?.config?.roulette?.centerImage;
@@ -98,10 +100,17 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   const { getGameDimensions } = useGameSize(gameSize);
   const gameDimensions = getGameDimensions();
   
-  // Calculer la taille du canvas en fonction de la plus petite dimension
-  const canvasSize = Math.min(gameDimensions.width, gameDimensions.height) - 60;
+  // Check if we're on mobile/tablet and position is left/right for intentional cropping
+  const isMobileTablet = previewDevice === 'mobile' || previewDevice === 'tablet';
+  const isLeftRightPosition = gamePosition === 'left' || gamePosition === 'right';
+  const shouldCropWheel = isMobileTablet && isLeftRightPosition;
   
-  // Taille du pointeur proportionnelle - moved here to be available everywhere
+  // Adjust canvas size for cropping
+  const baseCanvasSize = Math.min(gameDimensions.width, gameDimensions.height) - 60;
+  const canvasSize = shouldCropWheel ? baseCanvasSize : baseCanvasSize;
+  const displayWidth = shouldCropWheel ? baseCanvasSize * 0.5 : baseCanvasSize;
+  
+  // Taille du pointeur proportionnelle
   const pointerSize = Math.max(30, canvasSize * 0.08);
 
   const {
@@ -150,7 +159,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
         return { 
           ...containerStyle, 
           flexDirection: 'row' as const,
-          left: `${safeMargin}px`, 
+          left: shouldCropWheel ? `-${displayWidth * 0.5}px` : `${safeMargin}px`, 
           top: '50%', 
           transform: 'translateY(-50%)',
           width: `${gameDimensions.width}px`,
@@ -160,13 +169,13 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
         return { 
           ...containerStyle, 
           flexDirection: 'row-reverse' as const,
-          right: `${safeMargin}px`, 
+          right: shouldCropWheel ? `-${displayWidth * 0.5}px` : `${safeMargin}px`, 
           top: '50%', 
           transform: 'translateY(-50%)',
           width: `${gameDimensions.width}px`,
           height: `${gameDimensions.height}px`
         };
-      default: // center - au centre du conteneur
+      default: // center
         return { 
           ...containerStyle, 
           flexDirection: 'column' as const,
@@ -194,7 +203,6 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   };
 
   const handleWheelClick = () => {
-    // If button has a link and is configured to redirect
     if (buttonConfig.link && !formValidated) {
       window.open(buttonConfig.link, '_blank');
       return;
@@ -215,18 +223,17 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
 
     const size = canvas.width;
     const center = size / 2;
-    const radius = center - 30; // Marge fixe de 30px
+    const radius = center - 30;
     const total = segments.length;
     const anglePerSlice = (2 * Math.PI) / total;
     const themeColors = getThemeColors(theme);
 
     ctx.clearRect(0, 0, size, size);
 
-    // Bordure externe avec largeur fixe
     if (theme === 'default') {
       ctx.beginPath();
       ctx.arc(center, center, radius + 8, 0, 2 * Math.PI);
-      ctx.lineWidth = 10; // Largeur fixe comme demandé
+      ctx.lineWidth = 10;
       ctx.strokeStyle = borderColor;
       ctx.stroke();
     }
@@ -247,7 +254,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
         img.onload = () => {
           const angle = startAngle + anglePerSlice / 2;
           const distance = radius - 40;
-          const imgSize = Math.max(40, size * 0.15); // Taille d'image proportionnelle
+          const imgSize = Math.max(40, size * 0.15);
           const x = center + distance * Math.cos(angle) - imgSize / 2;
           const y = center + distance * Math.sin(angle) - imgSize / 2;
 
@@ -266,13 +273,12 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
       ctx.rotate(startAngle + anglePerSlice / 2);
       ctx.textAlign = 'right';
       ctx.fillStyle = 'white';
-      ctx.font = `bold ${Math.max(10, size * 0.035)}px Arial`; // Taille de police proportionnelle
+      ctx.font = `bold ${Math.max(10, size * 0.035)}px Arial`;
       ctx.fillText(seg.label, radius - 20, 5);
       ctx.restore();
     });
 
-    // Cercle central avec taille fixe
-    const centerRadius = 25; // Taille fixe
+    const centerRadius = 25;
     if (centerImage) {
       const img = new Image();
       img.onload = () => {
@@ -289,7 +295,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
       ctx.arc(center, center, centerRadius, 0, 2 * Math.PI);
       ctx.fillStyle = '#fff';
       ctx.strokeStyle = borderColor;
-      ctx.lineWidth = 2; // Largeur fixe comme demandé
+      ctx.lineWidth = 2;
       ctx.stroke();
     }
   };
@@ -351,18 +357,21 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
     );
   }
 
-  // Don't render button if it's set to invisible
   if (!buttonConfig.visible) {
     return (
       <div style={getAbsolutePositionStyles()}>
-        <div style={{ position: 'relative', width: canvasSize, height: canvasSize }}>
-          {/* Conteneur pour l'ombre - SOUS la roue */}
+        <div style={{ 
+          position: 'relative', 
+          width: displayWidth, 
+          height: canvasSize,
+          overflow: shouldCropWheel ? 'hidden' : 'visible'
+        }}>
           <div 
             style={{
               position: 'absolute',
               width: canvasSize - 20,
               height: canvasSize - 20,
-              left: '10px',
+              left: shouldCropWheel ? '10px' : '10px',
               top: '15px',
               borderRadius: '50%',
               background: 'rgba(0,0,0,0.15)',
@@ -377,7 +386,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
             height={canvasSize}
             style={{
               position: 'absolute',
-              left: 0,
+              left: shouldCropWheel ? '0px' : '0px',
               top: 0,
               zIndex: 1
             }}
@@ -390,7 +399,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
               alt={`Décor roue ${theme}`}
               style={{
                 position: 'absolute',
-                left: 0,
+                left: shouldCropWheel ? '0px' : '0px',
                 top: 0,
                 width: canvasSize,
                 height: canvasSize,
@@ -404,7 +413,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
           <div
             style={{
               position: 'absolute',
-              left: canvasSize / 2 - pointerSize / 2,
+              left: (shouldCropWheel ? 0 : canvasSize / 2) + canvasSize / 2 - pointerSize / 2,
               top: -pointerSize * 0.6,
               width: pointerSize,
               height: pointerSize * 1.5,
@@ -426,7 +435,6 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
             </svg>
           </div>
 
-          {/* Overlay clickable si formulaire non validé */}
           {!formValidated && (
             <div 
               onClick={handleWheelClick}
@@ -457,14 +465,18 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
 
   return (
     <div style={getAbsolutePositionStyles()}>
-      <div style={{ position: 'relative', width: canvasSize, height: canvasSize }}>
-        {/* Conteneur pour l'ombre - SOUS la roue */}
+      <div style={{ 
+        position: 'relative', 
+        width: displayWidth, 
+        height: canvasSize,
+        overflow: shouldCropWheel ? 'hidden' : 'visible'
+      }}>
         <div 
           style={{
             position: 'absolute',
             width: canvasSize - 20,
             height: canvasSize - 20,
-            left: '10px',
+            left: shouldCropWheel ? '10px' : '10px',
             top: '15px',
             borderRadius: '50%',
             background: 'rgba(0,0,0,0.15)',
@@ -479,7 +491,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
           height={canvasSize}
           style={{
             position: 'absolute',
-            left: 0,
+            left: shouldCropWheel ? '0px' : '0px',
             top: 0,
             zIndex: 1
           }}
@@ -492,7 +504,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
             alt={`Décor roue ${theme}`}
             style={{
               position: 'absolute',
-              left: 0,
+              left: shouldCropWheel ? '0px' : '0px',
               top: 0,
               width: canvasSize,
               height: canvasSize,
@@ -506,7 +518,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
         <div
           style={{
             position: 'absolute',
-            left: canvasSize / 2 - pointerSize / 2,
+            left: (shouldCropWheel ? 0 : canvasSize / 2) + canvasSize / 2 - pointerSize / 2,
             top: -pointerSize * 0.6,
             width: pointerSize,
             height: pointerSize * 1.5,
@@ -528,7 +540,6 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
           </svg>
         </div>
 
-        {/* Overlay clickable si formulaire non validé */}
         {!formValidated && (
           <div 
             onClick={handleWheelClick}
