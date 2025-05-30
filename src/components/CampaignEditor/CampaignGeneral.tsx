@@ -31,7 +31,7 @@ const CampaignGeneral: React.FC<CampaignGeneralProps> = ({
     }));
   };
   return <div className="space-y-6 mx-[24px]">
-      <div className="bg-[#f9f0f5] border border-[#e9d0e5] rounded-lg p-4 mb-4 mx-0">
+      <div className="bg-[#f9f0f5] border border-[#e9d0e5] rounded-lg p-4 mb-4 mx-0 py-[17px] my-[23px]">
         <p className="text-[#841b60] text-sm">
           Remplissez les informations générales de votre campagne. Le nom et l'URL seront utilisés pour identifier et accéder à votre campagne.
         </p>
