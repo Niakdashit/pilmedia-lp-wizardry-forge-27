@@ -1,6 +1,6 @@
-
 import React, { useRef, useEffect, useState } from 'react';
 import WheelStyleSelector from '../configurators/WheelStyleSelector';
+import { useGameSize } from '../../hooks/useGameSize';
 
 interface WheelProps {
   config: any;
@@ -12,6 +12,7 @@ interface WheelProps {
   winRate?: number;
   previewMode?: 'mobile' | 'tablet' | 'desktop';
   disabled?: boolean;
+  gameSize?: 'small' | 'medium' | 'large' | 'xlarge';
 }
 
 const Wheel: React.FC<WheelProps> = ({ 
@@ -20,12 +21,16 @@ const Wheel: React.FC<WheelProps> = ({
   onComplete, 
   onFinish, 
   previewMode = 'desktop',
-  disabled = false
+  disabled = false,
+  gameSize = 'small'
 }) => {
   const wheelRef = useRef<HTMLDivElement>(null);
   const [isSpinning, setIsSpinning] = useState(false);
   const [selectedStyle, setSelectedStyle] = useState('roulette_casino.svg');
 
+  const { getGameDimensions } = useGameSize(gameSize);
+  const gameDimensions = getGameDimensions();
+  
   // Configuration par défaut si aucune config fournie
   const defaultSegments = [
     { label: 'Prix 1', color: '#ff6b6b' },
@@ -38,19 +43,8 @@ const Wheel: React.FC<WheelProps> = ({
 
   const segments = config?.segments?.length > 0 ? config.segments : defaultSegments;
   
-  // Calculer la taille selon le mode d'aperçu
-  const getWheelSize = () => {
-    switch (previewMode) {
-      case 'mobile':
-        return 220;
-      case 'tablet':
-        return 240;
-      default:
-        return 280;
-    }
-  };
-
-  const wheelSize = getWheelSize();
+  // Calculer la taille de la roue en fonction des dimensions du jeu
+  const wheelSize = Math.min(gameDimensions.width, gameDimensions.height) - 40;
 
   const spin = () => {
     if (!wheelRef.current || isSpinning || disabled) return;
@@ -98,7 +92,15 @@ const Wheel: React.FC<WheelProps> = ({
   }
 
   return (
-    <div className="flex flex-col items-center space-y-6">
+    <div 
+      className="flex flex-col items-center space-y-6"
+      style={{
+        width: `${gameDimensions.width}px`,
+        height: `${gameDimensions.height}px`,
+        maxWidth: `${gameDimensions.width}px`,
+        maxHeight: `${gameDimensions.height}px`
+      }}
+    >
       <div className="relative" style={{ width: wheelSize, height: wheelSize }}>
         {/* Roue */}
         <div
@@ -129,7 +131,7 @@ const Wheel: React.FC<WheelProps> = ({
                   className="transform text-center leading-tight"
                   style={{ 
                     transform: `rotate(${segmentAngle / 2}deg)`,
-                    fontSize: previewMode === 'mobile' ? '10px' : '12px',
+                    fontSize: wheelSize < 250 ? '10px' : '12px',
                     maxWidth: '80%'
                   }}
                 >
@@ -145,9 +147,9 @@ const Wheel: React.FC<WheelProps> = ({
           <div 
             className="border-l-4 border-r-4 border-b-8 border-transparent border-b-gray-800"
             style={{
-              borderBottomWidth: previewMode === 'mobile' ? '6px' : '8px',
-              borderLeftWidth: previewMode === 'mobile' ? '3px' : '4px',
-              borderRightWidth: previewMode === 'mobile' ? '3px' : '4px'
+              borderBottomWidth: wheelSize < 250 ? '6px' : '8px',
+              borderLeftWidth: wheelSize < 250 ? '3px' : '4px',
+              borderRightWidth: wheelSize < 250 ? '3px' : '4px'
             }}
           ></div>
         </div>
@@ -158,8 +160,8 @@ const Wheel: React.FC<WheelProps> = ({
         disabled={isSpinning || disabled}
         className="px-6 py-3 bg-[#841b60] text-white font-bold rounded-xl hover:bg-[#6d164f] disabled:opacity-50 transition-colors duration-200"
         style={{
-          fontSize: previewMode === 'mobile' ? '14px' : '16px',
-          padding: previewMode === 'mobile' ? '10px 20px' : '12px 24px'
+          fontSize: wheelSize < 250 ? '14px' : '16px',
+          padding: wheelSize < 250 ? '10px 20px' : '12px 24px'
         }}
       >
         {isSpinning ? 'Rotation...' : 'Faire tourner'}

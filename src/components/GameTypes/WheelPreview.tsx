@@ -3,6 +3,7 @@ import Modal from '../common/Modal';
 import ValidationMessage from '../common/ValidationMessage';
 import DynamicContactForm, { FieldConfig } from '../forms/DynamicContactForm';
 import { useParticipations } from '../../hooks/useParticipations';
+import { useGameSize } from '../../hooks/useGameSize';
 
 interface Segment {
   label: string;
@@ -24,6 +25,7 @@ interface WheelPreviewProps {
   onFinish?: (result: 'win' | 'lose') => void;
   disabled?: boolean;
   onStart?: () => void;
+  gameSize?: 'small' | 'medium' | 'large' | 'xlarge';
 }
 
 const DEFAULT_FIELDS: FieldConfig[] = [
@@ -65,7 +67,8 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   config,
   onFinish,
   disabled = false,
-  onStart
+  onStart,
+  gameSize = 'small'
 }) => {
   const segments = campaign?.config?.roulette?.segments || [];
   const centerImage = campaign?.config?.roulette?.centerImage;
@@ -79,6 +82,10 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   const [showFormModal, setShowFormModal] = useState(false);
   const [showValidationMessage, setShowValidationMessage] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  const { getGameDimensions } = useGameSize(gameSize);
+  const gameDimensions = getGameDimensions();
+  const CANVAS_SIZE = Math.min(gameDimensions.width, gameDimensions.height) - 40; // Padding pour les contrôles
 
   const {
     createParticipation,
@@ -243,18 +250,32 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
 
   useEffect(() => {
     drawWheel();
-  }, [segments, rotation, centerImage, theme, borderColor, pointerColor]);
+  }, [segments, rotation, centerImage, theme, borderColor, pointerColor, CANVAS_SIZE]);
 
   if (segments.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center p-8 text-gray-500">
+      <div 
+        className="flex flex-col items-center justify-center p-8 text-gray-500"
+        style={{
+          width: `${gameDimensions.width}px`,
+          height: `${gameDimensions.height}px`
+        }}
+      >
         <p>Aucun segment configuré pour la roue</p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col items-center gap-4">
+    <div 
+      className="flex flex-col items-center gap-4"
+      style={{
+        width: `${gameDimensions.width}px`,
+        height: `${gameDimensions.height}px`,
+        maxWidth: `${gameDimensions.width}px`,
+        maxHeight: `${gameDimensions.height}px`
+      }}
+    >
       <div style={{ position: 'relative', width: CANVAS_SIZE, height: CANVAS_SIZE }}>
         <canvas
           ref={canvasRef}

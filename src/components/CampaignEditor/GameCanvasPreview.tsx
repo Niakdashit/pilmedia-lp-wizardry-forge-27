@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import Jackpot from '../GameTypes/Jackpot';
 import { Quiz } from '../GameTypes';
 import WheelPreview from '../GameTypes/WheelPreview';
@@ -7,6 +7,7 @@ import MemoryPreview from '../GameTypes/MemoryPreview';
 import PuzzlePreview from '../GameTypes/PuzzlePreview';
 import ScratchPreview from '../GameTypes/ScratchPreview';
 import DicePreview from '../GameTypes/DicePreview';
+import GameSizeSelector, { GameSize } from '../configurators/GameSizeSelector';
 
 interface GameCanvasPreviewProps {
   campaign: any;
@@ -17,6 +18,8 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   campaign,
   className = ""
 }) => {
+  const [gameSize, setGameSize] = useState<GameSize>('small');
+  
   const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage;
   const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel || 'Lancer le Jackpot';
   const buttonColor = campaign.gameConfig?.[campaign.type]?.buttonColor || '#ec4899';
@@ -26,88 +29,79 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
 
   const renderGame = () => {
     const gameProps = {
+      gameSize,
       style: { 
-        width: '100%', 
-        height: '100%', 
-        maxWidth: '100%', 
-        maxHeight: '100%',
-        overflow: 'hidden'
+        width: 'auto', 
+        height: 'auto'
       }
     };
 
     switch (campaign.type) {
       case 'jackpot':
         return (
-          <div style={gameProps.style}>
-            <Jackpot
-              isPreview={true}
-              instantWinConfig={{
-                mode: 'instant_winner' as const,
-                winProbability: campaign.gameConfig?.jackpot?.instantWin?.winProbability || 0.05,
-                maxWinners: campaign.gameConfig?.jackpot?.instantWin?.maxWinners,
-                winnersCount: 0
-              }}
-              buttonLabel={buttonLabel}
-              buttonColor={buttonColor}
-              selectedTemplate={selectedTemplateId}
-            />
-          </div>
+          <Jackpot
+            isPreview={true}
+            instantWinConfig={{
+              mode: 'instant_winner' as const,
+              winProbability: campaign.gameConfig?.jackpot?.instantWin?.winProbability || 0.05,
+              maxWinners: campaign.gameConfig?.jackpot?.instantWin?.maxWinners,
+              winnersCount: 0
+            }}
+            buttonLabel={buttonLabel}
+            buttonColor={buttonColor}
+            selectedTemplate={selectedTemplateId}
+            gameSize={gameSize}
+          />
         );
       case 'quiz':
         return (
-          <div style={gameProps.style}>
-            <Quiz 
-              config={campaign.gameConfig?.quiz || {}} 
-              onConfigChange={() => {}}
-            />
-          </div>
+          <Quiz 
+            config={campaign.gameConfig?.quiz || {}} 
+            onConfigChange={() => {}}
+            gameSize={gameSize}
+          />
         );
       case 'wheel':
         return (
-          <div style={gameProps.style}>
-            <WheelPreview
-              campaign={campaign}
-              config={{
-                mode: 'instant_winner' as const,
-                winProbability: campaign.gameConfig?.wheel?.winProbability || 0.1,
-                maxWinners: campaign.gameConfig?.wheel?.maxWinners,
-                winnersCount: 0
-              }}
-              onFinish={() => {}}
-            />
-          </div>
+          <WheelPreview
+            campaign={campaign}
+            config={{
+              mode: 'instant_winner' as const,
+              winProbability: campaign.gameConfig?.wheel?.winProbability || 0.1,
+              maxWinners: campaign.gameConfig?.wheel?.maxWinners,
+              winnersCount: 0
+            }}
+            onFinish={() => {}}
+            gameSize={gameSize}
+          />
         );
       case 'scratch':
         return (
-          <div style={gameProps.style}>
-            <ScratchPreview 
-              config={campaign.gameConfig?.scratch || {}} 
-            />
-          </div>
+          <ScratchPreview 
+            config={campaign.gameConfig?.scratch || {}} 
+            gameSize={gameSize}
+          />
         );
       case 'memory':
         return (
-          <div style={gameProps.style}>
-            <MemoryPreview 
-              config={campaign.gameConfig?.memory || {}} 
-            />
-          </div>
+          <MemoryPreview 
+            config={campaign.gameConfig?.memory || {}} 
+            gameSize={gameSize}
+          />
         );
       case 'puzzle':
         return (
-          <div style={gameProps.style}>
-            <PuzzlePreview 
-              config={campaign.gameConfig?.puzzle || {}} 
-            />
-          </div>
+          <PuzzlePreview 
+            config={campaign.gameConfig?.puzzle || {}} 
+            gameSize={gameSize}
+          />
         );
       case 'dice':
         return (
-          <div style={gameProps.style}>
-            <DicePreview 
-              config={campaign.gameConfig?.dice || {}} 
-            />
-          </div>
+          <DicePreview 
+            config={campaign.gameConfig?.dice || {}} 
+            gameSize={gameSize}
+          />
         );
       default:
         return (
@@ -119,7 +113,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   };
 
   return (
-    <div className={`relative w-full h-full ${className} flex items-center justify-center`} style={{ minHeight: '400px' }}>
+    <div className={`relative w-full h-full ${className}`} style={{ minHeight: '600px' }}>
       {/* Image de fond plein écran */}
       {gameBackgroundImage && (
         <img
@@ -130,8 +124,16 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
         />
       )}
 
-      {/* Jeu centré avec contraintes de taille */}
-      <div className="relative z-20 w-full h-full flex items-center justify-center p-4" style={{ maxWidth: '100%', maxHeight: '100%' }}>
+      {/* Panneau de contrôle des tailles */}
+      <div className="absolute top-4 right-4 z-30 bg-white p-4 rounded-lg shadow-lg border">
+        <GameSizeSelector
+          selectedSize={gameSize}
+          onSizeChange={setGameSize}
+        />
+      </div>
+
+      {/* Jeu centré avec taille fixe */}
+      <div className="relative z-20 w-full h-full flex items-center justify-center p-4">
         {renderGame()}
       </div>
     </div>
