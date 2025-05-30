@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { Plus, Trash2, Edit3, Save, X, Clock, HelpCircle } from 'lucide-react';
+import { Trash2, Edit3, Save, X, Clock, HelpCircle } from 'lucide-react';
 
 interface QuizQuestion {
   id: string;
