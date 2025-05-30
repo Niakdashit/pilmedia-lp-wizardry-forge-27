@@ -105,9 +105,10 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   const isLeftRightPosition = gamePosition === 'left' || gamePosition === 'right';
   const shouldCropWheel = isMobileTablet && isLeftRightPosition;
   
-  // Fixed wheel size for mobile/tablet cropping
-  const fixedWheelSize = 280; // Taille fixe pour la roue
-  const canvasSize = shouldCropWheel ? fixedWheelSize : Math.min(gameDimensions.width, gameDimensions.height) - 60;
+  // Adjust canvas and container sizes for cropping
+  const baseCanvasSize = Math.min(gameDimensions.width, gameDimensions.height) - 60;
+  const canvasSize = baseCanvasSize;
+  const containerWidth = shouldCropWheel ? baseCanvasSize * 0.5 : baseCanvasSize;
   
   // Taille du pointeur proportionnelle
   const pointerSize = Math.max(30, canvasSize * 0.08);
@@ -122,78 +123,69 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
 
   // Get absolute position styles based on gamePosition
   const getAbsolutePositionStyles = () => {
-    if (!shouldCropWheel) {
-      // ... keep existing code for non-cropped positions
-      const containerStyle: React.CSSProperties = {
-        position: 'absolute',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '16px',
-        zIndex: 10
-      };
-
-      const safeMargin = 20;
-
-      switch (gamePosition) {
-        case 'top':
-          return { 
-            ...containerStyle, 
-            flexDirection: 'column-reverse' as const,
-            top: `${safeMargin}px`, 
-            left: '50%', 
-            transform: 'translateX(-50%)',
-            width: `${gameDimensions.width}px`,
-            height: `${gameDimensions.height}px`
-          };
-        case 'bottom':
-          return { 
-            ...containerStyle, 
-            flexDirection: 'column' as const,
-            bottom: `${safeMargin}px`, 
-            left: '50%', 
-            transform: 'translateX(-50%)',
-            width: `${gameDimensions.width}px`,
-            height: `${gameDimensions.height}px`
-          };
-        case 'center':
-          return { 
-            ...containerStyle, 
-            flexDirection: 'column' as const,
-            top: '50%', 
-            left: '50%', 
-            transform: 'translate(-50%, -50%)',
-            width: `${gameDimensions.width}px`,
-            height: `${gameDimensions.height}px`
-          };
-        default:
-          return { 
-            ...containerStyle, 
-            flexDirection: 'column' as const,
-            top: '50%', 
-            left: '50%', 
-            transform: 'translate(-50%, -50%)',
-            width: `${gameDimensions.width}px`,
-            height: `${gameDimensions.height}px`
-          };
-      }
-    }
-
-    // Fixed positioning for cropped wheel (mobile/tablet left/right)
-    return {
-      position: 'fixed' as const,
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
+    const containerStyle: React.CSSProperties = {
+      position: 'absolute',
       display: 'flex',
-      flexDirection: gamePosition === 'left' ? 'row-reverse' as const : 'row' as const,
       alignItems: 'center',
-      justifyContent: 'flex-start',
-      zIndex: 10,
-      padding: '20px',
-      gap: '20px'
+      justifyContent: 'center',
+      gap: '16px',
+      zIndex: 10
     };
+
+    const safeMargin = 20;
+
+    switch (gamePosition) {
+      case 'top':
+        return { 
+          ...containerStyle, 
+          flexDirection: 'column-reverse' as const,
+          top: `${safeMargin}px`, 
+          left: '50%', 
+          transform: 'translateX(-50%)',
+          width: `${gameDimensions.width}px`,
+          height: `${gameDimensions.height}px`
+        };
+      case 'bottom':
+        return { 
+          ...containerStyle, 
+          flexDirection: 'column' as const,
+          bottom: `${safeMargin}px`, 
+          left: '50%', 
+          transform: 'translateX(-50%)',
+          width: `${gameDimensions.width}px`,
+          height: `${gameDimensions.height}px`
+        };
+      case 'left':
+        return { 
+          ...containerStyle, 
+          flexDirection: shouldCropWheel ? 'row-reverse' as const : 'row' as const,
+          left: shouldCropWheel ? '0px' : `${safeMargin}px`, 
+          top: '50%', 
+          transform: 'translateY(-50%)',
+          width: `${gameDimensions.width}px`,
+          height: `${gameDimensions.height}px`
+        };
+      case 'right':
+        return { 
+          ...containerStyle, 
+          flexDirection: shouldCropWheel ? 'row' as const : 'row-reverse' as const,
+          right: shouldCropWheel ? '0px' : `${safeMargin}px`, 
+          top: '50%', 
+          transform: 'translateY(-50%)',
+          width: `${gameDimensions.width}px`,
+          height: `${gameDimensions.height}px`
+        };
+      default: // center
+        return { 
+          ...containerStyle, 
+          flexDirection: 'column' as const,
+          top: '50%', 
+          left: '50%', 
+          transform: 'translate(-50%, -50%)',
+          width: `${gameDimensions.width}px`,
+          height: `${gameDimensions.height}px`
+        };
+    }
   };
 
   const handleFormSubmit = async (formData: Record<string, string>) => {
@@ -384,13 +376,11 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
 
   return (
     <div style={getAbsolutePositionStyles()}>
-      {/* Wheel container with fixed positioning for cropping */}
       <div style={{ 
-        position: 'relative',
-        width: shouldCropWheel ? fixedWheelSize / 2 : canvasSize,
-        height: fixedWheelSize,
-        overflow: shouldCropWheel ? 'hidden' : 'visible',
-        flexShrink: 0
+        position: 'relative', 
+        width: containerWidth, 
+        height: canvasSize,
+        overflow: shouldCropWheel ? 'hidden' : 'visible'
       }}>
         {/* Shadow */}
         <div 
@@ -398,7 +388,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
             position: 'absolute',
             width: canvasSize - 20,
             height: canvasSize - 20,
-            left: shouldCropWheel ? (gamePosition === 'left' ? '10px' : `-${fixedWheelSize / 2 + 10}px`) : '10px',
+            left: shouldCropWheel ? (gamePosition === 'left' ? '10px' : `-${canvasSize * 0.5 + 10}px`) : '10px',
             top: '15px',
             borderRadius: '50%',
             background: 'rgba(0,0,0,0.15)',
@@ -414,7 +404,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
           height={canvasSize}
           style={{
             position: 'absolute',
-            left: shouldCropWheel ? (gamePosition === 'left' ? '0px' : `-${fixedWheelSize / 2}px`) : '0px',
+            left: shouldCropWheel ? (gamePosition === 'left' ? '0px' : `-${canvasSize * 0.5}px`) : '0px',
             top: 0,
             zIndex: 1
           }}
@@ -428,7 +418,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
             alt={`Décor roue ${theme}`}
             style={{
               position: 'absolute',
-              left: shouldCropWheel ? (gamePosition === 'left' ? '0px' : `-${fixedWheelSize / 2}px`) : '0px',
+              left: shouldCropWheel ? (gamePosition === 'left' ? '0px' : `-${canvasSize * 0.5}px`) : '0px',
               top: 0,
               width: canvasSize,
               height: canvasSize,
@@ -443,7 +433,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
         <div
           style={{
             position: 'absolute',
-            left: (shouldCropWheel ? (gamePosition === 'left' ? 0 : -fixedWheelSize / 2) : canvasSize / 2) + canvasSize / 2 - pointerSize / 2,
+            left: (shouldCropWheel ? (gamePosition === 'left' ? 0 : -canvasSize * 0.5) : canvasSize / 2) + canvasSize / 2 - pointerSize / 2,
             top: -pointerSize * 0.6,
             width: pointerSize,
             height: pointerSize * 1.5,
@@ -480,34 +470,23 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
         />
       </div>
 
-      {/* Button container with flexible content */}
-      <div style={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        gap: '16px',
-        flex: shouldCropWheel ? 1 : 'none',
-        maxWidth: shouldCropWheel ? '60%' : 'none'
-      }}>
-        {/* Button positioned on the visible side */}
-        {buttonConfig.visible && (
-          <button
-            onClick={handleWheelClick}
-            disabled={spinning || disabled}
-            style={{
-              backgroundColor: buttonConfig.color,
-              borderColor: buttonConfig.borderColor,
-              borderWidth: `${buttonConfig.borderWidth}px`,
-              borderRadius: `${buttonConfig.borderRadius}px`,
-              borderStyle: 'solid'
-            }}
-            className={`${getButtonSizeClasses()} text-white font-medium disabled:opacity-50 hover:opacity-80 transition-all shadow-lg whitespace-nowrap`}
-          >
-            {spinning ? 'Tourne...' : formValidated ? 'Lancer la roue' : (buttonConfig.text || 'Remplir le formulaire')}
-          </button>
-        )}
-      </div>
+      {/* Button positioned on the visible side */}
+      {buttonConfig.visible && (
+        <button
+          onClick={handleWheelClick}
+          disabled={spinning || disabled}
+          style={{
+            backgroundColor: buttonConfig.color,
+            borderColor: buttonConfig.borderColor,
+            borderWidth: `${buttonConfig.borderWidth}px`,
+            borderRadius: `${buttonConfig.borderRadius}px`,
+            borderStyle: 'solid'
+          }}
+          className={`${getButtonSizeClasses()} text-white font-medium disabled:opacity-50 hover:opacity-80 transition-all shadow-lg`}
+        >
+          {spinning ? 'Tourne...' : formValidated ? 'Lancer la roue' : (buttonConfig.text || 'Remplir le formulaire')}
+        </button>
+      )}
 
       {/* Form modal */}
       {showFormModal && (
