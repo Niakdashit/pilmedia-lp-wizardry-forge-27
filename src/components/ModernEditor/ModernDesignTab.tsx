@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { Palette, Type, Square } from 'lucide-react';
+import { Palette, Type, Square, Image as ImageIcon } from 'lucide-react';
+import ImageUpload from '../common/ImageUpload';
 
 interface ModernDesignTabProps {
   campaign: any;
@@ -36,6 +37,21 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
         <p className="text-sm text-gray-600">
           Personnalisez l'apparence visuelle de votre campagne
         </p>
+      </div>
+
+      {/* Image de fond */}
+      <div className="space-y-4">
+        <h3 className="flex items-center text-lg font-semibold text-gray-900">
+          <ImageIcon className="w-5 h-5 mr-2" />
+          Image de fond
+        </h3>
+        
+        <ImageUpload
+          value={campaign.design?.backgroundImage || ''}
+          onChange={(value) => handleDesignChange('backgroundImage', value)}
+          label="Image de fond de la campagne"
+          className="w-full"
+        />
       </div>
 
       {/* Couleurs */}
