@@ -72,17 +72,20 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
   const getContentLayoutStyle = () => {
     const gamePosition = mobileConfig.gamePosition || 'center';
     const textPosition = mobileConfig.textPosition || 'top';
-    const verticalAlign = mobileConfig.gameVerticalAlign || 'center';
     const verticalSpacing = mobileConfig.verticalSpacing || 24;
     const horizontalPadding = Math.max(16, mobileConfig.horizontalPadding || 20);
 
     let flexDirection: 'column' | 'column-reverse' = 'column';
-    let justifyContent = verticalAlign;
+    let justifyContent = 'flex-start';
 
     if (gamePosition === 'top' && textPosition === 'bottom') {
       flexDirection = 'column';
+      justifyContent = 'flex-start';
     } else if (gamePosition === 'bottom' && textPosition === 'top') {
       flexDirection = 'column-reverse';
+      justifyContent = 'flex-start';
+    } else if (gamePosition === 'center') {
+      justifyContent = 'center';
     }
 
     return {
@@ -116,17 +119,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
 
   const getFunnelComponent = () => {
     const sharedProps = {
-      campaign: {
-        ...campaign,
-        // Synchroniser les configurations
-        gameConfig: {
-          ...campaign.gameConfig,
-          [campaign.type]: {
-            ...campaign.gameConfig?.[campaign.type],
-            customTemplate: mobileConfig.customTemplate || campaign.gameConfig?.[campaign.type]?.customTemplate
-          }
-        }
-      },
+      campaign,
       modalContained: true,
       mobileConfig
     };
@@ -207,25 +200,6 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
   return (
     <div style={getDeviceStyle()}>
       <div style={getScreenStyle()}>
-        {/* Template mobile personnalisé en arrière-plan */}
-        {mobileConfig.customTemplate && (
-          <div 
-            className="absolute inset-0 flex items-center justify-center"
-            style={{ zIndex: 1 }}
-          >
-            <img 
-              src={mobileConfig.customTemplate} 
-              alt="Template mobile personnalisé" 
-              className="object-contain"
-              style={{
-                width: `${mobileConfig.templateMaxWidth || 90}%`,
-                height: `${mobileConfig.templateMaxHeight || 70}%`,
-                opacity: 0.9
-              }}
-            />
-          </div>
-        )}
-
         {/* Logo Overlay */}
         {mobileConfig.logoOverlay && (
           <div 
