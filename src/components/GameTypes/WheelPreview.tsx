@@ -101,8 +101,6 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   const getAbsolutePositionStyles = () => {
     const containerStyle: React.CSSProperties = {
       position: 'absolute',
-      width: `${gameDimensions.width}px`,
-      height: `${gameDimensions.height}px`,
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
@@ -110,17 +108,63 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
       gap: '16px'
     };
 
+    // Calculer les dimensions sûres en tenant compte des marges
+    const safeMargin = 40; // Marge de sécurité
+    const maxWidth = `calc(100vw - ${safeMargin * 2}px)`;
+    const maxHeight = `calc(100vh - ${safeMargin * 2}px)`;
+
     switch (gamePosition) {
       case 'top':
-        return { ...containerStyle, top: '20px', left: '50%', transform: 'translateX(-50%)' };
+        return { 
+          ...containerStyle, 
+          top: `${safeMargin}px`, 
+          left: '50%', 
+          transform: 'translateX(-50%)',
+          maxWidth,
+          width: `${gameDimensions.width}px`,
+          height: `${gameDimensions.height}px`
+        };
       case 'bottom':
-        return { ...containerStyle, bottom: '20px', left: '50%', transform: 'translateX(-50%)' };
+        return { 
+          ...containerStyle, 
+          bottom: `${safeMargin}px`, 
+          left: '50%', 
+          transform: 'translateX(-50%)',
+          maxWidth,
+          width: `${gameDimensions.width}px`,
+          height: `${gameDimensions.height}px`
+        };
       case 'left':
-        return { ...containerStyle, left: '20px', top: '50%', transform: 'translateY(-50%)' };
+        return { 
+          ...containerStyle, 
+          left: `${safeMargin}px`, 
+          top: '50%', 
+          transform: 'translateY(-50%)',
+          maxHeight,
+          width: `${gameDimensions.width}px`,
+          height: `${gameDimensions.height}px`
+        };
       case 'right':
-        return { ...containerStyle, right: '20px', top: '50%', transform: 'translateY(-50%)' };
+        return { 
+          ...containerStyle, 
+          right: `${safeMargin}px`, 
+          top: '50%', 
+          transform: 'translateY(-50%)',
+          maxHeight,
+          width: `${gameDimensions.width}px`,
+          height: `${gameDimensions.height}px`
+        };
       default: // center
-        return { ...containerStyle, top: '50%', left: '50%', transform: 'translate(-50%, -50%)' };
+        return { 
+          ...containerStyle, 
+          top: '50%', 
+          left: '50%', 
+          transform: 'translate(-50%, -50%)',
+          maxWidth,
+          maxHeight,
+          width: `${gameDimensions.width}px`,
+          height: `${gameDimensions.height}px`
+        };
     }
   };
 
@@ -297,14 +341,17 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   return (
     <div style={getAbsolutePositionStyles()}>
       <div style={{ position: 'relative', width: canvasSize, height: canvasSize }}>
-        {/* Conteneur pour l'ombre */}
+        {/* Conteneur pour l'ombre - SOUS la roue */}
         <div 
           style={{
             position: 'absolute',
-            width: canvasSize,
-            height: canvasSize,
+            width: canvasSize - 20,
+            height: canvasSize - 20,
+            left: '10px',
+            top: '15px',
             borderRadius: '50%',
-            boxShadow: '0 8px 25px rgba(0,0,0,0.2)',
+            background: 'rgba(0,0,0,0.15)',
+            filter: 'blur(8px)',
             zIndex: 0
           }}
         />

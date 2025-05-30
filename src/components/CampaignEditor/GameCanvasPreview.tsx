@@ -66,7 +66,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
             onFinish={() => {}}
             gameSize={gameSize}
             gamePosition={gamePosition}
-            key={`${gameSize}-${gamePosition}`} // Force re-render when size or position changes
+            key={`${gameSize}-${gamePosition}-${JSON.stringify(campaign.config?.roulette)}`}
           />
         );
       case 'scratch':
@@ -103,7 +103,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   };
 
   return (
-    <div className={`relative w-full h-full ${className}`} style={{ minHeight: '600px' }}>
+    <div className={`relative w-full h-full overflow-hidden ${className}`} style={{ minHeight: '600px' }}>
       {/* Image de fond plein écran */}
       {gameBackgroundImage && (
         <img
