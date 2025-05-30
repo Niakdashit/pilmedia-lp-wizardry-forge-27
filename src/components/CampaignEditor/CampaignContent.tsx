@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Quiz, Scratch, Memory, Puzzle, Dice } from '../GameTypes';
 import TabRoulette from '@/components/configurators/TabRoulette';
@@ -6,7 +5,6 @@ import TabJackpot from '@/components/configurators/TabJackpot';
 import JackpotAppearance from '@/components/configurators/JackpotAppearance';
 import ImageUpload from '../common/ImageUpload';
 import GameCanvasPreview from './GameCanvasPreview';
-import GameSizeSelector from './GameSizeSelector';
 import { Settings, Eye, Palette } from 'lucide-react';
 
 interface CampaignContentProps {
@@ -26,19 +24,6 @@ const CampaignContent: React.FC<CampaignContentProps> = ({
       gameConfig: {
         ...prev.gameConfig,
         [gameType]: config,
-      },
-    }));
-  };
-
-  const updateGameSize = (size: number) => {
-    setCampaign((prev: any) => ({
-      ...prev,
-      gameConfig: {
-        ...prev.gameConfig,
-        [campaign.type]: {
-          ...prev.gameConfig?.[campaign.type],
-          size: size,
-        },
       },
     }));
   };
@@ -156,11 +141,6 @@ const CampaignContent: React.FC<CampaignContentProps> = ({
                 <h3 className="text-lg font-medium text-gray-900">Aperçu du jeu</h3>
               </div>
               <GameCanvasPreview campaign={campaign} />
-
-              <GameSizeSelector
-                selectedSize={campaign.gameConfig?.[campaign.type]?.size || 2}
-                onSizeChange={updateGameSize}
-              />
 
               <div>
                 <h3 className="text-lg font-medium text-gray-900 mb-4">Image de fond du jeu</h3>

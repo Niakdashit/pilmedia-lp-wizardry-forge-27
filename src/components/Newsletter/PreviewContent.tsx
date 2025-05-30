@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Color from 'color';
 import confetti from 'canvas-confetti';
-import { Jackpot } from '../GameTypes';
+import { Scratch, Jackpot } from '../GameTypes';
 import MemoryPreview from '../GameTypes/MemoryPreview';
 import PuzzlePreview from '../GameTypes/PuzzlePreview';
 import DicePreview from '../GameTypes/DicePreview';

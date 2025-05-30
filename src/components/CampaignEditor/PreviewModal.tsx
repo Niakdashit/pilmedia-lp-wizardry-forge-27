@@ -17,14 +17,41 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
   if (!isOpen) return null;
 
   const getPreviewFunnel = () => {
-    // Utiliser FunnelUnlockedGame pour les types de campagne compatibles
-    if (['scratch', 'jackpot', 'dice', 'wheel'].includes(campaign.type)) {
+    // Pour les jeux avec roue, on passe la configuration complète
+    if (campaign.type === 'wheel') {
+      return <FunnelUnlockedGame campaign={{
+        ...campaign,
+        // S'assurer que la config de la roue est bien transmise
+        config: {
+          ...campaign.config,
+          roulette: campaign.config?.roulette || {
+            segments: [],
+            centerImage: null,
+            theme: 'default',
+            borderColor: '#841b60',
+            pointerColor: '#841b60'
+          }
+        },
+        gameConfig: {
+          ...campaign.gameConfig,
+          wheel: campaign.config?.roulette || campaign.gameConfig?.wheel || {
+            segments: [],
+            centerImage: null,
+            theme: 'default',
+            borderColor: '#841b60',
+            pointerColor: '#841b60'
+          }
+        }
+      }} />;
+    }
+    
+    if (['scratch', 'jackpot', 'dice'].includes(campaign.type)) {
       return <FunnelUnlockedGame campaign={campaign} />;
     }
     return <FunnelStandard campaign={campaign} />;
   };
 
-  // Récupérer l'image de fond générale
+  // Récupérer l'image de fond générale (sans duplication avec le jeu)
   const backgroundImage = campaign.design?.backgroundImage;
 
   const getBackgroundStyle = () => {
@@ -35,7 +62,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
       backgroundColor: campaign.design?.background || '#ebf4f7'
     };
 
-    // Appliquer l'image de fond seulement en mode desktop
+    // Appliquer l'image de fond seulement en mode desktop et pour les types compatibles
     if (backgroundImage && selectedDevice === 'desktop') {
       style.backgroundImage = `url(${backgroundImage})`;
       style.backgroundSize = 'cover';
@@ -55,35 +82,14 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
     </div>
   );
 
-  const renderMobilePreview = () => {
-    // Pour mobile et tablette, utiliser FunnelUnlockedGame avec la config mobile
-    if (['scratch', 'jackpot', 'dice', 'wheel'].includes(campaign.type)) {
-      return (
-        <div className="w-full h-full flex items-center justify-center p-4">
-          <div className="w-full max-w-md">
-            <FunnelUnlockedGame 
-              campaign={campaign} 
-              modalContained={true}
-              mobileConfig={{
-                ...campaign.mobileConfig,
-                contrastBackground: campaign.screens?.[2]?.contrastBackground
-              }}
-            />
-          </div>
-        </div>
-      );
-    }
-    
-    // Fallback pour les autres types
-    return (
-      <div className="w-full h-full flex items-center justify-center p-4">
-        <MobilePreview
-          campaign={campaign}
-          previewMode={selectedDevice === 'tablet' ? 'tablet' : 'mobile'}
-        />
-      </div>
-    );
-  };
+  const renderMobilePreview = () => (
+    <div className="w-full h-full flex items-center justify-center p-4">
+      <MobilePreview
+        campaign={campaign}
+        previewMode={selectedDevice === 'tablet' ? 'tablet' : 'mobile'}
+      />
+    </div>
+  );
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
