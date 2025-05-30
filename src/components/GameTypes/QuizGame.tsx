@@ -77,6 +77,17 @@ const QuizGame: React.FC<QuizGameProps> = ({
 
   const currentQuestion = questions[currentQuestionIndex];
 
+  // Helper function to ensure we always get a string from options
+  const getOptionText = (option: any): string => {
+    if (typeof option === 'string') {
+      return option;
+    }
+    if (typeof option === 'object' && option.text) {
+      return option.text;
+    }
+    return String(option);
+  };
+
   useEffect(() => {
     if (showTimer && timeLeft > 0 && !answered) {
       const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
@@ -252,7 +263,7 @@ const QuizGame: React.FC<QuizGameProps> = ({
                 whileTap={!answered ? { scale: 0.98 } : {}}
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-medium">{option}</span>
+                  <span className="font-medium">{getOptionText(option)}</span>
                   {answered && (
                     <div>
                       {index === currentQuestion.correctAnswer && (
