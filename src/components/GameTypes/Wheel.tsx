@@ -68,24 +68,26 @@ const Wheel: React.FC<WheelProps> = ({
     );
   }
 
-  // Container principal 100% responsive
   return (
     <div
       className={`flex flex-col items-center justify-center w-full h-full ${className || ''}`}
-      style={{
-        minHeight: 0,
-        minWidth: 0,
-        ...style
-      }}
+      style={style}
     >
-      {/* Container de la roue - utilise l'espace disponible avec aspect ratio carré */}
+      {/* Container de la roue - maintient un aspect ratio parfaitement carré */}
       <div
-        className="relative flex items-center justify-center w-full max-w-full max-h-full"
+        className="relative flex items-center justify-center"
         style={{
-          aspectRatio: '1/1',
-          // Utilise le minimum entre largeur et hauteur disponibles
-          width: 'min(100%, 100vh)',
-          height: 'min(100%, 100vw)',
+          // Utilise le minimum entre largeur et hauteur disponibles pour garder l'aspect carré
+          width: Math.min(
+            (style?.width as number) || 300,
+            (style?.height as number) || 300
+          ),
+          height: Math.min(
+            (style?.width as number) || 300,
+            (style?.height as number) || 300
+          ),
+          maxWidth: '100%',
+          maxHeight: '100%',
         }}
       >
         <div

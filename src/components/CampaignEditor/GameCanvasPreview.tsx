@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Jackpot from '../GameTypes/Jackpot';
 import { Quiz } from '../GameTypes';
@@ -20,13 +21,9 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel || 'Lancer le Jackpot';
   const buttonColor = campaign.gameConfig?.[campaign.type]?.buttonColor || '#ec4899';
   
-  // Récupération du template sélectionné
   const selectedTemplateId = campaign?.design?.template || campaign?.gameConfig?.jackpot?.template;
-
-  // Récupération de la taille sélectionnée
   const selectedSize = campaign.gameConfig?.[campaign.type]?.gameSize || 1;
   
-  // Définition des tailles prédéfinies
   const GAME_SIZES: Record<number, { width: number; height: number }> = {
     1: { width: 300, height: 200 },
     2: { width: 400, height: 300 },
@@ -40,10 +37,8 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
     // Props communes pour tous les jeux avec taille prédéfinie
     const gameProps = {
       style: { 
-        width: `${currentSize.width}px`, 
-        height: `${currentSize.height}px`,
-        maxWidth: '100%', 
-        maxHeight: '100%'
+        width: currentSize.width, 
+        height: currentSize.height,
       },
       className: 'w-full h-full'
     };
@@ -125,14 +120,11 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
 
   return (
     <div 
-      className={`relative w-full flex items-center justify-center ${className}`} 
+      className={`relative w-full flex items-center justify-center bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-8 ${className}`} 
       style={{ 
-        minHeight: `${currentSize.height + 40}px`,
-        height: `${currentSize.height + 100}px`,
-        backgroundColor: '#f8f9fa',
-        border: '2px dashed #e9ecef',
-        borderRadius: '8px',
-        padding: '20px'
+        // Container fixe qui ne change pas de taille
+        minHeight: '400px',
+        height: '500px',
       }}
     >
       {/* Image de fond plein écran */}
@@ -146,7 +138,15 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
       )}
 
       {/* Jeu avec taille prédéfinie centré */}
-      <div className="relative z-20 flex items-center justify-center" style={{ width: `${currentSize.width}px`, height: `${currentSize.height}px` }}>
+      <div 
+        className="relative z-20 flex items-center justify-center bg-white rounded-lg shadow-sm" 
+        style={{ 
+          width: currentSize.width, 
+          height: currentSize.height,
+          minWidth: currentSize.width,
+          minHeight: currentSize.height,
+        }}
+      >
         {renderGame()}
       </div>
     </div>
