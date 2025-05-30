@@ -1,6 +1,7 @@
 import React from 'react';
-import { Palette, Type, Square, Image, Eye, EyeOff } from 'lucide-react';
+import { Palette, Type, Image, Eye, EyeOff } from 'lucide-react';
 import ImageUpload from '../common/ImageUpload';
+
 interface ModernDesignTabProps {
   campaign: any;
   setCampaign: React.Dispatch<React.SetStateAction<any>>;
