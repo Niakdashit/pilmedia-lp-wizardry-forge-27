@@ -29,8 +29,8 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
     // Props communes pour tous les jeux - 100% responsive
     const gameProps = {
       style: { 
-        width: '100%', 
-        height: '100%',
+        width: '50%', 
+        height: '50%',
         minHeight: '300px',
         maxWidth: '100%', 
         maxHeight: '100%'
