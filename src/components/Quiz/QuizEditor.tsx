@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult, DroppableProvided, DraggableProvided, DraggableStateSnapshot } from 'react-beautiful-dnd';
 import { Plus, GripVertical, Trash2, Copy, Edit3, Clock, HelpCircle, Wand2 } from 'lucide-react';
@@ -82,8 +83,23 @@ const QuizEditor: React.FC<QuizEditorProps> = ({ questions, onQuestionsChange })
     onQuestionsChange(newQuestions);
   };
 
+  // Helper function to ensure options are always strings
+  const normalizeOptions = (options: any[]): string[] => {
+    return options.map(option => {
+      if (typeof option === 'string') return option;
+      if (option && typeof option === 'object' && option.text) return option.text;
+      return String(option || '');
+    });
+  };
+
   const QuestionCard = ({ question, index }: { question: QuizQuestion; index: number }) => {
     const isEditing = editingId === question.id;
+    
+    // Normalize options to ensure they're strings
+    const normalizedQuestion = {
+      ...question,
+      options: normalizeOptions(question.options)
+    };
 
     return (
       <Draggable draggableId={question.id} index={index}>
@@ -100,7 +116,7 @@ const QuizEditor: React.FC<QuizEditorProps> = ({ questions, onQuestionsChange })
           >
             {isEditing ? (
               <QuestionEditor
-                question={question}
+                question={normalizedQuestion}
                 onSave={(updates) => {
                   updateQuestion(question.id, updates);
                   setEditingId(null);
@@ -126,7 +142,7 @@ const QuizEditor: React.FC<QuizEditorProps> = ({ questions, onQuestionsChange })
                       <Edit3 className="w-4 h-4" />
                     </button>
                     <button
-                      onClick={() => duplicateQuestion(question)}
+                      onClick={() => duplicateQuestion(normalizedQuestion)}
                       className="p-2 text-gray-400 hover:text-green-600 hover:bg-green-50 rounded-lg transition-colors"
                     >
                       <Copy className="w-4 h-4" />
@@ -141,15 +157,15 @@ const QuizEditor: React.FC<QuizEditorProps> = ({ questions, onQuestionsChange })
                 </div>
 
                 <h3 className="font-semibold text-lg mb-3 text-gray-800">
-                  {question.question || 'Question sans titre'}
+                  {normalizedQuestion.question || 'Question sans titre'}
                 </h3>
 
                 <div className="grid grid-cols-2 gap-2 mb-4">
-                  {question.options.map((option, optionIndex) => (
+                  {normalizedQuestion.options.map((option, optionIndex) => (
                     <div
                       key={optionIndex}
                       className={`p-3 rounded-lg border text-sm ${
-                        optionIndex === question.correctAnswer
+                        optionIndex === normalizedQuestion.correctAnswer
                           ? 'bg-green-50 border-green-200 text-green-800 font-medium'
                           : 'bg-gray-50 border-gray-200 text-gray-600'
                       }`}
@@ -163,9 +179,9 @@ const QuizEditor: React.FC<QuizEditorProps> = ({ questions, onQuestionsChange })
                   <div className="flex items-center space-x-4">
                     <span className="flex items-center space-x-1">
                       <Clock className="w-4 h-4" />
-                      <span>{question.timeLimit}s</span>
+                      <span>{normalizedQuestion.timeLimit}s</span>
                     </span>
-                    {question.explanation && (
+                    {normalizedQuestion.explanation && (
                       <span className="flex items-center space-x-1">
                         <HelpCircle className="w-4 h-4" />
                         <span>Avec explication</span>
@@ -173,7 +189,7 @@ const QuizEditor: React.FC<QuizEditorProps> = ({ questions, onQuestionsChange })
                     )}
                   </div>
                   <div className="text-xs bg-purple-100 text-purple-600 px-2 py-1 rounded">
-                    {question.type}
+                    {normalizedQuestion.type}
                   </div>
                 </div>
               </div>
