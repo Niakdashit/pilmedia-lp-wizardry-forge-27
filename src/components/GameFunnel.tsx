@@ -1,14 +1,12 @@
-
 import React, { useState } from 'react';
 import Color from 'color';
 import { Quiz, Memory, Puzzle } from './GameTypes';
 
 interface GameFunnelProps {
   campaign: any;
-  mobileConfig?: any;
 }
 
-const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign, mobileConfig }) => {
+const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
   const [step, setStep] = useState<'start' | 'form' | 'game' | 'end'>('start');
   const [formData, setFormData] = useState({
     civilite: '',

@@ -1,11 +1,10 @@
 
 import React from 'react';
-import { BarChart3 } from 'luc ide-react';
+import { BarChart3 } from 'lucide-react';
 import ParticipationsViewer from '../../../campaign/ParticipationsViewer';
 
 interface AnalyticsSectionProps {
   campaign: any;
-  setCampaign: React.Dispatch<React.SetStateAction<any>>;
 }
 
 const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({ campaign }) => {
