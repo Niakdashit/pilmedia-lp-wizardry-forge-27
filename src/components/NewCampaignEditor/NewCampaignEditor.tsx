@@ -22,7 +22,7 @@ interface CampaignState {
   startTime: string;
   endDate: string;
   endTime: string;
-  status: string;
+  status: 'draft' | 'active' | 'paused' | 'ended';
   type: CampaignType;
   design: {
     template: string;
@@ -130,6 +130,7 @@ const NewCampaignEditor: React.FC = () => {
           ...defaultCampaign,
           ...existingCampaign,
           type: existingCampaign.type as CampaignType,
+          status: existingCampaign.status as 'draft' | 'active' | 'paused' | 'ended',
           formFields: existingCampaign.form_fields?.map((field: any) => ({
             id: field.id,
             label: field.label,
