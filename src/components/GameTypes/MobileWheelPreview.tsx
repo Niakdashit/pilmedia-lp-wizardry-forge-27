@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 
 interface Segment {
@@ -43,18 +44,13 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
   campaign,
   onFinish
 }) => {
-  // Utilise prioritairement la config mobile, puis la config générale de la roue
+  // Utilise la configuration mobile spécifique
   const mobileRouletteConfig = campaign?.mobileConfig?.roulette || {};
-  const generalRouletteConfig = campaign?.config?.roulette || campaign?.gameConfig?.wheel || {};
-  
-  // Utilise la config mobile si elle existe, sinon la config générale
-  const segments = mobileRouletteConfig.segments?.length > 0 
-    ? mobileRouletteConfig.segments 
-    : generalRouletteConfig.segments || [];
-  const centerImage = mobileRouletteConfig.centerImage || generalRouletteConfig.centerImage;
-  const theme = mobileRouletteConfig.theme || generalRouletteConfig.theme || 'default';
-  const borderColor = mobileRouletteConfig.borderColor || generalRouletteConfig.borderColor || '#841b60';
-  const pointerColor = mobileRouletteConfig.pointerColor || generalRouletteConfig.pointerColor || '#841b60';
+  const segments = mobileRouletteConfig.segments || [];
+  const centerImage = mobileRouletteConfig.centerImage;
+  const theme = mobileRouletteConfig.theme || 'default';
+  const borderColor = mobileRouletteConfig.borderColor || '#841b60';
+  const pointerColor = mobileRouletteConfig.pointerColor || '#841b60';
   
   const [rotation, setRotation] = useState(0);
   const [spinning, setSpinning] = useState(false);
@@ -189,7 +185,7 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
   if (segments.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center p-8 text-gray-500">
-        <p className="text-sm">Veuillez configurer les segments de la roue</p>
+        <p className="text-sm">Configuration mobile de la roue requise</p>
       </div>
     );
   }

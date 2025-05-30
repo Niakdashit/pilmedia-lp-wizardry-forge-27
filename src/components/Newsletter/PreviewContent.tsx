@@ -1,12 +1,11 @@
+
 import React, { useState, useEffect } from 'react';
 import Color from 'color';
 import confetti from 'canvas-confetti';
-import { Jackpot } from '../GameTypes';
+import { Wheel, Scratch, Jackpot } from '../GameTypes';
 import MemoryPreview from '../GameTypes/MemoryPreview';
 import PuzzlePreview from '../GameTypes/PuzzlePreview';
 import DicePreview from '../GameTypes/DicePreview';
-import WheelPreview from '../GameTypes/WheelPreview';
-import ScratchPreview from '../GameTypes/ScratchPreview';
 
 interface PreviewContentProps {
   campaign: any;
@@ -84,22 +83,21 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
 
       case 'wheel':
         return (
-          <WheelPreview
-            campaign={campaign}
-            config={{
-              mode: 'instant_winner' as const,
-              winProbability: campaign.gameConfig?.wheel?.winProbability || 0.1,
-              maxWinners: campaign.gameConfig?.wheel?.maxWinners,
-              winnersCount: 0
-            }}
-            onFinish={handleGameComplete}
+          <Wheel 
+            config={campaign.gameConfig.wheel}
+            isPreview={true}
+            currentWinners={0}
+            maxWinners={100}
+            winRate={10}
+            onComplete={handleGameComplete}
           />
         );
 
       case 'scratch':
         return (
-          <ScratchPreview 
+          <Scratch 
             config={campaign.gameConfig.scratch}
+            onConfigChange={() => {}}
           />
         );
 

@@ -1,6 +1,8 @@
+
 import React, { useState } from 'react';
 import { X, Monitor, Tablet, Smartphone } from 'lucide-react';
 import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
+import FunnelStandard from '../funnels/FunnelStandard';
 import MobilePreview from './Mobile/MobilePreview';
 
 interface PreviewModalProps {
@@ -14,13 +16,20 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
 
   if (!isOpen) return null;
 
-  // Toujours utiliser le funnel, peu importe l'appareil ou le type de jeu
   const getPreviewFunnel = () => {
-    return <FunnelUnlockedGame campaign={campaign} />;
+    if (['wheel', 'scratch', 'jackpot', 'dice'].includes(campaign.type)) {
+      return <FunnelUnlockedGame campaign={campaign} />;
+    }
+    return <FunnelStandard campaign={campaign} />;
   };
 
-  // Récupérer l'image de fond générale (sans duplication avec le jeu)
-  const backgroundImage = campaign.design?.backgroundImage;
+  // Récupérer l'image de fond du jeu
+  const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage || 
+                              campaign.design?.backgroundImage;
+  
+  // Récupérer le template personnalisé (notamment pour jackpot)
+  const customTemplate = campaign.gameConfig?.[campaign.type]?.customTemplate ||
+                         campaign.gameConfig?.[campaign.type]?.jackpotTemplate;
 
   const getBackgroundStyle = () => {
     const style: any = {
@@ -30,9 +39,8 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
       backgroundColor: campaign.design?.background || '#ebf4f7'
     };
 
-    // Appliquer l'image de fond seulement en mode desktop et pour les types compatibles
-    if (backgroundImage && selectedDevice === 'desktop') {
-      style.backgroundImage = `url(${backgroundImage})`;
+    if (gameBackgroundImage) {
+      style.backgroundImage = `url(${gameBackgroundImage})`;
       style.backgroundSize = 'cover';
       style.backgroundPosition = 'center';
       style.backgroundRepeat = 'no-repeat';
@@ -43,7 +51,18 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
 
   const renderDesktopPreview = () => (
     <div style={getBackgroundStyle()}>
-      {/* Contenu du funnel avec z-index élevé pour être au-dessus du background */}
+      {/* Template personnalisé overlay (pour jackpot, etc.) */}
+      {customTemplate && (
+        <div className="absolute inset-0 z-10 pointer-events-none">
+          <img
+            src={customTemplate}
+            alt="Custom template"
+            className="w-full h-full object-contain"
+          />
+        </div>
+      )}
+
+      {/* Contenu du funnel avec z-index plus élevé */}
       <div className="relative z-20 w-full h-full flex items-center justify-center">
         {getPreviewFunnel()}
       </div>

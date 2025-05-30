@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
@@ -36,8 +35,9 @@ interface JackpotProps {
   onStart?: () => void;
   buttonLabel?: string;
   buttonColor?: string;
+  backgroundImage?: string;
   customTemplate?: string;
-  selectedTemplate?: string;
+  selectedTemplate?: string; // Nouveau prop pour le template
 }
 
 const Jackpot: React.FC<JackpotProps> = ({
@@ -47,6 +47,7 @@ const Jackpot: React.FC<JackpotProps> = ({
   onStart,
   buttonLabel = "Lancer le Jackpot",
   buttonColor = "#ec4899",
+  backgroundImage,
   customTemplate,
   selectedTemplate
 }) => {
@@ -54,9 +55,14 @@ const Jackpot: React.FC<JackpotProps> = ({
   const [isRolling, setIsRolling] = useState(false);
   const [result, setResult] = useState<'win' | 'lose' | null>(null);
 
+  // Debug logs
+  console.log('Jackpot component - selectedTemplate:', selectedTemplate);
+  console.log('Jackpot component - available templates:', Object.keys(jackpotTemplates));
+
   const roll = () => {
     if (isRolling || result) return;
     
+    // Appeler onStart dès que le jeu commence
     onStart?.();
     
     setIsRolling(true);
@@ -103,13 +109,14 @@ const Jackpot: React.FC<JackpotProps> = ({
 
   // Récupération du template SVG
   const templateImg = selectedTemplate ? jackpotTemplates[selectedTemplate] : undefined;
+  console.log('Template image selected:', templateImg);
 
   // Responsive slot size calculation
   const getSlotSize = () => {
     const containerWidth = window.innerWidth || 400;
-    if (containerWidth < 350) return 50;
-    if (containerWidth < 500) return 60;
-    return 70;
+    if (containerWidth < 350) return 50; // Mobile très petit
+    if (containerWidth < 500) return 60; // Mobile standard
+    return 70; // Tablette et plus
   };
 
   const slotSize = getSlotSize();
@@ -125,33 +132,38 @@ const Jackpot: React.FC<JackpotProps> = ({
     justifyContent: 'center'
   };
 
+  if (backgroundImage) {
+    containerStyle.backgroundImage = `url(${backgroundImage})`;
+    containerStyle.backgroundSize = 'cover';
+    containerStyle.backgroundPosition = 'center';
+    containerStyle.backgroundRepeat = 'no-repeat';
+  }
+
   return (
     <div style={containerStyle} className="flex flex-col items-center justify-center w-full h-full p-2 px-0">
-      {/* Template SVG responsive - utilise les mêmes dimensions que QuickCampaign */}
+      {/* Template SVG en arrière-plan AVEC taille agrandie, centrée, object-contain */}
       {templateImg && (
         <img
           src={templateImg}
           alt="Template jackpot"
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0"
           style={{
-            width: '100%',
-            height: '100%',
-            maxWidth: '100vw',
-            maxHeight: '100vh',
-            minWidth: '300px',
-            minHeight: '250px',
+            width: '640px',         // ↖️ Modifie ici la largeur souhaitée pour desktop
+            maxWidth: '90vw',
+            height: '600px',        // ↖️ Modifie ici la hauteur souhaitée pour desktop
+            maxHeight: '75vh',
             objectFit: 'contain',
-            opacity: 0.95
+            opacity: 0.97
           }}
         />
       )}
 
-      {/* Template personnalisé overlay */}
+      {/* Template personnalisé overlay (au-dessus du template SVG) */}
       {customTemplate && (
         <img
           src={customTemplate}
           alt="Jackpot template personnalisé"
-          className="absolute inset-0 w-full h-full object-contain pointer-events-none z-10"
+          className="absolute inset-0 w-full h-full object-cover pointer-events-none z-10"
         />
       )}
 

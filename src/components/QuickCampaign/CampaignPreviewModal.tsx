@@ -26,9 +26,6 @@ const CampaignPreviewModal: React.FC<CampaignPreviewModalProps> = ({
 
   if (!isOpen) return null;
 
-  // Créer l'URL de l'image de fond si elle existe
-  const backgroundImageUrl = backgroundImage ? URL.createObjectURL(backgroundImage) : undefined;
-
   // Create mock campaign data with proper template structure
   const mockCampaign = {
     id: 'preview',
@@ -37,7 +34,7 @@ const CampaignPreviewModal: React.FC<CampaignPreviewModalProps> = ({
     gameConfig: {
       [selectedGameType || 'jackpot']: {
         template: selectedTheme,
-        backgroundImage: backgroundImageUrl,
+        backgroundImage: backgroundImage ? URL.createObjectURL(backgroundImage) : undefined,
         buttonLabel: 'Lancer le Jackpot',
         buttonColor: '#ec4899'
       },
@@ -53,9 +50,7 @@ const CampaignPreviewModal: React.FC<CampaignPreviewModalProps> = ({
     },
     design: {
       template: selectedTheme,
-      theme: selectedTheme,
-      backgroundImage: backgroundImageUrl,
-      background: '#ebf4f7'
+      theme: selectedTheme
     },
     screens: [
       {
@@ -96,7 +91,6 @@ const CampaignPreviewModal: React.FC<CampaignPreviewModalProps> = ({
     // Configuration mobile par défaut
     mobileConfig: {
       backgroundColor: '#ebf4f7',
-      backgroundImage: backgroundImageUrl,
       gamePosition: 'center',
       textPosition: 'top',
       verticalSpacing: 20,
@@ -120,37 +114,17 @@ const CampaignPreviewModal: React.FC<CampaignPreviewModalProps> = ({
 
   console.log('Preview campaign data:', mockCampaign);
   console.log('Selected theme in preview:', selectedTheme);
-  console.log('Background image URL:', backgroundImageUrl);
 
-  const renderDesktopPreview = () => {
-    const containerStyle: any = {
-      width: '100%',
-      height: '100%',
-      position: 'relative',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: '#ebf4f7'
-    };
-
-    if (backgroundImageUrl) {
-      containerStyle.backgroundImage = `url(${backgroundImageUrl})`;
-      containerStyle.backgroundSize = 'cover';
-      containerStyle.backgroundPosition = 'center';
-      containerStyle.backgroundRepeat = 'no-repeat';
-    }
-
-    return (
-      <div style={containerStyle}>
-        <div className="max-w-lg mx-auto relative z-10">
-          <FunnelUnlockedGame
-            campaign={mockCampaign}
-            modalContained={true}
-          />
-        </div>
+  const renderDesktopPreview = () => (
+    <div className="w-full h-full flex items-center justify-center bg-gray-50">
+      <div className="max-w-lg mx-auto">
+        <FunnelUnlockedGame
+          campaign={mockCampaign}
+          modalContained={true}
+        />
       </div>
-    );
-  };
+    </div>
+  );
 
   const renderMobilePreview = () => (
     <div className="w-full h-full flex items-center justify-center p-4 bg-gray-50">

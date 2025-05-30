@@ -7,153 +7,54 @@ interface WheelProps {
   isPreview?: boolean;
   onComplete?: (prize: string) => void;
   onFinish?: (result: 'win' | 'lose') => void;
-  previewMode?: 'mobile' | 'tablet' | 'desktop';
-  style?: React.CSSProperties;
-  className?: string;
+  currentWinners?: number;
+  maxWinners?: number;
+  winRate?: number;
 }
 
-const Wheel: React.FC<WheelProps> = ({
-  config,
-  isPreview,
-  onComplete,
-  onFinish,
-  previewMode = 'desktop',
-  style,
-  className
-}) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+const Wheel: React.FC<WheelProps> = ({ config, isPreview, onComplete, onFinish }) => {
+  const wheelRef = useRef<HTMLDivElement>(null);
   const [isSpinning, setIsSpinning] = useState(false);
   const [selectedStyle, setSelectedStyle] = useState('roulette_casino.svg');
-  const [rotation, setRotation] = useState(0);
 
-  // Récupération des données de configuration avec valeurs par défaut
-  const segments = config?.segments || config?.prizes || [
-    { label: 'Prix 1', color: '#ff6b6b' },
-    { label: 'Prix 2', color: '#4ecdc4' },
-    { label: 'Prix 3', color: '#45b7d1' },
-    { label: 'Prix 4', color: '#96ceb4' }
-  ];
-
+  const prizes = config?.prizes || ['Prix 1', 'Prix 2', 'Prix 3', 'Prix 4'];
   const colors = config?.colors || ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4'];
 
-  console.log('Wheel config:', config);
-  console.log('Wheel segments:', segments);
-
-  const drawWheel = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const size = Math.min(canvas.width, canvas.height);
-    const center = size / 2;
-    const radius = center - 10;
-
-    // Clear canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    if (segments.length === 0) return;
-
-    const anglePerSegment = (2 * Math.PI) / segments.length;
-
-    // Draw segments
-    segments.forEach((segment: any, index: number) => {
-      const startAngle = index * anglePerSegment + (rotation * Math.PI / 180);
-      const endAngle = startAngle + anglePerSegment;
-
-      // Get segment data
-      const segmentLabel = typeof segment === 'object' ? segment.label : segment;
-      const segmentColor = typeof segment === 'object' ? segment.color : colors[index % colors.length];
-
-      // Draw segment
-      ctx.beginPath();
-      ctx.moveTo(center, center);
-      ctx.arc(center, center, radius, startAngle, endAngle);
-      ctx.closePath();
-      ctx.fillStyle = segmentColor;
-      ctx.fill();
-      ctx.strokeStyle = '#ffffff';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-
-      // Draw text
-      ctx.save();
-      ctx.translate(center, center);
-      ctx.rotate(startAngle + anglePerSegment / 2);
-      ctx.textAlign = 'left';
-      ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 14px Arial';
-      ctx.shadowColor = 'rgba(0,0,0,0.5)';
-      ctx.shadowBlur = 2;
-      ctx.fillText(segmentLabel, radius * 0.6, 5);
-      ctx.restore();
-    });
-
-    // Draw center circle
-    ctx.beginPath();
-    ctx.arc(center, center, 20, 0, 2 * Math.PI);
-    ctx.fillStyle = '#ffffff';
-    ctx.fill();
-    ctx.strokeStyle = '#333333';
-    ctx.lineWidth = 2;
-    ctx.stroke();
-  };
-
   const spin = () => {
-    if (isSpinning) return;
+    if (!wheelRef.current || isSpinning) return;
 
     setIsSpinning(true);
-    const spinAmount = Math.random() * 360 + 1440; // Au moins 4 tours
-    const finalRotation = rotation + spinAmount;
-
-    // Animate rotation
-    const startTime = Date.now();
-    const duration = 3000;
-
-    const animate = () => {
-      const elapsed = Date.now() - startTime;
-      const progress = Math.min(elapsed / duration, 1);
+    const randomRotation = Math.random() * 360 + 1440; // Au moins 4 tours
+    
+    wheelRef.current.style.transform = `rotate(${randomRotation}deg)`;
+    
+    setTimeout(() => {
+      setIsSpinning(false);
+      const prizeIndex = Math.floor((360 - (randomRotation % 360)) / (360 / prizes.length));
+      const selectedPrize = prizes[prizeIndex] || prizes[0];
       
-      // Easing function
-      const easeOut = 1 - Math.pow(1 - progress, 3);
-      const currentRotation = rotation + (spinAmount * easeOut);
+      // Appeler onComplete si fourni (pour la compatibilité)
+      onComplete?.(selectedPrize);
       
-      setRotation(currentRotation);
-
-      if (progress < 1) {
-        requestAnimationFrame(animate);
-      } else {
-        setIsSpinning(false);
-        
-        // Calculate winning segment
-        const normalizedRotation = (finalRotation % 360 + 360) % 360;
-        const segmentAngle = 360 / segments.length;
-        const winningIndex = Math.floor((360 - normalizedRotation) / segmentAngle) % segments.length;
-        const winningSegment = segments[winningIndex];
-        const prize = typeof winningSegment === 'object' ? winningSegment.label : winningSegment;
-        
-        onComplete?.(prize);
-        
-        if (onFinish) {
-          const result = Math.random() > 0.5 ? 'win' : 'lose';
-          onFinish(result);
-        }
+      // Appeler onFinish si fourni (pour la cohérence avec les autres jeux)
+      if (onFinish) {
+        // Simuler un résultat win/lose basé sur le prix
+        const result = Math.random() > 0.5 ? 'win' : 'lose';
+        onFinish(result);
       }
-    };
-
-    animate();
+    }, 3000);
   };
 
   useEffect(() => {
-    drawWheel();
-  }, [segments, rotation]);
+    if (wheelRef.current) {
+      wheelRef.current.style.transition = isSpinning ? 'transform 3s ease-out' : 'none';
+    }
+  }, [isSpinning]);
 
-  // Mode éditeur - afficher seulement le sélecteur de style
   if (!isPreview) {
     return (
       <div className="space-y-6">
-        <WheelStyleSelector
+        <WheelStyleSelector 
           selectedStyle={selectedStyle}
           setSelectedStyle={setSelectedStyle}
         />
@@ -161,67 +62,38 @@ const Wheel: React.FC<WheelProps> = ({
     );
   }
 
-  // Mode preview - toujours afficher la roue
-  const containerSize = Math.min(
-    (style?.width as number) || 300,
-    (style?.height as number) || 300
-  );
-
   return (
-    <div
-      className={`flex flex-col items-center justify-center w-full h-full ${className || ''}`}
-      style={style}
-    >
-      {/* Container de la roue */}
-      <div
-        className="relative flex items-center justify-center"
-        style={{
-          width: containerSize,
-          height: containerSize,
-          maxWidth: '100%',
-          maxHeight: '100%',
-        }}
-      >
-        {/* Canvas pour la roue */}
-        <canvas
-          ref={canvasRef}
-          width={containerSize}
-          height={containerSize}
-          className="rounded-full border-4 border-gray-800"
-          style={{
-            width: containerSize,
-            height: containerSize,
-          }}
-        />
-        
-        {/* Curseur/flèche */}
+    <div className="flex flex-col items-center space-y-8">
+      <div className="relative">
         <div
-          className="absolute z-30 pointer-events-none"
-          style={{
-            top: -2,
-            left: '50%',
-            transform: 'translateX(-50%)',
-          }}
+          ref={wheelRef}
+          className="w-80 h-80 rounded-full border-8 border-gray-800 relative overflow-hidden"
+          style={{ transition: 'transform 3s ease-out' }}
         >
-          <div 
-            className="w-0 h-0 border-l-[12px] border-r-[12px] border-b-[20px] border-transparent border-b-gray-800"
-            style={{
-              filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))'
-            }}
-          ></div>
+          {prizes.map((prize: string, index: number) => (
+            <div
+              key={index}
+              className="absolute w-1/2 h-1/2 origin-bottom-right flex items-center justify-center text-white font-bold"
+              style={{
+                backgroundColor: colors[index % colors.length],
+                transform: `rotate(${(360 / prizes.length) * index}deg)`,
+                clipPath: `polygon(0 0, ${100 / prizes.length}% 0, 0 100%)`
+              }}
+            >
+              <span className="transform -rotate-45 text-sm">{prize}</span>
+            </div>
+          ))}
+        </div>
+        
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+          <div className="w-0 h-0 border-l-4 border-r-4 border-b-8 border-transparent border-b-gray-800"></div>
         </div>
       </div>
 
-      {/* Bouton responsive */}
       <button
         onClick={spin}
         disabled={isSpinning}
-        className="px-6 py-3 mt-6 bg-[#841b60] text-white font-bold rounded-xl hover:bg-[#6d164f] disabled:opacity-50 transition-colors duration-200 text-sm md:text-base shadow-lg"
-        style={{
-          width: previewMode === 'mobile' ? '80%' : previewMode === 'tablet' ? '70%' : '60%',
-          maxWidth: '280px',
-          minWidth: '120px',
-        }}
+        className="px-8 py-3 bg-[#841b60] text-white font-bold rounded-xl hover:bg-[#6d164f] disabled:opacity-50 transition-colors duration-200"
       >
         {isSpinning ? 'Rotation...' : 'Faire tourner'}
       </button>

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Quiz, Scratch, Memory, Puzzle, Dice } from '../GameTypes';
 import TabRoulette from '@/components/configurators/TabRoulette';
@@ -6,7 +5,6 @@ import TabJackpot from '@/components/configurators/TabJackpot';
 import JackpotAppearance from '@/components/configurators/JackpotAppearance';
 import ImageUpload from '../common/ImageUpload';
 import GameCanvasPreview from './GameCanvasPreview';
-import GameSizeSelector from './GameSizeSelector';
 import { Settings, Eye, Palette } from 'lucide-react';
 
 interface CampaignContentProps {
@@ -30,27 +28,13 @@ const CampaignContent: React.FC<CampaignContentProps> = ({
     }));
   };
 
-  const handleSizeChange = (size: number) => {
-    setCampaign((prev: any) => ({
-      ...prev,
-      gameConfig: {
-        ...prev.gameConfig,
-        [campaign.type]: {
-          ...prev.gameConfig?.[campaign.type],
-          gameSize: size,
-        },
-      },
-    }));
-  };
-
   const getContentEditor = () => {
     switch (campaign.type) {
       case 'quiz':
         return (
           <Quiz
             config={campaign.gameConfig?.quiz}
-            campaign={campaign}
-            onConfigChange={(config: any) => updateGameConfig('quiz', config)}
+            onConfigChange={(config) => updateGameConfig('quiz', config)}
           />
         );
       case 'wheel':
@@ -59,28 +43,28 @@ const CampaignContent: React.FC<CampaignContentProps> = ({
         return (
           <Scratch
             config={campaign.gameConfig?.scratch}
-            onConfigChange={(config: any) => updateGameConfig('scratch', config)}
+            onConfigChange={(config) => updateGameConfig('scratch', config)}
           />
         );
       case 'memory':
         return (
           <Memory
             config={campaign.gameConfig?.memory}
-            onConfigChange={(config: any) => updateGameConfig('memory', config)}
+            onConfigChange={(config) => updateGameConfig('memory', config)}
           />
         );
       case 'puzzle':
         return (
           <Puzzle
             config={campaign.gameConfig?.puzzle}
-            onConfigChange={(config: any) => updateGameConfig('puzzle', config)}
+            onConfigChange={(config) => updateGameConfig('puzzle', config)}
           />
         );
       case 'dice':
         return (
           <Dice
             config={campaign.gameConfig?.dice}
-            onConfigChange={(config: any) => updateGameConfig('dice', config)}
+            onConfigChange={(config) => updateGameConfig('dice', config)}
           />
         );
       case 'jackpot':
@@ -156,12 +140,6 @@ const CampaignContent: React.FC<CampaignContentProps> = ({
                 <h3 className="text-lg font-medium text-gray-900">Aperçu du jeu</h3>
               </div>
               <GameCanvasPreview campaign={campaign} />
-
-              {/* Game Size Selector */}
-              <GameSizeSelector
-                selectedSize={campaign.gameConfig?.[campaign.type]?.gameSize || 1}
-                onSizeChange={handleSizeChange}
-              />
 
               <div>
                 <h3 className="text-lg font-medium text-gray-900 mb-4">Image de fond du jeu</h3>

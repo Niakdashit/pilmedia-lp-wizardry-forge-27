@@ -36,7 +36,7 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
   const getGameComponent = () => {
     switch (campaign.type) {
       case 'quiz':
-        return <Quiz config={campaign.gameConfig.quiz} campaign={campaign} />;
+        return <Quiz config={campaign.gameConfig.quiz} onConfigChange={() => {}} />;
       case 'memory':
         return <Memory config={campaign.gameConfig.memory} onConfigChange={() => {}} />;
       case 'puzzle':

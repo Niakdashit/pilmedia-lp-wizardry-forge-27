@@ -1,12 +1,11 @@
-
 import React from 'react';
 import Jackpot from '../GameTypes/Jackpot';
 import { Quiz } from '../GameTypes';
+import WheelPreview from '../GameTypes/WheelPreview';
 import MemoryPreview from '../GameTypes/MemoryPreview';
 import PuzzlePreview from '../GameTypes/PuzzlePreview';
 import ScratchPreview from '../GameTypes/ScratchPreview';
 import DicePreview from '../GameTypes/DicePreview';
-import { Wheel } from '../GameTypes';
 
 interface GameCanvasPreviewProps {
   campaign: any;
@@ -21,86 +20,65 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel || 'Lancer le Jackpot';
   const buttonColor = campaign.gameConfig?.[campaign.type]?.buttonColor || '#ec4899';
   
+  // Récupération du template sélectionné
   const selectedTemplateId = campaign?.design?.template || campaign?.gameConfig?.jackpot?.template;
-  const selectedSize: number = campaign.gameConfig?.[campaign.type]?.gameSize || 1;
-  
-  const GAME_SIZES: Record<number, { width: number; height: number }> = {
-    1: { width: 300, height: 200 },
-    2: { width: 400, height: 300 },
-    3: { width: 500, height: 400 },
-    4: { width: 600, height: 500 }
-  };
-
-  const currentSize = GAME_SIZES[selectedSize] || GAME_SIZES[1];
-
-  console.log('GameCanvasPreview - campaign:', campaign);
-  console.log('GameCanvasPreview - campaign.type:', campaign.type);
-  console.log('GameCanvasPreview - wheel config:', campaign.gameConfig?.wheel);
-  console.log('GameCanvasPreview - roulette config:', campaign.config?.roulette);
 
   const renderGame = () => {
-    // Props communes pour tous les jeux avec taille prédéfinie
     const gameProps = {
       style: { 
-        width: currentSize.width, 
-        height: currentSize.height,
-      },
-      className: 'w-full h-full'
+        width: '100%', 
+        height: '100%', 
+        maxWidth: '100%', 
+        maxHeight: '100%',
+        overflow: 'hidden'
+      }
     };
 
     switch (campaign.type) {
       case 'jackpot':
         return (
-          <Jackpot
-            isPreview={true}
-            instantWinConfig={{
-              mode: 'instant_winner' as const,
-              winProbability: campaign.gameConfig?.jackpot?.instantWin?.winProbability || 0.05,
-              maxWinners: campaign.gameConfig?.jackpot?.instantWin?.maxWinners,
-              winnersCount: 0
-            }}
-            buttonLabel={buttonLabel}
-            buttonColor={buttonColor}
-            selectedTemplate={selectedTemplateId}
-            {...gameProps}
-          />
+          <div style={gameProps.style}>
+            <Jackpot
+              isPreview={true}
+              instantWinConfig={{
+                mode: 'instant_winner' as const,
+                winProbability: campaign.gameConfig?.jackpot?.instantWin?.winProbability || 0.05,
+                maxWinners: campaign.gameConfig?.jackpot?.instantWin?.maxWinners,
+                winnersCount: 0
+              }}
+              buttonLabel={buttonLabel}
+              buttonColor={buttonColor}
+              selectedTemplate={selectedTemplateId}
+            />
+          </div>
         );
       case 'quiz':
         return (
-          <Quiz 
-            config={campaign.gameConfig?.quiz || {}} 
-            campaign={campaign}
-            {...gameProps}
-          />
+          <div style={gameProps.style}>
+            <Quiz 
+              config={campaign.gameConfig?.quiz || {}} 
+              onConfigChange={() => {}}
+            />
+          </div>
         );
       case 'wheel':
-        // Fusionner les configurations de différentes sources
-        const wheelConfig = {
-          ...campaign.gameConfig?.wheel,
-          ...campaign.config?.roulette,
-          // S'assurer qu'on a des segments par défaut si aucune configuration
-          segments: campaign.config?.roulette?.segments || 
-                   campaign.gameConfig?.wheel?.segments || 
-                   campaign.gameConfig?.wheel?.prizes ||
-                   ['Segment 1', 'Segment 2', 'Segment 3', 'Segment 4'],
-          colors: campaign.config?.roulette?.colors || 
-                 campaign.gameConfig?.wheel?.colors ||
-                 ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4']
-        };
-        
-        console.log('Final wheel config:', wheelConfig);
-        
         return (
-          <Wheel
-            config={wheelConfig}
-            isPreview={true}
-            previewMode="desktop"
-            {...gameProps}
-          />
+          <div style={gameProps.style}>
+            <WheelPreview
+              campaign={campaign}
+              config={{
+                mode: 'instant_winner' as const,
+                winProbability: campaign.gameConfig?.wheel?.winProbability || 0.1,
+                maxWinners: campaign.gameConfig?.wheel?.maxWinners,
+                winnersCount: 0
+              }}
+              onFinish={() => {}}
+            />
+          </div>
         );
       case 'scratch':
         return (
-          <div className="w-full h-full flex items-center justify-center">
+          <div style={gameProps.style}>
             <ScratchPreview 
               config={campaign.gameConfig?.scratch || {}} 
             />
@@ -108,7 +86,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
         );
       case 'memory':
         return (
-          <div className="w-full h-full flex items-center justify-center">
+          <div style={gameProps.style}>
             <MemoryPreview 
               config={campaign.gameConfig?.memory || {}} 
             />
@@ -116,7 +94,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
         );
       case 'puzzle':
         return (
-          <div className="w-full h-full flex items-center justify-center">
+          <div style={gameProps.style}>
             <PuzzlePreview 
               config={campaign.gameConfig?.puzzle || {}} 
             />
@@ -124,7 +102,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
         );
       case 'dice':
         return (
-          <div className="w-full h-full flex items-center justify-center">
+          <div style={gameProps.style}>
             <DicePreview 
               config={campaign.gameConfig?.dice || {}} 
             />
@@ -140,34 +118,19 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   };
 
   return (
-    <div 
-      className={`relative w-full flex items-center justify-center bg-gray-50 border-2 border-dashed border-gray-300 rounded-lg p-8 ${className}`} 
-      style={{ 
-        // Container fixe qui ne change pas de taille
-        minHeight: '400px',
-        height: '500px',
-      }}
-    >
+    <div className={`relative w-full h-full ${className} flex items-center justify-center`} style={{ minHeight: '400px' }}>
       {/* Image de fond plein écran */}
       {gameBackgroundImage && (
         <img
           src={gameBackgroundImage}
           alt="Background"
-          className="absolute inset-0 w-full h-full object-cover z-0 rounded-lg"
+          className="absolute inset-0 w-full h-full object-cover z-0"
           style={{ pointerEvents: 'none' }}
         />
       )}
 
-      {/* Jeu avec taille prédéfinie centré */}
-      <div 
-        className="relative z-20 flex items-center justify-center bg-white rounded-lg shadow-sm" 
-        style={{ 
-          width: currentSize.width, 
-          height: currentSize.height,
-          minWidth: currentSize.width,
-          minHeight: currentSize.height,
-        }}
-      >
+      {/* Jeu centré avec contraintes de taille */}
+      <div className="relative z-20 w-full h-full flex items-center justify-center p-4" style={{ maxWidth: '100%', maxHeight: '100%' }}>
         {renderGame()}
       </div>
     </div>

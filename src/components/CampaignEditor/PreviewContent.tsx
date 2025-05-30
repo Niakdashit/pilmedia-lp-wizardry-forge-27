@@ -1,12 +1,8 @@
+
 import React, { useState, useEffect } from 'react';
 import Color from 'color';
 import confetti from 'canvas-confetti';
-import { Quiz } from '../GameTypes';
-import WheelPreview from '../GameTypes/WheelPreview';
-import ScratchPreview from '../GameTypes/ScratchPreview';
-import MemoryPreview from '../GameTypes/MemoryPreview';
-import PuzzlePreview from '../GameTypes/PuzzlePreview';
-import DicePreview from '../GameTypes/DicePreview';
+import { Quiz, Wheel, Scratch, Memory, Puzzle, Dice } from '../GameTypes';
 
 interface PreviewContentProps {
   campaign: any;
@@ -74,49 +70,51 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
         return (
           <Quiz 
             config={campaign.gameConfig.quiz} 
-            campaign={campaign}
+            onConfigChange={() => {}}
           />
         );
 
       case 'wheel':
         return (
-          <WheelPreview
-            campaign={campaign}
-            config={{
-              mode: 'instant_winner' as const,
-              winProbability: campaign.gameConfig?.wheel?.winProbability || 0.1,
-              maxWinners: campaign.gameConfig?.wheel?.maxWinners,
-              winnersCount: 0
-            }}
-            onFinish={handleGameComplete}
+          <Wheel 
+            config={campaign.gameConfig.wheel}
+            isPreview={true}
+            currentWinners={0}
+            maxWinners={100}
+            winRate={10}
+            onComplete={handleGameComplete}
           />
         );
 
       case 'scratch':
         return (
-          <ScratchPreview 
+          <Scratch 
             config={campaign.gameConfig.scratch} 
+            onConfigChange={() => {}}
           />
         );
 
       case 'memory':
         return (
-          <MemoryPreview 
+          <Memory 
             config={campaign.gameConfig.memory} 
+            onConfigChange={() => {}}
           />
         );
 
       case 'puzzle':
         return (
-          <PuzzlePreview 
+          <Puzzle 
             config={campaign.gameConfig.puzzle} 
+            onConfigChange={() => {}}
           />
         );
 
       case 'dice':
         return (
-          <DicePreview 
+          <Dice 
             config={campaign.gameConfig.dice} 
+            onConfigChange={() => {}}
           />
         );
 

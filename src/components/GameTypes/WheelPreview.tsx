@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 
 interface Segment {
@@ -52,13 +53,11 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   config,
   onFinish
 }) => {
-  // Utilise prioritairement la config de la roue depuis config.roulette
-  const wheelConfig = campaign?.config?.roulette || campaign?.gameConfig?.wheel || {};
-  const segments = wheelConfig.segments || [];
-  const centerImage = wheelConfig.centerImage;
-  const theme = wheelConfig.theme || 'default';
-  const borderColor = wheelConfig.borderColor || '#841b60';
-  const pointerColor = wheelConfig.pointerColor || '#841b60';
+  const segments = campaign?.config?.roulette?.segments || [];
+  const centerImage = campaign?.config?.roulette?.centerImage;
+  const theme = campaign?.config?.roulette?.theme || 'default';
+  const borderColor = campaign?.config?.roulette?.borderColor || '#841b60';
+  const pointerColor = campaign?.config?.roulette?.pointerColor || '#841b60';
   
   const [rotation, setRotation] = useState(0);
   const [spinning, setSpinning] = useState(false);

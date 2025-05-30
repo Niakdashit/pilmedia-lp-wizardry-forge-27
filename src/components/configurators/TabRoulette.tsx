@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 
 interface Segment {
@@ -40,26 +39,16 @@ const TabRoulette: React.FC<TabRouletteProps> = ({
   campaign,
   setCampaign
 }) => {
-  // Initialiser avec des segments par défaut s'ils n'existent pas
-  const initialSegments = campaign?.config?.roulette?.segments || [
-    { label: 'Prix 1', chance: 25, color: '#ff6b6b', image: null },
-    { label: 'Prix 2', chance: 25, color: '#4ecdc4', image: null },
-    { label: 'Prix 3', chance: 25, color: '#45b7d1', image: null },
-    { label: 'Prix 4', chance: 25, color: '#96ceb4', image: null }
-  ];
-
-  const [segments, setSegments] = useState<Segment[]>(initialSegments);
-  const [centerImage, setCenterImage] = useState<File | null>(campaign?.config?.roulette?.centerImage || null);
+  const [segments, setSegments] = useState<Segment[]>(campaign?.config?.roulette?.segments || []);
+  const [centerImage, setCenterImage] = useState<File | null>(null);
   const [rotation] = useState(0);
   const [desiredCount, setDesiredCount] = useState<number>(segments.length);
-  const [theme, setTheme] = useState<'default' | 'promo' | 'food' | 'casino' | 'child' | 'gaming' | 'luxury' | 'halloween' | 'noel'>(campaign?.config?.roulette?.theme || 'default');
-  const [borderColor, setBorderColor] = useState<string>(campaign?.config?.roulette?.borderColor || '#841b60');
-  const [pointerColor, setPointerColor] = useState<string>(campaign?.config?.roulette?.pointerColor || '#841b60');
+  const [theme, setTheme] = useState<'default' | 'promo' | 'food' | 'casino' | 'child' | 'gaming' | 'luxury' | 'halloween' | 'noel'>('default');
+  const [borderColor, setBorderColor] = useState<string>('#841b60');
+  const [pointerColor, setPointerColor] = useState<string>('#841b60');
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const updateCampaign = (newSegments: Segment[], center: File | null) => {
-    console.log('Updating campaign with segments:', newSegments);
-    
     setSegments(newSegments);
     setCenterImage(center);
     setCampaign((prev: any) => ({
@@ -67,41 +56,13 @@ const TabRoulette: React.FC<TabRouletteProps> = ({
       config: {
         ...prev.config,
         roulette: {
+          ...prev.config?.roulette,
           segments: newSegments,
-          centerImage: center || null,
-          theme,
-          borderColor,
-          pointerColor
-        }
-      },
-      // Mise à jour de gameConfig.wheel pour compatibilité
-      gameConfig: {
-        ...prev.gameConfig,
-        wheel: {
-          ...prev.gameConfig?.wheel,
-          segments: newSegments,
-          centerImage: center || null,
-          theme,
-          borderColor,
-          pointerColor
+          centerImage: center || null
         }
       }
     }));
   };
-
-  // Mettre à jour la campagne quand les couleurs ou le thème changent
-  useEffect(() => {
-    if (segments.length > 0) {
-      updateCampaign(segments, centerImage);
-    }
-  }, [theme, borderColor, pointerColor]);
-
-  // Initialiser les segments au premier chargement
-  useEffect(() => {
-    if (segments.length > 0) {
-      updateCampaign(segments, centerImage);
-    }
-  }, []);
 
   const handleSegmentChange = (index: number, field: keyof Segment, value: string | number) => {
     const updated = [...segments];
@@ -119,22 +80,10 @@ const TabRoulette: React.FC<TabRouletteProps> = ({
     updateCampaign(updated, centerImage);
   };
 
-  const handleThemeChange = (newTheme: typeof theme) => {
-    setTheme(newTheme);
-  };
-
-  const handleBorderColorChange = (color: string) => {
-    setBorderColor(color);
-  };
-
-  const handlePointerColorChange = (color: string) => {
-    setPointerColor(color);
-  };
-
   const addSegment = () => {
     const themeColors = getThemeColors(theme);
     const newSegment: Segment = {
-      label: `Segment ${segments.length + 1}`,
+      label: '',
       chance: 0,
       color: themeColors[segments.length % themeColors.length],
       image: null
@@ -156,8 +105,8 @@ const TabRoulette: React.FC<TabRouletteProps> = ({
     
     for (let i = 0; i < count; i++) {
       newSegments.push(segments[i] || {
-        label: `Segment ${i + 1}`,
-        chance: Math.floor(100 / count),
+        label: '',
+        chance: 0,
         color: themeColors[i % themeColors.length],
         image: null
       });
@@ -268,7 +217,7 @@ const TabRoulette: React.FC<TabRouletteProps> = ({
           <input
             type="color"
             value={borderColor}
-            onChange={(e) => handleBorderColorChange(e.target.value)}
+            onChange={(e) => setBorderColor(e.target.value)}
             className="w-full h-10 rounded border"
           />
         </div>
@@ -277,7 +226,7 @@ const TabRoulette: React.FC<TabRouletteProps> = ({
           <input
             type="color"
             value={pointerColor}
-            onChange={(e) => handlePointerColorChange(e.target.value)}
+            onChange={(e) => setPointerColor(e.target.value)}
             className="w-full h-10 rounded border"
           />
         </div>
@@ -287,7 +236,7 @@ const TabRoulette: React.FC<TabRouletteProps> = ({
         <label className="block text-sm font-medium text-gray-700 mb-1">Thème visuel de la roue</label>
         <select
           value={theme}
-          onChange={(e) => handleThemeChange(e.target.value as any)}
+          onChange={(e) => setTheme(e.target.value as any)}
           className="border p-2 rounded w-full md:w-1/2"
         >
           <option value="default">Classique pâle</option>
@@ -358,19 +307,6 @@ const TabRoulette: React.FC<TabRouletteProps> = ({
           </button>
         </div>
       ))}
-
-      {/* Aperçu de la roue */}
-      <div className="mt-8">
-        <h3 className="text-lg font-semibold mb-4">Aperçu de la roue</h3>
-        <div className="flex justify-center">
-          <canvas
-            ref={canvasRef}
-            width={300}
-            height={300}
-            className="border rounded-full shadow-lg"
-          />
-        </div>
-      </div>
     </div>
   );
 };
