@@ -17,13 +17,29 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
   if (!isOpen) return null;
 
   const getPreviewFunnel = () => {
+    // S'assurer que toutes les configurations sont passées correctement
+    const funnelProps = {
+      campaign: {
+        ...campaign,
+        // Synchroniser les configurations entre gameConfig et config
+        config: {
+          ...campaign.config,
+          [campaign.type]: {
+            ...campaign.config?.[campaign.type],
+            ...campaign.gameConfig?.[campaign.type]
+          }
+        }
+      },
+      modalContained: true
+    };
+
     if (['wheel', 'scratch', 'jackpot', 'dice'].includes(campaign.type)) {
-      return <FunnelUnlockedGame campaign={campaign} modalContained={true} />;
+      return <FunnelUnlockedGame {...funnelProps} />;
     }
-    return <FunnelStandard campaign={campaign} />;
+    return <FunnelStandard campaign={funnelProps.campaign} />;
   };
 
-  const backgroundImage = campaign.design?.backgroundImage;
+  const backgroundImage = campaign.design?.backgroundImage || campaign.gameConfig?.[campaign.type]?.backgroundImage;
 
   const getBackgroundStyle = () => {
     const style: any = {
@@ -35,10 +51,15 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
     };
 
     if (backgroundImage && selectedDevice === 'desktop') {
-      style.backgroundImage = `url(${backgroundImage})`;
-      style.backgroundSize = 'cover';
-      style.backgroundPosition = 'center';
-      style.backgroundRepeat = 'no-repeat';
+      const imageUrl = typeof backgroundImage === 'string' ? backgroundImage : 
+                     backgroundImage?.value && backgroundImage.value !== 'undefined' ? backgroundImage.value : null;
+      
+      if (imageUrl) {
+        style.backgroundImage = `url(${imageUrl})`;
+        style.backgroundSize = 'cover';
+        style.backgroundPosition = 'center';
+        style.backgroundRepeat = 'no-repeat';
+      }
     }
 
     return style;
@@ -71,7 +92,6 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
           {getPreviewFunnel()}
         </div>
         
-        {/* Indicateur de responsive design */}
         {!isFullscreen && (
           <div className="absolute bottom-4 right-4 bg-white/90 backdrop-blur-sm rounded-lg px-3 py-2 text-xs text-gray-600 shadow-md">
             <div className="flex items-center space-x-2">
@@ -88,11 +108,17 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
     <div className="w-full h-full flex items-center justify-center p-4">
       <div className="relative">
         <MobilePreview
-          campaign={campaign}
+          campaign={{
+            ...campaign,
+            // Synchroniser les configurations mobiles
+            mobileConfig: {
+              ...campaign.mobileConfig,
+              customTemplate: campaign.mobileConfig?.customTemplate || campaign.gameConfig?.[campaign.type]?.customTemplate
+            }
+          }}
           previewMode={selectedDevice === 'tablet' ? 'tablet' : 'mobile'}
         />
         
-        {/* Indicateur de device */}
         <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 bg-white/90 backdrop-blur-sm rounded-lg px-3 py-1 text-xs text-gray-600 shadow-md">
           <div className="flex items-center space-x-2">
             {selectedDevice === 'tablet' ? <Tablet className="w-3 h-3" /> : <Smartphone className="w-3 h-3" />}

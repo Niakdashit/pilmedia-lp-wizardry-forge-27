@@ -38,6 +38,8 @@ interface JackpotProps {
   buttonColor?: string;
   customTemplate?: string;
   selectedTemplate?: string;
+  gameSize?: { width: number; height: number };
+  templateSize?: { width: number; height: number };
 }
 
 const Jackpot: React.FC<JackpotProps> = ({
@@ -48,7 +50,9 @@ const Jackpot: React.FC<JackpotProps> = ({
   buttonLabel = "Lancer le Jackpot",
   buttonColor = "#ec4899",
   customTemplate,
-  selectedTemplate
+  selectedTemplate,
+  gameSize,
+  templateSize
 }) => {
   const [slots, setSlots] = useState<string[]>(['🍒', '🍋', '🍊']);
   const [isRolling, setIsRolling] = useState(false);
@@ -113,22 +117,23 @@ const Jackpot: React.FC<JackpotProps> = ({
   const templateImg = selectedTemplate ? jackpotTemplates[selectedTemplate] : undefined;
   const customTemplateUrl = getImageUrl(customTemplate);
 
-  console.log('Jackpot - Template sélectionné:', selectedTemplate);
-  console.log('Jackpot - Template personnalisé:', customTemplateUrl);
+  // Utilisation des tailles passées en props ou valeurs par défaut
+  const currentGameSize = gameSize || { width: 400, height: 400 };
+  const currentTemplateSize = templateSize || { width: 680, height: 400 };
 
-  // Responsive slot size calculation
+  // Responsive slot size calculation based on game size
   const getSlotSize = () => {
-    const containerWidth = window.innerWidth || 400;
+    const containerWidth = currentGameSize.width;
     if (containerWidth < 350) return 50;
     if (containerWidth < 500) return 60;
-    return 70;
+    return Math.min(70, containerWidth * 0.15);
   };
 
   const slotSize = getSlotSize();
   const slotGap = Math.max(8, slotSize * 0.15);
 
   const containerStyle: any = {
-    minHeight: '400px',
+    minHeight: `${currentGameSize.height}px`,
     position: 'relative',
     width: '100%',
     height: '100%',
@@ -139,38 +144,15 @@ const Jackpot: React.FC<JackpotProps> = ({
 
   return (
     <div style={containerStyle} className="flex flex-col items-center justify-center w-full h-full p-2 px-0">
-      {/* Template personnalisé en priorité */}
-      {customTemplateUrl && (
-        <img
-          src={customTemplateUrl}
-          alt="Template jackpot personnalisé"
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0"
-          style={{
-            width: '100%',
-            height: '100%',
-            maxWidth: '100vw',
-            maxHeight: '100vh',
-            minWidth: '300px',
-            minHeight: '250px',
-            objectFit: 'contain',
-            opacity: 0.95
-          }}
-        />
-      )}
-
-      {/* Template SVG si pas de template personnalisé */}
+      {/* Template SVG (taille fixe selon selectedTemplate) */}
       {!customTemplateUrl && templateImg && (
         <img
           src={templateImg}
           alt="Template jackpot"
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0"
           style={{
-            width: '100%',
-            height: '100%',
-            maxWidth: '100vw',
-            maxHeight: '100vh',
-            minWidth: '300px',
-            minHeight: '250px',
+            width: `${currentTemplateSize.width}px`,
+            height: `${currentTemplateSize.height}px`,
             objectFit: 'contain',
             opacity: 0.95
           }}
@@ -204,7 +186,7 @@ const Jackpot: React.FC<JackpotProps> = ({
                 duration: 0.32,
                 repeat: isRolling ? Infinity : 0
               }} 
-              className="bg-white shadow-md flex items-center justify-center flex-shrink-0 aspect-[9/16]"
+              className="bg-white shadow-md flex items-center justify-center flex-shrink-0"
             >
               {symbol}
             </motion.div>

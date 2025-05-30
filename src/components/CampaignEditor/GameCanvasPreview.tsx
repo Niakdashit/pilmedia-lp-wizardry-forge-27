@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Jackpot from '../GameTypes/Jackpot';
 import { Quiz } from '../GameTypes';
@@ -12,11 +11,13 @@ import ResizableGameContainer from '../common/ResizableGameContainer';
 interface GameCanvasPreviewProps {
   campaign: any;
   className?: string;
+  setCampaign?: (campaign: any) => void;
 }
 
 const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   campaign,
-  className = ""
+  className = "",
+  setCampaign
 }) => {
   // Correction pour récupérer l'image de fond
   const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage;
@@ -27,19 +28,39 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   // Récupération du template sélectionné
   const selectedTemplateId = campaign?.design?.template || campaign?.gameConfig?.jackpot?.template;
 
-  // Configuration du jeu redimensionnable
+  // Configuration du jeu redimensionnable - séparation des tailles
   const gameConfig = campaign.config?.[campaign.type] || campaign.gameConfig?.[campaign.type] || {};
   const gameSize = gameConfig.gameSize || { width: 400, height: 400 };
-  const gamePosition = gameConfig.gamePosition || { x: 0, y: 0 };
+  const templateSize = gameConfig.templateSize || { width: 680, height: 400 };
 
-  const handleSizeChange = (size: { width: number; height: number }) => {
-    console.log('Game size changed:', size);
-    // Cette fonction pourrait être connectée à setCampaign si nécessaire
+  const handleGameSizeChange = (size: { width: number; height: number }) => {
+    if (setCampaign) {
+      setCampaign((prev: any) => ({
+        ...prev,
+        gameConfig: {
+          ...prev.gameConfig,
+          [campaign.type]: {
+            ...prev.gameConfig?.[campaign.type],
+            gameSize: size
+          }
+        }
+      }));
+    }
   };
 
-  const handlePositionChange = (position: { x: number; y: number }) => {
-    console.log('Game position changed:', position);
-    // Cette fonction pourrait être connectée à setCampaign si nécessaire
+  const handleTemplateSizeChange = (size: { width: number; height: number }) => {
+    if (setCampaign) {
+      setCampaign((prev: any) => ({
+        ...prev,
+        gameConfig: {
+          ...prev.gameConfig,
+          [campaign.type]: {
+            ...prev.gameConfig?.[campaign.type],
+            templateSize: size
+          }
+        }
+      }));
+    }
   };
 
   const renderGame = () => {
@@ -69,6 +90,8 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
               buttonColor={buttonColor}
               selectedTemplate={selectedTemplateId}
               customTemplate={customTemplate}
+              gameSize={gameSize}
+              templateSize={templateSize}
             />
           </div>
         );
@@ -159,16 +182,41 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
         />
       )}
 
-      {/* Jeu redimensionnable */}
-      <div className="relative z-20 w-full h-full flex items-center justify-center p-4">
-        <ResizableGameContainer
-          initialSize={gameSize}
-          onSizeChange={handleSizeChange}
-          onPositionChange={handlePositionChange}
-          className="bg-white/10 backdrop-blur-sm"
-        >
-          {renderGame()}
-        </ResizableGameContainer>
+      {/* Deux conteneurs redimensionnables séparés */}
+      <div className="relative z-20 w-full h-full flex items-center justify-center p-4 space-x-4">
+        {/* Conteneur pour le jeu */}
+        <div className="relative">
+          <div className="absolute -top-8 left-0 text-xs text-gray-600 bg-white px-2 py-1 rounded">
+            Jeu
+          </div>
+          <ResizableGameContainer
+            initialSize={gameSize}
+            onSizeChange={handleGameSizeChange}
+            className="bg-white/20 backdrop-blur-sm border-blue-500"
+          >
+            {renderGame()}
+          </ResizableGameContainer>
+        </div>
+
+        {/* Conteneur pour le template personnalisé (si jackpot) */}
+        {campaign.type === 'jackpot' && customTemplate && (
+          <div className="relative">
+            <div className="absolute -top-8 left-0 text-xs text-gray-600 bg-white px-2 py-1 rounded">
+              Template
+            </div>
+            <ResizableGameContainer
+              initialSize={templateSize}
+              onSizeChange={handleTemplateSizeChange}
+              className="bg-white/20 backdrop-blur-sm border-green-500"
+            >
+              <img
+                src={getImageUrl(customTemplate)}
+                alt="Template personnalisé"
+                className="w-full h-full object-contain"
+              />
+            </ResizableGameContainer>
+          </div>
+        )}
       </div>
     </div>
   );
