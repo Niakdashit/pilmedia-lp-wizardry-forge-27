@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { BarChart3 } from 'lucide-react';
+import { BarChart3 } from 'luc ide-react';
 import ParticipationsViewer from '../../../campaign/ParticipationsViewer';
 
 interface AnalyticsSectionProps {
@@ -8,7 +8,7 @@ interface AnalyticsSectionProps {
   setCampaign: React.Dispatch<React.SetStateAction<any>>;
 }
 
-const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({ campaign, setCampaign }) => {
+const AnalyticsSection: React.FC<AnalyticsSectionProps> = ({ campaign }) => {
   return (
     <div className="space-y-8">
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">

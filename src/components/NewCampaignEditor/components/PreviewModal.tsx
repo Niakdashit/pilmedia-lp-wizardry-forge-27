@@ -119,10 +119,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({
               }}
             >
               <div className="w-full h-full overflow-auto">
-                <GameFunnel 
-                  campaign={campaign} 
-                  mobileConfig={currentDevice === 'mobile' ? campaign.mobileConfig : undefined}
-                />
+                <GameFunnel campaign={campaign} />
               </div>
             </div>
           </div>

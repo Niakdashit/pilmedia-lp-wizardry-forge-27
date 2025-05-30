@@ -7,6 +7,7 @@ import { Wheel, Jackpot } from '../GameTypes';
 import ScratchPreview from '../GameTypes/ScratchPreview';
 import DicePreview from '../GameTypes/DicePreview';
 import { useParticipations } from '../../hooks/useParticipations';
+
 const DEFAULT_FIELDS: FieldConfig[] = [{
   id: "civilite",
   label: "Civilité",
@@ -27,11 +28,13 @@ const DEFAULT_FIELDS: FieldConfig[] = [{
   type: "email",
   required: true
 }];
+
 interface GameFunnelProps {
   campaign: any;
   modalContained?: boolean;
   mobileConfig?: any;
 }
+
 const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
   campaign,
   modalContained = false,
@@ -43,11 +46,14 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
   const [gameResult, setGameResult] = useState<'win' | 'lose' | null>(null);
   const [gameStarted, setGameStarted] = useState(false);
   const [showValidationMessage, setShowValidationMessage] = useState(false);
+  
   const {
     createParticipation,
     loading: participationLoading
   } = useParticipations();
+  
   const fields: FieldConfig[] = Array.isArray(campaign.formFields) && campaign.formFields.length > 0 ? campaign.formFields : DEFAULT_FIELDS;
+  
   const handleFormSubmit = async (formData: Record<string, string>) => {
     if (campaign.id) {
       const participation = await createParticipation({
@@ -66,33 +72,32 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
       setShowValidationMessage(false);
     }, 1500);
   };
+  
   const handleGameFinish = (result: 'win' | 'lose') => {
     setTimeout(() => {
       setGameResult(result);
       setGamePlayed(true);
     }, 1500);
   };
+  
   const handleGameStart = () => {
     setGameStarted(true);
   };
-  const handleGameButtonClick = () => {
-    if (!formValidated) {
-      setShowFormModal(true);
-      return;
-    }
-  };
+  
   const reset = () => {
     setGamePlayed(false);
     setGameResult(null);
     setGameStarted(false);
     setFormValidated(false);
   };
+  
   const selectedTemplateId = campaign?.design?.template || campaign?.gameConfig?.jackpot?.template || campaign?.gameConfig?.[campaign.type]?.template || campaign?.selectedTemplate;
+  
   const renderGame = () => {
     const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel;
     const buttonColor = campaign.gameConfig?.[campaign.type]?.buttonColor;
     const contrastBg = mobileConfig?.contrastBackground || campaign.screens?.[2]?.contrastBackground;
-
+    
     // Récupérer les paramètres de taille et position depuis la configuration
     const gameConfig = campaign.config?.[campaign.type] || campaign.gameConfig?.[campaign.type] || {};
     const gameSize = gameConfig.gameSize || {
@@ -146,6 +151,7 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
         <ValidationMessage show={showValidationMessage} message="Formulaire validé ! Vous pouvez maintenant jouer." type="success" />
       </div>;
   };
+  
   if (gamePlayed) {
     const resultScreen = campaign.screens?.[3] || {};
     const contrastBg = mobileConfig?.contrastBackground || resultScreen.contrastBackground;
@@ -166,6 +172,7 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
         </ContrastBackground>
       </div>;
   }
+  
   if (mobileConfig) {
     return <div className="w-full flex flex-col items-center space-y-3">
         {renderGame()}
@@ -174,10 +181,12 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
           </Modal>}
       </div>;
   }
+  
   const entryScreen = campaign.screens?.[0] || {};
   const contrastBg = entryScreen.contrastBackground;
   const showTitle = entryScreen.showTitle !== false && !gameStarted;
   const showDescription = entryScreen.showDescription !== false && !gameStarted;
+  
   return <div className="w-full max-w-4xl mx-auto p-6 flex flex-col items-center space-y-6">
       {(showTitle || showDescription) && <ContrastBackground enabled={contrastBg?.enabled} config={contrastBg} className="text-center space-y-3 w-full animate-fade-in">
           {showTitle && <h2 className="text-3xl font-bold">
@@ -197,4 +206,5 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
         </Modal>}
     </div>;
 };
+
 export default FunnelUnlockedGame;
