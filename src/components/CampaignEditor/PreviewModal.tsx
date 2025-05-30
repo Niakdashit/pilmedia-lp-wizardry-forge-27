@@ -1,8 +1,6 @@
-
 import React, { useState } from 'react';
 import { X, Monitor, Tablet, Smartphone } from 'lucide-react';
 import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
-import MobilePreview from './Mobile/MobilePreview';
 
 interface PreviewModalProps {
   isOpen: boolean;
