@@ -75,7 +75,12 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
   const handleGameStart = () => {
     setGameStarted(true);
   };
-  
+  const handleGameButtonClick = () => {
+    if (!formValidated) {
+      setShowFormModal(true);
+      return;
+    }
+  };
   const reset = () => {
     setGamePlayed(false);
     setGameResult(null);

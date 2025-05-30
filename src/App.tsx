@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout/Layout';
 import Dashboard from './pages/Dashboard';
 import Campaigns from './pages/Campaigns';
-import NewCampaignEditor from './components/NewCampaignEditor/NewCampaignEditor';
+import CampaignEditor from './pages/CampaignEditor';
 import QuickCampaign from './pages/QuickCampaign';
 import Newsletter from './pages/Newsletter';
 import Statistics from './pages/Statistics';
@@ -29,8 +29,8 @@ function App() {
               <Routes>
                 <Route path="/" element={<Dashboard />} />
                 <Route path="/campaigns" element={<Campaigns />} />
-                <Route path="/campaign/:id" element={<NewCampaignEditor />} />
-                <Route path="/campaign/new" element={<NewCampaignEditor />} />
+                <Route path="/campaign/:id" element={<CampaignEditor />} />
+                <Route path="/campaign/new" element={<CampaignEditor />} />
                 <Route path="/newsletter" element={<Newsletter />} />
                 <Route path="/statistics" element={<Statistics />} />
                 <Route path="/contacts" element={<Contacts />} />

@@ -90,14 +90,6 @@ export const getDefaultGameConfig = (type: CampaignType) => {
           backgroundImage: ''
         }
       };
-    case 'swiper':
-      return {
-        swiper: {
-          images: [],
-          autoplay: false,
-          duration: 3000
-        }
-      };
     case 'jackpot':
       return {
         jackpot: {
