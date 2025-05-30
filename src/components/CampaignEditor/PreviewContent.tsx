@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import Color from 'color';
 import confetti from 'canvas-confetti';
-import { Quiz, Scratch, Memory, Puzzle, Dice } from '../GameTypes';
+import { Quiz } from '../GameTypes';
 import WheelPreview from '../GameTypes/WheelPreview';
 import ScratchPreview from '../GameTypes/ScratchPreview';
 import MemoryPreview from '../GameTypes/MemoryPreview';
