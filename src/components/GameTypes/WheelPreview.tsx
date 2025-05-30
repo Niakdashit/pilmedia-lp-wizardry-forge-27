@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import Modal from '../common/Modal';
 import ValidationMessage from '../common/ValidationMessage';
@@ -309,10 +308,9 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
             left: 0,
             top: 0,
             zIndex: 1,
+            boxShadow: '0 4px 20px rgba(0,0,0,0.15)'
           }}
           className="rounded-full"
-          // Ombre ajustée pour rester sous la roue
-          boxShadow="0 4px 20px rgba(0,0,0,0.15)"
         />
         {theme !== 'default' && wheelDecorByTheme[theme] && (
           <img
@@ -330,6 +328,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
             draggable={false}
           />
         )}
+        
         <div
           style={{
             position: 'absolute',

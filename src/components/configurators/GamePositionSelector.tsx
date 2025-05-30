@@ -12,14 +12,6 @@ const GamePositionSelector: React.FC<GamePositionSelectorProps> = ({
   selectedPosition,
   onPositionChange
 }) => {
-  const positions: { value: GamePosition; label: string }[] = [
-    { value: 'top', label: 'Haut' },
-    { value: 'center', label: 'Centre' },
-    { value: 'bottom', label: 'Bas' },
-    { value: 'left', label: 'Gauche' },
-    { value: 'right', label: 'Droite' }
-  ];
-
   return (
     <div className="space-y-2">
       <label className="block text-sm font-medium text-gray-700">
