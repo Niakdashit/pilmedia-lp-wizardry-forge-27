@@ -1,6 +1,4 @@
-
 import React from 'react';
-import { Monitor, Smartphone, Tablet } from 'lucide-react';
 
 interface ModernEditorCanvasProps {
   campaign: any;
