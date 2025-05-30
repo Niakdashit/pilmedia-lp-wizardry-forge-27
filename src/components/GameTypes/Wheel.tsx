@@ -7,6 +7,8 @@ interface WheelProps {
   onComplete?: (prize: string) => void;
   onFinish?: (result: 'win' | 'lose') => void;
   previewMode?: 'mobile' | 'tablet' | 'desktop';
+  style?: React.CSSProperties;
+  className?: string;
 }
 
 const Wheel: React.FC<WheelProps> = ({
@@ -14,7 +16,9 @@ const Wheel: React.FC<WheelProps> = ({
   isPreview,
   onComplete,
   onFinish,
-  previewMode = 'desktop'
+  previewMode = 'desktop',
+  style,
+  className
 }) => {
   const wheelRef = useRef<HTMLDivElement>(null);
   const [isSpinning, setIsSpinning] = useState(false);
@@ -23,18 +27,16 @@ const Wheel: React.FC<WheelProps> = ({
   const prizes = config?.prizes || ['Prix 1', 'Prix 2', 'Prix 3', 'Prix 4'];
   const colors = config?.colors || ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4'];
 
-  // Responsive sizing (s'adapte au conteneur parent)
-  let containerSize = '100%';
-  let maxPx = 340; // desktop default
-
-  if (previewMode === 'mobile') maxPx = 200;
-  if (previewMode === 'tablet') maxPx = 260;
+  // Responsive sizing : s'adapte toujours à la hauteur/largeur du parent
+  let maxPx = 340;
+  if (previewMode === 'mobile') maxPx = 180;
+  if (previewMode === 'tablet') maxPx = 240;
 
   const spin = () => {
     if (!wheelRef.current || isSpinning) return;
 
     setIsSpinning(true);
-    const randomRotation = Math.random() * 360 + 1440; // Au moins 4 tours
+    const randomRotation = Math.random() * 360 + 1440;
 
     wheelRef.current.style.transform = `rotate(${randomRotation}deg)`;
 
@@ -59,7 +61,6 @@ const Wheel: React.FC<WheelProps> = ({
     }
   }, [isSpinning]);
 
-  // Mode édition
   if (!isPreview) {
     return (
       <div className="space-y-6">
@@ -71,26 +72,40 @@ const Wheel: React.FC<WheelProps> = ({
     );
   }
 
-  // Mode preview : roue responsive
   return (
-    <div className="flex flex-col items-center space-y-8 w-full">
-      <div className="relative w-full flex justify-center items-center">
+    <div
+      className={`flex flex-col items-center justify-center w-full h-full ${className || ''}`}
+      style={{
+        minHeight: 0,
+        minWidth: 0,
+        ...style
+      }}
+    >
+      <div
+        className="relative flex items-center justify-center w-full h-full"
+        style={{
+          maxWidth: maxPx,
+          maxHeight: maxPx,
+          aspectRatio: '1 / 1',
+          width: '100%',
+          height: '100%',
+        }}
+      >
         <div
           ref={wheelRef}
-          className="rounded-full border-8 border-gray-800 relative overflow-hidden bg-white"
+          className="rounded-full border-8 border-gray-800 relative overflow-hidden bg-white flex items-center justify-center"
           style={{
-            width: containerSize,
-            maxWidth: maxPx,
-            height: 'auto',
+            width: '100%',
+            height: '100%',
             aspectRatio: '1 / 1',
+            maxWidth: '100%',
+            maxHeight: '100%',
+            minWidth: 0,
+            minHeight: 0,
             transition: 'transform 3s cubic-bezier(.17,.67,.83,.67)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
             background: 'white',
           }}
         >
-          {/* Utilisation du SVG/CSS pour garantir le ratio même sur petits écrans */}
           {prizes.map((prize: string, index: number) => (
             <div
               key={index}
@@ -121,7 +136,7 @@ const Wheel: React.FC<WheelProps> = ({
       <button
         onClick={spin}
         disabled={isSpinning}
-        className="px-8 py-3 bg-[#841b60] text-white font-bold rounded-xl hover:bg-[#6d164f] disabled:opacity-50 transition-colors duration-200"
+        className="px-8 py-3 mt-4 bg-[#841b60] text-white font-bold rounded-xl hover:bg-[#6d164f] disabled:opacity-50 transition-colors duration-200"
       >
         {isSpinning ? 'Rotation...' : 'Faire tourner'}
       </button>
