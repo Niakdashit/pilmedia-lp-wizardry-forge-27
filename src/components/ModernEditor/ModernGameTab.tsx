@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Settings, Target } from 'lucide-react';
 import WheelGameConfig from './GameConfigs/WheelGameConfig';
@@ -35,14 +36,6 @@ const ModernGameTab: React.FC<ModernGameTabProps> = ({
       gamePosition: position
     }));
   };
-
-  const positions = [
-    { value: 'top', label: 'Haut' },
-    { value: 'center', label: 'Centre' },
-    { value: 'bottom', label: 'Bas' },
-    { value: 'left', label: 'Gauche' },
-    { value: 'right', label: 'Droite' }
-  ];
 
   const renderGameConfig = () => {
     switch (campaign.type) {
