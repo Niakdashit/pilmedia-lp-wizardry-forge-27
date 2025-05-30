@@ -28,14 +28,6 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   const selectedTemplateId = campaign?.design?.template || campaign?.gameConfig?.jackpot?.template;
 
   const renderGame = () => {
-    const gameProps = {
-      gameSize,
-      style: { 
-        width: 'auto', 
-        height: 'auto'
-      }
-    };
-
     switch (campaign.type) {
       case 'jackpot':
         return (
@@ -50,7 +42,6 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
             buttonLabel={buttonLabel}
             buttonColor={buttonColor}
             selectedTemplate={selectedTemplateId}
-            gameSize={gameSize}
           />
         );
       case 'quiz':
@@ -58,7 +49,6 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
           <Quiz 
             config={campaign.gameConfig?.quiz || {}} 
             onConfigChange={() => {}}
-            gameSize={gameSize}
           />
         );
       case 'wheel':
@@ -79,28 +69,24 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
         return (
           <ScratchPreview 
             config={campaign.gameConfig?.scratch || {}} 
-            gameSize={gameSize}
           />
         );
       case 'memory':
         return (
           <MemoryPreview 
             config={campaign.gameConfig?.memory || {}} 
-            gameSize={gameSize}
           />
         );
       case 'puzzle':
         return (
           <PuzzlePreview 
             config={campaign.gameConfig?.puzzle || {}} 
-            gameSize={gameSize}
           />
         );
       case 'dice':
         return (
           <DicePreview 
             config={campaign.gameConfig?.dice || {}} 
-            gameSize={gameSize}
           />
         );
       default:

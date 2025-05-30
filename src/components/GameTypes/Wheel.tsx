@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect, useState } from 'react';
 import WheelStyleSelector from '../configurators/WheelStyleSelector';
 import { useGameSize } from '../../hooks/useGameSize';
@@ -10,7 +11,6 @@ interface WheelProps {
   currentWinners?: number;
   maxWinners?: number;
   winRate?: number;
-  previewMode?: 'mobile' | 'tablet' | 'desktop';
   disabled?: boolean;
   gameSize?: 'small' | 'medium' | 'large' | 'xlarge';
 }
@@ -20,7 +20,6 @@ const Wheel: React.FC<WheelProps> = ({
   isPreview, 
   onComplete, 
   onFinish, 
-  previewMode = 'desktop',
   disabled = false,
   gameSize = 'small'
 }) => {

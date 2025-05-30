@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import Modal from '../common/Modal';
 import ValidationMessage from '../common/ValidationMessage';
@@ -60,8 +61,6 @@ const wheelDecorByTheme: Record<string, string> = {
   gaming: '/wheel-styles/roulette_gaming.svg',
 };
 
-const CANVAS_SIZE = 400;
-
 const WheelPreview: React.FC<WheelPreviewProps> = ({
   campaign,
   config,
@@ -85,7 +84,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
 
   const { getGameDimensions } = useGameSize(gameSize);
   const gameDimensions = getGameDimensions();
-  const CANVAS_SIZE = Math.min(gameDimensions.width, gameDimensions.height) - 40; // Padding pour les contrôles
+  const canvasSize = Math.min(gameDimensions.width, gameDimensions.height) - 40; // Padding pour les contrôles
 
   const {
     createParticipation,
@@ -250,7 +249,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
 
   useEffect(() => {
     drawWheel();
-  }, [segments, rotation, centerImage, theme, borderColor, pointerColor, CANVAS_SIZE]);
+  }, [segments, rotation, centerImage, theme, borderColor, pointerColor, canvasSize]);
 
   if (segments.length === 0) {
     return (
@@ -276,11 +275,11 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
         maxHeight: `${gameDimensions.height}px`
       }}
     >
-      <div style={{ position: 'relative', width: CANVAS_SIZE, height: CANVAS_SIZE }}>
+      <div style={{ position: 'relative', width: canvasSize, height: canvasSize }}>
         <canvas
           ref={canvasRef}
-          width={CANVAS_SIZE}
-          height={CANVAS_SIZE}
+          width={canvasSize}
+          height={canvasSize}
           style={{
             position: 'absolute',
             left: 0,
@@ -297,8 +296,8 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
               position: 'absolute',
               left: 0,
               top: 0,
-              width: CANVAS_SIZE,
-              height: CANVAS_SIZE,
+              width: canvasSize,
+              height: canvasSize,
               zIndex: 2,
               pointerEvents: 'none',
             }}
@@ -308,7 +307,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
         <div
           style={{
             position: 'absolute',
-            left: CANVAS_SIZE / 2 - 20,
+            left: canvasSize / 2 - 20,
             top: -25,
             width: 40,
             height: 60,
