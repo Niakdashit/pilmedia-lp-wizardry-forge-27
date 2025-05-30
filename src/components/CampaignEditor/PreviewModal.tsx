@@ -23,11 +23,15 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
           campaign={campaign} 
           previewMode={selectedDevice} 
           modalContained={true}
-          key={`${selectedDevice}-${campaign.id}-${Date.now()}`} // Force re-render with campaign changes
+          key={`${selectedDevice}-${campaign.id}-${JSON.stringify({
+            gameConfig: campaign.gameConfig,
+            design: campaign.design,
+            screens: campaign.screens
+          })}`} // Force re-render with comprehensive dependencies
         />
       );
     }
-    return <FunnelStandard campaign={campaign} key={`${campaign.id}-${Date.now()}`} />;
+    return <FunnelStandard campaign={campaign} key={`${campaign.id}-${JSON.stringify(campaign.gameConfig)}`} />;
   };
 
   // Récupérer l'image de fond du jeu
@@ -67,7 +71,11 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
       <MobilePreview
         campaign={campaign}
         previewMode={selectedDevice === 'tablet' ? 'tablet' : 'mobile'}
-        key={`mobile-${campaign.id}-${Date.now()}`} // Force re-render with campaign changes
+        key={`mobile-${campaign.id}-${JSON.stringify({
+          mobileConfig: campaign.mobileConfig,
+          gameConfig: campaign.gameConfig,
+          design: campaign.design
+        })}`} // Force re-render with comprehensive dependencies
       />
     </div>
   );

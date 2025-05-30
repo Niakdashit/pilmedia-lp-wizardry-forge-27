@@ -97,26 +97,30 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   const fields: FieldConfig[] = Array.isArray(campaign.formFields) && campaign.formFields.length > 0
     ? campaign.formFields : DEFAULT_FIELDS;
 
-  // Get position styles based on gamePosition
-  const getPositionStyles = () => {
-    const baseStyle = {
+  // Get absolute position styles based on gamePosition
+  const getAbsolutePositionStyles = () => {
+    const containerStyle: React.CSSProperties = {
+      position: 'absolute',
       width: `${gameDimensions.width}px`,
       height: `${gameDimensions.height}px`,
-      maxWidth: `${gameDimensions.width}px`,
-      maxHeight: `${gameDimensions.height}px`
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '16px'
     };
 
     switch (gamePosition) {
       case 'top':
-        return { ...baseStyle, alignItems: 'flex-start', justifyContent: 'center' };
+        return { ...containerStyle, top: '20px', left: '50%', transform: 'translateX(-50%)' };
       case 'bottom':
-        return { ...baseStyle, alignItems: 'flex-end', justifyContent: 'center' };
+        return { ...containerStyle, bottom: '20px', left: '50%', transform: 'translateX(-50%)' };
       case 'left':
-        return { ...baseStyle, alignItems: 'center', justifyContent: 'flex-start' };
+        return { ...containerStyle, left: '20px', top: '50%', transform: 'translateY(-50%)' };
       case 'right':
-        return { ...baseStyle, alignItems: 'center', justifyContent: 'flex-end' };
+        return { ...containerStyle, right: '20px', top: '50%', transform: 'translateY(-50%)' };
       default: // center
-        return { ...baseStyle, alignItems: 'center', justifyContent: 'center' };
+        return { ...containerStyle, top: '50%', left: '50%', transform: 'translate(-50%, -50%)' };
     }
   };
 
@@ -281,10 +285,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
 
   if (segments.length === 0) {
     return (
-      <div 
-        className="flex flex-col items-center justify-center p-8 text-gray-500"
-        style={getPositionStyles()}
-      >
+      <div style={getAbsolutePositionStyles()}>
         <p>Aucun segment configuré pour la roue</p>
       </div>
     );
@@ -294,11 +295,20 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   const pointerSize = Math.max(30, canvasSize * 0.08);
 
   return (
-    <div 
-      className="flex flex-col gap-4"
-      style={getPositionStyles()}
-    >
+    <div style={getAbsolutePositionStyles()}>
       <div style={{ position: 'relative', width: canvasSize, height: canvasSize }}>
+        {/* Conteneur pour l'ombre */}
+        <div 
+          style={{
+            position: 'absolute',
+            width: canvasSize,
+            height: canvasSize,
+            borderRadius: '50%',
+            boxShadow: '0 8px 25px rgba(0,0,0,0.2)',
+            zIndex: 0
+          }}
+        />
+        
         <canvas
           ref={canvasRef}
           width={canvasSize}
@@ -307,11 +317,11 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
             position: 'absolute',
             left: 0,
             top: 0,
-            zIndex: 1,
-            boxShadow: '0 4px 20px rgba(0,0,0,0.15)'
+            zIndex: 1
           }}
           className="rounded-full"
         />
+        
         {theme !== 'default' && wheelDecorByTheme[theme] && (
           <img
             src={wheelDecorByTheme[theme]}

@@ -126,8 +126,8 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
         />
       </div>
 
-      {/* Jeu centré avec taille fixe */}
-      <div className="relative z-20 w-full h-full flex items-center justify-center p-4">
+      {/* Conteneur pour le jeu avec positionnement relatif */}
+      <div className="relative z-20 w-full h-full">
         {renderGame()}
       </div>
     </div>
