@@ -8,7 +8,6 @@ import { useGameSize } from '../../hooks/useGameSize';
 
 interface Segment {
   label: string;
-  chance: number;
   color?: string;
   image?: string | null;
 }
@@ -270,6 +269,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
 
     ctx.clearRect(0, 0, size, size);
 
+    // Draw wheel border
     if (theme === 'default') {
       ctx.beginPath();
       ctx.arc(center, center, radius + 8, 0, 2 * Math.PI);

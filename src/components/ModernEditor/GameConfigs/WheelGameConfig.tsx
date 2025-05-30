@@ -13,6 +13,7 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
   setCampaign
 }) => {
   const segments = campaign.config?.roulette?.segments || [];
+  const borderColor = campaign.config?.roulette?.borderColor || '#841b60';
 
   const addSegment = () => {
     setCampaign((prev: any) => ({
@@ -25,7 +26,6 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
             ...segments,
             {
               label: `Segment ${segments.length + 1}`,
-              chance: 10,
               color: '#' + Math.floor(Math.random()*16777215).toString(16),
               image: null
             }
@@ -60,6 +60,19 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
         roulette: {
           ...prev.config?.roulette,
           segments: updatedSegments
+        }
+      }
+    }));
+  };
+
+  const updateBorderColor = (color: string) => {
+    setCampaign((prev: any) => ({
+      ...prev,
+      config: {
+        ...prev.config,
+        roulette: {
+          ...prev.config?.roulette,
+          borderColor: color
         }
       }
     }));
@@ -101,6 +114,25 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
             </option>
           ))}
         </select>
+      </div>
+
+      {/* Couleur de bordure de la roue */}
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-gray-700">Couleur de la bordure</label>
+        <div className="flex items-center space-x-2">
+          <input
+            type="color"
+            value={borderColor}
+            onChange={(e) => updateBorderColor(e.target.value)}
+            className="w-10 h-10 rounded border border-gray-300"
+          />
+          <input
+            type="text"
+            value={borderColor}
+            onChange={(e) => updateBorderColor(e.target.value)}
+            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
+          />
+        </div>
       </div>
 
       {/* Segments */}

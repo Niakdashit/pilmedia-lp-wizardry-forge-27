@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { Palette, Type, Image, Eye, EyeOff, Layout, AlignCenter, MoreHorizontal, ChevronDown, ChevronUp } from 'lucide-react';
+import { Palette, Type, Image, Eye, EyeOff, Layout, AlignCenter, MoreHorizontal, ChevronDown, ChevronUp, Plus, Trash2, Bold, Italic, Underline } from 'lucide-react';
 import ImageUpload from '../common/ImageUpload';
 
 interface ModernDesignTabProps {
@@ -13,6 +14,14 @@ interface AccordionSectionProps {
   children: React.ReactNode;
   defaultOpen?: boolean;
   bgColor?: string;
+}
+
+interface TextContent {
+  id: string;
+  text: string;
+  bold: boolean;
+  italic: boolean;
+  underline: boolean;
 }
 
 const AccordionSection: React.FC<AccordionSectionProps> = ({ 
@@ -137,6 +146,170 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
     }));
   };
 
+  const handleTextContentChange = (section: string, contentId: string, field: string, value: any) => {
+    setCampaign((prev: any) => {
+      const currentSection = prev.design?.[section] || {};
+      const currentContents = currentSection.textContents || [];
+      const updatedContents = currentContents.map((content: TextContent) =>
+        content.id === contentId ? { ...content, [field]: value } : content
+      );
+      
+      return {
+        ...prev,
+        design: {
+          ...prev.design,
+          [section]: {
+            ...currentSection,
+            textContents: updatedContents
+          }
+        }
+      };
+    });
+  };
+
+  const addTextContent = (section: string) => {
+    setCampaign((prev: any) => {
+      const currentSection = prev.design?.[section] || {};
+      const currentContents = currentSection.textContents || [];
+      const newContent: TextContent = {
+        id: Date.now().toString(),
+        text: 'Nouveau texte',
+        bold: false,
+        italic: false,
+        underline: false
+      };
+      
+      return {
+        ...prev,
+        design: {
+          ...prev.design,
+          [section]: {
+            ...currentSection,
+            textContents: [...currentContents, newContent]
+          }
+        }
+      };
+    });
+  };
+
+  const removeTextContent = (section: string, contentId: string) => {
+    setCampaign((prev: any) => {
+      const currentSection = prev.design?.[section] || {};
+      const currentContents = currentSection.textContents || [];
+      const updatedContents = currentContents.filter((content: TextContent) => content.id !== contentId);
+      
+      return {
+        ...prev,
+        design: {
+          ...prev.design,
+          [section]: {
+            ...currentSection,
+            textContents: updatedContents
+          }
+        }
+      };
+    });
+  };
+
+  const getTextSizeStyle = (size: string) => {
+    switch (size) {
+      case 'small':
+        return '14px';
+      case 'large':
+        return '24px';
+      default:
+        return '18px';
+    }
+  };
+
+  const renderTextContentEditor = (section: string, textContents: TextContent[], sectionSize: string) => (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <label className="text-sm font-medium text-gray-700">Contenus texte</label>
+        <button
+          onClick={() => addTextContent(section)}
+          className="flex items-center space-x-1 px-3 py-1 text-sm bg-[#841b60] text-white rounded-lg hover:bg-[#6d164f] transition-colors"
+        >
+          <Plus className="w-4 h-4" />
+          <span>Ajouter</span>
+        </button>
+      </div>
+      
+      {textContents.map((content: TextContent, index: number) => (
+        <div key={content.id} className="border border-gray-200 rounded-lg p-3 space-y-3">
+          <div className="flex items-center justify-between">
+            <span className="text-sm font-medium text-gray-700">Texte {index + 1}</span>
+            <button
+              onClick={() => removeTextContent(section, content.id)}
+              className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded"
+            >
+              <Trash2 className="w-4 h-4" />
+            </button>
+          </div>
+          
+          <textarea
+            value={content.text}
+            onChange={(e) => handleTextContentChange(section, content.id, 'text', e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
+            rows={2}
+            placeholder="Entrez votre texte"
+            style={{ fontSize: getTextSizeStyle(sectionSize) }}
+          />
+          
+          <div className="flex items-center space-x-4">
+            <label className="flex items-center space-x-2 cursor-pointer">
+              <button
+                onClick={() => handleTextContentChange(section, content.id, 'bold', !content.bold)}
+                className={`p-1 rounded ${content.bold ? 'bg-[#841b60] text-white' : 'bg-gray-100 text-gray-600'}`}
+              >
+                <Bold className="w-4 h-4" />
+              </button>
+              <span className="text-sm">Gras</span>
+            </label>
+            
+            <label className="flex items-center space-x-2 cursor-pointer">
+              <button
+                onClick={() => handleTextContentChange(section, content.id, 'italic', !content.italic)}
+                className={`p-1 rounded ${content.italic ? 'bg-[#841b60] text-white' : 'bg-gray-100 text-gray-600'}`}
+              >
+                <Italic className="w-4 h-4" />
+              </button>
+              <span className="text-sm">Italique</span>
+            </label>
+            
+            <label className="flex items-center space-x-2 cursor-pointer">
+              <button
+                onClick={() => handleTextContentChange(section, content.id, 'underline', !content.underline)}
+                className={`p-1 rounded ${content.underline ? 'bg-[#841b60] text-white' : 'bg-gray-100 text-gray-600'}`}
+              >
+                <Underline className="w-4 h-4" />
+              </button>
+              <span className="text-sm">Souligné</span>
+            </label>
+          </div>
+          
+          <div 
+            className="p-2 bg-gray-50 rounded text-sm"
+            style={{
+              fontSize: getTextSizeStyle(sectionSize),
+              fontWeight: content.bold ? 'bold' : 'normal',
+              fontStyle: content.italic ? 'italic' : 'normal',
+              textDecoration: content.underline ? 'underline' : 'none'
+            }}
+          >
+            Aperçu : {content.text || 'Texte d\'exemple'}
+          </div>
+        </div>
+      ))}
+      
+      {textContents.length === 0 && (
+        <div className="text-center py-4 text-gray-500 text-sm">
+          Aucun contenu texte. Cliquez sur "Ajouter" pour créer votre premier texte.
+        </div>
+      )}
+    </div>
+  );
+
   const fontOptions = [
     { value: 'Inter', label: 'Inter' },
     { value: 'Arial', label: 'Arial' },
@@ -194,7 +367,8 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
     color: '#000000',
     showFrame: false,
     frameColor: '#ffffff',
-    frameBorderColor: '#e5e7eb'
+    frameBorderColor: '#e5e7eb',
+    textContents: []
   };
 
   const footerBanner = campaign.design?.footerBanner || {
@@ -211,7 +385,8 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
     color: '#000000',
     showFrame: false,
     frameColor: '#ffffff',
-    frameBorderColor: '#e5e7eb'
+    frameBorderColor: '#e5e7eb',
+    textContents: []
   };
 
   return (
@@ -324,17 +499,6 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
           {headerText.enabled && (
             <>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Contenu du texte</label>
-                <textarea
-                  value={headerText.text}
-                  onChange={(e) => handleHeaderTextChange('text', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-                  rows={3}
-                  placeholder="Entrez votre texte d'en-tête"
-                />
-              </div>
-
-              <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700">Taille du texte</label>
                 <div className="grid grid-cols-3 gap-2">
                   {sizeOptions.map((option) => (
@@ -370,6 +534,8 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
                   />
                 </div>
               </div>
+
+              {renderTextContentEditor('headerText', headerText.textContents || [], headerText.size)}
 
               <div className="space-y-2">
                 <label className="flex items-center justify-between">
@@ -432,7 +598,7 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
           )}
         </div>
         
-        {/* Texte personnalisé (legacy) */}
+        {/* Legacy custom text */}
         <div className="space-y-4">
           <h4 className="flex items-center text-lg font-medium text-gray-800">
             <Type className="w-5 h-5 mr-2" />
@@ -466,7 +632,7 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
                   value={customText.text}
                   onChange={(e) => handleCustomTextChange('text', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-                  rows={3}
+                  rows={2}
                   placeholder="Entrez votre texte personnalisé"
                 />
               </div>
@@ -645,7 +811,7 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
                   value={croppedAreaText.text}
                   onChange={(e) => handleCroppedAreaTextChange('text', e.target.value)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-                  rows={3}
+                  rows={2}
                   placeholder="Entrez votre texte pour la zone recadrée"
                 />
               </div>
@@ -841,17 +1007,6 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
           {footerText.enabled && (
             <>
               <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Contenu du texte</label>
-                <textarea
-                  value={footerText.text}
-                  onChange={(e) => handleFooterTextChange('text', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-                  rows={3}
-                  placeholder="Entrez votre texte de pied de page"
-                />
-              </div>
-
-              <div className="space-y-2">
                 <label className="text-sm font-medium text-gray-700">Taille du texte</label>
                 <div className="grid grid-cols-3 gap-2">
                   {sizeOptions.map((option) => (
@@ -887,6 +1042,8 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
                   />
                 </div>
               </div>
+
+              {renderTextContentEditor('footerText', footerText.textContents || [], footerText.size)}
 
               <div className="space-y-2">
                 <label className="flex items-center justify-between">
