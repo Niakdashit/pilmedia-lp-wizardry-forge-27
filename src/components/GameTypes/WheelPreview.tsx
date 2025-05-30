@@ -100,7 +100,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   // Get absolute position styles based on gamePosition
   const getAbsolutePositionStyles = () => {
     const containerStyle: React.CSSProperties = {
-      position: 'fixed', // Utiliser fixed au lieu d'absolute pour vraiment centrer
+      position: 'absolute',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -151,7 +151,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
           width: `${gameDimensions.width}px`,
           height: `${gameDimensions.height}px`
         };
-      default: // center - vraiment au centre de l'écran
+      default: // center - au centre du conteneur
         return { 
           ...containerStyle, 
           flexDirection: 'column' as const,
