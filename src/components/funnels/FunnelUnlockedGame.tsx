@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Modal from '../common/Modal';
 import ValidationMessage from '../common/ValidationMessage';
@@ -9,37 +8,25 @@ import ScratchPreview from '../GameTypes/ScratchPreview';
 import DicePreview from '../GameTypes/DicePreview';
 import { useParticipations } from '../../hooks/useParticipations';
 
-const DEFAULT_FIELDS: FieldConfig[] = [{
-  id: "civilite",
-  label: "Civilité",
-  type: "select",
-  options: ["M.", "Mme"],
-  required: false
-}, {
-  id: "prenom",
-  label: "Prénom",
-  required: true
-}, {
-  id: "nom",
-  label: "Nom",
-  required: true
-}, {
-  id: "email",
-  label: "Email",
-  type: "email",
-  required: true
-}];
+const DEFAULT_FIELDS: FieldConfig[] = [
+  { id: "civilite", label: "Civilité", type: "select", options: ["M.", "Mme"], required: false },
+  { id: "prenom", label: "Prénom", required: true },
+  { id: "nom", label: "Nom", required: true },
+  { id: "email", label: "Email", type: "email", required: true }
+];
 
 interface GameFunnelProps {
   campaign: any;
   modalContained?: boolean;
   mobileConfig?: any;
+  previewMode?: 'mobile' | 'tablet' | 'desktop';
 }
 
 const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
   campaign,
   modalContained = false,
-  mobileConfig
+  mobileConfig,
+  previewMode // optionnel, passé par MobilePreview
 }) => {
   const [formValidated, setFormValidated] = useState(false);
   const [showFormModal, setShowFormModal] = useState(false);
@@ -53,31 +40,21 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
     loading: participationLoading
   } = useParticipations();
 
-  const fields: FieldConfig[] = Array.isArray(campaign.formFields) && campaign.formFields.length > 0 ? campaign.formFields : DEFAULT_FIELDS;
+  const fields: FieldConfig[] = Array.isArray(campaign.formFields) && campaign.formFields.length > 0
+    ? campaign.formFields : DEFAULT_FIELDS;
 
   const handleFormSubmit = async (formData: Record<string, string>) => {
     if (campaign.id) {
-      const participation = await createParticipation({
+      await createParticipation({
         campaign_id: campaign.id,
         form_data: formData,
         user_email: formData.email
       });
-      if (participation) {
-        // Optionnel : traiter la participation
-      }
     }
-    
-    // Fermer le modal immédiatement
     setShowFormModal(false);
-    
-    // Valider le formulaire immédiatement sans délai
     setFormValidated(true);
-    
-    // Afficher brièvement le message de validation
     setShowValidationMessage(true);
-    setTimeout(() => {
-      setShowValidationMessage(false);
-    }, 1500);
+    setTimeout(() => setShowValidationMessage(false), 1500);
   };
 
   const handleGameFinish = (result: 'win' | 'lose') => {
@@ -87,15 +64,10 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
     }, 1500);
   };
 
-  const handleGameStart = () => {
-    setGameStarted(true);
-  };
+  const handleGameStart = () => setGameStarted(true);
 
   const handleGameButtonClick = () => {
-    if (!formValidated) {
-      setShowFormModal(true);
-      return;
-    }
+    if (!formValidated) setShowFormModal(true);
   };
 
   const reset = () => {
@@ -105,15 +77,13 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
     setFormValidated(false);
   };
 
-  // Récupération du template sélectionné avec plusieurs sources possibles
-  const selectedTemplateId = 
+  const selectedTemplateId =
     campaign?.design?.template ||
     campaign?.gameConfig?.jackpot?.template ||
     campaign?.gameConfig?.[campaign.type]?.template ||
     campaign?.selectedTemplate;
 
-  console.log('Selected template ID in FunnelUnlockedGame:', selectedTemplateId);
-
+  // -- Correction principale : Game container responsive
   const renderGame = () => {
     const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage;
     const customTemplate = campaign.gameConfig?.[campaign.type]?.customTemplate;
@@ -121,66 +91,106 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
     const buttonColor = campaign.gameConfig?.[campaign.type]?.buttonColor;
     const contrastBg = mobileConfig?.contrastBackground || campaign.screens?.[2]?.contrastBackground;
 
-    const gameContainerStyle: any = {
-      position: 'relative',
+    // Calcul du ratio, taille max selon previewMode (mobile/tablet/desktop)
+    let gameBoxMaxWidth = 320, gameBoxMaxHeight = 320;
+    if (previewMode === 'tablet') {
+      gameBoxMaxWidth = 340;
+      gameBoxMaxHeight = 340;
+    }
+    if (previewMode === 'desktop') {
+      gameBoxMaxWidth = 400;
+      gameBoxMaxHeight = 400;
+    }
+
+    // Responsive style (toujours centré, jamais coupé)
+    const gameContainerStyle: React.CSSProperties = {
       width: '100%',
-      height: mobileConfig ? 'auto' : '400px',
-      minHeight: mobileConfig ? '200px' : '400px',
-      maxHeight: mobileConfig ? '300px' : 'none'
+      height: 'auto',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      minHeight: '160px',
+      padding: 0,
+      margin: 0,
+      maxWidth: '100%',
+      position: 'relative',
+      // S'assure que la roue ou le jeu n'est jamais plus large que le device
+      aspectRatio: '1/1',
     };
 
-    if (gameBackgroundImage) {
-      gameContainerStyle.backgroundImage = `url(${gameBackgroundImage})`;
-      gameContainerStyle.backgroundSize = 'cover';
-      gameContainerStyle.backgroundPosition = 'center';
-      gameContainerStyle.backgroundRepeat = 'no-repeat';
-    }
+    const innerGameBoxStyle: React.CSSProperties = {
+      width: '100%',
+      maxWidth: gameBoxMaxWidth,
+      maxHeight: gameBoxMaxHeight,
+      aspectRatio: '1/1',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+    };
 
     const gameComponent = (() => {
       const commonProps = {
         disabled: !formValidated,
         onFinish: handleGameFinish,
-        onStart: handleGameStart
+        onStart: handleGameStart,
+        previewMode: previewMode || 'desktop'
       };
 
       switch (campaign.type) {
         case 'wheel':
-          return <Wheel config={campaign.gameConfig.wheel} isPreview={true} {...commonProps} />;
+          return (
+            <div style={innerGameBoxStyle}>
+              <Wheel config={campaign.gameConfig.wheel} isPreview={true} {...commonProps} />
+            </div>
+          );
         case 'scratch':
-          return <ScratchPreview config={campaign.gameConfig.scratch} />;
+          return (
+            <div style={innerGameBoxStyle}>
+              <ScratchPreview config={campaign.gameConfig.scratch} />
+            </div>
+          );
         case 'jackpot':
-          return <Jackpot 
-            isPreview={true} 
-            instantWinConfig={campaign.gameConfig?.jackpot?.instantWin} 
-            buttonLabel={buttonLabel} 
-            buttonColor={buttonColor} 
-            backgroundImage={gameBackgroundImage} 
-            customTemplate={customTemplate}
-            selectedTemplate={selectedTemplateId}
-            {...commonProps} 
-          />;
+          return (
+            <div style={innerGameBoxStyle}>
+              <Jackpot
+                isPreview={true}
+                instantWinConfig={campaign.gameConfig?.jackpot?.instantWin}
+                buttonLabel={buttonLabel}
+                buttonColor={buttonColor}
+                backgroundImage={gameBackgroundImage}
+                customTemplate={customTemplate}
+                selectedTemplate={selectedTemplateId}
+                {...commonProps}
+              />
+            </div>
+          );
         case 'dice':
-          return <DicePreview config={campaign.gameConfig.dice} />;
+          return (
+            <div style={innerGameBoxStyle}>
+              <DicePreview config={campaign.gameConfig.dice} />
+            </div>
+          );
         default:
           return <div className="text-center text-gray-500">Jeu non supporté</div>;
       }
     })();
 
     return (
-      <div style={gameContainerStyle} className="rounded-lg overflow-hidden relative">
-        {/* Le composant jeu principal avec le template intégré */}
-        <div className="relative z-20 h-full">
+      <div style={gameContainerStyle} className="rounded-lg overflow-visible relative">
+        {/* Jeu principal */}
+        <div className="relative z-20 w-full h-full flex items-center justify-center">
           <ContrastBackground
             enabled={contrastBg?.enabled && contrastBg?.applyToGame}
             config={contrastBg}
-            className="h-full flex items-center justify-center"
+            className="h-full w-full flex items-center justify-center"
           >
             {gameComponent}
           </ContrastBackground>
         </div>
-
+        {/* Overlay clickable si formulaire non validé */}
         {!formValidated && (
-          <div onClick={handleGameButtonClick} className="absolute inset-0 flex items-center justify-center z-30 rounded-lg cursor-pointer bg-black/0" />
+          <div onClick={handleGameButtonClick}
+               className="absolute inset-0 flex items-center justify-center z-30 rounded-lg cursor-pointer bg-black/0" />
         )}
 
         <ValidationMessage
@@ -192,6 +202,7 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
     );
   };
 
+  // -- Rendu FIN (écran de sortie/victoire/défaite)
   if (gamePlayed) {
     const resultScreen = campaign.screens?.[3] || {};
     const contrastBg = mobileConfig?.contrastBackground || resultScreen.contrastBackground;
@@ -222,21 +233,21 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
     );
   }
 
+  // -- Mode preview device (mobileConfig existe)
   if (mobileConfig) {
     return (
       <div className="w-full flex flex-col items-center space-y-3">
         {renderGame()}
-
         {showFormModal && (
-          <Modal 
-            onClose={() => setShowFormModal(false)} 
+          <Modal
+            onClose={() => setShowFormModal(false)}
             title={campaign.screens[1]?.title || 'Vos informations'}
             contained={modalContained}
           >
-            <DynamicContactForm 
-              fields={fields} 
-              submitLabel={participationLoading ? 'Chargement...' : campaign.screens[1]?.buttonText || "C'est parti !"} 
-              onSubmit={handleFormSubmit} 
+            <DynamicContactForm
+              fields={fields}
+              submitLabel={participationLoading ? 'Chargement...' : campaign.screens[1]?.buttonText || "C'est parti !"}
+              onSubmit={handleFormSubmit}
             />
           </Modal>
         )}
@@ -244,6 +255,7 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
     );
   }
 
+  // -- Mode fallback classique (desktop)
   const entryScreen = campaign.screens?.[0] || {};
   const contrastBg = entryScreen.contrastBackground;
   const showTitle = entryScreen.showTitle !== false && !gameStarted;
@@ -269,19 +281,17 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
           )}
         </ContrastBackground>
       )}
-
       {renderGame()}
-
       {showFormModal && (
-        <Modal 
-          onClose={() => setShowFormModal(false)} 
+        <Modal
+          onClose={() => setShowFormModal(false)}
           title={campaign.screens[1]?.title || 'Vos informations'}
           contained={modalContained}
         >
-          <DynamicContactForm 
-            fields={fields} 
-            submitLabel={participationLoading ? 'Chargement...' : campaign.screens[1]?.buttonText || "C'est parti !"} 
-            onSubmit={handleFormSubmit} 
+          <DynamicContactForm
+            fields={fields}
+            submitLabel={participationLoading ? 'Chargement...' : campaign.screens[1]?.buttonText || "C'est parti !"}
+            onSubmit={handleFormSubmit}
           />
         </Modal>
       )}
