@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Jackpot from '../GameTypes/Jackpot';
 import { Quiz } from '../GameTypes';
@@ -6,6 +7,7 @@ import MemoryPreview from '../GameTypes/MemoryPreview';
 import PuzzlePreview from '../GameTypes/PuzzlePreview';
 import ScratchPreview from '../GameTypes/ScratchPreview';
 import DicePreview from '../GameTypes/DicePreview';
+import ResizableGameContainer from '../common/ResizableGameContainer';
 
 interface GameCanvasPreviewProps {
   campaign: any;
@@ -16,12 +18,29 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   campaign,
   className = ""
 }) => {
+  // Correction pour récupérer l'image de fond
   const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage;
   const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel || 'Lancer le Jackpot';
   const buttonColor = campaign.gameConfig?.[campaign.type]?.buttonColor || '#ec4899';
+  const customTemplate = campaign.gameConfig?.[campaign.type]?.customTemplate;
   
   // Récupération du template sélectionné
   const selectedTemplateId = campaign?.design?.template || campaign?.gameConfig?.jackpot?.template;
+
+  // Configuration du jeu redimensionnable
+  const gameConfig = campaign.config?.[campaign.type] || campaign.gameConfig?.[campaign.type] || {};
+  const gameSize = gameConfig.gameSize || { width: 400, height: 400 };
+  const gamePosition = gameConfig.gamePosition || { x: 0, y: 0 };
+
+  const handleSizeChange = (size: { width: number; height: number }) => {
+    console.log('Game size changed:', size);
+    // Cette fonction pourrait être connectée à setCampaign si nécessaire
+  };
+
+  const handlePositionChange = (position: { x: number; y: number }) => {
+    console.log('Game position changed:', position);
+    // Cette fonction pourrait être connectée à setCampaign si nécessaire
+  };
 
   const renderGame = () => {
     const gameProps = {
@@ -49,6 +68,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
               buttonLabel={buttonLabel}
               buttonColor={buttonColor}
               selectedTemplate={selectedTemplateId}
+              customTemplate={customTemplate}
             />
           </div>
         );
@@ -117,21 +137,38 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
     }
   };
 
+  // Fonction pour normaliser l'URL de l'image
+  const getImageUrl = (imageData: any) => {
+    if (!imageData) return null;
+    if (typeof imageData === 'string') return imageData;
+    if (imageData.value && imageData.value !== 'undefined') return imageData.value;
+    return null;
+  };
+
+  const backgroundImageUrl = getImageUrl(gameBackgroundImage);
+
   return (
     <div className={`relative w-full h-full ${className} flex items-center justify-center`} style={{ minHeight: '400px' }}>
-      {/* Image de fond plein écran */}
-      {gameBackgroundImage && (
+      {/* Image de fond corrigée */}
+      {backgroundImageUrl && (
         <img
-          src={gameBackgroundImage}
+          src={backgroundImageUrl}
           alt="Background"
           className="absolute inset-0 w-full h-full object-cover z-0"
           style={{ pointerEvents: 'none' }}
         />
       )}
 
-      {/* Jeu centré avec contraintes de taille */}
-      <div className="relative z-20 w-full h-full flex items-center justify-center p-4" style={{ maxWidth: '100%', maxHeight: '100%' }}>
-        {renderGame()}
+      {/* Jeu redimensionnable */}
+      <div className="relative z-20 w-full h-full flex items-center justify-center p-4">
+        <ResizableGameContainer
+          initialSize={gameSize}
+          onSizeChange={handleSizeChange}
+          onPositionChange={handlePositionChange}
+          className="bg-white/10 backdrop-blur-sm"
+        >
+          {renderGame()}
+        </ResizableGameContainer>
       </div>
     </div>
   );

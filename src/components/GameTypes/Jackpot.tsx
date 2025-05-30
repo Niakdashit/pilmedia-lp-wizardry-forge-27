@@ -101,8 +101,20 @@ const Jackpot: React.FC<JackpotProps> = ({
     return <div><p>Pas de configuration pour le moment.</p></div>;
   }
 
-  // Récupération du template SVG
+  // Fonction pour normaliser l'URL de l'image
+  const getImageUrl = (imageData: any) => {
+    if (!imageData) return null;
+    if (typeof imageData === 'string') return imageData;
+    if (imageData.value && imageData.value !== 'undefined') return imageData.value;
+    return null;
+  };
+
+  // Récupération du template SVG et du template personnalisé
   const templateImg = selectedTemplate ? jackpotTemplates[selectedTemplate] : undefined;
+  const customTemplateUrl = getImageUrl(customTemplate);
+
+  console.log('Jackpot - Template sélectionné:', selectedTemplate);
+  console.log('Jackpot - Template personnalisé:', customTemplateUrl);
 
   // Responsive slot size calculation
   const getSlotSize = () => {
@@ -127,11 +139,11 @@ const Jackpot: React.FC<JackpotProps> = ({
 
   return (
     <div style={containerStyle} className="flex flex-col items-center justify-center w-full h-full p-2 px-0">
-      {/* Template SVG responsive - utilise les mêmes dimensions que QuickCampaign */}
-      {templateImg && (
+      {/* Template personnalisé en priorité */}
+      {customTemplateUrl && (
         <img
-          src={templateImg}
-          alt="Template jackpot"
+          src={customTemplateUrl}
+          alt="Template jackpot personnalisé"
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0"
           style={{
             width: '100%',
@@ -146,12 +158,22 @@ const Jackpot: React.FC<JackpotProps> = ({
         />
       )}
 
-      {/* Template personnalisé overlay */}
-      {customTemplate && (
+      {/* Template SVG si pas de template personnalisé */}
+      {!customTemplateUrl && templateImg && (
         <img
-          src={customTemplate}
-          alt="Jackpot template personnalisé"
-          className="absolute inset-0 w-full h-full object-contain pointer-events-none z-10"
+          src={templateImg}
+          alt="Template jackpot"
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0"
+          style={{
+            width: '100%',
+            height: '100%',
+            maxWidth: '100vw',
+            maxHeight: '100vh',
+            minWidth: '300px',
+            minHeight: '250px',
+            objectFit: 'contain',
+            opacity: 0.95
+          }}
         />
       )}
 
