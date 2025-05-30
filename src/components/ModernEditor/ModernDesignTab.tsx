@@ -1,13 +1,10 @@
-
 import React from 'react';
 import { Palette, Type, Square, Image, Eye, EyeOff } from 'lucide-react';
 import ImageUpload from '../common/ImageUpload';
-
 interface ModernDesignTabProps {
   campaign: any;
   setCampaign: React.Dispatch<React.SetStateAction<any>>;
 }
-
 const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
   campaign,
   setCampaign
@@ -21,7 +18,6 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
       }
     }));
   };
-
   const handleCustomTextChange = (field: string, value: any) => {
     setCampaign((prev: any) => ({
       ...prev,
@@ -34,29 +30,48 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
       }
     }));
   };
-
-  const fontOptions = [
-    { value: 'Inter', label: 'Inter' },
-    { value: 'Arial', label: 'Arial' },
-    { value: 'Helvetica', label: 'Helvetica' },
-    { value: 'Georgia', label: 'Georgia' },
-    { value: 'Times New Roman', label: 'Times New Roman' }
-  ];
-
-  const positionOptions = [
-    { value: 'top', label: 'Haut' },
-    { value: 'center', label: 'Centre' },
-    { value: 'bottom', label: 'Bas' },
-    { value: 'left', label: 'Gauche' },
-    { value: 'right', label: 'Droite' }
-  ];
-
-  const sizeOptions = [
-    { value: 'small', label: 'Petit' },
-    { value: 'medium', label: 'Moyen' },
-    { value: 'large', label: 'Grand' }
-  ];
-
+  const fontOptions = [{
+    value: 'Inter',
+    label: 'Inter'
+  }, {
+    value: 'Arial',
+    label: 'Arial'
+  }, {
+    value: 'Helvetica',
+    label: 'Helvetica'
+  }, {
+    value: 'Georgia',
+    label: 'Georgia'
+  }, {
+    value: 'Times New Roman',
+    label: 'Times New Roman'
+  }];
+  const positionOptions = [{
+    value: 'top',
+    label: 'Haut'
+  }, {
+    value: 'center',
+    label: 'Centre'
+  }, {
+    value: 'bottom',
+    label: 'Bas'
+  }, {
+    value: 'left',
+    label: 'Gauche'
+  }, {
+    value: 'right',
+    label: 'Droite'
+  }];
+  const sizeOptions = [{
+    value: 'small',
+    label: 'Petit'
+  }, {
+    value: 'medium',
+    label: 'Moyen'
+  }, {
+    value: 'large',
+    label: 'Grand'
+  }];
   const customText = campaign.design?.customText || {
     enabled: false,
     text: 'Texte personnalisé',
@@ -67,9 +82,7 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
     frameColor: '#ffffff',
     frameBorderColor: '#e5e7eb'
   };
-
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">Design et apparence</h2>
         <p className="text-sm text-gray-600">
@@ -84,11 +97,7 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
           Image de fond
         </h3>
         
-        <ImageUpload
-          value={campaign.design?.backgroundImage || ''}
-          onChange={(value) => handleDesignChange('backgroundImage', value)}
-          label="Image de fond de la campagne"
-        />
+        <ImageUpload value={campaign.design?.backgroundImage || ''} onChange={value => handleDesignChange('backgroundImage', value)} label="Image de fond de la campagne" />
       </div>
 
       {/* Texte personnalisé */}
@@ -105,52 +114,26 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
               {customText.enabled ? <Eye className="w-4 h-4 mr-2" /> : <EyeOff className="w-4 h-4 mr-2" />}
               Afficher un texte personnalisé
             </span>
-            <button
-              onClick={() => handleCustomTextChange('enabled', !customText.enabled)}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                customText.enabled ? 'bg-[#841b60]' : 'bg-gray-200'
-              }`}
-            >
-              <span
-                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                  customText.enabled ? 'translate-x-6' : 'translate-x-1'
-                }`}
-              />
+            <button onClick={() => handleCustomTextChange('enabled', !customText.enabled)} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${customText.enabled ? 'bg-[#841b60]' : 'bg-gray-200'}`}>
+              <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${customText.enabled ? 'translate-x-6' : 'translate-x-1'}`} />
             </button>
           </label>
         </div>
 
-        {customText.enabled && (
-          <>
+        {customText.enabled && <>
             {/* Contenu du texte */}
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700">Contenu du texte</label>
-              <textarea
-                value={customText.text}
-                onChange={(e) => handleCustomTextChange('text', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-                rows={3}
-                placeholder="Entrez votre texte personnalisé"
-              />
+              <textarea value={customText.text} onChange={e => handleCustomTextChange('text', e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent" rows={3} placeholder="Entrez votre texte personnalisé" />
             </div>
 
             {/* Position du texte */}
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700">Position du texte</label>
               <div className="grid grid-cols-3 gap-2">
-                {positionOptions.map((option) => (
-                  <button
-                    key={option.value}
-                    onClick={() => handleCustomTextChange('position', option.value)}
-                    className={`p-2 text-xs rounded border transition-colors ${
-                      customText.position === option.value
-                        ? 'bg-[#841b60] text-white border-[#841b60]'
-                        : 'bg-white text-gray-700 border-gray-300 hover:border-[#841b60]'
-                    }`}
-                  >
+                {positionOptions.map(option => <button key={option.value} onClick={() => handleCustomTextChange('position', option.value)} className={`p-2 text-xs rounded border transition-colors ${customText.position === option.value ? 'bg-[#841b60] text-white border-[#841b60]' : 'bg-white text-gray-700 border-gray-300 hover:border-[#841b60]'}`}>
                     {option.label}
-                  </button>
-                ))}
+                  </button>)}
               </div>
             </div>
 
@@ -158,19 +141,9 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700">Taille du texte</label>
               <div className="grid grid-cols-3 gap-2">
-                {sizeOptions.map((option) => (
-                  <button
-                    key={option.value}
-                    onClick={() => handleCustomTextChange('size', option.value)}
-                    className={`p-2 text-xs rounded border transition-colors ${
-                      customText.size === option.value
-                        ? 'bg-[#841b60] text-white border-[#841b60]'
-                        : 'bg-white text-gray-700 border-gray-300 hover:border-[#841b60]'
-                    }`}
-                  >
+                {sizeOptions.map(option => <button key={option.value} onClick={() => handleCustomTextChange('size', option.value)} className={`p-2 text-xs rounded border transition-colors ${customText.size === option.value ? 'bg-[#841b60] text-white border-[#841b60]' : 'bg-white text-gray-700 border-gray-300 hover:border-[#841b60]'}`}>
                     {option.label}
-                  </button>
-                ))}
+                  </button>)}
               </div>
             </div>
 
@@ -178,18 +151,8 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
             <div className="space-y-2">
               <label className="text-sm font-medium text-gray-700">Couleur du texte</label>
               <div className="flex items-center space-x-2">
-                <input
-                  type="color"
-                  value={customText.color}
-                  onChange={(e) => handleCustomTextChange('color', e.target.value)}
-                  className="w-10 h-10 rounded border border-gray-300"
-                />
-                <input
-                  type="text"
-                  value={customText.color}
-                  onChange={(e) => handleCustomTextChange('color', e.target.value)}
-                  className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-                />
+                <input type="color" value={customText.color} onChange={e => handleCustomTextChange('color', e.target.value)} className="w-10 h-10 rounded border border-gray-300" />
+                <input type="text" value={customText.color} onChange={e => handleCustomTextChange('color', e.target.value)} className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent" />
               </div>
             </div>
 
@@ -199,39 +162,19 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
                 <span className="text-sm font-medium text-gray-700">
                   Afficher un cadre de contraste
                 </span>
-                <button
-                  onClick={() => handleCustomTextChange('showFrame', !customText.showFrame)}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    customText.showFrame ? 'bg-[#841b60]' : 'bg-gray-200'
-                  }`}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      customText.showFrame ? 'translate-x-6' : 'translate-x-1'
-                    }`}
-                  />
+                <button onClick={() => handleCustomTextChange('showFrame', !customText.showFrame)} className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${customText.showFrame ? 'bg-[#841b60]' : 'bg-gray-200'}`}>
+                  <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${customText.showFrame ? 'translate-x-6' : 'translate-x-1'}`} />
                 </button>
               </label>
             </div>
 
-            {customText.showFrame && (
-              <>
+            {customText.showFrame && <>
                 {/* Couleur du fond du cadre */}
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-700">Couleur du fond du cadre</label>
                   <div className="flex items-center space-x-2">
-                    <input
-                      type="color"
-                      value={customText.frameColor}
-                      onChange={(e) => handleCustomTextChange('frameColor', e.target.value)}
-                      className="w-10 h-10 rounded border border-gray-300"
-                    />
-                    <input
-                      type="text"
-                      value={customText.frameColor}
-                      onChange={(e) => handleCustomTextChange('frameColor', e.target.value)}
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-                    />
+                    <input type="color" value={customText.frameColor} onChange={e => handleCustomTextChange('frameColor', e.target.value)} className="w-10 h-10 rounded border border-gray-300" />
+                    <input type="text" value={customText.frameColor} onChange={e => handleCustomTextChange('frameColor', e.target.value)} className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent" />
                   </div>
                 </div>
 
@@ -239,24 +182,12 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-gray-700">Couleur de la bordure du cadre</label>
                   <div className="flex items-center space-x-2">
-                    <input
-                      type="color"
-                      value={customText.frameBorderColor}
-                      onChange={(e) => handleCustomTextChange('frameBorderColor', e.target.value)}
-                      className="w-10 h-10 rounded border border-gray-300"
-                    />
-                    <input
-                      type="text"
-                      value={customText.frameBorderColor}
-                      onChange={(e) => handleCustomTextChange('frameBorderColor', e.target.value)}
-                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-                    />
+                    <input type="color" value={customText.frameBorderColor} onChange={e => handleCustomTextChange('frameBorderColor', e.target.value)} className="w-10 h-10 rounded border border-gray-300" />
+                    <input type="text" value={customText.frameBorderColor} onChange={e => handleCustomTextChange('frameBorderColor', e.target.value)} className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent" />
                   </div>
                 </div>
-              </>
-            )}
-          </>
-        )}
+              </>}
+          </>}
       </div>
 
       {/* Couleurs */}
@@ -268,57 +199,21 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
         
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">Couleur principale</label>
-            <div className="flex items-center space-x-2">
-              <input
-                type="color"
-                value={campaign.design?.primaryColor || '#841b60'}
-                onChange={(e) => handleDesignChange('primaryColor', e.target.value)}
-                className="w-10 h-10 rounded border border-gray-300"
-              />
-              <input
-                type="text"
-                value={campaign.design?.primaryColor || '#841b60'}
-                onChange={(e) => handleDesignChange('primaryColor', e.target.value)}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-              />
-            </div>
+            
+            
           </div>
           
           <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">Couleur des boutons</label>
-            <div className="flex items-center space-x-2">
-              <input
-                type="color"
-                value={campaign.design?.buttonColor || '#841b60'}
-                onChange={(e) => handleDesignChange('buttonColor', e.target.value)}
-                className="w-10 h-10 rounded border border-gray-300"
-              />
-              <input
-                type="text"
-                value={campaign.design?.buttonColor || '#841b60'}
-                onChange={(e) => handleDesignChange('buttonColor', e.target.value)}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-              />
-            </div>
+            
+            
           </div>
         </div>
 
         <div className="space-y-2">
           <label className="text-sm font-medium text-gray-700">Couleur de fond</label>
           <div className="flex items-center space-x-2">
-            <input
-              type="color"
-              value={campaign.design?.background || '#f8fafc'}
-              onChange={(e) => handleDesignChange('background', e.target.value)}
-              className="w-10 h-10 rounded border border-gray-300"
-            />
-            <input
-              type="text"
-              value={campaign.design?.background || '#f8fafc'}
-              onChange={(e) => handleDesignChange('background', e.target.value)}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-            />
+            <input type="color" value={campaign.design?.background || '#f8fafc'} onChange={e => handleDesignChange('background', e.target.value)} className="w-10 h-10 rounded border border-gray-300" />
+            <input type="text" value={campaign.design?.background || '#f8fafc'} onChange={e => handleDesignChange('background', e.target.value)} className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent" />
           </div>
         </div>
       </div>
@@ -332,63 +227,28 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
         
         <div className="space-y-2">
           <label className="text-sm font-medium text-gray-700">Police de caractères</label>
-          <select
-            value={campaign.design?.fontFamily || 'Inter'}
-            onChange={(e) => handleDesignChange('fontFamily', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-          >
-            {fontOptions.map((font) => (
-              <option key={font.value} value={font.value}>
+          <select value={campaign.design?.fontFamily || 'Inter'} onChange={e => handleDesignChange('fontFamily', e.target.value)} className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent">
+            {fontOptions.map(font => <option key={font.value} value={font.value}>
                 {font.label}
-              </option>
-            ))}
+              </option>)}
           </select>
         </div>
 
         <div className="space-y-2">
           <label className="text-sm font-medium text-gray-700">Couleur du texte</label>
           <div className="flex items-center space-x-2">
-            <input
-              type="color"
-              value={campaign.design?.titleColor || '#000000'}
-              onChange={(e) => handleDesignChange('titleColor', e.target.value)}
-              className="w-10 h-10 rounded border border-gray-300"
-            />
-            <input
-              type="text"
-              value={campaign.design?.titleColor || '#000000'}
-              onChange={(e) => handleDesignChange('titleColor', e.target.value)}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-            />
+            <input type="color" value={campaign.design?.titleColor || '#000000'} onChange={e => handleDesignChange('titleColor', e.target.value)} className="w-10 h-10 rounded border border-gray-300" />
+            <input type="text" value={campaign.design?.titleColor || '#000000'} onChange={e => handleDesignChange('titleColor', e.target.value)} className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent" />
           </div>
         </div>
       </div>
 
       {/* Borders */}
       <div className="space-y-4">
-        <h3 className="flex items-center text-lg font-semibold text-gray-900">
-          <Square className="w-5 h-5 mr-2" />
-          Bordures
-        </h3>
         
-        <div className="space-y-2">
-          <label className="text-sm font-medium text-gray-700">Rayon des bordures</label>
-          <input
-            type="range"
-            min="0"
-            max="2"
-            step="0.1"
-            value={parseFloat(campaign.design?.borderRadius || '0.5')}
-            onChange={(e) => handleDesignChange('borderRadius', e.target.value + 'rem')}
-            className="w-full"
-          />
-          <div className="text-sm text-gray-500">
-            {campaign.design?.borderRadius || '0.5rem'}
-          </div>
-        </div>
+        
+        
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default ModernDesignTab;
