@@ -100,6 +100,9 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   
   // Calculer la taille du canvas en fonction de la plus petite dimension
   const canvasSize = Math.min(gameDimensions.width, gameDimensions.height) - 60;
+  
+  // Taille du pointeur proportionnelle - moved here to be available everywhere
+  const pointerSize = Math.max(30, canvasSize * 0.08);
 
   const {
     createParticipation,
@@ -451,9 +454,6 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
         return 'px-6 py-3 text-base';
     }
   };
-
-  // Taille du pointeur proportionnelle
-  const pointerSize = Math.max(30, canvasSize * 0.08);
 
   return (
     <div style={getAbsolutePositionStyles()}>

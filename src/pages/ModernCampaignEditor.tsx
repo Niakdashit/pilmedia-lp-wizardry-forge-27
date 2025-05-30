@@ -238,6 +238,7 @@ const ModernCampaignEditor: React.FC = () => {
         <ModernEditorSidebar
           activeTab={activeTab}
           onTabChange={setActiveTab}
+          campaignType={campaignType}
         />
 
         {/* Content Area */}
