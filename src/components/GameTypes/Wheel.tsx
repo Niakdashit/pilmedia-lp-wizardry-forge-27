@@ -6,12 +6,16 @@ interface WheelProps {
   isPreview?: boolean;
   onComplete?: (prize: string) => void;
   onFinish?: (result: 'win' | 'lose') => void;
-  width?: number | string;
-  height?: number | string;
   previewMode?: 'mobile' | 'tablet' | 'desktop';
 }
 
-const Wheel: React.FC<WheelProps> = ({ config, isPreview, onComplete, onFinish, width, height, previewMode }) => {
+const Wheel: React.FC<WheelProps> = ({
+  config,
+  isPreview,
+  onComplete,
+  onFinish,
+  previewMode = 'desktop'
+}) => {
   const wheelRef = useRef<HTMLDivElement>(null);
   const [isSpinning, setIsSpinning] = useState(false);
   const [selectedStyle, setSelectedStyle] = useState('roulette_casino.svg');
@@ -19,12 +23,12 @@ const Wheel: React.FC<WheelProps> = ({ config, isPreview, onComplete, onFinish, 
   const prizes = config?.prizes || ['Prix 1', 'Prix 2', 'Prix 3', 'Prix 4'];
   const colors = config?.colors || ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4'];
 
-  // 🟣 Ajustement du sizing selon le mode preview
-  let size = 320; // default desktop
-  if (previewMode === 'mobile') size = 180;
-  else if (previewMode === 'tablet') size = 240;
-  if (width) size = typeof width === 'number' ? width : parseInt(width);
-  if (height && typeof height === 'number' && height < size) size = height;
+  // Responsive sizing (s'adapte au conteneur parent)
+  let containerSize = '100%';
+  let maxPx = 340; // desktop default
+
+  if (previewMode === 'mobile') maxPx = 200;
+  if (previewMode === 'tablet') maxPx = 260;
 
   const spin = () => {
     if (!wheelRef.current || isSpinning) return;
@@ -36,11 +40,10 @@ const Wheel: React.FC<WheelProps> = ({ config, isPreview, onComplete, onFinish, 
 
     setTimeout(() => {
       setIsSpinning(false);
-      const normalizedRotation = (randomRotation % 360 + 360) % 360; // angle [0, 360[
+      const normalizedRotation = (randomRotation % 360 + 360) % 360;
       const slice = 360 / prizes.length;
       const prizeIndex = prizes.length - 1 - Math.floor(normalizedRotation / slice);
       const selectedPrize = prizes[(prizeIndex + prizes.length) % prizes.length] || prizes[0];
-
       onComplete?.(selectedPrize);
 
       if (onFinish) {
@@ -52,14 +55,15 @@ const Wheel: React.FC<WheelProps> = ({ config, isPreview, onComplete, onFinish, 
 
   useEffect(() => {
     if (wheelRef.current) {
-      wheelRef.current.style.transition = isSpinning ? 'transform 3s ease-out' : 'none';
+      wheelRef.current.style.transition = isSpinning ? 'transform 3s cubic-bezier(.17,.67,.83,.67)' : 'none';
     }
   }, [isSpinning]);
 
+  // Mode édition
   if (!isPreview) {
     return (
       <div className="space-y-6">
-        <WheelStyleSelector 
+        <WheelStyleSelector
           selectedStyle={selectedStyle}
           setSelectedStyle={setSelectedStyle}
         />
@@ -67,22 +71,26 @@ const Wheel: React.FC<WheelProps> = ({ config, isPreview, onComplete, onFinish, 
     );
   }
 
-  // 🟣 Responsive, centrée, jamais débordée
+  // Mode preview : roue responsive
   return (
     <div className="flex flex-col items-center space-y-8 w-full">
-      <div className="relative w-full flex justify-center">
+      <div className="relative w-full flex justify-center items-center">
         <div
           ref={wheelRef}
-          className="rounded-full border-8 border-gray-800 relative overflow-hidden"
+          className="rounded-full border-8 border-gray-800 relative overflow-hidden bg-white"
           style={{
-            width: size,
-            height: size,
-            maxWidth: '100%',
-            maxHeight: '100%',
-            aspectRatio: '1/1',
-            transition: 'transform 3s ease-out'
+            width: containerSize,
+            maxWidth: maxPx,
+            height: 'auto',
+            aspectRatio: '1 / 1',
+            transition: 'transform 3s cubic-bezier(.17,.67,.83,.67)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: 'white',
           }}
         >
+          {/* Utilisation du SVG/CSS pour garantir le ratio même sur petits écrans */}
           {prizes.map((prize: string, index: number) => (
             <div
               key={index}
@@ -93,12 +101,19 @@ const Wheel: React.FC<WheelProps> = ({ config, isPreview, onComplete, onFinish, 
                 clipPath: `polygon(0 0, ${100 / prizes.length}% 0, 0 100%)`
               }}
             >
-              <span className="transform -rotate-45 text-sm">{prize}</span>
+              <span className="transform -rotate-45 text-xs md:text-sm truncate">{prize}</span>
             </div>
           ))}
         </div>
         {/* Curseur/flèche */}
-        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+        <div
+          className="absolute z-30"
+          style={{
+            top: 0,
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+          }}
+        >
           <div className="w-0 h-0 border-l-4 border-r-4 border-b-8 border-transparent border-b-gray-800"></div>
         </div>
       </div>
