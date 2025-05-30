@@ -190,15 +190,8 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
               
             </div>
             
-            {/* Zone de jeu repositionnable avec redimensionnement en temps réel */}
-            <div 
-              className="flex-1 relative transition-all duration-300 ease-in-out"
-              style={{
-                // Assurer que les changements de taille sont bien visibles
-                minHeight: '200px',
-                overflow: 'visible'
-              }}
-            >
+            {/* Zone de jeu repositionnable */}
+            <div className="flex-1 relative">
               {renderGamePreview()}
             </div>
           </div>
