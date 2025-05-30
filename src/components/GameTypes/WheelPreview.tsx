@@ -388,7 +388,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
             position: 'absolute',
             width: canvasSize - 20,
             height: canvasSize - 20,
-            left: shouldCropWheel ? (gamePosition === 'left' ? '10px' : `-${canvasSize * 0.5 + 10}px`) : '10px',
+            left: shouldCropWheel ? (gamePosition === 'left' ? '10px' : `-${canvasSize * 0.5}px`) : '10px',
             top: '15px',
             borderRadius: '50%',
             background: 'rgba(0,0,0,0.15)',
