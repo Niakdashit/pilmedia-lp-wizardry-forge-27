@@ -7,12 +7,14 @@ interface EditorSidebarProps {
   activeSection: string;
   setActiveSection: (section: string) => void;
   campaignType: CampaignType;
+  onSectionChange?: () => void;
 }
 
 const EditorSidebar: React.FC<EditorSidebarProps> = ({
   activeSection,
   setActiveSection,
-  campaignType
+  campaignType,
+  onSectionChange
 }) => {
   const sections = [
     { id: 'general', label: 'Général', icon: Settings, description: 'Paramètres de base' },
@@ -24,12 +26,21 @@ const EditorSidebar: React.FC<EditorSidebarProps> = ({
     { id: 'analytics', label: 'Analytiques', icon: BarChart3, description: 'Statistiques et résultats' }
   ];
 
+  const handleSectionClick = (sectionId: string) => {
+    setActiveSection(sectionId);
+    onSectionChange?.();
+  };
+
   return (
-    <aside className="w-80 bg-white border-r border-gray-200 overflow-y-auto">
-      <div className="p-6">
-        <h2 className="text-lg font-semibold text-gray-900 mb-4">Configuration</h2>
-        
-        <nav className="space-y-2">
+    <aside className="h-full bg-white border-r border-gray-200 overflow-y-auto">
+      {/* Header avec gradient brand */}
+      <div className="bg-gradient-to-r from-[#841b60] to-pink-600 p-4 lg:p-6">
+        <h2 className="text-lg font-semibold text-white mb-2">Configuration</h2>
+        <p className="text-white/80 text-sm">Personnalisez votre campagne</p>
+      </div>
+      
+      <div className="p-4 lg:p-6">
+        <nav className="space-y-1 lg:space-y-2">
           {sections.map((section) => {
             const Icon = section.icon;
             const isActive = activeSection === section.id;
@@ -37,24 +48,24 @@ const EditorSidebar: React.FC<EditorSidebarProps> = ({
             return (
               <button
                 key={section.id}
-                onClick={() => setActiveSection(section.id)}
-                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-left transition-all duration-200 ${
+                onClick={() => handleSectionClick(section.id)}
+                className={`w-full flex items-center space-x-3 px-3 lg:px-4 py-3 rounded-lg text-left transition-all duration-200 ${
                   isActive
-                    ? 'bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200 text-purple-700'
+                    ? 'bg-gradient-to-r from-[#841b60]/10 to-pink-50 border border-[#841b60]/20 text-[#841b60]'
                     : 'hover:bg-gray-50 text-gray-700'
                 }`}
               >
-                <Icon className={`w-5 h-5 ${isActive ? 'text-purple-600' : 'text-gray-500'}`} />
+                <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-[#841b60]' : 'text-gray-500'}`} />
                 <div className="flex-1 min-w-0">
-                  <div className={`font-medium ${isActive ? 'text-purple-900' : 'text-gray-900'}`}>
+                  <div className={`font-medium ${isActive ? 'text-[#841b60]' : 'text-gray-900'}`}>
                     {section.label}
                   </div>
-                  <div className={`text-sm ${isActive ? 'text-purple-600' : 'text-gray-500'}`}>
+                  <div className={`text-xs lg:text-sm ${isActive ? 'text-[#841b60]/70' : 'text-gray-500'} truncate`}>
                     {section.description}
                   </div>
                 </div>
                 {isActive && (
-                  <div className="w-2 h-2 bg-purple-600 rounded-full" />
+                  <div className="w-2 h-2 bg-[#841b60] rounded-full flex-shrink-0" />
                 )}
               </button>
             );
@@ -62,10 +73,10 @@ const EditorSidebar: React.FC<EditorSidebarProps> = ({
         </nav>
       </div>
       
-      {/* Game Type Indicator */}
-      <div className="px-6 py-4 bg-gradient-to-r from-purple-50 to-pink-50 border-t border-gray-200">
+      {/* Game Type Indicator avec style brand */}
+      <div className="p-4 lg:p-6 bg-gradient-to-r from-[#841b60]/5 to-pink-50 border-t border-gray-200 mt-auto">
         <div className="text-sm font-medium text-gray-900 mb-1">Type de jeu actuel</div>
-        <div className="text-lg font-bold text-purple-600 capitalize">{campaignType}</div>
+        <div className="text-lg font-bold text-[#841b60] capitalize">{campaignType}</div>
       </div>
     </aside>
   );

@@ -27,6 +27,7 @@ const CampaignEditorNew: React.FC = () => {
   const [showPreview, setShowPreview] = useState(false);
   const [previewDevice, setPreviewDevice] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');
   const [previewOrientation, setPreviewOrientation] = useState<'portrait' | 'landscape'>('portrait');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   
   const { saveCampaign, getCampaign } = useCampaigns();
   
@@ -106,8 +107,8 @@ const CampaignEditorNew: React.FC = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-gradient-to-br from-purple-50 to-pink-50">
-      {/* Header */}
+    <div className="h-screen flex flex-col bg-gradient-to-br from-[#841b60]/5 to-pink-50">
+      {/* Header Mobile-First */}
       <EditorHeader
         campaign={campaign}
         onSave={handleSave}
@@ -116,23 +117,42 @@ const CampaignEditorNew: React.FC = () => {
         setPreviewDevice={setPreviewDevice}
         previewOrientation={previewOrientation}
         setPreviewOrientation={setPreviewOrientation}
+        sidebarOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen}
       />
 
-      {/* Main Editor */}
-      <div className="flex-1 flex overflow-hidden">
+      {/* Main Editor - Mobile Layout */}
+      <div className="flex-1 flex overflow-hidden relative">
+        {/* Mobile Sidebar Overlay */}
+        {sidebarOpen && (
+          <div 
+            className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
         {/* Sidebar */}
-        <EditorSidebar
-          activeSection={activeSection}
-          setActiveSection={setActiveSection}
-          campaignType={campaign.type}
-        />
+        <div className={`
+          fixed lg:relative top-0 left-0 h-full w-80 z-50 transform transition-transform duration-300 ease-in-out
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+          lg:w-80 lg:block
+        `}>
+          <EditorSidebar
+            activeSection={activeSection}
+            setActiveSection={setActiveSection}
+            campaignType={campaign.type}
+            onSectionChange={() => setSidebarOpen(false)}
+          />
+        </div>
 
         {/* Content */}
-        <EditorContent
-          activeSection={activeSection}
-          campaign={campaign}
-          setCampaign={setCampaign}
-        />
+        <div className="flex-1 overflow-hidden">
+          <EditorContent
+            activeSection={activeSection}
+            campaign={campaign}
+            setCampaign={setCampaign}
+          />
+        </div>
       </div>
 
       {/* Preview Modal */}
