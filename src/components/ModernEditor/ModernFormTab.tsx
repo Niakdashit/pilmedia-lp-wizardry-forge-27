@@ -1,7 +1,6 @@
-
 import React from 'react';
 import { Plus, Trash2, Move, FormInput } from 'lucide-react';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable, DropResult, DroppableProvided, DraggableProvided, DraggableStateSnapshot } from 'react-beautiful-dnd';
 
 interface ModernFormTabProps {
   campaign: any;
@@ -55,7 +54,7 @@ const ModernFormTab: React.FC<ModernFormTabProps> = ({
     }));
   };
 
-  const onDragEnd = (result: any) => {
+  const onDragEnd = (result: DropResult) => {
     if (!result.destination) return;
 
     const items = Array.from(formFields);
@@ -110,11 +109,11 @@ const ModernFormTab: React.FC<ModernFormTabProps> = ({
 
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="form-fields">
-          {(provided) => (
+          {(provided: DroppableProvided) => (
             <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-4">
               {formFields.map((field: any, index: number) => (
                 <Draggable key={field.id} draggableId={field.id} index={index}>
-                  {(provided, snapshot) => (
+                  {(provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
                     <div
                       ref={provided.innerRef}
                       {...provided.draggableProps}

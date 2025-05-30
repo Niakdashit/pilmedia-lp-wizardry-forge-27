@@ -1,4 +1,3 @@
-
 import React from 'react';
 import WheelPreview from '../GameTypes/WheelPreview';
 import ScratchPreview from '../GameTypes/ScratchPreview';
@@ -42,7 +41,7 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
     
     switch (campaign.type) {
       case 'wheel':
-        return <WheelPreview config={gameConfig.wheel} />;
+        return <WheelPreview campaign={campaign} config={gameConfig.wheel} />;
       case 'scratch':
         return <ScratchPreview config={gameConfig.scratch} />;
       case 'memory':

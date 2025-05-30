@@ -23,6 +23,7 @@
     "@tiptap/pm": "^2.1.16",
     "@tiptap/react": "^2.1.16",
     "@tiptap/starter-kit": "^2.1.16",
+    "@types/react-beautiful-dnd": "^13.1.8",
     "canvas-confetti": "^1.9.2",
     "color": "^4.2.3",
     "date-fns": "^2.30.0",
