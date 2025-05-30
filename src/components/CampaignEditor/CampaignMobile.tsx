@@ -5,7 +5,8 @@ import MobileVisuals from './Mobile/MobileVisuals';
 import MobileTexts from './Mobile/MobileTexts';
 import MobileGamePlacement from './Mobile/MobileGamePlacement';
 import MobileButtons from './Mobile/MobileButtons';
-import MobilePreview from './Mobile/MobilePreview';
+import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
+
 interface CampaignMobileProps {
   campaign: any;
   setCampaign: React.Dispatch<React.SetStateAction<any>>;
@@ -87,7 +88,8 @@ const CampaignMobile: React.FC<CampaignMobileProps> = ({
         minHeight: '600px'
       }}>
           <div className="w-full flex justify-center">
-            <MobilePreview campaign={campaign} previewMode={previewMode} />
+            {/* On passe le mode preview (mobile/tablet) au funnel via une prop custom si besoin */}
+            <FunnelUnlockedGame campaign={campaign} previewMode={previewMode} />
           </div>
         </div>
       </div>
