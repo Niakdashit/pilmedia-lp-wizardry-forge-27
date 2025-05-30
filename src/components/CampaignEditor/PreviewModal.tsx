@@ -1,9 +1,9 @@
-
 import React, { useState } from 'react';
 import { X, Monitor, Tablet, Smartphone } from 'lucide-react';
 import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
 import FunnelStandard from '../funnels/FunnelStandard';
 import MobilePreview from './Mobile/MobilePreview';
+import WheelPreview from '../GameTypes/WheelPreview';
 
 interface PreviewModalProps {
   isOpen: boolean;
@@ -17,32 +17,18 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
   if (!isOpen) return null;
 
   const getPreviewFunnel = () => {
-    // Pour les jeux avec roue, on passe la configuration complète
+    // Pour les jeux avec roue, utiliser directement WheelPreview avec la bonne configuration
     if (campaign.type === 'wheel') {
-      return <FunnelUnlockedGame campaign={{
-        ...campaign,
-        // S'assurer que la config de la roue est bien transmise
-        config: {
-          ...campaign.config,
-          roulette: campaign.config?.roulette || {
-            segments: [],
-            centerImage: null,
-            theme: 'default',
-            borderColor: '#841b60',
-            pointerColor: '#841b60'
-          }
-        },
-        gameConfig: {
-          ...campaign.gameConfig,
-          wheel: campaign.config?.roulette || campaign.gameConfig?.wheel || {
-            segments: [],
-            centerImage: null,
-            theme: 'default',
-            borderColor: '#841b60',
-            pointerColor: '#841b60'
-          }
-        }
-      }} />;
+      return <WheelPreview
+        campaign={campaign}
+        config={{
+          mode: 'instant_winner' as const,
+          winProbability: campaign.gameConfig?.wheel?.winProbability || 0.1,
+          maxWinners: campaign.gameConfig?.wheel?.maxWinners,
+          winnersCount: 0
+        }}
+        onFinish={(result) => console.log('Wheel result:', result)}
+      />;
     }
     
     if (['scratch', 'jackpot', 'dice'].includes(campaign.type)) {
