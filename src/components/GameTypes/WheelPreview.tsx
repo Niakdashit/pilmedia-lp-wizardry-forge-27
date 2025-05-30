@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import Modal from '../common/Modal';
 import ValidationMessage from '../common/ValidationMessage';
@@ -25,7 +24,6 @@ interface WheelPreviewProps {
   onFinish?: (result: 'win' | 'lose') => void;
   disabled?: boolean;
   onStart?: () => void;
-  previewMode?: 'mobile' | 'tablet' | 'desktop';
 }
 
 const DEFAULT_FIELDS: FieldConfig[] = [
@@ -67,8 +65,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   config,
   onFinish,
   disabled = false,
-  onStart,
-  previewMode = 'desktop'
+  onStart
 }) => {
   const segments = campaign?.config?.roulette?.segments || [];
   const centerImage = campaign?.config?.roulette?.centerImage;
