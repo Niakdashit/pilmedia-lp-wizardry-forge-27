@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Modal from '../common/Modal';
 import ValidationMessage from '../common/ValidationMessage';
@@ -26,7 +27,7 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
   campaign,
   modalContained = false,
   mobileConfig,
-  previewMode // optionnel, passé par MobilePreview
+  previewMode = 'desktop'
 }) => {
   const [formValidated, setFormValidated] = useState(false);
   const [showFormModal, setShowFormModal] = useState(false);
@@ -83,7 +84,7 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
     campaign?.gameConfig?.[campaign.type]?.template ||
     campaign?.selectedTemplate;
 
-  // -- Correction principale : Game container responsive
+  // Rendu du jeu avec dimensions responsive corrigées
   const renderGame = () => {
     const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage;
     const customTemplate = campaign.gameConfig?.[campaign.type]?.customTemplate;
@@ -91,41 +92,28 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
     const buttonColor = campaign.gameConfig?.[campaign.type]?.buttonColor;
     const contrastBg = mobileConfig?.contrastBackground || campaign.screens?.[2]?.contrastBackground;
 
-    // Calcul du ratio, taille max selon previewMode (mobile/tablet/desktop)
-    let gameBoxMaxWidth = 320, gameBoxMaxHeight = 320;
-    if (previewMode === 'tablet') {
-      gameBoxMaxWidth = 340;
-      gameBoxMaxHeight = 340;
-    }
-    if (previewMode === 'desktop') {
-      gameBoxMaxWidth = 400;
-      gameBoxMaxHeight = 400;
-    }
+    // Dimensions responsive selon le mode d'aperçu
+    const getGameContainerStyle = (): React.CSSProperties => {
+      let maxSize = 280; // desktop par défaut
+      
+      if (previewMode === 'mobile') {
+        maxSize = 240;
+      } else if (previewMode === 'tablet') {
+        maxSize = 260;
+      }
 
-    // Responsive style (toujours centré, jamais coupé)
-    const gameContainerStyle: React.CSSProperties = {
-      width: '100%',
-      height: 'auto',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      minHeight: '160px',
-      padding: 0,
-      margin: 0,
-      maxWidth: '100%',
-      position: 'relative',
-      // S'assure que la roue ou le jeu n'est jamais plus large que le device
-      aspectRatio: '1/1',
-    };
-
-    const innerGameBoxStyle: React.CSSProperties = {
-      width: '100%',
-      maxWidth: gameBoxMaxWidth,
-      maxHeight: gameBoxMaxHeight,
-      aspectRatio: '1/1',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
+      return {
+        width: '100%',
+        height: 'auto',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '10px',
+        maxWidth: `${maxSize}px`,
+        maxHeight: `${maxSize}px`,
+        margin: '0 auto',
+        position: 'relative'
+      };
     };
 
     const gameComponent = (() => {
@@ -133,42 +121,38 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
         disabled: !formValidated,
         onFinish: handleGameFinish,
         onStart: handleGameStart,
-        previewMode: previewMode || 'desktop'
+        previewMode: previewMode
       };
 
       switch (campaign.type) {
         case 'wheel':
           return (
-            <div style={innerGameBoxStyle}>
-              <Wheel config={campaign.gameConfig.wheel} isPreview={true} {...commonProps} />
-            </div>
+            <Wheel 
+              config={campaign.gameConfig?.wheel || campaign.config?.roulette || {}} 
+              isPreview={true} 
+              {...commonProps} 
+            />
           );
         case 'scratch':
           return (
-            <div style={innerGameBoxStyle}>
-              <ScratchPreview config={campaign.gameConfig.scratch} />
-            </div>
+            <ScratchPreview config={campaign.gameConfig?.scratch || {}} />
           );
         case 'jackpot':
           return (
-            <div style={innerGameBoxStyle}>
-              <Jackpot
-                isPreview={true}
-                instantWinConfig={campaign.gameConfig?.jackpot?.instantWin}
-                buttonLabel={buttonLabel}
-                buttonColor={buttonColor}
-                backgroundImage={gameBackgroundImage}
-                customTemplate={customTemplate}
-                selectedTemplate={selectedTemplateId}
-                {...commonProps}
-              />
-            </div>
+            <Jackpot
+              isPreview={true}
+              instantWinConfig={campaign.gameConfig?.jackpot?.instantWin}
+              buttonLabel={buttonLabel}
+              buttonColor={buttonColor}
+              backgroundImage={gameBackgroundImage}
+              customTemplate={customTemplate}
+              selectedTemplate={selectedTemplateId}
+              {...commonProps}
+            />
           );
         case 'dice':
           return (
-            <div style={innerGameBoxStyle}>
-              <DicePreview config={campaign.gameConfig.dice} />
-            </div>
+            <DicePreview config={campaign.gameConfig?.dice || {}} />
           );
         default:
           return <div className="text-center text-gray-500">Jeu non supporté</div>;
@@ -176,7 +160,7 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
     })();
 
     return (
-      <div style={gameContainerStyle} className="rounded-lg overflow-visible relative">
+      <div style={getGameContainerStyle()} className="rounded-lg overflow-visible relative">
         {/* Jeu principal */}
         <div className="relative z-20 w-full h-full flex items-center justify-center">
           <ContrastBackground
@@ -187,10 +171,13 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
             {gameComponent}
           </ContrastBackground>
         </div>
+        
         {/* Overlay clickable si formulaire non validé */}
         {!formValidated && (
-          <div onClick={handleGameButtonClick}
-               className="absolute inset-0 flex items-center justify-center z-30 rounded-lg cursor-pointer bg-black/0" />
+          <div 
+            onClick={handleGameButtonClick}
+            className="absolute inset-0 flex items-center justify-center z-30 rounded-lg cursor-pointer bg-black/0" 
+          />
         )}
 
         <ValidationMessage
