@@ -1,6 +1,4 @@
-
 import React from 'react';
-import Color from 'color';
 import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
 import FunnelStandard from '../funnels/FunnelStandard';
 
