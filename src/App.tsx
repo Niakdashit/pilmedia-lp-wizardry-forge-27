@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Layout from './components/Layout/Layout';
 import Dashboard from './pages/Dashboard';
 import Campaigns from './pages/Campaigns';
-import CampaignEditor from './pages/CampaignEditor';
 import NewCampaignEditor from './components/NewCampaignEditor/NewCampaignEditor';
 import QuickCampaign from './pages/QuickCampaign';
 import Newsletter from './pages/Newsletter';
