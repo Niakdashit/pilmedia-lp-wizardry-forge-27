@@ -39,6 +39,7 @@ const defaultJackpotConfig = {
     maxWinners: undefined
   }
 };
+
 const CampaignEditor: React.FC = () => {
   const {
     id
@@ -53,134 +54,150 @@ const CampaignEditor: React.FC = () => {
     saveCampaign,
     getCampaign
   } = useCampaigns();
-  const [campaign, setCampaign] = useState<any>({
-    id: undefined,
-    name: isNewCampaign ? 'Nouvelle Campagne' : 'Quiz Marketing Digital',
-    description: isNewCampaign ? '' : 'Quiz pour évaluer les connaissances en marketing digital',
-    url: isNewCampaign ? '' : 'quiz-marketing-digital',
-    startDate: isNewCampaign ? '' : '2025-03-15',
-    startTime: isNewCampaign ? '' : '09:00',
-    endDate: isNewCampaign ? '' : '2025-04-15',
-    endTime: isNewCampaign ? '' : '18:00',
-    status: isNewCampaign ? 'draft' : 'active',
-    type: campaignType,
-    screens: {
-      1: {
-        title: 'Bienvenue !',
-        description: 'Participez à notre jeu et tentez de gagner !',
-        buttonText: 'Participer',
-        buttonLink: '',
-        showTitle: true,
-        showDescription: true
+
+  // Initialisation différente selon le type de campagne
+  const getInitialCampaign = () => {
+    const baseConfig = {
+      id: undefined,
+      name: isNewCampaign ? `Nouvelle Campagne ${campaignType === 'quiz' ? 'Quiz' : 'Wheel'}` : 'Campagne Marketing',
+      description: isNewCampaign ? '' : 'Description de la campagne',
+      url: isNewCampaign ? '' : `campagne-${campaignType}`,
+      startDate: isNewCampaign ? '' : '2025-03-15',
+      startTime: isNewCampaign ? '' : '09:00',
+      endDate: isNewCampaign ? '' : '2025-04-15',
+      endTime: isNewCampaign ? '' : '18:00',
+      status: isNewCampaign ? 'draft' : 'active',
+      type: campaignType,
+      screens: {
+        1: {
+          title: 'Bienvenue !',
+          description: `Participez à notre ${campaignType === 'quiz' ? 'quiz' : 'jeu'} et tentez de gagner !`,
+          buttonText: 'Participer',
+          buttonLink: '',
+          showTitle: true,
+          showDescription: true
+        },
+        2: {},
+        3: {
+          title: 'Félicitations !',
+          description: 'Merci pour votre participation !',
+          buttonText: 'Rejouer',
+          buttonLink: '',
+          showTitle: true,
+          showDescription: true,
+          showReplayButton: true
+        }
       },
-      2: {},
-      3: {
-        title: 'Félicitations !',
-        description: 'Merci pour votre participation !',
-        buttonText: 'Rejouer',
-        buttonLink: '',
+      formFields: defaultFormFields,
+      gameConfig: getDefaultGameConfig(campaignType),
+      design: {
+        background: '#ebf4f7',
+        fontFamily: 'Inter',
+        primaryColor: '#841b60',
+        secondaryColor: '#ffffff',
+        titleColor: '#000000',
+        buttonColor: '#841b60',
+        blockColor: '#ffffff',
+        borderColor: '#E5E7EB',
+        borderRadius: '0.5rem',
+        shadow: 'shadow-md',
+        titleFont: 'Inter, sans-serif',
+        textFont: 'Inter, sans-serif',
+        fontSize: 'normal',
+        fontWeight: 'normal',
+        logoUrl: '',
+        backgroundImage: ''
+      },
+      rewards: {
+        mode: 'probability',
+        quantity: 10,
+        probability: 10,
+        timeSlots: []
+      },
+      config: {
+        jackpot: defaultJackpotConfig,
+        roulette: {
+          segments: [],
+          centerImage: null,
+          theme: 'default',
+          borderColor: '#841b60',
+          pointerColor: '#841b60'
+        }
+      },
+      mobileConfig: {
+        roulette: {
+          segments: [],
+          centerImage: null,
+          theme: 'default',
+          borderColor: '#841b60',
+          pointerColor: '#841b60'
+        },
+        gamePosition: 'center',
+        buttonPosition: 'below',
+        textPosition: 'top',
+        horizontalPadding: 16,
+        verticalSpacing: 20,
+        backgroundMode: 'cover',
+        backgroundColor: '#ebf4f7',
+        backgroundImage: null,
+        logoOverlay: null,
+        logoPosition: 'top-right',
+        decorativeOverlay: null,
+        customTemplate: null,
+        fontFamily: 'Inter',
+        title: null,
+        description: null,
         showTitle: true,
         showDescription: true,
-        showReplayButton: true
+        titleColor: '#000000',
+        titleSize: 'text-2xl',
+        titleWeight: 'font-bold',
+        titleAlignment: 'text-center',
+        descriptionColor: '#666666',
+        descriptionSize: 'text-base',
+        descriptionAlignment: 'text-center',
+        gameVerticalAlign: 'center',
+        gameMaxWidth: 90,
+        gameMaxHeight: 60,
+        gamePaddingX: 16,
+        gamePaddingY: 16,
+        autoResize: true,
+        fullscreenGame: false,
+        buttonPlacement: 'bottom',
+        buttonText: null,
+        buttonColor: '#841b60',
+        buttonTextColor: '#ffffff',
+        buttonShape: 'rounded-lg',
+        buttonSize: 'medium',
+        buttonShadow: 'shadow-md',
+        buttonMargin: 16,
+        buttonWidth: 80,
+        buttonHoverEffect: true
       }
-    },
-    formFields: defaultFormFields,
-    gameConfig: getDefaultGameConfig(campaignType),
-    design: {
-      background: '#ebf4f7',
-      fontFamily: 'Inter',
-      primaryColor: '#841b60',
-      secondaryColor: '#ffffff',
-      titleColor: '#000000',
-      buttonColor: '#841b60',
-      blockColor: '#ffffff',
-      borderColor: '#E5E7EB',
-      borderRadius: '0.5rem',
-      shadow: 'shadow-md',
-      titleFont: 'Inter, sans-serif',
-      textFont: 'Inter, sans-serif',
-      fontSize: 'normal',
-      fontWeight: 'normal',
-      logoUrl: '',
-      backgroundImage: ''
-    },
-    rewards: {
-      mode: 'probability',
-      quantity: 10,
-      probability: 10,
-      timeSlots: []
-    },
-    config: {
-      jackpot: defaultJackpotConfig,
-      roulette: {
-        segments: [],
-        centerImage: null,
-        theme: 'default',
-        borderColor: '#841b60',
-        pointerColor: '#841b60'
-      }
-    },
-    mobileConfig: {
-      roulette: {
-        segments: [],
-        centerImage: null,
-        theme: 'default',
-        borderColor: '#841b60',
-        pointerColor: '#841b60'
-      },
-      gamePosition: 'center',
-      buttonPosition: 'below',
-      textPosition: 'top',
-      horizontalPadding: 16,
-      verticalSpacing: 20,
-      backgroundMode: 'cover',
-      backgroundColor: '#ebf4f7',
-      backgroundImage: null,
-      logoOverlay: null,
-      logoPosition: 'top-right',
-      decorativeOverlay: null,
-      customTemplate: null,
-      fontFamily: 'Inter',
-      title: null,
-      description: null,
-      showTitle: true,
-      showDescription: true,
-      titleColor: '#000000',
-      titleSize: 'text-2xl',
-      titleWeight: 'font-bold',
-      titleAlignment: 'text-center',
-      descriptionColor: '#666666',
-      descriptionSize: 'text-base',
-      descriptionAlignment: 'text-center',
-      gameVerticalAlign: 'center',
-      gameMaxWidth: 90,
-      gameMaxHeight: 60,
-      gamePaddingX: 16,
-      gamePaddingY: 16,
-      autoResize: true,
-      fullscreenGame: false,
-      buttonPlacement: 'bottom',
-      buttonText: null,
-      buttonColor: '#841b60',
-      buttonTextColor: '#ffffff',
-      buttonShape: 'rounded-lg',
-      buttonSize: 'medium',
-      buttonShadow: 'shadow-md',
-      buttonMargin: 16,
-      buttonWidth: 80,
-      buttonHoverEffect: true
+    };
+
+    // Pour les quiz, rediriger vers l'onglet settings pour configuration immédiate
+    if (campaignType === 'quiz' && isNewCampaign) {
+      setTimeout(() => setActiveTab('settings'), 100);
     }
-  });
+
+    return baseConfig;
+  };
+
+  const [campaign, setCampaign] = useState<any>(getInitialCampaign());
+
   useEffect(() => {
     if (isNewCampaign && !searchParams.get('type')) {
       navigate('/campaigns');
     }
   }, [isNewCampaign, searchParams, navigate]);
+
   useEffect(() => {
     if (!isNewCampaign && id) {
       loadCampaign(id);
     }
   }, [id, isNewCampaign]);
+
   const loadCampaign = async (campaignId: string) => {
     const existingCampaign = await getCampaign(campaignId);
     if (existingCampaign) {
@@ -190,6 +207,7 @@ const CampaignEditor: React.FC = () => {
       });
     }
   };
+
   const handleSave = async (continueEditing = false) => {
     console.log('Saving campaign:', campaign);
     const campaignData = {
@@ -206,6 +224,7 @@ const CampaignEditor: React.FC = () => {
       }));
     }
   };
+
   return <div className="h-[calc(150vh-3rem)] flex flex-col mx-0">
       <CampaignEditorHeader isNewCampaign={isNewCampaign} campaignName={campaign.name} onPreview={() => setShowPreviewModal(true)} onSave={handleSave} />
 
@@ -223,4 +242,5 @@ const CampaignEditor: React.FC = () => {
       {showPreviewModal && <PreviewModal isOpen={showPreviewModal} onClose={() => setShowPreviewModal(false)} campaign={campaign} />}
     </div>;
 };
+
 export default CampaignEditor;

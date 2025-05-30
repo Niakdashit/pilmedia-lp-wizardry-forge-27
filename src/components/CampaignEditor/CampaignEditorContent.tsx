@@ -41,6 +41,13 @@ const CampaignEditorContent: React.FC<CampaignEditorContentProps> = ({
             {campaign.type === 'quiz' && (
               <div>
                 <h2 className="text-xl font-bold mb-4 text-[#841b60]">Configuration du Quiz</h2>
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                  <h3 className="font-medium text-blue-800 mb-2">Personnalisation des Questions</h3>
+                  <p className="text-blue-700 text-sm">
+                    Ici vous pouvez ajouter, modifier et personnaliser toutes vos questions de quiz. 
+                    Définissez le nombre de questions, les options de réponse, les explications et les temps limites.
+                  </p>
+                </div>
                 <QuizConfiguration
                   campaign={campaign}
                   setCampaign={setCampaign}
