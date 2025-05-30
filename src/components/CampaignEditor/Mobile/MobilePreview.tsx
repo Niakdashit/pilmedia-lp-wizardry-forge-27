@@ -7,7 +7,7 @@ interface MobilePreviewProps {
 }
 
 const DEVICE_SPECS = {
-  mobile: { width: 375, height: 667 },
+  mobile: { width: 375, height: 687 },
   tablet: { width: 440, height: 650 }
 };
 
