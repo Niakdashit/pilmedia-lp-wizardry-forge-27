@@ -69,14 +69,15 @@ const EditorTabs: React.FC<EditorTabsProps> = ({
 };
 
 function getGameTypeLabel(type: CampaignType): string {
-  const labels = {
+  const labels: Record<CampaignType, string> = {
     wheel: 'roue',
     jackpot: 'jackpot',
     scratch: 'carte à gratter',
     memory: 'memory',
     puzzle: 'puzzle',
     dice: 'dé magique',
-    quiz: 'quiz'
+    quiz: 'quiz',
+    swiper: 'swiper'
   };
   return labels[type] || 'jeu';
 }

@@ -7,13 +7,56 @@ import EditorHeader from './components/EditorHeader';
 import EditorTabs from './components/EditorTabs';
 import EditorContent from './components/EditorContent';
 import EditorPreview from './components/EditorPreview';
-import { toast } from '../../hooks/use-toast';
+import { toast } from 'sonner';
 
 // Types d'onglets
 export type TabType = 'general' | 'design' | 'content' | 'preview';
 
+// Interface pour le campaign state
+interface CampaignState {
+  id?: string;
+  name: string;
+  description: string;
+  url: string;
+  startDate: string;
+  startTime: string;
+  endDate: string;
+  endTime: string;
+  status: string;
+  type: CampaignType;
+  design: {
+    template: string;
+    background: string;
+    primaryColor: string;
+    secondaryColor: string;
+    fontFamily: string;
+    fontSize: string;
+    blockRadius: string;
+    shadow: string;
+    backgroundImage: string | null;
+    logoUrl: string | null;
+  };
+  gameConfig: any;
+  formFields: Array<{
+    id: string;
+    label: string;
+    type: 'text' | 'email' | 'tel' | 'textarea' | 'select' | 'checkbox';
+    required: boolean;
+  }>;
+  screens: {
+    0: { title: string; description: string; showTitle: boolean; showDescription: boolean };
+    1: { title: string; buttonText: string };
+    2: { title: string; description: string; replayButtonText: string };
+  };
+  mobileConfig: {
+    gamePosition: string;
+    customTemplate: string | null;
+    gameVerticalAlign: string;
+  };
+}
+
 // Configuration par défaut
-const defaultCampaign = {
+const defaultCampaign: CampaignState = {
   id: undefined,
   name: 'Nouvelle Campagne',
   description: '',
@@ -63,7 +106,7 @@ const NewCampaignEditor: React.FC = () => {
   const campaignType = searchParams.get('type') as CampaignType || 'wheel';
   
   const [activeTab, setActiveTab] = useState<TabType>('general');
-  const [campaign, setCampaign] = useState(() => ({
+  const [campaign, setCampaign] = useState<CampaignState>(() => ({
     ...defaultCampaign,
     type: campaignType,
     gameConfig: getDefaultGameConfig(campaignType)
@@ -86,15 +129,17 @@ const NewCampaignEditor: React.FC = () => {
         setCampaign({
           ...defaultCampaign,
           ...existingCampaign,
-          formFields: existingCampaign.form_fields || defaultCampaign.formFields
+          type: existingCampaign.type as CampaignType,
+          formFields: existingCampaign.form_fields?.map((field: any) => ({
+            id: field.id,
+            label: field.label,
+            type: field.type as 'text' | 'email' | 'tel' | 'textarea' | 'select' | 'checkbox',
+            required: field.required
+          })) || defaultCampaign.formFields
         });
       }
     } catch (error) {
-      toast({
-        title: "Erreur",
-        description: "Impossible de charger la campagne",
-        variant: "destructive"
-      });
+      toast.error("Impossible de charger la campagne");
     }
   };
 
@@ -102,16 +147,18 @@ const NewCampaignEditor: React.FC = () => {
     try {
       const campaignData = {
         ...campaign,
-        form_fields: campaign.formFields
+        form_fields: campaign.formFields.map(field => ({
+          id: field.id,
+          label: field.label,
+          type: field.type,
+          required: field.required
+        }))
       };
       
       const savedCampaign = await saveCampaign(campaignData);
       
       if (savedCampaign) {
-        toast({
-          title: "Succès",
-          description: "Campagne sauvegardée avec succès"
-        });
+        toast.success("Campagne sauvegardée avec succès");
         
         if (isNewCampaign) {
           setCampaign(prev => ({ ...prev, id: savedCampaign.id }));
@@ -122,11 +169,7 @@ const NewCampaignEditor: React.FC = () => {
         }
       }
     } catch (error) {
-      toast({
-        title: "Erreur",
-        description: "Erreur lors de la sauvegarde",
-        variant: "destructive"
-      });
+      toast.error("Erreur lors de la sauvegarde");
     }
   };
 

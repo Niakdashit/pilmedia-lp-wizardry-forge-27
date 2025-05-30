@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Gamepad2, Settings } from 'lucide-react';
+import { Gamepad2 } from 'lucide-react';
 import WheelContentEditor from '../content/WheelContentEditor';
 import JackpotContentEditor from '../content/JackpotContentEditor';
 import ScratchContentEditor from '../content/ScratchContentEditor';

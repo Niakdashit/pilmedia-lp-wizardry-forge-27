@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ArrowLeft, Save, Eye, Settings } from 'lucide-react';
+import { ArrowLeft, Save, Eye } from 'lucide-react';
 
 interface EditorHeaderProps {
   campaignName: string;
