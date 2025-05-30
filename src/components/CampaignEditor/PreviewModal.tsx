@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { X, Monitor, Tablet, Smartphone } from 'lucide-react';
 import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
-import WheelPreview from '../GameTypes/WheelPreview';
 import MobilePreview from './Mobile/MobilePreview';
 
 interface PreviewModalProps {
@@ -15,27 +14,6 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
   const [selectedDevice, setSelectedDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
 
   if (!isOpen) return null;
-
-  const getPreviewFunnel = () => {
-    // En mode desktop pour les campagnes "wheel", utiliser directement WheelPreview
-    if (selectedDevice === 'desktop' && campaign.type === 'wheel') {
-      return (
-        <WheelPreview
-          campaign={campaign}
-          config={{
-            mode: 'instant_winner' as const,
-            winProbability: campaign.gameConfig?.wheel?.winProbability || 0.1,
-            maxWinners: campaign.gameConfig?.wheel?.maxWinners,
-            winnersCount: 0
-          }}
-          onFinish={() => {}}
-        />
-      );
-    }
-    
-    // Pour les autres cas, utiliser FunnelUnlockedGame
-    return <FunnelUnlockedGame campaign={campaign} />;
-  };
 
   // Récupérer l'image de fond générale (sans duplication avec le jeu)
   const backgroundImage = campaign.design?.backgroundImage;
@@ -63,17 +41,20 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
     <div style={getBackgroundStyle()}>
       {/* Contenu du funnel avec z-index élevé pour être au-dessus du background */}
       <div className="relative z-20 w-full h-full flex items-center justify-center">
-        {getPreviewFunnel()}
+        <FunnelUnlockedGame campaign={campaign} />
       </div>
     </div>
   );
 
   const renderMobilePreview = () => (
     <div className="w-full h-full flex items-center justify-center p-4">
-      <MobilePreview
-        campaign={campaign}
-        previewMode={selectedDevice === 'tablet' ? 'tablet' : 'mobile'}
-      />
+      <div className="w-full max-w-sm mx-auto">
+        <FunnelUnlockedGame 
+          campaign={campaign} 
+          modalContained={true}
+          mobileConfig={{ contrastBackground: null }}
+        />
+      </div>
     </div>
   );
 
