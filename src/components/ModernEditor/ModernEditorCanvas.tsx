@@ -109,16 +109,7 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
     if (!headerText?.enabled || !headerText?.text) {
       return null;
     }
-    const getTextSize = () => {
-      switch (headerText.size) {
-        case 'small':
-          return 'text-sm';
-        case 'large':
-          return 'text-2xl';
-        default:
-          return 'text-lg';
-      }
-    };
+
     const frameStyles = headerText.showFrame ? {
       backgroundColor: headerText.frameColor || '#ffffff',
       border: `1px solid ${headerText.frameBorderColor || '#e5e7eb'}`,
@@ -129,6 +120,7 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
     } : {
       padding: '12px 16px'
     };
+
     return <div className="w-full flex justify-center" style={frameStyles}>
         <p style={{
         color: headerText.color || '#000000',
