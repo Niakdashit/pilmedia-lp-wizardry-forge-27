@@ -23,10 +23,11 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
           campaign={campaign} 
           previewMode={selectedDevice} 
           modalContained={true}
+          key={`${selectedDevice}-${campaign.id}-${Date.now()}`} // Force re-render with campaign changes
         />
       );
     }
-    return <FunnelStandard campaign={campaign} />;
+    return <FunnelStandard campaign={campaign} key={`${campaign.id}-${Date.now()}`} />;
   };
 
   // Récupérer l'image de fond du jeu
@@ -66,6 +67,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
       <MobilePreview
         campaign={campaign}
         previewMode={selectedDevice === 'tablet' ? 'tablet' : 'mobile'}
+        key={`mobile-${campaign.id}-${Date.now()}`} // Force re-render with campaign changes
       />
     </div>
   );

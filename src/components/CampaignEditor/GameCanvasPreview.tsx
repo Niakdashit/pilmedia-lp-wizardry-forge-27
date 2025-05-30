@@ -8,6 +8,7 @@ import PuzzlePreview from '../GameTypes/PuzzlePreview';
 import ScratchPreview from '../GameTypes/ScratchPreview';
 import DicePreview from '../GameTypes/DicePreview';
 import GameSizeSelector, { GameSize } from '../configurators/GameSizeSelector';
+import GamePositionSelector, { GamePosition } from '../configurators/GamePositionSelector';
 
 interface GameCanvasPreviewProps {
   campaign: any;
@@ -19,6 +20,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   className = ""
 }) => {
   const [gameSize, setGameSize] = useState<GameSize>('small');
+  const [gamePosition, setGamePosition] = useState<GamePosition>('center');
   
   const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage;
   const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel || 'Lancer le Jackpot';
@@ -63,7 +65,8 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
             }}
             onFinish={() => {}}
             gameSize={gameSize}
-            key={gameSize} // Force re-render when size changes
+            gamePosition={gamePosition}
+            key={`${gameSize}-${gamePosition}`} // Force re-render when size or position changes
           />
         );
       case 'scratch':
@@ -111,11 +114,15 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
         />
       )}
 
-      {/* Panneau de contrôle des tailles */}
-      <div className="absolute top-4 right-4 z-30 bg-white p-4 rounded-lg shadow-lg border">
+      {/* Panneau de contrôle des tailles et positions */}
+      <div className="absolute top-4 right-4 z-30 bg-white p-4 rounded-lg shadow-lg border space-y-4">
         <GameSizeSelector
           selectedSize={gameSize}
           onSizeChange={setGameSize}
+        />
+        <GamePositionSelector
+          selectedPosition={gamePosition}
+          onPositionChange={setGamePosition}
         />
       </div>
 

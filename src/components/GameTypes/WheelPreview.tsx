@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import Modal from '../common/Modal';
 import ValidationMessage from '../common/ValidationMessage';
@@ -26,6 +27,7 @@ interface WheelPreviewProps {
   disabled?: boolean;
   onStart?: () => void;
   gameSize?: 'small' | 'medium' | 'large' | 'xlarge';
+  gamePosition?: 'top' | 'center' | 'bottom' | 'left' | 'right';
 }
 
 const DEFAULT_FIELDS: FieldConfig[] = [
@@ -66,7 +68,8 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   onFinish,
   disabled = false,
   onStart,
-  gameSize = 'small'
+  gameSize = 'small',
+  gamePosition = 'center'
 }) => {
   const segments = campaign?.config?.roulette?.segments || [];
   const centerImage = campaign?.config?.roulette?.centerImage;
@@ -94,6 +97,29 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
 
   const fields: FieldConfig[] = Array.isArray(campaign.formFields) && campaign.formFields.length > 0
     ? campaign.formFields : DEFAULT_FIELDS;
+
+  // Get position styles based on gamePosition
+  const getPositionStyles = () => {
+    const baseStyle = {
+      width: `${gameDimensions.width}px`,
+      height: `${gameDimensions.height}px`,
+      maxWidth: `${gameDimensions.width}px`,
+      maxHeight: `${gameDimensions.height}px`
+    };
+
+    switch (gamePosition) {
+      case 'top':
+        return { ...baseStyle, alignItems: 'flex-start', justifyContent: 'center' };
+      case 'bottom':
+        return { ...baseStyle, alignItems: 'flex-end', justifyContent: 'center' };
+      case 'left':
+        return { ...baseStyle, alignItems: 'center', justifyContent: 'flex-start' };
+      case 'right':
+        return { ...baseStyle, alignItems: 'center', justifyContent: 'flex-end' };
+      default: // center
+        return { ...baseStyle, alignItems: 'center', justifyContent: 'center' };
+    }
+  };
 
   const handleFormSubmit = async (formData: Record<string, string>) => {
     if (campaign.id) {
@@ -181,8 +207,8 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
       ctx.restore();
     });
 
-    // Cercle central avec taille proportionnelle mais limitée
-    const centerRadius = Math.min(25, size * 0.08); // Maximum 25px, proportionnel sinon
+    // Cercle central avec taille fixe
+    const centerRadius = 25; // Taille fixe
     if (centerImage) {
       const img = new Image();
       img.onload = () => {
@@ -258,10 +284,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
     return (
       <div 
         className="flex flex-col items-center justify-center p-8 text-gray-500"
-        style={{
-          width: `${gameDimensions.width}px`,
-          height: `${gameDimensions.height}px`
-        }}
+        style={getPositionStyles()}
       >
         <p>Aucun segment configuré pour la roue</p>
       </div>
@@ -273,13 +296,8 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
 
   return (
     <div 
-      className="flex flex-col items-center gap-4"
-      style={{
-        width: `${gameDimensions.width}px`,
-        height: `${gameDimensions.height}px`,
-        maxWidth: `${gameDimensions.width}px`,
-        maxHeight: `${gameDimensions.height}px`
-      }}
+      className="flex flex-col gap-4"
+      style={getPositionStyles()}
     >
       <div style={{ position: 'relative', width: canvasSize, height: canvasSize }}>
         <canvas
@@ -292,7 +310,9 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
             top: 0,
             zIndex: 1,
           }}
-          className="rounded-full shadow-lg"
+          className="rounded-full"
+          // Ombre ajustée pour rester sous la roue
+          boxShadow="0 4px 20px rgba(0,0,0,0.15)"
         />
         {theme !== 'default' && wheelDecorByTheme[theme] && (
           <img
