@@ -7,6 +7,7 @@ import MemoryPreview from '../GameTypes/MemoryPreview';
 import PuzzlePreview from '../GameTypes/PuzzlePreview';
 import DicePreview from '../GameTypes/DicePreview';
 import WheelPreview from '../GameTypes/WheelPreview';
+import ScratchPreview from '../GameTypes/ScratchPreview';
 
 interface PreviewContentProps {
   campaign: any;
@@ -98,7 +99,7 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
 
       case 'scratch':
         return (
-          <Scratch 
+          <ScratchPreview 
             config={campaign.gameConfig.scratch}
           />
         );

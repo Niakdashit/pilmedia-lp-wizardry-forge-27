@@ -4,6 +4,10 @@ import Color from 'color';
 import confetti from 'canvas-confetti';
 import { Quiz, Scratch, Memory, Puzzle, Dice } from '../GameTypes';
 import WheelPreview from '../GameTypes/WheelPreview';
+import ScratchPreview from '../GameTypes/ScratchPreview';
+import MemoryPreview from '../GameTypes/MemoryPreview';
+import PuzzlePreview from '../GameTypes/PuzzlePreview';
+import DicePreview from '../GameTypes/DicePreview';
 
 interface PreviewContentProps {
   campaign: any;
@@ -91,28 +95,28 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
 
       case 'scratch':
         return (
-          <Scratch 
+          <ScratchPreview 
             config={campaign.gameConfig.scratch} 
           />
         );
 
       case 'memory':
         return (
-          <Memory 
+          <MemoryPreview 
             config={campaign.gameConfig.memory} 
           />
         );
 
       case 'puzzle':
         return (
-          <Puzzle 
+          <PuzzlePreview 
             config={campaign.gameConfig.puzzle} 
           />
         );
 
       case 'dice':
         return (
-          <Dice 
+          <DicePreview 
             config={campaign.gameConfig.dice} 
           />
         );
