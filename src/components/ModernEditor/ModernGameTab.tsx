@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { Gamepad2, Settings, Target } from 'lucide-react';
+import { Settings, Target } from 'lucide-react';
 import WheelGameConfig from './GameConfigs/WheelGameConfig';
 import JackpotGameConfig from './GameConfigs/JackpotGameConfig';
 import MemoryGameConfig from './GameConfigs/MemoryGameConfig';
@@ -26,6 +25,7 @@ const ModernGameTab: React.FC<ModernGameTabProps> = ({
     quiz: 'Quiz Interactif',
     dice: 'Dés Magiques',
     scratch: 'Carte à Gratter',
+    swiper: 'Swiper',
     form: 'Formulaire Dynamique'
   };
 

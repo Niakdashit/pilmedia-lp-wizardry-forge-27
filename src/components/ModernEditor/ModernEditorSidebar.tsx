@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Settings, Gamepad2, Palette, Monitor, FormInput } from 'lucide-react';
+import { Settings, Gamepad2, Palette, FormInput } from 'lucide-react';
 import { CampaignType } from '../../utils/campaignTypes';
 
 interface ModernEditorSidebarProps {

@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Eye, Save, Settings, Palette, Monitor, Smartphone } from 'lucide-react';
+import { ArrowLeft, Eye, Save, Monitor, Smartphone } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CampaignType, getDefaultGameConfig } from '../utils/campaignTypes';
 import { useCampaigns } from '../hooks/useCampaigns';
@@ -105,14 +104,14 @@ const ModernCampaignEditor: React.FC = () => {
       if (savedCampaign && !continueEditing) {
         navigate('/gamification');
       } else if (savedCampaign && isNewCampaign) {
-        setCampaign(prev => ({ ...prev, id: savedCampaign.id }));
+        setCampaign((prev: any) => ({ ...prev, id: savedCampaign.id }));
       }
     } finally {
       setIsLoading(false);
     }
   };
 
-  const gameTypeLabels = {
+  const gameTypeLabels: Record<CampaignType, string> = {
     wheel: 'Roue de la Fortune',
     jackpot: 'Jackpot',
     memory: 'Jeu de Mémoire',
@@ -120,6 +119,7 @@ const ModernCampaignEditor: React.FC = () => {
     quiz: 'Quiz Interactif',
     dice: 'Dés Magiques',
     scratch: 'Carte à Gratter',
+    swiper: 'Swiper',
     form: 'Formulaire Dynamique'
   };
 
