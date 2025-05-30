@@ -159,7 +159,7 @@ const CampaignContent: React.FC<CampaignContentProps> = ({
 
               {/* Game Size Selector */}
               <GameSizeSelector
-                selectedSize={campaign.gameConfig?.[campaign.type]?.gameSize || 2}
+                selectedSize={campaign.gameConfig?.[campaign.type]?.gameSize || 1}
                 onSizeChange={handleSizeChange}
               />
 

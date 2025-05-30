@@ -2,7 +2,6 @@
 import React from 'react';
 import Jackpot from '../GameTypes/Jackpot';
 import { Quiz } from '../GameTypes';
-import WheelPreview from '../GameTypes/WheelPreview';
 import MemoryPreview from '../GameTypes/MemoryPreview';
 import PuzzlePreview from '../GameTypes/PuzzlePreview';
 import ScratchPreview from '../GameTypes/ScratchPreview';
@@ -25,13 +24,25 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   // Récupération du template sélectionné
   const selectedTemplateId = campaign?.design?.template || campaign?.gameConfig?.jackpot?.template;
 
+  // Récupération de la taille sélectionnée
+  const selectedSize = campaign.gameConfig?.[campaign.type]?.gameSize || 1;
+  
+  // Définition des tailles prédéfinies
+  const GAME_SIZES = {
+    1: { width: 300, height: 200 },
+    2: { width: 400, height: 300 },
+    3: { width: 500, height: 400 },
+    4: { width: 600, height: 500 }
+  };
+
+  const currentSize = GAME_SIZES[selectedSize] || GAME_SIZES[1];
+
   const renderGame = () => {
-    // Props communes pour tous les jeux - 100% responsive
+    // Props communes pour tous les jeux avec taille prédéfinie
     const gameProps = {
       style: { 
-        width: '50%', 
-        height: '50%',
-        minHeight: '300px',
+        width: `${currentSize.width}px`, 
+        height: `${currentSize.height}px`,
         maxWidth: '100%', 
         maxHeight: '100%'
       },
@@ -117,8 +128,8 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
     <div 
       className={`relative w-full flex items-center justify-center ${className}`} 
       style={{ 
-        minHeight: '400px',
-        height: '500px',
+        minHeight: `${currentSize.height + 40}px`,
+        height: `${currentSize.height + 100}px`,
         backgroundColor: '#f8f9fa',
         border: '2px dashed #e9ecef',
         borderRadius: '8px',
@@ -135,8 +146,8 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
         />
       )}
 
-      {/* Jeu responsive centré */}
-      <div className="relative z-20 w-full h-full flex items-center justify-center">
+      {/* Jeu avec taille prédéfinie centré */}
+      <div className="relative z-20 flex items-center justify-center" style={{ width: `${currentSize.width}px`, height: `${currentSize.height}px` }}>
         {renderGame()}
       </div>
     </div>
