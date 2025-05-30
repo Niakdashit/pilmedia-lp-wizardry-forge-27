@@ -1,6 +1,5 @@
-
 import React, { useState, useRef, useEffect } from 'react';
-import { Move, RotateCcw, Maximize2, Minimize2 } from 'lucide-react';
+import { Move, RotateCcw } from 'lucide-react';
 
 interface ResizableGameContainerProps {
   children: React.ReactNode;

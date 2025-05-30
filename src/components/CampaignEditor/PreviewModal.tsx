@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { X, Monitor, Tablet, Smartphone, RotateCcw, Maximize2 } from 'lucide-react';
+import { X, Monitor, Tablet, Smartphone, Maximize2, Minimize2 } from 'lucide-react';
 import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
 import FunnelStandard from '../funnels/FunnelStandard';
 import MobilePreview from './Mobile/MobilePreview';
