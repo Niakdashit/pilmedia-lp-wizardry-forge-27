@@ -1,3 +1,4 @@
+
 import React from 'react';
 import FunnelUnlockedGame from '../../funnels/FunnelUnlockedGame';
 import FunnelStandard from '../../funnels/FunnelStandard';
@@ -111,40 +112,42 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
   const renderOrderedContent = () => {
     const contrastBg = mobileConfig.contrastBackground || {};
     const textBlock = (mobileConfig.showTitle !== false || mobileConfig.showDescription !== false) ? (
-      <ContrastBackground
-        enabled={contrastBg.enabled}
-        config={contrastBg}
-        style={getTextBlockStyle()}
-      >
-        {mobileConfig.showTitle !== false && (
-          <h2
-            className={`font-bold mb-3 ${mobileConfig.titleAlignment || 'text-center'}`}
-            style={{
-              color: mobileConfig.titleColor || '#000',
-              fontSize: previewMode === 'mobile' ? '1.20rem' : '1.35rem',
-              fontWeight: mobileConfig.titleWeight === 'font-normal' ? 'normal' :
-                mobileConfig.titleWeight === 'font-medium' ? '500' :
-                mobileConfig.titleWeight === 'font-semibold' ? '600' :
-                mobileConfig.titleWeight === 'font-extrabold' ? '800' : 'bold',
-              lineHeight: 1.3
-            }}
-          >
-            {mobileConfig.title || campaign.screens?.[1]?.title || 'Tentez votre chance !'}
-          </h2>
-        )}
-        {mobileConfig.showDescription !== false && (
-          <p
-            className={mobileConfig.descriptionAlignment || 'text-center'}
-            style={{
-              color: mobileConfig.descriptionColor || '#666',
-              fontSize: previewMode === 'mobile' ? '0.95rem' : '1.05rem',
-              lineHeight: 1.45
-            }}
-          >
-            {mobileConfig.description || campaign.screens?.[1]?.description || 'Participez pour avoir une chance de gagner !'}
-          </p>
-        )}
-      </ContrastBackground>
+      <div style={getTextBlockStyle()}>
+        <ContrastBackground
+          enabled={contrastBg.enabled}
+          config={contrastBg}
+          className="w-full"
+        >
+          {mobileConfig.showTitle !== false && (
+            <h2
+              className={`font-bold mb-3 ${mobileConfig.titleAlignment || 'text-center'}`}
+              style={{
+                color: mobileConfig.titleColor || '#000',
+                fontSize: previewMode === 'mobile' ? '1.20rem' : '1.35rem',
+                fontWeight: mobileConfig.titleWeight === 'font-normal' ? 'normal' :
+                  mobileConfig.titleWeight === 'font-medium' ? '500' :
+                  mobileConfig.titleWeight === 'font-semibold' ? '600' :
+                  mobileConfig.titleWeight === 'font-extrabold' ? '800' : 'bold',
+                lineHeight: 1.3
+              }}
+            >
+              {mobileConfig.title || campaign.screens?.[1]?.title || 'Tentez votre chance !'}
+            </h2>
+          )}
+          {mobileConfig.showDescription !== false && (
+            <p
+              className={mobileConfig.descriptionAlignment || 'text-center'}
+              style={{
+                color: mobileConfig.descriptionColor || '#666',
+                fontSize: previewMode === 'mobile' ? '0.95rem' : '1.05rem',
+                lineHeight: 1.45
+              }}
+            >
+              {mobileConfig.description || campaign.screens?.[1]?.description || 'Participez pour avoir une chance de gagner !'}
+            </p>
+          )}
+        </ContrastBackground>
+      </div>
     ) : null;
 
     const gameBlock = (
