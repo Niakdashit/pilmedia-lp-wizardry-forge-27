@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import Modal from '../common/Modal';
 import ValidationMessage from '../common/ValidationMessage';
@@ -106,9 +105,9 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   const isLeftRightPosition = gamePosition === 'left' || gamePosition === 'right';
   const shouldCropWheel = isMobileTablet && isLeftRightPosition;
   
-  // Adjust canvas size for cropping
+  // Calculate canvas and display dimensions for cropping
   const baseCanvasSize = Math.min(gameDimensions.width, gameDimensions.height) - 60;
-  const canvasSize = shouldCropWheel ? baseCanvasSize : baseCanvasSize;
+  const canvasSize = baseCanvasSize;
   const displayWidth = shouldCropWheel ? baseCanvasSize * 0.5 : baseCanvasSize;
   
   // Taille du pointeur proportionnelle
@@ -423,6 +422,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
         height: canvasSize,
         overflow: shouldCropWheel ? 'hidden' : 'visible'
       }}>
+        {/* Shadow */}
         <div 
           style={{
             position: 'absolute',
@@ -437,6 +437,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
           }}
         />
         
+        {/* Wheel Canvas */}
         <canvas
           ref={canvasRef}
           width={canvasSize}
@@ -450,6 +451,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
           className="rounded-full"
         />
         
+        {/* Theme Decoration */}
         {theme !== 'default' && wheelDecorByTheme[theme] && (
           <img
             src={wheelDecorByTheme[theme]}
@@ -467,6 +469,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
           />
         )}
         
+        {/* Pointer */}
         <div
           style={{
             position: 'absolute',
@@ -499,6 +502,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
           </div>
         )}
 
+        {/* Click overlay for unvalidated form */}
         {!formValidated && (
           <div 
             onClick={handleWheelClick}
@@ -513,6 +517,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
         />
       </div>
 
+      {/* Button */}
       {buttonConfig.visible && (
         <button
           onClick={handleWheelClick}
@@ -530,6 +535,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
         </button>
       )}
 
+      {/* Form Modal */}
       {showFormModal && (
         <Modal
           onClose={() => setShowFormModal(false)}
