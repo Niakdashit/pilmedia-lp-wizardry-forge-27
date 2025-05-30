@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import Modal from '../common/Modal';
 import ValidationMessage from '../common/ValidationMessage';
@@ -9,7 +10,7 @@ interface Segment {
   label: string;
   chance: number;
   color?: string;
-  image?: File | null;
+  image?: string | null;
 }
 
 interface InstantWinConfig {
@@ -74,6 +75,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
 }) => {
   const segments = campaign?.config?.roulette?.segments || [];
   const centerImage = campaign?.config?.roulette?.centerImage;
+  const centerLogo = campaign?.design?.centerLogo;
   const theme = campaign?.config?.roulette?.theme || 'default';
   const borderColor = campaign?.config?.roulette?.borderColor || '#841b60';
   const pointerColor = campaign?.config?.roulette?.pointerColor || '#841b60';
@@ -188,6 +190,44 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
     }
   };
 
+  // Get cropped area text styles for left/right positions
+  const getCroppedAreaTextStyles = () => {
+    if (!shouldCropWheel || !campaign.design?.croppedAreaText?.enabled) return null;
+
+    const croppedText = campaign.design.croppedAreaText;
+    const textStyle: React.CSSProperties = {
+      position: 'absolute',
+      zIndex: 15,
+      color: croppedText.color || '#000000',
+      fontSize: croppedText.size === 'small' ? '14px' : croppedText.size === 'large' ? '24px' : '18px',
+      fontWeight: croppedText.bold ? 'bold' : 'normal',
+      fontStyle: croppedText.italic ? 'italic' : 'normal',
+      textDecoration: croppedText.underline ? 'underline' : 'none',
+      fontFamily: campaign.design?.fontFamily || 'Inter',
+      maxWidth: `${displayWidth * 0.8}px`,
+      textAlign: 'center',
+      wordWrap: 'break-word'
+    };
+
+    if (gamePosition === 'left') {
+      return {
+        ...textStyle,
+        right: '10px',
+        top: '50%',
+        transform: 'translateY(-50%)'
+      };
+    } else if (gamePosition === 'right') {
+      return {
+        ...textStyle,
+        left: '10px',
+        top: '50%',
+        transform: 'translateY(-50%)'
+      };
+    }
+
+    return null;
+  };
+
   const handleFormSubmit = async (formData: Record<string, string>) => {
     if (campaign.id) {
       await createParticipation({
@@ -251,6 +291,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
 
       if (seg.image) {
         const img = new Image();
+        img.crossOrigin = 'anonymous';
         img.onload = () => {
           const angle = startAngle + anglePerSlice / 2;
           const distance = radius - 40;
@@ -265,7 +306,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
           ctx.drawImage(img, x, y, imgSize, imgSize);
           ctx.restore();
         };
-        img.src = URL.createObjectURL(seg.image);
+        img.src = seg.image;
       }
 
       ctx.save();
@@ -279,8 +320,11 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
     });
 
     const centerRadius = 25;
-    if (centerImage) {
+    const logoToDisplay = centerLogo || centerImage;
+    
+    if (logoToDisplay) {
       const img = new Image();
+      img.crossOrigin = 'anonymous';
       img.onload = () => {
         ctx.save();
         ctx.beginPath();
@@ -289,11 +333,12 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
         ctx.drawImage(img, center - centerRadius, center - centerRadius, centerRadius * 2, centerRadius * 2);
         ctx.restore();
       };
-      img.src = URL.createObjectURL(centerImage);
+      img.src = logoToDisplay;
     } else {
       ctx.beginPath();
       ctx.arc(center, center, centerRadius, 0, 2 * Math.PI);
       ctx.fillStyle = '#fff';
+      ctx.fill();
       ctx.strokeStyle = borderColor;
       ctx.lineWidth = 2;
       ctx.stroke();
@@ -347,107 +392,12 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
 
   useEffect(() => {
     drawWheel();
-  }, [segments, rotation, centerImage, theme, borderColor, pointerColor, canvasSize]);
+  }, [segments, rotation, centerImage, centerLogo, theme, borderColor, pointerColor, canvasSize]);
 
   if (segments.length === 0) {
     return (
       <div style={getAbsolutePositionStyles()}>
         <p>Aucun segment configuré pour la roue</p>
-      </div>
-    );
-  }
-
-  if (!buttonConfig.visible) {
-    return (
-      <div style={getAbsolutePositionStyles()}>
-        <div style={{ 
-          position: 'relative', 
-          width: displayWidth, 
-          height: canvasSize,
-          overflow: shouldCropWheel ? 'hidden' : 'visible'
-        }}>
-          <div 
-            style={{
-              position: 'absolute',
-              width: canvasSize - 20,
-              height: canvasSize - 20,
-              left: shouldCropWheel ? '10px' : '10px',
-              top: '15px',
-              borderRadius: '50%',
-              background: 'rgba(0,0,0,0.15)',
-              filter: 'blur(8px)',
-              zIndex: 0
-            }}
-          />
-        
-          <canvas
-            ref={canvasRef}
-            width={canvasSize}
-            height={canvasSize}
-            style={{
-              position: 'absolute',
-              left: shouldCropWheel ? '0px' : '0px',
-              top: 0,
-              zIndex: 1
-            }}
-            className="rounded-full"
-          />
-        
-          {theme !== 'default' && wheelDecorByTheme[theme] && (
-            <img
-              src={wheelDecorByTheme[theme]}
-              alt={`Décor roue ${theme}`}
-              style={{
-                position: 'absolute',
-                left: shouldCropWheel ? '0px' : '0px',
-                top: 0,
-                width: canvasSize,
-                height: canvasSize,
-                zIndex: 2,
-                pointerEvents: 'none',
-              }}
-              draggable={false}
-            />
-          )}
-        
-          <div
-            style={{
-              position: 'absolute',
-              left: (shouldCropWheel ? 0 : canvasSize / 2) + canvasSize / 2 - pointerSize / 2,
-              top: -pointerSize * 0.6,
-              width: pointerSize,
-              height: pointerSize * 1.5,
-              zIndex: 3,
-              pointerEvents: 'none',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'flex-start',
-            }}
-          >
-            <svg width={pointerSize} height={pointerSize * 1.5}>
-              <polygon
-                points={`${pointerSize/2},${pointerSize*1.5} ${pointerSize*0.9},${pointerSize*0.5} ${pointerSize*0.1},${pointerSize*0.5}`}
-                fill={pointerColor}
-                stroke="#fff"
-                strokeWidth="2"
-                style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.10))' }}
-              />
-            </svg>
-          </div>
-
-          {!formValidated && (
-            <div 
-              onClick={handleWheelClick}
-              className="absolute inset-0 flex items-center justify-center z-30 rounded-full cursor-pointer bg-black/0" 
-            />
-          )}
-
-          <ValidationMessage
-            show={showValidationMessage}
-            message="Formulaire validé ! Vous pouvez maintenant jouer."
-            type="success"
-          />
-        </div>
       </div>
     );
   }
@@ -463,6 +413,8 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
     }
   };
 
+  const croppedAreaTextStyles = getCroppedAreaTextStyles();
+
   return (
     <div style={getAbsolutePositionStyles()}>
       <div style={{ 
@@ -476,7 +428,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
             position: 'absolute',
             width: canvasSize - 20,
             height: canvasSize - 20,
-            left: shouldCropWheel ? '10px' : '10px',
+            left: shouldCropWheel ? (gamePosition === 'left' ? '10px' : `-${canvasSize * 0.5}px`) : '10px',
             top: '15px',
             borderRadius: '50%',
             background: 'rgba(0,0,0,0.15)',
@@ -491,7 +443,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
           height={canvasSize}
           style={{
             position: 'absolute',
-            left: shouldCropWheel ? '0px' : '0px',
+            left: shouldCropWheel ? (gamePosition === 'left' ? '0px' : `-${canvasSize * 0.5}px`) : '0px',
             top: 0,
             zIndex: 1
           }}
@@ -504,7 +456,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
             alt={`Décor roue ${theme}`}
             style={{
               position: 'absolute',
-              left: shouldCropWheel ? '0px' : '0px',
+              left: shouldCropWheel ? (gamePosition === 'left' ? '0px' : `-${canvasSize * 0.5}px`) : '0px',
               top: 0,
               width: canvasSize,
               height: canvasSize,
@@ -518,7 +470,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
         <div
           style={{
             position: 'absolute',
-            left: (shouldCropWheel ? 0 : canvasSize / 2) + canvasSize / 2 - pointerSize / 2,
+            left: (shouldCropWheel ? (gamePosition === 'left' ? 0 : -canvasSize * 0.5) : canvasSize / 2) + canvasSize / 2 - pointerSize / 2,
             top: -pointerSize * 0.6,
             width: pointerSize,
             height: pointerSize * 1.5,
@@ -540,6 +492,13 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
           </svg>
         </div>
 
+        {/* Cropped area text */}
+        {croppedAreaTextStyles && (
+          <div style={croppedAreaTextStyles}>
+            {campaign.design?.croppedAreaText?.text || 'Texte personnalisé'}
+          </div>
+        )}
+
         {!formValidated && (
           <div 
             onClick={handleWheelClick}
@@ -554,20 +513,22 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
         />
       </div>
 
-      <button
-        onClick={handleWheelClick}
-        disabled={spinning || disabled}
-        style={{
-          backgroundColor: buttonConfig.color,
-          borderColor: buttonConfig.borderColor,
-          borderWidth: `${buttonConfig.borderWidth}px`,
-          borderRadius: `${buttonConfig.borderRadius}px`,
-          borderStyle: 'solid'
-        }}
-        className={`${getButtonSizeClasses()} text-white font-medium disabled:opacity-50 hover:opacity-80 transition-all shadow-lg`}
-      >
-        {spinning ? 'Tourne...' : formValidated ? 'Lancer la roue' : (buttonConfig.text || 'Remplir le formulaire')}
-      </button>
+      {buttonConfig.visible && (
+        <button
+          onClick={handleWheelClick}
+          disabled={spinning || disabled}
+          style={{
+            backgroundColor: buttonConfig.color,
+            borderColor: buttonConfig.borderColor,
+            borderWidth: `${buttonConfig.borderWidth}px`,
+            borderRadius: `${buttonConfig.borderRadius}px`,
+            borderStyle: 'solid'
+          }}
+          className={`${getButtonSizeClasses()} text-white font-medium disabled:opacity-50 hover:opacity-80 transition-all shadow-lg`}
+        >
+          {spinning ? 'Tourne...' : formValidated ? 'Lancer la roue' : (buttonConfig.text || 'Remplir le formulaire')}
+        </button>
+      )}
 
       {showFormModal && (
         <Modal

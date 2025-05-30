@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { Plus, Trash2, Palette } from 'lucide-react';
+import { Plus, Trash2, Palette, Upload } from 'lucide-react';
+import ImageUpload from '../../common/ImageUpload';
 
 interface WheelGameConfigProps {
   campaign: any;
@@ -25,7 +26,8 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
             {
               label: `Segment ${segments.length + 1}`,
               chance: 10,
-              color: '#' + Math.floor(Math.random()*16777215).toString(16)
+              color: '#' + Math.floor(Math.random()*16777215).toString(16),
+              image: null
             }
           ]
         }
@@ -116,7 +118,7 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
 
         <div className="space-y-3 max-h-60 overflow-y-auto">
           {segments.map((segment: any, index: number) => (
-            <div key={index} className="p-3 border border-gray-200 rounded-lg space-y-2">
+            <div key={index} className="p-3 border border-gray-200 rounded-lg space-y-3">
               <div className="flex items-center justify-between">
                 <span className="text-sm font-medium text-gray-700">Segment {index + 1}</span>
                 <button
@@ -142,16 +144,21 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
                     onChange={(e) => updateSegment(index, 'color', e.target.value)}
                     className="w-8 h-8 rounded border"
                   />
-                  <input
-                    type="number"
-                    value={segment.chance || 10}
-                    onChange={(e) => updateSegment(index, 'chance', parseInt(e.target.value))}
-                    placeholder="Chance %"
-                    min="1"
-                    max="100"
-                    className="flex-1 px-2 py-2 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-[#841b60] focus:border-transparent"
-                  />
                 </div>
+              </div>
+
+              {/* Image upload for segment */}
+              <div className="space-y-2">
+                <label className="flex items-center text-xs font-medium text-gray-600">
+                  <Upload className="w-3 h-3 mr-1" />
+                  Image du segment
+                </label>
+                <ImageUpload
+                  value={segment.image || ''}
+                  onChange={(value) => updateSegment(index, 'image', value)}
+                  label=""
+                  compact={true}
+                />
               </div>
             </div>
           ))}
