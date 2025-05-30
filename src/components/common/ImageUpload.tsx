@@ -23,7 +23,9 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     if (file && file.type.startsWith('image/')) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        onChange(reader.result as string);
+        const result = reader.result as string;
+        console.log('Image uploaded via drop:', result.substring(0, 50) + '...');
+        onChange(result);
       };
       reader.readAsDataURL(file);
     }
@@ -34,7 +36,9 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        onChange(reader.result as string);
+        const result = reader.result as string;
+        console.log('Image uploaded via file input:', result.substring(0, 50) + '...');
+        onChange(result);
       };
       reader.readAsDataURL(file);
     }
@@ -78,6 +82,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                 <button
                   onClick={(e) => {
                     e.preventDefault();
+                    e.stopPropagation();
+                    console.log('Image removed');
                     onChange('');
                   }}
                   className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 text-xs"
