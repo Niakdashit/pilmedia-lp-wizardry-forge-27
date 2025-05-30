@@ -1,7 +1,8 @@
 
 import React from 'react';
 import Color from 'color';
-import GameFunnel from '../GameFunnel';
+import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
+import FunnelStandard from '../funnels/FunnelStandard';
 
 interface CampaignPreviewProps {
   campaign: any;
@@ -73,6 +74,14 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
     <div dangerouslySetInnerHTML={{ __html: design.customHTML }} />
   ) : null;
 
+  // Choisir le bon funnel selon le type de campagne
+  const getFunnelComponent = () => {
+    if (['wheel', 'scratch', 'jackpot', 'dice'].includes(campaign.type)) {
+      return <FunnelUnlockedGame campaign={campaign} previewMode="desktop" />;
+    }
+    return <FunnelStandard campaign={campaign} />;
+  };
+
   return (
     <div style={containerStyle}>
       {customStyles}
@@ -99,9 +108,9 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
           )}
         </div>
 
-        {/* Jeu centré DESKTOP */}
+        {/* Jeu centré DESKTOP avec le bon funnel */}
         <div style={centeredGameStyle}>
-          <GameFunnel campaign={campaign} />
+          {getFunnelComponent()}
         </div>
       </div>
     </div>
