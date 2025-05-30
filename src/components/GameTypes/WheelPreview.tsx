@@ -1,4 +1,5 @@
 
+
 import React, { useState, useRef, useEffect } from 'react';
 import Modal from '../common/Modal';
 import ValidationMessage from '../common/ValidationMessage';
@@ -84,7 +85,9 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
 
   const { getGameDimensions } = useGameSize(gameSize);
   const gameDimensions = getGameDimensions();
-  const canvasSize = Math.min(gameDimensions.width, gameDimensions.height) - 40; // Padding pour les contrôles
+  
+  // Calculer la taille du canvas en fonction de la plus petite dimension
+  const canvasSize = Math.min(gameDimensions.width, gameDimensions.height) - 60;
 
   const {
     createParticipation,
@@ -124,17 +127,18 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
 
     const size = canvas.width;
     const center = size / 2;
-    const radius = center - 20;
+    const radius = center - 30; // Marge fixe de 30px
     const total = segments.length;
     const anglePerSlice = (2 * Math.PI) / total;
     const themeColors = getThemeColors(theme);
 
     ctx.clearRect(0, 0, size, size);
 
+    // Bordure externe proportionnelle
     if (theme === 'default') {
       ctx.beginPath();
       ctx.arc(center, center, radius + 8, 0, 2 * Math.PI);
-      ctx.lineWidth = 10;
+      ctx.lineWidth = Math.max(4, size * 0.015); // Bordure proportionnelle
       ctx.strokeStyle = borderColor;
       ctx.stroke();
     }
@@ -155,7 +159,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
         img.onload = () => {
           const angle = startAngle + anglePerSlice / 2;
           const distance = radius - 40;
-          const imgSize = 60;
+          const imgSize = Math.max(40, size * 0.15); // Taille d'image proportionnelle
           const x = center + distance * Math.cos(angle) - imgSize / 2;
           const y = center + distance * Math.sin(angle) - imgSize / 2;
 
@@ -174,30 +178,31 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
       ctx.rotate(startAngle + anglePerSlice / 2);
       ctx.textAlign = 'right';
       ctx.fillStyle = 'white';
-      ctx.font = 'bold 14px Arial';
+      ctx.font = `bold ${Math.max(10, size * 0.035)}px Arial`; // Taille de police proportionnelle
       ctx.fillText(seg.label, radius - 20, 5);
       ctx.restore();
     });
 
-    // Centre image
+    // Cercle central avec taille proportionnelle
+    const centerRadius = Math.max(25, size * 0.08); // Rayon du centre proportionnel
     if (centerImage) {
       const img = new Image();
       img.onload = () => {
         ctx.save();
         ctx.beginPath();
-        ctx.arc(center, center, 40, 0, 2 * Math.PI);
+        ctx.arc(center, center, centerRadius, 0, 2 * Math.PI);
         ctx.clip();
-        ctx.drawImage(img, center - 40, center - 40, 80, 80);
+        ctx.drawImage(img, center - centerRadius, center - centerRadius, centerRadius * 2, centerRadius * 2);
         ctx.restore();
       };
       img.src = URL.createObjectURL(centerImage);
     } else {
       ctx.beginPath();
-      ctx.arc(center, center, 40, 0, 2 * Math.PI);
+      ctx.arc(center, center, centerRadius, 0, 2 * Math.PI);
       ctx.fillStyle = '#fff';
       ctx.fill();
       ctx.strokeStyle = borderColor;
-      ctx.lineWidth = 2;
+      ctx.lineWidth = Math.max(2, size * 0.008); // Bordure du centre proportionnelle
       ctx.stroke();
     }
   };
@@ -265,6 +270,9 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
     );
   }
 
+  // Taille du pointeur proportionnelle
+  const pointerSize = Math.max(30, canvasSize * 0.08);
+
   return (
     <div 
       className="flex flex-col items-center gap-4"
@@ -307,10 +315,10 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
         <div
           style={{
             position: 'absolute',
-            left: canvasSize / 2 - 20,
-            top: -25,
-            width: 40,
-            height: 60,
+            left: canvasSize / 2 - pointerSize / 2,
+            top: -pointerSize * 0.6,
+            width: pointerSize,
+            height: pointerSize * 1.5,
             zIndex: 3,
             pointerEvents: 'none',
             display: 'flex',
@@ -318,9 +326,9 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
             alignItems: 'flex-start',
           }}
         >
-          <svg width="40" height="60">
+          <svg width={pointerSize} height={pointerSize * 1.5}>
             <polygon
-              points="20,60 36,20 4,20"
+              points={`${pointerSize/2},${pointerSize*1.5} ${pointerSize*0.9},${pointerSize*0.5} ${pointerSize*0.1},${pointerSize*0.5}`}
               fill={pointerColor}
               stroke="#fff"
               strokeWidth="2"
@@ -348,6 +356,10 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
         onClick={handleWheelClick}
         disabled={spinning || disabled}
         className="px-6 py-3 bg-[#841b60] text-white rounded-lg disabled:opacity-50 hover:bg-[#6d164f] transition-colors shadow-lg"
+        style={{
+          fontSize: Math.max(14, canvasSize * 0.04) + 'px',
+          padding: `${Math.max(8, canvasSize * 0.02)}px ${Math.max(16, canvasSize * 0.04)}px`
+        }}
       >
         {spinning ? 'Tourne...' : formValidated ? 'Lancer la roue' : 'Remplir le formulaire'}
       </button>
@@ -370,3 +382,4 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
 };
 
 export default WheelPreview;
+
