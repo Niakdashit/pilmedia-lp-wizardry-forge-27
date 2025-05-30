@@ -46,20 +46,18 @@ const wheelDecorByTheme: Record<string, string> = {
   gaming: '/wheel-styles/roulette_gaming.svg',
 };
 
+const CANVAS_SIZE = 400;
+
 const WheelPreview: React.FC<WheelPreviewProps> = ({
   campaign,
   config,
   onFinish
 }) => {
-  // Utiliser la configuration synchronisée depuis campaign.config.roulette
-  const rouletteConfig = campaign?.config?.roulette || {};
-  const segments = rouletteConfig.segments || [];
-  const centerImage = rouletteConfig.centerImage;
-  const theme = rouletteConfig.theme || 'default';
-  const borderColor = rouletteConfig.borderColor || '#841b60';
-  const pointerColor = rouletteConfig.pointerColor || '#841b60';
-  const gameSize = rouletteConfig.gameSize || { width: 400, height: 400 };
-  const gamePosition = rouletteConfig.gamePosition || { x: 0, y: 0 };
+  const segments = campaign?.config?.roulette?.segments || [];
+  const centerImage = campaign?.config?.roulette?.centerImage;
+  const theme = campaign?.config?.roulette?.theme || 'default';
+  const borderColor = campaign?.config?.roulette?.borderColor || '#841b60';
+  const pointerColor = campaign?.config?.roulette?.pointerColor || '#841b60';
   
   const [rotation, setRotation] = useState(0);
   const [spinning, setSpinning] = useState(false);
@@ -71,10 +69,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const size = Math.min(gameSize.width, gameSize.height);
-    canvas.width = size;
-    canvas.height = size;
-    
+    const size = canvas.width;
     const center = size / 2;
     const radius = center - 20;
     const total = segments.length;
@@ -107,7 +102,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
         img.onload = () => {
           const angle = startAngle + anglePerSlice / 2;
           const distance = radius - 40;
-          const imgSize = Math.min(60, radius / 4);
+          const imgSize = 60;
           const x = center + distance * Math.cos(angle) - imgSize / 2;
           const y = center + distance * Math.sin(angle) - imgSize / 2;
 
@@ -126,9 +121,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
       ctx.rotate(startAngle + anglePerSlice / 2);
       ctx.textAlign = 'right';
       ctx.fillStyle = 'white';
-      ctx.font = `bold ${Math.max(12, size / 30)}px Arial`;
-      ctx.shadowColor = 'rgba(0,0,0,0.5)';
-      ctx.shadowBlur = 2;
+      ctx.font = 'bold 14px Arial';
       ctx.fillText(seg.label, radius - 20, 5);
       ctx.restore();
     });
@@ -137,19 +130,17 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
     if (centerImage) {
       const img = new Image();
       img.onload = () => {
-        const centerSize = Math.min(40, radius / 5);
         ctx.save();
         ctx.beginPath();
-        ctx.arc(center, center, centerSize, 0, 2 * Math.PI);
+        ctx.arc(center, center, 40, 0, 2 * Math.PI);
         ctx.clip();
-        ctx.drawImage(img, center - centerSize, center - centerSize, centerSize * 2, centerSize * 2);
+        ctx.drawImage(img, center - 40, center - 40, 80, 80);
         ctx.restore();
       };
       img.src = URL.createObjectURL(centerImage);
     } else {
-      const centerSize = Math.min(40, radius / 5);
       ctx.beginPath();
-      ctx.arc(center, center, centerSize, 0, 2 * Math.PI);
+      ctx.arc(center, center, 40, 0, 2 * Math.PI);
       ctx.fillStyle = '#fff';
       ctx.fill();
       ctx.strokeStyle = borderColor;
@@ -203,47 +194,28 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
 
   useEffect(() => {
     drawWheel();
-  }, [segments, rotation, centerImage, theme, borderColor, pointerColor, gameSize]);
+  }, [segments, rotation, centerImage, theme, borderColor, pointerColor]);
 
   if (segments.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center p-8 text-gray-500 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
-        <p className="text-lg font-medium">Configuration de la roue requise</p>
-        <p className="text-sm text-gray-400 mt-1">Ajoutez des segments dans l'onglet "Contenu et apparence"</p>
+      <div className="flex flex-col items-center justify-center p-8 text-gray-500">
+        <p>Aucun segment configuré pour la roue</p>
       </div>
     );
   }
 
-  const containerSize = Math.min(gameSize.width, gameSize.height);
-
   return (
-    <div 
-      className="flex flex-col items-center gap-6 p-4"
-      style={{
-        transform: `translate(${gamePosition.x}px, ${gamePosition.y}px)`,
-        maxWidth: '100%',
-        overflow: 'visible'
-      }}
-    >
-      <div 
-        style={{ 
-          position: 'relative', 
-          width: containerSize, 
-          height: containerSize,
-          maxWidth: '100%',
-          maxHeight: '100%'
-        }}
-      >
+    <div className="flex flex-col items-center gap-4">
+      <div style={{ position: 'relative', width: CANVAS_SIZE, height: CANVAS_SIZE }}>
         <canvas
           ref={canvasRef}
+          width={CANVAS_SIZE}
+          height={CANVAS_SIZE}
           style={{
             position: 'absolute',
             left: 0,
             top: 0,
             zIndex: 1,
-            width: '100%',
-            height: '100%',
-            objectFit: 'contain'
           }}
           className="rounded-full shadow-lg"
         />
@@ -255,11 +227,10 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
               position: 'absolute',
               left: 0,
               top: 0,
-              width: '100%',
-              height: '100%',
+              width: CANVAS_SIZE,
+              height: CANVAS_SIZE,
               zIndex: 2,
               pointerEvents: 'none',
-              objectFit: 'contain'
             }}
             draggable={false}
           />
@@ -267,25 +238,24 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
         <div
           style={{
             position: 'absolute',
-            left: '50%',
-            top: '-12px',
-            width: Math.max(20, containerSize / 20),
-            height: Math.max(30, containerSize / 15),
+            left: CANVAS_SIZE / 2 - 20,
+            top: -25,
+            width: 40,
+            height: 60,
             zIndex: 3,
             pointerEvents: 'none',
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'flex-start',
-            transform: 'translateX(-50%)'
           }}
         >
-          <svg width={Math.max(20, containerSize / 20)} height={Math.max(30, containerSize / 15)}>
+          <svg width="40" height="60">
             <polygon
-              points={`${Math.max(10, containerSize / 40)},${Math.max(30, containerSize / 15)} ${Math.max(18, containerSize / 22)},${Math.max(10, containerSize / 40)} ${Math.max(2, containerSize / 200)},${Math.max(10, containerSize / 40)}`}
+              points="20,60 36,20 4,20"
               fill={pointerColor}
               stroke="#fff"
               strokeWidth="2"
-              style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.20))' }}
+              style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.10))' }}
             />
           </svg>
         </div>
@@ -293,11 +263,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
       <button
         onClick={spinWheel}
         disabled={spinning}
-        className="px-8 py-3 bg-[#841b60] text-white rounded-lg disabled:opacity-50 hover:bg-[#6d164f] transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 disabled:transform-none font-medium"
-        style={{
-          fontSize: Math.max(14, containerSize / 30),
-          minWidth: Math.max(120, containerSize / 4)
-        }}
+        className="px-6 py-3 bg-[#841b60] text-white rounded-lg disabled:opacity-50 hover:bg-[#6d164f] transition-colors shadow-lg"
       >
         {spinning ? 'Tourne...' : 'Lancer la roue'}
       </button>

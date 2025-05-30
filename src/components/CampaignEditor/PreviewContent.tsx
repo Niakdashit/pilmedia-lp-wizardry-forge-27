@@ -70,7 +70,7 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
         return (
           <Quiz 
             config={campaign.gameConfig.quiz} 
-            campaign={campaign}
+            onConfigChange={() => {}}
           />
         );
 

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Jackpot from '../GameTypes/Jackpot';
 import { Quiz } from '../GameTypes';
@@ -21,6 +20,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel || 'Lancer le Jackpot';
   const buttonColor = campaign.gameConfig?.[campaign.type]?.buttonColor || '#ec4899';
   
+  // Récupération du template sélectionné
   const selectedTemplateId = campaign?.design?.template || campaign?.gameConfig?.jackpot?.template;
 
   const renderGame = () => {
@@ -54,13 +54,11 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
         );
       case 'quiz':
         return (
-          <div style={gameProps.style} className="w-full h-full flex items-center justify-center p-2 sm:p-4">
-            <div className="w-full max-w-2xl mx-auto">
-              <Quiz 
-                config={campaign.gameConfig?.quiz || {}} 
-                campaign={campaign}
-              />
-            </div>
+          <div style={gameProps.style}>
+            <Quiz 
+              config={campaign.gameConfig?.quiz || {}} 
+              onConfigChange={() => {}}
+            />
           </div>
         );
       case 'wheel':
@@ -112,7 +110,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
         );
       default:
         return (
-          <div className="text-center text-gray-500 flex items-center justify-center h-full p-4">
+          <div className="text-center text-gray-500 flex items-center justify-center h-full">
             <p className="text-sm">Type de jeu non pris en charge</p>
           </div>
         );
@@ -120,7 +118,8 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   };
 
   return (
-    <div className={`relative w-full h-full ${className} flex items-center justify-center`} style={{ minHeight: '300px' }}>
+    <div className={`relative w-full h-full ${className} flex items-center justify-center`} style={{ minHeight: '400px' }}>
+      {/* Image de fond plein écran */}
       {gameBackgroundImage && (
         <img
           src={gameBackgroundImage}
@@ -130,7 +129,8 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
         />
       )}
 
-      <div className="relative z-20 w-full h-full flex items-center justify-center p-2 sm:p-4" style={{ maxWidth: '100%', maxHeight: '100%' }}>
+      {/* Jeu centré avec contraintes de taille */}
+      <div className="relative z-20 w-full h-full flex items-center justify-center p-4" style={{ maxWidth: '100%', maxHeight: '100%' }}>
         {renderGame()}
       </div>
     </div>

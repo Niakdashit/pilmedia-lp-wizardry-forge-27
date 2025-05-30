@@ -8,31 +8,26 @@ import ScratchPreview from '../GameTypes/ScratchPreview';
 import DicePreview from '../GameTypes/DicePreview';
 import { useParticipations } from '../../hooks/useParticipations';
 
-const DEFAULT_FIELDS: FieldConfig[] = [
-  {
-    id: "civilite",
-    label: "Civilité",
-    type: "select",
-    options: ["M.", "Mme"],
-    required: false
-  },
-  {
-    id: "prenom",
-    label: "Prénom",
-    required: true
-  },
-  {
-    id: "nom",
-    label: "Nom",
-    required: true
-  },
-  {
-    id: "email",
-    label: "Email",
-    type: "email",
-    required: true
-  }
-];
+const DEFAULT_FIELDS: FieldConfig[] = [{
+  id: "civilite",
+  label: "Civilité",
+  type: "select",
+  options: ["M.", "Mme"],
+  required: false
+}, {
+  id: "prenom",
+  label: "Prénom",
+  required: true
+}, {
+  id: "nom",
+  label: "Nom",
+  required: true
+}, {
+  id: "email",
+  label: "Email",
+  type: "email",
+  required: true
+}];
 
 interface GameFunnelProps {
   campaign: any;
@@ -57,9 +52,7 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
     loading: participationLoading
   } = useParticipations();
 
-  const fields: FieldConfig[] = Array.isArray(campaign.formFields) && campaign.formFields.length > 0 
-    ? campaign.formFields 
-    : DEFAULT_FIELDS;
+  const fields: FieldConfig[] = Array.isArray(campaign.formFields) && campaign.formFields.length > 0 ? campaign.formFields : DEFAULT_FIELDS;
 
   const handleFormSubmit = async (formData: Record<string, string>) => {
     if (campaign.id) {
@@ -112,24 +105,18 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
     campaign?.selectedTemplate;
 
   const renderGame = () => {
+    // Pour éviter la duplication d'image, ne pas passer backgroundImage au jeu
+    // L'image de fond est gérée par le conteneur parent
     const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel;
     const buttonColor = campaign.gameConfig?.[campaign.type]?.buttonColor;
     const contrastBg = mobileConfig?.contrastBackground || campaign.screens?.[2]?.contrastBackground;
 
-    // Récupérer les paramètres de taille et position depuis la configuration
-    const gameConfig = campaign.config?.[campaign.type] || campaign.gameConfig?.[campaign.type] || {};
-    const gameSize = gameConfig.gameSize || { width: 400, height: 400 };
-    const gamePosition = gameConfig.gamePosition || { x: 0, y: 0 };
-
     const gameContainerStyle: any = {
       position: 'relative',
-      width: mobileConfig ? '100%' : `${gameSize.width}px`,
-      height: mobileConfig ? 'auto' : `${gameSize.height}px`,
-      minHeight: mobileConfig ? '200px' : `${gameSize.height}px`,
-      maxHeight: mobileConfig ? '400px' : 'none',
-      transform: !mobileConfig ? `translate(${gamePosition.x}px, ${gamePosition.y}px)` : 'none',
-      margin: mobileConfig ? '0 auto' : '0',
-      transition: 'all 0.3s ease-in-out'
+      width: '100%',
+      height: mobileConfig ? 'auto' : '400px',
+      minHeight: mobileConfig ? '200px' : '400px',
+      maxHeight: mobileConfig ? '300px' : 'none'
     };
 
     const gameComponent = (() => {
@@ -156,37 +143,23 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
         case 'dice':
           return <DicePreview config={campaign.gameConfig.dice} />;
         default:
-          return (
-            <div className="text-center text-gray-500 p-8">
-              <p>Jeu non supporté</p>
-            </div>
-          );
+          return <div className="text-center text-gray-500">Jeu non supporté</div>;
       }
     })();
 
     return (
       <div style={gameContainerStyle} className="rounded-lg overflow-hidden relative">
-        <div className="relative z-20 h-full w-full">
+        <div className="relative z-20 h-full">
           <ContrastBackground
             enabled={contrastBg?.enabled && contrastBg?.applyToGame}
             config={contrastBg}
-            className="h-full w-full flex items-center justify-center"
+            className="h-full flex items-center justify-center"
           >
-            <div className="w-full h-full flex items-center justify-center">
-              {gameComponent}
-            </div>
+            {gameComponent}
           </ContrastBackground>
         </div>
         {!formValidated && (
-          <div 
-            onClick={handleGameButtonClick} 
-            className="absolute inset-0 flex items-center justify-center z-30 rounded-lg cursor-pointer bg-black/5 hover:bg-black/10 transition-colors"
-            style={{ backdropFilter: 'blur(2px)' }}
-          >
-            <div className="bg-white/90 backdrop-blur-sm rounded-lg px-4 py-2 text-sm font-medium text-gray-700 shadow-lg border">
-              Cliquez pour participer
-            </div>
-          </div>
+          <div onClick={handleGameButtonClick} className="absolute inset-0 flex items-center justify-center z-30 rounded-lg cursor-pointer bg-black/0" />
         )}
         <ValidationMessage
           show={showValidationMessage}
@@ -206,30 +179,19 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
         <ContrastBackground
           enabled={contrastBg?.enabled}
           config={contrastBg}
-          className="text-center space-y-3 w-full animate-fade-in"
+          className="text-center space-y-3 w-full"
         >
           <h3 className="text-xl font-semibold">
-            {gameResult === 'win' 
-              ? resultScreen?.winMessage || 'Félicitations, vous avez gagné !' 
-              : resultScreen?.loseMessage || 'Dommage, réessayez !'
-            }
+            {gameResult === 'win' ? resultScreen?.winMessage || 'Félicitations, vous avez gagné !' : resultScreen?.loseMessage || 'Dommage, réessayez !'}
           </h3>
           <p className="text-sm">{resultScreen?.ctaMessage || 'Découvrez nos offres ou partagez votre participation.'}</p>
           <div className="flex flex-col space-y-2">
             {resultScreen?.ctaLink && (
-              <a 
-                href={resultScreen.ctaLink} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="bg-blue-600 text-white px-4 py-2 text-sm rounded hover:bg-blue-700 transition-colors transform hover:scale-105"
-              >
+              <a href={resultScreen.ctaLink} target="_blank" rel="noopener noreferrer" className="bg-blue-600 text-white px-4 py-2 text-sm rounded hover:bg-blue-700 transition-colors">
                 {resultScreen?.ctaText || "Découvrir l'offre"}
               </a>
             )}
-            <button 
-              onClick={reset} 
-              className="bg-gray-800 text-white px-4 py-2 text-sm rounded hover:bg-gray-900 transition-all transform hover:scale-105"
-            >
+            <button onClick={reset} className="bg-gray-800 text-white px-4 py-2 text-sm rounded hover:bg-gray-900 transition-colors">
               {resultScreen?.replayButtonText || 'Rejouer'}
             </button>
           </div>
@@ -266,30 +228,26 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
   const showDescription = entryScreen.showDescription !== false && !gameStarted;
 
   return (
-    <div className="w-full max-w-4xl mx-auto p-6 flex flex-col items-center space-y-6">
+    <div className="w-full max-w-lg mx-auto p-4 flex flex-col items-center space-y-4">
       {(showTitle || showDescription) && (
         <ContrastBackground
           enabled={contrastBg?.enabled}
           config={contrastBg}
-          className="text-center space-y-3 w-full animate-fade-in"
+          className="text-center space-y-3 w-full"
         >
           {showTitle && (
-            <h2 className="text-3xl font-bold">
+            <h2 className="text-2xl font-bold">
               {entryScreen?.title || 'Tentez votre chance !'}
             </h2>
           )}
           {showDescription && (
-            <p className="text-lg text-gray-600">
+            <p className="text-gray-600">
               {entryScreen?.description || 'Participez pour avoir une chance de gagner !'}
             </p>
           )}
         </ContrastBackground>
       )}
-      
-      <div className="w-full flex justify-center">
-        {renderGame()}
-      </div>
-      
+      {renderGame()}
       {showFormModal && (
         <Modal 
           onClose={() => setShowFormModal(false)} 
