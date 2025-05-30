@@ -1,7 +1,6 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Settings, Gamepad2, Palette, FormInput } from 'lucide-react';
+import { Settings, Gamepad2, Palette, FormInput, Sliders } from 'lucide-react';
 import { CampaignType } from '../../utils/campaignTypes';
 
 interface ModernEditorSidebarProps {
@@ -16,24 +15,11 @@ const ModernEditorSidebar: React.FC<ModernEditorSidebarProps> = ({
   campaignType
 }) => {
   const tabs = [
-    {
-      id: 'general',
-      label: 'Général',
-      icon: Settings,
-      description: 'Configuration de base'
-    },
-    {
-      id: 'game',
-      label: 'Jeu',
-      icon: Gamepad2,
-      description: 'Paramètres du jeu'
-    },
-    {
-      id: 'design',
-      label: 'Design',
-      icon: Palette,
-      description: 'Apparence visuelle'
-    }
+    { id: 'general', label: 'Général', icon: Settings },
+    { id: 'game', label: 'Jeu', icon: Gamepad2 },
+    { id: 'gameconfig', label: 'Configuration', icon: Sliders },
+    { id: 'design', label: 'Design', icon: Palette },
+    { id: 'form', label: 'Formulaire', icon: FormInput }
   ];
 
   // Ajout conditionnel de l'onglet formulaire pour certains types

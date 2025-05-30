@@ -1,25 +1,26 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import WheelPreview from '../GameTypes/WheelPreview';
 import ScratchPreview from '../GameTypes/ScratchPreview';
 import MemoryPreview from '../GameTypes/MemoryPreview';
 import PuzzlePreview from '../GameTypes/PuzzlePreview';
 import DicePreview from '../GameTypes/DicePreview';
-import GameSizeSelector, { GameSize } from '../configurators/GameSizeSelector';
-import GamePositionSelector, { GamePosition } from '../configurators/GamePositionSelector';
+import { GameSize } from '../configurators/GameSizeSelector';
+import { GamePosition } from '../configurators/GamePositionSelector';
 
 interface ModernEditorCanvasProps {
   campaign: any;
   previewDevice: 'desktop' | 'tablet' | 'mobile';
+  gameSize: GameSize;
+  gamePosition: GamePosition;
 }
 
 const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
   campaign,
-  previewDevice
+  previewDevice,
+  gameSize,
+  gamePosition
 }) => {
-  const [gameSize, setGameSize] = useState<GameSize>('medium');
-  const [gamePosition, setGamePosition] = useState<GamePosition>('center');
-
   const getDeviceStyles = () => {
     switch (previewDevice) {
       case 'mobile':
@@ -96,22 +97,6 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
 
   return (
     <div className="h-full flex flex-col">
-      {/* Contrôles de configuration */}
-      <div className="p-4 bg-white border-b border-gray-200">
-        <div className="flex items-center justify-between space-x-6">
-          <GameSizeSelector
-            selectedSize={gameSize}
-            onSizeChange={setGameSize}
-            className="flex-1"
-          />
-          <GamePositionSelector
-            selectedPosition={gamePosition}
-            onPositionChange={setGamePosition}
-            className="flex-1"
-          />
-        </div>
-      </div>
-
       {/* Zone d'aperçu */}
       <div className="flex-1 flex items-center justify-center p-8 bg-gray-100">
         <div 

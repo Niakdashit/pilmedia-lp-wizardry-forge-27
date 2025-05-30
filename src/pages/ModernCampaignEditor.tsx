@@ -11,6 +11,7 @@ import ModernGeneralTab from '../components/ModernEditor/ModernGeneralTab';
 import ModernGameTab from '../components/ModernEditor/ModernGameTab';
 import ModernDesignTab from '../components/ModernEditor/ModernDesignTab';
 import ModernFormTab from '../components/ModernEditor/ModernFormTab';
+import ModernGameConfigTab from '../components/ModernEditor/ModernGameConfigTab';
 
 const defaultFormFields = [
   { id: 'prenom', label: 'Prénom', type: 'text', required: true },
@@ -29,6 +30,8 @@ const ModernCampaignEditor: React.FC = () => {
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [previewDevice, setPreviewDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
   const [isLoading, setIsLoading] = useState(false);
+  const [gameSize, setGameSize] = useState<'small' | 'medium' | 'large' | 'xlarge'>('medium');
+  const [gamePosition, setGamePosition] = useState<'top' | 'center' | 'bottom' | 'left' | 'right'>('center');
   
   const { saveCampaign, getCampaign } = useCampaigns();
   
@@ -220,6 +223,14 @@ const ModernCampaignEditor: React.FC = () => {
                     setCampaign={setCampaign}
                   />
                 )}
+                {activeTab === 'gameconfig' && (
+                  <ModernGameConfigTab
+                    gameSize={gameSize}
+                    gamePosition={gamePosition}
+                    onGameSizeChange={setGameSize}
+                    onGamePositionChange={setGamePosition}
+                  />
+                )}
                 {activeTab === 'design' && (
                   <ModernDesignTab
                     campaign={campaign}
@@ -241,6 +252,8 @@ const ModernCampaignEditor: React.FC = () => {
             <ModernEditorCanvas
               campaign={campaign}
               previewDevice={previewDevice}
+              gameSize={gameSize}
+              gamePosition={gamePosition}
             />
           </div>
         </div>
