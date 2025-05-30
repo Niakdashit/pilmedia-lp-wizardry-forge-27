@@ -56,13 +56,34 @@ const TabRoulette: React.FC<TabRouletteProps> = ({
       config: {
         ...prev.config,
         roulette: {
-          ...prev.config?.roulette,
           segments: newSegments,
-          centerImage: center || null
+          centerImage: center || null,
+          theme,
+          borderColor,
+          pointerColor
+        }
+      },
+      // Mise à jour de gameConfig.wheel pour compatibilité
+      gameConfig: {
+        ...prev.gameConfig,
+        wheel: {
+          ...prev.gameConfig?.wheel,
+          segments: newSegments,
+          centerImage: center || null,
+          theme,
+          borderColor,
+          pointerColor
         }
       }
     }));
   };
+
+  // Mettre à jour la campagne quand les couleurs ou le thème changent
+  useEffect(() => {
+    if (segments.length > 0) {
+      updateCampaign(segments, centerImage);
+    }
+  }, [theme, borderColor, pointerColor]);
 
   const handleSegmentChange = (index: number, field: keyof Segment, value: string | number) => {
     const updated = [...segments];
@@ -217,7 +238,7 @@ const TabRoulette: React.FC<TabRouletteProps> = ({
           <input
             type="color"
             value={borderColor}
-            onChange={(e) => setBorderColor(e.target.value)}
+            onChange={(e) => handleBorderColorChange(e.target.value)}
             className="w-full h-10 rounded border"
           />
         </div>
@@ -226,7 +247,7 @@ const TabRoulette: React.FC<TabRouletteProps> = ({
           <input
             type="color"
             value={pointerColor}
-            onChange={(e) => setPointerColor(e.target.value)}
+            onChange={(e) => handlePointerColorChange(e.target.value)}
             className="w-full h-10 rounded border"
           />
         </div>
@@ -236,7 +257,7 @@ const TabRoulette: React.FC<TabRouletteProps> = ({
         <label className="block text-sm font-medium text-gray-700 mb-1">Thème visuel de la roue</label>
         <select
           value={theme}
-          onChange={(e) => setTheme(e.target.value as any)}
+          onChange={(e) => handleThemeChange(e.target.value as any)}
           className="border p-2 rounded w-full md:w-1/2"
         >
           <option value="default">Classique pâle</option>

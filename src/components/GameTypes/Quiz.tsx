@@ -1,6 +1,7 @@
 
 import React from 'react';
 import QuizGame from './QuizGame';
+import QuizConfigurator from '../configurators/QuizConfigurator';
 
 interface QuizConfig {
   questions?: any[];
@@ -14,13 +15,17 @@ interface QuizProps {
   campaign?: any;
   onComplete?: (score: number, totalQuestions: number) => void;
   onStart?: () => void;
+  onConfigChange?: (config: QuizConfig) => void;
+  isPreview?: boolean;
 }
 
 const Quiz: React.FC<QuizProps> = ({ 
   config = {}, 
   campaign,
   onComplete,
-  onStart 
+  onStart,
+  onConfigChange,
+  isPreview = false
 }) => {
   const design = campaign?.design || {
     primaryColor: '#841b60',
@@ -29,6 +34,17 @@ const Quiz: React.FC<QuizProps> = ({
     buttonColor: '#841b60'
   };
 
+  // Si onConfigChange est fourni, on affiche le configurateur
+  if (onConfigChange && !isPreview) {
+    return (
+      <QuizConfigurator
+        config={config}
+        onConfigChange={onConfigChange}
+      />
+    );
+  }
+
+  // Sinon, on affiche le jeu
   return (
     <div className="w-full">
       <QuizGame
@@ -36,8 +52,8 @@ const Quiz: React.FC<QuizProps> = ({
         onComplete={onComplete}
         onStart={onStart}
         design={design}
-        showTimer={config.showTimer !== false}
-        showScore={config.showScore !== false}
+        showTimer={false}
+        showScore={false}
       />
     </div>
   );
