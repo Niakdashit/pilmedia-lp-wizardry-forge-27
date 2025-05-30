@@ -34,7 +34,7 @@ const EditorContent: React.FC<EditorContentProps> = ({
       case 'form':
         return <FormSection campaign={campaign} setCampaign={setCampaign} />;
       case 'analytics':
-        return <AnalyticsSection campaign={campaign} setCampaign={setCampaign} />;
+        return <AnalyticsSection campaign={campaign} />;
       default:
         return <GeneralSection campaign={campaign} setCampaign={setCampaign} />;
     }
