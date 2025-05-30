@@ -1,3 +1,4 @@
+
 import React from 'react';
 import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
 import FunnelStandard from '../funnels/FunnelStandard';
@@ -35,16 +36,10 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
     zIndex: 1,
     width: '100%',
     height: '100%',
-  };
-
-  const centeredGameStyle = {
-    position: 'absolute' as const,
-    width: '680px',
-    height: '400px',
-    left: '50%',
-    top: '50%',
-    transform: 'translate(-50%, -50%)',
-    zIndex: 2,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '20px',
   };
 
   const customStyles = design.customCSS ? (
@@ -58,7 +53,13 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
   // Choisir le bon funnel selon le type de campagne
   const getFunnelComponent = () => {
     if (['wheel', 'scratch', 'jackpot', 'dice'].includes(campaign.type)) {
-      return <FunnelUnlockedGame campaign={campaign} previewMode="desktop" />;
+      return (
+        <FunnelUnlockedGame 
+          campaign={campaign} 
+          previewMode="desktop"
+          modalContained={false}
+        />
+      );
     }
     return <FunnelStandard campaign={campaign} />;
   };
@@ -73,11 +74,7 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
       {/* Contenu DESKTOP */}
       <div style={contentWrapperStyle}>
         {customHTML}
-
-        {/* Jeu centré DESKTOP avec le bon funnel */}
-        <div style={centeredGameStyle}>
-          {getFunnelComponent()}
-        </div>
+        {getFunnelComponent()}
       </div>
     </div>
   );
