@@ -1,9 +1,9 @@
+
 import React, { useState } from 'react';
 import { X, Monitor, Tablet, Smartphone } from 'lucide-react';
 import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
 import FunnelStandard from '../funnels/FunnelStandard';
 import MobilePreview from './Mobile/MobilePreview';
-import WheelPreview from '../GameTypes/WheelPreview';
 
 interface PreviewModalProps {
   isOpen: boolean;
@@ -17,21 +17,8 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
   if (!isOpen) return null;
 
   const getPreviewFunnel = () => {
-    // Pour les jeux avec roue, utiliser directement WheelPreview avec la bonne configuration
-    if (campaign.type === 'wheel') {
-      return <WheelPreview
-        campaign={campaign}
-        config={{
-          mode: 'instant_winner' as const,
-          winProbability: campaign.gameConfig?.wheel?.winProbability || 0.1,
-          maxWinners: campaign.gameConfig?.wheel?.maxWinners,
-          winnersCount: 0
-        }}
-        onFinish={(result) => console.log('Wheel result:', result)}
-      />;
-    }
-    
-    if (['scratch', 'jackpot', 'dice'].includes(campaign.type)) {
+    // Utiliser le tunnel complet selon le type de campagne
+    if (['scratch', 'jackpot', 'dice', 'wheel'].includes(campaign.type)) {
       return <FunnelUnlockedGame campaign={campaign} />;
     }
     return <FunnelStandard campaign={campaign} />;
