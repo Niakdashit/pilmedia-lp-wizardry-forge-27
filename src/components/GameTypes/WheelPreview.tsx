@@ -158,8 +158,8 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
       case 'left':
         return { 
           ...containerStyle, 
-          flexDirection: 'row' as const,
-          left: shouldCropWheel ? `-${containerWidth * 0.5}px` : `${safeMargin}px`, 
+          flexDirection: shouldCropWheel ? 'row-reverse' as const : 'row' as const,
+          left: shouldCropWheel ? '0px' : `${safeMargin}px`, 
           top: '50%', 
           transform: 'translateY(-50%)',
           width: `${gameDimensions.width}px`,
@@ -168,8 +168,8 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
       case 'right':
         return { 
           ...containerStyle, 
-          flexDirection: 'row-reverse' as const,
-          right: shouldCropWheel ? `-${containerWidth * 0.5}px` : `${safeMargin}px`, 
+          flexDirection: shouldCropWheel ? 'row' as const : 'row-reverse' as const,
+          right: shouldCropWheel ? '0px' : `${safeMargin}px`, 
           top: '50%', 
           transform: 'translateY(-50%)',
           width: `${gameDimensions.width}px`,
