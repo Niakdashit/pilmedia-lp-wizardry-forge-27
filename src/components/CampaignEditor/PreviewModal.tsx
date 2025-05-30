@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { X, Monitor, Tablet, Smartphone } from 'lucide-react';
 import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
+import WheelPreview from '../GameTypes/WheelPreview';
 import MobilePreview from './Mobile/MobilePreview';
 
 interface PreviewModalProps {
@@ -16,7 +17,23 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
   if (!isOpen) return null;
 
   const getPreviewFunnel = () => {
-    // Use FunnelUnlockedGame for all game types to ensure proper funnel flow
+    // En mode desktop pour les campagnes "wheel", utiliser directement WheelPreview
+    if (selectedDevice === 'desktop' && campaign.type === 'wheel') {
+      return (
+        <WheelPreview
+          campaign={campaign}
+          config={{
+            mode: 'instant_winner' as const,
+            winProbability: campaign.gameConfig?.wheel?.winProbability || 0.1,
+            maxWinners: campaign.gameConfig?.wheel?.maxWinners,
+            winnersCount: 0
+          }}
+          onFinish={() => {}}
+        />
+      );
+    }
+    
+    // Pour les autres cas, utiliser FunnelUnlockedGame
     return <FunnelUnlockedGame campaign={campaign} />;
   };
 
