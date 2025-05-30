@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect, useState } from 'react';
 import WheelStyleSelector from '../configurators/WheelStyleSelector';
 
@@ -27,18 +26,22 @@ const Wheel: React.FC<WheelProps> = ({ config, isPreview, onComplete, onFinish }
     const randomRotation = Math.random() * 360 + 1440; // Au moins 4 tours
     
     wheelRef.current.style.transform = `rotate(${randomRotation}deg)`;
-    
+
     setTimeout(() => {
       setIsSpinning(false);
-      const prizeIndex = Math.floor((360 - (randomRotation % 360)) / (360 / prizes.length));
-      const selectedPrize = prizes[prizeIndex] || prizes[0];
+
+      // Correction du calcul de l'index gagnant
+      const normalizedRotation = (randomRotation % 360 + 360) % 360; // angle [0, 360[
+      const slice = 360 / prizes.length;
+      const prizeIndex = prizes.length - 1 - Math.floor(normalizedRotation / slice);
+      const selectedPrize = prizes[(prizeIndex + prizes.length) % prizes.length] || prizes[0];
       
       // Appeler onComplete si fourni (pour la compatibilité)
       onComplete?.(selectedPrize);
-      
+
       // Appeler onFinish si fourni (pour la cohérence avec les autres jeux)
       if (onFinish) {
-        // Simuler un résultat win/lose basé sur le prix
+        // Simuler un résultat win/lose basé sur le prix (remplace par ta logique si besoin)
         const result = Math.random() > 0.5 ? 'win' : 'lose';
         onFinish(result);
       }
@@ -51,6 +54,7 @@ const Wheel: React.FC<WheelProps> = ({ config, isPreview, onComplete, onFinish }
     }
   }, [isSpinning]);
 
+  // Mode édition : uniquement le sélecteur de style
   if (!isPreview) {
     return (
       <div className="space-y-6">
@@ -62,6 +66,7 @@ const Wheel: React.FC<WheelProps> = ({ config, isPreview, onComplete, onFinish }
     );
   }
 
+  // Mode preview : roue interactive
   return (
     <div className="flex flex-col items-center space-y-8">
       <div className="relative">
