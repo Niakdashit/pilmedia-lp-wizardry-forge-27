@@ -1,5 +1,6 @@
+
 import React from 'react';
-import { Settings, Target } from 'lucide-react';
+import { Settings } from 'lucide-react';
 import WheelGameConfig from './GameConfigs/WheelGameConfig';
 import JackpotGameConfig from './GameConfigs/JackpotGameConfig';
 import MemoryGameConfig from './GameConfigs/MemoryGameConfig';
@@ -7,31 +8,16 @@ import PuzzleGameConfig from './GameConfigs/PuzzleGameConfig';
 import QuizGameConfig from './GameConfigs/QuizGameConfig';
 import DiceGameConfig from './GameConfigs/DiceGameConfig';
 import ScratchGameConfig from './GameConfigs/ScratchGameConfig';
+
 interface ModernGameTabProps {
   campaign: any;
   setCampaign: React.Dispatch<React.SetStateAction<any>>;
 }
+
 const ModernGameTab: React.FC<ModernGameTabProps> = ({
   campaign,
   setCampaign
 }) => {
-  const gameTypeLabels = {
-    wheel: 'Roue de la Fortune',
-    jackpot: 'Jackpot',
-    memory: 'Jeu de Mémoire',
-    puzzle: 'Puzzle',
-    quiz: 'Quiz Interactif',
-    dice: 'Dés Magiques',
-    scratch: 'Carte à Gratter',
-    swiper: 'Swiper',
-    form: 'Formulaire Dynamique'
-  };
-  const handlePositionChange = (position: string) => {
-    setCampaign((prev: any) => ({
-      ...prev,
-      gamePosition: position
-    }));
-  };
   const renderGameConfig = () => {
     switch (campaign.type) {
       case 'wheel':
@@ -52,28 +38,14 @@ const ModernGameTab: React.FC<ModernGameTabProps> = ({
         return <div className="text-gray-500">Configuration non disponible pour ce type de jeu</div>;
     }
   };
-  return <div className="space-y-6">
-      <div>
-        
-        
-      </div>
 
-      {/* Position du jeu */}
-      <div className="space-y-3">
-        
-        <div className="grid grid-cols-3 gap-2">
-          <div></div>
-          
-          <div></div>
-          
-          
-          
-          
-          
-          <div></div>
-          
-          <div></div>
-        </div>
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Configuration du jeu</h2>
+        <p className="text-sm text-gray-600">
+          Configurez les paramètres spécifiques à votre jeu
+        </p>
       </div>
 
       {/* Configuration spécifique au jeu */}
@@ -84,6 +56,8 @@ const ModernGameTab: React.FC<ModernGameTabProps> = ({
         </h3>
         {renderGameConfig()}
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default ModernGameTab;

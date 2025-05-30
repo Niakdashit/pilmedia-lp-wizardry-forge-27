@@ -19,8 +19,7 @@ interface TabConfig {
 
 const ModernEditorSidebar: React.FC<ModernEditorSidebarProps> = ({
   activeTab,
-  onTabChange,
-  campaignType
+  onTabChange
 }) => {
   const tabs: TabConfig[] = [
     { id: 'general', label: 'Général', icon: Settings },
