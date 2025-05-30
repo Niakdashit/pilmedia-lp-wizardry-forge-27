@@ -1,4 +1,3 @@
-
 import React from 'react';
 import WheelPreview from '../GameTypes/WheelPreview';
 import ScratchPreview from '../GameTypes/ScratchPreview';
@@ -7,14 +6,12 @@ import PuzzlePreview from '../GameTypes/PuzzlePreview';
 import DicePreview from '../GameTypes/DicePreview';
 import { GameSize } from '../configurators/GameSizeSelector';
 import { GamePosition } from '../configurators/GamePositionSelector';
-
 interface ModernEditorCanvasProps {
   campaign: any;
   previewDevice: 'desktop' | 'tablet' | 'mobile';
   gameSize: GameSize;
   gamePosition: GamePosition;
 }
-
 const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
   campaign,
   previewDevice,
@@ -42,20 +39,11 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
         };
     }
   };
-
   const renderGamePreview = () => {
     const gameConfig = campaign.gameConfig || {};
-    
     switch (campaign.type) {
       case 'wheel':
-        return (
-          <WheelPreview 
-            campaign={campaign} 
-            config={gameConfig.wheel} 
-            gameSize={gameSize}
-            gamePosition={gamePosition}
-          />
-        );
+        return <WheelPreview campaign={campaign} config={gameConfig.wheel} gameSize={gameSize} gamePosition={gamePosition} />;
       case 'scratch':
         return <ScratchPreview config={gameConfig.scratch} />;
       case 'memory':
@@ -65,44 +53,38 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
       case 'dice':
         return <DicePreview config={gameConfig.dice} />;
       case 'jackpot':
-        return (
-          <div className="p-4 border-2 border-dashed border-gray-300 rounded-lg">
+        return <div className="p-4 border-2 border-dashed border-gray-300 rounded-lg">
             <div className="text-center text-gray-500">
               <div className="text-sm">Aperçu Jackpot</div>
               <div className="text-xs mt-1">🎰 Machine à sous</div>
             </div>
-          </div>
-        );
+          </div>;
       default:
-        return (
-          <div className="p-4 border-2 border-dashed border-gray-300 rounded-lg">
+        return <div className="p-4 border-2 border-dashed border-gray-300 rounded-lg">
             <div className="text-center text-gray-500">
               <div className="text-sm">Aperçu du jeu : {campaign.type}</div>
               <div className="text-xs mt-1">Position : {gamePosition}</div>
             </div>
-          </div>
-        );
+          </div>;
     }
   };
-
   const renderCustomText = () => {
     const customText = campaign.design?.customText;
-    
     if (!customText?.enabled || !customText?.text) {
       return null;
     }
-
     const getTextSize = () => {
       switch (customText.size) {
-        case 'small': return 'text-sm';
-        case 'large': return 'text-2xl';
-        default: return 'text-lg';
+        case 'small':
+          return 'text-sm';
+        case 'large':
+          return 'text-2xl';
+        default:
+          return 'text-lg';
       }
     };
-
     const getPositionStyles = () => {
       const baseStyles = 'absolute z-20 max-w-md';
-      
       switch (customText.position) {
         case 'top':
           return `${baseStyles} top-4 left-1/2 transform -translate-x-1/2`;
@@ -112,11 +94,11 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
           return `${baseStyles} left-4 top-1/2 transform -translate-y-1/2`;
         case 'right':
           return `${baseStyles} right-4 top-1/2 transform -translate-y-1/2`;
-        default: // center
+        default:
+          // center
           return `${baseStyles} top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2`;
       }
     };
-
     const frameStyles = customText.showFrame ? {
       backgroundColor: customText.frameColor || '#ffffff',
       border: `1px solid ${customText.frameBorderColor || '#e5e7eb'}`,
@@ -124,79 +106,41 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
       padding: '12px 16px',
       boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
     } : {};
-
-    return (
-      <div 
-        className={getPositionStyles()}
-        style={frameStyles}
-      >
-        <p 
-          className={`${getTextSize()} font-medium text-center`}
-          style={{ 
-            color: customText.color || '#000000',
-            fontFamily: campaign.design?.fontFamily || 'Inter'
-          }}
-        >
+    return <div className={getPositionStyles()} style={frameStyles}>
+        <p className={`${getTextSize()} font-medium text-center`} style={{
+        color: customText.color || '#000000',
+        fontFamily: campaign.design?.fontFamily || 'Inter'
+      }}>
           {customText.text}
         </p>
-      </div>
-    );
+      </div>;
   };
-
   const deviceStyles = getDeviceStyles();
-  const backgroundStyle = campaign.design?.backgroundImage 
-    ? { 
-        backgroundImage: `url(${campaign.design.backgroundImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
-      }
-    : { backgroundColor: campaign.design?.background || '#f8fafc' };
-
-  return (
-    <div className="h-full flex flex-col">
+  const backgroundStyle = campaign.design?.backgroundImage ? {
+    backgroundImage: `url(${campaign.design.backgroundImage})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat'
+  } : {
+    backgroundColor: campaign.design?.background || '#f8fafc'
+  };
+  return <div className="h-full flex flex-col">
       {/* Zone d'aperçu */}
       <div className="flex-1 flex items-center justify-center p-8 bg-gray-100">
-        <div 
-          className="bg-white rounded-lg shadow-lg overflow-hidden relative"
-          style={deviceStyles}
-        >
+        <div className="bg-white rounded-lg shadow-lg overflow-hidden relative" style={deviceStyles}>
           {/* Conteneur avec image de fond complète */}
-          <div 
-            className="h-full w-full relative flex flex-col"
-            style={backgroundStyle}
-          >
+          <div className="h-full w-full relative flex flex-col" style={backgroundStyle}>
             {/* Overlay pour améliorer la lisibilité si nécessaire */}
-            {campaign.design?.backgroundImage && (
-              <div className="absolute inset-0 bg-black/10"></div>
-            )}
+            {campaign.design?.backgroundImage && <div className="absolute inset-0 bg-black/10"></div>}
             
             {/* Texte personnalisé */}
             {renderCustomText()}
             
             {/* Contenu par défaut - titre et description */}
             <div className="relative z-10 p-6 text-center">
-              <h1 
-                className="text-2xl font-bold mb-2"
-                style={{ 
-                  color: campaign.design?.titleColor || '#000000',
-                  fontFamily: campaign.design?.fontFamily || 'Inter'
-                }}
-              >
-                {campaign.screens?.[1]?.title || 'Bienvenue !'}
-              </h1>
-              <p 
-                className="text-gray-600 mb-4"
-                style={{ color: campaign.design?.titleColor || '#666666' }}
-              >
-                {campaign.screens?.[1]?.description || 'Participez à notre jeu et tentez de gagner !'}
-              </p>
-              <button
-                className="px-6 py-3 rounded-lg text-white font-medium"
-                style={{ backgroundColor: campaign.design?.buttonColor || '#841b60' }}
-              >
-                {campaign.screens?.[1]?.buttonText || 'Participer'}
-              </button>
+              
+              
+              
             </div>
             
             {/* Zone de jeu repositionnable */}
@@ -206,8 +150,6 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default ModernEditorCanvas;
