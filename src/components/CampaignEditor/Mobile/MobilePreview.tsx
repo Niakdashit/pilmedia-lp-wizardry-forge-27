@@ -27,11 +27,23 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) 
           overflow: 'hidden',
           position: 'relative',
           display: 'flex',
-          flexDirection: 'column'
+          flexDirection: 'column',
+          alignItems: 'center',      // Ajouté !
+          justifyContent: 'center'   // Ajouté !
         }}
       >
-        {/* Tout le contenu funnel/modal reste contenu dans ce device */}
-        <div style={{ width: '100%', height: '100%', overflow: 'auto', position: 'relative' }}>
+        {/* Le funnel/game reste parfaitement centré */}
+        <div
+          style={{
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: 'relative',
+            overflow: 'hidden' // ← Pas de scroll interne pour une vraie simulation device
+          }}
+        >
           <FunnelUnlockedGame campaign={campaign} previewMode={previewMode} />
         </div>
       </div>
