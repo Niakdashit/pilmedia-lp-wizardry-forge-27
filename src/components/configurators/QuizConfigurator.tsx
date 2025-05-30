@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Plus, Trash2, Upload, Link } from 'lucide-react';
+import { Plus, Trash2 } from 'lucide-react';
 
 interface QuizQuestion {
   id: string;
@@ -217,7 +217,7 @@ const QuizConfigurator: React.FC<QuizConfiguratorProps> = ({ config, onConfigCha
                   <input
                     type="url"
                     value={question.hint.value}
-                    onChange={(e) => updateHint(question.id, { ...question.hint, value: e.target.value })}
+                    onChange={(e) => updateHint(question.id, { type: 'image', value: e.target.value })}
                     className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
                     placeholder="URL de l'image..."
                   />
@@ -229,14 +229,14 @@ const QuizConfigurator: React.FC<QuizConfiguratorProps> = ({ config, onConfigCha
                   <input
                     type="text"
                     value={question.hint.text || ''}
-                    onChange={(e) => updateHint(question.id, { ...question.hint, text: e.target.value })}
+                    onChange={(e) => updateHint(question.id, { type: 'link', value: question.hint?.value || '', text: e.target.value })}
                     className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
                     placeholder="Texte du lien..."
                   />
                   <input
                     type="url"
                     value={question.hint.value}
-                    onChange={(e) => updateHint(question.id, { ...question.hint, value: e.target.value })}
+                    onChange={(e) => updateHint(question.id, { type: 'link', value: e.target.value, text: question.hint?.text })}
                     className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
                     placeholder="URL du lien..."
                   />

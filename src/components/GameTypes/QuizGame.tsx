@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { CheckCircle, XCircle, ExternalLink } from 'lucide-react';
+import { CheckCircle, ExternalLink } from 'lucide-react';
 
 interface QuizQuestion {
   id: string;
@@ -18,17 +18,13 @@ interface QuizGameProps {
   onComplete?: (score?: number, totalQuestions?: number) => void;
   onStart?: () => void;
   design?: any;
-  showTimer?: boolean;
-  showScore?: boolean;
 }
 
 const QuizGame: React.FC<QuizGameProps> = ({
   questions = [],
   onComplete,
   onStart,
-  design = {},
-  showTimer = false,
-  showScore = false
+  design = {}
 }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);

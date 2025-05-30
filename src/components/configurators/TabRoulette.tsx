@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 
 interface Segment {
@@ -99,6 +100,18 @@ const TabRoulette: React.FC<TabRouletteProps> = ({
     const updated = [...segments];
     updated[index].image = file;
     updateCampaign(updated, centerImage);
+  };
+
+  const handleThemeChange = (newTheme: typeof theme) => {
+    setTheme(newTheme);
+  };
+
+  const handleBorderColorChange = (color: string) => {
+    setBorderColor(color);
+  };
+
+  const handlePointerColorChange = (color: string) => {
+    setPointerColor(color);
   };
 
   const addSegment = () => {

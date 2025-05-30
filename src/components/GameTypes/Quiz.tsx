@@ -13,7 +13,7 @@ interface QuizConfig {
 interface QuizProps {
   config?: QuizConfig;
   campaign?: any;
-  onComplete?: (score: number, totalQuestions: number) => void;
+  onComplete?: (score?: number, totalQuestions?: number) => void;
   onStart?: () => void;
   onConfigChange?: (config: QuizConfig) => void;
   isPreview?: boolean;
@@ -49,11 +49,9 @@ const Quiz: React.FC<QuizProps> = ({
     <div className="w-full">
       <QuizGame
         questions={config.questions}
-        onComplete={onComplete}
+        onComplete={(score, totalQuestions) => onComplete?.(score, totalQuestions)}
         onStart={onStart}
         design={design}
-        showTimer={false}
-        showScore={false}
       />
     </div>
   );
