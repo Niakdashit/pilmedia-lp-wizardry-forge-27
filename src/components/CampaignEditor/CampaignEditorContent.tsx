@@ -6,6 +6,7 @@ import CampaignScreens from './CampaignScreens';
 import CampaignMobile from './CampaignMobile';
 import CampaignSettings from './CampaignSettings';
 import TabJackpot from '../configurators/TabJackpot';
+import QuizConfiguration from './QuizConfiguration';
 
 interface CampaignEditorContentProps {
   activeTab: string;
@@ -34,15 +35,28 @@ const CampaignEditorContent: React.FC<CampaignEditorContentProps> = ({
 
       case 'settings':
         return (
-          <div>
+          <div className="space-y-8">
             <CampaignSettings campaign={campaign} setCampaign={setCampaign} />
-            <div className="mt-8">
-              <h2 className="text-xl font-bold mb-3 text-[#841b60]">Configuration du Jackpot</h2>
-              <TabJackpot
-                campaign={campaign}
-                setCampaign={setCampaign}
-              />
-            </div>
+            
+            {campaign.type === 'quiz' && (
+              <div>
+                <h2 className="text-xl font-bold mb-4 text-[#841b60]">Configuration du Quiz</h2>
+                <QuizConfiguration
+                  campaign={campaign}
+                  setCampaign={setCampaign}
+                />
+              </div>
+            )}
+            
+            {campaign.type === 'jackpot' && (
+              <div>
+                <h2 className="text-xl font-bold mb-4 text-[#841b60]">Configuration du Jackpot</h2>
+                <TabJackpot
+                  campaign={campaign}
+                  setCampaign={setCampaign}
+                />
+              </div>
+            )}
           </div>
         );
         
@@ -52,7 +66,7 @@ const CampaignEditorContent: React.FC<CampaignEditorContentProps> = ({
   };
 
   return (
-    <div className="flex-1 overflow-y-auto p-6">
+    <div className="flex-1 overflow-y-auto p-4 sm:p-6">
       {renderTabContent()}
     </div>
   );

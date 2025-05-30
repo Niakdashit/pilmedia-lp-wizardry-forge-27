@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { CheckCircle, XCircle, Clock } from 'lucide-react';
+import { CheckCircle, XCircle, Clock, Trophy, Star, Target } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 interface QuizQuestion {
@@ -74,6 +74,8 @@ const QuizGame: React.FC<QuizGameProps> = ({
   const [isComplete, setIsComplete] = useState(false);
   const [timeLeft, setTimeLeft] = useState(questions[0]?.timeLimit || 30);
   const [answered, setAnswered] = useState(false);
+  const [streak, setStreak] = useState(0);
+  const [maxStreak, setMaxStreak] = useState(0);
 
   const currentQuestion = questions[currentQuestionIndex];
 
@@ -82,7 +84,7 @@ const QuizGame: React.FC<QuizGameProps> = ({
       const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
       return () => clearTimeout(timer);
     } else if (timeLeft === 0 && !answered) {
-      handleAnswer(-1); // Auto-submit when time is up
+      handleAnswer(-1);
     }
   }, [timeLeft, answered, showTimer]);
 
@@ -95,6 +97,18 @@ const QuizGame: React.FC<QuizGameProps> = ({
 
     if (answerIndex === currentQuestion.correctAnswer) {
       setScore(score + 1);
+      setStreak(streak + 1);
+      setMaxStreak(Math.max(maxStreak, streak + 1));
+      
+      // Animation de succès
+      confetti({
+        particleCount: 30,
+        spread: 60,
+        origin: { y: 0.8 },
+        colors: [design.primaryColor || '#841b60', '#FFD700', '#32CD32']
+      });
+    } else {
+      setStreak(0);
     }
 
     setTimeout(() => {
@@ -112,7 +126,8 @@ const QuizGame: React.FC<QuizGameProps> = ({
           confetti({
             particleCount: 100,
             spread: 70,
-            origin: { y: 0.6 }
+            origin: { y: 0.6 },
+            colors: [design.primaryColor || '#841b60', '#FFD700', '#32CD32']
           });
         }
         
@@ -129,21 +144,30 @@ const QuizGame: React.FC<QuizGameProps> = ({
     setIsComplete(false);
     setTimeLeft(questions[0]?.timeLimit || 30);
     setAnswered(false);
+    setStreak(0);
+    setMaxStreak(0);
     onStart?.();
   };
 
   const getScoreMessage = () => {
     const percentage = (score / questions.length) * 100;
-    if (percentage >= 80) return 'Excellent ! 🎉';
-    if (percentage >= 60) return 'Bien joué ! 👏';
-    if (percentage >= 40) return 'Pas mal ! 👍';
-    return 'Il faut réviser ! 📚';
+    if (percentage >= 90) return 'Performance exceptionnelle ! 🌟';
+    if (percentage >= 80) return 'Excellent travail ! 🎉';
+    if (percentage >= 70) return 'Très bien joué ! 👏';
+    if (percentage >= 60) return 'Bon travail ! 👍';
+    if (percentage >= 40) return 'Pas mal, continuez ! 💪';
+    return 'Bravo pour votre participation ! 🎯';
   };
 
-  // Ensure we have valid questions and current question
+  const getEncouragementMessage = () => {
+    if (streak >= 3) return `🔥 Série de ${streak} !`;
+    if (maxStreak >= 2) return `⭐ Meilleure série : ${maxStreak}`;
+    return '';
+  };
+
   if (!questions || questions.length === 0 || !currentQuestion) {
     return (
-      <div className="w-full max-w-2xl mx-auto p-6 text-center">
+      <div className="w-full max-w-2xl mx-auto p-4 sm:p-6 text-center">
         <p className="text-gray-500">Aucune question disponible</p>
       </div>
     );
@@ -151,40 +175,57 @@ const QuizGame: React.FC<QuizGameProps> = ({
 
   if (isComplete) {
     return (
-      <div className="w-full max-w-2xl mx-auto p-6 text-center space-y-6">
+      <div className="w-full max-w-2xl mx-auto p-4 sm:p-6 text-center space-y-4 sm:space-y-6">
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           className="space-y-4"
         >
+          <div className="flex justify-center mb-4">
+            <Trophy className="w-12 h-12 sm:w-16 sm:h-16 text-yellow-500" />
+          </div>
+          
           <h2 
-            className="text-3xl font-bold"
+            className="text-2xl sm:text-3xl font-bold"
             style={{ color: design.textColor }}
           >
             Quiz terminé !
           </h2>
           
           <div 
-            className="text-6xl font-bold"
+            className="text-4xl sm:text-6xl font-bold"
             style={{ color: design.primaryColor }}
           >
             {score}/{questions.length}
           </div>
           
+          <div className="flex justify-center space-x-1 mb-4">
+            {Array.from({ length: Math.floor((score / questions.length) * 5) }).map((_, i) => (
+              <Star key={i} className="w-6 h-6 text-yellow-400 fill-current" />
+            ))}
+          </div>
+          
           <p 
-            className="text-xl"
+            className="text-lg sm:text-xl"
             style={{ color: design.textColor }}
           >
             {getScoreMessage()}
           </p>
           
-          <div className="text-lg text-gray-600">
-            Score: {Math.round((score / questions.length) * 100)}%
+          <div className="bg-gray-50 rounded-lg p-4 space-y-2">
+            <div className="text-sm text-gray-600">
+              Score: {Math.round((score / questions.length) * 100)}%
+            </div>
+            {maxStreak > 1 && (
+              <div className="text-sm text-gray-600">
+                Meilleure série: {maxStreak} réponses consécutives
+              </div>
+            )}
           </div>
           
           <button
             onClick={resetQuiz}
-            className="px-8 py-3 rounded-lg font-medium text-white transition-all hover:opacity-90"
+            className="px-6 sm:px-8 py-3 rounded-lg font-medium text-white transition-all hover:opacity-90 w-full sm:w-auto"
             style={{ backgroundColor: design.buttonColor }}
           >
             Recommencer le quiz
@@ -195,47 +236,57 @@ const QuizGame: React.FC<QuizGameProps> = ({
   }
 
   return (
-    <div className="w-full max-w-2xl mx-auto p-6">
+    <div className="w-full max-w-2xl mx-auto p-4 sm:p-6">
       <motion.div
         key={currentQuestionIndex}
         initial={{ x: 300, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         exit={{ x: -300, opacity: 0 }}
-        className="space-y-6"
+        className="space-y-4 sm:space-y-6"
       >
         {/* Progress bar */}
-        <div className="w-full bg-gray-200 rounded-full h-2">
+        <div className="w-full bg-gray-200 rounded-full h-3">
           <div
-            className="h-2 rounded-full transition-all duration-300"
+            className="h-3 rounded-full transition-all duration-300 relative"
             style={{
               backgroundColor: design.primaryColor,
               width: `${((currentQuestionIndex + 1) / questions.length) * 100}%`
             }}
-          />
+          >
+            <div className="absolute right-0 top-0 h-full w-8 bg-gradient-to-r from-transparent to-white/30 rounded-full"></div>
+          </div>
         </div>
 
-        {/* Question counter and timer */}
-        <div className="flex justify-between items-center">
+        {/* Question counter, timer and streak */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center space-y-2 sm:space-y-0">
           <span className="text-sm font-medium text-gray-600">
             Question {currentQuestionIndex + 1} sur {questions.length}
           </span>
           
-          {showTimer && (
-            <div className="flex items-center space-x-2">
-              <Clock className="w-4 h-4 text-gray-600" />
-              <span 
-                className={`font-medium ${timeLeft <= 10 ? 'text-red-500' : 'text-gray-600'}`}
-              >
-                {timeLeft}s
+          <div className="flex items-center space-x-4">
+            {getEncouragementMessage() && (
+              <span className="text-sm font-medium text-orange-600">
+                {getEncouragementMessage()}
               </span>
-            </div>
-          )}
+            )}
+            
+            {showTimer && (
+              <div className="flex items-center space-x-2">
+                <Clock className="w-4 h-4 text-gray-600" />
+                <span 
+                  className={`font-medium ${timeLeft <= 10 ? 'text-red-500 animate-pulse' : 'text-gray-600'}`}
+                >
+                  {timeLeft}s
+                </span>
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Question */}
         <div className="space-y-4">
           <h3 
-            className="text-xl font-semibold"
+            className="text-lg sm:text-xl font-semibold leading-tight"
             style={{ color: design.textColor }}
           >
             {currentQuestion.question}
@@ -244,7 +295,6 @@ const QuizGame: React.FC<QuizGameProps> = ({
           {/* Options */}
           <div className="space-y-3">
             {currentQuestion.options.map((option, index) => {
-              // Ensure option is a string
               const optionText = typeof option === 'string' ? option : String(option);
               
               return (
@@ -252,20 +302,20 @@ const QuizGame: React.FC<QuizGameProps> = ({
                   key={index}
                   onClick={() => handleAnswer(index)}
                   disabled={answered}
-                  className={`w-full p-4 rounded-lg border-2 text-left transition-all duration-200 ${
+                  className={`w-full p-3 sm:p-4 rounded-lg border-2 text-left transition-all duration-200 text-sm sm:text-base ${
                     answered
                       ? index === currentQuestion.correctAnswer
-                        ? 'bg-green-100 border-green-500 text-green-800'
+                        ? 'bg-green-100 border-green-500 text-green-800 shadow-lg'
                         : index === selectedAnswer && index !== currentQuestion.correctAnswer
                         ? 'bg-red-100 border-red-500 text-red-800'
                         : 'bg-gray-100 border-gray-300 text-gray-600'
-                      : 'bg-white border-gray-300 hover:border-purple-300 hover:bg-purple-50'
+                      : 'bg-white border-gray-300 hover:border-purple-300 hover:bg-purple-50 hover:shadow-md'
                   }`}
                   whileHover={!answered ? { scale: 1.02 } : {}}
                   whileTap={!answered ? { scale: 0.98 } : {}}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-medium">{optionText}</span>
+                    <span className="font-medium pr-2">{optionText}</span>
                     {answered && (
                       <div>
                         {index === currentQuestion.correctAnswer && (
@@ -287,10 +337,10 @@ const QuizGame: React.FC<QuizGameProps> = ({
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="p-4 bg-blue-50 border border-blue-200 rounded-lg"
+              className="p-3 sm:p-4 bg-blue-50 border border-blue-200 rounded-lg"
             >
-              <p className="text-blue-800">
-                <strong>Explication :</strong> {currentQuestion.explanation}
+              <p className="text-blue-800 text-sm sm:text-base">
+                <strong>💡 Explication :</strong> {currentQuestion.explanation}
               </p>
             </motion.div>
           )}
@@ -299,9 +349,10 @@ const QuizGame: React.FC<QuizGameProps> = ({
         {/* Score display */}
         {showScore && (
           <div className="text-center">
-            <span className="text-sm text-gray-600">
-              Score actuel: {score}/{currentQuestionIndex + (answered ? 1 : 0)}
-            </span>
+            <div className="flex items-center justify-center space-x-4 text-sm text-gray-600">
+              <span>Score: {score}/{currentQuestionIndex + (answered ? 1 : 0)}</span>
+              <Target className="w-4 h-4" />
+            </div>
           </div>
         )}
       </motion.div>
