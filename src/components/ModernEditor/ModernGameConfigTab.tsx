@@ -1,8 +1,9 @@
 
 import React, { useState } from 'react';
-import { Settings, Maximize2, Navigation } from 'lucide-react';
+import { Settings, Maximize2, Navigation, MousePointer } from 'lucide-react';
 import GameSizeSelector, { GameSize } from '../configurators/GameSizeSelector';
 import GamePositionSelector, { GamePosition } from '../configurators/GamePositionSelector';
+import ButtonConfigTab from './ButtonConfigTab';
 
 interface ModernGameConfigTabProps {
   gameSize: GameSize;
@@ -17,11 +18,21 @@ const ModernGameConfigTab: React.FC<ModernGameConfigTabProps> = ({
   onGameSizeChange,
   onGamePositionChange
 }) => {
-  const [activeSubTab, setActiveSubTab] = useState<'size' | 'position'>('size');
+  const [activeSubTab, setActiveSubTab] = useState<'size' | 'position' | 'buttons'>('size');
+  const [buttonConfig, setButtonConfig] = useState({
+    color: '#841b60',
+    borderColor: '#841b60',
+    borderWidth: 1,
+    borderRadius: 8,
+    size: 'medium' as 'small' | 'medium' | 'large',
+    link: '',
+    visible: true
+  });
 
   const subTabs = [
     { id: 'size', label: 'Taille du jeu', icon: Maximize2 },
-    { id: 'position', label: 'Position du jeu', icon: Navigation }
+    { id: 'position', label: 'Position du jeu', icon: Navigation },
+    { id: 'buttons', label: 'Configuration boutons', icon: MousePointer }
   ];
 
   return (
@@ -32,7 +43,7 @@ const ModernGameConfigTab: React.FC<ModernGameConfigTabProps> = ({
           Configuration du jeu
         </h2>
         <p className="text-sm text-gray-600">
-          Ajustez la taille et la position du jeu dans l'aperçu
+          Ajustez la taille, la position du jeu et les boutons
         </p>
       </div>
 
@@ -44,7 +55,7 @@ const ModernGameConfigTab: React.FC<ModernGameConfigTabProps> = ({
             return (
               <button
                 key={tab.id}
-                onClick={() => setActiveSubTab(tab.id as 'size' | 'position')}
+                onClick={() => setActiveSubTab(tab.id as 'size' | 'position' | 'buttons')}
                 className={`py-2 px-1 border-b-2 font-medium text-sm flex items-center space-x-2 ${
                   activeSubTab === tab.id
                     ? 'border-[#841b60] text-[#841b60]'
@@ -72,6 +83,13 @@ const ModernGameConfigTab: React.FC<ModernGameConfigTabProps> = ({
           <GamePositionSelector
             selectedPosition={gamePosition}
             onPositionChange={onGamePositionChange}
+          />
+        )}
+
+        {activeSubTab === 'buttons' && (
+          <ButtonConfigTab
+            buttonConfig={buttonConfig}
+            onButtonConfigChange={setButtonConfig}
           />
         )}
       </div>

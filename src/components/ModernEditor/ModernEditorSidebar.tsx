@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Settings, Gamepad2, Palette, FormInput, Sliders } from 'lucide-react';
@@ -9,28 +10,25 @@ interface ModernEditorSidebarProps {
   campaignType: CampaignType;
 }
 
+interface TabConfig {
+  id: string;
+  label: string;
+  icon: any;
+  description?: string;
+}
+
 const ModernEditorSidebar: React.FC<ModernEditorSidebarProps> = ({
   activeTab,
   onTabChange,
   campaignType
 }) => {
-  const tabs = [
+  const tabs: TabConfig[] = [
     { id: 'general', label: 'Général', icon: Settings },
     { id: 'game', label: 'Jeu', icon: Gamepad2 },
-    { id: 'gameconfig', label: 'Configuration', icon: Sliders },
+    { id: 'gameconfig', label: 'Configuration', icon: Sliders, description: 'Taille et position' },
     { id: 'design', label: 'Design', icon: Palette },
     { id: 'form', label: 'Formulaire', icon: FormInput }
   ];
-
-  // Ajout conditionnel de l'onglet formulaire pour certains types
-  if (['wheel', 'jackpot', 'scratch'].includes(campaignType)) {
-    tabs.push({
-      id: 'form',
-      label: 'Formulaire',
-      icon: FormInput,
-      description: 'Champs de saisie'
-    });
-  }
 
   return (
     <div className="w-20 bg-white border-r border-gray-200 flex flex-col">
@@ -56,7 +54,9 @@ const ModernEditorSidebar: React.FC<ModernEditorSidebarProps> = ({
               {/* Tooltip */}
               <div className="absolute left-full top-1/2 transform -translate-y-1/2 ml-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-lg opacity-0 pointer-events-none group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap z-10">
                 <div className="font-medium">{tab.label}</div>
-                <div className="text-xs text-gray-300">{tab.description}</div>
+                {tab.description && (
+                  <div className="text-xs text-gray-300">{tab.description}</div>
+                )}
                 <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-1 w-2 h-2 bg-gray-900 rotate-45"></div>
               </div>
               
