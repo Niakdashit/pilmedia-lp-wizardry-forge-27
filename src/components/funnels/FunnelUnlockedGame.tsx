@@ -33,12 +33,14 @@ interface GameFunnelProps {
   campaign: any;
   modalContained?: boolean;
   mobileConfig?: any;
+  previewMode?: 'mobile' | 'tablet'; // <-- Ajout pour la preview
 }
 
 const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
   campaign,
   modalContained = false,
-  mobileConfig
+  mobileConfig,
+  previewMode, // <-- Ajout
 }) => {
   const [formValidated, setFormValidated] = useState(false);
   const [showFormModal, setShowFormModal] = useState(false);
@@ -200,7 +202,8 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
     );
   }
 
-  if (mobileConfig) {
+  // ----------- AJOUT FOCUS : previewMode pour mobile/tablette --------------
+  if (previewMode === 'mobile' || previewMode === 'tablet' || mobileConfig) {
     return (
       <div className="w-full flex flex-col items-center space-y-3">
         {renderGame()}
@@ -221,6 +224,7 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
       </div>
     );
   }
+  // -------------------------------------------------------------------------
 
   const entryScreen = campaign.screens?.[0] || {};
   const contrastBg = entryScreen.contrastBackground;
