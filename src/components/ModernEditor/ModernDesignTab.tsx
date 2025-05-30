@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { Palette, Type, Image, Eye, EyeOff, Layout, AlignCenter, MoreHorizontal, ChevronDown, ChevronUp, Plus, Trash2, Bold, Italic, Underline } from 'lucide-react';
+import { Type, Image, Eye, EyeOff, Layout, AlignCenter, MoreHorizontal, ChevronDown, ChevronUp, Plus, Trash2, Bold, Italic, Underline } from 'lucide-react';
 import ImageUpload from '../common/ImageUpload';
 
 interface ModernDesignTabProps {
@@ -907,7 +906,6 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
         {/* Couleurs */}
         <div className="space-y-4">
           <h4 className="flex items-center text-lg font-medium text-gray-800">
-            <Palette className="w-5 h-5 mr-2" />
             Couleurs
           </h4>
           
