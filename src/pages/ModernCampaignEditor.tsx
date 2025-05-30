@@ -10,6 +10,7 @@ import ModernPreviewModal from '../components/ModernEditor/ModernPreviewModal';
 import ModernGeneralTab from '../components/ModernEditor/ModernGeneralTab';
 import ModernGameTab from '../components/ModernEditor/ModernGameTab';
 import ModernDesignTab from '../components/ModernEditor/ModernDesignTab';
+import ModernFormTab from '../components/ModernEditor/ModernFormTab';
 
 const defaultFormFields = [
   { id: 'prenom', label: 'Prénom', type: 'text', required: true },
@@ -221,6 +222,12 @@ const ModernCampaignEditor: React.FC = () => {
                 )}
                 {activeTab === 'design' && (
                   <ModernDesignTab
+                    campaign={campaign}
+                    setCampaign={setCampaign}
+                  />
+                )}
+                {activeTab === 'form' && (
+                  <ModernFormTab
                     campaign={campaign}
                     setCampaign={setCampaign}
                   />
