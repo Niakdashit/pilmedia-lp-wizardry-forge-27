@@ -1,0 +1,171 @@
+
+import React from 'react';
+import { Plus, Trash2, Palette } from 'lucide-react';
+
+interface WheelGameConfigProps {
+  campaign: any;
+  setCampaign: React.Dispatch<React.SetStateAction<any>>;
+}
+
+const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
+  campaign,
+  setCampaign
+}) => {
+  const segments = campaign.config?.roulette?.segments || [];
+
+  const addSegment = () => {
+    setCampaign((prev: any) => ({
+      ...prev,
+      config: {
+        ...prev.config,
+        roulette: {
+          ...prev.config?.roulette,
+          segments: [
+            ...segments,
+            {
+              label: `Segment ${segments.length + 1}`,
+              chance: 10,
+              color: '#' + Math.floor(Math.random()*16777215).toString(16)
+            }
+          ]
+        }
+      }
+    }));
+  };
+
+  const updateSegment = (index: number, field: string, value: any) => {
+    const updatedSegments = [...segments];
+    updatedSegments[index] = { ...updatedSegments[index], [field]: value };
+    
+    setCampaign((prev: any) => ({
+      ...prev,
+      config: {
+        ...prev.config,
+        roulette: {
+          ...prev.config?.roulette,
+          segments: updatedSegments
+        }
+      }
+    }));
+  };
+
+  const removeSegment = (index: number) => {
+    const updatedSegments = segments.filter((_: any, i: number) => i !== index);
+    setCampaign((prev: any) => ({
+      ...prev,
+      config: {
+        ...prev.config,
+        roulette: {
+          ...prev.config?.roulette,
+          segments: updatedSegments
+        }
+      }
+    }));
+  };
+
+  const themes = [
+    { value: 'default', label: 'Classique' },
+    { value: 'casino', label: 'Casino' },
+    { value: 'luxury', label: 'Luxe' },
+    { value: 'noel', label: 'Noël' },
+    { value: 'halloween', label: 'Halloween' }
+  ];
+
+  return (
+    <div className="space-y-6">
+      {/* Thème de la roue */}
+      <div className="space-y-2">
+        <label className="flex items-center text-sm font-medium text-gray-700">
+          <Palette className="w-4 h-4 mr-2" />
+          Thème de la roue
+        </label>
+        <select
+          value={campaign.config?.roulette?.theme || 'default'}
+          onChange={(e) => setCampaign((prev: any) => ({
+            ...prev,
+            config: {
+              ...prev.config,
+              roulette: {
+                ...prev.config?.roulette,
+                theme: e.target.value
+              }
+            }
+          }))}
+          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
+        >
+          {themes.map((theme) => (
+            <option key={theme.value} value={theme.value}>
+              {theme.label}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      {/* Segments */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <label className="text-sm font-medium text-gray-700">Segments de la roue</label>
+          <button
+            onClick={addSegment}
+            className="flex items-center space-x-1 px-3 py-1 text-sm bg-[#841b60] text-white rounded-lg hover:bg-[#6d164f] transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            <span>Ajouter</span>
+          </button>
+        </div>
+
+        <div className="space-y-3 max-h-60 overflow-y-auto">
+          {segments.map((segment: any, index: number) => (
+            <div key={index} className="p-3 border border-gray-200 rounded-lg space-y-2">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-gray-700">Segment {index + 1}</span>
+                <button
+                  onClick={() => removeSegment(index)}
+                  className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-2">
+                <input
+                  type="text"
+                  value={segment.label || ''}
+                  onChange={(e) => updateSegment(index, 'label', e.target.value)}
+                  placeholder="Texte du segment"
+                  className="px-3 py-2 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-[#841b60] focus:border-transparent"
+                />
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="color"
+                    value={segment.color || '#841b60'}
+                    onChange={(e) => updateSegment(index, 'color', e.target.value)}
+                    className="w-8 h-8 rounded border"
+                  />
+                  <input
+                    type="number"
+                    value={segment.chance || 10}
+                    onChange={(e) => updateSegment(index, 'chance', parseInt(e.target.value))}
+                    placeholder="Chance %"
+                    min="1"
+                    max="100"
+                    className="flex-1 px-2 py-2 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-[#841b60] focus:border-transparent"
+                  />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {segments.length === 0 && (
+          <div className="text-center py-8 text-gray-500">
+            <p className="text-sm">Aucun segment configuré</p>
+            <p className="text-xs">Cliquez sur "Ajouter" pour créer votre premier segment</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default WheelGameConfig;
