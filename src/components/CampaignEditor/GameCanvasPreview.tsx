@@ -63,6 +63,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
             }}
             onFinish={() => {}}
             gameSize={gameSize}
+            key={gameSize} // Force re-render when size changes
           />
         );
       case 'scratch':

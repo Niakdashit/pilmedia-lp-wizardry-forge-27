@@ -1,5 +1,3 @@
-
-
 import React, { useState, useRef, useEffect } from 'react';
 import Modal from '../common/Modal';
 import ValidationMessage from '../common/ValidationMessage';
@@ -134,11 +132,11 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
 
     ctx.clearRect(0, 0, size, size);
 
-    // Bordure externe proportionnelle
+    // Bordure externe avec largeur fixe
     if (theme === 'default') {
       ctx.beginPath();
       ctx.arc(center, center, radius + 8, 0, 2 * Math.PI);
-      ctx.lineWidth = Math.max(4, size * 0.015); // Bordure proportionnelle
+      ctx.lineWidth = 10; // Largeur fixe comme demandé
       ctx.strokeStyle = borderColor;
       ctx.stroke();
     }
@@ -183,8 +181,8 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
       ctx.restore();
     });
 
-    // Cercle central avec taille proportionnelle
-    const centerRadius = Math.max(25, size * 0.08); // Rayon du centre proportionnel
+    // Cercle central avec largeur fixe
+    const centerRadius = 40; // Taille fixe comme demandé
     if (centerImage) {
       const img = new Image();
       img.onload = () => {
@@ -202,7 +200,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
       ctx.fillStyle = '#fff';
       ctx.fill();
       ctx.strokeStyle = borderColor;
-      ctx.lineWidth = Math.max(2, size * 0.008); // Bordure du centre proportionnelle
+      ctx.lineWidth = 2; // Largeur fixe comme demandé
       ctx.stroke();
     }
   };
@@ -382,4 +380,3 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
 };
 
 export default WheelPreview;
-
