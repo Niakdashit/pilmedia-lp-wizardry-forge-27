@@ -109,7 +109,6 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
     if (!headerText?.enabled || !headerText?.text) {
       return null;
     }
-
     const frameStyles = headerText.showFrame ? {
       backgroundColor: headerText.frameColor || '#ffffff',
       border: `1px solid ${headerText.frameBorderColor || '#e5e7eb'}`,
@@ -120,7 +119,6 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
     } : {
       padding: '12px 16px'
     };
-
     return <div className="w-full flex justify-center" style={frameStyles}>
         <p style={{
         color: headerText.color || '#000000',
@@ -156,10 +154,10 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
       padding: '12px 16px'
     };
     return <div className="w-full flex justify-center" style={frameStyles}>
-        <p className={`${getTextSize()} font-medium text-center`} style={{
+        <p style={{
         color: footerText.color || '#000000',
         fontFamily: campaign.design?.fontFamily || 'Inter'
-      }}>
+      }} className="my-0 py-[12px]">
           {footerText.text}
         </p>
       </div>;
