@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Jackpot from '../GameTypes/Jackpot';
 import { Quiz } from '../GameTypes';
@@ -28,7 +27,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   const selectedSize = campaign.gameConfig?.[campaign.type]?.gameSize || 1;
   
   // Définition des tailles prédéfinies
-  const GAME_SIZES = {
+  const GAME_SIZES: Record<number, { width: number; height: number }> = {
     1: { width: 300, height: 200 },
     2: { width: 400, height: 300 },
     3: { width: 500, height: 400 },
