@@ -40,16 +40,26 @@ const TabRoulette: React.FC<TabRouletteProps> = ({
   campaign,
   setCampaign
 }) => {
-  const [segments, setSegments] = useState<Segment[]>(campaign?.config?.roulette?.segments || []);
-  const [centerImage, setCenterImage] = useState<File | null>(null);
+  // Initialiser avec des segments par défaut s'ils n'existent pas
+  const initialSegments = campaign?.config?.roulette?.segments || [
+    { label: 'Prix 1', chance: 25, color: '#ff6b6b', image: null },
+    { label: 'Prix 2', chance: 25, color: '#4ecdc4', image: null },
+    { label: 'Prix 3', chance: 25, color: '#45b7d1', image: null },
+    { label: 'Prix 4', chance: 25, color: '#96ceb4', image: null }
+  ];
+
+  const [segments, setSegments] = useState<Segment[]>(initialSegments);
+  const [centerImage, setCenterImage] = useState<File | null>(campaign?.config?.roulette?.centerImage || null);
   const [rotation] = useState(0);
   const [desiredCount, setDesiredCount] = useState<number>(segments.length);
-  const [theme, setTheme] = useState<'default' | 'promo' | 'food' | 'casino' | 'child' | 'gaming' | 'luxury' | 'halloween' | 'noel'>('default');
-  const [borderColor, setBorderColor] = useState<string>('#841b60');
-  const [pointerColor, setPointerColor] = useState<string>('#841b60');
+  const [theme, setTheme] = useState<'default' | 'promo' | 'food' | 'casino' | 'child' | 'gaming' | 'luxury' | 'halloween' | 'noel'>(campaign?.config?.roulette?.theme || 'default');
+  const [borderColor, setBorderColor] = useState<string>(campaign?.config?.roulette?.borderColor || '#841b60');
+  const [pointerColor, setPointerColor] = useState<string>(campaign?.config?.roulette?.pointerColor || '#841b60');
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const updateCampaign = (newSegments: Segment[], center: File | null) => {
+    console.log('Updating campaign with segments:', newSegments);
+    
     setSegments(newSegments);
     setCenterImage(center);
     setCampaign((prev: any) => ({
@@ -86,6 +96,13 @@ const TabRoulette: React.FC<TabRouletteProps> = ({
     }
   }, [theme, borderColor, pointerColor]);
 
+  // Initialiser les segments au premier chargement
+  useEffect(() => {
+    if (segments.length > 0) {
+      updateCampaign(segments, centerImage);
+    }
+  }, []);
+
   const handleSegmentChange = (index: number, field: keyof Segment, value: string | number) => {
     const updated = [...segments];
     if (field === 'chance') {
@@ -117,7 +134,7 @@ const TabRoulette: React.FC<TabRouletteProps> = ({
   const addSegment = () => {
     const themeColors = getThemeColors(theme);
     const newSegment: Segment = {
-      label: '',
+      label: `Segment ${segments.length + 1}`,
       chance: 0,
       color: themeColors[segments.length % themeColors.length],
       image: null
@@ -139,8 +156,8 @@ const TabRoulette: React.FC<TabRouletteProps> = ({
     
     for (let i = 0; i < count; i++) {
       newSegments.push(segments[i] || {
-        label: '',
-        chance: 0,
+        label: `Segment ${i + 1}`,
+        chance: Math.floor(100 / count),
         color: themeColors[i % themeColors.length],
         image: null
       });
@@ -341,6 +358,19 @@ const TabRoulette: React.FC<TabRouletteProps> = ({
           </button>
         </div>
       ))}
+
+      {/* Aperçu de la roue */}
+      <div className="mt-8">
+        <h3 className="text-lg font-semibold mb-4">Aperçu de la roue</h3>
+        <div className="flex justify-center">
+          <canvas
+            ref={canvasRef}
+            width={300}
+            height={300}
+            className="border rounded-full shadow-lg"
+          />
+        </div>
+      </div>
     </div>
   );
 };

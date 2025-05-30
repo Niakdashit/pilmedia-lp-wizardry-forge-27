@@ -25,8 +25,12 @@ const Wheel: React.FC<WheelProps> = ({
   const [isSpinning, setIsSpinning] = useState(false);
   const [selectedStyle, setSelectedStyle] = useState('roulette_casino.svg');
 
-  const prizes = config?.prizes || ['Prix 1', 'Prix 2', 'Prix 3', 'Prix 4'];
+  // Récupération des données de configuration - priorité aux segments existants
+  const segments = config?.segments || config?.prizes || ['Prix 1', 'Prix 2', 'Prix 3', 'Prix 4'];
   const colors = config?.colors || ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4'];
+
+  console.log('Wheel config:', config);
+  console.log('Wheel segments:', segments);
 
   const spin = () => {
     if (!wheelRef.current || isSpinning) return;
@@ -39,9 +43,9 @@ const Wheel: React.FC<WheelProps> = ({
     setTimeout(() => {
       setIsSpinning(false);
       const normalizedRotation = (randomRotation % 360 + 360) % 360;
-      const slice = 360 / prizes.length;
-      const prizeIndex = prizes.length - 1 - Math.floor(normalizedRotation / slice);
-      const selectedPrize = prizes[(prizeIndex + prizes.length) % prizes.length] || prizes[0];
+      const slice = 360 / segments.length;
+      const prizeIndex = segments.length - 1 - Math.floor(normalizedRotation / slice);
+      const selectedPrize = segments[(prizeIndex + segments.length) % segments.length] || segments[0];
       onComplete?.(selectedPrize);
 
       if (onFinish) {
@@ -57,6 +61,7 @@ const Wheel: React.FC<WheelProps> = ({
     }
   }, [isSpinning]);
 
+  // Mode éditeur - afficher seulement le sélecteur de style
   if (!isPreview) {
     return (
       <div className="space-y-6">
@@ -68,6 +73,7 @@ const Wheel: React.FC<WheelProps> = ({
     );
   }
 
+  // Mode preview - toujours afficher la roue
   return (
     <div
       className={`flex flex-col items-center justify-center w-full h-full ${className || ''}`}
@@ -97,19 +103,25 @@ const Wheel: React.FC<WheelProps> = ({
             transition: 'transform 3s cubic-bezier(.17,.67,.83,.67)',
           }}
         >
-          {prizes.map((prize: string, index: number) => (
-            <div
-              key={index}
-              className="absolute w-1/2 h-1/2 origin-bottom-right flex items-center justify-center text-white font-bold"
-              style={{
-                backgroundColor: colors[index % colors.length],
-                transform: `rotate(${(360 / prizes.length) * index}deg)`,
-                clipPath: `polygon(0 0, ${100 / prizes.length}% 0, 0 100%)`
-              }}
-            >
-              <span className="transform -rotate-45 text-xs md:text-sm truncate">{prize}</span>
-            </div>
-          ))}
+          {segments.map((segment: any, index: number) => {
+            // Gérer le cas où segment est un objet ou une string
+            const segmentLabel = typeof segment === 'object' ? segment.label : segment;
+            const segmentColor = typeof segment === 'object' ? segment.color : colors[index % colors.length];
+            
+            return (
+              <div
+                key={index}
+                className="absolute w-1/2 h-1/2 origin-bottom-right flex items-center justify-center text-white font-bold"
+                style={{
+                  backgroundColor: segmentColor,
+                  transform: `rotate(${(360 / segments.length) * index}deg)`,
+                  clipPath: `polygon(0 0, ${100 / segments.length}% 0, 0 100%)`
+                }}
+              >
+                <span className="transform -rotate-45 text-xs md:text-sm truncate">{segmentLabel}</span>
+              </div>
+            );
+          })}
         </div>
         {/* Curseur/flèche */}
         <div

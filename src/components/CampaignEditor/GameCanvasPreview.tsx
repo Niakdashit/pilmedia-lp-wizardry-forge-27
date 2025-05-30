@@ -22,7 +22,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   const buttonColor = campaign.gameConfig?.[campaign.type]?.buttonColor || '#ec4899';
   
   const selectedTemplateId = campaign?.design?.template || campaign?.gameConfig?.jackpot?.template;
-  const selectedSize = campaign.gameConfig?.[campaign.type]?.gameSize || 1;
+  const selectedSize: number = campaign.gameConfig?.[campaign.type]?.gameSize || 1;
   
   const GAME_SIZES: Record<number, { width: number; height: number }> = {
     1: { width: 300, height: 200 },
@@ -32,6 +32,11 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   };
 
   const currentSize = GAME_SIZES[selectedSize] || GAME_SIZES[1];
+
+  console.log('GameCanvasPreview - campaign:', campaign);
+  console.log('GameCanvasPreview - campaign.type:', campaign.type);
+  console.log('GameCanvasPreview - wheel config:', campaign.gameConfig?.wheel);
+  console.log('GameCanvasPreview - roulette config:', campaign.config?.roulette);
 
   const renderGame = () => {
     // Props communes pour tous les jeux avec taille prédéfinie
@@ -69,9 +74,25 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
           />
         );
       case 'wheel':
+        // Fusionner les configurations de différentes sources
+        const wheelConfig = {
+          ...campaign.gameConfig?.wheel,
+          ...campaign.config?.roulette,
+          // S'assurer qu'on a des segments par défaut si aucune configuration
+          segments: campaign.config?.roulette?.segments || 
+                   campaign.gameConfig?.wheel?.segments || 
+                   campaign.gameConfig?.wheel?.prizes ||
+                   ['Segment 1', 'Segment 2', 'Segment 3', 'Segment 4'],
+          colors: campaign.config?.roulette?.colors || 
+                 campaign.gameConfig?.wheel?.colors ||
+                 ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4']
+        };
+        
+        console.log('Final wheel config:', wheelConfig);
+        
         return (
           <Wheel
-            config={campaign.gameConfig?.wheel || {}}
+            config={wheelConfig}
             isPreview={true}
             previewMode="desktop"
             {...gameProps}
