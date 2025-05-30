@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import CampaignEditorHeader from '../components/CampaignEditor/CampaignEditorHeader';
@@ -199,10 +198,10 @@ const CampaignEditor: React.FC = () => {
     }
   }, [id, isNewCampaign]);
 
-  // Pour les quiz, rediriger vers l'onglet content pour configuration immédiate
+  // Pour les quiz, rediriger vers l'onglet questions pour configuration immédiate
   useEffect(() => {
     if (campaignType === 'quiz' && isNewCampaign) {
-      setActiveTab('content');
+      setActiveTab('questions');
     }
   }, [campaignType, isNewCampaign]);
 
@@ -238,7 +237,11 @@ const CampaignEditor: React.FC = () => {
 
       <div className="flex flex-1 overflow-hidden bg-white rounded-xl shadow-sm">
         <div className="flex flex-col w-full">
-          <CampaignEditorTabs activeTab={activeTab} onTabChange={setActiveTab} />
+          <CampaignEditorTabs 
+            activeTab={activeTab} 
+            onTabChange={setActiveTab}
+            campaignType={campaign.type}
+          />
 
           {activeTab === 'mobile' ? <CampaignMobile campaign={campaign} setCampaign={setCampaign} /> : activeTab === 'form' ? <FormEditor formFields={campaign.formFields || []} setFormFields={fields => setCampaign((prev: any) => ({
           ...prev,
