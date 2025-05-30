@@ -102,66 +102,61 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
     const containerStyle: React.CSSProperties = {
       position: 'absolute',
       display: 'flex',
-      flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
       gap: '16px'
     };
 
-    // Calculer les dimensions sûres en tenant compte des marges
-    const safeMargin = 40; // Marge de sécurité
-    const maxWidth = `calc(100vw - ${safeMargin * 2}px)`;
-    const maxHeight = `calc(100vh - ${safeMargin * 2}px)`;
+    const safeMargin = 20; // Marge réduite pour être vraiment aux bords
 
     switch (gamePosition) {
       case 'top':
         return { 
           ...containerStyle, 
+          flexDirection: 'column-reverse', // Bouton au-dessus
           top: `${safeMargin}px`, 
           left: '50%', 
           transform: 'translateX(-50%)',
-          maxWidth,
           width: `${gameDimensions.width}px`,
           height: `${gameDimensions.height}px`
         };
       case 'bottom':
         return { 
           ...containerStyle, 
+          flexDirection: 'column', // Bouton en dessous
           bottom: `${safeMargin}px`, 
           left: '50%', 
           transform: 'translateX(-50%)',
-          maxWidth,
           width: `${gameDimensions.width}px`,
           height: `${gameDimensions.height}px`
         };
       case 'left':
         return { 
           ...containerStyle, 
+          flexDirection: 'row', // Bouton à droite de la roue
           left: `${safeMargin}px`, 
           top: '50%', 
           transform: 'translateY(-50%)',
-          maxHeight,
           width: `${gameDimensions.width}px`,
           height: `${gameDimensions.height}px`
         };
       case 'right':
         return { 
           ...containerStyle, 
+          flexDirection: 'row-reverse', // Bouton à gauche de la roue
           right: `${safeMargin}px`, 
           top: '50%', 
           transform: 'translateY(-50%)',
-          maxHeight,
           width: `${gameDimensions.width}px`,
           height: `${gameDimensions.height}px`
         };
-      default: // center
+      default: // center - vraiment au centre
         return { 
           ...containerStyle, 
+          flexDirection: 'column', // Bouton en dessous
           top: '50%', 
           left: '50%', 
           transform: 'translate(-50%, -50%)',
-          maxWidth,
-          maxHeight,
           width: `${gameDimensions.width}px`,
           height: `${gameDimensions.height}px`
         };
