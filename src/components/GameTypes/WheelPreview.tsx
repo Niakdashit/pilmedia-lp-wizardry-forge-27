@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import Modal from '../common/Modal';
 import ValidationMessage from '../common/ValidationMessage';
@@ -101,15 +100,15 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   const { getGameDimensions } = useGameSize(gameSize);
   const gameDimensions = getGameDimensions();
   
-  // Check if we're on mobile/tablet and position is left/right for intentional cropping
+  // Check if we're on mobile/tablet and position is left/right for 50% cropping
   const isMobileTablet = previewDevice === 'mobile' || previewDevice === 'tablet';
   const isLeftRightPosition = gamePosition === 'left' || gamePosition === 'right';
   const shouldCropWheel = isMobileTablet && isLeftRightPosition;
   
-  // Adjust canvas size for cropping
+  // Adjust canvas and container sizes for cropping
   const baseCanvasSize = Math.min(gameDimensions.width, gameDimensions.height) - 60;
-  const canvasSize = shouldCropWheel ? baseCanvasSize : baseCanvasSize;
-  const displayWidth = shouldCropWheel ? baseCanvasSize * 0.5 : baseCanvasSize;
+  const canvasSize = baseCanvasSize;
+  const containerWidth = shouldCropWheel ? baseCanvasSize * 0.5 : baseCanvasSize;
   
   // Taille du pointeur proportionnelle
   const pointerSize = Math.max(30, canvasSize * 0.08);
@@ -160,7 +159,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
         return { 
           ...containerStyle, 
           flexDirection: 'row' as const,
-          left: shouldCropWheel ? `-${displayWidth * 0.5}px` : `${safeMargin}px`, 
+          left: shouldCropWheel ? `-${containerWidth * 0.5}px` : `${safeMargin}px`, 
           top: '50%', 
           transform: 'translateY(-50%)',
           width: `${gameDimensions.width}px`,
@@ -170,7 +169,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
         return { 
           ...containerStyle, 
           flexDirection: 'row-reverse' as const,
-          right: shouldCropWheel ? `-${displayWidth * 0.5}px` : `${safeMargin}px`, 
+          right: shouldCropWheel ? `-${containerWidth * 0.5}px` : `${safeMargin}px`, 
           top: '50%', 
           transform: 'translateY(-50%)',
           width: `${gameDimensions.width}px`,
@@ -187,44 +186,6 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
           height: `${gameDimensions.height}px`
         };
     }
-  };
-
-  // Get cropped area text styles for left/right positions
-  const getCroppedAreaTextStyles = () => {
-    if (!shouldCropWheel || !campaign.design?.croppedAreaText?.enabled) return null;
-
-    const croppedText = campaign.design.croppedAreaText;
-    const textStyle: React.CSSProperties = {
-      position: 'absolute',
-      zIndex: 15,
-      color: croppedText.color || '#000000',
-      fontSize: croppedText.size === 'small' ? '14px' : croppedText.size === 'large' ? '24px' : '18px',
-      fontWeight: croppedText.bold ? 'bold' : 'normal',
-      fontStyle: croppedText.italic ? 'italic' : 'normal',
-      textDecoration: croppedText.underline ? 'underline' : 'none',
-      fontFamily: campaign.design?.fontFamily || 'Inter',
-      maxWidth: `${displayWidth * 0.8}px`,
-      textAlign: 'center',
-      wordWrap: 'break-word'
-    };
-
-    if (gamePosition === 'left') {
-      return {
-        ...textStyle,
-        right: '10px',
-        top: '50%',
-        transform: 'translateY(-50%)'
-      };
-    } else if (gamePosition === 'right') {
-      return {
-        ...textStyle,
-        left: '10px',
-        top: '50%',
-        transform: 'translateY(-50%)'
-      };
-    }
-
-    return null;
   };
 
   const handleFormSubmit = async (formData: Record<string, string>) => {
@@ -413,16 +374,15 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
     }
   };
 
-  const croppedAreaTextStyles = getCroppedAreaTextStyles();
-
   return (
     <div style={getAbsolutePositionStyles()}>
       <div style={{ 
         position: 'relative', 
-        width: displayWidth, 
+        width: containerWidth, 
         height: canvasSize,
         overflow: shouldCropWheel ? 'hidden' : 'visible'
       }}>
+        {/* Shadow */}
         <div 
           style={{
             position: 'absolute',
@@ -437,6 +397,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
           }}
         />
         
+        {/* Canvas */}
         <canvas
           ref={canvasRef}
           width={canvasSize}
@@ -450,6 +411,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
           className="rounded-full"
         />
         
+        {/* Theme decoration */}
         {theme !== 'default' && wheelDecorByTheme[theme] && (
           <img
             src={wheelDecorByTheme[theme]}
@@ -467,6 +429,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
           />
         )}
         
+        {/* Pointer */}
         <div
           style={{
             position: 'absolute',
@@ -492,13 +455,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
           </svg>
         </div>
 
-        {/* Cropped area text */}
-        {croppedAreaTextStyles && (
-          <div style={croppedAreaTextStyles}>
-            {campaign.design?.croppedAreaText?.text || 'Texte personnalisé'}
-          </div>
-        )}
-
+        {/* Click overlay for non-validated form */}
         {!formValidated && (
           <div 
             onClick={handleWheelClick}
@@ -513,6 +470,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
         />
       </div>
 
+      {/* Button positioned on the visible side */}
       {buttonConfig.visible && (
         <button
           onClick={handleWheelClick}
@@ -530,6 +488,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
         </button>
       )}
 
+      {/* Form modal */}
       {showFormModal && (
         <Modal
           onClose={() => setShowFormModal(false)}
