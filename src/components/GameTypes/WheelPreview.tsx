@@ -113,7 +113,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
       case 'top':
         return { 
           ...containerStyle, 
-          flexDirection: 'column-reverse', // Bouton au-dessus
+          flexDirection: 'column-reverse' as const, // Bouton au-dessus
           top: `${safeMargin}px`, 
           left: '50%', 
           transform: 'translateX(-50%)',
@@ -123,7 +123,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
       case 'bottom':
         return { 
           ...containerStyle, 
-          flexDirection: 'column', // Bouton en dessous
+          flexDirection: 'column' as const, // Bouton en dessous
           bottom: `${safeMargin}px`, 
           left: '50%', 
           transform: 'translateX(-50%)',
@@ -133,7 +133,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
       case 'left':
         return { 
           ...containerStyle, 
-          flexDirection: 'row', // Bouton à droite de la roue
+          flexDirection: 'row' as const, // Bouton à droite de la roue
           left: `${safeMargin}px`, 
           top: '50%', 
           transform: 'translateY(-50%)',
@@ -143,7 +143,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
       case 'right':
         return { 
           ...containerStyle, 
-          flexDirection: 'row-reverse', // Bouton à gauche de la roue
+          flexDirection: 'row-reverse' as const, // Bouton à gauche de la roue
           right: `${safeMargin}px`, 
           top: '50%', 
           transform: 'translateY(-50%)',
@@ -153,7 +153,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
       default: // center - vraiment au centre
         return { 
           ...containerStyle, 
-          flexDirection: 'column', // Bouton en dessous
+          flexDirection: 'column' as const, // Bouton en dessous
           top: '50%', 
           left: '50%', 
           transform: 'translate(-50%, -50%)',
