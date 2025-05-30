@@ -105,8 +105,8 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   const isLeftRightPosition = gamePosition === 'left' || gamePosition === 'right';
   const shouldCropWheel = isMobileTablet && isLeftRightPosition;
   
-  // FIXED wheel size for mobile/tablet cropping - COMPLETELY INDEPENDENT of any other element
-  const FIXED_WHEEL_SIZE = 320;
+  // Fixed wheel size for mobile/tablet cropping - completely independent
+  const FIXED_WHEEL_SIZE = 320; // Taille fixe pour garantir la cohérence
   const canvasSize = shouldCropWheel ? FIXED_WHEEL_SIZE : Math.min(gameDimensions.width, gameDimensions.height) - 60;
   const containerWidth = shouldCropWheel ? FIXED_WHEEL_SIZE * 0.5 : canvasSize;
   
@@ -121,18 +121,73 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   const fields: FieldConfig[] = Array.isArray(campaign.formFields) && campaign.formFields.length > 0
     ? campaign.formFields : DEFAULT_FIELDS;
 
-  // Get absolute position styles for wheel - COMPLETELY INDEPENDENT
-  const getWheelPositionStyles = () => {
+  // Get absolute position styles based on gamePosition - COMPLETELY INDEPENDENT
+  const getAbsolutePositionStyles = () => {
     if (!shouldCropWheel) {
-      // Desktop behavior - relative positioning
-      return {
-        position: 'relative' as const,
+      // Desktop behavior - keep existing relative positioning
+      const containerStyle: React.CSSProperties = {
+        position: 'absolute',
         display: 'flex',
-        flexDirection: 'column' as const,
         alignItems: 'center',
+        justifyContent: 'center',
         gap: '16px',
         zIndex: 10
       };
+
+      const safeMargin = 20;
+
+      switch (gamePosition) {
+        case 'top':
+          return { 
+            ...containerStyle, 
+            flexDirection: 'column-reverse' as const,
+            top: `${safeMargin}px`, 
+            left: '50%', 
+            transform: 'translateX(-50%)',
+            width: `${gameDimensions.width}px`,
+            height: `${gameDimensions.height}px`
+          };
+        case 'bottom':
+          return { 
+            ...containerStyle, 
+            flexDirection: 'column' as const,
+            bottom: `${safeMargin}px`, 
+            left: '50%', 
+            transform: 'translateX(-50%)',
+            width: `${gameDimensions.width}px`,
+            height: `${gameDimensions.height}px`
+          };
+        case 'left':
+          return { 
+            ...containerStyle, 
+            flexDirection: 'row' as const,
+            left: `${safeMargin}px`, 
+            top: '50%', 
+            transform: 'translateY(-50%)',
+            width: `${gameDimensions.width}px`,
+            height: `${gameDimensions.height}px`
+          };
+        case 'right':
+          return { 
+            ...containerStyle, 
+            flexDirection: 'row-reverse' as const,
+            right: `${safeMargin}px`, 
+            top: '50%', 
+            transform: 'translateY(-50%)',
+            width: `${gameDimensions.width}px`,
+            height: `${gameDimensions.height}px`
+          };
+        default: // center
+          return { 
+            ...containerStyle, 
+            flexDirection: 'column' as const,
+            top: '50%', 
+            left: '50%', 
+            transform: 'translate(-50%, -50%)',
+            width: `${gameDimensions.width}px`,
+            height: `${gameDimensions.height}px`
+          };
+      }
     } else {
       // Mobile/Tablet 50% crop behavior - FIXED ABSOLUTE POSITIONS
       return {
@@ -156,7 +211,6 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   const getButtonPositionStyles = () => {
     if (!shouldCropWheel || !buttonConfig.visible) return {};
 
-    // FIXED POSITION - never moves regardless of button size
     return {
       position: 'absolute' as const,
       bottom: '20px',
@@ -335,7 +389,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
 
   if (segments.length === 0) {
     return (
-      <div style={getWheelPositionStyles()}>
+      <div style={getAbsolutePositionStyles()}>
         <p>Aucun segment configuré pour la roue</p>
       </div>
     );
@@ -354,8 +408,8 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
 
   return (
     <>
-      {/* Wheel Container - ABSOLUTELY FIXED POSITION */}
-      <div style={getWheelPositionStyles()}>
+      {/* Wheel Container - FIXED POSITION */}
+      <div style={getAbsolutePositionStyles()}>
         <div style={{ 
           position: 'relative', 
           width: containerWidth, 
@@ -451,7 +505,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
         </div>
       </div>
 
-      {/* Button - INDEPENDENT FIXED POSITION - NEVER MOVES */}
+      {/* Button - INDEPENDENT FIXED POSITION */}
       {buttonConfig.visible && shouldCropWheel && (
         <div style={getButtonPositionStyles()}>
           <button
