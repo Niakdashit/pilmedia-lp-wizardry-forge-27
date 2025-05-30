@@ -4,7 +4,6 @@ import { X, Monitor, Tablet, Smartphone } from 'lucide-react';
 import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
 import FunnelStandard from '../funnels/FunnelStandard';
 import MobilePreview from './Mobile/MobilePreview';
-import WheelPreview from '../GameTypes/WheelPreview';
 
 interface PreviewModalProps {
   isOpen: boolean;
@@ -14,102 +13,18 @@ interface PreviewModalProps {
 
 const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }) => {
   const [selectedDevice, setSelectedDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
-  const [currentStep, setCurrentStep] = useState<'home' | 'form' | 'game' | 'end'>('home');
 
   if (!isOpen) return null;
 
   const getPreviewFunnel = () => {
-    // Pour les campagnes de type wheel en mode desktop, utiliser directement WheelPreview
-    if (campaign.type === 'wheel' && selectedDevice === 'desktop') {
-      return (
-        <div className="flex flex-col items-center justify-center min-h-screen p-8">
-          {currentStep === 'home' && (
-            <div className="text-center mb-8">
-              <h1 className="text-4xl font-bold mb-4" style={{ color: campaign.design?.titleColor || '#000' }}>
-                {campaign.screens?.[1]?.title || 'Bienvenue !'}
-              </h1>
-              <p className="text-xl mb-6" style={{ color: campaign.design?.titleColor || '#666' }}>
-                {campaign.screens?.[1]?.description || 'Participez à notre jeu et tentez de gagner !'}
-              </p>
-              <button
-                onClick={() => setCurrentStep('form')}
-                className="px-6 py-3 rounded-lg text-white font-medium"
-                style={{ backgroundColor: campaign.design?.buttonColor || '#841b60' }}
-              >
-                {campaign.screens?.[1]?.buttonText || 'Participer'}
-              </button>
-            </div>
-          )}
-
-          {currentStep === 'form' && (
-            <div className="text-center mb-8">
-              <h2 className="text-3xl font-bold mb-6">Vos informations</h2>
-              <div className="space-y-4 max-w-md mx-auto">
-                {campaign.formFields?.map((field: any) => (
-                  <input
-                    key={field.id}
-                    type={field.type}
-                    placeholder={field.label}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-                    readOnly
-                  />
-                ))}
-                <button
-                  onClick={() => setCurrentStep('game')}
-                  className="w-full px-6 py-3 rounded-lg text-white font-medium"
-                  style={{ backgroundColor: campaign.design?.buttonColor || '#841b60' }}
-                >
-                  Continuer
-                </button>
-              </div>
-            </div>
-          )}
-
-          {currentStep === 'game' && (
-            <div className="text-center">
-              <h2 className="text-3xl font-bold mb-6">Tentez votre chance !</h2>
-              <WheelPreview
-                campaign={campaign}
-                config={{
-                  mode: 'instant_winner' as const,
-                  winProbability: campaign.gameConfig?.wheel?.winProbability || 0.1,
-                  maxWinners: campaign.gameConfig?.wheel?.maxWinners,
-                  winnersCount: 0
-                }}
-                onFinish={() => setCurrentStep('end')}
-              />
-            </div>
-          )}
-
-          {currentStep === 'end' && (
-            <div className="text-center">
-              <h2 className="text-3xl font-bold mb-6" style={{ color: campaign.design?.titleColor || '#000' }}>
-                {campaign.screens?.[3]?.title || 'Félicitations !'}
-              </h2>
-              <p className="text-xl mb-6" style={{ color: campaign.design?.titleColor || '#666' }}>
-                {campaign.screens?.[3]?.description || 'Merci pour votre participation !'}
-              </p>
-              <button
-                onClick={() => setCurrentStep('home')}
-                className="px-6 py-3 rounded-lg text-white font-medium"
-                style={{ backgroundColor: campaign.design?.buttonColor || '#841b60' }}
-              >
-                Rejouer
-              </button>
-            </div>
-          )}
-        </div>
-      );
-    }
-
-    // Utiliser le tunnel complet selon le type de campagne pour les autres cas
+    // Utiliser FunnelUnlockedGame pour les types de campagne compatibles
     if (['scratch', 'jackpot', 'dice', 'wheel'].includes(campaign.type)) {
       return <FunnelUnlockedGame campaign={campaign} />;
     }
     return <FunnelStandard campaign={campaign} />;
   };
 
-  // Récupérer l'image de fond générale (sans duplication avec le jeu)
+  // Récupérer l'image de fond générale
   const backgroundImage = campaign.design?.backgroundImage;
 
   const getBackgroundStyle = () => {
@@ -120,7 +35,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
       backgroundColor: campaign.design?.background || '#ebf4f7'
     };
 
-    // Appliquer l'image de fond seulement en mode desktop et pour les types compatibles
+    // Appliquer l'image de fond seulement en mode desktop
     if (backgroundImage && selectedDevice === 'desktop') {
       style.backgroundImage = `url(${backgroundImage})`;
       style.backgroundSize = 'cover';
@@ -140,14 +55,35 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
     </div>
   );
 
-  const renderMobilePreview = () => (
-    <div className="w-full h-full flex items-center justify-center p-4">
-      <MobilePreview
-        campaign={campaign}
-        previewMode={selectedDevice === 'tablet' ? 'tablet' : 'mobile'}
-      />
-    </div>
-  );
+  const renderMobilePreview = () => {
+    // Pour mobile et tablette, utiliser FunnelUnlockedGame avec la config mobile
+    if (['scratch', 'jackpot', 'dice', 'wheel'].includes(campaign.type)) {
+      return (
+        <div className="w-full h-full flex items-center justify-center p-4">
+          <div className="w-full max-w-md">
+            <FunnelUnlockedGame 
+              campaign={campaign} 
+              modalContained={true}
+              mobileConfig={{
+                ...campaign.mobileConfig,
+                contrastBackground: campaign.screens?.[2]?.contrastBackground
+              }}
+            />
+          </div>
+        </div>
+      );
+    }
+    
+    // Fallback pour les autres types
+    return (
+      <div className="w-full h-full flex items-center justify-center p-4">
+        <MobilePreview
+          campaign={campaign}
+          previewMode={selectedDevice === 'tablet' ? 'tablet' : 'mobile'}
+        />
+      </div>
+    );
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
@@ -192,23 +128,6 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
                 <span>Mobile</span>
               </button>
             </div>
-
-            {/* Step Navigation pour les campagnes wheel en mode desktop */}
-            {campaign.type === 'wheel' && selectedDevice === 'desktop' && (
-              <div className="flex items-center space-x-2 ml-4">
-                <span className="text-sm text-gray-600">Étape:</span>
-                <select
-                  value={currentStep}
-                  onChange={(e) => setCurrentStep(e.target.value as any)}
-                  className="px-3 py-1 border border-gray-300 rounded-md text-sm"
-                >
-                  <option value="home">Accueil</option>
-                  <option value="form">Formulaire</option>
-                  <option value="game">Jeu</option>
-                  <option value="end">Fin</option>
-                </select>
-              </div>
-            )}
           </div>
 
           <button
