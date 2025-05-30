@@ -100,20 +100,21 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   // Get absolute position styles based on gamePosition
   const getAbsolutePositionStyles = () => {
     const containerStyle: React.CSSProperties = {
-      position: 'absolute',
+      position: 'fixed', // Utiliser fixed au lieu d'absolute pour vraiment centrer
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      gap: '16px'
+      gap: '16px',
+      zIndex: 10
     };
 
-    const safeMargin = 20; // Marge réduite pour être vraiment aux bords
+    const safeMargin = 20;
 
     switch (gamePosition) {
       case 'top':
         return { 
           ...containerStyle, 
-          flexDirection: 'column-reverse' as const, // Bouton au-dessus
+          flexDirection: 'column-reverse' as const,
           top: `${safeMargin}px`, 
           left: '50%', 
           transform: 'translateX(-50%)',
@@ -123,7 +124,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
       case 'bottom':
         return { 
           ...containerStyle, 
-          flexDirection: 'column' as const, // Bouton en dessous
+          flexDirection: 'column' as const,
           bottom: `${safeMargin}px`, 
           left: '50%', 
           transform: 'translateX(-50%)',
@@ -133,7 +134,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
       case 'left':
         return { 
           ...containerStyle, 
-          flexDirection: 'row' as const, // Bouton à droite de la roue
+          flexDirection: 'row' as const,
           left: `${safeMargin}px`, 
           top: '50%', 
           transform: 'translateY(-50%)',
@@ -143,17 +144,17 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
       case 'right':
         return { 
           ...containerStyle, 
-          flexDirection: 'row-reverse' as const, // Bouton à gauche de la roue
+          flexDirection: 'row-reverse' as const,
           right: `${safeMargin}px`, 
           top: '50%', 
           transform: 'translateY(-50%)',
           width: `${gameDimensions.width}px`,
           height: `${gameDimensions.height}px`
         };
-      default: // center - vraiment au centre
+      default: // center - vraiment au centre de l'écran
         return { 
           ...containerStyle, 
-          flexDirection: 'column' as const, // Bouton en dessous
+          flexDirection: 'column' as const,
           top: '50%', 
           left: '50%', 
           transform: 'translate(-50%, -50%)',
