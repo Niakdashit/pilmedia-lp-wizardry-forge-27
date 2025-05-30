@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import Modal from '../common/Modal';
 import ValidationMessage from '../common/ValidationMessage';
@@ -112,7 +113,12 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   const fields: FieldConfig[] = Array.isArray(campaign.formFields) && campaign.formFields.length > 0
     ? campaign.formFields : DEFAULT_FIELDS;
 
-  // Get absolute position styles based on gamePosition
+  // Check if we're on mobile or tablet
+  const isMobileOrTablet = () => {
+    return window.innerWidth <= 1024; // Standard tablet breakpoint
+  };
+
+  // Get absolute position styles based on gamePosition with mobile/tablet fixes
   const getAbsolutePositionStyles = () => {
     const containerStyle: React.CSSProperties = {
       position: 'absolute',
@@ -124,6 +130,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
     };
 
     const safeMargin = 20;
+    const isMobile = isMobileOrTablet();
 
     switch (gamePosition) {
       case 'top':
@@ -147,6 +154,18 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
           height: `${gameDimensions.height}px`
         };
       case 'left':
+        // Fix for mobile/tablet: ensure the wheel is fully visible
+        if (isMobile) {
+          return { 
+            ...containerStyle, 
+            flexDirection: 'column' as const,
+            left: '50%', 
+            top: '50%', 
+            transform: 'translate(-50%, -50%)',
+            width: `${Math.min(gameDimensions.width, window.innerWidth - 40)}px`,
+            height: `${gameDimensions.height}px`
+          };
+        }
         return { 
           ...containerStyle, 
           flexDirection: 'row' as const,
@@ -157,6 +176,18 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
           height: `${gameDimensions.height}px`
         };
       case 'right':
+        // Fix for mobile/tablet: ensure the wheel is fully visible
+        if (isMobile) {
+          return { 
+            ...containerStyle, 
+            flexDirection: 'column' as const,
+            left: '50%', 
+            top: '50%', 
+            transform: 'translate(-50%, -50%)',
+            width: `${Math.min(gameDimensions.width, window.innerWidth - 40)}px`,
+            height: `${gameDimensions.height}px`
+          };
+        }
         return { 
           ...containerStyle, 
           flexDirection: 'row-reverse' as const,
@@ -351,17 +382,28 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
     );
   }
 
+  // Calculate responsive canvas size for mobile/tablet
+  const getResponsiveCanvasSize = () => {
+    if (isMobileOrTablet() && (gamePosition === 'left' || gamePosition === 'right')) {
+      // Ensure the canvas fits within the viewport
+      return Math.min(canvasSize, window.innerWidth - 80);
+    }
+    return canvasSize;
+  };
+
+  const responsiveCanvasSize = getResponsiveCanvasSize();
+
   // Don't render button if it's set to invisible
   if (!buttonConfig.visible) {
     return (
       <div style={getAbsolutePositionStyles()}>
-        <div style={{ position: 'relative', width: canvasSize, height: canvasSize }}>
+        <div style={{ position: 'relative', width: responsiveCanvasSize, height: responsiveCanvasSize }}>
           {/* Conteneur pour l'ombre - SOUS la roue */}
           <div 
             style={{
               position: 'absolute',
-              width: canvasSize - 20,
-              height: canvasSize - 20,
+              width: responsiveCanvasSize - 20,
+              height: responsiveCanvasSize - 20,
               left: '10px',
               top: '15px',
               borderRadius: '50%',
@@ -373,8 +415,8 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
         
           <canvas
             ref={canvasRef}
-            width={canvasSize}
-            height={canvasSize}
+            width={responsiveCanvasSize}
+            height={responsiveCanvasSize}
             style={{
               position: 'absolute',
               left: 0,
@@ -392,8 +434,8 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
                 position: 'absolute',
                 left: 0,
                 top: 0,
-                width: canvasSize,
-                height: canvasSize,
+                width: responsiveCanvasSize,
+                height: responsiveCanvasSize,
                 zIndex: 2,
                 pointerEvents: 'none',
               }}
@@ -404,7 +446,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
           <div
             style={{
               position: 'absolute',
-              left: canvasSize / 2 - pointerSize / 2,
+              left: responsiveCanvasSize / 2 - pointerSize / 2,
               top: -pointerSize * 0.6,
               width: pointerSize,
               height: pointerSize * 1.5,
@@ -457,13 +499,13 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
 
   return (
     <div style={getAbsolutePositionStyles()}>
-      <div style={{ position: 'relative', width: canvasSize, height: canvasSize }}>
+      <div style={{ position: 'relative', width: responsiveCanvasSize, height: responsiveCanvasSize }}>
         {/* Conteneur pour l'ombre - SOUS la roue */}
         <div 
           style={{
             position: 'absolute',
-            width: canvasSize - 20,
-            height: canvasSize - 20,
+            width: responsiveCanvasSize - 20,
+            height: responsiveCanvasSize - 20,
             left: '10px',
             top: '15px',
             borderRadius: '50%',
@@ -475,8 +517,8 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
         
         <canvas
           ref={canvasRef}
-          width={canvasSize}
-          height={canvasSize}
+          width={responsiveCanvasSize}
+          height={responsiveCanvasSize}
           style={{
             position: 'absolute',
             left: 0,
@@ -494,8 +536,8 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
               position: 'absolute',
               left: 0,
               top: 0,
-              width: canvasSize,
-              height: canvasSize,
+              width: responsiveCanvasSize,
+              height: responsiveCanvasSize,
               zIndex: 2,
               pointerEvents: 'none',
             }}
@@ -506,7 +548,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
         <div
           style={{
             position: 'absolute',
-            left: canvasSize / 2 - pointerSize / 2,
+            left: responsiveCanvasSize / 2 - pointerSize / 2,
             top: -pointerSize * 0.6,
             width: pointerSize,
             height: pointerSize * 1.5,
