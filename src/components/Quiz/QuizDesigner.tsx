@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Palette, Type, Image as ImageIcon, Sparkles, Eye, Monitor, Smartphone } from 'lucide-react';
+import { Palette, Type, Image as ImageIcon, Sparkles, Monitor, Smartphone } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 interface QuizDesign {

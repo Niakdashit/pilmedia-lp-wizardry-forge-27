@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable, DropResult, DroppableProvided, DraggableProvided, DraggableStateSnapshot } from 'react-beautiful-dnd';
 import { Plus, GripVertical, Trash2, Copy, Edit3, Clock, HelpCircle, Wand2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -73,7 +72,7 @@ const QuizEditor: React.FC<QuizEditorProps> = ({ questions, onQuestionsChange })
     onQuestionsChange([...questions, duplicate]);
   };
 
-  const onDragEnd = (result: any) => {
+  const onDragEnd = (result: DropResult) => {
     if (!result.destination) return;
 
     const newQuestions = Array.from(questions);
@@ -88,7 +87,7 @@ const QuizEditor: React.FC<QuizEditorProps> = ({ questions, onQuestionsChange })
 
     return (
       <Draggable draggableId={question.id} index={index}>
-        {(provided, snapshot) => (
+        {(provided: DraggableProvided, snapshot: DraggableStateSnapshot) => (
           <motion.div
             ref={provided.innerRef}
             {...provided.draggableProps}
@@ -339,7 +338,7 @@ const QuizEditor: React.FC<QuizEditorProps> = ({ questions, onQuestionsChange })
 
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="questions">
-          {(provided) => (
+          {(provided: DroppableProvided) => (
             <div {...provided.droppableProps} ref={provided.innerRef} className="space-y-4">
               <AnimatePresence>
                 {questions.map((question, index) => (

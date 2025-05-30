@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle, XCircle, Clock, Trophy, Star, Zap, Target, Award } from 'lucide-react';
@@ -74,7 +73,6 @@ const ModernQuiz: React.FC<ModernQuizProps> = ({
   const handleAnswer = (answerIndex: number) => {
     if (answered) return;
 
-    const startTime = Date.now();
     const isCorrect = answerIndex === currentQuestion.correctAnswer;
     
     setSelectedAnswer(answerIndex);
