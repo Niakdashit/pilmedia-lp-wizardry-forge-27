@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import ResizableGameContainer from '../common/ResizableGameContainer';
 
 interface Segment {
   label: string;
@@ -35,6 +36,17 @@ const getThemeColors = (theme: string): string[] => {
   }
 };
 
+const wheelDecorByTheme: Record<string, string> = {
+  casino: '/wheel-styles/roulette_casino.svg',
+  luxury: '/wheel-styles/roulette_luxe.svg',
+  noel: '/wheel-styles/roulette_noel.svg',
+  halloween: '/wheel-styles/roulette_halloween.svg',
+  promo: '/wheel-styles/roulette_promo.svg',
+  food: '/wheel-styles/roulette_food.svg',
+  child: '/wheel-styles/roulette_child.svg',
+  gaming: '/wheel-styles/roulette_gaming.svg',
+};
+
 const TabRoulette: React.FC<TabRouletteProps> = ({
   campaign,
   setCampaign
@@ -43,14 +55,19 @@ const TabRoulette: React.FC<TabRouletteProps> = ({
   const [centerImage, setCenterImage] = useState<File | null>(null);
   const [rotation] = useState(0);
   const [desiredCount, setDesiredCount] = useState<number>(segments.length);
-  const [theme, setTheme] = useState<'default' | 'promo' | 'food' | 'casino' | 'child' | 'gaming' | 'luxury' | 'halloween' | 'noel'>('default');
-  const [borderColor, setBorderColor] = useState<string>('#841b60');
-  const [pointerColor, setPointerColor] = useState<string>('#841b60');
+  const [theme, setTheme] = useState<'default' | 'promo' | 'food' | 'casino' | 'child' | 'gaming' | 'luxury' | 'halloween' | 'noel'>(
+    campaign?.config?.roulette?.theme || 'default'
+  );
+  const [borderColor, setBorderColor] = useState<string>(campaign?.config?.roulette?.borderColor || '#841b60');
+  const [pointerColor, setPointerColor] = useState<string>(campaign?.config?.roulette?.pointerColor || '#841b60');
+  const [gameSize, setGameSize] = useState({ width: 400, height: 400 });
+  const [gamePosition, setGamePosition] = useState({ x: 0, y: 0 });
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const updateCampaign = (newSegments: Segment[], center: File | null) => {
+  const updateCampaign = (newSegments: Segment[], center: File | null, newTheme?: string, newBorderColor?: string, newPointerColor?: string) => {
     setSegments(newSegments);
     setCenterImage(center);
+    
     setCampaign((prev: any) => ({
       ...prev,
       config: {
@@ -58,7 +75,12 @@ const TabRoulette: React.FC<TabRouletteProps> = ({
         roulette: {
           ...prev.config?.roulette,
           segments: newSegments,
-          centerImage: center || null
+          centerImage: center || null,
+          theme: newTheme || theme,
+          borderColor: newBorderColor || borderColor,
+          pointerColor: newPointerColor || pointerColor,
+          gameSize,
+          gamePosition
         }
       }
     }));
@@ -115,7 +137,21 @@ const TabRoulette: React.FC<TabRouletteProps> = ({
     setDesiredCount(count);
   };
 
-  // ----------- CANVAS DRAW WHEEL -----------
+  const handleThemeChange = (newTheme: string) => {
+    setTheme(newTheme as any);
+    updateCampaign(segments, centerImage, newTheme);
+  };
+
+  const handleBorderColorChange = (newBorderColor: string) => {
+    setBorderColor(newBorderColor);
+    updateCampaign(segments, centerImage, theme, newBorderColor);
+  };
+
+  const handlePointerColorChange = (newPointerColor: string) => {
+    setPointerColor(newPointerColor);
+    updateCampaign(segments, centerImage, theme, borderColor, newPointerColor);
+  };
+
   const drawWheel = () => {
     const canvas = canvasRef.current;
     if (!canvas || segments.length === 0) return;
@@ -123,7 +159,10 @@ const TabRoulette: React.FC<TabRouletteProps> = ({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const size = canvas.width;
+    const size = Math.min(gameSize.width, gameSize.height);
+    canvas.width = size;
+    canvas.height = size;
+    
     const center = size / 2;
     const radius = center - 20;
     const total = segments.length;
@@ -205,19 +244,18 @@ const TabRoulette: React.FC<TabRouletteProps> = ({
 
   useEffect(() => {
     drawWheel();
-    // eslint-disable-next-line
-  }, [segments, rotation, centerImage, theme, borderColor, pointerColor]);
+  }, [segments, rotation, centerImage, theme, borderColor, pointerColor, gameSize]);
 
-  // ----------- JSX -----------
   return (
     <div className="space-y-8">
+      {/* Configuration Controls */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2">Couleur de la bordure</label>
           <input
             type="color"
             value={borderColor}
-            onChange={(e) => setBorderColor(e.target.value)}
+            onChange={(e) => handleBorderColorChange(e.target.value)}
             className="w-full h-10 rounded border"
           />
         </div>
@@ -226,7 +264,7 @@ const TabRoulette: React.FC<TabRouletteProps> = ({
           <input
             type="color"
             value={pointerColor}
-            onChange={(e) => setPointerColor(e.target.value)}
+            onChange={(e) => handlePointerColorChange(e.target.value)}
             className="w-full h-10 rounded border"
           />
         </div>
@@ -236,7 +274,7 @@ const TabRoulette: React.FC<TabRouletteProps> = ({
         <label className="block text-sm font-medium text-gray-700 mb-1">Thème visuel de la roue</label>
         <select
           value={theme}
-          onChange={(e) => setTheme(e.target.value as any)}
+          onChange={(e) => handleThemeChange(e.target.value)}
           className="border p-2 rounded w-full md:w-1/2"
         >
           <option value="default">Classique pâle</option>
@@ -251,6 +289,55 @@ const TabRoulette: React.FC<TabRouletteProps> = ({
         </select>
       </div>
 
+      {/* Aperçu redimensionnable de la roue */}
+      <div className="mt-8">
+        <h3 className="text-lg font-medium text-gray-900 mb-4">Aperçu et positionnement de la roue</h3>
+        <div className="bg-gray-50 p-8 rounded-lg">
+          <ResizableGameContainer
+            initialSize={gameSize}
+            onSizeChange={(size) => {
+              setGameSize(size);
+              updateCampaign(segments, centerImage, theme, borderColor, pointerColor);
+            }}
+            onPositionChange={(position) => {
+              setGamePosition(position);
+              updateCampaign(segments, centerImage, theme, borderColor, pointerColor);
+            }}
+            lockAspectRatio={true}
+            className="mx-auto"
+          >
+            <div className="relative w-full h-full">
+              <canvas
+                ref={canvasRef}
+                className="w-full h-full rounded-full shadow-lg"
+                style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }}
+              />
+              {theme !== 'default' && wheelDecorByTheme[theme] && (
+                <img
+                  src={wheelDecorByTheme[theme]}
+                  alt={`Décor roue ${theme}`}
+                  className="absolute inset-0 w-full h-full object-contain pointer-events-none"
+                  style={{ zIndex: 2 }}
+                />
+              )}
+              {/* Pointer */}
+              <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2" style={{ zIndex: 3 }}>
+                <svg width="40" height="60">
+                  <polygon
+                    points="20,60 36,20 4,20"
+                    fill={pointerColor}
+                    stroke="#fff"
+                    strokeWidth="2"
+                    style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.10))' }}
+                  />
+                </svg>
+              </div>
+            </div>
+          </ResizableGameContainer>
+        </div>
+      </div>
+
+      {/* Segment Configuration */}
       <h2 className="text-lg font-semibold">Paramètres des segments</h2>
 
       <div className="flex items-center gap-4">
@@ -265,7 +352,7 @@ const TabRoulette: React.FC<TabRouletteProps> = ({
         />
         <button
           onClick={addSegment}
-          className="bg-[#841b60] text-white px-4 py-2 rounded shadow"
+          className="bg-[#841b60] text-white px-4 py-2 rounded shadow hover:bg-[#6d164f] transition-colors"
         >
           + Ajouter un segment
         </button>
@@ -301,7 +388,7 @@ const TabRoulette: React.FC<TabRouletteProps> = ({
           />
           <button
             onClick={() => removeSegment(index)}
-            className="bg-red-500 text-white px-4 py-2 rounded shadow"
+            className="bg-red-500 text-white px-4 py-2 rounded shadow hover:bg-red-600 transition-colors"
           >
             Supprimer
           </button>
