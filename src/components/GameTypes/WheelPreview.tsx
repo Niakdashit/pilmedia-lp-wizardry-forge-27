@@ -76,6 +76,18 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   const borderColor = campaign?.config?.roulette?.borderColor || '#841b60';
   const pointerColor = campaign?.config?.roulette?.pointerColor || '#841b60';
   
+  // Get button configuration from campaign
+  const buttonConfig = campaign?.buttonConfig || {
+    color: '#841b60',
+    borderColor: '#841b60',
+    borderWidth: 1,
+    borderRadius: 8,
+    size: 'medium',
+    link: '',
+    visible: true,
+    text: 'Remplir le formulaire'
+  };
+  
   const [rotation, setRotation] = useState(0);
   const [spinning, setSpinning] = useState(false);
   const [formValidated, setFormValidated] = useState(false);
@@ -179,6 +191,12 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   };
 
   const handleWheelClick = () => {
+    // If button has a link and is configured to redirect
+    if (buttonConfig.link && !formValidated) {
+      window.open(buttonConfig.link, '_blank');
+      return;
+    }
+
     if (!formValidated) {
       setShowFormModal(true);
       return;
@@ -267,7 +285,6 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
       ctx.beginPath();
       ctx.arc(center, center, centerRadius, 0, 2 * Math.PI);
       ctx.fillStyle = '#fff';
-      ctx.fill();
       ctx.strokeStyle = borderColor;
       ctx.lineWidth = 2; // Largeur fixe comme demandé
       ctx.stroke();
@@ -330,6 +347,110 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
       </div>
     );
   }
+
+  // Don't render button if it's set to invisible
+  if (!buttonConfig.visible) {
+    return (
+      <div style={getAbsolutePositionStyles()}>
+        <div style={{ position: 'relative', width: canvasSize, height: canvasSize }}>
+          {/* Conteneur pour l'ombre - SOUS la roue */}
+          <div 
+            style={{
+              position: 'absolute',
+              width: canvasSize - 20,
+              height: canvasSize - 20,
+              left: '10px',
+              top: '15px',
+              borderRadius: '50%',
+              background: 'rgba(0,0,0,0.15)',
+              filter: 'blur(8px)',
+              zIndex: 0
+            }}
+          />
+        
+          <canvas
+            ref={canvasRef}
+            width={canvasSize}
+            height={canvasSize}
+            style={{
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              zIndex: 1
+            }}
+            className="rounded-full"
+          />
+        
+          {theme !== 'default' && wheelDecorByTheme[theme] && (
+            <img
+              src={wheelDecorByTheme[theme]}
+              alt={`Décor roue ${theme}`}
+              style={{
+                position: 'absolute',
+                left: 0,
+                top: 0,
+                width: canvasSize,
+                height: canvasSize,
+                zIndex: 2,
+                pointerEvents: 'none',
+              }}
+              draggable={false}
+            />
+          )}
+        
+          <div
+            style={{
+              position: 'absolute',
+              left: canvasSize / 2 - pointerSize / 2,
+              top: -pointerSize * 0.6,
+              width: pointerSize,
+              height: pointerSize * 1.5,
+              zIndex: 3,
+              pointerEvents: 'none',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'flex-start',
+            }}
+          >
+            <svg width={pointerSize} height={pointerSize * 1.5}>
+              <polygon
+                points={`${pointerSize/2},${pointerSize*1.5} ${pointerSize*0.9},${pointerSize*0.5} ${pointerSize*0.1},${pointerSize*0.5}`}
+                fill={pointerColor}
+                stroke="#fff"
+                strokeWidth="2"
+                style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.10))' }}
+              />
+            </svg>
+          </div>
+
+          {/* Overlay clickable si formulaire non validé */}
+          {!formValidated && (
+            <div 
+              onClick={handleWheelClick}
+              className="absolute inset-0 flex items-center justify-center z-30 rounded-full cursor-pointer bg-black/0" 
+            />
+          )}
+
+          <ValidationMessage
+            show={showValidationMessage}
+            message="Formulaire validé ! Vous pouvez maintenant jouer."
+            type="success"
+          />
+        </div>
+      </div>
+    );
+  }
+
+  const getButtonSizeClasses = () => {
+    switch (buttonConfig.size) {
+      case 'small':
+        return 'px-3 py-1 text-sm';
+      case 'large':
+        return 'px-8 py-4 text-lg';
+      default:
+        return 'px-6 py-3 text-base';
+    }
+  };
 
   // Taille du pointeur proportionnelle
   const pointerSize = Math.max(30, canvasSize * 0.08);
@@ -425,13 +546,16 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
       <button
         onClick={handleWheelClick}
         disabled={spinning || disabled}
-        className="px-6 py-3 bg-[#841b60] text-white rounded-lg disabled:opacity-50 hover:bg-[#6d164f] transition-colors shadow-lg"
         style={{
-          fontSize: Math.max(14, canvasSize * 0.04) + 'px',
-          padding: `${Math.max(8, canvasSize * 0.02)}px ${Math.max(16, canvasSize * 0.04)}px`
+          backgroundColor: buttonConfig.color,
+          borderColor: buttonConfig.borderColor,
+          borderWidth: `${buttonConfig.borderWidth}px`,
+          borderRadius: `${buttonConfig.borderRadius}px`,
+          borderStyle: 'solid'
         }}
+        className={`${getButtonSizeClasses()} text-white font-medium disabled:opacity-50 hover:opacity-80 transition-all shadow-lg`}
       >
-        {spinning ? 'Tourne...' : formValidated ? 'Lancer la roue' : 'Remplir le formulaire'}
+        {spinning ? 'Tourne...' : formValidated ? 'Lancer la roue' : (buttonConfig.text || 'Remplir le formulaire')}
       </button>
 
       {showFormModal && (

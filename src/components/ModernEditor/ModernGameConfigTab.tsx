@@ -10,24 +10,19 @@ interface ModernGameConfigTabProps {
   gamePosition: GamePosition;
   onGameSizeChange: (size: GameSize) => void;
   onGamePositionChange: (position: GamePosition) => void;
+  buttonConfig: any;
+  onButtonConfigChange: (config: any) => void;
 }
 
 const ModernGameConfigTab: React.FC<ModernGameConfigTabProps> = ({
   gameSize,
   gamePosition,
   onGameSizeChange,
-  onGamePositionChange
+  onGamePositionChange,
+  buttonConfig,
+  onButtonConfigChange
 }) => {
   const [activeSubTab, setActiveSubTab] = useState<'size' | 'position' | 'buttons'>('size');
-  const [buttonConfig, setButtonConfig] = useState({
-    color: '#841b60',
-    borderColor: '#841b60',
-    borderWidth: 1,
-    borderRadius: 8,
-    size: 'medium' as 'small' | 'medium' | 'large',
-    link: '',
-    visible: true
-  });
 
   const subTabs = [
     { id: 'size', label: 'Taille du jeu', icon: Maximize2 },
@@ -89,7 +84,7 @@ const ModernGameConfigTab: React.FC<ModernGameConfigTabProps> = ({
         {activeSubTab === 'buttons' && (
           <ButtonConfigTab
             buttonConfig={buttonConfig}
-            onButtonConfigChange={setButtonConfig}
+            onButtonConfigChange={onButtonConfigChange}
           />
         )}
       </div>

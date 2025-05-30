@@ -30,8 +30,6 @@ const ModernCampaignEditor: React.FC = () => {
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [previewDevice, setPreviewDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
   const [isLoading, setIsLoading] = useState(false);
-  const [gameSize, setGameSize] = useState<'small' | 'medium' | 'large' | 'xlarge'>('medium');
-  const [gamePosition, setGamePosition] = useState<'top' | 'center' | 'bottom' | 'left' | 'right'>('center');
   
   const { saveCampaign, getCampaign } = useCampaigns();
   
@@ -48,6 +46,20 @@ const ModernCampaignEditor: React.FC = () => {
     type: campaignType,
     formFields: defaultFormFields,
     gameConfig: getDefaultGameConfig(campaignType),
+    // Game layout configuration
+    gameSize: 'medium' as 'small' | 'medium' | 'large' | 'xlarge',
+    gamePosition: 'center' as 'top' | 'center' | 'bottom' | 'left' | 'right',
+    // Button configuration
+    buttonConfig: {
+      color: '#841b60',
+      borderColor: '#841b60',
+      borderWidth: 1,
+      borderRadius: 8,
+      size: 'medium' as 'small' | 'medium' | 'large',
+      link: '',
+      visible: true,
+      text: 'Remplir le formulaire'
+    },
     design: {
       background: '#f8fafc',
       primaryColor: '#841b60',
@@ -55,9 +67,19 @@ const ModernCampaignEditor: React.FC = () => {
       titleColor: '#000000',
       buttonColor: '#841b60',
       fontFamily: 'Inter',
-      borderRadius: '0.5rem'
+      borderRadius: '0.5rem',
+      // Custom text configuration
+      customText: {
+        enabled: false,
+        text: 'Texte personnalisé',
+        position: 'top' as 'top' | 'bottom' | 'left' | 'right' | 'center',
+        size: 'medium' as 'small' | 'medium' | 'large',
+        color: '#000000',
+        showFrame: false,
+        frameColor: '#ffffff',
+        frameBorderColor: '#e5e7eb'
+      }
     },
-    gamePosition: 'center',
     screens: {
       1: {
         title: 'Bienvenue !',
@@ -113,6 +135,27 @@ const ModernCampaignEditor: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleGameSizeChange = (size: 'small' | 'medium' | 'large' | 'xlarge') => {
+    setCampaign((prev: any) => ({
+      ...prev,
+      gameSize: size
+    }));
+  };
+
+  const handleGamePositionChange = (position: 'top' | 'center' | 'bottom' | 'left' | 'right') => {
+    setCampaign((prev: any) => ({
+      ...prev,
+      gamePosition: position
+    }));
+  };
+
+  const handleButtonConfigChange = (config: any) => {
+    setCampaign((prev: any) => ({
+      ...prev,
+      buttonConfig: config
+    }));
   };
 
   const gameTypeLabels: Record<CampaignType, string> = {
@@ -195,7 +238,6 @@ const ModernCampaignEditor: React.FC = () => {
         <ModernEditorSidebar
           activeTab={activeTab}
           onTabChange={setActiveTab}
-          campaignType={campaignType}
         />
 
         {/* Content Area */}
@@ -225,10 +267,12 @@ const ModernCampaignEditor: React.FC = () => {
                 )}
                 {activeTab === 'gameconfig' && (
                   <ModernGameConfigTab
-                    gameSize={gameSize}
-                    gamePosition={gamePosition}
-                    onGameSizeChange={setGameSize}
-                    onGamePositionChange={setGamePosition}
+                    gameSize={campaign.gameSize}
+                    gamePosition={campaign.gamePosition}
+                    onGameSizeChange={handleGameSizeChange}
+                    onGamePositionChange={handleGamePositionChange}
+                    buttonConfig={campaign.buttonConfig}
+                    onButtonConfigChange={handleButtonConfigChange}
                   />
                 )}
                 {activeTab === 'design' && (
@@ -252,8 +296,8 @@ const ModernCampaignEditor: React.FC = () => {
             <ModernEditorCanvas
               campaign={campaign}
               previewDevice={previewDevice}
-              gameSize={gameSize}
-              gamePosition={gamePosition}
+              gameSize={campaign.gameSize}
+              gamePosition={campaign.gamePosition}
             />
           </div>
         </div>

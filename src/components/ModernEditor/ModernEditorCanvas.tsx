@@ -85,6 +85,64 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
     }
   };
 
+  const renderCustomText = () => {
+    const customText = campaign.design?.customText;
+    
+    if (!customText?.enabled || !customText?.text) {
+      return null;
+    }
+
+    const getTextSize = () => {
+      switch (customText.size) {
+        case 'small': return 'text-sm';
+        case 'large': return 'text-2xl';
+        default: return 'text-lg';
+      }
+    };
+
+    const getPositionStyles = () => {
+      const baseStyles = 'absolute z-20 max-w-md';
+      
+      switch (customText.position) {
+        case 'top':
+          return `${baseStyles} top-4 left-1/2 transform -translate-x-1/2`;
+        case 'bottom':
+          return `${baseStyles} bottom-4 left-1/2 transform -translate-x-1/2`;
+        case 'left':
+          return `${baseStyles} left-4 top-1/2 transform -translate-y-1/2`;
+        case 'right':
+          return `${baseStyles} right-4 top-1/2 transform -translate-y-1/2`;
+        default: // center
+          return `${baseStyles} top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2`;
+      }
+    };
+
+    const frameStyles = customText.showFrame ? {
+      backgroundColor: customText.frameColor || '#ffffff',
+      border: `1px solid ${customText.frameBorderColor || '#e5e7eb'}`,
+      borderRadius: '8px',
+      padding: '12px 16px',
+      boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+    } : {};
+
+    return (
+      <div 
+        className={getPositionStyles()}
+        style={frameStyles}
+      >
+        <p 
+          className={`${getTextSize()} font-medium text-center`}
+          style={{ 
+            color: customText.color || '#000000',
+            fontFamily: campaign.design?.fontFamily || 'Inter'
+          }}
+        >
+          {customText.text}
+        </p>
+      </div>
+    );
+  };
+
   const deviceStyles = getDeviceStyles();
   const backgroundStyle = campaign.design?.backgroundImage 
     ? { 
@@ -112,6 +170,9 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
             {campaign.design?.backgroundImage && (
               <div className="absolute inset-0 bg-black/10"></div>
             )}
+            
+            {/* Texte personnalisé */}
+            {renderCustomText()}
             
             {/* Contenu par défaut - titre et description */}
             <div className="relative z-10 p-6 text-center">

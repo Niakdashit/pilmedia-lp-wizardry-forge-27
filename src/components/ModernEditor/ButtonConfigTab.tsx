@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { MousePointer, Palette, Square, Eye, EyeOff } from 'lucide-react';
+import { MousePointer, Palette, Square, Eye, EyeOff, Type } from 'lucide-react';
 
 interface ButtonConfig {
   color: string;
@@ -10,6 +10,7 @@ interface ButtonConfig {
   size: 'small' | 'medium' | 'large';
   link: string;
   visible: boolean;
+  text: string;
 }
 
 interface ButtonConfigTabProps {
@@ -41,6 +42,24 @@ const ButtonConfigTab: React.FC<ButtonConfigTabProps> = ({
           <MousePointer className="w-5 h-5 mr-2" />
           Configuration des boutons
         </h3>
+        <p className="text-sm text-gray-600 mb-4">
+          Personnalisez le bouton de lancement du jeu
+        </p>
+      </div>
+
+      {/* Texte du bouton */}
+      <div className="space-y-2">
+        <label className="flex items-center text-sm font-medium text-gray-700">
+          <Type className="w-4 h-4 mr-2" />
+          Texte du bouton
+        </label>
+        <input
+          type="text"
+          value={buttonConfig.text}
+          onChange={(e) => handleChange('text', e.target.value)}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
+          placeholder="Remplir le formulaire"
+        />
       </div>
 
       {/* Couleur du bouton */}
@@ -150,7 +169,7 @@ const ButtonConfigTab: React.FC<ButtonConfigTabProps> = ({
       {/* Lien */}
       <div className="space-y-2">
         <label className="text-sm font-medium text-gray-700">
-          Lien du bouton
+          Lien du bouton (optionnel)
         </label>
         <input
           type="url"
@@ -202,7 +221,7 @@ const ButtonConfigTab: React.FC<ButtonConfigTabProps> = ({
                 'px-6 py-3 text-base'
               }`}
             >
-              Bouton d'exemple
+              {buttonConfig.text || 'Bouton d\'exemple'}
             </button>
           )}
           {!buttonConfig.visible && (
