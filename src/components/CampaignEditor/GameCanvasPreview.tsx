@@ -1,7 +1,7 @@
+
 import React from 'react';
 import Jackpot from '../GameTypes/Jackpot';
-import { Quiz } from '../GameTypes';
-import WheelPreview from '../GameTypes/WheelPreview';
+import { Quiz, Wheel } from '../GameTypes';
 import MemoryPreview from '../GameTypes/MemoryPreview';
 import PuzzlePreview from '../GameTypes/PuzzlePreview';
 import ScratchPreview from '../GameTypes/ScratchPreview';
@@ -64,15 +64,11 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
       case 'wheel':
         return (
           <div style={gameProps.style}>
-            <WheelPreview
-              campaign={campaign}
-              config={{
-                mode: 'instant_winner' as const,
-                winProbability: campaign.gameConfig?.wheel?.winProbability || 0.1,
-                maxWinners: campaign.gameConfig?.wheel?.maxWinners,
-                winnersCount: 0
-              }}
-              onFinish={() => {}}
+            <Wheel 
+              config={campaign.gameConfig?.wheel || campaign.config?.roulette || {}} 
+              isPreview={true} 
+              disabled={false}
+              previewMode="desktop"
             />
           </div>
         );
