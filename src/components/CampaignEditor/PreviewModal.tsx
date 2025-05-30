@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { X, Monitor, Tablet, Smartphone, Maximize2, Minimize2 } from 'lucide-react';
 import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
@@ -21,7 +20,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
     if (['wheel', 'scratch', 'jackpot', 'dice'].includes(campaign.type)) {
       return <FunnelUnlockedGame campaign={campaign} modalContained={true} />;
     }
-    return <FunnelStandard campaign={campaign} modalContained={true} />;
+    return <FunnelStandard campaign={campaign} />;
   };
 
   const backgroundImage = campaign.design?.backgroundImage;
