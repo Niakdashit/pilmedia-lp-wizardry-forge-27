@@ -27,21 +27,6 @@ const Wheel: React.FC<WheelProps> = ({
   const prizes = config?.prizes || ['Prix 1', 'Prix 2', 'Prix 3', 'Prix 4'];
   const colors = config?.colors || ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4'];
 
-  // Sizing/positioning adapté à l'appareil
-  let maxPx = 340, widthPercent = '90%', paddingTop = 12, paddingBottom = 12;
-  if (previewMode === 'mobile') {
-    maxPx = 180;
-    widthPercent = '90%';
-    paddingTop = 12;
-    paddingBottom = 12;
-  }
-  if (previewMode === 'tablet') {
-    maxPx = 260;
-    widthPercent = '75%';
-    paddingTop = 32;
-    paddingBottom = 48;
-  }
-
   const spin = () => {
     if (!wheelRef.current || isSpinning) return;
 
@@ -82,28 +67,25 @@ const Wheel: React.FC<WheelProps> = ({
     );
   }
 
+  // -- Correction : le container prend toute la largeur dispo, aspect carré garanti, padding géré par le device parent --
   return (
     <div
       className={`flex flex-col items-center justify-center w-full h-full ${className || ''}`}
       style={{
         minHeight: 0,
         minWidth: 0,
-        paddingTop,
-        paddingBottom,
         ...style
       }}
     >
       <div
-        className="relative flex items-center justify-center"
+        className="relative flex items-center justify-center w-full"
         style={{
-          width: widthPercent,
-          height: widthPercent,
-          maxWidth: maxPx,
-          maxHeight: maxPx,
-          aspectRatio: '1 / 1',
+          width: '100%',
+          aspectRatio: '1/1',
+          boxSizing: 'border-box',
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'center'
+          justifyContent: 'center',
         }}
       >
         <div
@@ -152,6 +134,10 @@ const Wheel: React.FC<WheelProps> = ({
         onClick={spin}
         disabled={isSpinning}
         className="px-8 py-3 mt-4 bg-[#841b60] text-white font-bold rounded-xl hover:bg-[#6d164f] disabled:opacity-50 transition-colors duration-200"
+        style={{
+          width: previewMode === 'mobile' ? '90%' : previewMode === 'tablet' ? '80%' : '60%',
+          maxWidth: 260,
+        }}
       >
         {isSpinning ? 'Rotation...' : 'Faire tourner'}
       </button>
