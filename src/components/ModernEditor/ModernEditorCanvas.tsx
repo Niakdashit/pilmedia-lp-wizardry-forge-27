@@ -1,7 +1,6 @@
 
 import React from 'react';
-import { motion } from 'framer-motion';
-import GameCanvasPreview from '../CampaignEditor/GameCanvasPreview';
+import { Monitor, Smartphone, Tablet } from 'lucide-react';
 
 interface ModernEditorCanvasProps {
   campaign: any;
@@ -14,79 +13,68 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
 }) => {
   const getDeviceStyles = () => {
     switch (previewDevice) {
+      case 'mobile':
+        return {
+          width: '375px',
+          height: '667px',
+          maxWidth: '100%'
+        };
       case 'tablet':
         return {
           width: '768px',
           height: '1024px',
-          borderRadius: '24px'
-        };
-      case 'mobile':
-        return {
-          width: '375px',
-          height: '812px',
-          borderRadius: '24px'
+          maxWidth: '100%'
         };
       default:
         return {
           width: '100%',
-          height: '100%',
-          borderRadius: '12px'
+          height: '600px'
         };
     }
   };
 
   const deviceStyles = getDeviceStyles();
-  const isDevice = previewDevice !== 'desktop';
 
   return (
-    <div className="w-full h-full flex items-center justify-center p-8 bg-gradient-to-br from-gray-50 to-gray-100">
-      <motion.div
-        layout
-        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className={`relative bg-white shadow-2xl overflow-hidden ${
-          isDevice ? 'border-8 border-gray-800' : ''
-        }`}
+    <div className="h-full flex items-center justify-center p-8">
+      <div 
+        className="bg-white rounded-lg shadow-lg overflow-hidden"
         style={deviceStyles}
       >
-        {/* Device notch for mobile */}
-        {previewDevice === 'mobile' && (
-          <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-6 bg-gray-800 rounded-b-2xl z-10"></div>
-        )}
-        
-        {/* Device home indicator for mobile */}
-        {previewDevice === 'mobile' && (
-          <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-gray-400 rounded-full z-10"></div>
-        )}
-        
-        {/* Canvas Content */}
-        <div className="w-full h-full relative overflow-hidden">
-          <GameCanvasPreview
-            campaign={campaign}
-            className="w-full h-full"
-          />
+        <div 
+          className="h-full p-6 flex flex-col items-center justify-center"
+          style={{ 
+            backgroundColor: campaign.design?.background || '#f8fafc',
+            color: campaign.design?.titleColor || '#000000'
+          }}
+        >
+          <div className="text-center space-y-4">
+            <h1 
+              className="text-2xl font-bold"
+              style={{ color: campaign.design?.titleColor || '#000000' }}
+            >
+              {campaign.screens?.[1]?.title || 'Bienvenue !'}
+            </h1>
+            <p className="text-gray-600">
+              {campaign.screens?.[1]?.description || 'Aperçu de votre campagne'}
+            </p>
+            <div 
+              className="inline-block px-6 py-3 rounded-lg text-white font-medium"
+              style={{ backgroundColor: campaign.design?.buttonColor || '#841b60' }}
+            >
+              {campaign.screens?.[1]?.buttonText || 'Participer'}
+            </div>
+          </div>
+          
+          {/* Game placeholder */}
+          <div className="mt-8 p-4 border-2 border-dashed border-gray-300 rounded-lg">
+            <div className="text-center text-gray-500">
+              <div className="text-sm">Aperçu du jeu : {campaign.type}</div>
+              <div className="text-xs mt-1">Position : {campaign.gamePosition || 'center'}</div>
+            </div>
+          </div>
         </div>
-        
-        {/* Device label */}
-        <div className="absolute top-4 right-4 px-3 py-1 bg-black/20 backdrop-blur-sm text-white text-sm rounded-full">
-          {previewDevice === 'desktop' ? 'Bureau' : previewDevice === 'tablet' ? 'Tablette' : 'Mobile'}
-        </div>
-      </motion.div>
-      
-      {/* Grid background for desktop */}
-      {previewDevice === 'desktop' && (
-        <div className="absolute inset-0 opacity-5 pointer-events-none">
-          <div
-            className="w-full h-full"
-            style={{
-              backgroundImage: `
-                linear-gradient(rgba(132, 27, 96, 0.1) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(132, 27, 96, 0.1) 1px, transparent 1px)
-              `,
-              backgroundSize: '24px 24px'
-            }}
-          />
-        </div>
-      )}
+      </div>
     </div>
   );
 };

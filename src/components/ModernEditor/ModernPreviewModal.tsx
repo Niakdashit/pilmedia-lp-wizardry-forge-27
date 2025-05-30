@@ -1,9 +1,6 @@
 
 import React, { useState } from 'react';
-import { X, Monitor, Tablet, Smartphone } from 'lucide-react';
-import { motion } from 'framer-motion';
-import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
-import MobilePreview from '../CampaignEditor/Mobile/MobilePreview';
+import { X, Monitor, Smartphone, Tablet } from 'lucide-react';
 
 interface ModernPreviewModalProps {
   isOpen: boolean;
@@ -16,122 +13,106 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
   onClose,
   campaign
 }) => {
-  const [selectedDevice, setSelectedDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
+  const [device, setDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
 
   if (!isOpen) return null;
 
-  const getPreviewFunnel = () => {
-    if (['wheel', 'scratch', 'jackpot', 'dice'].includes(campaign.type)) {
-      return (
-        <FunnelUnlockedGame 
-          campaign={campaign} 
-          previewMode={selectedDevice} 
-          modalContained={true}
-          key={`${selectedDevice}-${campaign.id}-${JSON.stringify({
-            gameConfig: campaign.gameConfig,
-            design: campaign.design,
-            screens: campaign.screens
-          })}`}
-        />
-      );
+  const getDeviceStyles = () => {
+    switch (device) {
+      case 'mobile':
+        return { width: '375px', height: '667px' };
+      case 'tablet':
+        return { width: '768px', height: '1024px' };
+      default:
+        return { width: '1200px', height: '800px' };
     }
-    return <div className="flex items-center justify-center h-full text-gray-500">Aperçu non disponible</div>;
   };
 
-  const renderDesktopPreview = () => (
-    <div className="w-full h-full flex items-center justify-center p-8 bg-gray-100">
-      <div className="w-full max-w-4xl h-full bg-white rounded-xl shadow-2xl overflow-hidden">
-        {getPreviewFunnel()}
-      </div>
-    </div>
-  );
-
-  const renderMobilePreview = () => (
-    <div className="w-full h-full flex items-center justify-center p-4 bg-gray-100">
-      <MobilePreview
-        campaign={campaign}
-        previewMode={selectedDevice === 'tablet' ? 'tablet' : 'mobile'}
-        key={`mobile-${campaign.id}-${JSON.stringify({
-          mobileConfig: campaign.mobileConfig,
-          gameConfig: campaign.gameConfig,
-          design: campaign.design
-        })}`}
-      />
-    </div>
-  );
-
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
-    >
-      <motion.div
-        initial={{ scale: 0.9, opacity: 0 }}
-        animate={{ scale: 1, opacity: 1 }}
-        exit={{ scale: 0.9, opacity: 0 }}
-        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        className="bg-white w-[95vw] h-[95vh] flex flex-col relative overflow-hidden rounded-2xl shadow-2xl"
-      >
+    <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4">
+      <div className="bg-white rounded-lg shadow-xl max-w-[95vw] max-h-[95vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 bg-white border-b border-gray-200">
+        <div className="flex items-center justify-between p-4 border-b">
           <div className="flex items-center space-x-4">
-            <h2 className="text-xl font-bold text-gray-900">Aperçu de la campagne</h2>
-            <span className="text-sm text-gray-500">{campaign.name}</span>
-            
-            {/* Device Selector */}
-            <div className="flex items-center bg-gray-100 rounded-xl p-1">
+            <h2 className="text-lg font-semibold">Aperçu - {campaign.name}</h2>
+            <div className="flex items-center bg-gray-100 rounded-lg p-1">
               <button
-                onClick={() => setSelectedDevice('desktop')}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                  selectedDevice === 'desktop'
-                    ? 'bg-white text-[#841b60] shadow-sm'
-                    : 'text-gray-600 hover:text-gray-900'
+                onClick={() => setDevice('desktop')}
+                className={`p-2 rounded-md transition-colors ${
+                  device === 'desktop' ? 'bg-white shadow-sm' : 'hover:bg-gray-200'
                 }`}
               >
                 <Monitor className="w-4 h-4" />
-                <span>Bureau</span>
               </button>
               <button
-                onClick={() => setSelectedDevice('tablet')}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                  selectedDevice === 'tablet'
-                    ? 'bg-white text-[#841b60] shadow-sm'
-                    : 'text-gray-600 hover:text-gray-900'
+                onClick={() => setDevice('tablet')}
+                className={`p-2 rounded-md transition-colors ${
+                  device === 'tablet' ? 'bg-white shadow-sm' : 'hover:bg-gray-200'
                 }`}
               >
                 <Tablet className="w-4 h-4" />
-                <span>Tablette</span>
               </button>
               <button
-                onClick={() => setSelectedDevice('mobile')}
-                className={`flex items-center space-x-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                  selectedDevice === 'mobile'
-                    ? 'bg-white text-[#841b60] shadow-sm'
-                    : 'text-gray-600 hover:text-gray-900'
+                onClick={() => setDevice('mobile')}
+                className={`p-2 rounded-md transition-colors ${
+                  device === 'mobile' ? 'bg-white shadow-sm' : 'hover:bg-gray-200'
                 }`}
               >
                 <Smartphone className="w-4 h-4" />
-                <span>Mobile</span>
               </button>
             </div>
           </div>
-
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-xl transition-colors duration-200"
+            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
           >
-            <X className="w-6 h-6" />
+            <X className="w-5 h-5" />
           </button>
         </div>
 
         {/* Preview Content */}
-        <div className="flex-1 overflow-hidden">
-          {selectedDevice === 'desktop' ? renderDesktopPreview() : renderMobilePreview()}
+        <div className="flex-1 p-8 bg-gray-100 flex items-center justify-center">
+          <div
+            className="bg-white rounded-lg shadow-lg overflow-hidden"
+            style={getDeviceStyles()}
+          >
+            <div
+              className="h-full p-6 flex flex-col items-center justify-center"
+              style={{
+                backgroundColor: campaign.design?.background || '#f8fafc',
+                fontFamily: campaign.design?.fontFamily || 'Inter'
+              }}
+            >
+              <div className="text-center space-y-4">
+                <h1
+                  className="text-3xl font-bold"
+                  style={{ color: campaign.design?.titleColor || '#000000' }}
+                >
+                  {campaign.screens?.[1]?.title || 'Bienvenue !'}
+                </h1>
+                <p className="text-lg text-gray-600">
+                  {campaign.screens?.[1]?.description || 'Participez à notre jeu et tentez de gagner !'}
+                </p>
+                <button
+                  className="px-8 py-3 rounded-lg text-white font-medium text-lg"
+                  style={{ backgroundColor: campaign.design?.buttonColor || '#841b60' }}
+                >
+                  {campaign.screens?.[1]?.buttonText || 'Participer'}
+                </button>
+              </div>
+
+              {/* Game Preview Area */}
+              <div className="mt-8 p-6 border-2 border-dashed border-gray-300 rounded-lg">
+                <div className="text-center text-gray-500">
+                  <div className="text-lg font-medium">Jeu : {campaign.type}</div>
+                  <div className="text-sm mt-2">Position : {campaign.gamePosition || 'center'}</div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 };
 
