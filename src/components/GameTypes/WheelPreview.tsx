@@ -181,8 +181,8 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
       ctx.restore();
     });
 
-    // Cercle central avec largeur fixe
-    const centerRadius = 40; // Taille fixe comme demandé
+    // Cercle central avec taille proportionnelle mais limitée
+    const centerRadius = Math.min(25, size * 0.08); // Maximum 25px, proportionnel sinon
     if (centerImage) {
       const img = new Image();
       img.onload = () => {
