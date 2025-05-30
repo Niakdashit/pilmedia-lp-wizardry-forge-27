@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { Type, Image, Eye, EyeOff, Layout, AlignCenter, MoreHorizontal, ChevronDown, ChevronUp, Plus, Trash2, Bold, Italic, Underline } from 'lucide-react';
+import { Type, Image, Eye, EyeOff, Layout, ChevronDown, ChevronUp, Plus, Trash2, Bold, Italic, Underline } from 'lucide-react';
 import ImageUpload from '../common/ImageUpload';
 
 interface ModernDesignTabProps {
