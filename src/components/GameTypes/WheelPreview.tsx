@@ -1,5 +1,9 @@
 
 import React, { useState, useRef, useEffect } from 'react';
+import Modal from '../common/Modal';
+import ValidationMessage from '../common/ValidationMessage';
+import DynamicContactForm, { FieldConfig } from '../forms/DynamicContactForm';
+import { useParticipations } from '../../hooks/useParticipations';
 
 interface Segment {
   label: string;
@@ -19,7 +23,17 @@ interface WheelPreviewProps {
   campaign: any;
   config: InstantWinConfig;
   onFinish?: (result: 'win' | 'lose') => void;
+  disabled?: boolean;
+  onStart?: () => void;
+  previewMode?: 'mobile' | 'tablet' | 'desktop';
 }
+
+const DEFAULT_FIELDS: FieldConfig[] = [
+  { id: "civilite", label: "Civilité", type: "select", options: ["M.", "Mme"], required: false },
+  { id: "prenom", label: "Prénom", required: true },
+  { id: "nom", label: "Nom", required: true },
+  { id: "email", label: "Email", type: "email", required: true }
+];
 
 const getThemeColors = (theme: string): string[] => {
   switch (theme) {
@@ -51,7 +65,10 @@ const CANVAS_SIZE = 400;
 const WheelPreview: React.FC<WheelPreviewProps> = ({
   campaign,
   config,
-  onFinish
+  onFinish,
+  disabled = false,
+  onStart,
+  previewMode = 'desktop'
 }) => {
   const segments = campaign?.config?.roulette?.segments || [];
   const centerImage = campaign?.config?.roulette?.centerImage;
@@ -61,7 +78,40 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   
   const [rotation, setRotation] = useState(0);
   const [spinning, setSpinning] = useState(false);
+  const [formValidated, setFormValidated] = useState(false);
+  const [showFormModal, setShowFormModal] = useState(false);
+  const [showValidationMessage, setShowValidationMessage] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  const {
+    createParticipation,
+    loading: participationLoading
+  } = useParticipations();
+
+  const fields: FieldConfig[] = Array.isArray(campaign.formFields) && campaign.formFields.length > 0
+    ? campaign.formFields : DEFAULT_FIELDS;
+
+  const handleFormSubmit = async (formData: Record<string, string>) => {
+    if (campaign.id) {
+      await createParticipation({
+        campaign_id: campaign.id,
+        form_data: formData,
+        user_email: formData.email
+      });
+    }
+    setShowFormModal(false);
+    setFormValidated(true);
+    setShowValidationMessage(true);
+    setTimeout(() => setShowValidationMessage(false), 1500);
+  };
+
+  const handleWheelClick = () => {
+    if (!formValidated) {
+      setShowFormModal(true);
+      return;
+    }
+    spinWheel();
+  };
 
   const drawWheel = () => {
     const canvas = canvasRef.current;
@@ -150,8 +200,10 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   };
 
   const spinWheel = () => {
-    if (spinning || segments.length === 0) return;
+    if (spinning || segments.length === 0 || disabled) return;
     setSpinning(true);
+
+    if (onStart) onStart();
 
     const totalSpins = 5;
     const randomOffset = Math.random() * 360;
@@ -259,14 +311,43 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
             />
           </svg>
         </div>
+
+        {/* Overlay clickable si formulaire non validé */}
+        {!formValidated && (
+          <div 
+            onClick={handleWheelClick}
+            className="absolute inset-0 flex items-center justify-center z-30 rounded-full cursor-pointer bg-black/0" 
+          />
+        )}
+
+        <ValidationMessage
+          show={showValidationMessage}
+          message="Formulaire validé ! Vous pouvez maintenant jouer."
+          type="success"
+        />
       </div>
+
       <button
-        onClick={spinWheel}
-        disabled={spinning}
+        onClick={handleWheelClick}
+        disabled={spinning || disabled}
         className="px-6 py-3 bg-[#841b60] text-white rounded-lg disabled:opacity-50 hover:bg-[#6d164f] transition-colors shadow-lg"
       >
-        {spinning ? 'Tourne...' : 'Lancer la roue'}
+        {spinning ? 'Tourne...' : formValidated ? 'Lancer la roue' : 'Remplir le formulaire'}
       </button>
+
+      {showFormModal && (
+        <Modal
+          onClose={() => setShowFormModal(false)}
+          title={campaign.screens?.[1]?.title || 'Vos informations'}
+          contained={true}
+        >
+          <DynamicContactForm
+            fields={fields}
+            submitLabel={participationLoading ? 'Chargement...' : campaign.screens?.[1]?.buttonText || "C'est parti !"}
+            onSubmit={handleFormSubmit}
+          />
+        </Modal>
+      )}
     </div>
   );
 };
