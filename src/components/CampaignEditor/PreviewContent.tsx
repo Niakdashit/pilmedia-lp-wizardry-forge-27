@@ -2,7 +2,8 @@
 import React, { useState, useEffect } from 'react';
 import Color from 'color';
 import confetti from 'canvas-confetti';
-import { Quiz, Wheel, Scratch, Memory, Puzzle, Dice } from '../GameTypes';
+import { Quiz, Scratch, Memory, Puzzle, Dice } from '../GameTypes';
+import WheelPreview from '../GameTypes/WheelPreview';
 
 interface PreviewContentProps {
   campaign: any;
@@ -76,13 +77,15 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
 
       case 'wheel':
         return (
-          <Wheel 
-            config={campaign.gameConfig.wheel}
-            isPreview={true}
-            currentWinners={0}
-            maxWinners={100}
-            winRate={10}
-            onComplete={handleGameComplete}
+          <WheelPreview
+            campaign={campaign}
+            config={{
+              mode: 'instant_winner' as const,
+              winProbability: campaign.gameConfig?.wheel?.winProbability || 0.1,
+              maxWinners: campaign.gameConfig?.wheel?.maxWinners,
+              winnersCount: 0
+            }}
+            onFinish={handleGameComplete}
           />
         );
 
@@ -90,7 +93,6 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
         return (
           <Scratch 
             config={campaign.gameConfig.scratch} 
-            onConfigChange={() => {}}
           />
         );
 
@@ -98,7 +100,6 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
         return (
           <Memory 
             config={campaign.gameConfig.memory} 
-            onConfigChange={() => {}}
           />
         );
 
@@ -106,7 +107,6 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
         return (
           <Puzzle 
             config={campaign.gameConfig.puzzle} 
-            onConfigChange={() => {}}
           />
         );
 
@@ -114,7 +114,6 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
         return (
           <Dice 
             config={campaign.gameConfig.dice} 
-            onConfigChange={() => {}}
           />
         );
 
