@@ -8,7 +8,7 @@ interface MobilePreviewProps {
 
 const DEVICE_SPECS = {
   mobile: { width: 375, height: 667 },
-  tablet: { width: 768, height: 1024 }
+  tablet: { width: 440, height: 650 }
 };
 
 const MobilePreview: React.FC<MobilePreviewProps> = ({ campaign, previewMode }) => {
