@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Jackpot from '../GameTypes/Jackpot';
 import { Quiz } from '../GameTypes';
@@ -6,6 +7,7 @@ import MemoryPreview from '../GameTypes/MemoryPreview';
 import PuzzlePreview from '../GameTypes/PuzzlePreview';
 import ScratchPreview from '../GameTypes/ScratchPreview';
 import DicePreview from '../GameTypes/DicePreview';
+import { GAME_SIZES } from './GameSizeSelector';
 
 interface GameCanvasPreviewProps {
   campaign: any;
@@ -19,15 +21,21 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage;
   const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel || 'Lancer le Jackpot';
   const buttonColor = campaign.gameConfig?.[campaign.type]?.buttonColor || '#ec4899';
+  const gameSize = campaign.gameConfig?.[campaign.type]?.gameSize || 2;
   
   // Récupération du template sélectionné
   const selectedTemplateId = campaign?.design?.template || campaign?.gameConfig?.jackpot?.template;
 
+  // Get dimensions for selected game size
+  const selectedSize = GAME_SIZES.find(size => size.id === gameSize) || GAME_SIZES[1];
+  const gameWidth = selectedSize.width;
+  const gameHeight = selectedSize.height;
+
   const renderGame = () => {
     const gameProps = {
       style: { 
-        width: '100%', 
-        height: '100%', 
+        width: `${gameWidth}px`, 
+        height: `${gameHeight}px`, 
         maxWidth: '100%', 
         maxHeight: '100%',
         overflow: 'hidden'
@@ -118,19 +126,25 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   };
 
   return (
-    <div className={`relative w-full h-full ${className} flex items-center justify-center`} style={{ minHeight: '400px' }}>
+    <div className={`relative w-full flex items-center justify-center ${className}`} style={{ 
+      minHeight: `${gameHeight}px`,
+      backgroundColor: '#f8f9fa',
+      border: '2px dashed #e9ecef',
+      borderRadius: '8px',
+      padding: '20px'
+    }}>
       {/* Image de fond plein écran */}
       {gameBackgroundImage && (
         <img
           src={gameBackgroundImage}
           alt="Background"
-          className="absolute inset-0 w-full h-full object-cover z-0"
+          className="absolute inset-0 w-full h-full object-cover z-0 rounded-lg"
           style={{ pointerEvents: 'none' }}
         />
       )}
 
       {/* Jeu centré avec contraintes de taille */}
-      <div className="relative z-20 w-full h-full flex items-center justify-center p-4" style={{ maxWidth: '100%', maxHeight: '100%' }}>
+      <div className="relative z-20 flex items-center justify-center">
         {renderGame()}
       </div>
     </div>

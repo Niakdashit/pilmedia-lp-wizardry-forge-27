@@ -2,7 +2,6 @@
 import React, { useState } from 'react';
 import { X, Monitor, Tablet, Smartphone } from 'lucide-react';
 import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
-import FunnelStandard from '../funnels/FunnelStandard';
 import MobilePreview from './Mobile/MobilePreview';
 
 interface PreviewModalProps {
@@ -17,38 +16,8 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
   if (!isOpen) return null;
 
   const getPreviewFunnel = () => {
-    // Pour les jeux avec roue, on passe la configuration complète
-    if (campaign.type === 'wheel') {
-      return <FunnelUnlockedGame campaign={{
-        ...campaign,
-        // S'assurer que la config de la roue est bien transmise
-        config: {
-          ...campaign.config,
-          roulette: campaign.config?.roulette || {
-            segments: [],
-            centerImage: null,
-            theme: 'default',
-            borderColor: '#841b60',
-            pointerColor: '#841b60'
-          }
-        },
-        gameConfig: {
-          ...campaign.gameConfig,
-          wheel: campaign.config?.roulette || campaign.gameConfig?.wheel || {
-            segments: [],
-            centerImage: null,
-            theme: 'default',
-            borderColor: '#841b60',
-            pointerColor: '#841b60'
-          }
-        }
-      }} />;
-    }
-    
-    if (['scratch', 'jackpot', 'dice'].includes(campaign.type)) {
-      return <FunnelUnlockedGame campaign={campaign} />;
-    }
-    return <FunnelStandard campaign={campaign} />;
+    // Use FunnelUnlockedGame for all game types to ensure proper funnel flow
+    return <FunnelUnlockedGame campaign={campaign} />;
   };
 
   // Récupérer l'image de fond générale (sans duplication avec le jeu)
