@@ -135,7 +135,7 @@ const Wheel: React.FC<WheelProps> = ({
         disabled={isSpinning}
         className="px-8 py-3 mt-4 bg-[#841b60] text-white font-bold rounded-xl hover:bg-[#6d164f] disabled:opacity-50 transition-colors duration-200"
         style={{
-          width: previewMode === 'mobile' ? '90%' : previewMode === 'tablet' ? '80%' : '60%',
+          width: previewMode === 'mobile' ? '70%' : previewMode === 'tablet' ? '80%' : '60%',
           maxWidth: 260,
         }}
       >
