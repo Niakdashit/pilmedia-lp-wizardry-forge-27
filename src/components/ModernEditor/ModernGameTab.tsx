@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Settings, Target } from 'lucide-react';
 import WheelGameConfig from './GameConfigs/WheelGameConfig';
@@ -8,12 +7,10 @@ import PuzzleGameConfig from './GameConfigs/PuzzleGameConfig';
 import QuizGameConfig from './GameConfigs/QuizGameConfig';
 import DiceGameConfig from './GameConfigs/DiceGameConfig';
 import ScratchGameConfig from './GameConfigs/ScratchGameConfig';
-
 interface ModernGameTabProps {
   campaign: any;
   setCampaign: React.Dispatch<React.SetStateAction<any>>;
 }
-
 const ModernGameTab: React.FC<ModernGameTabProps> = ({
   campaign,
   setCampaign
@@ -29,14 +26,12 @@ const ModernGameTab: React.FC<ModernGameTabProps> = ({
     swiper: 'Swiper',
     form: 'Formulaire Dynamique'
   };
-
   const handlePositionChange = (position: string) => {
     setCampaign((prev: any) => ({
       ...prev,
       gamePosition: position
     }));
   };
-
   const renderGameConfig = () => {
     switch (campaign.type) {
       case 'wheel':
@@ -57,78 +52,26 @@ const ModernGameTab: React.FC<ModernGameTabProps> = ({
         return <div className="text-gray-500">Configuration non disponible pour ce type de jeu</div>;
     }
   };
-
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Configuration du jeu</h2>
-        <p className="text-sm text-gray-600">
-          Paramétrez votre {gameTypeLabels[campaign.type as keyof typeof gameTypeLabels]}
-        </p>
+        
+        
       </div>
 
       {/* Position du jeu */}
       <div className="space-y-3">
-        <label className="flex items-center text-sm font-medium text-gray-700">
-          <Target className="w-4 h-4 mr-2" />
-          Position du jeu
-        </label>
+        
         <div className="grid grid-cols-3 gap-2">
           <div></div>
-          <button
-            onClick={() => handlePositionChange('top')}
-            className={`p-2 text-xs rounded border transition-colors ${
-              campaign.gamePosition === 'top'
-                ? 'bg-[#841b60] text-white border-[#841b60]'
-                : 'bg-white text-gray-700 border-gray-300 hover:border-[#841b60]'
-            }`}
-          >
-            Haut
-          </button>
-          <div></div>
-          
-          <button
-            onClick={() => handlePositionChange('left')}
-            className={`p-2 text-xs rounded border transition-colors ${
-              campaign.gamePosition === 'left'
-                ? 'bg-[#841b60] text-white border-[#841b60]'
-                : 'bg-white text-gray-700 border-gray-300 hover:border-[#841b60]'
-            }`}
-          >
-            Gauche
-          </button>
-          <button
-            onClick={() => handlePositionChange('center')}
-            className={`p-2 text-xs rounded border transition-colors ${
-              campaign.gamePosition === 'center'
-                ? 'bg-[#841b60] text-white border-[#841b60]'
-                : 'bg-white text-gray-700 border-gray-300 hover:border-[#841b60]'
-            }`}
-          >
-            Centre
-          </button>
-          <button
-            onClick={() => handlePositionChange('right')}
-            className={`p-2 text-xs rounded border transition-colors ${
-              campaign.gamePosition === 'right'
-                ? 'bg-[#841b60] text-white border-[#841b60]'
-                : 'bg-white text-gray-700 border-gray-300 hover:border-[#841b60]'
-            }`}
-          >
-            Droite
-          </button>
           
           <div></div>
-          <button
-            onClick={() => handlePositionChange('bottom')}
-            className={`p-2 text-xs rounded border transition-colors ${
-              campaign.gamePosition === 'bottom'
-                ? 'bg-[#841b60] text-white border-[#841b60]'
-                : 'bg-white text-gray-700 border-gray-300 hover:border-[#841b60]'
-            }`}
-          >
-            Bas
-          </button>
+          
+          
+          
+          
+          
+          <div></div>
+          
           <div></div>
         </div>
       </div>
@@ -141,8 +84,6 @@ const ModernGameTab: React.FC<ModernGameTabProps> = ({
         </h3>
         {renderGameConfig()}
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default ModernGameTab;
