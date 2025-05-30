@@ -18,7 +18,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
 
   const getPreviewFunnel = () => {
     if (['wheel', 'scratch', 'jackpot', 'dice'].includes(campaign.type)) {
-      return <FunnelUnlockedGame campaign={campaign} />;
+      return <FunnelUnlockedGame campaign={campaign} previewMode={selectedDevice} />;
     }
     return <FunnelStandard campaign={campaign} />;
   };

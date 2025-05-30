@@ -4,7 +4,8 @@ import Modal from '../common/Modal';
 import ValidationMessage from '../common/ValidationMessage';
 import ContrastBackground from '../common/ContrastBackground';
 import DynamicContactForm, { FieldConfig } from '../forms/DynamicContactForm';
-import { Wheel, Jackpot } from '../GameTypes';
+import WheelPreview from '../GameTypes/WheelPreview';
+import { Jackpot } from '../GameTypes';
 import ScratchPreview from '../GameTypes/ScratchPreview';
 import DicePreview from '../GameTypes/DicePreview';
 import { useParticipations } from '../../hooks/useParticipations';
@@ -127,10 +128,15 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
       switch (campaign.type) {
         case 'wheel':
           return (
-            <Wheel 
-              config={campaign.gameConfig?.wheel || campaign.config?.roulette || {}} 
-              isPreview={true} 
-              {...commonProps} 
+            <WheelPreview 
+              campaign={campaign} 
+              config={{
+                mode: 'instant_winner' as const,
+                winProbability: campaign.gameConfig?.wheel?.winProbability || 0.1,
+                maxWinners: campaign.gameConfig?.wheel?.maxWinners,
+                winnersCount: 0
+              }}
+              onFinish={handleGameFinish}
             />
           );
         case 'scratch':
