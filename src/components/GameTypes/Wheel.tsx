@@ -27,10 +27,20 @@ const Wheel: React.FC<WheelProps> = ({
   const prizes = config?.prizes || ['Prix 1', 'Prix 2', 'Prix 3', 'Prix 4'];
   const colors = config?.colors || ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4'];
 
-  // Responsive sizing: max size depending on device type
-  let maxPx = 340;
-  if (previewMode === 'mobile') maxPx = 180;
-  if (previewMode === 'tablet') maxPx = 240;
+  // Sizing/positioning adapté à l'appareil
+  let maxPx = 340, widthPercent = '90%', paddingTop = 12, paddingBottom = 12;
+  if (previewMode === 'mobile') {
+    maxPx = 180;
+    widthPercent = '90%';
+    paddingTop = 12;
+    paddingBottom = 12;
+  }
+  if (previewMode === 'tablet') {
+    maxPx = 260;
+    widthPercent = '75%';
+    paddingTop = 32;
+    paddingBottom = 48;
+  }
 
   const spin = () => {
     if (!wheelRef.current || isSpinning) return;
@@ -78,17 +88,22 @@ const Wheel: React.FC<WheelProps> = ({
       style={{
         minHeight: 0,
         minWidth: 0,
+        paddingTop,
+        paddingBottom,
         ...style
       }}
     >
       <div
-        className="relative flex items-center justify-center w-full h-full"
+        className="relative flex items-center justify-center"
         style={{
+          width: widthPercent,
+          height: widthPercent,
           maxWidth: maxPx,
           maxHeight: maxPx,
           aspectRatio: '1 / 1',
-          width: '100%',
-          height: '100%',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
         }}
       >
         <div
