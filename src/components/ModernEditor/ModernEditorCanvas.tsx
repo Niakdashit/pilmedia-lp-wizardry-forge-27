@@ -152,35 +152,42 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
     const frameStyles = headerText.showFrame ? {
       backgroundColor: headerText.frameColor || '#ffffff',
       border: `1px solid ${headerText.frameBorderColor || '#e5e7eb'}`,
-      borderRadius: `${headerText.frameBorderRadius || 8}px`,
-      padding: `${headerText.framePadding || 12}px`,
+      borderRadius: '8px',
+      padding: '12px 16px',
       margin: '0 16px',
-      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-      display: 'inline-block',
-      width: 'fit-content'
+      boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
     } : {
       padding: '12px 16px'
+    };
+
+    const getTextSize = () => {
+      switch (headerText.size) {
+        case 'small':
+          return '14px';
+        case 'large':
+          return '24px';
+        default:
+          return '18px';
+      }
     };
 
     const baseTextStyle = {
       color: headerText.color || '#000000',
       fontFamily: campaign.design?.fontFamily || 'Inter',
-      fontSize: headerText.size === 'small' ? '14px' : headerText.size === 'large' ? '24px' : '18px',
+      fontSize: getTextSize(),
       textAlign: 'center' as const
     };
 
     return (
-      <div className="w-full flex justify-center">
-        <div style={frameStyles}>
-          <div className="my-[20px] px-[42px]">
-            {headerText.textContents && headerText.textContents.length > 0 ? (
-              renderTextContents(headerText.textContents, baseTextStyle)
-            ) : (
-              <p style={baseTextStyle} className="text-xl">
-                {headerText.text || 'Texte d\'en-tête'}
-              </p>
-            )}
-          </div>
+      <div className="w-full flex justify-center" style={frameStyles}>
+        <div className="my-[20px] px-[42px]">
+          {headerText.textContents && headerText.textContents.length > 0 ? (
+            renderTextContents(headerText.textContents, baseTextStyle)
+          ) : (
+            <p style={baseTextStyle} className="text-xl">
+              {headerText.text || 'Texte d\'en-tête'}
+            </p>
+          )}
         </div>
       </div>
     );
@@ -195,35 +202,42 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
     const frameStyles = footerText.showFrame ? {
       backgroundColor: footerText.frameColor || '#ffffff',
       border: `1px solid ${footerText.frameBorderColor || '#e5e7eb'}`,
-      borderRadius: `${footerText.frameBorderRadius || 8}px`,
-      padding: `${footerText.framePadding || 12}px`,
+      borderRadius: '8px',
+      padding: '12px 16px',
       margin: '0 16px',
-      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-      display: 'inline-block',
-      width: 'fit-content'
+      boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
     } : {
       padding: '12px 16px'
+    };
+
+    const getTextSize = () => {
+      switch (footerText.size) {
+        case 'small':
+          return '14px';
+        case 'large':
+          return '24px';
+        default:
+          return '18px';
+      }
     };
 
     const baseTextStyle = {
       color: footerText.color || '#000000',
       fontFamily: campaign.design?.fontFamily || 'Inter',
-      fontSize: footerText.size === 'small' ? '14px' : footerText.size === 'large' ? '24px' : '18px',
+      fontSize: getTextSize(),
       textAlign: 'center' as const
     };
 
     return (
-      <div className="w-full flex justify-center">
-        <div style={frameStyles}>
-          <div className="my-0 py-[12px]">
-            {footerText.textContents && footerText.textContents.length > 0 ? (
-              renderTextContents(footerText.textContents, baseTextStyle)
-            ) : (
-              <p style={baseTextStyle}>
-                {footerText.text || 'Texte de pied de page'}
-              </p>
-            )}
-          </div>
+      <div className="w-full flex justify-center" style={frameStyles}>
+        <div className="my-0 py-[12px]">
+          {footerText.textContents && footerText.textContents.length > 0 ? (
+            renderTextContents(footerText.textContents, baseTextStyle)
+          ) : (
+            <p style={baseTextStyle}>
+              {footerText.text || 'Texte de pied de page'}
+            </p>
+          )}
         </div>
       </div>
     );
@@ -234,6 +248,17 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
     if (!customText?.enabled || !customText?.text) {
       return null;
     }
+
+    const getTextSize = () => {
+      switch (customText.size) {
+        case 'small':
+          return 'text-sm';
+        case 'large':
+          return 'text-2xl';
+        default:
+          return 'text-lg';
+      }
+    };
 
     const getPositionStyles = () => {
       const baseStyles = 'absolute z-20 max-w-md';
@@ -262,7 +287,7 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
 
     return (
       <div className={getPositionStyles()} style={frameStyles}>
-        <p className={`font-medium text-center ${customText.size === 'small' ? 'text-sm' : customText.size === 'large' ? 'text-2xl' : 'text-lg'}`} style={{
+        <p className={`${getTextSize()} font-medium text-center`} style={{
           color: customText.color || '#000000',
           fontFamily: campaign.design?.fontFamily || 'Inter'
         }}>
