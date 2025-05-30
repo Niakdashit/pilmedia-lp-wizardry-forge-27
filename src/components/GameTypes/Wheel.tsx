@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect, useState } from 'react';
 import WheelStyleSelector from '../configurators/WheelStyleSelector';
 
@@ -67,7 +68,7 @@ const Wheel: React.FC<WheelProps> = ({
     );
   }
 
-  // -- Correction : le container prend toute la largeur dispo, aspect carré garanti, padding géré par le device parent --
+  // Container principal 100% responsive
   return (
     <div
       className={`flex flex-col items-center justify-center w-full h-full ${className || ''}`}
@@ -77,30 +78,21 @@ const Wheel: React.FC<WheelProps> = ({
         ...style
       }}
     >
+      {/* Container de la roue - utilise l'espace disponible avec aspect ratio carré */}
       <div
-        className="relative flex items-center justify-center w-full"
+        className="relative flex items-center justify-center w-full max-w-full max-h-full"
         style={{
-          width: '100%',
           aspectRatio: '1/1',
-          boxSizing: 'border-box',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
+          // Utilise le minimum entre largeur et hauteur disponibles
+          width: 'min(100%, 100vh)',
+          height: 'min(100%, 100vw)',
         }}
       >
         <div
           ref={wheelRef}
-          className="rounded-full border-8 border-gray-800 relative overflow-hidden bg-white flex items-center justify-center"
+          className="rounded-full border-8 border-gray-800 relative overflow-hidden bg-white flex items-center justify-center w-full h-full"
           style={{
-            width: '100%',
-            height: '100%',
-            aspectRatio: '1 / 1',
-            maxWidth: '100%',
-            maxHeight: '100%',
-            minWidth: 0,
-            minHeight: 0,
             transition: 'transform 3s cubic-bezier(.17,.67,.83,.67)',
-            background: 'white',
           }}
         >
           {prizes.map((prize: string, index: number) => (
@@ -130,13 +122,15 @@ const Wheel: React.FC<WheelProps> = ({
         </div>
       </div>
 
+      {/* Bouton responsive */}
       <button
         onClick={spin}
         disabled={isSpinning}
-        className="px-8 py-3 mt-4 bg-[#841b60] text-white font-bold rounded-xl hover:bg-[#6d164f] disabled:opacity-50 transition-colors duration-200"
+        className="px-4 py-2 mt-4 bg-[#841b60] text-white font-bold rounded-xl hover:bg-[#6d164f] disabled:opacity-50 transition-colors duration-200 text-sm md:text-base"
         style={{
-          width: previewMode === 'mobile' ? '70%' : previewMode === 'tablet' ? '80%' : '60%',
-          maxWidth: 260,
+          width: previewMode === 'mobile' ? '80%' : previewMode === 'tablet' ? '70%' : '60%',
+          maxWidth: '280px',
+          minWidth: '120px',
         }}
       >
         {isSpinning ? 'Rotation...' : 'Faire tourner'}

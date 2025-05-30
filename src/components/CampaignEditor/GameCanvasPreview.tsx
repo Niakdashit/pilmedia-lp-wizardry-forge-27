@@ -7,7 +7,7 @@ import MemoryPreview from '../GameTypes/MemoryPreview';
 import PuzzlePreview from '../GameTypes/PuzzlePreview';
 import ScratchPreview from '../GameTypes/ScratchPreview';
 import DicePreview from '../GameTypes/DicePreview';
-import { GAME_SIZES } from './GameSizeSelector';
+import { Wheel } from '../GameTypes';
 
 interface GameCanvasPreviewProps {
   campaign: any;
@@ -21,72 +21,60 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage;
   const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel || 'Lancer le Jackpot';
   const buttonColor = campaign.gameConfig?.[campaign.type]?.buttonColor || '#ec4899';
-  const gameSize = campaign.gameConfig?.[campaign.type]?.gameSize || 2;
   
   // Récupération du template sélectionné
   const selectedTemplateId = campaign?.design?.template || campaign?.gameConfig?.jackpot?.template;
 
-  // Get dimensions for selected game size
-  const selectedSize = GAME_SIZES.find(size => size.id === gameSize) || GAME_SIZES[1];
-  const gameWidth = selectedSize.width;
-  const gameHeight = selectedSize.height;
-
   const renderGame = () => {
+    // Props communes pour tous les jeux - 100% responsive
     const gameProps = {
       style: { 
-        width: `${gameWidth}px`, 
-        height: `${gameHeight}px`, 
+        width: '100%', 
+        height: '100%',
+        minHeight: '300px',
         maxWidth: '100%', 
-        maxHeight: '100%',
-        overflow: 'hidden'
-      }
+        maxHeight: '100%'
+      },
+      className: 'w-full h-full'
     };
 
     switch (campaign.type) {
       case 'jackpot':
         return (
-          <div style={gameProps.style}>
-            <Jackpot
-              isPreview={true}
-              instantWinConfig={{
-                mode: 'instant_winner' as const,
-                winProbability: campaign.gameConfig?.jackpot?.instantWin?.winProbability || 0.05,
-                maxWinners: campaign.gameConfig?.jackpot?.instantWin?.maxWinners,
-                winnersCount: 0
-              }}
-              buttonLabel={buttonLabel}
-              buttonColor={buttonColor}
-              selectedTemplate={selectedTemplateId}
-            />
-          </div>
+          <Jackpot
+            isPreview={true}
+            instantWinConfig={{
+              mode: 'instant_winner' as const,
+              winProbability: campaign.gameConfig?.jackpot?.instantWin?.winProbability || 0.05,
+              maxWinners: campaign.gameConfig?.jackpot?.instantWin?.maxWinners,
+              winnersCount: 0
+            }}
+            buttonLabel={buttonLabel}
+            buttonColor={buttonColor}
+            selectedTemplate={selectedTemplateId}
+            {...gameProps}
+          />
         );
       case 'quiz':
         return (
-          <div style={gameProps.style}>
-            <Quiz 
-              config={campaign.gameConfig?.quiz || {}} 
-              campaign={campaign}
-            />
-          </div>
+          <Quiz 
+            config={campaign.gameConfig?.quiz || {}} 
+            campaign={campaign}
+            {...gameProps}
+          />
         );
       case 'wheel':
         return (
-          <div style={gameProps.style}>
-            <WheelPreview
-              campaign={campaign}
-              config={{
-                mode: 'instant_winner' as const,
-                winProbability: campaign.gameConfig?.wheel?.winProbability || 0.1,
-                maxWinners: campaign.gameConfig?.wheel?.maxWinners,
-                winnersCount: 0
-              }}
-              onFinish={() => {}}
-            />
-          </div>
+          <Wheel
+            config={campaign.gameConfig?.wheel || {}}
+            isPreview={true}
+            previewMode="desktop"
+            {...gameProps}
+          />
         );
       case 'scratch':
         return (
-          <div style={gameProps.style}>
+          <div className="w-full h-full flex items-center justify-center">
             <ScratchPreview 
               config={campaign.gameConfig?.scratch || {}} 
             />
@@ -94,7 +82,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
         );
       case 'memory':
         return (
-          <div style={gameProps.style}>
+          <div className="w-full h-full flex items-center justify-center">
             <MemoryPreview 
               config={campaign.gameConfig?.memory || {}} 
             />
@@ -102,7 +90,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
         );
       case 'puzzle':
         return (
-          <div style={gameProps.style}>
+          <div className="w-full h-full flex items-center justify-center">
             <PuzzlePreview 
               config={campaign.gameConfig?.puzzle || {}} 
             />
@@ -110,7 +98,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
         );
       case 'dice':
         return (
-          <div style={gameProps.style}>
+          <div className="w-full h-full flex items-center justify-center">
             <DicePreview 
               config={campaign.gameConfig?.dice || {}} 
             />
@@ -126,13 +114,17 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   };
 
   return (
-    <div className={`relative w-full flex items-center justify-center ${className}`} style={{ 
-      minHeight: `${gameHeight}px`,
-      backgroundColor: '#f8f9fa',
-      border: '2px dashed #e9ecef',
-      borderRadius: '8px',
-      padding: '20px'
-    }}>
+    <div 
+      className={`relative w-full flex items-center justify-center ${className}`} 
+      style={{ 
+        minHeight: '400px',
+        height: '500px',
+        backgroundColor: '#f8f9fa',
+        border: '2px dashed #e9ecef',
+        borderRadius: '8px',
+        padding: '20px'
+      }}
+    >
       {/* Image de fond plein écran */}
       {gameBackgroundImage && (
         <img
@@ -143,8 +135,8 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
         />
       )}
 
-      {/* Jeu centré avec contraintes de taille */}
-      <div className="relative z-20 flex items-center justify-center">
+      {/* Jeu responsive centré */}
+      <div className="relative z-20 w-full h-full flex items-center justify-center">
         {renderGame()}
       </div>
     </div>

@@ -33,14 +33,14 @@ interface GameFunnelProps {
   campaign: any;
   modalContained?: boolean;
   mobileConfig?: any;
-  previewMode?: 'mobile' | 'tablet'; // <-- Ajout pour la preview
+  previewMode?: 'mobile' | 'tablet' | 'desktop';
 }
 
 const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
   campaign,
   modalContained = false,
   mobileConfig,
-  previewMode, // <-- Ajout
+  previewMode = 'desktop',
 }) => {
   const [formValidated, setFormValidated] = useState(false);
   const [showFormModal, setShowFormModal] = useState(false);
@@ -107,43 +107,60 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
     campaign?.selectedTemplate;
 
   const renderGame = () => {
-    // Pour éviter la duplication d'image, ne pas passer backgroundImage au jeu
-    // L'image de fond est gérée par le conteneur parent
     const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel;
     const buttonColor = campaign.gameConfig?.[campaign.type]?.buttonColor;
     const contrastBg = mobileConfig?.contrastBackground || campaign.screens?.[2]?.contrastBackground;
 
+    // Container responsive qui s'adapte selon le mode de preview
     const gameContainerStyle: any = {
       position: 'relative',
       width: '100%',
-      height: mobileConfig ? 'auto' : '400px',
-      minHeight: mobileConfig ? '200px' : '400px',
-      maxHeight: mobileConfig ? '300px' : 'none'
+      height: '100%',
+      minHeight: previewMode === 'mobile' ? '250px' : previewMode === 'tablet' ? '300px' : '400px',
+      maxHeight: previewMode === 'mobile' ? '350px' : previewMode === 'tablet' ? '450px' : 'none',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
     };
 
     const gameComponent = (() => {
       const commonProps = {
         disabled: !formValidated,
         onFinish: handleGameFinish,
-        onStart: handleGameStart
+        onStart: handleGameStart,
+        previewMode,
+        style: { width: '100%', height: '100%' },
+        className: 'w-full h-full'
       };
 
       switch (campaign.type) {
         case 'wheel':
           return <Wheel config={campaign.gameConfig.wheel} isPreview={true} {...commonProps} />;
         case 'scratch':
-          return <ScratchPreview config={campaign.gameConfig.scratch} />;
+          return (
+            <div className="w-full h-full flex items-center justify-center">
+              <ScratchPreview config={campaign.gameConfig.scratch} />
+            </div>
+          );
         case 'jackpot':
-          return <Jackpot 
-            isPreview={true} 
-            instantWinConfig={campaign.gameConfig?.jackpot?.instantWin} 
-            buttonLabel={buttonLabel} 
-            buttonColor={buttonColor} 
-            selectedTemplate={selectedTemplateId}
-            {...commonProps} 
-          />;
+          return (
+            <div className="w-full h-full flex items-center justify-center">
+              <Jackpot 
+                isPreview={true} 
+                instantWinConfig={campaign.gameConfig?.jackpot?.instantWin} 
+                buttonLabel={buttonLabel} 
+                buttonColor={buttonColor} 
+                selectedTemplate={selectedTemplateId}
+                {...commonProps} 
+              />
+            </div>
+          );
         case 'dice':
-          return <DicePreview config={campaign.gameConfig.dice} />;
+          return (
+            <div className="w-full h-full flex items-center justify-center">
+              <DicePreview config={campaign.gameConfig.dice} />
+            </div>
+          );
         default:
           return <div className="text-center text-gray-500">Jeu non supporté</div>;
       }
@@ -151,11 +168,11 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
 
     return (
       <div style={gameContainerStyle} className="rounded-lg overflow-hidden relative">
-        <div className="relative z-20 h-full">
+        <div className="relative z-20 w-full h-full">
           <ContrastBackground
             enabled={contrastBg?.enabled && contrastBg?.applyToGame}
             config={contrastBg}
-            className="h-full flex items-center justify-center"
+            className="w-full h-full flex items-center justify-center"
           >
             {gameComponent}
           </ContrastBackground>
