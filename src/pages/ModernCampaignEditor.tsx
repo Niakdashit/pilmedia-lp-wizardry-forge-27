@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Eye, Save, Monitor, Smartphone } from 'lucide-react';
@@ -10,7 +9,6 @@ import ModernEditorCanvas from '../components/ModernEditor/ModernEditorCanvas';
 import ModernPreviewModal from '../components/ModernEditor/ModernPreviewModal';
 import ModernGeneralTab from '../components/ModernEditor/ModernGeneralTab';
 import ModernGameTab from '../components/ModernEditor/ModernGameTab';
-import ModernFormTab from '../components/ModernEditor/ModernFormTab';
 import ModernDesignTab from '../components/ModernEditor/ModernDesignTab';
 
 const defaultFormFields = [
@@ -46,7 +44,6 @@ const ModernCampaignEditor: React.FC = () => {
     type: campaignType,
     formFields: defaultFormFields,
     gameConfig: getDefaultGameConfig(campaignType),
-    config: getDefaultGameConfig(campaignType),
     design: {
       background: '#f8fafc',
       primaryColor: '#841b60',
@@ -54,8 +51,7 @@ const ModernCampaignEditor: React.FC = () => {
       titleColor: '#000000',
       buttonColor: '#841b60',
       fontFamily: 'Inter',
-      borderRadius: '0.5rem',
-      backgroundImage: ''
+      borderRadius: '0.5rem'
     },
     gamePosition: 'center',
     screens: {
@@ -219,12 +215,6 @@ const ModernCampaignEditor: React.FC = () => {
                 )}
                 {activeTab === 'game' && (
                   <ModernGameTab
-                    campaign={campaign}
-                    setCampaign={setCampaign}
-                  />
-                )}
-                {activeTab === 'form' && (
-                  <ModernFormTab
                     campaign={campaign}
                     setCampaign={setCampaign}
                   />
