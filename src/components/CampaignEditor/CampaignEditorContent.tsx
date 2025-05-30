@@ -25,18 +25,9 @@ const CampaignEditorContent: React.FC<CampaignEditorContentProps> = ({
         return <CampaignGeneral campaign={campaign} setCampaign={setCampaign} />;
         
       case 'content':
-        return <CampaignContent campaign={campaign} setCampaign={setCampaign} />;
-
-      case 'screens':
-        return <CampaignScreens campaign={campaign} setCampaign={setCampaign} />;
-        
-      case 'mobile':
-        return <CampaignMobile campaign={campaign} setCampaign={setCampaign} />;
-
-      case 'settings':
         return (
           <div className="space-y-8">
-            <CampaignSettings campaign={campaign} setCampaign={setCampaign} />
+            <CampaignContent campaign={campaign} setCampaign={setCampaign} />
             
             {campaign.type === 'quiz' && (
               <div>
@@ -54,6 +45,19 @@ const CampaignEditorContent: React.FC<CampaignEditorContentProps> = ({
                 />
               </div>
             )}
+          </div>
+        );
+
+      case 'screens':
+        return <CampaignScreens campaign={campaign} setCampaign={setCampaign} />;
+        
+      case 'mobile':
+        return <CampaignMobile campaign={campaign} setCampaign={setCampaign} />;
+
+      case 'settings':
+        return (
+          <div className="space-y-8">
+            <CampaignSettings campaign={campaign} setCampaign={setCampaign} />
             
             {campaign.type === 'jackpot' && (
               <div>

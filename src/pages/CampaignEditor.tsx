@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import CampaignEditorHeader from '../components/CampaignEditor/CampaignEditorHeader';
@@ -197,6 +198,13 @@ const CampaignEditor: React.FC = () => {
       loadCampaign(id);
     }
   }, [id, isNewCampaign]);
+
+  // Pour les quiz, rediriger vers l'onglet content pour configuration immédiate
+  useEffect(() => {
+    if (campaignType === 'quiz' && isNewCampaign) {
+      setActiveTab('content');
+    }
+  }, [campaignType, isNewCampaign]);
 
   const loadCampaign = async (campaignId: string) => {
     const existingCampaign = await getCampaign(campaignId);
