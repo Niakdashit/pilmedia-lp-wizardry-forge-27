@@ -27,7 +27,7 @@ const Wheel: React.FC<WheelProps> = ({
   const prizes = config?.prizes || ['Prix 1', 'Prix 2', 'Prix 3', 'Prix 4'];
   const colors = config?.colors || ['#ff6b6b', '#4ecdc4', '#45b7d1', '#96ceb4'];
 
-  // Responsive sizing : s'adapte toujours à la hauteur/largeur du parent
+  // Responsive sizing: max size depending on device type
   let maxPx = 340;
   if (previewMode === 'mobile') maxPx = 180;
   if (previewMode === 'tablet') maxPx = 240;
@@ -36,7 +36,7 @@ const Wheel: React.FC<WheelProps> = ({
     if (!wheelRef.current || isSpinning) return;
 
     setIsSpinning(true);
-    const randomRotation = Math.random() * 360 + 1440;
+    const randomRotation = Math.random() * 360 + 1440; // Au moins 4 tours
 
     wheelRef.current.style.transform = `rotate(${randomRotation}deg)`;
 
