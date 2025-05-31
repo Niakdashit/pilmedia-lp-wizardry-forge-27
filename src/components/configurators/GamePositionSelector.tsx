@@ -6,16 +6,14 @@ export type GamePosition = 'top' | 'center' | 'bottom' | 'left' | 'right';
 interface GamePositionSelectorProps {
   selectedPosition: GamePosition;
   onPositionChange: (position: GamePosition) => void;
-  className?: string;
 }
 
 const GamePositionSelector: React.FC<GamePositionSelectorProps> = ({
   selectedPosition,
-  onPositionChange,
-  className = ""
+  onPositionChange
 }) => {
   return (
-    <div className={`space-y-3 ${className}`}>
+    <div className="space-y-2">
       <label className="block text-sm font-medium text-gray-700">
         Position du jeu
       </label>
