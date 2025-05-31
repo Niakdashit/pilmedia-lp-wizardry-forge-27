@@ -1,6 +1,6 @@
 
 import React, { useCallback } from 'react';
-import { Upload, Image as ImageIcon } from 'lucide-react';
+import { Upload } from 'lucide-react';
 
 interface ImageUploadProps {
   value?: string;
@@ -90,11 +90,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                 <div className={`mx-auto bg-[#f8f0f5] rounded-full flex items-center justify-center mb-2 ${
                   compact ? 'w-8 h-8' : 'w-12 h-12 mb-3'
                 }`}>
-                  {value ? (
-                    <ImageIcon className={compact ? "w-4 h-4 text-[#841b60]" : "w-6 h-6 text-[#841b60]"} />
-                  ) : (
-                    <Upload className={compact ? "w-4 h-4 text-[#841b60]" : "w-6 h-6 text-[#841b60]"} />
-                  )}
+                  <Upload className={compact ? "w-4 h-4 text-[#841b60]" : "w-6 h-6 text-[#841b60]"} />
                 </div>
                 <p className={compact ? "text-xs text-gray-500" : "text-sm text-gray-500"}>
                   {compact ? "Ajouter image" : "Glissez-déposez une image ici ou"}

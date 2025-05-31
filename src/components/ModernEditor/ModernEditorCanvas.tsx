@@ -161,14 +161,12 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
     };
 
     const getTextSize = () => {
-      switch (headerText.size) {
-        case 'small':
-          return '14px';
-        case 'large':
-          return '24px';
-        default:
-          return '18px';
-      }
+      const sizeMap: Record<string, string> = {
+        small: '14px',
+        medium: '18px',
+        large: '24px'
+      };
+      return sizeMap[headerText.size as string] || '18px';
     };
 
     const baseTextStyle = {
@@ -211,14 +209,12 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
     };
 
     const getTextSize = () => {
-      switch (footerText.size) {
-        case 'small':
-          return '14px';
-        case 'large':
-          return '24px';
-        default:
-          return '18px';
-      }
+      const sizeMap: Record<string, string> = {
+        small: '14px',
+        medium: '18px',
+        large: '24px'
+      };
+      return sizeMap[footerText.size as string] || '18px';
     };
 
     const baseTextStyle = {
@@ -262,19 +258,14 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
 
     const getPositionStyles = () => {
       const baseStyles = 'absolute z-20 max-w-md';
-      switch (customText.position) {
-        case 'top':
-          return `${baseStyles} top-4 left-1/2 transform -translate-x-1/2`;
-        case 'bottom':
-          return `${baseStyles} bottom-4 left-1/2 transform -translate-x-1/2`;
-        case 'left':
-          return `${baseStyles} left-4 top-1/2 transform -translate-y-1/2`;
-        case 'right':
-          return `${baseStyles} right-4 top-1/2 transform -translate-y-1/2`;
-        default:
-          // center
-          return `${baseStyles} top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2`;
-      }
+      const positionMap: Record<string, string> = {
+        top: `${baseStyles} top-4 left-1/2 transform -translate-x-1/2`,
+        bottom: `${baseStyles} bottom-4 left-1/2 transform -translate-x-1/2`,
+        left: `${baseStyles} left-4 top-1/2 transform -translate-y-1/2`,
+        right: `${baseStyles} right-4 top-1/2 transform -translate-y-1/2`,
+        center: `${baseStyles} top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2`
+      };
+      return positionMap[customText.position as string] || positionMap.center;
     };
 
     const frameStyles = customText.showFrame ? {
