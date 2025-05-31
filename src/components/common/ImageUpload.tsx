@@ -1,6 +1,6 @@
 
 import React, { useCallback } from 'react';
-import { Upload, Image as ImageIcon } from 'lucide-react';
+import { Upload, Image as ImageIcon, X } from 'lucide-react';
 
 interface ImageUploadProps {
   value?: string;
@@ -23,6 +23,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     if (file && file.type.startsWith('image/')) {
       const reader = new FileReader();
       reader.onloadend = () => {
+        console.log('Image uploaded via drop:', reader.result);
         onChange(reader.result as string);
       };
       reader.readAsDataURL(file);
@@ -34,10 +35,18 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
+        console.log('Image uploaded via file input:', reader.result);
         onChange(reader.result as string);
       };
       reader.readAsDataURL(file);
     }
+  }, [onChange]);
+
+  const handleRemove = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log('Image removed');
+    onChange('');
   }, [onChange]);
 
   return (
@@ -60,12 +69,12 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           accept="image/*"
           onChange={handleFileChange}
           className="hidden"
-          id="image-upload"
+          id={`image-upload-${Math.random()}`}
         />
         
         <label
-          htmlFor="image-upload"
-          className="cursor-pointer"
+          htmlFor={`image-upload-${Math.random()}`}
+          className="cursor-pointer block"
         >
           <div className="text-center">
             {value ? (
@@ -76,13 +85,11 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                   className={compact ? "max-h-16 mx-auto rounded" : "max-h-48 mx-auto rounded-lg"}
                 />
                 <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onChange('');
-                  }}
-                  className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 text-xs"
+                  onClick={handleRemove}
+                  className="absolute -top-2 -right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 text-xs w-6 h-6 flex items-center justify-center"
+                  type="button"
                 >
-                  ×
+                  <X className="w-3 h-3" />
                 </button>
               </div>
             ) : (
@@ -90,11 +97,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                 <div className={`mx-auto bg-[#f8f0f5] rounded-full flex items-center justify-center mb-2 ${
                   compact ? 'w-8 h-8' : 'w-12 h-12 mb-3'
                 }`}>
-                  {value ? (
-                    <ImageIcon className={compact ? "w-4 h-4 text-[#841b60]" : "w-6 h-6 text-[#841b60]"} />
-                  ) : (
-                    <Upload className={compact ? "w-4 h-4 text-[#841b60]" : "w-6 h-6 text-[#841b60]"} />
-                  )}
+                  <Upload className={compact ? "w-4 h-4 text-[#841b60]" : "w-6 h-6 text-[#841b60]"} />
                 </div>
                 <p className={compact ? "text-xs text-gray-500" : "text-sm text-gray-500"}>
                   {compact ? "Ajouter image" : "Glissez-déposez une image ici ou"}
