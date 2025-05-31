@@ -109,7 +109,7 @@ const templatesByMechanic: Record<string, Array<{
       glowColor: 'shadow-blue-500/30'
     }
   ],
-  roue: [
+  wheel: [
     {
       id: 'color',
       name: 'Chance Colorée',
@@ -148,50 +148,55 @@ const Step3VisualStyle: React.FC = () => {
   const [showPreview, setShowPreview] = useState(false);
   const [creationSuccess, setCreationSuccess] = useState(false);
 
-  const currentTemplates =
-    templatesByMechanic[selectedGameType || 'quiz'] ||
-    templatesByMechanic['quiz'];
+  // Ensure we always have a valid game type
+  const gameType = selectedGameType || 'quiz';
+  const currentTemplates = templatesByMechanic[gameType] || templatesByMechanic['quiz'];
 
   const handleFileUpload = (files: FileList | null) => {
     if (files && files[0]) {
       setBackgroundImage(files[0]);
     }
   };
+
   const handleFinish = () => {
     setShowFinalStep(true);
   };
+
   const handlePreview = () => {
     setShowPreview(true);
   };
+
   const handleCreateCampaign = async () => {
     setIsCreating(true);
     try {
       const selectedTemplate =
         currentTemplates.find((tpl) => tpl.id === selectedTheme) ||
         currentTemplates[0];
+      
       const campaignData = {
         name: campaignName,
-        description: `Campagne ${selectedGameType} - ${marketingGoal}`,
-        type: selectedGameType || 'quiz',
+        description: `Campagne ${gameType} - ${marketingGoal}`,
+        type: gameType, // Now guaranteed to be string
         game_config: {
           theme: selectedTheme,
           launchDate,
           marketingGoal,
           hasLogo: !!logoFile,
           hasBackgroundImage: !!backgroundImage,
-          [selectedGameType || 'quiz']: {
-            ...(selectedGameType === 'jackpot' && {
-              template: selectedTheme // Sauvegarde du template sélectionné
+          [gameType]: { // Now safe to use as computed property
+            ...(gameType === 'jackpot' && {
+              template: selectedTheme
             })
           }
         },
         design: {
           theme: selectedTheme,
           colors: selectedTemplate?.colors,
-          template: selectedTheme // Aussi dans design pour l'accès facile
+          template: selectedTheme
         },
         status: 'draft' as const
       };
+      
       const result = await saveCampaign(campaignData);
       if (result) {
         setCreationSuccess(true);
@@ -206,35 +211,38 @@ const Step3VisualStyle: React.FC = () => {
       setIsCreating(false);
     }
   };
+
   const handleAdvancedSettings = async () => {
     setIsCreating(true);
     try {
       const selectedTemplate =
         currentTemplates.find((tpl) => tpl.id === selectedTheme) ||
         currentTemplates[0];
+      
       const campaignData = {
         name: campaignName,
-        description: `Campagne ${selectedGameType} - ${marketingGoal}`,
-        type: selectedGameType || 'quiz',
+        description: `Campagne ${gameType} - ${marketingGoal}`,
+        type: gameType, // Now guaranteed to be string
         game_config: {
           theme: selectedTheme,
           launchDate,
           marketingGoal,
           hasLogo: !!logoFile,
           hasBackgroundImage: !!backgroundImage,
-          [selectedGameType || 'quiz']: {
-            ...(selectedGameType === 'jackpot' && {
-              template: selectedTheme // Sauvegarde du template sélectionné
+          [gameType]: { // Now safe to use as computed property
+            ...(gameType === 'jackpot' && {
+              template: selectedTheme
             })
           }
         },
         design: {
           theme: selectedTheme,
           colors: selectedTemplate?.colors,
-          template: selectedTheme // Aussi dans design pour l'accès facile
+          template: selectedTheme
         },
         status: 'draft' as const
       };
+      
       const result = await saveCampaign(campaignData);
       if (result) {
         reset();
