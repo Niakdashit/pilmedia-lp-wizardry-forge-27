@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { useCampaigns } from '../../hooks/useCampaigns';
@@ -179,7 +178,6 @@ const ModernCampaignEditor: React.FC = () => {
         <div className="flex-1 bg-gray-100">
           <ModernEditorCanvas
             campaign={campaign}
-            activeTab={activeTab}
           />
         </div>
       </div>

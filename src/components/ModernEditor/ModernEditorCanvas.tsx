@@ -4,12 +4,10 @@ import CampaignPreview from '../CampaignEditor/CampaignPreview';
 
 interface ModernEditorCanvasProps {
   campaign: any;
-  activeTab: string;
 }
 
 const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
-  campaign,
-  activeTab
+  campaign
 }) => {
   return (
     <div className="h-full bg-gray-100 p-6">
