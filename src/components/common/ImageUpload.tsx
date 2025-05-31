@@ -1,5 +1,5 @@
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Upload } from 'lucide-react';
 
 interface ImageUploadProps {
@@ -17,13 +17,23 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   className,
   compact = false 
 }) => {
+  const [dragActive, setDragActive] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
+    setDragActive(false);
     const file = e.dataTransfer.files[0];
     if (file && file.type.startsWith('image/')) {
+      setIsLoading(true);
       const reader = new FileReader();
       reader.onloadend = () => {
         onChange(reader.result as string);
+        setIsLoading(false);
+      };
+      reader.onerror = () => {
+        console.error('Erreur lors de la lecture du fichier');
+        setIsLoading(false);
       };
       reader.readAsDataURL(file);
     }
@@ -32,12 +42,24 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      setIsLoading(true);
       const reader = new FileReader();
       reader.onloadend = () => {
         onChange(reader.result as string);
+        setIsLoading(false);
+      };
+      reader.onerror = () => {
+        console.error('Erreur lors de la lecture du fichier');
+        setIsLoading(false);
       };
       reader.readAsDataURL(file);
     }
+  }, [onChange]);
+
+  const handleRemove = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onChange('');
   }, [onChange]);
 
   return (
@@ -49,10 +71,19 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       )}
       
       <div 
-        className={`relative border-2 border-dashed border-gray-300 rounded-lg hover:border-[#841b60] transition-colors duration-200 ${
-          compact ? 'p-2' : 'p-6'
-        }`}
-        onDragOver={(e) => e.preventDefault()}
+        className={`relative border-2 border-dashed rounded-lg transition-colors duration-200 ${
+          dragActive 
+            ? 'border-[#841b60] bg-[#f8f0f5]' 
+            : 'border-gray-300 hover:border-[#841b60]'
+        } ${compact ? 'p-2' : 'p-6'}`}
+        onDragOver={(e) => {
+          e.preventDefault();
+          setDragActive(true);
+        }}
+        onDragLeave={(e) => {
+          e.preventDefault();
+          setDragActive(false);
+        }}
         onDrop={handleDrop}
       >
         <input
@@ -60,30 +91,38 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           accept="image/*"
           onChange={handleFileChange}
           className="hidden"
-          id="image-upload"
+          id={`image-upload-${Math.random()}`}
         />
         
         <label
-          htmlFor="image-upload"
-          className="cursor-pointer"
+          htmlFor={`image-upload-${Math.random()}`}
+          className="cursor-pointer block"
         >
           <div className="text-center">
-            {value ? (
-              <div className="relative">
+            {isLoading ? (
+              <div className="flex flex-col items-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#841b60] mb-2"></div>
+                <p className="text-sm text-gray-500">Chargement...</p>
+              </div>
+            ) : value ? (
+              <div className="relative group">
                 <img 
                   src={value} 
                   alt="Preview" 
-                  className={compact ? "max-h-16 mx-auto rounded" : "max-h-48 mx-auto rounded-lg"}
+                  className={`mx-auto rounded object-cover ${
+                    compact ? "max-h-16 w-16" : "max-h-48 max-w-full"
+                  }`}
                 />
                 <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onChange('');
-                  }}
-                  className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 text-xs"
+                  onClick={handleRemove}
+                  className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 text-xs opacity-0 group-hover:opacity-100 transition-opacity"
+                  type="button"
                 >
                   ×
                 </button>
+                <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity rounded">
+                  <span className="text-white text-sm font-medium">Changer l'image</span>
+                </div>
               </div>
             ) : (
               <>
@@ -95,7 +134,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                 <p className={compact ? "text-xs text-gray-500" : "text-sm text-gray-500"}>
                   {compact ? "Ajouter image" : "Glissez-déposez une image ici ou"}
                   {!compact && (
-                    <span className="text-[#841b60] hover:text-[#6d164f] ml-1">
+                    <span className="text-[#841b60] hover:text-[#6d164f] ml-1 font-medium">
                       parcourez vos fichiers
                     </span>
                   )}

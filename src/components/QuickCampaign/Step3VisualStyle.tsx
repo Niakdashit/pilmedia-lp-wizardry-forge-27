@@ -1,134 +1,64 @@
+
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Upload, Eye, Settings, Sparkles, CheckCircle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { ArrowLeft, Check, Palette, Upload } from 'lucide-react';
 import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
 import { useCampaigns } from '../../hooks/useCampaigns';
-import CampaignPreviewModal from './CampaignPreviewModal';
+import { useNavigate } from 'react-router-dom';
 
-// 👉 IMPORTS SVG
-import Tjackpot1 from '../../assets/templates/Tjackpot1.svg';
-import Tjackpot2 from '../../assets/templates/Tjackpot2.svg';
-import Tjackpot3 from '../../assets/templates/Tjackpot3.svg';
-import Tjackpot4 from '../../assets/templates/Tjackpot4.svg';
-import Tjackpot5 from '../../assets/templates/Tjackpot5.svg';
-
-// ----------- MAPPING CORRIGÉ : Jackpot a des images réelles ----------- //
-const templatesByMechanic: Record<string, Array<{
-  id: string;
-  name: string;
-  description: string;
-  colors?: { primary: string; secondary: string; background: string };
-  preview?: string;
-  borderColor: string;
-  glowColor: string;
-  image?: string;
-}>> = {
-  jackpot: [
-    {
-      id: 'Tjackpot1',
-      name: 'Jackpot Classic',
-      description: 'Template classique de machine à sous.',
-      image: Tjackpot1,
-      borderColor: 'border-yellow-400',
-      glowColor: 'shadow-yellow-400/30'
-    },
-    {
-      id: 'Tjackpot2',
-      name: 'Jackpot Vegas',
-      description: 'Ambiance Vegas, couleurs néon.',
-      image: Tjackpot2,
-      borderColor: 'border-pink-400',
-      glowColor: 'shadow-pink-400/30'
-    },
-    {
-      id: 'Tjackpot3',
-      name: 'Jackpot Luxe',
-      description: 'Version haut de gamme, effet doré.',
-      image: Tjackpot3,
-      borderColor: 'border-yellow-500',
-      glowColor: 'shadow-yellow-500/30'
-    },
-    {
-      id: 'Tjackpot4',
-      name: 'Jackpot Fun',
-      description: 'Style cartoon, parfait pour les familles.',
-      image: Tjackpot4,
-      borderColor: 'border-blue-400',
-      glowColor: 'shadow-blue-400/30'
-    },
-    {
-      id: 'Tjackpot5',
-      name: 'Jackpot Minimal',
-      description: 'Design minimaliste et épuré.',
-      image: Tjackpot5,
-      borderColor: 'border-gray-400',
-      glowColor: 'shadow-gray-400/30'
+const predefinedThemes = [
+  {
+    id: 'corporate',
+    name: 'Corporate',
+    description: 'Design professionnel et élégant',
+    preview: 'from-blue-600 to-blue-800',
+    colors: {
+      primary: '#1e40af',
+      secondary: '#3b82f6',
+      background: '#f8fafc'
     }
-  ],
-  quiz: [
-    {
-      id: 'modern',
-      name: 'Quiz Moderne',
-      description: 'Design épuré pour du contenu interactif.',
-      colors: {
-        primary: '#8b5cf6',
-        secondary: '#06b6d4',
-        background: '#f0f9ff'
-      },
-      preview: 'bg-gradient-to-br from-purple-500 to-cyan-400',
-      borderColor: 'border-purple-400',
-      glowColor: 'shadow-purple-500/30'
-    },
-    {
-      id: 'educ',
-      name: 'Éducatif Fun',
-      description: 'Ambiance apprentissage, couleurs douces.',
-      colors: {
-        primary: '#f59e42',
-        secondary: '#34d399',
-        background: '#fff9e6'
-      },
-      preview: 'bg-gradient-to-br from-orange-300 to-green-200',
-      borderColor: 'border-orange-300',
-      glowColor: 'shadow-orange-300/30'
+  },
+  {
+    id: 'festive',
+    name: 'Festif',
+    description: 'Couleurs vives et joyeuses',
+    preview: 'from-purple-600 to-pink-600',
+    colors: {
+      primary: '#9333ea',
+      secondary: '#ec4899',
+      background: '#fdf4ff'
     }
-  ],
-  corporate: [
-    {
-      id: 'corporate',
-      name: 'Corporate',
-      description: 'Élégant et professionnel',
-      colors: {
-        primary: '#1f2937',
-        secondary: '#3b82f6',
-        background: '#f8fafc'
-      },
-      preview: 'bg-gradient-to-br from-gray-700 to-blue-600',
-      borderColor: 'border-blue-400',
-      glowColor: 'shadow-blue-500/30'
+  },
+  {
+    id: 'nature',
+    name: 'Nature',
+    description: 'Tons verts et naturels',
+    preview: 'from-green-600 to-emerald-600',
+    colors: {
+      primary: '#059669',
+      secondary: '#10b981',
+      background: '#f0fdf4'
     }
-  ],
-  roue: [
-    {
-      id: 'color',
-      name: 'Chance Colorée',
-      description: 'Roue multicolore, dynamique et festive.',
-      colors: {
-        primary: '#f472b6',
-        secondary: '#3b82f6',
-        background: '#fff0f6'
-      },
-      preview: 'bg-gradient-to-br from-pink-300 to-blue-200',
-      borderColor: 'border-blue-400',
-      glowColor: 'shadow-blue-300/30'
+  },
+  {
+    id: 'minimal',
+    name: 'Minimal',
+    description: 'Design épuré et moderne',
+    preview: 'from-gray-600 to-gray-800',
+    colors: {
+      primary: '#374151',
+      secondary: '#6b7280',
+      background: '#ffffff'
     }
-  ]
-};
+  }
+];
 
 const Step3VisualStyle: React.FC = () => {
   const navigate = useNavigate();
   const { saveCampaign } = useCampaigns();
+  const [isCreating, setIsCreating] = useState(false);
+  const [dragActive, setDragActive] = useState(false);
+  
   const {
     selectedGameType,
     campaignName,
@@ -139,198 +69,85 @@ const Step3VisualStyle: React.FC = () => {
     backgroundImage,
     setSelectedTheme,
     setBackgroundImage,
-    setCurrentStep,
-    reset
+    setCurrentStep
   } = useQuickCampaignStore();
 
-  const [showFinalStep, setShowFinalStep] = useState(false);
-  const [isCreating, setIsCreating] = useState(false);
-  const [showPreview, setShowPreview] = useState(false);
-  const [creationSuccess, setCreationSuccess] = useState(false);
-
-  const currentTemplates =
-    templatesByMechanic[selectedGameType || 'quiz'] ||
-    templatesByMechanic['quiz'];
-
-  const handleFileUpload = (files: FileList | null) => {
+  const handleImageUpload = (files: FileList | null) => {
     if (files && files[0]) {
-      setBackgroundImage(files[0]);
-    }
-  };
-  const handleFinish = () => {
-    setShowFinalStep(true);
-  };
-  const handlePreview = () => {
-    setShowPreview(true);
-  };
-  const handleCreateCampaign = async () => {
-    setIsCreating(true);
-    try {
-      const selectedTemplate =
-        currentTemplates.find((tpl) => tpl.id === selectedTheme) ||
-        currentTemplates[0];
-      const campaignData = {
-        name: campaignName,
-        description: `Campagne ${selectedGameType} - ${marketingGoal}`,
-        type: selectedGameType || 'quiz',
-        game_config: {
-          theme: selectedTheme,
-          launchDate,
-          marketingGoal,
-          hasLogo: !!logoFile,
-          hasBackgroundImage: !!backgroundImage,
-          [selectedGameType || 'quiz']: {
-            ...(selectedGameType === 'jackpot' && {
-              template: selectedTheme // Sauvegarde du template sélectionné
-            })
-          }
-        },
-        design: {
-          theme: selectedTheme,
-          colors: selectedTemplate?.colors,
-          template: selectedTheme // Aussi dans design pour l'accès facile
-        },
-        status: 'draft' as const
+      const file = files[0];
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setBackgroundImage(file);
       };
-      const result = await saveCampaign(campaignData);
-      if (result) {
-        setCreationSuccess(true);
-        setTimeout(() => {
-          reset();
-          navigate('/campaigns');
-        }, 2000);
-      }
-    } catch (error) {
-      console.error('Erreur lors de la création:', error);
-    } finally {
-      setIsCreating(false);
-    }
-  };
-  const handleAdvancedSettings = async () => {
-    setIsCreating(true);
-    try {
-      const selectedTemplate =
-        currentTemplates.find((tpl) => tpl.id === selectedTheme) ||
-        currentTemplates[0];
-      const campaignData = {
-        name: campaignName,
-        description: `Campagne ${selectedGameType} - ${marketingGoal}`,
-        type: selectedGameType || 'quiz',
-        game_config: {
-          theme: selectedTheme,
-          launchDate,
-          marketingGoal,
-          hasLogo: !!logoFile,
-          hasBackgroundImage: !!backgroundImage,
-          [selectedGameType || 'quiz']: {
-            ...(selectedGameType === 'jackpot' && {
-              template: selectedTheme // Sauvegarde du template sélectionné
-            })
-          }
-        },
-        design: {
-          theme: selectedTheme,
-          colors: selectedTemplate?.colors,
-          template: selectedTheme // Aussi dans design pour l'accès facile
-        },
-        status: 'draft' as const
-      };
-      const result = await saveCampaign(campaignData);
-      if (result) {
-        reset();
-        navigate(`/campaign/${result.id}`);
-      }
-    } catch (error) {
-      console.error('Erreur lors de la création:', error);
-    } finally {
-      setIsCreating(false);
+      reader.readAsDataURL(file);
     }
   };
 
-  if (showFinalStep) {
-    return (
-      <div className="min-h-screen w-full flex items-center justify-center p-6">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6 }}
-          className="max-w-2xl w-full text-center"
-        >
-          <div className="bg-white/80 backdrop-blur-lg rounded-[32px] shadow-2xl p-12 border border-white/20">
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.2, type: 'spring' }}
-              className="mb-8"
-            >
-              {creationSuccess ? (
-                <CheckCircle className="w-20 h-20 text-green-500 mx-auto" />
-              ) : (
-                <Sparkles className="w-20 h-20 text-[#841b60] mx-auto" />
-              )}
-            </motion.div>
-            <h1 className="text-5xl font-bold text-gray-900 mb-6">
-              {creationSuccess
-                ? 'Campagne créée avec succès !'
-                : 'Votre campagne est prête !'}
-            </h1>
-            {creationSuccess ? (
-              <p className="text-xl text-gray-600 mb-8">
-                Redirection vers vos campagnes...
-              </p>
-            ) : (
-              <p className="text-xl text-gray-600 mb-8">
-                Vous pouvez maintenant la tester ou la personnaliser davantage.
-              </p>
-            )}
-            {!creationSuccess && (
-              <div className="space-y-4">
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={handlePreview}
-                  className="w-full py-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold rounded-2xl hover:shadow-lg transition-all flex items-center justify-center space-x-3"
-                >
-                  <Eye className="w-6 h-6" />
-                  <span>Voir un aperçu</span>
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={handleCreateCampaign}
-                  disabled={isCreating}
-                  className="w-full py-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold rounded-2xl hover:shadow-lg transition-all disabled:opacity-50"
-                >
-                  {isCreating ? (
-                    <div className="flex items-center justify-center space-x-2">
-                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                      <span>Création...</span>
-                    </div>
-                  ) : (
-                    'Créer la campagne'
-                  )}
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                  onClick={handleAdvancedSettings}
-                  disabled={isCreating}
-                  className="w-full py-4 bg-white/80 text-gray-700 font-bold rounded-2xl border-2 border-gray-200 hover:border-gray-300 hover:shadow-lg transition-all flex items-center justify-center space-x-3 disabled:opacity-50"
-                >
-                  <Settings className="w-6 h-6" />
-                  <span>Réglages avancés</span>
-                </motion.button>
-              </div>
-            )}
-          </div>
-        </motion.div>
-        <CampaignPreviewModal
-          isOpen={showPreview}
-          onClose={() => setShowPreview(false)}
-        />
-      </div>
-    );
-  }
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setDragActive(false);
+    handleImageUpload(e.dataTransfer.files);
+  };
+
+  const createCampaign = async () => {
+    setIsCreating(true);
+    
+    try {
+      const selectedThemeData = predefinedThemes.find(t => t.id === selectedTheme);
+      
+      // Convertir le logo en base64 si présent
+      let logoBase64 = null;
+      if (logoFile) {
+        const reader = new FileReader();
+        logoBase64 = await new Promise((resolve) => {
+          reader.onloadend = () => resolve(reader.result);
+          reader.readAsDataURL(logoFile);
+        });
+      }
+
+      // Convertir l'image de fond en base64 si présente
+      let backgroundBase64 = null;
+      if (backgroundImage) {
+        const reader = new FileReader();
+        backgroundBase64 = await new Promise((resolve) => {
+          reader.onloadend = () => resolve(reader.result);
+          reader.readAsDataURL(backgroundImage);
+        });
+      }
+
+      const campaignData = {
+        name: campaignName,
+        type: selectedGameType,
+        status: 'draft' as const,
+        description: `Campagne ${selectedGameType} créée via Quick Campaign`,
+        design: {
+          theme: selectedTheme,
+          colors: selectedThemeData?.colors,
+          logo: logoBase64,
+          backgroundImage: backgroundBase64,
+          background: selectedThemeData?.colors.background
+        },
+        gameConfig: {
+          [selectedGameType]: {
+            // Configuration par défaut selon le type de jeu
+          }
+        },
+        marketingGoal,
+        startDate: launchDate
+      };
+
+      const result = await saveCampaign(campaignData);
+      
+      if (result) {
+        // Rediriger vers l'éditeur moderne avec la nouvelle campagne
+        navigate(`/modern-campaign/${result.id}`);
+      }
+    } catch (error) {
+      console.error('Erreur lors de la création:', error);
+    } finally {
+      setIsCreating(false);
+    }
+  };
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-6">
@@ -342,96 +159,116 @@ const Step3VisualStyle: React.FC = () => {
           className="text-center mb-16"
         >
           <h1 className="text-6xl font-bold mb-6 text-white">
-            Choisissez un thème pour votre campagne
+            Personnalisez l'apparence
           </h1>
           <p className="text-2xl text-white">
-            Donnez vie à votre expérience avec un style visuel adapté.
+            Choisissez un thème et ajoutez vos éléments visuels
           </p>
         </motion.div>
+
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
           className="bg-white/80 backdrop-blur-lg rounded-[32px] shadow-2xl p-10 space-y-10 border border-white/20"
         >
-          {/* Choix des templates dynamiques par mécanique */}
+          {/* Thèmes prédéfinis */}
           <div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-8">
-              Thèmes prédéfinis
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {currentTemplates.map((template) => (
+            <div className="flex items-center space-x-3 mb-6">
+              <Palette className="w-8 h-8 text-[#841b60]" />
+              <label className="block text-2xl font-bold text-gray-900">
+                Thème visuel
+              </label>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {predefinedThemes.map((theme) => (
                 <motion.button
-                  key={template.id}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={() => setSelectedTheme(template.id)}
+                  key={theme.id}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => setSelectedTheme(theme.id)}
                   className={`
-                    p-8 rounded-3xl border-2 transition-all text-left
+                    relative p-6 rounded-2xl border-2 transition-all text-left
                     bg-white/60 backdrop-blur-sm shadow-lg
-                    ${
-                      selectedTheme === template.id
-                        ? `${template.borderColor} border-4 ${template.glowColor} shadow-xl`
-                        : 'border-gray-200 hover:border-gray-300 hover:shadow-xl'
+                    ${selectedTheme === theme.id 
+                      ? 'border-[#841b60] bg-[#841b60]/10 shadow-xl' 
+                      : 'border-gray-200 hover:border-gray-300 hover:shadow-xl'
                     }
                   `}
                 >
-                  {template.image ? (
-                    <img
-                      src={template.image}
-                      alt={template.name}
-                        className="w-full h-64 max-h-72 object-contain rounded-2xl mb-6 shadow-lg bg-white"
-                    />
-                  ) : (
-                    <div
-                      className={`w-full h-32 rounded-2xl mb-6 ${template.preview} shadow-lg`}
-                    />
+                  <div className={`w-full h-20 rounded-xl bg-gradient-to-r ${theme.preview} mb-4`}></div>
+                  <div className="font-bold text-gray-900 text-lg mb-2">{theme.name}</div>
+                  <div className="text-gray-600 text-sm">{theme.description}</div>
+                  {selectedTheme === theme.id && (
+                    <div className="absolute top-3 right-3 w-6 h-6 bg-[#841b60] rounded-full flex items-center justify-center">
+                      <Check className="w-4 h-4 text-white" />
+                    </div>
                   )}
-                  <h4 className="font-bold text-xl text-gray-900 mb-3">
-                    {template.name}
-                  </h4>
-                  <p className="text-gray-600">{template.description}</p>
                 </motion.button>
               ))}
             </div>
           </div>
-          {/* Upload d'image de fond */}
+
+          {/* Image de fond personnalisée */}
           <div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-6">
-              Image de fond personnalisée (optionnel)
-            </h3>
-            <div className="border-2 border-dashed border-gray-300 rounded-3xl p-10 text-center bg-white/40 backdrop-blur-sm">
-              <Upload className="w-16 h-16 text-gray-400 mx-auto mb-6" />
+            <div className="flex items-center space-x-3 mb-6">
+              <Upload className="w-8 h-8 text-[#841b60]" />
+              <label className="block text-2xl font-bold text-gray-900">
+                Image de fond (optionnel)
+              </label>
+            </div>
+            <div
+              onDrop={handleDrop}
+              onDragOver={(e) => {
+                e.preventDefault();
+                setDragActive(true);
+              }}
+              onDragLeave={() => setDragActive(false)}
+              className={`
+                border-2 border-dashed rounded-3xl p-10 text-center transition-all
+                bg-white/40 backdrop-blur-sm
+                ${dragActive ? 'border-[#841b60] bg-[#841b60]/10' : 'border-gray-300'}
+              `}
+            >
               {backgroundImage ? (
-                <div>
-                  <p className="text-green-600 font-bold text-lg">
-                    {backgroundImage.name}
-                  </p>
-                  <button
+                <div className="space-y-4">
+                  <div className="w-32 h-32 mx-auto rounded-lg overflow-hidden">
+                    <img 
+                      src={URL.createObjectURL(backgroundImage)} 
+                      alt="Aperçu" 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <p className="text-green-600 font-bold text-lg">{backgroundImage.name}</p>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
                     onClick={() => setBackgroundImage(null)}
-                    className="text-gray-500 hover:text-red-500 mt-3 font-medium"
+                    className="text-gray-500 hover:text-red-500 font-medium"
                   >
                     Supprimer
-                  </button>
+                  </motion.button>
                 </div>
               ) : (
                 <>
+                  <Upload className="w-16 h-16 text-gray-400 mx-auto mb-6" />
                   <p className="text-gray-600 mb-3 text-lg">
-                    <label className="text-blue-500 cursor-pointer hover:underline font-medium">
-                      Téléchargez une image de fond
+                    Glissez votre image de fond ici ou{' '}
+                    <label className="text-[#841b60] cursor-pointer hover:underline font-medium">
+                      parcourez
                       <input
                         type="file"
                         accept="image/*"
-                        onChange={(e) => handleFileUpload(e.target.files)}
+                        onChange={(e) => handleImageUpload(e.target.files)}
                         className="hidden"
                       />
                     </label>
                   </p>
-                  <p className="text-gray-400">PNG, JPG jusqu'à 10MB</p>
+                  <p className="text-gray-400">PNG, JPG jusqu'à 5MB</p>
                 </>
               )}
             </div>
           </div>
+
           {/* Navigation */}
           <div className="flex justify-between items-center pt-8">
             <motion.button
@@ -443,24 +280,25 @@ const Step3VisualStyle: React.FC = () => {
               <ArrowLeft className="w-6 h-6" />
               <span>Retour</span>
             </motion.button>
+
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={handleFinish}
-              disabled={!selectedTheme}
+              onClick={createCampaign}
+              disabled={isCreating}
               className={`
                 px-12 py-4 rounded-2xl font-bold text-lg transition-all
-                ${
-                  selectedTheme
-                    ? 'bg-gradient-to-r from-[#841b60] to-pink-500 text-white hover:shadow-xl'
-                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                ${isCreating 
+                  ? 'bg-gray-400 text-white cursor-not-allowed' 
+                  : 'bg-gradient-to-r from-[#841b60] to-pink-500 text-white hover:shadow-xl'
                 }
               `}
             >
-              Finaliser
+              {isCreating ? 'Création...' : 'Créer ma campagne'}
             </motion.button>
           </div>
         </motion.div>
+
         {/* Progress indicator */}
         <motion.div
           initial={{ opacity: 0 }}

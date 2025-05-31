@@ -26,7 +26,7 @@ function App() {
             <Route path="/campaigns" element={<Layout><Campaigns /></Layout>} />
             <Route path="/campaign/:id" element={<Layout><CampaignEditor /></Layout>} />
             <Route path="/modern-campaign/:id" element={<ModernCampaignEditor />} />
-            <Route path="/quick-campaign" element={<Layout><QuickCampaign /></Layout>} />
+            <Route path="/quick-campaign" element={<QuickCampaign />} />
             <Route path="/newsletter" element={<Layout><Newsletter /></Layout>} />
             <Route path="/gamification" element={<Layout><Gamification /></Layout>} />
             <Route path="/contacts" element={<Layout><Contacts /></Layout>} />
