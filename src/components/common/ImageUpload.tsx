@@ -1,22 +1,14 @@
-
 import React, { useCallback } from 'react';
-import { Upload } from 'lucide-react';
+import { Upload, Image as ImageIcon } from 'lucide-react';
 
 interface ImageUploadProps {
   value?: string;
   onChange: (value: string) => void;
   label?: string;
   className?: string;
-  compact?: boolean;
 }
 
-const ImageUpload: React.FC<ImageUploadProps> = ({ 
-  value, 
-  onChange, 
-  label, 
-  className,
-  compact = false 
-}) => {
+const ImageUpload: React.FC<ImageUploadProps> = ({ value, onChange, label, className }) => {
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
@@ -49,9 +41,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
       )}
       
       <div 
-        className={`relative border-2 border-dashed border-gray-300 rounded-lg hover:border-[#841b60] transition-colors duration-200 ${
-          compact ? 'p-2' : 'p-6'
-        }`}
+        className="relative border-2 border-dashed border-gray-300 rounded-lg p-6 hover:border-[#841b60] transition-colors duration-200"
         onDragOver={(e) => e.preventDefault()}
         onDrop={handleDrop}
       >
@@ -73,38 +63,36 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                 <img 
                   src={value} 
                   alt="Preview" 
-                  className={compact ? "max-h-16 mx-auto rounded" : "max-h-48 mx-auto rounded-lg"}
+                  className="max-h-48 mx-auto rounded-lg"
                 />
                 <button
                   onClick={(e) => {
                     e.preventDefault();
                     onChange('');
                   }}
-                  className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 text-xs"
+                  className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600"
                 >
                   ×
                 </button>
               </div>
             ) : (
               <>
-                <div className={`mx-auto bg-[#f8f0f5] rounded-full flex items-center justify-center mb-2 ${
-                  compact ? 'w-8 h-8' : 'w-12 h-12 mb-3'
-                }`}>
-                  <Upload className={compact ? "w-4 h-4 text-[#841b60]" : "w-6 h-6 text-[#841b60]"} />
-                </div>
-                <p className={compact ? "text-xs text-gray-500" : "text-sm text-gray-500"}>
-                  {compact ? "Ajouter image" : "Glissez-déposez une image ici ou"}
-                  {!compact && (
-                    <span className="text-[#841b60] hover:text-[#6d164f] ml-1">
-                      parcourez vos fichiers
-                    </span>
+                <div className="mx-auto w-12 h-12 bg-[#f8f0f5] rounded-full flex items-center justify-center mb-3">
+                  {value ? (
+                    <ImageIcon className="w-6 h-6 text-[#841b60]" />
+                  ) : (
+                    <Upload className="w-6 h-6 text-[#841b60]" />
                   )}
+                </div>
+                <p className="text-sm text-gray-500">
+                  Glissez-déposez une image ici ou
+                  <span className="text-[#841b60] hover:text-[#6d164f] ml-1">
+                    parcourez vos fichiers
+                  </span>
                 </p>
-                {!compact && (
-                  <p className="text-xs text-gray-400 mt-1">
-                    PNG, JPG jusqu'à 5MB
-                  </p>
-                )}
+                <p className="text-xs text-gray-400 mt-1">
+                  PNG, JPG jusqu'à 5MB
+                </p>
               </>
             )}
           </div>

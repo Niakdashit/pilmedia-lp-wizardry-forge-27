@@ -1,7 +1,8 @@
+
 import React from 'react';
 import { HelpCircle, Settings, Dices } from 'lucide-react';
 
-export type CampaignType = 'quiz' | 'wheel' | 'scratch' | 'memory' | 'puzzle' | 'dice' | 'swiper' | 'jackpot' | 'form';
+export type CampaignType = 'quiz' | 'wheel' | 'scratch' | 'memory' | 'puzzle' | 'dice' | 'swiper' | 'jackpot';
 
 export const campaignTypes: Array<{
   id: CampaignType;
@@ -86,13 +87,6 @@ export const getDefaultGameConfig = (type: CampaignType) => {
         dice: {
           sides: 6, 
           count: 2,
-          backgroundImage: ''
-        }
-      };
-    case 'swiper':
-      return {
-        swiper: {
-          cards: [],
           backgroundImage: ''
         }
       };
