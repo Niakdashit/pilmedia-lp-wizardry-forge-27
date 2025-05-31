@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { Type, Image, Layout, AlignCenter, MoreHorizontal, ChevronDown, ChevronUp, Plus, Trash2, Bold, Italic, Underline, Palette } from 'lucide-react';
+import { Type, Image, Eye, EyeOff, Layout, AlignCenter, MoreHorizontal, ChevronDown, ChevronUp, Plus, Trash2, Bold, Italic, Underline, Palette } from 'lucide-react';
 import ImageUpload from '../common/ImageUpload';
 
 interface ModernDesignTabProps {
@@ -447,7 +448,7 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
               </div>
 
               {renderColorInput(headerText.color, (val) => handleHeaderTextChange('color', val), 'Couleur')}
-              {renderCompactTextEditor('headerText', headerText.textContents || [])}
+              {renderTextContentEditor('headerText', headerText.textContents || [])}
 
               <div className="grid grid-cols-2 gap-4 items-center">
                 <span className="text-sm text-gray-700">Cadre de contraste</span>
@@ -637,7 +638,7 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
               </div>
 
               {renderColorInput(footerText.color, (val) => handleFooterTextChange('color', val), 'Couleur')}
-              {renderCompactTextEditor('footerText', footerText.textContents || [])}
+              {renderTextContentEditor('footerText', footerText.textContents || [])}
 
               <div className="grid grid-cols-2 gap-4 items-center">
                 <span className="text-sm text-gray-700">Cadre de contraste</span>
