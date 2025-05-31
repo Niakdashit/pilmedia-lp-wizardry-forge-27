@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { Type, Image, Eye, EyeOff, Layout, AlignCenter, MoreHorizontal, ChevronDown, ChevronUp, Plus, Trash2, Bold, Italic, Underline } from 'lucide-react';
+import { Type, Image, Eye, EyeOff, Layout, AlignCenter, MoreHorizontal, ChevronDown, ChevronUp, Plus, Trash2, Bold, Italic, Underline, Palette } from 'lucide-react';
 import ImageUpload from '../common/ImageUpload';
 
 interface ModernDesignTabProps {
@@ -36,16 +37,16 @@ const AccordionSection: React.FC<AccordionSectionProps> = ({
     <div className={`rounded-lg border ${bgColor}`}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full p-4 flex items-center justify-between text-left hover:bg-gray-100 transition-colors"
+        className="w-full p-3 flex items-center justify-between text-left hover:bg-gray-100 transition-colors"
       >
-        <h3 className="flex items-center text-xl font-semibold text-gray-900">
+        <h3 className="flex items-center text-lg font-semibold text-gray-900">
           {icon}
           {title}
         </h3>
-        {isOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+        {isOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
       </button>
       {isOpen && (
-        <div className="p-6 pt-0 space-y-6">
+        <div className="p-4 pt-0 space-y-4">
           {children}
         </div>
       )}
@@ -74,19 +75,6 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
         ...prev.design,
         customText: {
           ...prev.design.customText,
-          [field]: value
-        }
-      }
-    }));
-  };
-
-  const handleCroppedAreaTextChange = (field: string, value: any) => {
-    setCampaign((prev: any) => ({
-      ...prev,
-      design: {
-        ...prev.design,
-        croppedAreaText: {
-          ...prev.design.croppedAreaText,
           [field]: value
         }
       }
@@ -210,102 +198,100 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
     });
   };
 
-  const getTextSizeStyle = (size: string) => {
-    switch (size) {
-      case 'small':
-        return '14px';
-      case 'large':
-        return '24px';
-      default:
-        return '18px';
-    }
-  };
-
-  const renderTextContentEditor = (section: string, textContents: TextContent[], sectionSize: string) => (
-    <div className="space-y-4">
+  const renderCompactTextEditor = (section: string, textContents: TextContent[]) => (
+    <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <label className="text-sm font-medium text-gray-700">Contenus texte</label>
+        <span className="text-sm font-medium text-gray-700">Contenus texte</span>
         <button
           onClick={() => addTextContent(section)}
-          className="flex items-center space-x-1 px-3 py-1 text-sm bg-[#841b60] text-white rounded-lg hover:bg-[#6d164f] transition-colors"
+          className="flex items-center space-x-1 px-2 py-1 text-xs bg-[#841b60] text-white rounded hover:bg-[#6d164f] transition-colors"
         >
-          <Plus className="w-4 h-4" />
+          <Plus className="w-3 h-3" />
           <span>Ajouter</span>
         </button>
       </div>
       
       {textContents.map((content: TextContent, index: number) => (
-        <div key={content.id} className="border border-gray-200 rounded-lg p-3 space-y-3">
+        <div key={content.id} className="border border-gray-200 rounded p-2 space-y-2">
           <div className="flex items-center justify-between">
-            <span className="text-sm font-medium text-gray-700">Texte {index + 1}</span>
+            <span className="text-xs font-medium text-gray-600">Texte {index + 1}</span>
             <button
               onClick={() => removeTextContent(section, content.id)}
-              className="p-1 text-red-500 hover:text-red-700 hover:bg-red-50 rounded"
+              className="p-0.5 text-red-500 hover:text-red-700 hover:bg-red-50 rounded"
             >
-              <Trash2 className="w-4 h-4" />
+              <Trash2 className="w-3 h-3" />
             </button>
           </div>
           
           <textarea
             value={content.text}
             onChange={(e) => handleTextContentChange(section, content.id, 'text', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-            rows={2}
+            className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#841b60] focus:border-transparent"
+            rows={1}
             placeholder="Entrez votre texte"
-            style={{ fontSize: getTextSizeStyle(sectionSize) }}
           />
           
-          <div className="flex items-center space-x-4">
-            <label className="flex items-center space-x-2 cursor-pointer">
-              <button
-                onClick={() => handleTextContentChange(section, content.id, 'bold', !content.bold)}
-                className={`p-1 rounded ${content.bold ? 'bg-[#841b60] text-white' : 'bg-gray-100 text-gray-600'}`}
-              >
-                <Bold className="w-4 h-4" />
-              </button>
-              <span className="text-sm">Gras</span>
-            </label>
-            
-            <label className="flex items-center space-x-2 cursor-pointer">
-              <button
-                onClick={() => handleTextContentChange(section, content.id, 'italic', !content.italic)}
-                className={`p-1 rounded ${content.italic ? 'bg-[#841b60] text-white' : 'bg-gray-100 text-gray-600'}`}
-              >
-                <Italic className="w-4 h-4" />
-              </button>
-              <span className="text-sm">Italique</span>
-            </label>
-            
-            <label className="flex items-center space-x-2 cursor-pointer">
-              <button
-                onClick={() => handleTextContentChange(section, content.id, 'underline', !content.underline)}
-                className={`p-1 rounded ${content.underline ? 'bg-[#841b60] text-white' : 'bg-gray-100 text-gray-600'}`}
-              >
-                <Underline className="w-4 h-4" />
-              </button>
-              <span className="text-sm">Souligné</span>
-            </label>
-          </div>
-          
-          <div 
-            className="p-2 bg-gray-50 rounded text-sm"
-            style={{
-              fontSize: getTextSizeStyle(sectionSize),
-              fontWeight: content.bold ? 'bold' : 'normal',
-              fontStyle: content.italic ? 'italic' : 'normal',
-              textDecoration: content.underline ? 'underline' : 'none'
-            }}
-          >
-            Aperçu : {content.text || 'Texte d\'exemple'}
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={() => handleTextContentChange(section, content.id, 'bold', !content.bold)}
+              className={`p-1 rounded text-xs ${content.bold ? 'bg-[#841b60] text-white' : 'bg-gray-100 text-gray-600'}`}
+            >
+              <Bold className="w-3 h-3" />
+            </button>
+            <button
+              onClick={() => handleTextContentChange(section, content.id, 'italic', !content.italic)}
+              className={`p-1 rounded text-xs ${content.italic ? 'bg-[#841b60] text-white' : 'bg-gray-100 text-gray-600'}`}
+            >
+              <Italic className="w-3 h-3" />
+            </button>
+            <button
+              onClick={() => handleTextContentChange(section, content.id, 'underline', !content.underline)}
+              className={`p-1 rounded text-xs ${content.underline ? 'bg-[#841b60] text-white' : 'bg-gray-100 text-gray-600'}`}
+            >
+              <Underline className="w-3 h-3" />
+            </button>
           </div>
         </div>
       ))}
       
       {textContents.length === 0 && (
-        <div className="text-center py-4 text-gray-500 text-sm">
-          Aucun contenu texte. Cliquez sur "Ajouter" pour créer votre premier texte.
+        <div className="text-center py-2 text-gray-400 text-xs">
+          Aucun contenu texte
         </div>
       )}
+    </div>
+  );
+
+  const renderToggle = (value: boolean, onChange: (val: boolean) => void) => (
+    <button
+      onClick={() => onChange(!value)}
+      className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
+        value ? 'bg-[#841b60]' : 'bg-gray-200'
+      }`}
+    >
+      <span className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
+        value ? 'translate-x-5' : 'translate-x-1'
+      }`} />
+    </button>
+  );
+
+  const renderColorInput = (value: string, onChange: (val: string) => void, label: string) => (
+    <div className="grid grid-cols-2 gap-2 items-center">
+      <label className="text-sm text-gray-700">{label}</label>
+      <div className="flex items-center space-x-2">
+        <input
+          type="color"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="w-8 h-8 rounded border border-gray-300"
+        />
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          className="flex-1 px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#841b60] focus:border-transparent"
+        />
+      </div>
     </div>
   );
 
@@ -326,9 +312,9 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
   ];
 
   const sizeOptions = [
-    { value: 'small', label: 'Petit' },
-    { value: 'medium', label: 'Moyen' },
-    { value: 'large', label: 'Grand' }
+    { value: 'small', label: 'S' },
+    { value: 'medium', label: 'M' },
+    { value: 'large', label: 'L' }
   ];
 
   const customText = campaign.design?.customText || {
@@ -340,16 +326,6 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
     showFrame: false,
     frameColor: '#ffffff',
     frameBorderColor: '#e5e7eb'
-  };
-
-  const croppedAreaText = campaign.design?.croppedAreaText || {
-    enabled: false,
-    text: 'Texte personnalisé',
-    size: 'medium',
-    color: '#000000',
-    bold: false,
-    italic: false,
-    underline: false
   };
 
   const headerBanner = campaign.design?.headerBanner || {
@@ -389,7 +365,7 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       <div>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">Design et apparence</h2>
         <p className="text-sm text-gray-600">
@@ -399,34 +375,18 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
 
       {/* SECTION HEADER */}
       <AccordionSection
-        title="Header"
-        icon={<Layout className="w-6 h-6 mr-3" />}
+        title="En-tête"
+        icon={<Layout className="w-5 h-5 mr-2" />}
         bgColor="bg-gray-50"
       >
-        {/* Bannière d'en-tête */}
-        <div className="space-y-4">
-          <h4 className="flex items-center text-lg font-medium text-gray-800">
-            <Image className="w-5 h-5 mr-2" />
-            Bannière d'en-tête
-          </h4>
-          
-          <div className="space-y-2">
-            <label className="flex items-center justify-between">
-              <span className="flex items-center text-sm font-medium text-gray-700">
-                {headerBanner.enabled ? <Eye className="w-4 h-4 mr-2" /> : <EyeOff className="w-4 h-4 mr-2" />}
-                Afficher une bannière d'en-tête
-              </span>
-              <button
-                onClick={() => handleHeaderBannerChange('enabled', !headerBanner.enabled)}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                  headerBanner.enabled ? 'bg-[#841b60]' : 'bg-gray-200'
-                }`}
-              >
-                <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                  headerBanner.enabled ? 'translate-x-6' : 'translate-x-1'
-                }`} />
-              </button>
-            </label>
+        {/* Bannière d'en-tête - Version compacte */}
+        <div className="space-y-3">
+          <div className="grid grid-cols-2 gap-4 items-center">
+            <span className="flex items-center text-sm font-medium text-gray-700">
+              <Image className="w-4 h-4 mr-2" />
+              Bannière d'en-tête
+            </span>
+            {renderToggle(headerBanner.enabled, (val) => handleHeaderBannerChange('enabled', val))}
           </div>
 
           {headerBanner.enabled && (
@@ -434,77 +394,48 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
               <ImageUpload
                 value={headerBanner.image || ''}
                 onChange={(value) => handleHeaderBannerChange('image', value)}
-                label="Image de bannière d'en-tête"
+                compact={true}
               />
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Hauteur de la bannière</label>
+              
+              <div className="grid grid-cols-2 gap-2 items-center">
+                <label className="text-sm text-gray-700">Hauteur</label>
                 <input
                   type="text"
                   value={headerBanner.height || '120px'}
                   onChange={(e) => handleHeaderBannerChange('height', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
+                  className="px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#841b60] focus:border-transparent"
                   placeholder="120px"
                 />
               </div>
 
-              <div className="space-y-2">
-                <label className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-700">
-                    Overlay sombre
-                  </span>
-                  <button
-                    onClick={() => handleHeaderBannerChange('overlay', !headerBanner.overlay)}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                      headerBanner.overlay ? 'bg-[#841b60]' : 'bg-gray-200'
-                    }`}
-                  >
-                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      headerBanner.overlay ? 'translate-x-6' : 'translate-x-1'
-                    }`} />
-                  </button>
-                </label>
+              <div className="grid grid-cols-2 gap-4 items-center">
+                <span className="text-sm text-gray-700">Overlay sombre</span>
+                {renderToggle(headerBanner.overlay, (val) => handleHeaderBannerChange('overlay', val))}
               </div>
             </>
           )}
         </div>
 
-        {/* Texte personnalisé d'en-tête */}
-        <div className="space-y-4">
-          <h4 className="flex items-center text-lg font-medium text-gray-800">
-            <Type className="w-5 h-5 mr-2" />
-            Texte personnalisé d'en-tête
-          </h4>
-          
-          <div className="space-y-2">
-            <label className="flex items-center justify-between">
-              <span className="flex items-center text-sm font-medium text-gray-700">
-                {headerText.enabled ? <Eye className="w-4 h-4 mr-2" /> : <EyeOff className="w-4 h-4 mr-2" />}
-                Afficher un texte d'en-tête
-              </span>
-              <button
-                onClick={() => handleHeaderTextChange('enabled', !headerText.enabled)}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                  headerText.enabled ? 'bg-[#841b60]' : 'bg-gray-200'
-                }`}
-              >
-                <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                  headerText.enabled ? 'translate-x-6' : 'translate-x-1'
-                }`} />
-              </button>
-            </label>
+        {/* Texte personnalisé d'en-tête - Version compacte */}
+        <div className="space-y-3 border-t pt-3">
+          <div className="grid grid-cols-2 gap-4 items-center">
+            <span className="flex items-center text-sm font-medium text-gray-700">
+              <Type className="w-4 h-4 mr-2" />
+              Texte d'en-tête
+            </span>
+            {renderToggle(headerText.enabled, (val) => handleHeaderTextChange('enabled', val))}
           </div>
 
           {headerText.enabled && (
             <>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Taille du texte</label>
-                <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 gap-2 items-center">
+                <label className="text-sm text-gray-700">Taille</label>
+                <div className="flex gap-1">
                   {sizeOptions.map((option) => (
                     <button
                       key={option.value}
                       onClick={() => handleHeaderTextChange('size', option.value)}
-                      className={`p-2 text-xs rounded border transition-colors ${
+                      className={`px-2 py-1 text-xs rounded border transition-colors ${
                         headerText.size === option.value
                           ? 'bg-[#841b60] text-white border-[#841b60]'
                           : 'bg-white text-gray-700 border-gray-300 hover:border-[#841b60]'
@@ -516,153 +447,67 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Couleur du texte</label>
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="color"
-                    value={headerText.color}
-                    onChange={(e) => handleHeaderTextChange('color', e.target.value)}
-                    className="w-10 h-10 rounded border border-gray-300"
-                  />
-                  <input
-                    type="text"
-                    value={headerText.color}
-                    onChange={(e) => handleHeaderTextChange('color', e.target.value)}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-                  />
-                </div>
-              </div>
+              {renderColorInput(headerText.color, (val) => handleHeaderTextChange('color', val), 'Couleur')}
+              {renderTextContentEditor('headerText', headerText.textContents || [])}
 
-              {renderTextContentEditor('headerText', headerText.textContents || [], headerText.size)}
-
-              <div className="space-y-2">
-                <label className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-700">
-                    Afficher un cadre de contraste
-                  </span>
-                  <button
-                    onClick={() => handleHeaderTextChange('showFrame', !headerText.showFrame)}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                      headerText.showFrame ? 'bg-[#841b60]' : 'bg-gray-200'
-                    }`}
-                  >
-                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      headerText.showFrame ? 'translate-x-6' : 'translate-x-1'
-                    }`} />
-                  </button>
-                </label>
+              <div className="grid grid-cols-2 gap-4 items-center">
+                <span className="text-sm text-gray-700">Cadre de contraste</span>
+                {renderToggle(headerText.showFrame, (val) => handleHeaderTextChange('showFrame', val))}
               </div>
 
               {headerText.showFrame && (
                 <>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">Couleur du fond du cadre</label>
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="color"
-                        value={headerText.frameColor}
-                        onChange={(e) => handleHeaderTextChange('frameColor', e.target.value)}
-                        className="w-10 h-10 rounded border border-gray-300"
-                      />
-                      <input
-                        type="text"
-                        value={headerText.frameColor}
-                        onChange={(e) => handleHeaderTextChange('frameColor', e.target.value)}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">Couleur de la bordure du cadre</label>
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="color"
-                        value={headerText.frameBorderColor}
-                        onChange={(e) => handleHeaderTextChange('frameBorderColor', e.target.value)}
-                        className="w-10 h-10 rounded border border-gray-300"
-                      />
-                      <input
-                        type="text"
-                        value={headerText.frameBorderColor}
-                        onChange={(e) => handleHeaderTextChange('frameBorderColor', e.target.value)}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-                      />
-                    </div>
-                  </div>
+                  {renderColorInput(headerText.frameColor, (val) => handleHeaderTextChange('frameColor', val), 'Fond cadre')}
+                  {renderColorInput(headerText.frameBorderColor, (val) => handleHeaderTextChange('frameBorderColor', val), 'Bordure cadre')}
                 </>
               )}
             </>
           )}
         </div>
         
-        {/* Legacy custom text */}
-        <div className="space-y-4">
-          <h4 className="flex items-center text-lg font-medium text-gray-800">
-            <Type className="w-5 h-5 mr-2" />
-            Texte personnalisé (positioning libre)
-          </h4>
-          
-          <div className="space-y-2">
-            <label className="flex items-center justify-between">
-              <span className="flex items-center text-sm font-medium text-gray-700">
-                {customText.enabled ? <Eye className="w-4 h-4 mr-2" /> : <EyeOff className="w-4 h-4 mr-2" />}
-                Afficher un texte personnalisé
-              </span>
-              <button
-                onClick={() => handleCustomTextChange('enabled', !customText.enabled)}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                  customText.enabled ? 'bg-[#841b60]' : 'bg-gray-200'
-                }`}
-              >
-                <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                  customText.enabled ? 'translate-x-6' : 'translate-x-1'
-                }`} />
-              </button>
-            </label>
+        {/* Texte personnalisé libre - Version compacte */}
+        <div className="space-y-3 border-t pt-3">
+          <div className="grid grid-cols-2 gap-4 items-center">
+            <span className="flex items-center text-sm font-medium text-gray-700">
+              <Type className="w-4 h-4 mr-2" />
+              Texte libre
+            </span>
+            {renderToggle(customText.enabled, (val) => handleCustomTextChange('enabled', val))}
           </div>
 
           {customText.enabled && (
             <>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Contenu du texte</label>
-                <textarea
-                  value={customText.text}
-                  onChange={(e) => handleCustomTextChange('text', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-                  rows={2}
-                  placeholder="Entrez votre texte personnalisé"
-                />
-              </div>
+              <textarea
+                value={customText.text}
+                onChange={(e) => handleCustomTextChange('text', e.target.value)}
+                className="w-full px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#841b60] focus:border-transparent"
+                rows={2}
+                placeholder="Entrez votre texte personnalisé"
+              />
 
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Position du texte</label>
-                <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 gap-2 items-center">
+                <label className="text-sm text-gray-700">Position</label>
+                <select
+                  value={customText.position}
+                  onChange={(e) => handleCustomTextChange('position', e.target.value)}
+                  className="px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#841b60] focus:border-transparent"
+                >
                   {positionOptions.map((option) => (
-                    <button
-                      key={option.value}
-                      onClick={() => handleCustomTextChange('position', option.value)}
-                      className={`p-2 text-xs rounded border transition-colors ${
-                        customText.position === option.value
-                          ? 'bg-[#841b60] text-white border-[#841b60]'
-                          : 'bg-white text-gray-700 border-gray-300 hover:border-[#841b60]'
-                      }`}
-                    >
+                    <option key={option.value} value={option.value}>
                       {option.label}
-                    </button>
+                    </option>
                   ))}
-                </div>
+                </select>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Taille du texte</label>
-                <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 gap-2 items-center">
+                <label className="text-sm text-gray-700">Taille</label>
+                <div className="flex gap-1">
                   {sizeOptions.map((option) => (
                     <button
                       key={option.value}
                       onClick={() => handleCustomTextChange('size', option.value)}
-                      className={`p-2 text-xs rounded border transition-colors ${
+                      className={`px-2 py-1 text-xs rounded border transition-colors ${
                         customText.size === option.value
                           ? 'bg-[#841b60] text-white border-[#841b60]'
                           : 'bg-white text-gray-700 border-gray-300 hover:border-[#841b60]'
@@ -674,79 +519,17 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Couleur du texte</label>
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="color"
-                    value={customText.color}
-                    onChange={(e) => handleCustomTextChange('color', e.target.value)}
-                    className="w-10 h-10 rounded border border-gray-300"
-                  />
-                  <input
-                    type="text"
-                    value={customText.color}
-                    onChange={(e) => handleCustomTextChange('color', e.target.value)}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-                  />
-                </div>
-              </div>
+              {renderColorInput(customText.color, (val) => handleCustomTextChange('color', val), 'Couleur')}
 
-              <div className="space-y-2">
-                <label className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-700">
-                    Afficher un cadre de contraste
-                  </span>
-                  <button
-                    onClick={() => handleCustomTextChange('showFrame', !customText.showFrame)}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                      customText.showFrame ? 'bg-[#841b60]' : 'bg-gray-200'
-                    }`}
-                  >
-                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      customText.showFrame ? 'translate-x-6' : 'translate-x-1'
-                    }`} />
-                  </button>
-                </label>
+              <div className="grid grid-cols-2 gap-4 items-center">
+                <span className="text-sm text-gray-700">Cadre de contraste</span>
+                {renderToggle(customText.showFrame, (val) => handleCustomTextChange('showFrame', val))}
               </div>
 
               {customText.showFrame && (
                 <>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">Couleur du fond du cadre</label>
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="color"
-                        value={customText.frameColor}
-                        onChange={(e) => handleCustomTextChange('frameColor', e.target.value)}
-                        className="w-10 h-10 rounded border border-gray-300"
-                      />
-                      <input
-                        type="text"
-                        value={customText.frameColor}
-                        onChange={(e) => handleCustomTextChange('frameColor', e.target.value)}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">Couleur de la bordure du cadre</label>
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="color"
-                        value={customText.frameBorderColor}
-                        onChange={(e) => handleCustomTextChange('frameBorderColor', e.target.value)}
-                        className="w-10 h-10 rounded border border-gray-300"
-                      />
-                      <input
-                        type="text"
-                        value={customText.frameBorderColor}
-                        onChange={(e) => handleCustomTextChange('frameBorderColor', e.target.value)}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-                      />
-                    </div>
-                  </div>
+                  {renderColorInput(customText.frameColor, (val) => handleCustomTextChange('frameColor', val), 'Fond cadre')}
+                  {renderColorInput(customText.frameBorderColor, (val) => handleCustomTextChange('frameBorderColor', val), 'Bordure cadre')}
                 </>
               )}
             </>
@@ -756,191 +539,56 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
 
       {/* SECTION CENTER */}
       <AccordionSection
-        title="Center"
-        icon={<AlignCenter className="w-6 h-6 mr-3" />}
+        title="Centre & Arrière-plan"
+        icon={<AlignCenter className="w-5 h-5 mr-2" />}
         bgColor="bg-blue-50"
       >
-        {/* Logo central pour la roue */}
-        {campaign.type === 'wheel' && (
-          <div className="space-y-4">
-            <h4 className="flex items-center text-lg font-medium text-gray-800">
-              <Image className="w-5 h-5 mr-2" />
-              Logo central de la roue
-            </h4>
-            
-            <ImageUpload
-              value={campaign.design?.centerLogo || ''}
-              onChange={(value) => handleDesignChange('centerLogo', value)}
-              label="Logo à afficher au centre de la roue"
-            />
-          </div>
-        )}
-
-        {/* Texte zone recadrée (pour positions left/right) */}
-        <div className="space-y-4">
-          <h4 className="flex items-center text-lg font-medium text-gray-800">
-            <Type className="w-5 h-5 mr-2" />
-            Texte zone recadrée (mobile/tablette - positions gauche/droite)
-          </h4>
-          
-          <div className="space-y-2">
-            <label className="flex items-center justify-between">
-              <span className="flex items-center text-sm font-medium text-gray-700">
-                {croppedAreaText.enabled ? <Eye className="w-4 h-4 mr-2" /> : <EyeOff className="w-4 h-4 mr-2" />}
-                Afficher du texte dans la zone recadrée
-              </span>
-              <button
-                onClick={() => handleCroppedAreaTextChange('enabled', !croppedAreaText.enabled)}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                  croppedAreaText.enabled ? 'bg-[#841b60]' : 'bg-gray-200'
-                }`}
-              >
-                <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                  croppedAreaText.enabled ? 'translate-x-6' : 'translate-x-1'
-                }`} />
-              </button>
-            </label>
-          </div>
-
-          {croppedAreaText.enabled && (
-            <>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Contenu du texte</label>
-                <textarea
-                  value={croppedAreaText.text}
-                  onChange={(e) => handleCroppedAreaTextChange('text', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-                  rows={2}
-                  placeholder="Entrez votre texte pour la zone recadrée"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Taille du texte</label>
-                <div className="grid grid-cols-3 gap-2">
-                  {sizeOptions.map((option) => (
-                    <button
-                      key={option.value}
-                      onClick={() => handleCroppedAreaTextChange('size', option.value)}
-                      className={`p-2 text-xs rounded border transition-colors ${
-                        croppedAreaText.size === option.value
-                          ? 'bg-[#841b60] text-white border-[#841b60]'
-                          : 'bg-white text-gray-700 border-gray-300 hover:border-[#841b60]'
-                      }`}
-                    >
-                      {option.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Couleur du texte</label>
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="color"
-                    value={croppedAreaText.color}
-                    onChange={(e) => handleCroppedAreaTextChange('color', e.target.value)}
-                    className="w-10 h-10 rounded border border-gray-300"
-                  />
-                  <input
-                    type="text"
-                    value={croppedAreaText.color}
-                    onChange={(e) => handleCroppedAreaTextChange('color', e.target.value)}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-                  />
-                </div>
-              </div>
-
-              {/* Style options */}
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Style du texte</label>
-                <div className="flex items-center space-x-4">
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={croppedAreaText.bold}
-                      onChange={(e) => handleCroppedAreaTextChange('bold', e.target.checked)}
-                      className="mr-2"
-                    />
-                    <span className="text-sm font-bold">Gras</span>
-                  </label>
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={croppedAreaText.italic}
-                      onChange={(e) => handleCroppedAreaTextChange('italic', e.target.checked)}
-                      className="mr-2"
-                    />
-                    <span className="text-sm italic">Italique</span>
-                  </label>
-                  <label className="flex items-center">
-                    <input
-                      type="checkbox"
-                      checked={croppedAreaText.underline}
-                      onChange={(e) => handleCroppedAreaTextChange('underline', e.target.checked)}
-                      className="mr-2"
-                    />
-                    <span className="text-sm underline">Souligné</span>
-                  </label>
-                </div>
-              </div>
-            </>
-          )}
-        </div>
-
-        {/* Image de fond */}
-        <div className="space-y-4">
-          <h4 className="flex items-center text-lg font-medium text-gray-800">
-            <Image className="w-5 h-5 mr-2" />
+        {/* Image de fond - Version compacte */}
+        <div className="space-y-3">
+          <h4 className="flex items-center text-sm font-medium text-gray-800">
+            <Image className="w-4 h-4 mr-2" />
             Image de fond
           </h4>
           
           <ImageUpload
             value={campaign.design?.backgroundImage || ''}
             onChange={(value) => handleDesignChange('backgroundImage', value)}
-            label="Image de fond de la campagne"
+            compact={true}
           />
         </div>
 
-        {/* Couleurs */}
-        <div className="space-y-4">
-          <h4 className="flex items-center text-lg font-medium text-gray-800">
-            Couleurs
-          </h4>
-          
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">Couleur de fond</label>
-            <div className="flex items-center space-x-2">
-              <input
-                type="color"
-                value={campaign.design?.background || '#f8fafc'}
-                onChange={(e) => handleDesignChange('background', e.target.value)}
-                className="w-10 h-10 rounded border border-gray-300"
-              />
-              <input
-                type="text"
-                value={campaign.design?.background || '#f8fafc'}
-                onChange={(e) => handleDesignChange('background', e.target.value)}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-              />
-            </div>
+        {/* Logo central pour la roue */}
+        {campaign.type === 'wheel' && (
+          <div className="space-y-3 border-t pt-3">
+            <h4 className="flex items-center text-sm font-medium text-gray-800">
+              <Image className="w-4 h-4 mr-2" />
+              Logo central de la roue
+            </h4>
+            
+            <ImageUpload
+              value={campaign.design?.centerLogo || ''}
+              onChange={(value) => handleDesignChange('centerLogo', value)}
+              compact={true}
+            />
           </div>
-        </div>
+        )}
 
-        {/* Typography */}
-        <div className="space-y-4">
-          <h4 className="flex items-center text-lg font-medium text-gray-800">
-            <Type className="w-5 h-5 mr-2" />
-            Typographie
+        {/* Couleurs - Version compacte */}
+        <div className="space-y-3 border-t pt-3">
+          <h4 className="flex items-center text-sm font-medium text-gray-800">
+            <Palette className="w-4 h-4 mr-2" />
+            Couleurs & Typographie
           </h4>
           
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">Police de caractères</label>
+          {renderColorInput(campaign.design?.background || '#f8fafc', (val) => handleDesignChange('background', val), 'Fond')}
+          {renderColorInput(campaign.design?.titleColor || '#000000', (val) => handleDesignChange('titleColor', val), 'Texte')}
+
+          <div className="grid grid-cols-2 gap-2 items-center">
+            <label className="text-sm text-gray-700">Police</label>
             <select
               value={campaign.design?.fontFamily || 'Inter'}
               onChange={(e) => handleDesignChange('fontFamily', e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
+              className="px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#841b60] focus:border-transparent"
             >
               {fontOptions.map((font) => (
                 <option key={font.value} value={font.value}>
@@ -949,69 +597,35 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
               ))}
             </select>
           </div>
-
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">Couleur du texte</label>
-            <div className="flex items-center space-x-2">
-              <input
-                type="color"
-                value={campaign.design?.titleColor || '#000000'}
-                onChange={(e) => handleDesignChange('titleColor', e.target.value)}
-                className="w-10 h-10 rounded border border-gray-300"
-              />
-              <input
-                type="text"
-                value={campaign.design?.titleColor || '#000000'}
-                onChange={(e) => handleDesignChange('titleColor', e.target.value)}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-              />
-            </div>
-          </div>
         </div>
       </AccordionSection>
 
       {/* SECTION FOOTER */}
       <AccordionSection
-        title="Footer"
-        icon={<MoreHorizontal className="w-6 h-6 mr-3" />}
+        title="Pied de page"
+        icon={<MoreHorizontal className="w-5 h-5 mr-2" />}
         bgColor="bg-green-50"
       >
-        {/* Texte personnalisé de pied de page */}
-        <div className="space-y-4">
-          <h4 className="flex items-center text-lg font-medium text-gray-800">
-            <Type className="w-5 h-5 mr-2" />
-            Texte personnalisé de pied de page
-          </h4>
-          
-          <div className="space-y-2">
-            <label className="flex items-center justify-between">
-              <span className="flex items-center text-sm font-medium text-gray-700">
-                {footerText.enabled ? <Eye className="w-4 h-4 mr-2" /> : <EyeOff className="w-4 h-4 mr-2" />}
-                Afficher un texte de pied de page
-              </span>
-              <button
-                onClick={() => handleFooterTextChange('enabled', !footerText.enabled)}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                  footerText.enabled ? 'bg-[#841b60]' : 'bg-gray-200'
-                }`}
-              >
-                <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                  footerText.enabled ? 'translate-x-6' : 'translate-x-1'
-                }`} />
-              </button>
-            </label>
+        {/* Texte personnalisé de pied de page - Version compacte */}
+        <div className="space-y-3">
+          <div className="grid grid-cols-2 gap-4 items-center">
+            <span className="flex items-center text-sm font-medium text-gray-700">
+              <Type className="w-4 h-4 mr-2" />
+              Texte de pied de page
+            </span>
+            {renderToggle(footerText.enabled, (val) => handleFooterTextChange('enabled', val))}
           </div>
 
           {footerText.enabled && (
             <>
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Taille du texte</label>
-                <div className="grid grid-cols-3 gap-2">
+              <div className="grid grid-cols-2 gap-2 items-center">
+                <label className="text-sm text-gray-700">Taille</label>
+                <div className="flex gap-1">
                   {sizeOptions.map((option) => (
                     <button
                       key={option.value}
                       onClick={() => handleFooterTextChange('size', option.value)}
-                      className={`p-2 text-xs rounded border transition-colors ${
+                      className={`px-2 py-1 text-xs rounded border transition-colors ${
                         footerText.size === option.value
                           ? 'bg-[#841b60] text-white border-[#841b60]'
                           : 'bg-white text-gray-700 border-gray-300 hover:border-[#841b60]'
@@ -1023,111 +637,32 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
                 </div>
               </div>
 
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Couleur du texte</label>
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="color"
-                    value={footerText.color}
-                    onChange={(e) => handleFooterTextChange('color', e.target.value)}
-                    className="w-10 h-10 rounded border border-gray-300"
-                  />
-                  <input
-                    type="text"
-                    value={footerText.color}
-                    onChange={(e) => handleFooterTextChange('color', e.target.value)}
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-                  />
-                </div>
-              </div>
+              {renderColorInput(footerText.color, (val) => handleFooterTextChange('color', val), 'Couleur')}
+              {renderTextContentEditor('footerText', footerText.textContents || [])}
 
-              {renderTextContentEditor('footerText', footerText.textContents || [], footerText.size)}
-
-              <div className="space-y-2">
-                <label className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-700">
-                    Afficher un cadre de contraste
-                  </span>
-                  <button
-                    onClick={() => handleFooterTextChange('showFrame', !footerText.showFrame)}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                      footerText.showFrame ? 'bg-[#841b60]' : 'bg-gray-200'
-                    }`}
-                  >
-                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      footerText.showFrame ? 'translate-x-6' : 'translate-x-1'
-                    }`} />
-                  </button>
-                </label>
+              <div className="grid grid-cols-2 gap-4 items-center">
+                <span className="text-sm text-gray-700">Cadre de contraste</span>
+                {renderToggle(footerText.showFrame, (val) => handleFooterTextChange('showFrame', val))}
               </div>
 
               {footerText.showFrame && (
                 <>
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">Couleur du fond du cadre</label>
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="color"
-                        value={footerText.frameColor}
-                        onChange={(e) => handleFooterTextChange('frameColor', e.target.value)}
-                        className="w-10 h-10 rounded border border-gray-300"
-                      />
-                      <input
-                        type="text"
-                        value={footerText.frameColor}
-                        onChange={(e) => handleFooterTextChange('frameColor', e.target.value)}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-sm font-medium text-gray-700">Couleur de la bordure du cadre</label>
-                    <div className="flex items-center space-x-2">
-                      <input
-                        type="color"
-                        value={footerText.frameBorderColor}
-                        onChange={(e) => handleFooterTextChange('frameBorderColor', e.target.value)}
-                        className="w-10 h-10 rounded border border-gray-300"
-                      />
-                      <input
-                        type="text"
-                        value={footerText.frameBorderColor}
-                        onChange={(e) => handleFooterTextChange('frameBorderColor', e.target.value)}
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-                      />
-                    </div>
-                  </div>
+                  {renderColorInput(footerText.frameColor, (val) => handleFooterTextChange('frameColor', val), 'Fond cadre')}
+                  {renderColorInput(footerText.frameBorderColor, (val) => handleFooterTextChange('frameBorderColor', val), 'Bordure cadre')}
                 </>
               )}
             </>
           )}
         </div>
 
-        {/* Bannière de pied de page */}
-        <div className="space-y-4">
-          <h4 className="flex items-center text-lg font-medium text-gray-800">
-            <Image className="w-5 h-5 mr-2" />
-            Bannière de pied de page
-          </h4>
-          
-          <div className="space-y-2">
-            <label className="flex items-center justify-between">
-              <span className="flex items-center text-sm font-medium text-gray-700">
-                {footerBanner.enabled ? <Eye className="w-4 h-4 mr-2" /> : <EyeOff className="w-4 h-4 mr-2" />}
-                Afficher une bannière de pied de page
-              </span>
-              <button
-                onClick={() => handleFooterBannerChange('enabled', !footerBanner.enabled)}
-                className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                  footerBanner.enabled ? 'bg-[#841b60]' : 'bg-gray-200'
-                }`}
-              >
-                <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                  footerBanner.enabled ? 'translate-x-6' : 'translate-x-1'
-                }`} />
-              </button>
-            </label>
+        {/* Bannière de pied de page - Version compacte */}
+        <div className="space-y-3 border-t pt-3">
+          <div className="grid grid-cols-2 gap-4 items-center">
+            <span className="flex items-center text-sm font-medium text-gray-700">
+              <Image className="w-4 h-4 mr-2" />
+              Bannière de pied
+            </span>
+            {renderToggle(footerBanner.enabled, (val) => handleFooterBannerChange('enabled', val))}
           </div>
 
           {footerBanner.enabled && (
@@ -1135,36 +670,23 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
               <ImageUpload
                 value={footerBanner.image || ''}
                 onChange={(value) => handleFooterBannerChange('image', value)}
-                label="Image de bannière de pied de page"
+                compact={true}
               />
 
-              <div className="space-y-2">
-                <label className="text-sm font-medium text-gray-700">Hauteur de la bannière</label>
+              <div className="grid grid-cols-2 gap-2 items-center">
+                <label className="text-sm text-gray-700">Hauteur</label>
                 <input
                   type="text"
                   value={footerBanner.height || '120px'}
                   onChange={(e) => handleFooterBannerChange('height', e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
+                  className="px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#841b60] focus:border-transparent"
                   placeholder="120px"
                 />
               </div>
 
-              <div className="space-y-2">
-                <label className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-700">
-                    Overlay sombre
-                  </span>
-                  <button
-                    onClick={() => handleFooterBannerChange('overlay', !footerBanner.overlay)}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                      footerBanner.overlay ? 'bg-[#841b60]' : 'bg-gray-200'
-                    }`}
-                  >
-                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      footerBanner.overlay ? 'translate-x-6' : 'translate-x-1'
-                    }`} />
-                  </button>
-                </label>
+              <div className="grid grid-cols-2 gap-4 items-center">
+                <span className="text-sm text-gray-700">Overlay sombre</span>
+                {renderToggle(footerBanner.overlay, (val) => handleFooterBannerChange('overlay', val))}
               </div>
             </>
           )}
