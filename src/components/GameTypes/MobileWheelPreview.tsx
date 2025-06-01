@@ -1,16 +1,8 @@
-
 import React from 'react';
 import WheelCanvas from './MobileWheel/WheelCanvas';
 import WheelDecorations from './MobileWheel/WheelDecorations';
 import WheelPointer from './MobileWheel/WheelPointer';
 import { getContainerWidth, getCanvasOffset, getGameAbsoluteStyle } from './MobileWheel/utils';
-
-interface Segment {
-  label: string;
-  chance: number;
-  color?: string;
-  image?: File | null;
-}
 
 interface MobileWheelPreviewProps {
   campaign: any;
