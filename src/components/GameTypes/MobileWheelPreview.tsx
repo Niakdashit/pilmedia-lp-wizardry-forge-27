@@ -1,5 +1,4 @@
 
-
 import React, { useRef, useEffect } from 'react';
 
 interface Segment {
@@ -57,6 +56,12 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
   const rotation = 0;
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
+  // Déterminer si on doit afficher la roue à 50% (positions left/right)
+  const shouldCropWheel = gamePosition === 'left' || gamePosition === 'right';
+  
+  // Calcul de la largeur du conteneur visible
+  const containerWidth = shouldCropWheel ? canvasSize * 0.5 : canvasSize;
+
   // Calcul de la position absolue du jeu selon gamePosition
   const getGameAbsoluteStyle = () => {
     const baseStyle: React.CSSProperties = {
@@ -69,20 +74,22 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
       case 'left':
         return {
           ...baseStyle,
-          left: `-${canvasSize / 2}px`,
+          left: '0px',
           top: '50%',
           transform: 'translateY(-50%)',
-          width: canvasSize,
-          height: canvasSize
+          width: containerWidth,
+          height: canvasSize,
+          overflow: 'hidden'
         };
       case 'right':
         return {
           ...baseStyle,
-          right: `-${canvasSize / 2}px`,
+          right: '0px',
           top: '50%',
           transform: 'translateY(-50%)',
-          width: canvasSize,
-          height: canvasSize
+          width: containerWidth,
+          height: canvasSize,
+          overflow: 'hidden'
         };
       case 'top':
         return {
@@ -216,7 +223,7 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
         height={canvasSize}
         style={{
           position: 'absolute',
-          left: 0,
+          left: shouldCropWheel ? (gamePosition === 'left' ? '0px' : `-${canvasSize * 0.5}px`) : '0px',
           top: 0,
           zIndex: 1,
         }}
@@ -228,7 +235,7 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
           alt={`Décor roue ${theme}`}
           style={{
             position: 'absolute',
-            left: 0,
+            left: shouldCropWheel ? (gamePosition === 'left' ? '0px' : `-${canvasSize * 0.5}px`) : '0px',
             top: 0,
             width: canvasSize,
             height: canvasSize,
@@ -241,7 +248,12 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
       <div
         style={{
           position: 'absolute',
-          left: canvasSize / 2 - 15,
+          left: shouldCropWheel ? 
+            (gamePosition === 'left' ? 
+              canvasSize / 2 - 15 : // Pour left, pointeur au centre du côté visible
+              -15 // Pour right, pointeur au centre du côté visible
+            ) : 
+            canvasSize / 2 - 15, // Position normale au centre
           top: -20,
           width: 30,
           height: 50,
@@ -273,4 +285,3 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
 };
 
 export default MobileWheelPreview;
-
