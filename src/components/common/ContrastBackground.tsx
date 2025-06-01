@@ -35,13 +35,11 @@ const ContrastBackground: React.FC<ContrastBackgroundProps> = ({
     padding: `${padding}px`,
     borderRadius: `${borderRadius}px`,
     backdropFilter: 'blur(8px)',
-    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-    display: 'inline-block',
-    maxWidth: 'fit-content'
+    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
   };
 
   return (
-    <div style={backgroundStyle} className={`${className} mx-auto`}>
+    <div style={backgroundStyle} className={className}>
       {children}
     </div>
   );

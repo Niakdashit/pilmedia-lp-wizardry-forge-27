@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import Modal from '../common/Modal';
 import ValidationMessage from '../common/ValidationMessage';
@@ -122,13 +121,14 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   const fields: FieldConfig[] = Array.isArray(campaign.formFields) && campaign.formFields.length > 0
     ? campaign.formFields : DEFAULT_FIELDS;
 
-  // Get fixed position styles for the wheel container
-  const getFixedWheelContainerStyles = () => {
+  // Get absolute position styles based on gamePosition
+  const getAbsolutePositionStyles = () => {
     const containerStyle: React.CSSProperties = {
       position: 'absolute',
-      width: containerWidth,
-      height: canvasSize,
-      overflow: shouldCropWheel ? 'hidden' : 'visible',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '16px',
       zIndex: 10
     };
 
@@ -138,85 +138,52 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
       case 'top':
         return { 
           ...containerStyle, 
+          flexDirection: 'column-reverse' as const,
           top: `${safeMargin}px`, 
           left: '50%', 
-          transform: 'translateX(-50%)'
+          transform: 'translateX(-50%)',
+          width: `${gameDimensions.width}px`,
+          height: `${gameDimensions.height}px`
         };
       case 'bottom':
         return { 
           ...containerStyle, 
+          flexDirection: 'column' as const,
           bottom: `${safeMargin}px`, 
           left: '50%', 
-          transform: 'translateX(-50%)'
+          transform: 'translateX(-50%)',
+          width: `${gameDimensions.width}px`,
+          height: `${gameDimensions.height}px`
         };
       case 'left':
         return { 
           ...containerStyle, 
+          flexDirection: shouldCropWheel ? 'row-reverse' as const : 'row' as const,
           left: shouldCropWheel ? '0px' : `${safeMargin}px`, 
           top: '50%', 
-          transform: 'translateY(-50%)'
+          transform: 'translateY(-50%)',
+          width: `${gameDimensions.width}px`,
+          height: `${gameDimensions.height}px`
         };
       case 'right':
         return { 
           ...containerStyle, 
+          flexDirection: shouldCropWheel ? 'row' as const : 'row-reverse' as const,
           right: shouldCropWheel ? '0px' : `${safeMargin}px`, 
           top: '50%', 
-          transform: 'translateY(-50%)'
+          transform: 'translateY(-50%)',
+          width: `${gameDimensions.width}px`,
+          height: `${gameDimensions.height}px`
         };
       default: // center
         return { 
           ...containerStyle, 
+          flexDirection: 'column' as const,
           top: '50%', 
           left: '50%', 
-          transform: 'translate(-50%, -50%)'
-        };
-    }
-  };
-
-  // Get button position styles - positioned relative to the wheel but in a separate layer
-  const getButtonPositionStyles = () => {
-    const buttonStyle: React.CSSProperties = {
-      position: 'absolute',
-      zIndex: 20
-    };
-
-    const buttonOffset = 60; // Distance from wheel edge
-
-    switch (gamePosition) {
-      case 'top':
-        return {
-          ...buttonStyle,
-          top: `${canvasSize + buttonOffset}px`,
-          left: '50%',
-          transform: 'translateX(-50%)'
-        };
-      case 'bottom':
-        return {
-          ...buttonStyle,
-          bottom: `${canvasSize + buttonOffset}px`,
-          left: '50%',
-          transform: 'translateX(-50%)'
-        };
-      case 'left':
-        return {
-          ...buttonStyle,
-          left: shouldCropWheel ? `${containerWidth + buttonOffset}px` : `${containerWidth + buttonOffset}px`,
-          top: '50%',
-          transform: 'translateY(-50%)'
-        };
-      case 'right':
-        return {
-          ...buttonStyle,
-          right: shouldCropWheel ? `${containerWidth + buttonOffset}px` : `${containerWidth + buttonOffset}px`,
-          top: '50%',
-          transform: 'translateY(-50%)'
-        };
-      default: // center
-        return {
-          ...buttonStyle,
-          top: `${canvasSize + buttonOffset}px`,
-          left: '50%',
-          transform: 'translateX(-50%)'
+          transform: 'translate(-50%, -50%)',
+          width: `${gameDimensions.width}px`,
+          height: `${gameDimensions.height}px`
         };
     }
   };
@@ -390,7 +357,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
 
   if (segments.length === 0) {
     return (
-      <div className="absolute inset-0 flex items-center justify-center">
+      <div style={getAbsolutePositionStyles()}>
         <p>Aucun segment configuré pour la roue</p>
       </div>
     );
@@ -408,9 +375,13 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   };
 
   return (
-    <div className="relative w-full h-full">
-      {/* Fixed wheel container */}
-      <div style={getFixedWheelContainerStyles()}>
+    <div style={getAbsolutePositionStyles()}>
+      <div style={{ 
+        position: 'relative', 
+        width: containerWidth, 
+        height: canvasSize,
+        overflow: shouldCropWheel ? 'hidden' : 'visible'
+      }}>
         {/* Shadow */}
         <div 
           style={{
@@ -491,34 +462,31 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
             className="absolute inset-0 flex items-center justify-center z-30 rounded-full cursor-pointer bg-black/0" 
           />
         )}
+
+        <ValidationMessage
+          show={showValidationMessage}
+          message="Formulaire validé ! Vous pouvez maintenant jouer."
+          type="success"
+        />
       </div>
 
-      {/* Button positioned separately and fixed */}
+      {/* Button positioned on the visible side */}
       {buttonConfig.visible && (
-        <div style={getButtonPositionStyles()}>
-          <button
-            onClick={handleWheelClick}
-            disabled={spinning || disabled}
-            style={{
-              backgroundColor: buttonConfig.color,
-              borderColor: buttonConfig.borderColor,
-              borderWidth: `${buttonConfig.borderWidth}px`,
-              borderRadius: `${buttonConfig.borderRadius}px`,
-              borderStyle: 'solid'
-            }}
-            className={`${getButtonSizeClasses()} text-white font-medium disabled:opacity-50 hover:opacity-80 transition-all shadow-lg`}
-          >
-            {spinning ? 'Tourne...' : formValidated ? 'Lancer la roue' : (buttonConfig.text || 'Remplir le formulaire')}
-          </button>
-        </div>
+        <button
+          onClick={handleWheelClick}
+          disabled={spinning || disabled}
+          style={{
+            backgroundColor: buttonConfig.color,
+            borderColor: buttonConfig.borderColor,
+            borderWidth: `${buttonConfig.borderWidth}px`,
+            borderRadius: `${buttonConfig.borderRadius}px`,
+            borderStyle: 'solid'
+          }}
+          className={`${getButtonSizeClasses()} text-white font-medium disabled:opacity-50 hover:opacity-80 transition-all shadow-lg`}
+        >
+          {spinning ? 'Tourne...' : formValidated ? 'Lancer la roue' : (buttonConfig.text || 'Remplir le formulaire')}
+        </button>
       )}
-
-      {/* Validation message */}
-      <ValidationMessage
-        show={showValidationMessage}
-        message="Formulaire validé ! Vous pouvez maintenant jouer."
-        type="success"
-      />
 
       {/* Form modal */}
       {showFormModal && (

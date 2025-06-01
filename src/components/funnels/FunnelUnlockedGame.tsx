@@ -60,7 +60,6 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
   };
 
   const handleGameFinish = (result: 'win' | 'lose') => {
-    console.log('Game finished with result:', result);
     setTimeout(() => {
       setGameResult(result);
       setGamePlayed(true);
@@ -86,62 +85,37 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
     campaign?.gameConfig?.[campaign.type]?.template ||
     campaign?.selectedTemplate;
 
-  // Styles fixes pour la position du jeu
-  const getFixedGameContainerStyle = (): React.CSSProperties => {
-    const gameSize = campaign.gameSize || 'medium';
-    const gamePosition = campaign.gamePosition || 'center';
-    
-    let maxSize = 280; // desktop par défaut
-    if (previewMode === 'mobile') {
-      maxSize = 240;
-    } else if (previewMode === 'tablet') {
-      maxSize = 260;
-    }
-
-    // Ajustement de taille selon gameSize
-    if (gameSize === 'small') maxSize *= 0.8;
-    else if (gameSize === 'large') maxSize *= 1.2;
-    else if (gameSize === 'xlarge') maxSize *= 1.5;
-
-    const baseStyle: React.CSSProperties = {
-      width: `${maxSize}px`,
-      height: `${maxSize}px`,
-      flexShrink: 0,
-      flexGrow: 0,
-      position: 'relative',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center'
-    };
-
-    // Position absolue pour éviter les influences d'autres éléments
-    if (gamePosition === 'center') {
-      return {
-        ...baseStyle,
-        margin: '0 auto'
-      };
-    } else if (gamePosition === 'left') {
-      return {
-        ...baseStyle,
-        alignSelf: 'flex-start'
-      };
-    } else if (gamePosition === 'right') {
-      return {
-        ...baseStyle,
-        alignSelf: 'flex-end'
-      };
-    }
-
-    return baseStyle;
-  };
-
-  // Rendu du jeu avec dimensions fixes
+  // Rendu du jeu avec dimensions responsive corrigées
   const renderGame = () => {
     const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage;
     const customTemplate = campaign.gameConfig?.[campaign.type]?.customTemplate;
     const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel;
     const buttonColor = campaign.gameConfig?.[campaign.type]?.buttonColor;
     const contrastBg = mobileConfig?.contrastBackground || campaign.screens?.[2]?.contrastBackground;
+
+    // Dimensions responsive selon le mode d'aperçu
+    const getGameContainerStyle = (): React.CSSProperties => {
+      let maxSize = 280; // desktop par défaut
+      
+      if (previewMode === 'mobile') {
+        maxSize = 240;
+      } else if (previewMode === 'tablet') {
+        maxSize = 260;
+      }
+
+      return {
+        width: '100%',
+        height: 'auto',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: '10px',
+        maxWidth: `${maxSize}px`,
+        maxHeight: `${maxSize}px`,
+        margin: '0 auto',
+        position: 'relative'
+      };
+    };
 
     const gameComponent = (() => {
       const commonProps = {
@@ -163,8 +137,6 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
                 winnersCount: 0
               }}
               onFinish={handleGameFinish}
-              gameSize={campaign.gameSize || 'medium'}
-              gamePosition={campaign.gamePosition || 'center'}
             />
           );
         case 'scratch':
@@ -194,7 +166,7 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
     })();
 
     return (
-      <div style={getFixedGameContainerStyle()} className="rounded-lg overflow-visible relative">
+      <div style={getGameContainerStyle()} className="rounded-lg overflow-visible relative">
         {/* Jeu principal */}
         <div className="relative z-20 w-full h-full flex items-center justify-center">
           <ContrastBackground
@@ -233,31 +205,19 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
         <ContrastBackground
           enabled={contrastBg?.enabled}
           config={contrastBg}
-          className="text-center space-y-3 w-full inline-block max-w-max mx-auto"
+          className="text-center space-y-3 w-full"
         >
           <h3 className="text-xl font-semibold">
-            {gameResult === 'win' ? 
-              (resultScreen?.winMessage || 'Félicitations, vous avez gagné !') : 
-              (resultScreen?.loseMessage || 'Dommage, réessayez !')}
+            {gameResult === 'win' ? resultScreen?.winMessage || 'Félicitations, vous avez gagné !' : resultScreen?.loseMessage || 'Dommage, réessayez !'}
           </h3>
-          <p className="text-sm">
-            {resultScreen?.ctaMessage || 'Découvrez nos offres ou partagez votre participation.'}
-          </p>
+          <p className="text-sm">{resultScreen?.ctaMessage || 'Découvrez nos offres ou partagez votre participation.'}</p>
           <div className="flex flex-col space-y-2">
             {resultScreen?.ctaLink && (
-              <a 
-                href={resultScreen.ctaLink} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="bg-blue-600 text-white px-4 py-2 text-sm rounded hover:bg-blue-700 transition-colors"
-              >
+              <a href={resultScreen.ctaLink} target="_blank" rel="noopener noreferrer" className="bg-blue-600 text-white px-4 py-2 text-sm rounded hover:bg-blue-700 transition-colors">
                 {resultScreen?.ctaText || "Découvrir l'offre"}
               </a>
             )}
-            <button 
-              onClick={reset} 
-              className="bg-gray-800 text-white px-4 py-2 text-sm rounded hover:bg-gray-900 transition-colors"
-            >
+            <button onClick={reset} className="bg-gray-800 text-white px-4 py-2 text-sm rounded hover:bg-gray-900 transition-colors">
               {resultScreen?.replayButtonText || 'Rejouer'}
             </button>
           </div>
@@ -276,7 +236,6 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
             onClose={() => setShowFormModal(false)}
             title={campaign.screens[1]?.title || 'Vos informations'}
             contained={modalContained}
-            width="max-w-sm"
           >
             <DynamicContactForm
               fields={fields}
@@ -301,7 +260,7 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
         <ContrastBackground
           enabled={contrastBg?.enabled}
           config={contrastBg}
-          className="text-center space-y-3 inline-block max-w-max mx-auto"
+          className="text-center space-y-3 w-full"
         >
           {showTitle && (
             <h2 className="text-2xl font-bold">
@@ -321,7 +280,6 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
           onClose={() => setShowFormModal(false)}
           title={campaign.screens[1]?.title || 'Vos informations'}
           contained={modalContained}
-          width="max-w-sm"
         >
           <DynamicContactForm
             fields={fields}
