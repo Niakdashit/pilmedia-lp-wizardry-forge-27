@@ -1,8 +1,8 @@
+
 import React from 'react';
 import WheelCanvas from './MobileWheel/WheelCanvas';
 import WheelDecorations from './MobileWheel/WheelDecorations';
 import WheelPointer from './MobileWheel/WheelPointer';
-import { getContainerWidth, getCanvasOffset, getGameAbsoluteStyle } from './MobileWheel/utils';
 
 interface MobileWheelPreviewProps {
   campaign: any;
@@ -24,38 +24,102 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
 
   const canvasSize = mobileRouletteConfig.size || mobileRouletteConfig.width || CANVAS_SIZE;
 
-  // Déterminer si on doit afficher la roue à 50% (positions left/right)
-  const shouldCropWheel = gamePosition === 'left' || gamePosition === 'right';
-  
-  const containerWidth = getContainerWidth(canvasSize, shouldCropWheel);
-
   if (segments.length === 0) {
     return null;
   }
 
-  const canvasOffset = getCanvasOffset(shouldCropWheel, gamePosition, canvasSize);
+  // Positionnement absolu fixe pour chaque position - complètement indépendant du contenu
+  const getAbsoluteGameStyle = (): React.CSSProperties => {
+    const baseStyle: React.CSSProperties = {
+      position: 'absolute',
+      zIndex: 10,
+      pointerEvents: 'none'
+    };
+
+    switch (gamePosition) {
+      case 'left':
+        return {
+          ...baseStyle,
+          left: `-${canvasSize / 2}px`, // Toujours à moitié cachée
+          top: '50%',
+          transform: 'translateY(-50%)',
+          width: canvasSize,
+          height: canvasSize
+        };
+      
+      case 'right':
+        return {
+          ...baseStyle,
+          right: `-${canvasSize / 2}px`, // Toujours à moitié cachée
+          top: '50%',
+          transform: 'translateY(-50%)',
+          width: canvasSize,
+          height: canvasSize
+        };
+      
+      case 'top':
+        return {
+          ...baseStyle,
+          top: `-${canvasSize / 2}px`, // Toujours à moitié cachée
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: canvasSize,
+          height: canvasSize
+        };
+      
+      case 'bottom':
+        return {
+          ...baseStyle,
+          bottom: `-${canvasSize / 2}px`, // Toujours à moitié cachée
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: canvasSize,
+          height: canvasSize
+        };
+      
+      case 'center':
+      default:
+        return {
+          ...baseStyle,
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: canvasSize,
+          height: canvasSize
+        };
+    }
+  };
+
+  // Détermine si on doit couper la roue (positions left/right)
+  const shouldCropWheel = gamePosition === 'left' || gamePosition === 'right';
+  
+  // Offset pour le canvas dans le conteneur
+  const getCanvasOffset = () => {
+    if (!shouldCropWheel) return '0px';
+    return gamePosition === 'left' ? '0px' : `-${canvasSize / 2}px`;
+  };
 
   const renderWheelContainer = () => (
-    <div style={{ position: 'relative', width: canvasSize, height: canvasSize }}>
+    <div style={{ position: 'relative', width: canvasSize, height: canvasSize, overflow: 'hidden' }}>
       <WheelCanvas
         segments={segments}
         centerImage={centerImage}
         theme={theme}
         borderColor={borderColor}
         canvasSize={canvasSize}
-        offset={canvasOffset}
+        offset={getCanvasOffset()}
       />
       
       <WheelDecorations
         theme={theme}
         canvasSize={canvasSize}
-        offset={canvasOffset}
+        offset={getCanvasOffset()}
       />
       
       <WheelPointer
         pointerColor={pointerColor}
         gamePosition={gamePosition}
-        containerWidth={containerWidth}
+        containerWidth={shouldCropWheel ? canvasSize / 2 : canvasSize}
         canvasSize={canvasSize}
         shouldCropWheel={shouldCropWheel}
       />
@@ -63,7 +127,7 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
   );
 
   return (
-    <div style={getGameAbsoluteStyle(gamePosition, containerWidth, canvasSize)}>
+    <div style={getAbsoluteGameStyle()}>
       {renderWheelContainer()}
     </div>
   );
