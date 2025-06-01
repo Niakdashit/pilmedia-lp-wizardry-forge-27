@@ -1,4 +1,3 @@
-
 import React from 'react';
 import ContrastBackground from '../../common/ContrastBackground';
 import MobileWheelPreview from '../../GameTypes/MobileWheelPreview';
@@ -22,7 +21,6 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
 
   // Configuration du jeu mobile
   const mobileRouletteConfig = mobileConfig.roulette || {};
-  const gameCanvasSize = mobileRouletteConfig.size || mobileRouletteConfig.width || 280;
   const gamePosition = mobileConfig.gamePosition || 'left';
 
   // Largeur fixe du device - indépendante du contenu
@@ -96,7 +94,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
     maxWidth: '100%',
     flexShrink: 0,
     overflowWrap: 'break-word' as const,
-    wordBreak: 'break-word' as const // Force la coupure des mots longs
+    wordBreak: 'break-word' as const
   });
 
   // Style du bouton avec positionnement absolu complètement indépendant
@@ -260,21 +258,18 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
           </div>
         )}
 
-        {/* Layer du jeu - Position absolue TOTALEMENT indépendante avec conteneur fixe */}
+        {/* Layer du jeu - Conteneur fixe complètement indépendant */}
         {campaign.type === 'wheel' && (
           <div 
             style={{
               position: 'absolute',
               top: 0,
               left: 0,
-              right: 0,
-              bottom: 0,
+              width: deviceWidth,
+              height: specs.height,
               zIndex: 10,
               pointerEvents: 'none',
-              // Conteneur fixe qui ne peut pas déborder
-              width: deviceWidth - 16, // Largeur fixe moins les bordures
-              height: specs.height - 16, // Hauteur fixe moins les bordures
-              overflow: 'hidden' // Empêche tout débordement
+              overflow: 'hidden'
             }}
           >
             <MobileWheelPreview
@@ -284,7 +279,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
           </div>
         )}
 
-        {/* Layer du contenu adaptatif - Flex layout avec espacement fixe réservé pour le bouton */}
+        {/* Layer du contenu adaptatif */}
         <div style={getContentLayoutStyle()}>
           {renderContent().map((element, idx) =>
             element ? <React.Fragment key={idx}>{element}</React.Fragment> : null
