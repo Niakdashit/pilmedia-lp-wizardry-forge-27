@@ -1,5 +1,5 @@
 
-import React, { useRef, useEffect, useState } from 'react';
+import React from 'react';
 
 interface ContrastBackgroundProps {
   enabled?: boolean;
@@ -19,8 +19,9 @@ const ContrastBackground: React.FC<ContrastBackgroundProps> = ({
   children,
   className = ""
 }) => {
-  const contentRef = useRef<HTMLDivElement>(null);
-  const [contentDimensions, setContentDimensions] = useState({ width: 0, height: 0 });
+  if (!enabled) {
+    return <>{children}</>;
+  }
 
   const {
     color = 'rgba(255, 255, 255, 0.9)',
@@ -29,35 +30,6 @@ const ContrastBackground: React.FC<ContrastBackgroundProps> = ({
     borderRadius = 8
   } = config;
 
-  useEffect(() => {
-    if (enabled && contentRef.current) {
-      const updateDimensions = () => {
-        const rect = contentRef.current?.getBoundingClientRect();
-        if (rect) {
-          setContentDimensions({ 
-            width: rect.width, 
-            height: rect.height 
-          });
-        }
-      };
-
-      // Observer pour détecter les changements de taille du contenu
-      const resizeObserver = new ResizeObserver(updateDimensions);
-      resizeObserver.observe(contentRef.current);
-
-      // Mise à jour initiale
-      updateDimensions();
-
-      return () => {
-        resizeObserver.disconnect();
-      };
-    }
-  }, [enabled, children]);
-
-  if (!enabled) {
-    return <>{children}</>;
-  }
-
   const backgroundStyle = {
     backgroundColor: color.includes('rgba') ? color : `${color}${Math.round(opacity * 2.55).toString(16).padStart(2, '0')}`,
     padding: `${padding}px`,
@@ -65,18 +37,12 @@ const ContrastBackground: React.FC<ContrastBackgroundProps> = ({
     backdropFilter: 'blur(8px)',
     boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
     display: 'inline-block',
-    // Adaptation exacte au contenu
-    width: 'auto',
-    height: 'auto',
-    minWidth: 'auto',
-    maxWidth: 'none'
+    maxWidth: 'fit-content'
   };
 
   return (
-    <div style={backgroundStyle} className={`${className}`}>
-      <div ref={contentRef}>
-        {children}
-      </div>
+    <div style={backgroundStyle} className={`${className} mx-auto`}>
+      {children}
     </div>
   );
 };

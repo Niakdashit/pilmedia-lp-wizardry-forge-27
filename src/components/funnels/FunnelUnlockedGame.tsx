@@ -60,13 +60,11 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
   };
 
   const handleGameFinish = (result: 'win' | 'lose') => {
-    console.log('FunnelUnlockedGame - Game finished with result:', result);
-    // Délai pour permettre à l'animation de se terminer
+    console.log('Game finished with result:', result);
     setTimeout(() => {
       setGameResult(result);
       setGamePlayed(true);
-      console.log('FunnelUnlockedGame - Game state updated:', { gameResult: result, gamePlayed: true });
-    }, 1000);
+    }, 1500);
   };
 
   const handleGameStart = () => setGameStarted(true);
@@ -225,9 +223,8 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
     );
   };
 
-  // -- Rendu FIN (écran de sortie/victoire/défaite) - CORRIGÉ
-  if (gamePlayed && gameResult !== null) {
-    console.log('FunnelUnlockedGame - Rendering end screen with result:', gameResult);
+  // -- Rendu FIN (écran de sortie/victoire/défaite)
+  if (gamePlayed) {
     const resultScreen = campaign.screens?.[3] || {};
     const contrastBg = mobileConfig?.contrastBackground || resultScreen.contrastBackground;
 
