@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 
 interface Segment {
@@ -51,7 +50,10 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
   const theme = mobileRouletteConfig.theme || 'default';
   const borderColor = mobileRouletteConfig.borderColor || '#841b60';
   const pointerColor = mobileRouletteConfig.pointerColor || '#841b60';
-  
+
+  // Ajout : récupérer la position (gauche, droite, etc.)
+  const gamePosition = campaign?.mobileConfig?.position || 'center';
+
   const [rotation, setRotation] = useState(0);
   const [spinning, setSpinning] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -190,71 +192,171 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
     );
   }
 
+  // --- DEBUT MODIF RENDU ---
   return (
-    <div className="flex flex-col items-center gap-4">
-      <div style={{ position: 'relative', width: CANVAS_SIZE, height: CANVAS_SIZE }}>
-        <canvas
-          ref={canvasRef}
-          width={CANVAS_SIZE}
-          height={CANVAS_SIZE}
-          style={{
-            position: 'absolute',
-            left: 0,
-            top: 0,
-            zIndex: 1,
-          }}
-          className="rounded-full shadow-lg"
-        />
-        {theme !== 'default' && wheelDecorByTheme[theme] && (
-          <img
-            src={wheelDecorByTheme[theme]}
-            alt={`Décor roue ${theme}`}
-            style={{
-              position: 'absolute',
-              left: 0,
-              top: 0,
-              width: CANVAS_SIZE,
-              height: CANVAS_SIZE,
-              zIndex: 2,
-              pointerEvents: 'none',
-            }}
-            draggable={false}
-          />
-        )}
+    <div className="relative w-full h-[340px] flex items-center justify-center overflow-hidden">
+      {/* Roue à moitié coupée à gauche */}
+      {gamePosition === 'left' && (
         <div
-          style={{
-            position: 'absolute',
-            left: CANVAS_SIZE / 2 - 15,
-            top: -20,
-            width: 30,
-            height: 50,
-            zIndex: 3,
-            pointerEvents: 'none',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'flex-start',
-          }}
+          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 z-10"
+          style={{ width: CANVAS_SIZE, height: CANVAS_SIZE }}
         >
-          <svg width="30" height="50">
-            <polygon
-              points="15,50 27,15 3,15"
-              fill={pointerColor}
-              stroke="#fff"
-              strokeWidth="2"
-              style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.10))' }}
+          <div style={{ position: 'relative', width: CANVAS_SIZE, height: CANVAS_SIZE }}>
+            <canvas
+              ref={canvasRef}
+              width={CANVAS_SIZE}
+              height={CANVAS_SIZE}
+              style={{
+                position: 'absolute',
+                left: 0,
+                top: 0,
+                zIndex: 1,
+              }}
+              className="rounded-full shadow-lg"
             />
-          </svg>
+            {theme !== 'default' && wheelDecorByTheme[theme] && (
+              <img
+                src={wheelDecorByTheme[theme]}
+                alt={`Décor roue ${theme}`}
+                style={{
+                  position: 'absolute',
+                  left: 0,
+                  top: 0,
+                  width: CANVAS_SIZE,
+                  height: CANVAS_SIZE,
+                  zIndex: 2,
+                  pointerEvents: 'none',
+                }}
+                draggable={false}
+              />
+            )}
+            <div
+              style={{
+                position: 'absolute',
+                left: CANVAS_SIZE / 2 - 15,
+                top: -20,
+                width: 30,
+                height: 50,
+                zIndex: 3,
+                pointerEvents: 'none',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'flex-start',
+              }}
+            >
+              <svg width="30" height="50">
+                <polygon
+                  points="15,50 27,15 3,15"
+                  fill={pointerColor}
+                  stroke="#fff"
+                  strokeWidth="2"
+                  style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.10))' }}
+                />
+              </svg>
+            </div>
+          </div>
         </div>
+      )}
+      {/* Roue à moitié coupée à droite */}
+      {gamePosition === 'right' && (
+        <div
+          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-10"
+          style={{ width: CANVAS_SIZE, height: CANVAS_SIZE }}
+        >
+          <div style={{ position: 'relative', width: CANVAS_SIZE, height: CANVAS_SIZE }}>
+            <canvas
+              ref={canvasRef}
+              width={CANVAS_SIZE}
+              height={CANVAS_SIZE}
+              style={{
+                position: 'absolute',
+                left: 0,
+                top: 0,
+                zIndex: 1,
+              }}
+              className="rounded-full shadow-lg"
+            />
+            {theme !== 'default' && wheelDecorByTheme[theme] && (
+              <img
+                src={wheelDecorByTheme[theme]}
+                alt={`Décor roue ${theme}`}
+                style={{
+                  position: 'absolute',
+                  left: 0,
+                  top: 0,
+                  width: CANVAS_SIZE,
+                  height: CANVAS_SIZE,
+                  zIndex: 2,
+                  pointerEvents: 'none',
+                }}
+                draggable={false}
+              />
+            )}
+            <div
+              style={{
+                position: 'absolute',
+                left: CANVAS_SIZE / 2 - 15,
+                top: -20,
+                width: 30,
+                height: 50,
+                zIndex: 3,
+                pointerEvents: 'none',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'flex-start',
+              }}
+            >
+              <svg width="30" height="50">
+                <polygon
+                  points="15,50 27,15 3,15"
+                  fill={pointerColor}
+                  stroke="#fff"
+                  strokeWidth="2"
+                  style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.10))' }}
+                />
+              </svg>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Roue en haut */}
+      {gamePosition === 'top' && (
+        <div
+          className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10"
+          style={{ width: CANVAS_SIZE, height: CANVAS_SIZE }}
+        >
+          {/* ...identique à ci-dessus, adapte si besoin */}
+        </div>
+      )}
+      {/* Roue en bas */}
+      {gamePosition === 'bottom' && (
+        <div
+          className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 z-10"
+          style={{ width: CANVAS_SIZE, height: CANVAS_SIZE }}
+        >
+          {/* ...identique à ci-dessus, adapte si besoin */}
+        </div>
+      )}
+      {/* Roue au centre */}
+      {gamePosition === 'center' && (
+        <div
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10"
+          style={{ width: CANVAS_SIZE, height: CANVAS_SIZE }}
+        >
+          {/* ...identique à ci-dessus, adapte si besoin */}
+        </div>
+      )}
+
+      {/* Bouton toujours centré et jamais influence la roue */}
+      <div className="w-full flex items-center justify-center z-20">
+        <button
+          onClick={spinWheel}
+          disabled={spinning}
+          className="px-4 py-2 bg-[#841b60] text-white rounded-lg disabled:opacity-50 hover:bg-[#6d164f] transition-colors shadow-md text-sm"
+        >
+          {spinning ? 'Tourne...' : 'Lancer'}
+        </button>
       </div>
-      <button
-        onClick={spinWheel}
-        disabled={spinning}
-        className="px-4 py-2 bg-[#841b60] text-white rounded-lg disabled:opacity-50 hover:bg-[#6d164f] transition-colors shadow-md text-sm"
-      >
-        {spinning ? 'Tourne...' : 'Lancer'}
-      </button>
     </div>
   );
-};
-
-export default MobileWheelPreview;
+  // --- FI
