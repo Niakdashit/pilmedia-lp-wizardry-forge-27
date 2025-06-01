@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 
 interface Segment {
@@ -42,7 +43,8 @@ const CANVAS_SIZE = 280;
 
 const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
   campaign,
-  onFinish
+  onFinish,
+  gamePosition = 'center'
 }) => {
   const mobileRouletteConfig = campaign?.mobileConfig?.roulette || {};
   const segments = mobileRouletteConfig.segments || [];
@@ -198,42 +200,6 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
       ctx.lineWidth = 2;
       ctx.stroke();
     }
-  };
-
-  const spinWheel = () => {
-    if (spinning || segments.length === 0) return;
-    setSpinning(true);
-
-    const totalSpins = 5;
-    const randomOffset = Math.random() * 360;
-    const finalRotationDeg = totalSpins * 360 + randomOffset;
-    const finalRotation = (finalRotationDeg * Math.PI) / 180;
-
-    const duration = 4500;
-    const start = Date.now();
-    const initialRotation = rotation;
-
-    function easeOutCubic(t: number) {
-      return 1 - Math.pow(1 - t, 3);
-    }
-
-    const animate = () => {
-      const now = Date.now();
-      const elapsed = now - start;
-      const t = Math.min(elapsed / duration, 1);
-      const easedT = easeOutCubic(t);
-      const current = initialRotation + easedT * (finalRotation - initialRotation);
-      setRotation(current);
-
-      if (t < 1) {
-        requestAnimationFrame(animate);
-      } else {
-        setSpinning(false);
-        setRotation(current % (2 * Math.PI));
-        if (typeof onFinish === 'function') onFinish('win');
-      }
-    };
-    animate();
   };
 
   useEffect(() => {

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import ContrastBackground from '../../common/ContrastBackground';
 import MobileWheelPreview from '../../GameTypes/MobileWheelPreview';
@@ -223,7 +224,6 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
         {campaign.type === 'wheel' && (
           <MobileWheelPreview
             campaign={campaign}
-            containerDimensions={{ width: deviceWidth, height: specs.height }}
             gamePosition={gamePosition}
           />
         )}
