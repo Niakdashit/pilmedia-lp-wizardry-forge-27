@@ -1,4 +1,5 @@
 
+
 import React from 'react';
 import ContrastBackground from '../../common/ContrastBackground';
 import MobileWheelPreview from '../../GameTypes/MobileWheelPreview';
@@ -79,7 +80,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
       gap: verticalSpacing,
       padding: `${verticalSpacing}px ${horizontalPadding}px`,
       overflowY: 'auto' as const,
-      overflowX: 'hidden' as const, // Empêche le débordement horizontal
+      overflowX: 'hidden' as const,
       position: 'relative' as const,
       zIndex: 5,
       // Espacement fixe réservé pour le bouton - 80px fixe
@@ -104,7 +105,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
     
     const baseStyle: React.CSSProperties = {
       position: 'absolute',
-      zIndex: 100, // Z-index très élevé pour être au-dessus de tout
+      zIndex: 100,
       left: horizontalPadding,
       right: horizontalPadding,
       display: 'flex',
@@ -165,10 +166,8 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
       border: 'none',
       cursor: 'pointer',
       transition: 'all 0.2s ease-in-out',
-      // Dimensions minimales pour éviter les boutons trop petits
       minHeight: '44px',
       minWidth: '100px',
-      // Forcer la coupure des mots très longs
       wordBreak: 'break-word' as const,
       hyphens: 'auto' as const
     };
@@ -258,18 +257,18 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
           </div>
         )}
 
-        {/* Layer du jeu - Conteneur fixe complètement indépendant */}
+        {/* Conteneur fixe pour la roue - Positionnement complètement indépendant */}
         {campaign.type === 'wheel' && (
           <div 
             style={{
               position: 'absolute',
               top: 0,
               left: 0,
-              width: deviceWidth,
-              height: specs.height,
+              width: '100%',
+              height: '100%',
               zIndex: 10,
               pointerEvents: 'none',
-              overflow: 'hidden'
+              overflow: 'visible' // Important pour permettre le débordement contrôlé
             }}
           >
             <MobileWheelPreview
