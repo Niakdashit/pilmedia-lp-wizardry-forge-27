@@ -198,8 +198,12 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
       {/* Roue à moitié coupée à gauche */}
       {gamePosition === 'left' && (
         <div
-          className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 z-10"
-          style={{ width: CANVAS_SIZE, height: CANVAS_SIZE }}
+          className="absolute left-0 top-1/2 z-10"
+          style={{
+            width: CANVAS_SIZE,
+            height: CANVAS_SIZE,
+            transform: `translateY(-50%) translateX(-${CANVAS_SIZE / 2}px)`,
+          }}
         >
           <div style={{ position: 'relative', width: CANVAS_SIZE, height: CANVAS_SIZE }}>
             <canvas
@@ -260,8 +264,12 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
       {/* Roue à moitié coupée à droite */}
       {gamePosition === 'right' && (
         <div
-          className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-10"
-          style={{ width: CANVAS_SIZE, height: CANVAS_SIZE }}
+          className="absolute right-0 top-1/2 z-10"
+          style={{
+            width: CANVAS_SIZE,
+            height: CANVAS_SIZE,
+            transform: `translateY(-50%) translateX(${CANVAS_SIZE / 2}px)`,
+          }}
         >
           <div style={{ position: 'relative', width: CANVAS_SIZE, height: CANVAS_SIZE }}>
             <canvas
@@ -359,4 +367,7 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
       </div>
     </div>
   );
-  // --- FI
+  // --- FIN MODIF RENDU ---
+};
+
+export default MobileWheelPreview;
