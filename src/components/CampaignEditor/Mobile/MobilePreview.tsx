@@ -28,10 +28,8 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
   // Calcul de la largeur minimale du device en fonction de la position du jeu
   const getMinDeviceWidth = () => {
     if (gamePosition === 'left' || gamePosition === 'right') {
-      // Pour gauche/droite, on garde la largeur normale car le jeu dépasse
       return specs.width;
     }
-    // Pour les autres positions, on s'assure que le jeu rentre
     return Math.max(specs.width, gameCanvasSize + 40);
   };
 
@@ -74,7 +72,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
     screenStyle.backgroundRepeat = 'no-repeat';
   }
 
-  // Style du contenu adaptatif (sans le bouton)
+  // Style du contenu adaptatif avec espacement fixe pour éviter les conflits
   const getContentLayoutStyle = () => {
     const verticalSpacing = mobileConfig.verticalSpacing ?? 20;
     const horizontalPadding = Math.max(12, mobileConfig.horizontalPadding ?? 16);
@@ -104,7 +102,8 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
       overflowY: 'auto' as const,
       position: 'relative' as const,
       zIndex: 5,
-      // Réserver de l'espace pour le bouton selon sa position
+      // Espacement fixe réservé pour le bouton - indépendant de sa taille
+      paddingTop: mobileConfig.buttonPlacement === 'top' ? '80px' : `${verticalSpacing}px`,
       paddingBottom: mobileConfig.buttonPlacement === 'bottom' ? '80px' : `${verticalSpacing}px`
     };
   };
@@ -117,19 +116,20 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
     overflowWrap: 'break-word' as const
   });
 
-  // Style du bouton avec positionnement absolu
+  // Style du bouton avec positionnement absolu complètement indépendant
   const getButtonAbsoluteStyle = () => {
     const buttonPlacement = mobileConfig.buttonPlacement || 'bottom';
     const horizontalPadding = Math.max(12, mobileConfig.horizontalPadding ?? 16);
     
     const baseStyle: React.CSSProperties = {
       position: 'absolute',
-      zIndex: 50,
+      zIndex: 100, // Z-index très élevé pour être au-dessus de tout
       left: horizontalPadding,
       right: horizontalPadding,
       display: 'flex',
       justifyContent: 'center',
-      alignItems: 'center'
+      alignItems: 'center',
+      pointerEvents: 'auto' as const // Assure l'interactivité du bouton
     };
 
     switch (buttonPlacement) {
@@ -151,6 +151,43 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
           bottom: '20px'
         };
     }
+  };
+
+  // Style du bouton adaptatif selon sa configuration
+  const getButtonStyle = () => {
+    const buttonSize = mobileConfig.buttonSize || 'medium';
+    const buttonWidth = mobileConfig.buttonWidth || 80;
+    
+    // Tailles prédéfinies
+    const sizeConfig = {
+      small: { padding: '8px 16px', fontSize: '0.875rem' },
+      medium: { padding: '12px 24px', fontSize: '1rem' },
+      large: { padding: '16px 32px', fontSize: '1.125rem' }
+    };
+
+    return {
+      backgroundColor: mobileConfig.buttonColor || '#841b60',
+      color: mobileConfig.buttonTextColor || '#ffffff',
+      borderRadius: mobileConfig.buttonShape === 'rounded-full' ? '9999px' : 
+                   mobileConfig.buttonShape === 'rounded-md' ? '6px' : '8px',
+      padding: sizeConfig[buttonSize as keyof typeof sizeConfig]?.padding || sizeConfig.medium.padding,
+      fontSize: sizeConfig[buttonSize as keyof typeof sizeConfig]?.fontSize || sizeConfig.medium.fontSize,
+      boxShadow: mobileConfig.buttonShadow === 'none' ? 'none' :
+                mobileConfig.buttonShadow === 'shadow-lg' ? '0 10px 15px -3px rgba(0, 0, 0, 0.1)' :
+                '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+      width: `${buttonWidth}%`,
+      maxWidth: '100%',
+      whiteSpace: 'normal' as const,
+      wordWrap: 'break-word' as const,
+      lineHeight: 1.4,
+      textAlign: 'center' as const,
+      border: 'none',
+      cursor: 'pointer',
+      transition: 'all 0.2s ease-in-out',
+      // Dimensions minimales pour éviter les boutons trop petits
+      minHeight: '44px',
+      minWidth: '100px'
+    };
   };
 
   const renderContent = () => {
@@ -243,35 +280,18 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
           />
         )}
 
-        {/* Layer du contenu adaptatif - Flex layout sans bouton */}
+        {/* Layer du contenu adaptatif - Flex layout avec espacement fixe réservé pour le bouton */}
         <div style={getContentLayoutStyle()}>
           {renderContent().map((element, idx) =>
             element ? <React.Fragment key={idx}>{element}</React.Fragment> : null
           )}
         </div>
 
-        {/* Layer du bouton - Position absolue indépendante */}
+        {/* Layer du bouton - Position absolue totalement indépendante */}
         <div style={getButtonAbsoluteStyle()}>
           <button
-            className="px-4 py-2 bg-[#841b60] text-white rounded-lg hover:bg-[#6d164f] transition-colors shadow-md text-sm max-w-full"
-            style={{
-              backgroundColor: mobileConfig.buttonColor || '#841b60',
-              color: mobileConfig.buttonTextColor || '#ffffff',
-              borderRadius: mobileConfig.buttonShape === 'rounded-full' ? '9999px' : 
-                           mobileConfig.buttonShape === 'rounded-md' ? '6px' : '8px',
-              padding: mobileConfig.buttonSize === 'small' ? '8px 16px' :
-                      mobileConfig.buttonSize === 'large' ? '16px 32px' : '12px 24px',
-              fontSize: mobileConfig.buttonSize === 'small' ? '0.875rem' :
-                       mobileConfig.buttonSize === 'large' ? '1.125rem' : '1rem',
-              boxShadow: mobileConfig.buttonShadow === 'none' ? 'none' :
-                        mobileConfig.buttonShadow === 'shadow-lg' ? '0 10px 15px -3px rgba(0, 0, 0, 0.1)' :
-                        '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
-              width: `${mobileConfig.buttonWidth || 80}%`,
-              whiteSpace: 'normal' as const,
-              wordWrap: 'break-word' as const,
-              lineHeight: 1.4,
-              textAlign: 'center' as const
-            }}
+            className="transition-colors"
+            style={getButtonStyle()}
           >
             {mobileConfig.buttonText || campaign.gameConfig?.[campaign.type]?.buttonLabel || 'Lancer'}
           </button>
