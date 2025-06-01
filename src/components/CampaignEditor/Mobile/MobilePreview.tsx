@@ -1,4 +1,3 @@
-
 import React from 'react';
 import FunnelUnlockedGame from '../../funnels/FunnelUnlockedGame';
 import FunnelStandard from '../../funnels/FunnelStandard';
@@ -21,9 +20,19 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
   const mobileConfig = campaign.mobileConfig || {};
   const specs = DEVICE_SPECS[previewMode];
 
+  // >>> AJOUT pour supporter la taille dynamique du jeu
+  const mobileRouletteConfig = mobileConfig.roulette || {};
+  const gameCanvasSize =
+    mobileRouletteConfig.size ||
+    mobileRouletteConfig.width ||
+    280; // fallback par défaut (même que dans la roue)
+
+  // On force le device/mockup à être au moins aussi large que la roue
+  const deviceWidth = Math.max(specs.width, gameCanvasSize);
+
   // Style du device "mockup"
   const deviceStyle = {
-    width: specs.width,
+    width: deviceWidth, // dynamique !
     height: specs.height,
     borderRadius: specs.borderRadius,
     border: specs.border,
@@ -38,7 +47,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
     margin: '0 auto'
   };
 
-  // Style du background écran
+  // ... tout le reste inchangé ...
   const screenStyle: React.CSSProperties = {
     width: '100%',
     height: '100%',
@@ -57,7 +66,6 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
     screenStyle.backgroundRepeat = 'no-repeat';
   }
 
-  // Layout dynamique du contenu (titre/jeu)
   const getContentLayoutStyle = () => {
     const verticalSpacing = mobileConfig.verticalSpacing ?? 20;
     const horizontalPadding = Math.max(12, mobileConfig.horizontalPadding ?? 16);
@@ -77,7 +85,6 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
     };
   };
 
-  // Bloc texte (jamais débordant)
   const getTextBlockStyle = () => ({
     textAlign: 'center' as const,
     width: '100%',
@@ -86,7 +93,6 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
     overflowWrap: 'break-word' as const
   });
 
-  // Conteneur jeu centré et responsive
   const getGameContainerStyle = () => ({
     width: '100%',
     display: 'flex',
@@ -99,7 +105,6 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
     position: 'relative' as const
   });
 
-  // Choix du funnel (unlocked/game standard)
   const getFunnelComponent = () => {
     const sharedProps = { campaign, modalContained: true, mobileConfig, previewMode };
     if (['wheel', 'scratch', 'jackpot', 'dice'].includes(campaign.type)) {
@@ -108,7 +113,6 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
     return <FunnelStandard {...sharedProps} />;
   };
 
-  // Contenus texte + jeu en ordre dynamique
   const renderOrderedContent = () => {
     const contrastBg = mobileConfig.contrastBackground || {};
     const textBlock = (mobileConfig.showTitle !== false || mobileConfig.showDescription !== false) ? (
@@ -156,7 +160,6 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
       </div>
     );
 
-    // Texte au top, jeu en dessous (toujours le pattern optimal pour device mobile/tablette)
     return [textBlock, gameBlock];
   };
 
