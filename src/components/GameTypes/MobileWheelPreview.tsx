@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect } from 'react';
 
 interface Segment {
@@ -59,8 +58,18 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
   // Déterminer si on doit afficher la roue à 50% (positions left/right)
   const shouldCropWheel = gamePosition === 'left' || gamePosition === 'right';
   
-  // Calcul de la largeur du conteneur visible
-  const containerWidth = shouldCropWheel ? canvasSize * 0.5 : canvasSize;
+  // Calcul de la largeur du conteneur visible - ajustement pour les grandes tailles
+  const getContainerWidth = () => {
+    if (!shouldCropWheel) return canvasSize;
+    
+    // Pour les grandes tailles, on augmente la portion visible
+    if (canvasSize >= 500) {
+      return canvasSize * 0.65; // 65% au lieu de 50% pour les grandes roues
+    }
+    return canvasSize * 0.5; // 50% pour les petites roues
+  };
+  
+  const containerWidth = getContainerWidth();
 
   // Calcul de la position absolue du jeu selon gamePosition
   const getGameAbsoluteStyle = () => {
@@ -215,6 +224,19 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
     return null;
   }
 
+  // Calcul de la position de décalage du canvas pour les positions left/right
+  const getCanvasOffset = () => {
+    if (!shouldCropWheel) return '0px';
+    
+    if (gamePosition === 'left') {
+      return '0px';
+    } else { // right
+      // Pour les grandes tailles, on ajuste le décalage
+      const offset = canvasSize >= 500 ? canvasSize * 0.35 : canvasSize * 0.5;
+      return `-${offset}px`;
+    }
+  };
+
   const renderWheelContainer = () => (
     <div style={{ position: 'relative', width: canvasSize, height: canvasSize }}>
       <canvas
@@ -223,7 +245,7 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
         height={canvasSize}
         style={{
           position: 'absolute',
-          left: shouldCropWheel ? (gamePosition === 'left' ? '0px' : `-${canvasSize * 0.5}px`) : '0px',
+          left: getCanvasOffset(),
           top: 0,
           zIndex: 1,
         }}
@@ -235,7 +257,7 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
           alt={`Décor roue ${theme}`}
           style={{
             position: 'absolute',
-            left: shouldCropWheel ? (gamePosition === 'left' ? '0px' : `-${canvasSize * 0.5}px`) : '0px',
+            left: getCanvasOffset(),
             top: 0,
             width: canvasSize,
             height: canvasSize,
@@ -250,8 +272,8 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
           position: 'absolute',
           left: shouldCropWheel ? 
             (gamePosition === 'left' ? 
-              canvasSize / 2 - 15 : // Pour left, pointeur au centre du côté visible
-              -15 // Pour right, pointeur au centre du côté visible
+              containerWidth - 15 : // Pour left, pointeur au bord droit du conteneur visible
+              -15 // Pour right, pointeur au bord gauche du conteneur visible
             ) : 
             canvasSize / 2 - 15, // Position normale au centre
           top: -20,
