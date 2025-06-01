@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import Modal from '../common/Modal';
 import ValidationMessage from '../common/ValidationMessage';
@@ -121,15 +122,17 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   const fields: FieldConfig[] = Array.isArray(campaign.formFields) && campaign.formFields.length > 0
     ? campaign.formFields : DEFAULT_FIELDS;
 
-  // Get absolute position styles based on gamePosition
-  const getAbsolutePositionStyles = () => {
-    const containerStyle: React.CSSProperties = {
+  // POSITION ABSOLUE FIXE - Ne dépend plus du contenu
+  const getFixedContainerStyle = (): React.CSSProperties => {
+    const baseStyle: React.CSSProperties = {
       position: 'absolute',
+      width: `${gameDimensions.width}px`,
+      height: `${gameDimensions.height}px`,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      gap: '16px',
-      zIndex: 10
+      zIndex: 10,
+      pointerEvents: 'none' // Le conteneur ne capture pas les clics
     };
 
     const safeMargin = 20;
@@ -137,53 +140,43 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
     switch (gamePosition) {
       case 'top':
         return { 
-          ...containerStyle, 
-          flexDirection: 'column-reverse' as const,
+          ...baseStyle,
           top: `${safeMargin}px`, 
           left: '50%', 
           transform: 'translateX(-50%)',
-          width: `${gameDimensions.width}px`,
-          height: `${gameDimensions.height}px`
+          flexDirection: 'column-reverse'
         };
       case 'bottom':
         return { 
-          ...containerStyle, 
-          flexDirection: 'column' as const,
+          ...baseStyle,
           bottom: `${safeMargin}px`, 
           left: '50%', 
           transform: 'translateX(-50%)',
-          width: `${gameDimensions.width}px`,
-          height: `${gameDimensions.height}px`
+          flexDirection: 'column'
         };
       case 'left':
         return { 
-          ...containerStyle, 
-          flexDirection: shouldCropWheel ? 'row-reverse' as const : 'row' as const,
+          ...baseStyle,
           left: shouldCropWheel ? '0px' : `${safeMargin}px`, 
           top: '50%', 
           transform: 'translateY(-50%)',
-          width: `${gameDimensions.width}px`,
-          height: `${gameDimensions.height}px`
+          flexDirection: shouldCropWheel ? 'row-reverse' : 'row'
         };
       case 'right':
         return { 
-          ...containerStyle, 
-          flexDirection: shouldCropWheel ? 'row' as const : 'row-reverse' as const,
+          ...baseStyle,
           right: shouldCropWheel ? '0px' : `${safeMargin}px`, 
           top: '50%', 
           transform: 'translateY(-50%)',
-          width: `${gameDimensions.width}px`,
-          height: `${gameDimensions.height}px`
+          flexDirection: shouldCropWheel ? 'row' : 'row-reverse'
         };
       default: // center
         return { 
-          ...containerStyle, 
-          flexDirection: 'column' as const,
+          ...baseStyle,
           top: '50%', 
           left: '50%', 
           transform: 'translate(-50%, -50%)',
-          width: `${gameDimensions.width}px`,
-          height: `${gameDimensions.height}px`
+          flexDirection: 'column'
         };
     }
   };
@@ -345,6 +338,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
         ) {
           result = Math.random() < (config.winProbability ?? 0) ? 'win' : 'lose';
         }
+        console.log('WheelPreview calling onFinish with result:', result);
         if (typeof onFinish === 'function') onFinish(result);
       }
     };
@@ -357,7 +351,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
 
   if (segments.length === 0) {
     return (
-      <div style={getAbsolutePositionStyles()}>
+      <div style={getFixedContainerStyle()}>
         <p>Aucun segment configuré pour la roue</p>
       </div>
     );
@@ -375,118 +369,135 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   };
 
   return (
-    <div style={getAbsolutePositionStyles()}>
+    <div style={getFixedContainerStyle()}>
+      {/* CONTENEUR ROUE - Position fixe */}
       <div style={{ 
         position: 'relative', 
         width: containerWidth, 
         height: canvasSize,
-        overflow: shouldCropWheel ? 'hidden' : 'visible'
+        overflow: shouldCropWheel ? 'hidden' : 'visible',
+        pointerEvents: 'auto', // Réactive les clics pour cette zone
+        flexShrink: 0, // Empêche le redimensionnement
+        gap: '16px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: gamePosition === 'top' || gamePosition === 'bottom' ? 'column' : 'row'
       }}>
-        {/* Shadow */}
-        <div 
-          style={{
-            position: 'absolute',
-            width: canvasSize - 20,
-            height: canvasSize - 20,
-            left: shouldCropWheel ? (gamePosition === 'left' ? '10px' : `-${canvasSize * 0.5 + 10}px`) : '10px',
-            top: '15px',
-            borderRadius: '50%',
-            background: 'rgba(0,0,0,0.15)',
-            filter: 'blur(8px)',
-            zIndex: 0
-          }}
-        />
-        
-        {/* Canvas */}
-        <canvas
-          ref={canvasRef}
-          width={canvasSize}
-          height={canvasSize}
-          style={{
-            position: 'absolute',
-            left: shouldCropWheel ? (gamePosition === 'left' ? '0px' : `-${canvasSize * 0.5}px`) : '0px',
-            top: 0,
-            zIndex: 1
-          }}
-          className="rounded-full"
-        />
-        
-        {/* Theme decoration */}
-        {theme !== 'default' && wheelDecorByTheme[theme] && (
-          <img
-            src={wheelDecorByTheme[theme]}
-            alt={`Décor roue ${theme}`}
+        {/* Zone de la roue */}
+        <div style={{
+          position: 'relative',
+          width: containerWidth,
+          height: canvasSize,
+          flexShrink: 0
+        }}>
+          {/* Shadow */}
+          <div 
+            style={{
+              position: 'absolute',
+              width: canvasSize - 20,
+              height: canvasSize - 20,
+              left: shouldCropWheel ? (gamePosition === 'left' ? '10px' : `-${canvasSize * 0.5 + 10}px`) : '10px',
+              top: '15px',
+              borderRadius: '50%',
+              background: 'rgba(0,0,0,0.15)',
+              filter: 'blur(8px)',
+              zIndex: 0
+            }}
+          />
+          
+          {/* Canvas */}
+          <canvas
+            ref={canvasRef}
+            width={canvasSize}
+            height={canvasSize}
             style={{
               position: 'absolute',
               left: shouldCropWheel ? (gamePosition === 'left' ? '0px' : `-${canvasSize * 0.5}px`) : '0px',
               top: 0,
-              width: canvasSize,
-              height: canvasSize,
-              zIndex: 2,
-              pointerEvents: 'none',
+              zIndex: 1
             }}
-            draggable={false}
+            className="rounded-full"
           />
-        )}
-        
-        {/* Pointer */}
-        <div
-          style={{
-            position: 'absolute',
-            left: (shouldCropWheel ? (gamePosition === 'left' ? 0 : -canvasSize * 0.5) : canvasSize / 2) + canvasSize / 2 - pointerSize / 2,
-            top: -pointerSize * 0.6,
-            width: pointerSize,
-            height: pointerSize * 1.5,
-            zIndex: 3,
-            pointerEvents: 'none',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'flex-start',
-          }}
-        >
-          <svg width={pointerSize} height={pointerSize * 1.5}>
-            <polygon
-              points={`${pointerSize/2},${pointerSize*1.5} ${pointerSize*0.9},${pointerSize*0.5} ${pointerSize*0.1},${pointerSize*0.5}`}
-              fill={pointerColor}
-              stroke="#fff"
-              strokeWidth="2"
-              style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.10))' }}
+          
+          {/* Theme decoration */}
+          {theme !== 'default' && wheelDecorByTheme[theme] && (
+            <img
+              src={wheelDecorByTheme[theme]}
+              alt={`Décor roue ${theme}`}
+              style={{
+                position: 'absolute',
+                left: shouldCropWheel ? (gamePosition === 'left' ? '0px' : `-${canvasSize * 0.5}px`) : '0px',
+                top: 0,
+                width: canvasSize,
+                height: canvasSize,
+                zIndex: 2,
+                pointerEvents: 'none',
+              }}
+              draggable={false}
             />
-          </svg>
+          )}
+          
+          {/* Pointer */}
+          <div
+            style={{
+              position: 'absolute',
+              left: (shouldCropWheel ? (gamePosition === 'left' ? 0 : -canvasSize * 0.5) : canvasSize / 2) + canvasSize / 2 - pointerSize / 2,
+              top: -pointerSize * 0.6,
+              width: pointerSize,
+              height: pointerSize * 1.5,
+              zIndex: 3,
+              pointerEvents: 'none',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'flex-start',
+            }}
+          >
+            <svg width={pointerSize} height={pointerSize * 1.5}>
+              <polygon
+                points={`${pointerSize/2},${pointerSize*1.5} ${pointerSize*0.9},${pointerSize*0.5} ${pointerSize*0.1},${pointerSize*0.5}`}
+                fill={pointerColor}
+                stroke="#fff"
+                strokeWidth="2"
+                style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.10))' }}
+              />
+            </svg>
+          </div>
+
+          {/* Click overlay for non-validated form */}
+          {!formValidated && (
+            <div 
+              onClick={handleWheelClick}
+              className="absolute inset-0 flex items-center justify-center z-30 rounded-full cursor-pointer bg-black/0" 
+            />
+          )}
+
+          <ValidationMessage
+            show={showValidationMessage}
+            message="Formulaire validé ! Vous pouvez maintenant jouer."
+            type="success"
+          />
         </div>
 
-        {/* Click overlay for non-validated form */}
-        {!formValidated && (
-          <div 
+        {/* BOUTON - Position fixe séparée */}
+        {buttonConfig.visible && (
+          <button
             onClick={handleWheelClick}
-            className="absolute inset-0 flex items-center justify-center z-30 rounded-full cursor-pointer bg-black/0" 
-          />
+            disabled={spinning || disabled}
+            style={{
+              backgroundColor: buttonConfig.color,
+              borderColor: buttonConfig.borderColor,
+              borderWidth: `${buttonConfig.borderWidth}px`,
+              borderRadius: `${buttonConfig.borderRadius}px`,
+              borderStyle: 'solid',
+              flexShrink: 0 // Empêche le redimensionnement du bouton
+            }}
+            className={`${getButtonSizeClasses()} text-white font-medium disabled:opacity-50 hover:opacity-80 transition-all shadow-lg`}
+          >
+            {spinning ? 'Tourne...' : formValidated ? 'Lancer la roue' : (buttonConfig.text || 'Remplir le formulaire')}
+          </button>
         )}
-
-        <ValidationMessage
-          show={showValidationMessage}
-          message="Formulaire validé ! Vous pouvez maintenant jouer."
-          type="success"
-        />
       </div>
-
-      {/* Button positioned on the visible side */}
-      {buttonConfig.visible && (
-        <button
-          onClick={handleWheelClick}
-          disabled={spinning || disabled}
-          style={{
-            backgroundColor: buttonConfig.color,
-            borderColor: buttonConfig.borderColor,
-            borderWidth: `${buttonConfig.borderWidth}px`,
-            borderRadius: `${buttonConfig.borderRadius}px`,
-            borderStyle: 'solid'
-          }}
-          className={`${getButtonSizeClasses()} text-white font-medium disabled:opacity-50 hover:opacity-80 transition-all shadow-lg`}
-        >
-          {spinning ? 'Tourne...' : formValidated ? 'Lancer la roue' : (buttonConfig.text || 'Remplir le formulaire')}
-        </button>
-      )}
 
       {/* Form modal */}
       {showFormModal && (
