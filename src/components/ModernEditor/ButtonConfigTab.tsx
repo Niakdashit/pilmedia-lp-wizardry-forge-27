@@ -58,7 +58,7 @@ const ButtonConfigTab: React.FC<ButtonConfigTabProps> = ({
           value={buttonConfig.text}
           onChange={(e) => handleChange('text', e.target.value)}
           className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-          placeholder="Remplir le formulaire"
+          placeholder="Jouer"
         />
       </div>
 
