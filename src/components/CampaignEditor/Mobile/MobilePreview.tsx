@@ -74,7 +74,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
     screenStyle.backgroundRepeat = 'no-repeat';
   }
 
-  // Style du contenu adaptatif (sans le jeu)
+  // Style du contenu adaptatif (sans le bouton)
   const getContentLayoutStyle = () => {
     const verticalSpacing = mobileConfig.verticalSpacing ?? 20;
     const horizontalPadding = Math.max(12, mobileConfig.horizontalPadding ?? 16);
@@ -103,7 +103,9 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
                `${verticalSpacing}px ${horizontalPadding}px`,
       overflowY: 'auto' as const,
       position: 'relative' as const,
-      zIndex: 5
+      zIndex: 5,
+      // Réserver de l'espace pour le bouton selon sa position
+      paddingBottom: mobileConfig.buttonPlacement === 'bottom' ? '80px' : `${verticalSpacing}px`
     };
   };
 
@@ -115,14 +117,41 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
     overflowWrap: 'break-word' as const
   });
 
-  const getButtonContainerStyle = () => ({
-    width: '100%',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    flexShrink: 0,
-    position: 'relative' as const
-  });
+  // Style du bouton avec positionnement absolu
+  const getButtonAbsoluteStyle = () => {
+    const buttonPlacement = mobileConfig.buttonPlacement || 'bottom';
+    const horizontalPadding = Math.max(12, mobileConfig.horizontalPadding ?? 16);
+    
+    const baseStyle: React.CSSProperties = {
+      position: 'absolute',
+      zIndex: 50,
+      left: horizontalPadding,
+      right: horizontalPadding,
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center'
+    };
+
+    switch (buttonPlacement) {
+      case 'top':
+        return {
+          ...baseStyle,
+          top: '20px'
+        };
+      case 'center':
+        return {
+          ...baseStyle,
+          top: '50%',
+          transform: 'translateY(-50%)'
+        };
+      case 'bottom':
+      default:
+        return {
+          ...baseStyle,
+          bottom: '20px'
+        };
+    }
+  };
 
   const renderContent = () => {
     const contrastBg = mobileConfig.contrastBackground || {};
@@ -166,21 +195,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
       </div>
     ) : null;
 
-    const buttonBlock = (
-      <div style={getButtonContainerStyle()}>
-        <button
-          className="px-4 py-2 bg-[#841b60] text-white rounded-lg hover:bg-[#6d164f] transition-colors shadow-md text-sm"
-        >
-          Lancer
-        </button>
-      </div>
-    );
-
-    // Retourner les éléments selon la position du jeu
-    if (gamePosition === 'center') {
-      return [textBlock, buttonBlock];
-    }
-    return [textBlock, buttonBlock];
+    return [textBlock];
   };
 
   return (
@@ -228,11 +243,38 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
           />
         )}
 
-        {/* Layer du contenu adaptatif - Flex layout */}
+        {/* Layer du contenu adaptatif - Flex layout sans bouton */}
         <div style={getContentLayoutStyle()}>
           {renderContent().map((element, idx) =>
             element ? <React.Fragment key={idx}>{element}</React.Fragment> : null
           )}
+        </div>
+
+        {/* Layer du bouton - Position absolue indépendante */}
+        <div style={getButtonAbsoluteStyle()}>
+          <button
+            className="px-4 py-2 bg-[#841b60] text-white rounded-lg hover:bg-[#6d164f] transition-colors shadow-md text-sm max-w-full"
+            style={{
+              backgroundColor: mobileConfig.buttonColor || '#841b60',
+              color: mobileConfig.buttonTextColor || '#ffffff',
+              borderRadius: mobileConfig.buttonShape === 'rounded-full' ? '9999px' : 
+                           mobileConfig.buttonShape === 'rounded-md' ? '6px' : '8px',
+              padding: mobileConfig.buttonSize === 'small' ? '8px 16px' :
+                      mobileConfig.buttonSize === 'large' ? '16px 32px' : '12px 24px',
+              fontSize: mobileConfig.buttonSize === 'small' ? '0.875rem' :
+                       mobileConfig.buttonSize === 'large' ? '1.125rem' : '1rem',
+              boxShadow: mobileConfig.buttonShadow === 'none' ? 'none' :
+                        mobileConfig.buttonShadow === 'shadow-lg' ? '0 10px 15px -3px rgba(0, 0, 0, 0.1)' :
+                        '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+              width: `${mobileConfig.buttonWidth || 80}%`,
+              whiteSpace: 'normal' as const,
+              wordWrap: 'break-word' as const,
+              lineHeight: 1.4,
+              textAlign: 'center' as const
+            }}
+          >
+            {mobileConfig.buttonText || campaign.gameConfig?.[campaign.type]?.buttonLabel || 'Lancer'}
+          </button>
         </div>
       </div>
     </div>
