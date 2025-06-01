@@ -1,3 +1,4 @@
+
 import React from 'react';
 import ContrastBackground from '../../common/ContrastBackground';
 import MobileWheelPreview from '../../GameTypes/MobileWheelPreview';
@@ -20,7 +21,6 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
   const specs = DEVICE_SPECS[previewMode];
 
   // Configuration du jeu mobile
-  const mobileRouletteConfig = mobileConfig.roulette || {};
   const gamePosition = mobileConfig.gamePosition || 'left';
 
   // Largeur fixe du device - indépendante du contenu
