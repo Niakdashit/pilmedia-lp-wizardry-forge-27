@@ -11,11 +11,11 @@ interface ModalProps {
 
 const Modal: React.FC<ModalProps> = ({ title, children, onClose, width = 'max-w-md', contained = false }) => {
   return (
-    <div className={`${contained ? 'absolute' : 'fixed'} inset-0 ${contained ? 'z-30' : 'z-50'} flex items-center justify-center bg-black/40`}>
-      <div className={`bg-white rounded-xl shadow-xl w-full ${width} relative mx-4`}>
+    <div className={`${contained ? 'absolute' : 'fixed'} inset-0 ${contained ? 'z-30' : 'z-50'} flex items-center justify-center bg-black/40 p-4`}>
+      <div className={`bg-white rounded-xl shadow-xl w-full ${width} relative max-h-[90vh] overflow-hidden`}>
         {/* Bouton de fermeture */}
         <button
-          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-xl font-bold"
+          className="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-xl font-bold z-10"
           onClick={onClose}
           aria-label="Fermer"
           type="button"
@@ -25,11 +25,13 @@ const Modal: React.FC<ModalProps> = ({ title, children, onClose, width = 'max-w-
         {/* Titre */}
         {title && (
           <div className="px-6 pt-6 pb-2">
-            <h3 className="text-lg font-semibold">{title}</h3>
+            <h3 className="text-lg font-semibold pr-8">{title}</h3>
           </div>
         )}
         {/* Contenu */}
-        <div className="px-6 pb-6 pt-2 max-h-96 overflow-y-auto">{children}</div>
+        <div className="px-6 pb-6 pt-2 max-h-[calc(90vh-120px)] overflow-y-auto">
+          {children}
+        </div>
       </div>
     </div>
   );
