@@ -1,7 +1,4 @@
-
 import React from 'react';
-import FunnelUnlockedGame from '../../funnels/FunnelUnlockedGame';
-import FunnelStandard from '../../funnels/FunnelStandard';
 import ContrastBackground from '../../common/ContrastBackground';
 import MobileWheelPreview from '../../GameTypes/MobileWheelPreview';
 

@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 
 interface Segment {
@@ -11,7 +10,6 @@ interface Segment {
 interface MobileWheelPreviewProps {
   campaign: any;
   onFinish?: (result: 'win' | 'lose') => void;
-  containerDimensions: { width: number; height: number };
   gamePosition?: 'left' | 'right' | 'center' | 'top' | 'bottom';
 }
 
@@ -44,9 +42,7 @@ const CANVAS_SIZE = 280;
 
 const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
   campaign,
-  onFinish,
-  containerDimensions,
-  gamePosition = 'left'
+  onFinish
 }) => {
   const mobileRouletteConfig = campaign?.mobileConfig?.roulette || {};
   const segments = mobileRouletteConfig.segments || [];
