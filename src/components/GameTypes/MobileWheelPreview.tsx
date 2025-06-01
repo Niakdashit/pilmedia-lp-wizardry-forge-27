@@ -38,13 +38,12 @@ const wheelDecorByTheme: Record<string, string> = {
   gaming: '/wheel-styles/roulette_gaming.svg',
 };
 
-const CANVAS_SIZE = 280; // Valeur par défaut
+const CANVAS_SIZE = 280;
 
 const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
   campaign,
   onFinish
 }) => {
-  // Utilise la configuration mobile spécifique
   const mobileRouletteConfig = campaign?.mobileConfig?.roulette || {};
   const segments = mobileRouletteConfig.segments || [];
   const centerImage = mobileRouletteConfig.centerImage;
@@ -52,14 +51,8 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
   const borderColor = mobileRouletteConfig.borderColor || '#841b60';
   const pointerColor = mobileRouletteConfig.pointerColor || '#841b60';
 
-  // Ajout dynamique de la taille
-  const canvasSize =
-    mobileRouletteConfig.size ||
-    mobileRouletteConfig.width || // si stocké autrement
-    CANVAS_SIZE;
-
-  // Ajout : récupérer la position (gauche, droite, etc.)
-  const gamePosition = campaign?.mobileConfig?.position || 'center';
+  const canvasSize = mobileRouletteConfig.size || mobileRouletteConfig.width || CANVAS_SIZE;
+  const gamePosition = campaign?.mobileConfig?.position || 'left'; // Défaut à 'left' pour être coupée
 
   const [rotation, setRotation] = useState(0);
   const [spinning, setSpinning] = useState(false);
@@ -73,7 +66,7 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
 
     const size = canvas.width;
     const center = size / 2;
-    const radius = center - 15; // Réduit pour mobile
+    const radius = center - 15;
     const total = segments.length;
     const anglePerSlice = (2 * Math.PI) / total;
     const themeColors = getThemeColors(theme);
@@ -128,7 +121,6 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
       ctx.restore();
     });
 
-    // Centre image
     if (centerImage) {
       const img = new Image();
       img.onload = () => {
@@ -258,65 +250,19 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
 
   return (
     <div className="relative w-full h-[340px] flex items-center justify-center overflow-hidden">
-      {/* Roue à moitié coupée à gauche */}
-      {gamePosition === 'left' && (
-        <div
-          className="absolute left-0 top-1/2 z-10"
-          style={{
-            width: canvasSize,
-            height: canvasSize,
-            transform: `translateY(-50%) translateX(-${canvasSize / 2}px)`,
-          }}
-        >
-          {renderWheelContainer()}
-        </div>
-      )}
+      {/* Roue TOUJOURS coupée à 50% sur le bord gauche, quelle que soit la taille */}
+      <div
+        className="absolute left-0 top-1/2 z-10"
+        style={{
+          width: canvasSize,
+          height: canvasSize,
+          transform: `translateY(-50%) translateX(-${canvasSize / 2}px)`,
+        }}
+      >
+        {renderWheelContainer()}
+      </div>
 
-      {/* Roue à moitié coupée à droite */}
-      {gamePosition === 'right' && (
-        <div
-          className="absolute right-0 top-1/2 z-10"
-          style={{
-            width: canvasSize,
-            height: canvasSize,
-            transform: `translateY(-50%) translateX(${canvasSize / 2}px)`,
-          }}
-        >
-          {renderWheelContainer()}
-        </div>
-      )}
-
-      {/* Roue en haut */}
-      {gamePosition === 'top' && (
-        <div
-          className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10"
-          style={{ width: canvasSize, height: canvasSize }}
-        >
-          {renderWheelContainer()}
-        </div>
-      )}
-
-      {/* Roue en bas */}
-      {gamePosition === 'bottom' && (
-        <div
-          className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 z-10"
-          style={{ width: canvasSize, height: canvasSize }}
-        >
-          {renderWheelContainer()}
-        </div>
-      )}
-
-      {/* Roue au centre */}
-      {gamePosition === 'center' && (
-        <div
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10"
-          style={{ width: canvasSize, height: canvasSize }}
-        >
-          {renderWheelContainer()}
-        </div>
-      )}
-
-      {/* Bouton toujours centré et jamais influence la roue */}
+      {/* Bouton toujours centré et jamais influencé par la roue */}
       <div className="w-full flex items-center justify-center z-20">
         <button
           onClick={spinWheel}
