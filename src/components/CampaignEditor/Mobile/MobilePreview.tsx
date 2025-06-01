@@ -25,15 +25,8 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
   const gameCanvasSize = mobileRouletteConfig.size || mobileRouletteConfig.width || 280;
   const gamePosition = mobileConfig.gamePosition || 'left';
 
-  // Calcul de la largeur minimale du device en fonction de la position du jeu
-  const getMinDeviceWidth = () => {
-    if (gamePosition === 'left' || gamePosition === 'right') {
-      return specs.width;
-    }
-    return Math.max(specs.width, gameCanvasSize + 40);
-  };
-
-  const deviceWidth = getMinDeviceWidth();
+  // Largeur fixe du device - indépendante du contenu
+  const deviceWidth = specs.width;
 
   // Style du device mockup
   const deviceStyle = {
@@ -72,18 +65,10 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
     screenStyle.backgroundRepeat = 'no-repeat';
   }
 
-  // Style du contenu adaptatif avec espacement fixe pour éviter les conflits
+  // Style du contenu adaptatif avec espacement fixe
   const getContentLayoutStyle = () => {
     const verticalSpacing = mobileConfig.verticalSpacing ?? 20;
     const horizontalPadding = Math.max(12, mobileConfig.horizontalPadding ?? 16);
-
-    // Ajustement du padding selon la position du jeu
-    let adjustedPadding = horizontalPadding;
-    if (gamePosition === 'left') {
-      adjustedPadding = Math.max(horizontalPadding, gameCanvasSize / 2 + 20);
-    } else if (gamePosition === 'right') {
-      adjustedPadding = Math.max(horizontalPadding, gameCanvasSize / 2 + 20);
-    }
 
     return {
       display: 'flex',
@@ -94,15 +79,12 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
       height: '100%',
       width: '100%',
       gap: verticalSpacing,
-      padding: gamePosition === 'left' ? `${verticalSpacing}px ${horizontalPadding}px ${verticalSpacing}px ${adjustedPadding}px` :
-               gamePosition === 'right' ? `${verticalSpacing}px ${adjustedPadding}px ${verticalSpacing}px ${horizontalPadding}px` :
-               gamePosition === 'top' ? `${Math.max(verticalSpacing, gameCanvasSize / 2 + 20)}px ${horizontalPadding}px ${verticalSpacing}px ${horizontalPadding}px` :
-               gamePosition === 'bottom' ? `${verticalSpacing}px ${horizontalPadding}px ${Math.max(verticalSpacing, gameCanvasSize / 2 + 20)}px ${horizontalPadding}px` :
-               `${verticalSpacing}px ${horizontalPadding}px`,
+      padding: `${verticalSpacing}px ${horizontalPadding}px`,
       overflowY: 'auto' as const,
+      overflowX: 'hidden' as const, // Empêche le débordement horizontal
       position: 'relative' as const,
       zIndex: 5,
-      // Espacement fixe réservé pour le bouton - indépendant de sa taille
+      // Espacement fixe réservé pour le bouton - 80px fixe
       paddingTop: mobileConfig.buttonPlacement === 'top' ? '80px' : `${verticalSpacing}px`,
       paddingBottom: mobileConfig.buttonPlacement === 'bottom' ? '80px' : `${verticalSpacing}px`
     };
@@ -113,7 +95,8 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
     width: '100%',
     maxWidth: '100%',
     flexShrink: 0,
-    overflowWrap: 'break-word' as const
+    overflowWrap: 'break-word' as const,
+    wordBreak: 'break-word' as const // Force la coupure des mots longs
   });
 
   // Style du bouton avec positionnement absolu complètement indépendant
@@ -129,7 +112,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      pointerEvents: 'auto' as const // Assure l'interactivité du bouton
+      pointerEvents: 'auto' as const
     };
 
     switch (buttonPlacement) {
@@ -186,7 +169,10 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
       transition: 'all 0.2s ease-in-out',
       // Dimensions minimales pour éviter les boutons trop petits
       minHeight: '44px',
-      minWidth: '100px'
+      minWidth: '100px',
+      // Forcer la coupure des mots très longs
+      wordBreak: 'break-word' as const,
+      hyphens: 'auto' as const
     };
   };
 
@@ -210,7 +196,8 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
                   mobileConfig.titleWeight === 'font-medium' ? '500' :
                   mobileConfig.titleWeight === 'font-semibold' ? '600' :
                   mobileConfig.titleWeight === 'font-extrabold' ? '800' : 'bold',
-                lineHeight: 1.3
+                lineHeight: 1.3,
+                wordBreak: 'break-word' as const
               }}
             >
               {mobileConfig.title || campaign.screens?.[1]?.title || 'Tentez votre chance !'}
@@ -222,7 +209,8 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
               style={{
                 color: mobileConfig.descriptionColor || '#666',
                 fontSize: previewMode === 'mobile' ? '0.95rem' : '1.05rem',
-                lineHeight: 1.45
+                lineHeight: 1.45,
+                wordBreak: 'break-word' as const
               }}
             >
               {mobileConfig.description || campaign.screens?.[1]?.description || 'Participez pour avoir une chance de gagner !'}
@@ -272,12 +260,28 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
           </div>
         )}
 
-        {/* Layer du jeu - Position absolue indépendante */}
+        {/* Layer du jeu - Position absolue TOTALEMENT indépendante avec conteneur fixe */}
         {campaign.type === 'wheel' && (
-          <MobileWheelPreview
-            campaign={campaign}
-            gamePosition={gamePosition}
-          />
+          <div 
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              zIndex: 10,
+              pointerEvents: 'none',
+              // Conteneur fixe qui ne peut pas déborder
+              width: deviceWidth - 16, // Largeur fixe moins les bordures
+              height: specs.height - 16, // Hauteur fixe moins les bordures
+              overflow: 'hidden' // Empêche tout débordement
+            }}
+          >
+            <MobileWheelPreview
+              campaign={campaign}
+              gamePosition={gamePosition}
+            />
+          </div>
         )}
 
         {/* Layer du contenu adaptatif - Flex layout avec espacement fixe réservé pour le bouton */}
