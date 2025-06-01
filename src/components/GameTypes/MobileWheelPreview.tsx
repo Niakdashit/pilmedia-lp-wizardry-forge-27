@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 
 interface Segment {
@@ -10,6 +11,8 @@ interface Segment {
 interface MobileWheelPreviewProps {
   campaign: any;
   onFinish?: (result: 'win' | 'lose') => void;
+  containerDimensions: { width: number; height: number };
+  gamePosition?: 'left' | 'right' | 'center' | 'top' | 'bottom';
 }
 
 const getThemeColors = (theme: string): string[] => {
@@ -41,7 +44,9 @@ const CANVAS_SIZE = 280;
 
 const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
   campaign,
-  onFinish
+  onFinish,
+  containerDimensions,
+  gamePosition = 'left'
 }) => {
   const mobileRouletteConfig = campaign?.mobileConfig?.roulette || {};
   const segments = mobileRouletteConfig.segments || [];
@@ -55,6 +60,64 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
   const [rotation, setRotation] = useState(0);
   const [spinning, setSpinning] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  // Calcul de la position absolue du jeu selon gamePosition
+  const getGameAbsoluteStyle = () => {
+    const baseStyle: React.CSSProperties = {
+      position: 'absolute',
+      zIndex: 10,
+      pointerEvents: 'none' as const
+    };
+
+    switch (gamePosition) {
+      case 'left':
+        return {
+          ...baseStyle,
+          left: `-${canvasSize / 2}px`,
+          top: '50%',
+          transform: 'translateY(-50%)',
+          width: canvasSize,
+          height: canvasSize
+        };
+      case 'right':
+        return {
+          ...baseStyle,
+          right: `-${canvasSize / 2}px`,
+          top: '50%',
+          transform: 'translateY(-50%)',
+          width: canvasSize,
+          height: canvasSize
+        };
+      case 'top':
+        return {
+          ...baseStyle,
+          top: `-${canvasSize / 2}px`,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: canvasSize,
+          height: canvasSize
+        };
+      case 'bottom':
+        return {
+          ...baseStyle,
+          bottom: `-${canvasSize / 2}px`,
+          left: '50%',
+          transform: 'translateX(-50%)',
+          width: canvasSize,
+          height: canvasSize
+        };
+      case 'center':
+      default:
+        return {
+          ...baseStyle,
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)',
+          width: canvasSize,
+          height: canvasSize
+        };
+    }
+  };
 
   const drawWheel = () => {
     const canvas = canvasRef.current;
@@ -182,11 +245,7 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
   }, [segments, rotation, centerImage, theme, borderColor, pointerColor, canvasSize]);
 
   if (segments.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center p-8 text-gray-500">
-        <p className="text-sm">Configuration mobile de la roue requise</p>
-      </div>
-    );
+    return null;
   }
 
   const renderWheelContainer = () => (
@@ -247,29 +306,8 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
   );
 
   return (
-    <div className="relative w-full h-[340px] flex items-center justify-center overflow-hidden">
-      {/* Roue TOUJOURS coupée à 50% sur le bord gauche, quelle que soit la taille */}
-      <div
-        className="absolute left-0 top-1/2 z-10"
-        style={{
-          width: canvasSize,
-          height: canvasSize,
-          transform: `translateY(-50%) translateX(-${canvasSize / 2}px)`,
-        }}
-      >
-        {renderWheelContainer()}
-      </div>
-
-      {/* Bouton toujours centré et jamais influencé par la roue */}
-      <div className="w-full flex items-center justify-center z-20">
-        <button
-          onClick={spinWheel}
-          disabled={spinning}
-          className="px-4 py-2 bg-[#841b60] text-white rounded-lg disabled:opacity-50 hover:bg-[#6d164f] transition-colors shadow-md text-sm"
-        >
-          {spinning ? 'Tourne...' : 'Lancer'}
-        </button>
-      </div>
+    <div style={getGameAbsoluteStyle()}>
+      {renderWheelContainer()}
     </div>
   );
 };

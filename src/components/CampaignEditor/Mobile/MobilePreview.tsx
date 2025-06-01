@@ -1,7 +1,9 @@
+
 import React from 'react';
 import FunnelUnlockedGame from '../../funnels/FunnelUnlockedGame';
 import FunnelStandard from '../../funnels/FunnelStandard';
 import ContrastBackground from '../../common/ContrastBackground';
+import MobileWheelPreview from '../../GameTypes/MobileWheelPreview';
 
 interface MobilePreviewProps {
   campaign: any;
@@ -20,19 +22,26 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
   const mobileConfig = campaign.mobileConfig || {};
   const specs = DEVICE_SPECS[previewMode];
 
-  // >>> AJOUT pour supporter la taille dynamique du jeu
+  // Configuration du jeu mobile
   const mobileRouletteConfig = mobileConfig.roulette || {};
-  const gameCanvasSize =
-    mobileRouletteConfig.size ||
-    mobileRouletteConfig.width ||
-    280; // fallback par défaut (même que dans la roue)
+  const gameCanvasSize = mobileRouletteConfig.size || mobileRouletteConfig.width || 280;
+  const gamePosition = mobileConfig.gamePosition || 'left';
 
-  // On force le device/mockup à être au moins aussi large que la roue
-  const deviceWidth = Math.max(specs.width, gameCanvasSize);
+  // Calcul de la largeur minimale du device en fonction de la position du jeu
+  const getMinDeviceWidth = () => {
+    if (gamePosition === 'left' || gamePosition === 'right') {
+      // Pour gauche/droite, on garde la largeur normale car le jeu dépasse
+      return specs.width;
+    }
+    // Pour les autres positions, on s'assure que le jeu rentre
+    return Math.max(specs.width, gameCanvasSize + 40);
+  };
 
-  // Style du device "mockup"
+  const deviceWidth = getMinDeviceWidth();
+
+  // Style du device mockup
   const deviceStyle = {
-    width: deviceWidth, // dynamique !
+    width: deviceWidth,
     height: specs.height,
     borderRadius: specs.borderRadius,
     border: specs.border,
@@ -47,7 +56,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
     margin: '0 auto'
   };
 
-  // ... tout le reste inchangé ...
+  // Style de l'écran interne
   const screenStyle: React.CSSProperties = {
     width: '100%',
     height: '100%',
@@ -59,6 +68,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
     flexDirection: 'column',
     fontFamily: mobileConfig.fontFamily || 'Inter'
   };
+
   if (mobileConfig.backgroundImage) {
     screenStyle.backgroundImage = `url(${mobileConfig.backgroundImage})`;
     screenStyle.backgroundSize = mobileConfig.backgroundMode === 'contain' ? 'contain' : 'cover';
@@ -66,22 +76,36 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
     screenStyle.backgroundRepeat = 'no-repeat';
   }
 
+  // Style du contenu adaptatif (sans le jeu)
   const getContentLayoutStyle = () => {
     const verticalSpacing = mobileConfig.verticalSpacing ?? 20;
     const horizontalPadding = Math.max(12, mobileConfig.horizontalPadding ?? 16);
 
+    // Ajustement du padding selon la position du jeu
+    let adjustedPadding = horizontalPadding;
+    if (gamePosition === 'left') {
+      adjustedPadding = Math.max(horizontalPadding, gameCanvasSize / 2 + 20);
+    } else if (gamePosition === 'right') {
+      adjustedPadding = Math.max(horizontalPadding, gameCanvasSize / 2 + 20);
+    }
+
     return {
       display: 'flex',
       flexDirection: 'column' as const,
-      justifyContent: 'flex-start',
+      justifyContent: gamePosition === 'top' ? 'flex-end' : 
+                      gamePosition === 'bottom' ? 'flex-start' : 'center',
       alignItems: 'center',
       height: '100%',
       width: '100%',
       gap: verticalSpacing,
-      padding: `${verticalSpacing}px ${horizontalPadding}px`,
+      padding: gamePosition === 'left' ? `${verticalSpacing}px ${horizontalPadding}px ${verticalSpacing}px ${adjustedPadding}px` :
+               gamePosition === 'right' ? `${verticalSpacing}px ${adjustedPadding}px ${verticalSpacing}px ${horizontalPadding}px` :
+               gamePosition === 'top' ? `${Math.max(verticalSpacing, gameCanvasSize / 2 + 20)}px ${horizontalPadding}px ${verticalSpacing}px ${horizontalPadding}px` :
+               gamePosition === 'bottom' ? `${verticalSpacing}px ${horizontalPadding}px ${Math.max(verticalSpacing, gameCanvasSize / 2 + 20)}px ${horizontalPadding}px` :
+               `${verticalSpacing}px ${horizontalPadding}px`,
       overflowY: 'auto' as const,
       position: 'relative' as const,
-      zIndex: 10
+      zIndex: 5
     };
   };
 
@@ -93,28 +117,18 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
     overflowWrap: 'break-word' as const
   });
 
-  const getGameContainerStyle = () => ({
+  const getButtonContainerStyle = () => ({
     width: '100%',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    flexGrow: 1,
-    minHeight: previewMode === 'mobile' ? 160 : 220,
-    maxHeight: previewMode === 'mobile' ? 240 : 340,
-    padding: '0',
+    flexShrink: 0,
     position: 'relative' as const
   });
 
-  const getFunnelComponent = () => {
-    const sharedProps = { campaign, modalContained: true, mobileConfig, previewMode };
-    if (['wheel', 'scratch', 'jackpot', 'dice'].includes(campaign.type)) {
-      return <FunnelUnlockedGame {...sharedProps} />;
-    }
-    return <FunnelStandard {...sharedProps} />;
-  };
-
-  const renderOrderedContent = () => {
+  const renderContent = () => {
     const contrastBg = mobileConfig.contrastBackground || {};
+    
     const textBlock = (mobileConfig.showTitle !== false || mobileConfig.showDescription !== false) ? (
       <div style={getTextBlockStyle()}>
         <ContrastBackground
@@ -154,13 +168,21 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
       </div>
     ) : null;
 
-    const gameBlock = (
-      <div style={getGameContainerStyle()}>
-        {getFunnelComponent()}
+    const buttonBlock = (
+      <div style={getButtonContainerStyle()}>
+        <button
+          className="px-4 py-2 bg-[#841b60] text-white rounded-lg hover:bg-[#6d164f] transition-colors shadow-md text-sm"
+        >
+          Lancer
+        </button>
       </div>
     );
 
-    return [textBlock, gameBlock];
+    // Retourner les éléments selon la position du jeu
+    if (gamePosition === 'center') {
+      return [textBlock, buttonBlock];
+    }
+    return [textBlock, buttonBlock];
   };
 
   return (
@@ -200,9 +222,18 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
           </div>
         )}
 
-        {/* Main Content with Layout */}
+        {/* Layer du jeu - Position absolue indépendante */}
+        {campaign.type === 'wheel' && (
+          <MobileWheelPreview
+            campaign={campaign}
+            containerDimensions={{ width: deviceWidth, height: specs.height }}
+            gamePosition={gamePosition}
+          />
+        )}
+
+        {/* Layer du contenu adaptatif - Flex layout */}
         <div style={getContentLayoutStyle()}>
-          {renderOrderedContent().map((element, idx) =>
+          {renderContent().map((element, idx) =>
             element ? <React.Fragment key={idx}>{element}</React.Fragment> : null
           )}
         </div>
