@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 
 interface Segment {
@@ -198,7 +199,63 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
     );
   }
 
-  // --- DEBUT MODIF RENDU ---
+  const renderWheelContainer = () => (
+    <div style={{ position: 'relative', width: canvasSize, height: canvasSize }}>
+      <canvas
+        ref={canvasRef}
+        width={canvasSize}
+        height={canvasSize}
+        style={{
+          position: 'absolute',
+          left: 0,
+          top: 0,
+          zIndex: 1,
+        }}
+        className="rounded-full shadow-lg"
+      />
+      {theme !== 'default' && wheelDecorByTheme[theme] && (
+        <img
+          src={wheelDecorByTheme[theme]}
+          alt={`Décor roue ${theme}`}
+          style={{
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            width: canvasSize,
+            height: canvasSize,
+            zIndex: 2,
+            pointerEvents: 'none',
+          }}
+          draggable={false}
+        />
+      )}
+      <div
+        style={{
+          position: 'absolute',
+          left: canvasSize / 2 - 15,
+          top: -20,
+          width: 30,
+          height: 50,
+          zIndex: 3,
+          pointerEvents: 'none',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'flex-start',
+        }}
+      >
+        <svg width="30" height="50">
+          <polygon
+            points="15,50 27,15 3,15"
+            fill={pointerColor}
+            stroke="#fff"
+            strokeWidth="2"
+            style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.10))' }}
+          />
+        </svg>
+      </div>
+    </div>
+  );
+
   return (
     <div className="relative w-full h-[340px] flex items-center justify-center overflow-hidden">
       {/* Roue à moitié coupée à gauche */}
@@ -211,62 +268,10 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
             transform: `translateY(-50%) translateX(-${canvasSize / 2}px)`,
           }}
         >
-          <div style={{ position: 'relative', width: canvasSize, height: canvasSize }}>
-            <canvas
-              ref={canvasRef}
-              width={canvasSize}
-              height={canvasSize}
-              style={{
-                position: 'absolute',
-                left: 0,
-                top: 0,
-                zIndex: 1,
-              }}
-              className="rounded-full shadow-lg"
-            />
-            {theme !== 'default' && wheelDecorByTheme[theme] && (
-              <img
-                src={wheelDecorByTheme[theme]}
-                alt={`Décor roue ${theme}`}
-                style={{
-                  position: 'absolute',
-                  left: 0,
-                  top: 0,
-                  width: canvasSize,
-                  height: canvasSize,
-                  zIndex: 2,
-                  pointerEvents: 'none',
-                }}
-                draggable={false}
-              />
-            )}
-            <div
-              style={{
-                position: 'absolute',
-                left: canvasSize / 2 - 15,
-                top: -20,
-                width: 30,
-                height: 50,
-                zIndex: 3,
-                pointerEvents: 'none',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'flex-start',
-              }}
-            >
-              <svg width="30" height="50">
-                <polygon
-                  points="15,50 27,15 3,15"
-                  fill={pointerColor}
-                  stroke="#fff"
-                  strokeWidth="2"
-                  style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.10))' }}
-                />
-              </svg>
-            </div>
-          </div>
+          {renderWheelContainer()}
         </div>
       )}
+
       {/* Roue à moitié coupée à droite */}
       {gamePosition === 'right' && (
         <div
@@ -277,87 +282,37 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
             transform: `translateY(-50%) translateX(${canvasSize / 2}px)`,
           }}
         >
-          <div style={{ position: 'relative', width: canvasSize, height: canvasSize }}>
-            <canvas
-              ref={canvasRef}
-              width={canvasSize}
-              height={canvasSize}
-              style={{
-                position: 'absolute',
-                left: 0,
-                top: 0,
-                zIndex: 1,
-              }}
-              className="rounded-full shadow-lg"
-            />
-            {theme !== 'default' && wheelDecorByTheme[theme] && (
-              <img
-                src={wheelDecorByTheme[theme]}
-                alt={`Décor roue ${theme}`}
-                style={{
-                  position: 'absolute',
-                  left: 0,
-                  top: 0,
-                  width: canvasSize,
-                  height: canvasSize,
-                  zIndex: 2,
-                  pointerEvents: 'none',
-                }}
-                draggable={false}
-              />
-            )}
-            <div
-              style={{
-                position: 'absolute',
-                left: canvasSize / 2 - 15,
-                top: -20,
-                width: 30,
-                height: 50,
-                zIndex: 3,
-                pointerEvents: 'none',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'flex-start',
-              }}
-            >
-              <svg width="30" height="50">
-                <polygon
-                  points="15,50 27,15 3,15"
-                  fill={pointerColor}
-                  stroke="#fff"
-                  strokeWidth="2"
-                  style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.10))' }}
-                />
-              </svg>
-            </div>
-          </div>
+          {renderWheelContainer()}
         </div>
       )}
+
       {/* Roue en haut */}
       {gamePosition === 'top' && (
         <div
           className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10"
           style={{ width: canvasSize, height: canvasSize }}
         >
-          {/* ...identique à ci-dessus, adapte si besoin */}
+          {renderWheelContainer()}
         </div>
       )}
+
       {/* Roue en bas */}
       {gamePosition === 'bottom' && (
         <div
           className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 z-10"
           style={{ width: canvasSize, height: canvasSize }}
         >
-          {/* ...identique à ci-dessus, adapte si besoin */}
+          {renderWheelContainer()}
         </div>
       )}
+
       {/* Roue au centre */}
       {gamePosition === 'center' && (
         <div
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10"
           style={{ width: canvasSize, height: canvasSize }}
         >
-          {/* ...identique à ci-dessus, adapte si besoin */}
+          {renderWheelContainer()}
         </div>
       )}
 
@@ -373,7 +328,6 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
       </div>
     </div>
   );
-  // --- FIN MODIF RENDU ---
 };
 
 export default MobileWheelPreview;
