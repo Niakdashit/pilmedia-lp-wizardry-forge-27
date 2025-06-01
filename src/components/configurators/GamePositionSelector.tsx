@@ -1,117 +1,68 @@
 import React from 'react';
 
-export type GamePosition = 'top' | 'center' | 'bottom' | 'left' | 'right';
+interface GamePreviewProps {
+  gamePosition: 'top' | 'center' | 'bottom' | 'left' | 'right';
+  // Ajoute ici les autres props dont tu as besoin, ex: style, data, etc.
+}
 
-// Fonction pour obtenir la position opposée
-export function getInversedPosition(position: GamePosition): GamePosition {
-  switch (position) {
-    case 'top':
-      return 'bottom';
-    case 'bottom':
-      return 'top';
-    case 'left':
-      return 'right';
-    case 'right':
-      return 'left';
-    case 'center':
-    default:
-      return 'center';
+const GamePreview: React.FC<GamePreviewProps> = ({ gamePosition }) => {
+  // Remplace par tes vrais composants si besoin
+  const WheelComponent = (
+    <div className="bg-pink-100 w-40 h-40 rounded-full flex items-center justify-center shadow">
+      {/* Place ici ta roue réelle */}
+      🎡
+    </div>
+  );
+  const PlayButtonComponent = (
+    <button className="bg-[#841b60] text-white px-6 py-3 rounded shadow">
+      Jouer
+    </button>
+  );
+
+  // Affichage horizontal si 'left' ou 'right', vertical sinon
+  if (gamePosition === 'left') {
+    return (
+      <div className="flex flex-row items-center justify-center h-full space-x-4">
+        {PlayButtonComponent}
+        {WheelComponent}
+      </div>
+    );
   }
-}
 
-interface GamePositionSelectorProps {
-  selectedPosition: GamePosition;
-  onPositionChange: (position: GamePosition) => void;
-  className?: string;
-}
+  if (gamePosition === 'right') {
+    return (
+      <div className="flex flex-row items-center justify-center h-full space-x-4">
+        {WheelComponent}
+        {PlayButtonComponent}
+      </div>
+    );
+  }
 
-const GamePositionSelector: React.FC<GamePositionSelectorProps> = ({
-  selectedPosition,
-  onPositionChange,
-  className = ""
-}) => {
-  // Calcul automatique de la position opposée pour le bouton
-  const buttonPosition = getInversedPosition(selectedPosition);
+  if (gamePosition === 'top') {
+    return (
+      <div className="flex flex-col items-center justify-center h-full space-y-4">
+        {WheelComponent}
+        {PlayButtonComponent}
+      </div>
+    );
+  }
 
+  if (gamePosition === 'bottom') {
+    return (
+      <div className="flex flex-col items-center justify-center h-full space-y-4">
+        {PlayButtonComponent}
+        {WheelComponent}
+      </div>
+    );
+  }
+
+  // Position 'center' ou par défaut
   return (
-    <div className={`space-y-3 ${className}`}>
-      <label className="block text-sm font-medium text-gray-700">
-        Position du jeu
-      </label>
-      <div className="grid grid-cols-3 gap-2">
-        {/* Top */}
-        <div></div>
-        <button
-          onClick={() => onPositionChange('top')}
-          className={`p-2 text-xs rounded border transition-colors ${
-            selectedPosition === 'top'
-              ? 'bg-[#841b60] text-white border-[#841b60]'
-              : 'bg-white text-gray-700 border-gray-300 hover:border-[#841b60]'
-          }`}
-        >
-          Haut
-        </button>
-        <div></div>
-        
-        {/* Middle row */}
-        <button
-          onClick={() => onPositionChange('left')}
-          className={`p-2 text-xs rounded border transition-colors ${
-            selectedPosition === 'left'
-              ? 'bg-[#841b60] text-white border-[#841b60]'
-              : 'bg-white text-gray-700 border-gray-300 hover:border-[#841b60]'
-          }`}
-        >
-          Gauche
-        </button>
-        <button
-          onClick={() => onPositionChange('center')}
-          className={`p-2 text-xs rounded border transition-colors ${
-            selectedPosition === 'center'
-              ? 'bg-[#841b60] text-white border-[#841b60]'
-              : 'bg-white text-gray-700 border-gray-300 hover:border-[#841b60]'
-          }`}
-        >
-          Centre
-        </button>
-        <button
-          onClick={() => onPositionChange('right')}
-          className={`p-2 text-xs rounded border transition-colors ${
-            selectedPosition === 'right'
-              ? 'bg-[#841b60] text-white border-[#841b60]'
-              : 'bg-white text-gray-700 border-gray-300 hover:border-[#841b60]'
-          }`}
-        >
-          Droite
-        </button>
-        
-        {/* Bottom */}
-        <div></div>
-        <button
-          onClick={() => onPositionChange('bottom')}
-          className={`p-2 text-xs rounded border transition-colors ${
-            selectedPosition === 'bottom'
-              ? 'bg-[#841b60] text-white border-[#841b60]'
-              : 'bg-white text-gray-700 border-gray-300 hover:border-[#841b60]'
-          }`}
-        >
-          Bas
-        </button>
-        <div></div>
-      </div>
-
-      {/* Affichage dynamique de la position du bouton de lancement */}
-      <div className="mt-2 text-xs text-gray-500">
-        Position du bouton de lancement : <span className="font-bold">{ 
-          buttonPosition === 'top' ? 'Haut'
-          : buttonPosition === 'bottom' ? 'Bas'
-          : buttonPosition === 'left' ? 'Gauche'
-          : buttonPosition === 'right' ? 'Droite'
-          : 'Centre'
-        }</span>
-      </div>
+    <div className="flex flex-col items-center justify-center h-full space-y-4">
+      {WheelComponent}
+      {PlayButtonComponent}
     </div>
   );
 };
 
-export default GamePositionSelector;
+export default GamePreview;
