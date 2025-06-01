@@ -1,7 +1,23 @@
-
 import React from 'react';
 
 export type GamePosition = 'top' | 'center' | 'bottom' | 'left' | 'right';
+
+// Fonction pour obtenir la position opposée
+export function getInversedPosition(position: GamePosition): GamePosition {
+  switch (position) {
+    case 'top':
+      return 'bottom';
+    case 'bottom':
+      return 'top';
+    case 'left':
+      return 'right';
+    case 'right':
+      return 'left';
+    case 'center':
+    default:
+      return 'center';
+  }
+}
 
 interface GamePositionSelectorProps {
   selectedPosition: GamePosition;
@@ -14,6 +30,9 @@ const GamePositionSelector: React.FC<GamePositionSelectorProps> = ({
   onPositionChange,
   className = ""
 }) => {
+  // Calcul automatique de la position opposée pour le bouton
+  const buttonPosition = getInversedPosition(selectedPosition);
+
   return (
     <div className={`space-y-3 ${className}`}>
       <label className="block text-sm font-medium text-gray-700">
@@ -79,6 +98,17 @@ const GamePositionSelector: React.FC<GamePositionSelectorProps> = ({
           Bas
         </button>
         <div></div>
+      </div>
+
+      {/* Affichage dynamique de la position du bouton de lancement */}
+      <div className="mt-2 text-xs text-gray-500">
+        Position du bouton de lancement : <span className="font-bold">{ 
+          buttonPosition === 'top' ? 'Haut'
+          : buttonPosition === 'bottom' ? 'Bas'
+          : buttonPosition === 'left' ? 'Gauche'
+          : buttonPosition === 'right' ? 'Droite'
+          : 'Centre'
+        }</span>
       </div>
     </div>
   );
