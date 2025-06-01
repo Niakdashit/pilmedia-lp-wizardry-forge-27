@@ -1,5 +1,6 @@
 
-import React, { useState, useRef, useEffect } from 'react';
+
+import React, { useRef, useEffect } from 'react';
 
 interface Segment {
   label: string;
@@ -10,7 +11,6 @@ interface Segment {
 
 interface MobileWheelPreviewProps {
   campaign: any;
-  onFinish?: (result: 'win' | 'lose') => void;
   gamePosition?: 'left' | 'right' | 'center' | 'top' | 'bottom';
 }
 
@@ -43,7 +43,6 @@ const CANVAS_SIZE = 280;
 
 const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
   campaign,
-  onFinish,
   gamePosition = 'center'
 }) => {
   const mobileRouletteConfig = campaign?.mobileConfig?.roulette || {};
@@ -55,8 +54,7 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
 
   const canvasSize = mobileRouletteConfig.size || mobileRouletteConfig.width || CANVAS_SIZE;
 
-  const [rotation, setRotation] = useState(0);
-  const [spinning, setSpinning] = useState(false);
+  const rotation = 0;
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // Calcul de la position absolue du jeu selon gamePosition
@@ -275,3 +273,4 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
 };
 
 export default MobileWheelPreview;
+
