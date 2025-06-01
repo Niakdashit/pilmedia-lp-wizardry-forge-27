@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 
 interface Segment {
@@ -52,7 +51,6 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
   const pointerColor = mobileRouletteConfig.pointerColor || '#841b60';
 
   const canvasSize = mobileRouletteConfig.size || mobileRouletteConfig.width || CANVAS_SIZE;
-  const gamePosition = campaign?.mobileConfig?.position || 'left'; // Défaut à 'left' pour être coupée
 
   const [rotation, setRotation] = useState(0);
   const [spinning, setSpinning] = useState(false);
