@@ -37,7 +37,7 @@ const wheelDecorByTheme: Record<string, string> = {
   gaming: '/wheel-styles/roulette_gaming.svg',
 };
 
-const CANVAS_SIZE = 280; // Taille adaptée mobile
+const CANVAS_SIZE = 280; // Valeur par défaut
 
 const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
   campaign,
@@ -50,6 +50,12 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
   const theme = mobileRouletteConfig.theme || 'default';
   const borderColor = mobileRouletteConfig.borderColor || '#841b60';
   const pointerColor = mobileRouletteConfig.pointerColor || '#841b60';
+
+  // Ajout dynamique de la taille
+  const canvasSize =
+    mobileRouletteConfig.size ||
+    mobileRouletteConfig.width || // si stocké autrement
+    CANVAS_SIZE;
 
   // Ajout : récupérer la position (gauche, droite, etc.)
   const gamePosition = campaign?.mobileConfig?.position || 'center';
@@ -97,7 +103,7 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
         img.onload = () => {
           const angle = startAngle + anglePerSlice / 2;
           const distance = radius - 30;
-          const imgSize = 40; // Réduit pour mobile
+          const imgSize = 40;
           const x = center + distance * Math.cos(angle) - imgSize / 2;
           const y = center + distance * Math.sin(angle) - imgSize / 2;
 
@@ -116,7 +122,7 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
       ctx.rotate(startAngle + anglePerSlice / 2);
       ctx.textAlign = 'right';
       ctx.fillStyle = 'white';
-      ctx.font = 'bold 12px Arial'; // Police réduite pour mobile
+      ctx.font = 'bold 12px Arial';
       ctx.fillText(seg.label, radius - 15, 3);
       ctx.restore();
     });
@@ -127,7 +133,7 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
       img.onload = () => {
         ctx.save();
         ctx.beginPath();
-        ctx.arc(center, center, 30, 0, 2 * Math.PI); // Réduit pour mobile
+        ctx.arc(center, center, 30, 0, 2 * Math.PI);
         ctx.clip();
         ctx.drawImage(img, center - 30, center - 30, 60, 60);
         ctx.restore();
@@ -174,7 +180,7 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
       } else {
         setSpinning(false);
         setRotation(current % (2 * Math.PI));
-        if (typeof onFinish === 'function') onFinish('win'); // Simplifié pour le mobile
+        if (typeof onFinish === 'function') onFinish('win');
       }
     };
     animate();
@@ -182,7 +188,7 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
 
   useEffect(() => {
     drawWheel();
-  }, [segments, rotation, centerImage, theme, borderColor, pointerColor]);
+  }, [segments, rotation, centerImage, theme, borderColor, pointerColor, canvasSize]);
 
   if (segments.length === 0) {
     return (
@@ -200,16 +206,16 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
         <div
           className="absolute left-0 top-1/2 z-10"
           style={{
-            width: CANVAS_SIZE,
-            height: CANVAS_SIZE,
-            transform: `translateY(-50%) translateX(-${CANVAS_SIZE / 2}px)`,
+            width: canvasSize,
+            height: canvasSize,
+            transform: `translateY(-50%) translateX(-${canvasSize / 2}px)`,
           }}
         >
-          <div style={{ position: 'relative', width: CANVAS_SIZE, height: CANVAS_SIZE }}>
+          <div style={{ position: 'relative', width: canvasSize, height: canvasSize }}>
             <canvas
               ref={canvasRef}
-              width={CANVAS_SIZE}
-              height={CANVAS_SIZE}
+              width={canvasSize}
+              height={canvasSize}
               style={{
                 position: 'absolute',
                 left: 0,
@@ -226,8 +232,8 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
                   position: 'absolute',
                   left: 0,
                   top: 0,
-                  width: CANVAS_SIZE,
-                  height: CANVAS_SIZE,
+                  width: canvasSize,
+                  height: canvasSize,
                   zIndex: 2,
                   pointerEvents: 'none',
                 }}
@@ -237,7 +243,7 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
             <div
               style={{
                 position: 'absolute',
-                left: CANVAS_SIZE / 2 - 15,
+                left: canvasSize / 2 - 15,
                 top: -20,
                 width: 30,
                 height: 50,
@@ -266,16 +272,16 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
         <div
           className="absolute right-0 top-1/2 z-10"
           style={{
-            width: CANVAS_SIZE,
-            height: CANVAS_SIZE,
-            transform: `translateY(-50%) translateX(${CANVAS_SIZE / 2}px)`,
+            width: canvasSize,
+            height: canvasSize,
+            transform: `translateY(-50%) translateX(${canvasSize / 2}px)`,
           }}
         >
-          <div style={{ position: 'relative', width: CANVAS_SIZE, height: CANVAS_SIZE }}>
+          <div style={{ position: 'relative', width: canvasSize, height: canvasSize }}>
             <canvas
               ref={canvasRef}
-              width={CANVAS_SIZE}
-              height={CANVAS_SIZE}
+              width={canvasSize}
+              height={canvasSize}
               style={{
                 position: 'absolute',
                 left: 0,
@@ -292,8 +298,8 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
                   position: 'absolute',
                   left: 0,
                   top: 0,
-                  width: CANVAS_SIZE,
-                  height: CANVAS_SIZE,
+                  width: canvasSize,
+                  height: canvasSize,
                   zIndex: 2,
                   pointerEvents: 'none',
                 }}
@@ -303,7 +309,7 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
             <div
               style={{
                 position: 'absolute',
-                left: CANVAS_SIZE / 2 - 15,
+                left: canvasSize / 2 - 15,
                 top: -20,
                 width: 30,
                 height: 50,
@@ -331,7 +337,7 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
       {gamePosition === 'top' && (
         <div
           className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10"
-          style={{ width: CANVAS_SIZE, height: CANVAS_SIZE }}
+          style={{ width: canvasSize, height: canvasSize }}
         >
           {/* ...identique à ci-dessus, adapte si besoin */}
         </div>
@@ -340,7 +346,7 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
       {gamePosition === 'bottom' && (
         <div
           className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 z-10"
-          style={{ width: CANVAS_SIZE, height: CANVAS_SIZE }}
+          style={{ width: canvasSize, height: canvasSize }}
         >
           {/* ...identique à ci-dessus, adapte si besoin */}
         </div>
@@ -349,7 +355,7 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
       {gamePosition === 'center' && (
         <div
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-10"
-          style={{ width: CANVAS_SIZE, height: CANVAS_SIZE }}
+          style={{ width: canvasSize, height: canvasSize }}
         >
           {/* ...identique à ci-dessus, adapte si besoin */}
         </div>
