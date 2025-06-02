@@ -91,25 +91,30 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
   // Nouvelle méthode pour générer les données de campagne
   generatePreviewCampaign: () => {
     const state = get();
+    
+    // Générer les segments de la roue avec les couleurs personnalisées
+    const colors = [state.customColors.primary, state.customColors.secondary, state.customColors.accent || '#10b981'];
+    const segments = Array.from({ length: state.segmentCount }).map((_, i) => ({
+      label: `Prix ${i + 1}`,
+      color: colors[i % colors.length],
+      chance: Math.floor(100 / state.segmentCount)
+    }));
+
     return {
       id: 'preview',
       name: state.campaignName || 'Aperçu de la campagne',
-      type: state.selectedGameType || 'wheel',
+      type: 'wheel',
       config: {
-        roulette: state.selectedGameType === 'roue' ? {
-          segments: Array.from({ length: state.segmentCount }).map((_, i) => ({
-            label: `Segment ${i + 1}`,
-            color: [state.customColors.primary, state.customColors.secondary, state.customColors.accent || '#10b981'][i % 3],
-            chance: Math.floor(100 / state.segmentCount)
-          })),
+        roulette: {
+          segments: segments,
           theme: state.selectedTheme || 'default',
           borderColor: state.customColors.primary,
           pointerColor: state.customColors.primary,
           centerLogo: state.logoFile ? URL.createObjectURL(state.logoFile) : undefined
-        } : undefined
+        }
       },
       gameConfig: {
-        [state.selectedGameType || 'wheel']: {
+        wheel: {
           template: state.selectedTheme,
           backgroundImage: state.backgroundImage ? URL.createObjectURL(state.backgroundImage) : undefined,
           buttonLabel: 'Lancer la roue',
@@ -120,10 +125,6 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
             maxWinners: 10,
             winnersCount: 0
           }
-        },
-        wheel: {
-          winProbability: 0.1,
-          maxWinners: 10
         }
       },
       design: {

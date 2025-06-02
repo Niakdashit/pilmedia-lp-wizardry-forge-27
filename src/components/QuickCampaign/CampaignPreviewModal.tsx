@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { X, Monitor, Tablet, Smartphone } from 'lucide-react';
 import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
-import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
+import WheelPreview from '../GameTypes/WheelPreview';
 import MobilePreview from '../CampaignEditor/Mobile/MobilePreview';
 
 interface CampaignPreviewModalProps {
@@ -27,12 +27,43 @@ const CampaignPreviewModal: React.FC<CampaignPreviewModalProps> = ({
   console.log('Preview campaign data:', mockCampaign);
 
   const renderDesktopPreview = () => (
-    <div className="w-full h-full flex items-center justify-center bg-gray-50">
-      <div className="max-w-lg mx-auto">
-        <FunnelUnlockedGame
-          campaign={mockCampaign}
-          modalContained={true}
+    <div className="w-full h-full flex items-center justify-center bg-gray-50 relative overflow-hidden">
+      {/* Background image if available */}
+      {mockCampaign.design?.backgroundImage && (
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30"
+          style={{
+            backgroundImage: `url(${mockCampaign.design.backgroundImage})`
+          }}
         />
+      )}
+      
+      {/* Content container */}
+      <div className="relative z-10 max-w-2xl mx-auto p-8 text-center">
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            {mockCampaign.screens?.[0]?.title || 'Tentez votre chance !'}
+          </h1>
+          <p className="text-lg text-gray-600">
+            {mockCampaign.screens?.[0]?.description || 'Participez pour avoir une chance de gagner !'}
+          </p>
+        </div>
+        
+        {/* Wheel Preview */}
+        <div className="flex justify-center">
+          <WheelPreview
+            campaign={mockCampaign}
+            config={mockCampaign.gameConfig?.wheel || {
+              mode: "instant_winner" as const,
+              winProbability: 0.1,
+              maxWinners: 10,
+              winnersCount: 0
+            }}
+            gameSize="large"
+            gamePosition="center"
+            previewDevice="desktop"
+          />
+        </div>
       </div>
     </div>
   );
