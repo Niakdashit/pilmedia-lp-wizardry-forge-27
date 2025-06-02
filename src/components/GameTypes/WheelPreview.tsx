@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import Modal from '../common/Modal';
 import ValidationMessage from '../common/ValidationMessage';
@@ -226,7 +227,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
 
     const size = canvas.width;
     const center = size / 2;
-    const radius = center - 30;
+    const radius = center - 40;
     const total = segments.length;
     const anglePerSlice = (2 * Math.PI) / total;
     
@@ -237,25 +238,59 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
 
     ctx.clearRect(0, 0, size, size);
 
-    // Draw wheel border
-    if (theme === 'default') {
-      ctx.beginPath();
-      ctx.arc(center, center, radius + 8, 0, 2 * Math.PI);
-      ctx.lineWidth = 10;
-      ctx.strokeStyle = borderColor;
-      ctx.stroke();
-    }
+    // Draw outer golden border
+    ctx.beginPath();
+    ctx.arc(center, center, radius + 15, 0, 2 * Math.PI);
+    ctx.lineWidth = 8;
+    const gradient = ctx.createLinearGradient(0, 0, size, size);
+    gradient.addColorStop(0, '#FFD700');
+    gradient.addColorStop(0.5, '#FFA500');
+    gradient.addColorStop(1, '#B8860B');
+    ctx.strokeStyle = gradient;
+    ctx.stroke();
+
+    // Draw inner border
+    ctx.beginPath();
+    ctx.arc(center, center, radius + 8, 0, 2 * Math.PI);
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#8B4513';
+    ctx.stroke();
 
     segments.forEach((seg: Segment, i: number) => {
       const startAngle = i * anglePerSlice + rotation;
       const endAngle = startAngle + anglePerSlice;
 
+      // Draw segment
       ctx.beginPath();
       ctx.moveTo(center, center);
       ctx.arc(center, center, radius, startAngle, endAngle);
       ctx.closePath();
       ctx.fillStyle = seg.color || themeColors[i % themeColors.length];
       ctx.fill();
+
+      // Draw golden separator lines
+      ctx.beginPath();
+      ctx.moveTo(center, center);
+      ctx.lineTo(
+        center + radius * Math.cos(startAngle),
+        center + radius * Math.sin(startAngle)
+      );
+      ctx.strokeStyle = '#FFD700';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Draw text with better styling
+      ctx.save();
+      ctx.translate(center, center);
+      ctx.rotate(startAngle + anglePerSlice / 2);
+      ctx.textAlign = 'center';
+      ctx.fillStyle = 'white';
+      ctx.font = `bold ${Math.max(12, size * 0.04)}px Arial`;
+      ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+      ctx.lineWidth = 2;
+      ctx.strokeText(seg.label, radius - 50, 5);
+      ctx.fillText(seg.label, radius - 50, 5);
+      ctx.restore();
 
       if (seg.image) {
         const img = new Image();
@@ -276,19 +311,17 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
         };
         img.src = seg.image;
       }
-
-      ctx.save();
-      ctx.translate(center, center);
-      ctx.rotate(startAngle + anglePerSlice / 2);
-      ctx.textAlign = 'right';
-      ctx.fillStyle = 'white';
-      ctx.font = `bold ${Math.max(10, size * 0.035)}px Arial`;
-      ctx.fillText(seg.label, radius - 20, 5);
-      ctx.restore();
     });
 
-    const centerRadius = 25;
+    // Draw center circle with golden border
+    const centerRadius = 35;
     const logoToDisplay = centerLogo || centerImage;
+    
+    // Golden center border
+    ctx.beginPath();
+    ctx.arc(center, center, centerRadius + 5, 0, 2 * Math.PI);
+    ctx.fillStyle = gradient;
+    ctx.fill();
     
     if (logoToDisplay) {
       const img = new Image();
@@ -307,8 +340,8 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
       ctx.arc(center, center, centerRadius, 0, 2 * Math.PI);
       ctx.fillStyle = '#fff';
       ctx.fill();
-      ctx.strokeStyle = borderColor;
-      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#FFD700';
+      ctx.lineWidth = 3;
       ctx.stroke();
     }
   };
@@ -389,17 +422,17 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
         height: canvasSize,
         overflow: shouldCropWheel ? 'hidden' : 'visible'
       }}>
-        {/* Shadow */}
+        {/* Enhanced shadow with golden glow */}
         <div 
           style={{
             position: 'absolute',
-            width: canvasSize - 20,
-            height: canvasSize - 20,
-            left: shouldCropWheel ? (gamePosition === 'left' ? '10px' : `-${canvasSize * 0.5 + 10}px`) : '10px',
-            top: '15px',
+            width: canvasSize - 10,
+            height: canvasSize - 10,
+            left: shouldCropWheel ? (gamePosition === 'left' ? '5px' : `-${canvasSize * 0.5 + 5}px`) : '5px',
+            top: '10px',
             borderRadius: '50%',
-            background: 'rgba(0,0,0,0.15)',
-            filter: 'blur(8px)',
+            background: 'radial-gradient(circle, rgba(255,215,0,0.3) 0%, rgba(255,215,0,0.1) 50%, rgba(0,0,0,0.2) 100%)',
+            filter: 'blur(15px)',
             zIndex: 0
           }}
         />
@@ -436,14 +469,14 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
           />
         )}
         
-        {/* Pointer */}
+        {/* Enhanced Pointer with golden styling */}
         <div
           style={{
             position: 'absolute',
             left: (shouldCropWheel ? (gamePosition === 'left' ? 0 : -canvasSize * 0.5) : canvasSize / 2) + canvasSize / 2 - pointerSize / 2,
-            top: -pointerSize * 0.6,
+            top: -pointerSize * 0.7,
             width: pointerSize,
-            height: pointerSize * 1.5,
+            height: pointerSize * 1.6,
             zIndex: 3,
             pointerEvents: 'none',
             display: 'flex',
@@ -451,13 +484,20 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
             alignItems: 'flex-start',
           }}
         >
-          <svg width={pointerSize} height={pointerSize * 1.5}>
+          <svg width={pointerSize} height={pointerSize * 1.6}>
+            <defs>
+              <linearGradient id="pointerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#FFD700" />
+                <stop offset="50%" stopColor="#FFA500" />
+                <stop offset="100%" stopColor="#B8860B" />
+              </linearGradient>
+            </defs>
             <polygon
-              points={`${pointerSize/2},${pointerSize*1.5} ${pointerSize*0.9},${pointerSize*0.5} ${pointerSize*0.1},${pointerSize*0.5}`}
-              fill={pointerColor}
-              stroke="#fff"
+              points={`${pointerSize/2},${pointerSize*1.6} ${pointerSize*0.85},${pointerSize*0.4} ${pointerSize*0.15},${pointerSize*0.4}`}
+              fill="url(#pointerGradient)"
+              stroke="#8B4513"
               strokeWidth="2"
-              style={{ filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.10))' }}
+              style={{ filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))' }}
             />
           </svg>
         </div>
@@ -477,21 +517,28 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
         />
       </div>
 
-      {/* Button positioned on the visible side */}
+      {/* Enhanced button with golden styling */}
       {buttonConfig.visible && (
         <button
           onClick={handleWheelClick}
           disabled={spinning || disabled}
           style={{
-            backgroundColor: buttonConfig.color,
-            borderColor: buttonConfig.borderColor,
-            borderWidth: `${buttonConfig.borderWidth}px`,
+            background: `linear-gradient(45deg, ${buttonConfig.color}, ${buttonConfig.color}dd)`,
+            borderColor: '#FFD700',
+            borderWidth: '2px',
             borderRadius: `${buttonConfig.borderRadius}px`,
-            borderStyle: 'solid'
+            borderStyle: 'solid',
+            boxShadow: '0 4px 15px rgba(255, 215, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
           }}
-          className={`${getButtonSizeClasses()} text-white font-medium disabled:opacity-50 hover:opacity-80 transition-all shadow-lg`}
+          className={`${getButtonSizeClasses()} text-white font-bold disabled:opacity-50 hover:opacity-90 transition-all duration-200 relative overflow-hidden`}
         >
-          {spinning ? 'Tourne...' : formValidated ? 'Lancer la roue' : (buttonConfig.text || 'Remplir le formulaire')}
+          <span className="relative z-10">
+            {spinning ? 'Tourne...' : formValidated ? 'Lancer la roue' : (buttonConfig.text || 'Remplir le formulaire')}
+          </span>
+          <div 
+            className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300"
+            style={{ transform: 'skewX(-15deg)' }}
+          />
         </button>
       )}
 
