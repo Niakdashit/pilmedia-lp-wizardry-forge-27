@@ -75,13 +75,16 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   const centerImage = campaign?.config?.roulette?.centerImage;
   const centerLogo = campaign?.design?.centerLogo;
   const theme = campaign?.config?.roulette?.theme || 'default';
-  const borderColor = campaign?.config?.roulette?.borderColor || '#841b60';
-  const pointerColor = campaign?.config?.roulette?.pointerColor || '#841b60';
   
-  // Get button configuration from campaign
+  // Utiliser les couleurs personnalisées du store QuickCampaign ou valeurs par défaut
+  const customColors = campaign?.design?.customColors;
+  const borderColor = campaign?.config?.roulette?.borderColor || customColors?.primary || '#841b60';
+  const pointerColor = campaign?.config?.roulette?.pointerColor || customColors?.primary || '#841b60';
+  
+  // Get button configuration from campaign with custom colors
   const buttonConfig = campaign?.buttonConfig || {
-    color: '#841b60',
-    borderColor: '#841b60',
+    color: customColors?.primary || '#841b60',
+    borderColor: customColors?.primary || '#841b60',
     borderWidth: 1,
     borderRadius: 8,
     size: 'medium',
@@ -226,7 +229,11 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
     const radius = center - 30;
     const total = segments.length;
     const anglePerSlice = (2 * Math.PI) / total;
-    const themeColors = getThemeColors(theme);
+    
+    // Use custom colors or fallback to theme colors
+    const themeColors = customColors ? 
+      [customColors.primary, customColors.secondary, customColors.accent || '#10b981'] :
+      getThemeColors(theme);
 
     ctx.clearRect(0, 0, size, size);
 
@@ -353,7 +360,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
 
   useEffect(() => {
     drawWheel();
-  }, [segments, rotation, centerImage, centerLogo, theme, borderColor, pointerColor, canvasSize]);
+  }, [segments, rotation, centerImage, centerLogo, theme, borderColor, pointerColor, canvasSize, customColors]);
 
   if (segments.length === 0) {
     return (

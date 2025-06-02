@@ -17,103 +17,14 @@ const CampaignPreviewModal: React.FC<CampaignPreviewModalProps> = ({
 }) => {
   const [selectedDevice, setSelectedDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
   
-  const {
-    selectedGameType,
-    campaignName,
-    selectedTheme,
-    backgroundImage
-  } = useQuickCampaignStore();
+  const { generatePreviewCampaign, campaignName } = useQuickCampaignStore();
 
   if (!isOpen) return null;
 
-  // Create mock campaign data with proper template structure
-  const mockCampaign = {
-    id: 'preview',
-    name: campaignName || 'Aperçu de la campagne',
-    type: selectedGameType || 'jackpot',
-    gameConfig: {
-      [selectedGameType || 'jackpot']: {
-        template: selectedTheme,
-        backgroundImage: backgroundImage ? URL.createObjectURL(backgroundImage) : undefined,
-        buttonLabel: 'Lancer le Jackpot',
-        buttonColor: '#ec4899'
-      },
-      jackpot: {
-        template: selectedTheme,
-        instantWin: {
-          mode: 'instant_winner' as const,
-          winProbability: 0.1,
-          maxWinners: 10,
-          winnersCount: 0
-        }
-      }
-    },
-    design: {
-      template: selectedTheme,
-      theme: selectedTheme
-    },
-    screens: [
-      {
-        title: 'Tentez votre chance !',
-        description: 'Participez pour avoir une chance de gagner !',
-        showTitle: true,
-        showDescription: true
-      },
-      {
-        title: 'Vos informations',
-        buttonText: "C'est parti !"
-      },
-      {},
-      {
-        winMessage: 'Félicitations, vous avez gagné !',
-        loseMessage: 'Dommage, réessayez !',
-        replayButtonText: 'Rejouer'
-      }
-    ],
-    formFields: [
-      {
-        id: "prenom",
-        label: "Prénom",
-        required: true
-      },
-      {
-        id: "nom", 
-        label: "Nom",
-        required: true
-      },
-      {
-        id: "email",
-        label: "Email",
-        type: "email",
-        required: true
-      }
-    ],
-    // Configuration mobile par défaut
-    mobileConfig: {
-      backgroundColor: '#ebf4f7',
-      gamePosition: 'center',
-      textPosition: 'top',
-      verticalSpacing: 20,
-      horizontalPadding: 16,
-      showTitle: true,
-      showDescription: true,
-      title: 'Tentez votre chance !',
-      description: 'Participez pour avoir une chance de gagner !',
-      titleColor: '#000000',
-      descriptionColor: '#666666',
-      titleSize: 'text-2xl',
-      descriptionSize: 'text-base',
-      titleAlignment: 'text-center',
-      descriptionAlignment: 'text-center',
-      fontFamily: 'Inter',
-      contrastBackground: {
-        enabled: false
-      }
-    }
-  };
+  // Utiliser les données en temps réel du store
+  const mockCampaign = generatePreviewCampaign();
 
   console.log('Preview campaign data:', mockCampaign);
-  console.log('Selected theme in preview:', selectedTheme);
 
   const renderDesktopPreview = () => (
     <div className="w-full h-full flex items-center justify-center bg-gray-50">
