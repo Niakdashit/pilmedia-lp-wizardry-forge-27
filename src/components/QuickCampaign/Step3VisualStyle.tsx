@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
 import { useCampaigns } from '../../hooks/useCampaigns';
 import CampaignPreviewModal from './CampaignPreviewModal';
+import ColorCustomizer from './ColorCustomizer';
 
 // 👉 IMPORTS SVG
 import Tjackpot1 from '../../assets/templates/Tjackpot1.svg';
@@ -137,6 +138,8 @@ const Step3VisualStyle: React.FC = () => {
     logoFile,
     selectedTheme,
     backgroundImage,
+    customColors,
+    segmentCount,
     setSelectedTheme,
     setBackgroundImage,
     setCurrentStep,
@@ -179,6 +182,19 @@ const Step3VisualStyle: React.FC = () => {
           marketingGoal,
           hasLogo: !!logoFile,
           hasBackgroundImage: !!backgroundImage,
+          customColors,
+          ...(selectedGameType === 'roue' && {
+            segmentCount,
+            roulette: {
+              segments: Array.from({ length: segmentCount }).map((_, i) => ({
+                label: `Segment ${i + 1}`,
+                color: [customColors.primary, customColors.secondary, customColors.accent || '#10b981'][i % 3],
+                chance: Math.floor(100 / segmentCount)
+              })),
+              theme: selectedTheme,
+              borderColor: customColors.primary
+            }
+          }),
           [selectedGameType || 'quiz']: {
             ...(selectedGameType === 'jackpot' && {
               template: selectedTheme // Sauvegarde du template sélectionné
@@ -187,8 +203,14 @@ const Step3VisualStyle: React.FC = () => {
         },
         design: {
           theme: selectedTheme,
-          colors: selectedTemplate?.colors,
-          template: selectedTheme // Aussi dans design pour l'accès facile
+          colors: {
+            ...selectedTemplate?.colors,
+            primary: customColors.primary,
+            secondary: customColors.secondary,
+            accent: customColors.accent
+          },
+          template: selectedTheme, // Aussi dans design pour l'accès facile
+          customColors
         },
         status: 'draft' as const
       };
@@ -222,6 +244,19 @@ const Step3VisualStyle: React.FC = () => {
           marketingGoal,
           hasLogo: !!logoFile,
           hasBackgroundImage: !!backgroundImage,
+          customColors,
+          ...(selectedGameType === 'roue' && {
+            segmentCount,
+            roulette: {
+              segments: Array.from({ length: segmentCount }).map((_, i) => ({
+                label: `Segment ${i + 1}`,
+                color: [customColors.primary, customColors.secondary, customColors.accent || '#10b981'][i % 3],
+                chance: Math.floor(100 / segmentCount)
+              })),
+              theme: selectedTheme,
+              borderColor: customColors.primary
+            }
+          }),
           [selectedGameType || 'quiz']: {
             ...(selectedGameType === 'jackpot' && {
               template: selectedTheme // Sauvegarde du template sélectionné
@@ -230,8 +265,14 @@ const Step3VisualStyle: React.FC = () => {
         },
         design: {
           theme: selectedTheme,
-          colors: selectedTemplate?.colors,
-          template: selectedTheme // Aussi dans design pour l'accès facile
+          colors: {
+            ...selectedTemplate?.colors,
+            primary: customColors.primary,
+            secondary: customColors.secondary,
+            accent: customColors.accent
+          },
+          template: selectedTheme, // Aussi dans design pour l'accès facile
+          customColors
         },
         status: 'draft' as const
       };
@@ -333,41 +374,42 @@ const Step3VisualStyle: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-6">
+    <div className="min-h-screen w-full flex items-center justify-center p-3 sm:p-6">
       <div className="max-w-6xl w-full">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
-          className="text-center mb-16"
+          className="text-center mb-8 sm:mb-16"
         >
-          <h1 className="text-6xl font-bold mb-6 text-white">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 text-white px-4">
             Choisissez un thème pour votre campagne
           </h1>
-          <p className="text-2xl text-white">
+          <p className="text-lg sm:text-xl md:text-2xl text-white px-4">
             Donnez vie à votre expérience avec un style visuel adapté.
           </p>
         </motion.div>
+        
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
-          className="bg-white/80 backdrop-blur-lg rounded-[32px] shadow-2xl p-10 space-y-10 border border-white/20"
+          className="bg-white/80 backdrop-blur-lg rounded-[20px] sm:rounded-[32px] shadow-2xl p-4 sm:p-6 md:p-8 lg:p-10 space-y-6 sm:space-y-8 lg:space-y-10 border border-white/20 mx-2"
         >
           {/* Choix des templates dynamiques par mécanique */}
           <div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-8">
+            <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6 sm:mb-8">
               Thèmes prédéfinis
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
               {currentTemplates.map((template) => (
                 <motion.button
                   key={template.id}
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={() => setSelectedTheme(template.id)}
                   className={`
-                    p-8 rounded-3xl border-2 transition-all text-left
+                    p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl border-2 transition-all text-left
                     bg-white/60 backdrop-blur-sm shadow-lg
                     ${
                       selectedTheme === template.id
@@ -380,43 +422,47 @@ const Step3VisualStyle: React.FC = () => {
                     <img
                       src={template.image}
                       alt={template.name}
-                        className="w-full h-64 max-h-72 object-contain rounded-2xl mb-6 shadow-lg bg-white"
+                      className="w-full h-32 sm:h-48 md:h-64 max-h-72 object-contain rounded-xl sm:rounded-2xl mb-4 sm:mb-6 shadow-lg bg-white"
                     />
                   ) : (
                     <div
-                      className={`w-full h-32 rounded-2xl mb-6 ${template.preview} shadow-lg`}
+                      className={`w-full h-24 sm:h-32 rounded-xl sm:rounded-2xl mb-4 sm:mb-6 ${template.preview} shadow-lg`}
                     />
                   )}
-                  <h4 className="font-bold text-xl text-gray-900 mb-3">
+                  <h4 className="font-bold text-lg sm:text-xl text-gray-900 mb-2 sm:mb-3">
                     {template.name}
                   </h4>
-                  <p className="text-gray-600">{template.description}</p>
+                  <p className="text-gray-600 text-sm sm:text-base">{template.description}</p>
                 </motion.button>
               ))}
             </div>
           </div>
+
+          {/* Personnalisation des couleurs */}
+          <ColorCustomizer />
+
           {/* Upload d'image de fond */}
           <div>
-            <h3 className="text-2xl font-bold text-gray-900 mb-6">
+            <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">
               Image de fond personnalisée (optionnel)
             </h3>
-            <div className="border-2 border-dashed border-gray-300 rounded-3xl p-10 text-center bg-white/40 backdrop-blur-sm">
-              <Upload className="w-16 h-16 text-gray-400 mx-auto mb-6" />
+            <div className="border-2 border-dashed border-gray-300 rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 text-center bg-white/40 backdrop-blur-sm">
+              <Upload className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 text-gray-400 mx-auto mb-4 sm:mb-6" />
               {backgroundImage ? (
                 <div>
-                  <p className="text-green-600 font-bold text-lg">
+                  <p className="text-green-600 font-bold text-base sm:text-lg break-all px-2">
                     {backgroundImage.name}
                   </p>
                   <button
                     onClick={() => setBackgroundImage(null)}
-                    className="text-gray-500 hover:text-red-500 mt-3 font-medium"
+                    className="text-gray-500 hover:text-red-500 mt-2 sm:mt-3 font-medium text-sm sm:text-base"
                   >
                     Supprimer
                   </button>
                 </div>
               ) : (
                 <>
-                  <p className="text-gray-600 mb-3 text-lg">
+                  <p className="text-gray-600 mb-2 sm:mb-3 text-base sm:text-lg px-2">
                     <label className="text-blue-500 cursor-pointer hover:underline font-medium">
                       Téléchargez une image de fond
                       <input
@@ -427,29 +473,31 @@ const Step3VisualStyle: React.FC = () => {
                       />
                     </label>
                   </p>
-                  <p className="text-gray-400">PNG, JPG jusqu'à 10MB</p>
+                  <p className="text-gray-400 text-sm sm:text-base">PNG, JPG jusqu'à 10MB</p>
                 </>
               )}
             </div>
           </div>
+
           {/* Navigation */}
-          <div className="flex justify-between items-center pt-8">
+          <div className="flex flex-col sm:flex-row justify-between items-center pt-6 sm:pt-8 space-y-4 sm:space-y-0">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => setCurrentStep(2)}
-              className="flex items-center space-x-3 px-8 py-4 text-gray-600 hover:text-gray-900 transition-colors font-medium rounded-2xl hover:bg-gray-100"
+              className="w-full sm:w-auto flex items-center justify-center space-x-2 sm:space-x-3 px-6 sm:px-8 py-3 sm:py-4 text-gray-600 hover:text-gray-900 transition-colors font-medium rounded-xl sm:rounded-2xl hover:bg-gray-100 text-base sm:text-lg"
             >
-              <ArrowLeft className="w-6 h-6" />
+              <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6" />
               <span>Retour</span>
             </motion.button>
+
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={handleFinish}
               disabled={!selectedTheme}
               className={`
-                px-12 py-4 rounded-2xl font-bold text-lg transition-all
+                w-full sm:w-auto px-8 sm:px-12 py-3 sm:py-4 rounded-xl sm:rounded-2xl font-bold text-base sm:text-lg transition-all
                 ${
                   selectedTheme
                     ? 'bg-gradient-to-r from-[#841b60] to-pink-500 text-white hover:shadow-xl'
@@ -461,19 +509,20 @@ const Step3VisualStyle: React.FC = () => {
             </motion.button>
           </div>
         </motion.div>
+
         {/* Progress indicator */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.8 }}
-          className="text-center mt-12"
+          className="text-center mt-8 sm:mt-12"
         >
-          <div className="flex items-center justify-center space-x-3 mb-4">
-            <div className="w-12 h-2 bg-gray-300 rounded-full"></div>
-            <div className="w-12 h-2 bg-gray-300 rounded-full"></div>
-            <div className="w-12 h-2 bg-gradient-to-r from-[#841b60] to-pink-500 rounded-full"></div>
+          <div className="flex items-center justify-center space-x-2 sm:space-x-3 mb-3 sm:mb-4">
+            <div className="w-8 sm:w-12 h-1.5 sm:h-2 bg-gray-300 rounded-full"></div>
+            <div className="w-8 sm:w-12 h-1.5 sm:h-2 bg-gray-300 rounded-full"></div>
+            <div className="w-8 sm:w-12 h-1.5 sm:h-2 bg-gradient-to-r from-[#841b60] to-pink-500 rounded-full"></div>
           </div>
-          <p className="text-lg font-medium text-white">Étape 3 sur 3</p>
+          <p className="text-base sm:text-lg font-medium text-white">Étape 3 sur 3</p>
         </motion.div>
       </div>
     </div>
