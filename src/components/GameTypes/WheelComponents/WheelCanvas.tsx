@@ -56,7 +56,7 @@ const WheelCanvas: React.FC<WheelCanvasProps> = ({
 
     const size = canvas.width;
     const center = size / 2;
-    const radius = center - 40;
+    const radius = center - 25; // Réduire l'écart pour que les segments touchent la bordure
     const total = segments.length;
     const anglePerSlice = (2 * Math.PI) / total;
     
@@ -67,7 +67,64 @@ const WheelCanvas: React.FC<WheelCanvasProps> = ({
 
     ctx.clearRect(0, 0, size, size);
 
-    // Draw outer golden border
+    segments.forEach((seg: Segment, i: number) => {
+      const startAngle = i * anglePerSlice + rotation;
+      const endAngle = startAngle + anglePerSlice;
+
+      // Draw segment - étendre jusqu'à la bordure
+      ctx.beginPath();
+      ctx.moveTo(center, center);
+      ctx.arc(center, center, radius + 15, startAngle, endAngle); // Étendre jusqu'à la bordure dorée
+      ctx.closePath();
+      ctx.fillStyle = seg.color || themeColors[i % themeColors.length];
+      ctx.fill();
+
+      // Draw golden separator lines
+      ctx.beginPath();
+      ctx.moveTo(center, center);
+      ctx.lineTo(
+        center + (radius + 15) * Math.cos(startAngle),
+        center + (radius + 15) * Math.sin(startAngle)
+      );
+      ctx.strokeStyle = '#FFD700';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Draw text with better styling
+      ctx.save();
+      ctx.translate(center, center);
+      ctx.rotate(startAngle + anglePerSlice / 2);
+      ctx.textAlign = 'center';
+      ctx.fillStyle = 'white';
+      ctx.font = `bold ${Math.max(12, size * 0.04)}px Arial`;
+      ctx.strokeStyle = 'rgba(0,0,0,0.5)';
+      ctx.lineWidth = 2;
+      ctx.strokeText(seg.label, radius - 30, 5); // Ajuster la position du texte
+      ctx.fillText(seg.label, radius - 30, 5);
+      ctx.restore();
+
+      if (seg.image) {
+        const img = new Image();
+        img.crossOrigin = 'anonymous';
+        img.onload = () => {
+          const angle = startAngle + anglePerSlice / 2;
+          const distance = radius - 20; // Ajuster la position de l'image
+          const imgSize = Math.max(40, size * 0.15);
+          const x = center + distance * Math.cos(angle) - imgSize / 2;
+          const y = center + distance * Math.sin(angle) - imgSize / 2;
+
+          ctx.save();
+          ctx.beginPath();
+          ctx.arc(x + imgSize / 2, y + imgSize / 2, imgSize / 2, 0, 2 * Math.PI);
+          ctx.clip();
+          ctx.drawImage(img, x, y, imgSize, imgSize);
+          ctx.restore();
+        };
+        img.src = seg.image;
+      }
+    });
+
+    // Draw outer golden border - dessiner par-dessus les segments
     ctx.beginPath();
     ctx.arc(center, center, radius + 15, 0, 2 * Math.PI);
     ctx.lineWidth = 8;
@@ -84,63 +141,6 @@ const WheelCanvas: React.FC<WheelCanvasProps> = ({
     ctx.lineWidth = 2;
     ctx.strokeStyle = '#8B4513';
     ctx.stroke();
-
-    segments.forEach((seg: Segment, i: number) => {
-      const startAngle = i * anglePerSlice + rotation;
-      const endAngle = startAngle + anglePerSlice;
-
-      // Draw segment
-      ctx.beginPath();
-      ctx.moveTo(center, center);
-      ctx.arc(center, center, radius, startAngle, endAngle);
-      ctx.closePath();
-      ctx.fillStyle = seg.color || themeColors[i % themeColors.length];
-      ctx.fill();
-
-      // Draw golden separator lines
-      ctx.beginPath();
-      ctx.moveTo(center, center);
-      ctx.lineTo(
-        center + radius * Math.cos(startAngle),
-        center + radius * Math.sin(startAngle)
-      );
-      ctx.strokeStyle = '#FFD700';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-
-      // Draw text with better styling
-      ctx.save();
-      ctx.translate(center, center);
-      ctx.rotate(startAngle + anglePerSlice / 2);
-      ctx.textAlign = 'center';
-      ctx.fillStyle = 'white';
-      ctx.font = `bold ${Math.max(12, size * 0.04)}px Arial`;
-      ctx.strokeStyle = 'rgba(0,0,0,0.5)';
-      ctx.lineWidth = 2;
-      ctx.strokeText(seg.label, radius - 50, 5);
-      ctx.fillText(seg.label, radius - 50, 5);
-      ctx.restore();
-
-      if (seg.image) {
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.onload = () => {
-          const angle = startAngle + anglePerSlice / 2;
-          const distance = radius - 40;
-          const imgSize = Math.max(40, size * 0.15);
-          const x = center + distance * Math.cos(angle) - imgSize / 2;
-          const y = center + distance * Math.sin(angle) - imgSize / 2;
-
-          ctx.save();
-          ctx.beginPath();
-          ctx.arc(x + imgSize / 2, y + imgSize / 2, imgSize / 2, 0, 2 * Math.PI);
-          ctx.clip();
-          ctx.drawImage(img, x, y, imgSize, imgSize);
-          ctx.restore();
-        };
-        img.src = seg.image;
-      }
-    });
 
     // Draw center circle with golden border
     const centerRadius = 35;
