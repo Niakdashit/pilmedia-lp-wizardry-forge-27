@@ -1,18 +1,18 @@
 
-import React, { useRef, useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 interface Segment {
   label: string;
-  color?: string;
+  color: string;
   image?: string | null;
 }
 
 interface WheelCanvasProps {
   segments: Segment[];
   rotation: number;
-  centerImage?: string;
-  centerLogo?: string;
-  theme: string;
+  centerImage?: string | File | null;
+  centerLogo?: string | File | null;
+  theme?: string;
   customColors?: {
     primary: string;
     secondary: string;
@@ -21,171 +21,136 @@ interface WheelCanvasProps {
   borderColor?: string;
   borderOutlineColor?: string;
   canvasSize: number;
-  offset: string;
+  offset?: string;
 }
-
-const getThemeColors = (theme: string): string[] => {
-  switch (theme) {
-    case 'promo': return ['#FFD700', '#841b60', '#FF6F61'];
-    case 'food': return ['#f4d35e', '#ee964b', '#e63946'];
-    case 'casino': return ['#000000', '#FFD700', '#FF0000'];
-    case 'child': return ['#fcd5ce', '#cdb4db', '#b5ead7'];
-    case 'gaming': return ['#1f1f2e', '#841bff', '#13aae2'];
-    case 'luxury': return ['#0d0d0d', '#d4af37', '#ffffff'];
-    case 'halloween': return ['#ff7518', '#1b1b1b', '#fffacd'];
-    case 'noel': return ['#e74c3c', '#27ae60', '#fff'];
-    default: return ['#f9e5e5', '#dbeaff', '#e8f9e6', '#fff1e6', '#e6ffe6'];
-  }
-};
 
 const WheelCanvas: React.FC<WheelCanvasProps> = ({
   segments,
   rotation,
   centerImage,
   centerLogo,
-  theme,
+  theme = 'default',
   customColors,
   borderColor = '#841b60',
   borderOutlineColor = '#FFD700',
   canvasSize,
-  offset
+  offset = '0px'
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  const drawWheel = () => {
-    const canvas = canvasRef.current;
-    if (!canvas || segments.length === 0) return;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    const size = canvas.width;
-    const center = size / 2;
-    const radius = center - 25; // Réduire l'écart pour que les segments touchent la bordure
-    const total = segments.length;
-    const anglePerSlice = (2 * Math.PI) / total;
-    
-    // Use custom colors or fallback to theme colors
-    const themeColors = customColors ? 
-      [customColors.primary, customColors.secondary, customColors.accent || '#10b981'] :
-      getThemeColors(theme);
-
-    ctx.clearRect(0, 0, size, size);
-
-    segments.forEach((seg: Segment, i: number) => {
-      const startAngle = i * anglePerSlice + rotation;
-      const endAngle = startAngle + anglePerSlice;
-
-      // Draw segment - étendre jusqu'à la bordure
-      ctx.beginPath();
-      ctx.moveTo(center, center);
-      ctx.arc(center, center, radius + 15, startAngle, endAngle); // Étendre jusqu'à la bordure dorée
-      ctx.closePath();
-      ctx.fillStyle = seg.color || themeColors[i % themeColors.length];
-      ctx.fill();
-
-      // Draw golden separator lines with custom color
-      ctx.beginPath();
-      ctx.moveTo(center, center);
-      ctx.lineTo(
-        center + (radius + 15) * Math.cos(startAngle),
-        center + (radius + 15) * Math.sin(startAngle)
-      );
-      ctx.strokeStyle = borderOutlineColor;
-      ctx.lineWidth = 2;
-      ctx.stroke();
-
-      // Draw text with better styling
-      ctx.save();
-      ctx.translate(center, center);
-      ctx.rotate(startAngle + anglePerSlice / 2);
-      ctx.textAlign = 'center';
-      ctx.fillStyle = 'white';
-      ctx.font = `bold ${Math.max(12, size * 0.04)}px Arial`;
-      ctx.strokeStyle = 'rgba(0,0,0,0.5)';
-      ctx.lineWidth = 2;
-      ctx.strokeText(seg.label, radius - 30, 5); // Ajuster la position du texte
-      ctx.fillText(seg.label, radius - 30, 5);
-      ctx.restore();
-
-      if (seg.image) {
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.onload = () => {
-          const angle = startAngle + anglePerSlice / 2;
-          const distance = radius - 20; // Ajuster la position de l'image
-          const imgSize = Math.max(40, size * 0.15);
-          const x = center + distance * Math.cos(angle) - imgSize / 2;
-          const y = center + distance * Math.sin(angle) - imgSize / 2;
-
-          ctx.save();
-          ctx.beginPath();
-          ctx.arc(x + imgSize / 2, y + imgSize / 2, imgSize / 2, 0, 2 * Math.PI);
-          ctx.clip();
-          ctx.drawImage(img, x, y, imgSize, imgSize);
-          ctx.restore();
-        };
-        img.src = seg.image;
-      }
-    });
-
-    // Draw outer border with custom colors
-    ctx.beginPath();
-    ctx.arc(center, center, radius + 15, 0, 2 * Math.PI);
-    ctx.lineWidth = 8;
-    const gradient = ctx.createLinearGradient(0, 0, size, size);
-    gradient.addColorStop(0, borderOutlineColor);
-    gradient.addColorStop(0.5, borderOutlineColor);
-    gradient.addColorStop(1, borderOutlineColor);
-    ctx.strokeStyle = gradient;
-    ctx.stroke();
-
-    // Draw inner border with custom color
-    ctx.beginPath();
-    ctx.arc(center, center, radius + 8, 0, 2 * Math.PI);
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = borderColor;
-    ctx.stroke();
-
-    // Draw center circle with custom border color
-    const centerRadius = 35;
-    const logoToDisplay = centerLogo || centerImage;
-    
-    // Center border with custom color
-    ctx.beginPath();
-    ctx.arc(center, center, centerRadius + 5, 0, 2 * Math.PI);
-    const centerGradient = ctx.createLinearGradient(0, 0, size, size);
-    centerGradient.addColorStop(0, borderOutlineColor);
-    centerGradient.addColorStop(0.5, borderOutlineColor);
-    centerGradient.addColorStop(1, borderOutlineColor);
-    ctx.fillStyle = centerGradient;
-    ctx.fill();
-    
-    if (logoToDisplay) {
-      const img = new Image();
-      img.crossOrigin = 'anonymous';
-      img.onload = () => {
-        ctx.save();
-        ctx.beginPath();
-        ctx.arc(center, center, centerRadius, 0, 2 * Math.PI);
-        ctx.clip();
-        ctx.drawImage(img, center - centerRadius, center - centerRadius, centerRadius * 2, centerRadius * 2);
-        ctx.restore();
-      };
-      img.src = logoToDisplay;
-    } else {
-      ctx.beginPath();
-      ctx.arc(center, center, centerRadius, 0, 2 * Math.PI);
-      ctx.fillStyle = '#fff';
-      ctx.fill();
-      ctx.strokeStyle = borderOutlineColor;
-      ctx.lineWidth = 3;
-      ctx.stroke();
-    }
+  // Fonction pour obtenir l'URL d'une image (File ou string)
+  const getImageUrl = (image: string | File | null | undefined): string | null => {
+    if (!image) return null;
+    if (typeof image === 'string') return image;
+    if (image instanceof File) return URL.createObjectURL(image);
+    return null;
   };
 
   useEffect(() => {
-    drawWheel();
-  }, [segments, rotation, centerImage, centerLogo, theme, customColors, borderColor, borderOutlineColor, canvasSize]);
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const centerX = canvasSize / 2;
+    const centerY = canvasSize / 2;
+    const radius = (canvasSize / 2) - 30;
+
+    // Clear canvas
+    ctx.clearRect(0, 0, canvasSize, canvasSize);
+
+    // Draw segments
+    if (segments.length > 0) {
+      const anglePerSegment = (2 * Math.PI) / segments.length;
+
+      segments.forEach((segment, index) => {
+        const startAngle = index * anglePerSegment + rotation;
+        const endAngle = (index + 1) * anglePerSegment + rotation;
+
+        // Draw segment
+        ctx.beginPath();
+        ctx.moveTo(centerX, centerY);
+        ctx.arc(centerX, centerY, radius, startAngle, endAngle);
+        ctx.closePath();
+        ctx.fillStyle = segment.color;
+        ctx.fill();
+
+        // Draw segment border
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Draw text
+        if (segment.label) {
+          ctx.save();
+          ctx.translate(centerX, centerY);
+          ctx.rotate(startAngle + anglePerSegment / 2);
+          
+          ctx.fillStyle = '#ffffff';
+          ctx.font = 'bold 16px Arial';
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          
+          // Add text shadow for better readability
+          ctx.shadowColor = 'rgba(0,0,0,0.5)';
+          ctx.shadowBlur = 3;
+          ctx.shadowOffsetX = 1;
+          ctx.shadowOffsetY = 1;
+          
+          ctx.fillText(segment.label, radius * 0.7, 0);
+          ctx.restore();
+        }
+      });
+    }
+
+    // Draw outer border
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+    ctx.strokeStyle = borderOutlineColor;
+    ctx.lineWidth = 8;
+    ctx.stroke();
+
+    // Draw inner border
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+    ctx.strokeStyle = borderColor;
+    ctx.lineWidth = 4;
+    ctx.stroke();
+
+    // Draw center circle
+    const centerRadius = 50;
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, centerRadius, 0, 2 * Math.PI);
+    ctx.fillStyle = '#ffffff';
+    ctx.fill();
+    ctx.strokeStyle = borderColor;
+    ctx.lineWidth = 3;
+    ctx.stroke();
+
+    // Draw center image/logo
+    const logoUrl = getImageUrl(centerLogo || centerImage);
+    if (logoUrl) {
+      const img = new Image();
+      img.onload = () => {
+        ctx.save();
+        ctx.beginPath();
+        ctx.arc(centerX, centerY, centerRadius - 5, 0, 2 * Math.PI);
+        ctx.clip();
+        
+        const imgSize = (centerRadius - 5) * 2;
+        ctx.drawImage(
+          img,
+          centerX - imgSize / 2,
+          centerY - imgSize / 2,
+          imgSize,
+          imgSize
+        );
+        ctx.restore();
+      };
+      img.src = logoUrl;
+    }
+  }, [segments, rotation, centerImage, centerLogo, borderColor, borderOutlineColor, canvasSize]);
 
   return (
     <canvas
@@ -195,10 +160,10 @@ const WheelCanvas: React.FC<WheelCanvasProps> = ({
       style={{
         position: 'absolute',
         left: offset,
-        top: 0,
-        zIndex: 1
+        top: '0px',
+        zIndex: 2,
+        filter: 'drop-shadow(0 8px 32px rgba(0,0,0,0.3))'
       }}
-      className="rounded-full"
     />
   );
 };

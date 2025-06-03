@@ -71,7 +71,7 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
         // Synchroniser la configuration des boutons
         buttonLabel: campaign.buttonConfig?.text || campaign.gameConfig?.[campaign.type]?.buttonLabel,
         buttonColor: campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor,
-        // Garder les autres couleurs existantes
+        // Garder les autres couleurs existantes et ajouter les images
         containerBackgroundColor: campaign.gameConfig?.[campaign.type]?.containerBackgroundColor,
         backgroundColor: campaign.gameConfig?.[campaign.type]?.backgroundColor,
         borderColor: campaign.gameConfig?.[campaign.type]?.borderColor,
@@ -79,6 +79,17 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
         slotBorderColor: campaign.gameConfig?.[campaign.type]?.slotBorderColor,
         slotBorderWidth: campaign.gameConfig?.[campaign.type]?.slotBorderWidth,
         slotBackgroundColor: campaign.gameConfig?.[campaign.type]?.slotBackgroundColor,
+        // Ajouter les images de fond du jeu
+        backgroundImage: campaign.design?.backgroundImage
+      }
+    },
+    // Synchroniser les configurations de roue avec les images centrales
+    config: {
+      ...campaign.config,
+      roulette: {
+        ...campaign.config?.roulette,
+        centerImage: campaign.design?.centerLogo,
+        backgroundImage: campaign.design?.backgroundImage
       }
     }
   };
@@ -91,7 +102,7 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
         <GameCanvasPreview 
           campaign={enhancedCampaign}
           className="w-full h-full"
-          key={`preview-${gameSize}-${gamePosition}-${campaign.buttonConfig?.color}-${JSON.stringify(campaign.gameConfig?.[campaign.type])}`}
+          key={`preview-${gameSize}-${gamePosition}-${campaign.buttonConfig?.color}-${JSON.stringify(campaign.gameConfig?.[campaign.type])}-${campaign.design?.backgroundImage}-${campaign.design?.centerLogo}`}
         />
       </div>
     </div>
