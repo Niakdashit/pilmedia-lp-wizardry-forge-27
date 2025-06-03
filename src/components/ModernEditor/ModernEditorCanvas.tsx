@@ -56,18 +56,22 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
     ...campaign,
     gameSize,
     gamePosition,
-    // Mettre à jour la configuration des boutons de manière cohérente
+    // S'assurer que la configuration des boutons est cohérente
     buttonConfig: {
       ...campaign.buttonConfig,
-      // S'assurer que la couleur est bien propagée
-      color: campaign.buttonConfig?.color || '#841b60'
+      // Synchroniser avec la configuration du jeu si elle existe
+      text: campaign.buttonConfig?.text || campaign.gameConfig?.[campaign.type]?.buttonLabel,
+      color: campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor || '#841b60'
     },
     // S'assurer que les couleurs personnalisées sont incluses
     gameConfig: {
       ...campaign.gameConfig,
       [campaign.type]: {
         ...campaign.gameConfig?.[campaign.type],
-        // Garder les couleurs existantes si elles sont définies
+        // Synchroniser la configuration des boutons
+        buttonLabel: campaign.buttonConfig?.text || campaign.gameConfig?.[campaign.type]?.buttonLabel,
+        buttonColor: campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor,
+        // Garder les autres couleurs existantes
         containerBackgroundColor: campaign.gameConfig?.[campaign.type]?.containerBackgroundColor,
         backgroundColor: campaign.gameConfig?.[campaign.type]?.backgroundColor,
         borderColor: campaign.gameConfig?.[campaign.type]?.borderColor,
@@ -75,9 +79,6 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
         slotBorderColor: campaign.gameConfig?.[campaign.type]?.slotBorderColor,
         slotBorderWidth: campaign.gameConfig?.[campaign.type]?.slotBorderWidth,
         slotBackgroundColor: campaign.gameConfig?.[campaign.type]?.slotBackgroundColor,
-        // Ajouter la configuration des boutons
-        buttonLabel: campaign.gameConfig?.[campaign.type]?.buttonLabel || campaign.buttonConfig?.text,
-        buttonColor: campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor,
       }
     }
   };
@@ -90,6 +91,7 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
         <GameCanvasPreview 
           campaign={enhancedCampaign}
           className="w-full h-full"
+          key={`preview-${gameSize}-${gamePosition}-${campaign.buttonConfig?.color}-${JSON.stringify(campaign.gameConfig?.[campaign.type])}`}
         />
       </div>
     </div>

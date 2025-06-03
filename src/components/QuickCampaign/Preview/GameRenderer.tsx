@@ -22,16 +22,25 @@ interface GameRendererProps {
     slotBorderWidth: number;
     slotBackgroundColor: string;
   };
+  gameSize?: 'small' | 'medium' | 'large' | 'xlarge';
+  gamePosition?: 'top' | 'center' | 'bottom' | 'left' | 'right';
 }
 
 const GameRenderer: React.FC<GameRendererProps> = ({
   gameType,
   mockCampaign,
   customColors,
-  jackpotColors
+  jackpotColors,
+  gameSize = 'large',
+  gamePosition = 'center'
 }) => {
-  console.log('GameRenderer received jackpotColors:', jackpotColors);
-  console.log('GameRenderer mockCampaign gameConfig:', mockCampaign.gameConfig?.jackpot);
+  console.log('GameRenderer received:', { 
+    gameType, 
+    gameSize, 
+    gamePosition,
+    jackpotColors,
+    mockCampaign: mockCampaign.gameConfig?.jackpot 
+  });
 
   switch (gameType) {
     case 'wheel':
@@ -44,8 +53,8 @@ const GameRenderer: React.FC<GameRendererProps> = ({
             maxWinners: 10,
             winnersCount: 0
           }}
-          gameSize="large"
-          gamePosition="center"
+          gameSize={gameSize}
+          gamePosition={gamePosition}
           previewDevice="desktop"
         />
       );
@@ -60,7 +69,7 @@ const GameRenderer: React.FC<GameRendererProps> = ({
             maxWinners: 10,
             winnersCount: 0
           }}
-          buttonLabel={mockCampaign.gameConfig?.jackpot?.buttonLabel || 'Lancer le Jackpot'}
+          buttonLabel={mockCampaign.gameConfig?.jackpot?.buttonLabel || mockCampaign.buttonConfig?.text || 'Lancer le Jackpot'}
           buttonColor={customColors.primary}
           backgroundImage={mockCampaign.gameConfig?.jackpot?.backgroundImage}
           // Utiliser directement les couleurs du store jackpotColors

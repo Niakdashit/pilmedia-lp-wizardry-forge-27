@@ -60,6 +60,8 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
             mockCampaign={mockCampaign}
             customColors={customColors}
             jackpotColors={jackpotColors}
+            gameSize={mockCampaign.gameSize || 'large'}
+            gamePosition={mockCampaign.gamePosition || 'center'}
           />
         </div>
       </div>

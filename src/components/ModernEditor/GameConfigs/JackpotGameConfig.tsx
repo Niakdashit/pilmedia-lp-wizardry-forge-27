@@ -87,6 +87,10 @@ const JackpotGameConfig: React.FC<JackpotGameConfigProps> = ({
     updateButtonConfig({ color: value });
   };
 
+  // Valeurs actuelles avec fallbacks cohérents
+  const currentButtonText = campaign.buttonConfig?.text || jackpotConfig.buttonLabel || 'Lancer le Jackpot';
+  const currentButtonColor = campaign.buttonConfig?.color || jackpotConfig.buttonColor || '#ec4899';
+
   return (
     <div className="space-y-6">
       {/* Configuration du bouton */}
@@ -103,7 +107,7 @@ const JackpotGameConfig: React.FC<JackpotGameConfigProps> = ({
           </label>
           <input
             type="text"
-            value={campaign.buttonConfig?.text || jackpotConfig.buttonLabel || 'Lancer le Jackpot'}
+            value={currentButtonText}
             onChange={(e) => handleButtonLabelChange(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
             placeholder="Lancer le Jackpot"
@@ -118,19 +122,19 @@ const JackpotGameConfig: React.FC<JackpotGameConfigProps> = ({
           <div className="flex items-center space-x-3">
             <div 
               className="w-8 h-8 rounded border border-gray-300 cursor-pointer"
-              style={{ backgroundColor: campaign.buttonConfig?.color || jackpotConfig.buttonColor || '#ec4899' }}
+              style={{ backgroundColor: currentButtonColor }}
               onClick={() => document.getElementById('buttonColor')?.click()}
             />
             <input
               id="buttonColor"
               type="color"
-              value={campaign.buttonConfig?.color || jackpotConfig.buttonColor || '#ec4899'}
+              value={currentButtonColor}
               onChange={(e) => handleButtonColorChange(e.target.value)}
               className="sr-only"
             />
             <input
               type="text"
-              value={campaign.buttonConfig?.color || jackpotConfig.buttonColor || '#ec4899'}
+              value={currentButtonColor}
               onChange={(e) => handleButtonColorChange(e.target.value)}
               className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
               placeholder="#ec4899"

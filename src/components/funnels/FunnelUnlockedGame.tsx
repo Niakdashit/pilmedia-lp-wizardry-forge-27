@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Modal from '../common/Modal';
 import ValidationMessage from '../common/ValidationMessage';
@@ -8,6 +9,7 @@ import { Jackpot } from '../GameTypes';
 import ScratchPreview from '../GameTypes/ScratchPreview';
 import DicePreview from '../GameTypes/DicePreview';
 import { useParticipations } from '../../hooks/useParticipations';
+import { GAME_SIZES, GameSize } from '../configurators/GameSizeSelector';
 
 const DEFAULT_FIELDS: FieldConfig[] = [
   { id: "civilite", label: "Civilité", type: "select", options: ["M.", "Mme"], required: false },
@@ -81,29 +83,36 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
   // Rendu du jeu avec dimensions responsive corrigées
   const renderGame = () => {
     const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage;
-    const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel;
-    const buttonColor = campaign.gameConfig?.[campaign.type]?.buttonColor;
+    const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel || campaign.buttonConfig?.text;
+    const buttonColor = campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor;
     const contrastBg = mobileConfig?.contrastBackground || campaign.screens?.[2]?.contrastBackground;
+
+    // Récupérer la taille et position du jeu depuis la campagne
+    const gameSize: GameSize = (campaign.gameSize && Object.keys(GAME_SIZES).includes(campaign.gameSize)) 
+      ? campaign.gameSize as GameSize 
+      : 'medium';
+    const gamePosition = campaign.gamePosition || 'center';
 
     // Dimensions responsive selon le mode d'aperçu
     const getGameContainerStyle = (): React.CSSProperties => {
-      let maxSize = 280; // desktop par défaut
+      const gameDimensions = GAME_SIZES[gameSize];
+      let scaleFactor = 1;
       
       if (previewMode === 'mobile') {
-        maxSize = 240;
+        scaleFactor = 0.8;
       } else if (previewMode === 'tablet') {
-        maxSize = 260;
+        scaleFactor = 0.9;
       }
 
       return {
-        width: '100%',
-        height: 'auto',
+        width: `${gameDimensions.width * scaleFactor}px`,
+        height: `${gameDimensions.height * scaleFactor}px`,
+        maxWidth: `${gameDimensions.width * scaleFactor}px`,
+        maxHeight: `${gameDimensions.height * scaleFactor}px`,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         padding: '10px',
-        maxWidth: `${maxSize}px`,
-        maxHeight: `${maxSize}px`,
         margin: '0 auto',
         position: 'relative'
       };
@@ -130,8 +139,8 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
                 winnersCount: 0
               }}
               onFinish={handleGameFinish}
-              gameSize="medium"
-              gamePosition="center"
+              gameSize={gameSize}
+              gamePosition={gamePosition}
               previewDevice={previewMode}
             />
           );
