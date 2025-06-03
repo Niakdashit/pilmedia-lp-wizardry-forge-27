@@ -23,8 +23,8 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   console.log('Button config:', campaign.buttonConfig);
 
   const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage;
-  const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel || campaign.buttonConfig?.text || 'Lancer le Jackpot';
-  const buttonColor = campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor || '#ec4899';
+  const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel || campaign.buttonConfig?.text || 'Jouer';
+  const buttonColor = campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor || '#841b60';
 
   // Get game size and position from campaign with proper typing
   const gameSize: GameSize = (campaign.gameSize && Object.keys(GAME_SIZES).includes(campaign.gameSize)) 
@@ -131,14 +131,26 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
               onFinish={() => {}}
               gameSize={gameSize}
               gamePosition={gamePosition}
-              key={`${gameSize}-${gamePosition}-${JSON.stringify(campaign.gameConfig?.roulette)}`}
+              key={`${gameSize}-${gamePosition}-${JSON.stringify(campaign.gameConfig?.wheel)}`}
             />
           </div>
         );
       case 'scratch':
         return (
           <div style={gameContainerStyle}>
-            <ScratchPreview config={campaign.gameConfig?.scratch || {}} />
+            <ScratchPreview 
+              config={campaign.gameConfig?.scratch || {}}
+              buttonLabel={buttonLabel}
+              buttonColor={buttonColor}
+              gameSize={gameSize}
+              isPreview={true}
+              instantWinConfig={campaign.gameConfig?.scratch?.instantWin || {
+                mode: 'instant_winner' as const,
+                winProbability: 0.1,
+                maxWinners: 10,
+                winnersCount: 0
+              }}
+            />
           </div>
         );
       case 'memory':

@@ -84,7 +84,7 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
   const renderGame = () => {
     const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage;
     const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel || campaign.buttonConfig?.text;
-    const buttonColor = campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor;
+    const buttonColor = campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor || '#841b60';
     const contrastBg = mobileConfig?.contrastBackground || campaign.screens?.[2]?.contrastBackground;
 
     // Récupérer la taille et position du jeu depuis la campagne
@@ -147,7 +147,17 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
         case 'scratch':
           return (
             <ScratchPreview 
-              config={campaign.gameConfig?.scratch || {}} 
+              config={campaign.gameConfig?.scratch || {}}
+              buttonLabel={buttonLabel}
+              buttonColor={buttonColor}
+              gameSize={gameSize}
+              isPreview={true}
+              instantWinConfig={campaign.gameConfig?.scratch?.instantWin || {
+                mode: 'instant_winner' as const,
+                winProbability: 0.1,
+                maxWinners: 10,
+                winnersCount: 0
+              }}
               {...commonProps}
             />
           );
@@ -194,8 +204,8 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
           </ContrastBackground>
         </div>
         
-        {/* Overlay clickable si formulaire non validé */}
-        {!formValidated && (
+        {/* Overlay clickable si formulaire non validé et jeu non commencé */}
+        {!formValidated && !gameStarted && (
           <div 
             onClick={handleGameButtonClick}
             className="absolute inset-0 flex items-center justify-center z-30 rounded-lg cursor-pointer bg-black/0" 
