@@ -27,7 +27,6 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
   buttonLabel = 'Gratter',
   buttonColor = '#841b60',
   gameSize = 'medium',
-  isPreview = true,
   instantWinConfig
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
