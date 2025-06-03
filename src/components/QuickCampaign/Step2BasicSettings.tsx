@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { Upload, ArrowLeft, Calendar, Target, FileText, Image } from 'lucide-react';
+import { ArrowLeft, Calendar, Target, FileText, Image } from 'lucide-react';
 import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
 
 const marketingGoals = [
@@ -9,29 +8,25 @@ const marketingGoals = [
     id: 'acquisition',
     label: 'Acquisition de prospects',
     description: 'Générer des leads qualifiés',
-    icon: '🎯',
-    gradient: 'from-blue-500 to-cyan-500'
+    icon: '🎯'
   },
   {
     id: 'notoriete',
     label: 'Notoriété de marque',
     description: 'Faire connaître votre marque',
-    icon: '📢',
-    gradient: 'from-purple-500 to-pink-500'
+    icon: '📢'
   },
   {
     id: 'engagement',
     label: 'Engagement communauté',
     description: 'Fidéliser votre audience',
-    icon: '❤️',
-    gradient: 'from-red-500 to-orange-500'
+    icon: '❤️'
   },
   {
     id: 'autre',
     label: 'Autre objectif',
     description: 'Objectif personnalisé',
-    icon: '⚡',
-    gradient: 'from-green-500 to-teal-500'
+    icon: '⚡'
   }
 ];
 
@@ -65,34 +60,26 @@ const Step2BasicSettings: React.FC = () => {
   const canProceed = campaignName.trim() && launchDate && marketingGoal;
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-3 sm:p-6">
-      <div className="max-w-5xl w-full">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-8 sm:mb-16"
-        >
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 text-white px-4">
-            Paramétrez votre campagne en quelques secondes
+    <div className="min-h-screen w-full flex items-center justify-center px-8 py-16">
+      <div className="max-w-4xl w-full">
+        {/* Header */}
+        <div className="text-center mb-16">
+          <h1 className="text-5xl font-light text-white mb-6 tracking-tight">
+            Paramétrez votre campagne
           </h1>
-          <p className="text-lg sm:text-xl md:text-2xl text-white px-4">
+          <p className="text-xl text-white/80 font-light">
             Vos réglages sont personnalisables à tout moment.
           </p>
-        </motion.div>
+        </div>
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="bg-white/80 backdrop-blur-lg rounded-[20px] sm:rounded-[32px] shadow-2xl p-4 sm:p-6 md:p-8 lg:p-10 space-y-6 sm:space-y-8 lg:space-y-10 border border-white/20 mx-2"
-        >
-          {/* Nom de la campagne */}
-          <div>
-            <div className="flex items-center space-x-2 sm:space-x-3 mb-4 sm:mb-6">
-              <FileText className="w-6 h-6 sm:w-8 sm:h-8 text-[#841b60]" />
-              <label className="block text-lg sm:text-xl md:text-2xl font-bold text-gray-900">
-                Nom de votre campagne *
+        {/* Form */}
+        <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-12 space-y-12">
+          {/* Campaign Name */}
+          <div className="space-y-4">
+            <div className="flex items-center space-x-3">
+              <FileText className="w-6 h-6 text-white/70" />
+              <label className="text-lg font-medium text-white">
+                Nom de votre campagne
               </label>
             </div>
             <input
@@ -100,84 +87,84 @@ const Step2BasicSettings: React.FC = () => {
               value={campaignName}
               onChange={(e) => setCampaignName(e.target.value)}
               placeholder="Ex: Jeu de Noël 2024"
-              className="w-full px-4 sm:px-6 md:px-8 py-3 sm:py-4 md:py-5 text-base sm:text-lg md:text-xl border-2 border-gray-200 rounded-xl sm:rounded-2xl focus:border-[#841b60] focus:outline-none transition-all bg-white/80 backdrop-blur-sm"
+              className="w-full px-6 py-4 bg-white/10 border border-white/20 rounded-2xl 
+                       text-white placeholder-white/50 focus:outline-none focus:border-white/40
+                       transition-colors font-light text-lg backdrop-blur-sm"
             />
           </div>
 
-          {/* Date de lancement */}
-          <div>
-            <div className="flex items-center space-x-2 sm:space-x-3 mb-4 sm:mb-6">
-              <Calendar className="w-6 h-6 sm:w-8 sm:h-8 text-[#841b60]" />
-              <label className="block text-lg sm:text-xl md:text-2xl font-bold text-gray-900">
-                Date de lancement *
+          {/* Launch Date */}
+          <div className="space-y-4">
+            <div className="flex items-center space-x-3">
+              <Calendar className="w-6 h-6 text-white/70" />
+              <label className="text-lg font-medium text-white">
+                Date de lancement
               </label>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <input
                 type="date"
                 value={launchDate}
                 onChange={(e) => setLaunchDate(e.target.value)}
-                className="px-4 sm:px-6 md:px-8 py-3 sm:py-4 md:py-5 text-base sm:text-lg md:text-xl border-2 border-gray-200 rounded-xl sm:rounded-2xl focus:border-[#841b60] focus:outline-none transition-all bg-white/80 backdrop-blur-sm"
+                className="px-6 py-4 bg-white/10 border border-white/20 rounded-2xl 
+                         text-white focus:outline-none focus:border-white/40
+                         transition-colors font-light backdrop-blur-sm"
               />
-              <motion.button
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+              <button
                 onClick={() => setLaunchDate(new Date().toISOString().split('T')[0])}
-                className="px-4 sm:px-6 md:px-8 py-3 sm:py-4 md:py-5 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold rounded-xl sm:rounded-2xl hover:shadow-lg transition-all text-base sm:text-lg md:text-xl"
+                className="px-6 py-4 bg-blue-500 text-white font-medium rounded-2xl 
+                         hover:bg-blue-600 transition-colors"
               >
                 Commencer maintenant
-              </motion.button>
+              </button>
             </div>
           </div>
 
-          {/* Objectif marketing */}
-          <div>
-            <div className="flex items-center space-x-2 sm:space-x-3 mb-4 sm:mb-6">
-              <Target className="w-6 h-6 sm:w-8 sm:h-8 text-[#841b60]" />
-              <label className="block text-lg sm:text-xl md:text-2xl font-bold text-gray-900">
-                Objectif marketing *
+          {/* Marketing Goal */}
+          <div className="space-y-4">
+            <div className="flex items-center space-x-3">
+              <Target className="w-6 h-6 text-white/70" />
+              <label className="text-lg font-medium text-white">
+                Objectif marketing
               </label>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {marketingGoals.map((goal) => (
-                <motion.button
+                <button
                   key={goal.id}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
                   onClick={() => setMarketingGoal(goal.id)}
                   className={`
-                    p-4 sm:p-5 md:p-6 text-left rounded-xl sm:rounded-2xl border-2 transition-all
-                    bg-white/60 backdrop-blur-sm shadow-lg
+                    p-6 text-left rounded-2xl border transition-all
                     ${marketingGoal === goal.id 
-                      ? 'border-[#841b60] bg-[#841b60]/10 shadow-xl' 
-                      : 'border-gray-200 hover:border-gray-300 hover:shadow-xl'
+                      ? 'bg-white/20 border-white/40' 
+                      : 'bg-white/5 border-white/20 hover:bg-white/10 hover:border-white/30'
                     }
                   `}
                 >
-                  <div className="flex items-start space-x-3 sm:space-x-4">
-                    <div className={`p-2 sm:p-3 rounded-lg sm:rounded-xl bg-gradient-to-r ${goal.gradient} text-white text-lg sm:text-xl md:text-2xl`}>
+                  <div className="flex items-start space-x-4">
+                    <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center text-xl">
                       {goal.icon}
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="font-bold text-gray-900 text-sm sm:text-base md:text-lg mb-1 sm:mb-2 break-words">
+                    <div>
+                      <div className="font-medium text-white mb-1">
                         {goal.label}
                       </div>
-                      <div className="text-gray-600 text-xs sm:text-sm md:text-base break-words">
+                      <div className="text-white/70 text-sm">
                         {goal.description}
                       </div>
                     </div>
                   </div>
-                </motion.button>
+                </button>
               ))}
             </div>
           </div>
 
-          {/* Upload logo */}
-          <div>
-            <div className="flex items-center space-x-2 sm:space-x-3 mb-4 sm:mb-6">
-              <Image className="w-6 h-6 sm:w-8 sm:h-8 text-[#841b60]" />
-              <label className="block text-lg sm:text-xl md:text-2xl font-bold text-gray-900">
-                Logo (optionnel)
+          {/* Logo Upload */}
+          <div className="space-y-4">
+            <div className="flex items-center space-x-3">
+              <Image className="w-6 h-6 text-white/70" />
+              <label className="text-lg font-medium text-white">
+                Logo <span className="text-white/50 font-light">(optionnel)</span>
               </label>
             </div>
             <div
@@ -188,30 +175,30 @@ const Step2BasicSettings: React.FC = () => {
               }}
               onDragLeave={() => setDragActive(false)}
               className={`
-                border-2 border-dashed rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 text-center transition-all
-                bg-white/40 backdrop-blur-sm
-                ${dragActive ? 'border-[#841b60] bg-[#841b60]/10' : 'border-gray-300'}
+                border-2 border-dashed rounded-2xl p-8 text-center transition-all
+                ${dragActive ? 'border-white/40 bg-white/10' : 'border-white/20 bg-white/5'}
               `}
             >
-              <Upload className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 text-gray-400 mx-auto mb-4 sm:mb-6" />
               {logoFile ? (
                 <div>
-                  <p className="text-green-600 font-bold text-base sm:text-lg break-all px-2">
+                  <p className="text-white font-medium mb-2">
                     {logoFile.name}
                   </p>
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
+                  <button
                     onClick={() => setLogoFile(null)}
-                    className="text-gray-500 hover:text-red-500 mt-2 sm:mt-3 font-medium text-sm sm:text-base"
+                    className="text-white/60 hover:text-red-400 transition-colors"
                   >
                     Supprimer
-                  </motion.button>
+                  </button>
                 </div>
               ) : (
                 <>
-                  <p className="text-gray-600 mb-2 sm:mb-3 text-base sm:text-lg px-2">
+                  <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center mx-auto mb-4">
+                    <Image className="w-6 h-6 text-white/60" />
+                  </div>
+                  <p className="text-white/70 mb-2">
                     Glissez votre logo ici ou{' '}
-                    <label className="text-[#841b60] cursor-pointer hover:underline font-medium">
+                    <label className="text-blue-400 cursor-pointer hover:text-blue-300 transition-colors">
                       parcourez
                       <input
                         type="file"
@@ -221,56 +208,48 @@ const Step2BasicSettings: React.FC = () => {
                       />
                     </label>
                   </p>
-                  <p className="text-gray-400 text-sm sm:text-base">PNG, JPG jusqu'à 5MB</p>
+                  <p className="text-white/50 text-sm">PNG, JPG jusqu'à 5MB</p>
                 </>
               )}
             </div>
           </div>
+        </div>
 
-          {/* Navigation */}
-          <div className="flex flex-col sm:flex-row justify-between items-center pt-6 sm:pt-8 space-y-4 sm:space-y-0">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setCurrentStep(1)}
-              className="w-full sm:w-auto flex items-center justify-center space-x-2 sm:space-x-3 px-6 sm:px-8 py-3 sm:py-4 text-gray-600 hover:text-gray-900 transition-colors font-medium rounded-xl sm:rounded-2xl hover:bg-gray-100 text-base sm:text-lg"
-            >
-              <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6" />
-              <span>Retour</span>
-            </motion.button>
+        {/* Navigation */}
+        <div className="flex justify-between items-center mt-12">
+          <button
+            onClick={() => setCurrentStep(1)}
+            className="flex items-center space-x-2 px-6 py-3 text-white/70 hover:text-white 
+                     transition-colors font-light"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            <span>Retour</span>
+          </button>
 
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => setCurrentStep(3)}
-              disabled={!canProceed}
-              className={`
-                w-full sm:w-auto px-8 sm:px-12 py-3 sm:py-4 rounded-xl sm:rounded-2xl font-bold text-base sm:text-lg transition-all
-                ${canProceed 
-                  ? 'bg-gradient-to-r from-[#841b60] to-pink-500 text-white hover:shadow-xl' 
-                  : 'bg-gray-200 text-gray-400 cursor-not-allowed'
-                }
-              `}
-            >
-              Continuer
-            </motion.button>
+          <button
+            onClick={() => setCurrentStep(3)}
+            disabled={!canProceed}
+            className={`
+              px-8 py-4 rounded-2xl font-medium transition-all
+              ${canProceed 
+                ? 'bg-blue-500 text-white hover:bg-blue-600' 
+                : 'bg-white/10 text-white/40 cursor-not-allowed'
+              }
+            `}
+          >
+            Continuer
+          </button>
+        </div>
+
+        {/* Progress */}
+        <div className="text-center mt-16">
+          <div className="flex items-center justify-center space-x-2 mb-4">
+            <div className="w-8 h-1 bg-white/30 rounded-full"></div>
+            <div className="w-8 h-1 bg-white rounded-full"></div>
+            <div className="w-8 h-1 bg-white/30 rounded-full"></div>
           </div>
-        </motion.div>
-
-        {/* Progress indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8 }}
-          className="text-center mt-8 sm:mt-12"
-        >
-          <div className="flex items-center justify-center space-x-2 sm:space-x-3 mb-3 sm:mb-4">
-            <div className="w-8 sm:w-12 h-1.5 sm:h-2 bg-gray-300 rounded-full"></div>
-            <div className="w-8 sm:w-12 h-1.5 sm:h-2 bg-gradient-to-r from-[#841b60] to-pink-500 rounded-full"></div>
-            <div className="w-8 sm:w-12 h-1.5 sm:h-2 bg-gray-300 rounded-full"></div>
-          </div>
-          <p className="text-base sm:text-lg font-medium text-white">Étape 2 sur 3</p>
-        </motion.div>
+          <p className="text-white/60 font-light">Étape 2 sur 3</p>
+        </div>
       </div>
     </div>
   );
