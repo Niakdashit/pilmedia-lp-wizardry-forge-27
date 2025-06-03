@@ -18,6 +18,8 @@ interface WheelCanvasProps {
     secondary: string;
     accent?: string;
   };
+  borderColor?: string;
+  borderOutlineColor?: string;
   canvasSize: number;
   offset: string;
 }
@@ -43,6 +45,8 @@ const WheelCanvas: React.FC<WheelCanvasProps> = ({
   centerLogo,
   theme,
   customColors,
+  borderColor = '#841b60',
+  borderOutlineColor = '#FFD700',
   canvasSize,
   offset
 }) => {
@@ -79,14 +83,14 @@ const WheelCanvas: React.FC<WheelCanvasProps> = ({
       ctx.fillStyle = seg.color || themeColors[i % themeColors.length];
       ctx.fill();
 
-      // Draw golden separator lines
+      // Draw golden separator lines with custom color
       ctx.beginPath();
       ctx.moveTo(center, center);
       ctx.lineTo(
         center + (radius + 15) * Math.cos(startAngle),
         center + (radius + 15) * Math.sin(startAngle)
       );
-      ctx.strokeStyle = '#FFD700';
+      ctx.strokeStyle = borderOutlineColor;
       ctx.lineWidth = 2;
       ctx.stroke();
 
@@ -124,32 +128,36 @@ const WheelCanvas: React.FC<WheelCanvasProps> = ({
       }
     });
 
-    // Draw outer golden border - dessiner par-dessus les segments
+    // Draw outer border with custom colors
     ctx.beginPath();
     ctx.arc(center, center, radius + 15, 0, 2 * Math.PI);
     ctx.lineWidth = 8;
     const gradient = ctx.createLinearGradient(0, 0, size, size);
-    gradient.addColorStop(0, '#FFD700');
-    gradient.addColorStop(0.5, '#FFA500');
-    gradient.addColorStop(1, '#B8860B');
+    gradient.addColorStop(0, borderOutlineColor);
+    gradient.addColorStop(0.5, borderOutlineColor);
+    gradient.addColorStop(1, borderOutlineColor);
     ctx.strokeStyle = gradient;
     ctx.stroke();
 
-    // Draw inner border
+    // Draw inner border with custom color
     ctx.beginPath();
     ctx.arc(center, center, radius + 8, 0, 2 * Math.PI);
     ctx.lineWidth = 2;
-    ctx.strokeStyle = '#8B4513';
+    ctx.strokeStyle = borderColor;
     ctx.stroke();
 
-    // Draw center circle with golden border
+    // Draw center circle with custom border color
     const centerRadius = 35;
     const logoToDisplay = centerLogo || centerImage;
     
-    // Golden center border
+    // Center border with custom color
     ctx.beginPath();
     ctx.arc(center, center, centerRadius + 5, 0, 2 * Math.PI);
-    ctx.fillStyle = gradient;
+    const centerGradient = ctx.createLinearGradient(0, 0, size, size);
+    centerGradient.addColorStop(0, borderOutlineColor);
+    centerGradient.addColorStop(0.5, borderOutlineColor);
+    centerGradient.addColorStop(1, borderOutlineColor);
+    ctx.fillStyle = centerGradient;
     ctx.fill();
     
     if (logoToDisplay) {
@@ -169,7 +177,7 @@ const WheelCanvas: React.FC<WheelCanvasProps> = ({
       ctx.arc(center, center, centerRadius, 0, 2 * Math.PI);
       ctx.fillStyle = '#fff';
       ctx.fill();
-      ctx.strokeStyle = '#FFD700';
+      ctx.strokeStyle = borderOutlineColor;
       ctx.lineWidth = 3;
       ctx.stroke();
     }
@@ -177,7 +185,7 @@ const WheelCanvas: React.FC<WheelCanvasProps> = ({
 
   useEffect(() => {
     drawWheel();
-  }, [segments, rotation, centerImage, centerLogo, theme, customColors, canvasSize]);
+  }, [segments, rotation, centerImage, centerLogo, theme, customColors, borderColor, borderOutlineColor, canvasSize]);
 
   return (
     <canvas

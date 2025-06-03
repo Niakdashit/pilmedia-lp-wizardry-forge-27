@@ -50,6 +50,10 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   const centerLogo = campaign?.design?.centerLogo;
   const theme = campaign?.config?.roulette?.theme || 'default';
   
+  // Récupérer les couleurs de bordure personnalisées
+  const borderColor = campaign?.config?.roulette?.borderColor || '#841b60';
+  const borderOutlineColor = campaign?.config?.roulette?.borderOutlineColor || '#FFD700';
+  
   // Utiliser les couleurs personnalisées du store QuickCampaign ou valeurs par défaut
   const customColors = campaign?.design?.customColors;
   
@@ -206,7 +210,7 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
           }}
         />
         
-        {/* Canvas */}
+        {/* Canvas avec couleurs de bordure personnalisées */}
         <WheelCanvas
           segments={segments}
           rotation={rotation}
@@ -214,6 +218,8 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
           centerLogo={centerLogo}
           theme={theme}
           customColors={customColors}
+          borderColor={borderColor}
+          borderOutlineColor={borderOutlineColor}
           canvasSize={canvasSize}
           offset={shouldCropWheel ? (gamePosition === 'left' ? '0px' : `-${canvasSize * 0.5}px`) : '0px'}
         />
