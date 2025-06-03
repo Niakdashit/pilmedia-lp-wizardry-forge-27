@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Jackpot from '../GameTypes/Jackpot';
 import { Quiz } from '../GameTypes';
@@ -9,134 +8,68 @@ import ScratchPreview from '../GameTypes/ScratchPreview';
 import DicePreview from '../GameTypes/DicePreview';
 import GameSizeSelector, { GameSize } from '../configurators/GameSizeSelector';
 import GamePositionSelector, { GamePosition } from '../configurators/GamePositionSelector';
-
 interface GameCanvasPreviewProps {
   campaign: any;
   className?: string;
 }
-
 const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   campaign,
   className = ""
 }) => {
   const [gameSize, setGameSize] = useState<GameSize>('small');
   const [gamePosition, setGamePosition] = useState<GamePosition>('center');
-  
   const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage;
   const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel || 'Lancer le Jackpot';
   const buttonColor = campaign.gameConfig?.[campaign.type]?.buttonColor || '#ec4899';
-
   const renderGame = () => {
     switch (campaign.type) {
       case 'jackpot':
-        return (
-          <Jackpot
-            isPreview={true}
-            instantWinConfig={{
-              mode: 'instant_winner' as const,
-              winProbability: campaign.gameConfig?.jackpot?.instantWin?.winProbability || 0.05,
-              maxWinners: campaign.gameConfig?.jackpot?.instantWin?.maxWinners,
-              winnersCount: 0
-            }}
-            buttonLabel={buttonLabel}
-            buttonColor={buttonColor}
-            backgroundImage={gameBackgroundImage}
-            // Utiliser les nouvelles couleurs personnalisées
-            containerBackgroundColor={campaign.gameConfig?.jackpot?.containerBackgroundColor || '#1f2937'}
-            backgroundColor={campaign.gameConfig?.jackpot?.backgroundColor || '#c4b5fd30'}
-            borderColor={campaign.gameConfig?.jackpot?.borderColor || '#8b5cf6'}
-            borderWidth={campaign.gameConfig?.jackpot?.borderWidth || 3}
-            slotBorderColor={campaign.gameConfig?.jackpot?.slotBorderColor || '#a78bfa'}
-            slotBorderWidth={campaign.gameConfig?.jackpot?.slotBorderWidth || 2}
-            slotBackgroundColor={campaign.gameConfig?.jackpot?.slotBackgroundColor || '#ffffff'}
-          />
-        );
+        return <Jackpot isPreview={true} instantWinConfig={{
+          mode: 'instant_winner' as const,
+          winProbability: campaign.gameConfig?.jackpot?.instantWin?.winProbability || 0.05,
+          maxWinners: campaign.gameConfig?.jackpot?.instantWin?.maxWinners,
+          winnersCount: 0
+        }} buttonLabel={buttonLabel} buttonColor={buttonColor} backgroundImage={gameBackgroundImage}
+        // Utiliser les nouvelles couleurs personnalisées
+        containerBackgroundColor={campaign.gameConfig?.jackpot?.containerBackgroundColor || '#1f2937'} backgroundColor={campaign.gameConfig?.jackpot?.backgroundColor || '#c4b5fd30'} borderColor={campaign.gameConfig?.jackpot?.borderColor || '#8b5cf6'} borderWidth={campaign.gameConfig?.jackpot?.borderWidth || 3} slotBorderColor={campaign.gameConfig?.jackpot?.slotBorderColor || '#a78bfa'} slotBorderWidth={campaign.gameConfig?.jackpot?.slotBorderWidth || 2} slotBackgroundColor={campaign.gameConfig?.jackpot?.slotBackgroundColor || '#ffffff'} />;
       case 'quiz':
-        return (
-          <Quiz 
-            config={campaign.gameConfig?.quiz || {}} 
-            onConfigChange={() => {}}
-          />
-        );
+        return <Quiz config={campaign.gameConfig?.quiz || {}} onConfigChange={() => {}} />;
       case 'wheel':
-        return (
-          <WheelPreview
-            campaign={campaign}
-            config={{
-              mode: 'instant_winner' as const,
-              winProbability: campaign.gameConfig?.wheel?.winProbability || 0.1,
-              maxWinners: campaign.gameConfig?.wheel?.maxWinners,
-              winnersCount: 0
-            }}
-            onFinish={() => {}}
-            gameSize={gameSize}
-            gamePosition={gamePosition}
-            key={`${gameSize}-${gamePosition}-${JSON.stringify(campaign.config?.roulette)}`}
-          />
-        );
+        return <WheelPreview campaign={campaign} config={{
+          mode: 'instant_winner' as const,
+          winProbability: campaign.gameConfig?.wheel?.winProbability || 0.1,
+          maxWinners: campaign.gameConfig?.wheel?.maxWinners,
+          winnersCount: 0
+        }} onFinish={() => {}} gameSize={gameSize} gamePosition={gamePosition} key={`${gameSize}-${gamePosition}-${JSON.stringify(campaign.config?.roulette)}`} />;
       case 'scratch':
-        return (
-          <ScratchPreview 
-            config={campaign.gameConfig?.scratch || {}} 
-          />
-        );
+        return <ScratchPreview config={campaign.gameConfig?.scratch || {}} />;
       case 'memory':
-        return (
-          <MemoryPreview 
-            config={campaign.gameConfig?.memory || {}} 
-          />
-        );
+        return <MemoryPreview config={campaign.gameConfig?.memory || {}} />;
       case 'puzzle':
-        return (
-          <PuzzlePreview 
-            config={campaign.gameConfig?.puzzle || {}} 
-          />
-        );
+        return <PuzzlePreview config={campaign.gameConfig?.puzzle || {}} />;
       case 'dice':
-        return (
-          <DicePreview 
-            config={campaign.gameConfig?.dice || {}} 
-          />
-        );
+        return <DicePreview config={campaign.gameConfig?.dice || {}} />;
       default:
-        return (
-          <div className="text-center text-gray-500 flex items-center justify-center h-full">
+        return <div className="text-center text-gray-500 flex items-center justify-center h-full">
             <p className="text-sm">Type de jeu non pris en charge</p>
-          </div>
-        );
+          </div>;
     }
   };
-
-  return (
-    <div className={`relative w-full h-full overflow-hidden ${className}`} style={{ minHeight: '600px' }}>
+  return <div className={`relative w-full h-full overflow-hidden ${className}`} style={{
+    minHeight: '600px'
+  }}>
       {/* Image de fond plein écran */}
-      {gameBackgroundImage && (
-        <img
-          src={gameBackgroundImage}
-          alt="Background"
-          className="absolute inset-0 w-full h-full object-cover z-0"
-          style={{ pointerEvents: 'none' }}
-        />
-      )}
+      {gameBackgroundImage && <img src={gameBackgroundImage} alt="Background" className="absolute inset-0 w-full h-full object-cover z-0" style={{
+      pointerEvents: 'none'
+    }} />}
 
       {/* Panneau de contrôle des tailles et positions */}
-      <div className="absolute top-4 right-4 z-30 bg-white p-4 rounded-lg shadow-lg border space-y-4">
-        <GameSizeSelector
-          selectedSize={gameSize}
-          onSizeChange={setGameSize}
-        />
-        <GamePositionSelector
-          selectedPosition={gamePosition}
-          onPositionChange={setGamePosition}
-        />
-      </div>
+      
 
       {/* Conteneur pour le jeu avec positionnement relatif */}
       <div className="relative z-20 w-full h-full">
         {renderGame()}
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default GameCanvasPreview;
