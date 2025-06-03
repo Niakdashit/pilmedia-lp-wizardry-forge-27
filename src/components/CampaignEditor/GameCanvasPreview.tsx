@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Jackpot from '../GameTypes/Jackpot';
 import { Quiz } from '../GameTypes';
@@ -6,21 +7,20 @@ import MemoryPreview from '../GameTypes/MemoryPreview';
 import PuzzlePreview from '../GameTypes/PuzzlePreview';
 import ScratchPreview from '../GameTypes/ScratchPreview';
 import DicePreview from '../GameTypes/DicePreview';
-import GameSizeSelector, { GameSize } from '../configurators/GameSizeSelector';
-import GamePositionSelector, { GamePosition } from '../configurators/GamePositionSelector';
+
 interface GameCanvasPreviewProps {
   campaign: any;
   className?: string;
 }
+
 const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   campaign,
   className = ""
 }) => {
-  const [gameSize, setGameSize] = useState<GameSize>('small');
-  const [gamePosition, setGamePosition] = useState<GamePosition>('center');
   const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage;
   const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel || 'Lancer le Jackpot';
   const buttonColor = campaign.gameConfig?.[campaign.type]?.buttonColor || '#ec4899';
+
   const renderGame = () => {
     switch (campaign.type) {
       case 'jackpot':
@@ -40,7 +40,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
           winProbability: campaign.gameConfig?.wheel?.winProbability || 0.1,
           maxWinners: campaign.gameConfig?.wheel?.maxWinners,
           winnersCount: 0
-        }} onFinish={() => {}} gameSize={gameSize} gamePosition={gamePosition} key={`${gameSize}-${gamePosition}-${JSON.stringify(campaign.config?.roulette)}`} />;
+        }} onFinish={() => {}} gameSize={campaign.gameSize || 'medium'} gamePosition={campaign.gamePosition || 'center'} key={`${campaign.gameSize}-${campaign.gamePosition}-${JSON.stringify(campaign.config?.roulette)}`} />;
       case 'scratch':
         return <ScratchPreview config={campaign.gameConfig?.scratch || {}} />;
       case 'memory':
@@ -55,6 +55,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
           </div>;
     }
   };
+
   return <div className={`relative w-full h-full overflow-hidden ${className}`} style={{
     minHeight: '600px'
   }}>
@@ -63,13 +64,11 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
       pointerEvents: 'none'
     }} />}
 
-      {/* Panneau de contrôle des tailles et positions */}
-      
-
       {/* Conteneur pour le jeu avec positionnement relatif */}
       <div className="relative z-20 w-full h-full">
         {renderGame()}
       </div>
     </div>;
 };
+
 export default GameCanvasPreview;
