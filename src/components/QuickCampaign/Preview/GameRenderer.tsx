@@ -24,6 +24,7 @@ interface GameRendererProps {
   };
   gameSize?: 'small' | 'medium' | 'large' | 'xlarge';
   gamePosition?: 'top' | 'center' | 'bottom' | 'left' | 'right';
+  previewDevice?: 'desktop' | 'tablet' | 'mobile';
 }
 
 const GameRenderer: React.FC<GameRendererProps> = ({
@@ -32,7 +33,8 @@ const GameRenderer: React.FC<GameRendererProps> = ({
   customColors,
   jackpotColors,
   gameSize = 'large',
-  gamePosition = 'center'
+  gamePosition = 'center',
+  previewDevice = 'desktop'
 }) => {
   console.log('GameRenderer received:', { 
     gameType, 
@@ -42,11 +44,39 @@ const GameRenderer: React.FC<GameRendererProps> = ({
     mockCampaign: mockCampaign.gameConfig?.jackpot 
   });
 
+  // Synchroniser les couleurs de la roue avec les couleurs personnalisées
+  const synchronizedCampaign = {
+    ...mockCampaign,
+    config: {
+      ...mockCampaign.config,
+      roulette: {
+        ...mockCampaign.config?.roulette,
+        borderColor: customColors.primary,
+        borderOutlineColor: customColors.accent || customColors.secondary,
+        segmentColor1: customColors.primary,
+        segmentColor2: customColors.secondary,
+        segments: mockCampaign.config?.roulette?.segments?.map((segment: any, index: number) => ({
+          ...segment,
+          color: index % 2 === 0 ? customColors.primary : customColors.secondary
+        })) || []
+      }
+    },
+    design: {
+      ...mockCampaign.design,
+      customColors: customColors
+    },
+    buttonConfig: {
+      ...mockCampaign.buttonConfig,
+      color: customColors.primary,
+      borderColor: customColors.primary
+    }
+  };
+
   switch (gameType) {
     case 'wheel':
       return (
         <WheelPreview
-          campaign={mockCampaign}
+          campaign={synchronizedCampaign}
           config={mockCampaign.gameConfig?.wheel || {
             mode: "instant_winner" as const,
             winProbability: 0.1,
@@ -55,7 +85,7 @@ const GameRenderer: React.FC<GameRendererProps> = ({
           }}
           gameSize={gameSize}
           gamePosition={gamePosition}
-          previewDevice="desktop"
+          previewDevice={previewDevice}
         />
       );
 
@@ -72,7 +102,6 @@ const GameRenderer: React.FC<GameRendererProps> = ({
           buttonLabel={mockCampaign.gameConfig?.jackpot?.buttonLabel || mockCampaign.buttonConfig?.text || 'Lancer le Jackpot'}
           buttonColor={customColors.primary}
           backgroundImage={mockCampaign.gameConfig?.jackpot?.backgroundImage}
-          // Utiliser directement les couleurs du store jackpotColors
           containerBackgroundColor={jackpotColors.containerBackgroundColor}
           backgroundColor={jackpotColors.backgroundColor}
           borderColor={jackpotColors.borderColor}

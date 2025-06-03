@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Palette, RefreshCw } from 'lucide-react';
 
@@ -19,46 +20,60 @@ interface ColorPaletteSelectorProps {
 
 const colorPalettes: Record<string, ColorPalette[]> = {
   wheel: [{
-    name: 'Rose Pastel',
+    name: 'Bleu Corporate',
     colors: {
-      primary: '#FFB3BA',
-      secondary: '#FFDFBA',
-      accent: '#FFFFBA'
+      primary: '#3B82F6',
+      secondary: '#E3F2FD',
+      accent: '#1E40AF'
+    }
+  }, {
+    name: 'Vert Nature',
+    colors: {
+      primary: '#10B981',
+      secondary: '#D1FAE5',
+      accent: '#047857'
+    }
+  }, {
+    name: 'Violet Moderne',
+    colors: {
+      primary: '#8B5CF6',
+      secondary: '#EDE9FE',
+      accent: '#7C3AED'
+    }
+  }, {
+    name: 'Orange Dynamique',
+    colors: {
+      primary: '#F97316',
+      secondary: '#FED7AA',
+      accent: '#EA580C'
+    }
+  }, {
+    name: 'Rose Élégant',
+    colors: {
+      primary: '#EC4899',
+      secondary: '#FCE7F3',
+      accent: '#BE185D'
     }
   }, {
     name: 'Bleu Pastel',
     colors: {
-      primary: '#BAE1FF',
-      secondary: '#BAFFC9',
-      accent: '#C9BAFF'
+      primary: '#60A5FA',
+      secondary: '#DBEAFE',
+      accent: '#2563EB'
     }
   }, {
-    name: 'Lavande Douce',
+    name: 'Turquoise Zen',
     colors: {
-      primary: '#E6E6FA',
-      secondary: '#F0E68C',
-      accent: '#DDA0DD'
+      primary: '#14B8A6',
+      secondary: '#CCFBF1',
+      accent: '#0F766E'
     }
   }, {
-    name: 'Menthe Pastel',
+    name: 'Lavande Doux',
     colors: {
-      primary: '#98FB98',
-      secondary: '#F0FFF0',
-      accent: '#AFEEEE'
-    }
-  }, {
-    name: 'Pêche Pastel',
-    colors: {
-      primary: '#FFDAB9',
-      secondary: '#FFE4E1',
-      accent: '#FFF8DC'
-    }
-  }, {
-    name: 'Lilas Tendre',
-    colors: {
-      primary: '#DCD0FF',
-      secondary: '#FFD0DC',
-      accent: '#D0FFDC'
+      primary: '#A78BFA',
+      secondary: '#F3E8FF',
+      accent: '#7C3AED'
     }
   }],
   scratch: [{
@@ -195,8 +210,17 @@ const ColorPaletteSelector: React.FC<ColorPaletteSelectorProps> = ({
   const palettes = colorPalettes[gameType] || colorPalettes.wheel;
 
   const generateRandomPalette = () => {
-    const pastelColors = ['#FFB3BA', '#FFDFBA', '#FFFFBA', '#BAE1FF', '#BAFFC9', '#C9BAFF', '#E6E6FA', '#F0E68C', '#DDA0DD', '#98FB98', '#F0FFF0', '#AFEEEE'];
-    const shuffled = [...pastelColors].sort(() => Math.random() - 0.5);
+    const harmonicColors = [
+      // Bleus harmonieux
+      '#3B82F6', '#E3F2FD', '#1E40AF',
+      // Verts naturels
+      '#10B981', '#D1FAE5', '#047857',
+      // Violets modernes
+      '#8B5CF6', '#EDE9FE', '#7C3AED',
+      // Oranges dynamiques
+      '#F97316', '#FED7AA', '#EA580C'
+    ];
+    const shuffled = [...harmonicColors].sort(() => Math.random() - 0.5);
     const randomPalette: ColorPalette = {
       name: 'Personnalisé',
       colors: {
