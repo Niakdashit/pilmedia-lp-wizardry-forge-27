@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Palette } from 'lucide-react';
 import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
@@ -20,13 +19,14 @@ const JackpotBorderCustomizer: React.FC = () => {
       borderColor: customColors.primary,
       slotBorderColor: customColors.secondary,
       containerBackgroundColor: customColors.primary + '20', // Version transparente
+      backgroundColor: customColors.accent + '30' || customColors.secondary + '20', // Utiliser accent ou secondary en transparence
     });
   };
 
   React.useEffect(() => {
     // Synchroniser automatiquement les couleurs quand les couleurs personnalisées changent
     syncWithCustomColors();
-  }, [customColors.primary, customColors.secondary]);
+  }, [customColors.primary, customColors.secondary, customColors.accent]);
 
   return (
     <div className="space-y-6">
