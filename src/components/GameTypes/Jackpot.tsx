@@ -3,22 +3,6 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
 
-// Imports des templates SVG
-import Tjackpot1 from '../../assets/templates/Tjackpot1.svg';
-import Tjackpot2 from '../../assets/templates/Tjackpot2.svg';
-import Tjackpot3 from '../../assets/templates/Tjackpot3.svg';
-import Tjackpot4 from '../../assets/templates/Tjackpot4.svg';
-import Tjackpot5 from '../../assets/templates/Tjackpot5.svg';
-
-// Mapping des templates
-const jackpotTemplates: Record<string, any> = {
-  Tjackpot1,
-  Tjackpot2,
-  Tjackpot3,
-  Tjackpot4,
-  Tjackpot5
-};
-
 // Paramètres slots
 const SYMBOLS = ['🍒', '🍋', '🍊', '🍀', '7️⃣', '💎', '⭐'];
 
@@ -37,12 +21,13 @@ interface JackpotProps {
   buttonLabel?: string;
   buttonColor?: string;
   backgroundImage?: string;
-  customTemplate?: string;
-  selectedTemplate?: string;
+  backgroundColor?: string;
   borderColor?: string;
   borderWidth?: number;
   slotBorderColor?: string;
   slotBorderWidth?: number;
+  slotBackgroundColor?: string;
+  containerBackgroundColor?: string;
 }
 
 const Jackpot: React.FC<JackpotProps> = ({
@@ -53,25 +38,21 @@ const Jackpot: React.FC<JackpotProps> = ({
   buttonLabel = "Lancer le Jackpot",
   buttonColor = "#ec4899",
   backgroundImage,
-  customTemplate,
-  selectedTemplate,
+  backgroundColor = "#f3f4f6",
   borderColor = "#ffd700",
   borderWidth = 4,
   slotBorderColor = "#ffffff",
-  slotBorderWidth = 2
+  slotBorderWidth = 2,
+  slotBackgroundColor = "#ffffff",
+  containerBackgroundColor = "#1f2937"
 }) => {
   const [slots, setSlots] = useState<string[]>(['🍒', '🍋', '🍊']);
   const [isRolling, setIsRolling] = useState(false);
   const [result, setResult] = useState<'win' | 'lose' | null>(null);
 
-  // Debug logs
-  console.log('Jackpot component - selectedTemplate:', selectedTemplate);
-  console.log('Jackpot component - available templates:', Object.keys(jackpotTemplates));
-
   const roll = () => {
     if (isRolling || result) return;
     
-    // Appeler onStart dès que le jeu commence
     onStart?.();
     
     setIsRolling(true);
@@ -116,22 +97,18 @@ const Jackpot: React.FC<JackpotProps> = ({
     return <div><p>Pas de configuration pour le moment.</p></div>;
   }
 
-  // Récupération du template SVG
-  const templateImg = selectedTemplate ? jackpotTemplates[selectedTemplate] : undefined;
-  console.log('Template image selected:', templateImg);
-
   // Responsive slot size calculation
   const getSlotSize = () => {
     const containerWidth = window.innerWidth || 400;
-    if (containerWidth < 350) return 50; // Mobile très petit
-    if (containerWidth < 500) return 60; // Mobile standard
-    return 70; // Tablette et plus
+    if (containerWidth < 350) return 50;
+    if (containerWidth < 500) return 60;
+    return 70;
   };
 
   const slotSize = getSlotSize();
   const slotGap = Math.max(8, slotSize * 0.15);
 
-  const containerStyle: any = {
+  const containerStyle: React.CSSProperties = {
     minHeight: '400px',
     position: 'relative',
     width: '100%',
@@ -141,7 +118,8 @@ const Jackpot: React.FC<JackpotProps> = ({
     justifyContent: 'center',
     border: `${borderWidth}px solid ${borderColor}`,
     borderRadius: '12px',
-    padding: '16px'
+    padding: '20px',
+    backgroundColor: containerBackgroundColor,
   };
 
   if (backgroundImage) {
@@ -152,41 +130,24 @@ const Jackpot: React.FC<JackpotProps> = ({
   }
 
   return (
-    <div style={containerStyle} className="flex flex-col items-center justify-center w-full h-full p-2 px-0">
-      {/* Template SVG en arrière-plan AVEC taille agrandie, centrée, object-contain */}
-      {templateImg && (
-        <img
-          src={templateImg}
-          alt="Template jackpot"
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none z-0"
-          style={{
-            width: '640px',         // ↖️ Modifie ici la largeur souhaitée pour desktop
-            maxWidth: '90vw',
-            height: '600px',        // ↖️ Modifie ici la hauteur souhaitée pour desktop
-            maxHeight: '75vh',
-            objectFit: 'contain',
-            opacity: 0.97
-          }}
-        />
-      )}
+    <div style={containerStyle} className="flex flex-col items-center justify-center w-full h-full">
+      {/* Contenu du jeu */}
+      <div className="relative z-20 flex flex-col items-center justify-center bg-black/20 backdrop-blur-sm rounded-lg p-6" 
+           style={{ backgroundColor: backgroundColor + '40' }}>
+        
+        {/* Titre Jackpot */}
+        <div className="mb-6">
+          <h2 className="text-4xl font-bold text-center bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">
+            JACKPOT
+          </h2>
+        </div>
 
-      {/* Template personnalisé overlay (au-dessus du template SVG) */}
-      {customTemplate && (
-        <img
-          src={customTemplate}
-          alt="Jackpot template personnalisé"
-          className="absolute inset-0 w-full h-full object-cover pointer-events-none z-10"
-        />
-      )}
-
-      {/* Contenu du jeu avec z-index élevé */}
-      <div className="relative z-20 flex flex-col items-center justify-center">
         {/* Slots avec bordures personnalisables */}
         <div style={{
           gap: slotGap,
           flexWrap: 'nowrap',
           maxWidth: '100%'
-        }} className="flex mb-4 mx-0">
+        }} className="flex mb-6 mx-0">
           {slots.map((symbol, i) => 
             <motion.div 
               key={i} 
@@ -195,18 +156,20 @@ const Jackpot: React.FC<JackpotProps> = ({
                 height: slotSize,
                 borderRadius: 8,
                 border: `${slotBorderWidth}px solid ${slotBorderColor}`,
-                boxShadow: "0 2px 8px 0 rgba(0,0,0,0.09)",
+                backgroundColor: slotBackgroundColor,
+                boxShadow: "0 4px 12px 0 rgba(0,0,0,0.15)",
                 fontSize: Math.max(20, slotSize * 0.4),
                 fontWeight: 700
               }} 
               animate={{
-                scale: isRolling ? [1, 0.93, 1] : 1
+                scale: isRolling ? [1, 0.93, 1] : 1,
+                rotateY: isRolling ? [0, 180, 360] : 0
               }} 
               transition={{
                 duration: 0.32,
                 repeat: isRolling ? Infinity : 0
               }} 
-              className="bg-white shadow-md flex items-center justify-center flex-shrink-0 aspect-[9/16]"
+              className="shadow-md flex items-center justify-center flex-shrink-0"
             >
               {symbol}
             </motion.div>
@@ -216,24 +179,24 @@ const Jackpot: React.FC<JackpotProps> = ({
         {/* Résultat ou bouton */}
         <div className="flex flex-col items-center w-full">
           {result ? (
-            <h2 className={`text-base font-bold mb-2 text-center ${result === "win" ? "text-green-600" : "text-red-600"}`} 
-                style={{ fontSize: 'clamp(14px, 4vw, 18px)' }}>
-              {result === "win" ? "JACKPOT ! Vous avez gagné !" : "Dommage, pas de jackpot !"}
-            </h2>
+            <h3 className={`text-lg font-bold mb-2 text-center ${result === "win" ? "text-green-400" : "text-red-400"}`} 
+                style={{ fontSize: 'clamp(16px, 4vw, 20px)' }}>
+              {result === "win" ? "🎉 JACKPOT ! Vous avez gagné ! 🎉" : "😞 Dommage, pas de jackpot !"}
+            </h3>
           ) : (
             <button 
               onClick={roll} 
               disabled={isRolling} 
-              className="px-4 py-2 text-white font-medium rounded-lg shadow-lg hover:opacity-90 transition-all duration-200 disabled:opacity-50 max-w-full" 
+              className="px-6 py-3 text-white font-medium rounded-lg shadow-lg hover:opacity-90 transition-all duration-200 disabled:opacity-50 max-w-full" 
               style={{
                 backgroundColor: buttonColor,
-                fontSize: 'clamp(12px, 3.5vw, 16px)',
-                minHeight: '40px',
+                fontSize: 'clamp(14px, 3.5vw, 18px)',
+                minHeight: '48px',
                 border: `2px solid ${borderColor}`,
                 borderRadius: '8px'
               }}
             >
-              {isRolling ? "Roulement..." : buttonLabel}
+              {isRolling ? "🎰 Roulement..." : buttonLabel}
             </button>
           )}
         </div>

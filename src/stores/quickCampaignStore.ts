@@ -23,12 +23,15 @@ interface QuickCampaignState {
   };
   segmentCount: number;
   
-  // Nouvelles options de bordures pour jackpot
-  jackpotBorders: {
-    containerBorderColor: string;
-    containerBorderWidth: number;
+  // Nouvelles options de bordures et couleurs pour jackpot
+  jackpotColors: {
+    containerBackgroundColor: string;
+    backgroundColor: string;
+    borderColor: string;
+    borderWidth: number;
     slotBorderColor: string;
     slotBorderWidth: number;
+    slotBackgroundColor: string;
   };
   
   // État général
@@ -44,7 +47,7 @@ interface QuickCampaignState {
   setBackgroundImage: (file: File | null) => void;
   setCustomColors: (colors: { primary: string; secondary: string; accent?: string }) => void;
   setSegmentCount: (count: number) => void;
-  setJackpotBorders: (borders: { containerBorderColor: string; containerBorderWidth: number; slotBorderColor: string; slotBorderWidth: number }) => void;
+  setJackpotColors: (colors: { containerBackgroundColor: string; backgroundColor: string; borderColor: string; borderWidth: number; slotBorderColor: string; slotBorderWidth: number; slotBackgroundColor: string }) => void;
   setCurrentStep: (step: number) => void;
   reset: () => void;
   
@@ -67,11 +70,14 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
     accent: '#10b981'
   },
   segmentCount: 6,
-  jackpotBorders: {
-    containerBorderColor: '#ffd700',
-    containerBorderWidth: 4,
+  jackpotColors: {
+    containerBackgroundColor: '#1f2937',
+    backgroundColor: '#f3f4f6',
+    borderColor: '#ffd700',
+    borderWidth: 4,
     slotBorderColor: '#ffffff',
-    slotBorderWidth: 2
+    slotBorderWidth: 2,
+    slotBackgroundColor: '#ffffff'
   },
   currentStep: 1,
   
@@ -85,7 +91,7 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
   setBackgroundImage: (file) => set({ backgroundImage: file }),
   setCustomColors: (colors) => set({ customColors: colors }),
   setSegmentCount: (count) => set({ segmentCount: count }),
-  setJackpotBorders: (borders) => set({ jackpotBorders: borders }),
+  setJackpotColors: (colors) => set({ jackpotColors: colors }),
   setCurrentStep: (step) => set({ currentStep: step }),
   reset: () => set({
     selectedGameType: null,
@@ -101,11 +107,14 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
       accent: '#10b981'
     },
     segmentCount: 6,
-    jackpotBorders: {
-      containerBorderColor: '#ffd700',
-      containerBorderWidth: 4,
+    jackpotColors: {
+      containerBackgroundColor: '#1f2937',
+      backgroundColor: '#f3f4f6',
+      borderColor: '#ffd700',
+      borderWidth: 4,
       slotBorderColor: '#ffffff',
-      slotBorderWidth: 2
+      slotBorderWidth: 2,
+      slotBackgroundColor: '#ffffff'
     },
     currentStep: 1,
   }),
@@ -249,10 +258,13 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
               backgroundImage: state.backgroundImage ? URL.createObjectURL(state.backgroundImage) : undefined,
               buttonLabel: 'Lancer le Jackpot',
               buttonColor: state.customColors.primary,
-              borderColor: state.jackpotBorders.containerBorderColor,
-              borderWidth: state.jackpotBorders.containerBorderWidth,
-              slotBorderColor: state.jackpotBorders.slotBorderColor,
-              slotBorderWidth: state.jackpotBorders.slotBorderWidth,
+              containerBackgroundColor: state.jackpotColors.containerBackgroundColor,
+              backgroundColor: state.jackpotColors.backgroundColor,
+              borderColor: state.jackpotColors.borderColor,
+              borderWidth: state.jackpotColors.borderWidth,
+              slotBorderColor: state.jackpotColors.slotBorderColor,
+              slotBorderWidth: state.jackpotColors.slotBorderWidth,
+              slotBackgroundColor: state.jackpotColors.slotBackgroundColor,
               symbols: ['🍒', '🍋', '🍊'],
               reels: 3,
               winMessage: 'JACKPOT ! Vous avez gagné !',

@@ -61,12 +61,14 @@ const CampaignPreviewModal: React.FC<CampaignPreviewModalProps> = ({
             }}
             buttonLabel={mockCampaign.gameConfig?.jackpot?.buttonLabel || 'Lancer le Jackpot'}
             buttonColor={mockCampaign.gameConfig?.jackpot?.buttonColor || '#841b60'}
-            selectedTemplate={mockCampaign.gameConfig?.jackpot?.template}
             backgroundImage={mockCampaign.gameConfig?.jackpot?.backgroundImage}
+            containerBackgroundColor={mockCampaign.gameConfig?.jackpot?.containerBackgroundColor}
+            backgroundColor={mockCampaign.gameConfig?.jackpot?.backgroundColor}
             borderColor={mockCampaign.gameConfig?.jackpot?.borderColor}
             borderWidth={mockCampaign.gameConfig?.jackpot?.borderWidth}
             slotBorderColor={mockCampaign.gameConfig?.jackpot?.slotBorderColor}
             slotBorderWidth={mockCampaign.gameConfig?.jackpot?.slotBorderWidth}
+            slotBackgroundColor={mockCampaign.gameConfig?.jackpot?.slotBackgroundColor}
           />
         );
 
