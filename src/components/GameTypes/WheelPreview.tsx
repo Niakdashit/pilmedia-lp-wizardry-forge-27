@@ -1,5 +1,3 @@
-
-
 import React, { useState } from 'react';
 import Modal from '../common/Modal';
 import ValidationMessage from '../common/ValidationMessage';
@@ -207,17 +205,17 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
         height: canvasSize,
         overflow: shouldCropWheel ? 'hidden' : 'visible'
       }}>
-        {/* Enhanced shadow with golden glow */}
+        {/* Reduced shadow with golden glow */}
         <div 
           style={{
             position: 'absolute',
-            width: canvasSize - 10,
-            height: canvasSize - 10,
-            left: shouldCropWheel ? (gamePosition === 'left' ? '5px' : `-${canvasSize * 0.5 + 5}px`) : '5px',
-            top: '10px',
+            width: canvasSize - 20, // Réduit de -10 à -20
+            height: canvasSize - 20, // Réduit de -10 à -20
+            left: shouldCropWheel ? (gamePosition === 'left' ? '10px' : `-${canvasSize * 0.5 + 10}px`) : '10px',
+            top: '15px', // Réduit de 10px à 15px
             borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(255,215,0,0.3) 0%, rgba(255,215,0,0.1) 50%, rgba(0,0,0,0.2) 100%)',
-            filter: 'blur(15px)',
+            background: 'radial-gradient(circle, rgba(255,215,0,0.2) 0%, rgba(255,215,0,0.05) 50%, rgba(0,0,0,0.1) 100%)', // Réduit l'opacité
+            filter: 'blur(8px)', // Réduit de 15px à 8px
             zIndex: 0
           }}
         />
@@ -295,4 +293,3 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
 };
 
 export default WheelPreview;
-
