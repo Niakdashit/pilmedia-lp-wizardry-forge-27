@@ -1,6 +1,6 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Grid3X3, Image, Settings } from 'lucide-react';
+import ColorPaletteSelector from './ColorPaletteSelector';
 
 interface PuzzleGameConfigProps {
   campaign: any;
@@ -11,6 +11,8 @@ const PuzzleGameConfig: React.FC<PuzzleGameConfigProps> = ({
   campaign,
   setCampaign
 }) => {
+  const [selectedPalette, setSelectedPalette] = useState(null);
+
   const handlePuzzleChange = (field: string, value: any) => {
     setCampaign((prev: any) => ({
       ...prev,
@@ -24,6 +26,21 @@ const PuzzleGameConfig: React.FC<PuzzleGameConfigProps> = ({
     }));
   };
 
+  const handlePaletteSelect = (palette: any) => {
+    setSelectedPalette(palette);
+    
+    setCampaign((prev: any) => ({
+      ...prev,
+      gameConfig: {
+        ...prev.gameConfig,
+        puzzle: {
+          ...prev.gameConfig?.puzzle,
+          palette: palette
+        }
+      }
+    }));
+  };
+
   const gridSizes = [
     { value: 9, label: '3x3 (9 pièces) - Facile' },
     { value: 16, label: '4x4 (16 pièces) - Moyen' },
@@ -32,6 +49,13 @@ const PuzzleGameConfig: React.FC<PuzzleGameConfigProps> = ({
 
   return (
     <div className="space-y-6">
+      {/* Palette de couleurs */}
+      <ColorPaletteSelector
+        selectedPalette={selectedPalette}
+        onPaletteSelect={handlePaletteSelect}
+        gameType="puzzle"
+      />
+
       {/* Taille de la grille */}
       <div className="space-y-3">
         <label className="flex items-center text-sm font-medium text-gray-700">

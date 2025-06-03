@@ -1,6 +1,6 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Dices, Target, Settings } from 'lucide-react';
+import ColorPaletteSelector from './ColorPaletteSelector';
 
 interface DiceGameConfigProps {
   campaign: any;
@@ -11,6 +11,8 @@ const DiceGameConfig: React.FC<DiceGameConfigProps> = ({
   campaign,
   setCampaign
 }) => {
+  const [selectedPalette, setSelectedPalette] = useState(null);
+
   const handleDiceChange = (field: string, value: any) => {
     setCampaign((prev: any) => ({
       ...prev,
@@ -19,6 +21,21 @@ const DiceGameConfig: React.FC<DiceGameConfigProps> = ({
         dice: {
           ...prev.gameConfig?.dice,
           [field]: value
+        }
+      }
+    }));
+  };
+
+  const handlePaletteSelect = (palette: any) => {
+    setSelectedPalette(palette);
+    
+    setCampaign((prev: any) => ({
+      ...prev,
+      gameConfig: {
+        ...prev.gameConfig,
+        dice: {
+          ...prev.gameConfig?.dice,
+          palette: palette
         }
       }
     }));
@@ -40,6 +57,13 @@ const DiceGameConfig: React.FC<DiceGameConfigProps> = ({
 
   return (
     <div className="space-y-6">
+      {/* Palette de couleurs */}
+      <ColorPaletteSelector
+        selectedPalette={selectedPalette}
+        onPaletteSelect={handlePaletteSelect}
+        gameType="dice"
+      />
+
       {/* Nombre de dés */}
       <div className="space-y-3">
         <label className="flex items-center text-sm font-medium text-gray-700">

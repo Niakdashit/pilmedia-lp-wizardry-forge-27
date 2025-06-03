@@ -1,7 +1,7 @@
-
-import React from 'react';
+import React, { useState } from 'react';
 import { Plus, Trash2, Upload } from 'lucide-react';
 import ImageUpload from '../../common/ImageUpload';
+import ColorPaletteSelector from './ColorPaletteSelector';
 
 interface WheelGameConfigProps {
   campaign: any;
@@ -14,6 +14,7 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
 }) => {
   const segments = campaign.config?.roulette?.segments || [];
   const borderColor = campaign.config?.roulette?.borderColor || '#841b60';
+  const [selectedPalette, setSelectedPalette] = useState(null);
 
   const addSegment = () => {
     setCampaign((prev: any) => ({
@@ -78,7 +79,38 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
     }));
   };
 
-  return <div className="space-y-6">
+  const handlePaletteSelect = (palette: any) => {
+    setSelectedPalette(palette);
+    
+    // Appliquer les couleurs de la palette aux segments existants
+    const updatedSegments = segments.map((segment: any, index: number) => ({
+      ...segment,
+      color: [palette.colors.primary, palette.colors.secondary, palette.colors.accent || palette.colors.primary][index % 3]
+    }));
+
+    setCampaign((prev: any) => ({
+      ...prev,
+      config: {
+        ...prev.config,
+        roulette: {
+          ...prev.config?.roulette,
+          segments: updatedSegments,
+          borderColor: palette.colors.primary,
+          palette: palette
+        }
+      }
+    }));
+  };
+
+  return (
+    <div className="space-y-6">
+      {/* Palette de couleurs */}
+      <ColorPaletteSelector
+        selectedPalette={selectedPalette}
+        onPaletteSelect={handlePaletteSelect}
+        gameType="wheel"
+      />
+
       {/* Couleur de bordure de la roue */}
       <div className="space-y-2">
         <label className="text-sm font-medium text-gray-700">Couleur de la bordure</label>
@@ -130,7 +162,8 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
             <p className="text-xs">Cliquez sur "Ajouter" pour créer votre premier segment</p>
           </div>}
       </div>
-    </div>;
+    </div>
+  );
 };
 
 export default WheelGameConfig;
