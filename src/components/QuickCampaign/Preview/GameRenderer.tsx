@@ -30,8 +30,7 @@ const GameRenderer: React.FC<GameRendererProps> = ({
   customColors,
   jackpotColors
 }) => {
-  console.log('GameRenderer received jackpotColors:', jackpotColors);
-  console.log('GameRenderer mockCampaign gameConfig:', mockCampaign.gameConfig?.jackpot);
+  console.log('GameRenderer using jackpotColors from store:', jackpotColors);
 
   switch (gameType) {
     case 'wheel':
@@ -63,7 +62,7 @@ const GameRenderer: React.FC<GameRendererProps> = ({
           buttonLabel={mockCampaign.gameConfig?.jackpot?.buttonLabel || 'Lancer le Jackpot'}
           buttonColor={customColors.primary}
           backgroundImage={mockCampaign.gameConfig?.jackpot?.backgroundImage}
-          // Utiliser directement les couleurs du store jackpotColors
+          // CORRECTION: Utiliser jackpotColors du store au lieu de mockCampaign
           containerBackgroundColor={jackpotColors.containerBackgroundColor}
           backgroundColor={jackpotColors.backgroundColor}
           borderColor={jackpotColors.borderColor}

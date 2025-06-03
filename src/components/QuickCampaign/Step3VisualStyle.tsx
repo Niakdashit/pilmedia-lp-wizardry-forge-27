@@ -1,20 +1,19 @@
+
 import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { ArrowLeft, Upload, Eye, Settings, Sparkles, CheckCircle } from 'lucide-react';
+import { ArrowLeft, Upload, Eye, Settings, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
 import { useCampaigns } from '../../hooks/useCampaigns';
 import CampaignPreviewModal from './CampaignPreviewModal';
 import ColorCustomizer from './ColorCustomizer';
 
-// 👉 IMPORTS SVG
+// IMPORTS SVG
 import Tjackpot1 from '../../assets/templates/Tjackpot1.svg';
 import Tjackpot2 from '../../assets/templates/Tjackpot2.svg';
 import Tjackpot3 from '../../assets/templates/Tjackpot3.svg';
 import Tjackpot4 from '../../assets/templates/Tjackpot4.svg';
 import Tjackpot5 from '../../assets/templates/Tjackpot5.svg';
 
-// ----------- MAPPING CORRIGÉ : Jackpot a des images réelles ----------- //
 const templatesByMechanic: Record<string, Array<{
   id: string;
   name: string;
@@ -31,40 +30,40 @@ const templatesByMechanic: Record<string, Array<{
       name: 'Jackpot Classic',
       description: 'Template classique de machine à sous.',
       image: Tjackpot1,
-      borderColor: 'border-yellow-400',
-      glowColor: 'shadow-yellow-400/30'
+      borderColor: 'border-blue-500',
+      glowColor: 'shadow-blue-500/20'
     },
     {
       id: 'Tjackpot2',
       name: 'Jackpot Vegas',
       description: 'Ambiance Vegas, couleurs néon.',
       image: Tjackpot2,
-      borderColor: 'border-pink-400',
-      glowColor: 'shadow-pink-400/30'
+      borderColor: 'border-blue-500',
+      glowColor: 'shadow-blue-500/20'
     },
     {
       id: 'Tjackpot3',
       name: 'Jackpot Luxe',
       description: 'Version haut de gamme, effet doré.',
       image: Tjackpot3,
-      borderColor: 'border-yellow-500',
-      glowColor: 'shadow-yellow-500/30'
+      borderColor: 'border-blue-500',
+      glowColor: 'shadow-blue-500/20'
     },
     {
       id: 'Tjackpot4',
       name: 'Jackpot Fun',
       description: 'Style cartoon, parfait pour les familles.',
       image: Tjackpot4,
-      borderColor: 'border-blue-400',
-      glowColor: 'shadow-blue-400/30'
+      borderColor: 'border-blue-500',
+      glowColor: 'shadow-blue-500/20'
     },
     {
       id: 'Tjackpot5',
       name: 'Jackpot Minimal',
       description: 'Design minimaliste et épuré.',
       image: Tjackpot5,
-      borderColor: 'border-gray-400',
-      glowColor: 'shadow-gray-400/30'
+      borderColor: 'border-blue-500',
+      glowColor: 'shadow-blue-500/20'
     }
   ],
   quiz: [
@@ -78,8 +77,8 @@ const templatesByMechanic: Record<string, Array<{
         background: '#f0f9ff'
       },
       preview: 'bg-gradient-to-br from-purple-500 to-cyan-400',
-      borderColor: 'border-purple-400',
-      glowColor: 'shadow-purple-500/30'
+      borderColor: 'border-blue-500',
+      glowColor: 'shadow-blue-500/20'
     },
     {
       id: 'educ',
@@ -91,8 +90,8 @@ const templatesByMechanic: Record<string, Array<{
         background: '#fff9e6'
       },
       preview: 'bg-gradient-to-br from-orange-300 to-green-200',
-      borderColor: 'border-orange-300',
-      glowColor: 'shadow-orange-300/30'
+      borderColor: 'border-blue-500',
+      glowColor: 'shadow-blue-500/20'
     }
   ],
   corporate: [
@@ -106,8 +105,8 @@ const templatesByMechanic: Record<string, Array<{
         background: '#f8fafc'
       },
       preview: 'bg-gradient-to-br from-gray-700 to-blue-600',
-      borderColor: 'border-blue-400',
-      glowColor: 'shadow-blue-500/30'
+      borderColor: 'border-blue-500',
+      glowColor: 'shadow-blue-500/20'
     }
   ],
   roue: [
@@ -121,8 +120,8 @@ const templatesByMechanic: Record<string, Array<{
         background: '#fff0f6'
       },
       preview: 'bg-gradient-to-br from-pink-300 to-blue-200',
-      borderColor: 'border-blue-400',
-      glowColor: 'shadow-blue-300/30'
+      borderColor: 'border-blue-500',
+      glowColor: 'shadow-blue-500/20'
     }
   ]
 };
@@ -160,12 +159,15 @@ const Step3VisualStyle: React.FC = () => {
       setBackgroundImage(files[0]);
     }
   };
+
   const handleFinish = () => {
     setShowFinalStep(true);
   };
+
   const handlePreview = () => {
     setShowPreview(true);
   };
+
   const handleCreateCampaign = async () => {
     setIsCreating(true);
     try {
@@ -197,7 +199,7 @@ const Step3VisualStyle: React.FC = () => {
           }),
           [selectedGameType || 'quiz']: {
             ...(selectedGameType === 'jackpot' && {
-              template: selectedTheme // Sauvegarde du template sélectionné
+              template: selectedTheme
             })
           }
         },
@@ -209,7 +211,7 @@ const Step3VisualStyle: React.FC = () => {
             secondary: customColors.secondary,
             accent: customColors.accent
           },
-          template: selectedTheme, // Aussi dans design pour l'accès facile
+          template: selectedTheme,
           customColors
         },
         status: 'draft' as const
@@ -228,6 +230,7 @@ const Step3VisualStyle: React.FC = () => {
       setIsCreating(false);
     }
   };
+
   const handleAdvancedSettings = async () => {
     setIsCreating(true);
     try {
@@ -259,7 +262,7 @@ const Step3VisualStyle: React.FC = () => {
           }),
           [selectedGameType || 'quiz']: {
             ...(selectedGameType === 'jackpot' && {
-              template: selectedTheme // Sauvegarde du template sélectionné
+              template: selectedTheme
             })
           }
         },
@@ -271,7 +274,7 @@ const Step3VisualStyle: React.FC = () => {
             secondary: customColors.secondary,
             accent: customColors.accent
           },
-          template: selectedTheme, // Aussi dans design pour l'accès facile
+          template: selectedTheme,
           customColors
         },
         status: 'draft' as const
@@ -290,81 +293,67 @@ const Step3VisualStyle: React.FC = () => {
 
   if (showFinalStep) {
     return (
-      <div className="min-h-screen w-full flex items-center justify-center p-6">
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6 }}
-          className="max-w-2xl w-full text-center"
-        >
-          <div className="bg-white/80 backdrop-blur-lg rounded-[32px] shadow-2xl p-12 border border-white/20">
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.2, type: 'spring' }}
-              className="mb-8"
-            >
+      <div className="min-h-screen w-full flex items-center justify-center p-6 bg-gray-50">
+        <div className="max-w-lg w-full text-center">
+          <div className="bg-white rounded-3xl shadow-sm p-12 border border-gray-100">
+            <div className="mb-8">
               {creationSuccess ? (
-                <CheckCircle className="w-20 h-20 text-green-500 mx-auto" />
+                <CheckCircle className="w-16 h-16 text-green-500 mx-auto" />
               ) : (
-                <Sparkles className="w-20 h-20 text-[#841b60] mx-auto" />
+                <div className="w-16 h-16 bg-blue-500 rounded-full mx-auto flex items-center justify-center">
+                  <CheckCircle className="w-8 h-8 text-white" />
+                </div>
               )}
-            </motion.div>
-            <h1 className="text-5xl font-bold text-gray-900 mb-6">
+            </div>
+            <h1 className="text-3xl font-semibold text-gray-900 mb-4">
               {creationSuccess
                 ? 'Campagne créée avec succès !'
                 : 'Votre campagne est prête !'}
             </h1>
             {creationSuccess ? (
-              <p className="text-xl text-gray-600 mb-8">
+              <p className="text-lg text-gray-600 mb-8">
                 Redirection vers vos campagnes...
               </p>
             ) : (
-              <p className="text-xl text-gray-600 mb-8">
+              <p className="text-lg text-gray-600 mb-8">
                 Vous pouvez maintenant la tester ou la personnaliser davantage.
               </p>
             )}
             {!creationSuccess && (
-              <div className="space-y-4">
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+              <div className="space-y-3">
+                <button
                   onClick={handlePreview}
-                  className="w-full py-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold rounded-2xl hover:shadow-lg transition-all flex items-center justify-center space-x-3"
+                  className="w-full py-3 bg-gray-100 text-gray-900 font-medium rounded-xl hover:bg-gray-200 transition-colors flex items-center justify-center space-x-2"
                 >
-                  <Eye className="w-6 h-6" />
+                  <Eye className="w-5 h-5" />
                   <span>Voir un aperçu</span>
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                </button>
+                <button
                   onClick={handleCreateCampaign}
                   disabled={isCreating}
-                  className="w-full py-4 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold rounded-2xl hover:shadow-lg transition-all disabled:opacity-50"
+                  className="w-full py-3 bg-blue-500 text-white font-medium rounded-xl hover:bg-blue-600 transition-colors disabled:opacity-50"
                 >
                   {isCreating ? (
                     <div className="flex items-center justify-center space-x-2">
-                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                       <span>Création...</span>
                     </div>
                   ) : (
                     'Créer la campagne'
                   )}
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
+                </button>
+                <button
                   onClick={handleAdvancedSettings}
                   disabled={isCreating}
-                  className="w-full py-4 bg-white/80 text-gray-700 font-bold rounded-2xl border-2 border-gray-200 hover:border-gray-300 hover:shadow-lg transition-all flex items-center justify-center space-x-3 disabled:opacity-50"
+                  className="w-full py-3 bg-white text-gray-700 font-medium rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors flex items-center justify-center space-x-2 disabled:opacity-50"
                 >
-                  <Settings className="w-6 h-6" />
+                  <Settings className="w-5 h-5" />
                   <span>Réglages avancés</span>
-                </motion.button>
+                </button>
               </div>
             )}
           </div>
-        </motion.div>
+        </div>
         <CampaignPreviewModal
           isOpen={showPreview}
           onClose={() => setShowPreview(false)}
@@ -374,47 +363,34 @@ const Step3VisualStyle: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center p-3 sm:p-6">
-      <div className="max-w-6xl w-full">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center mb-8 sm:mb-16"
-        >
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold mb-4 sm:mb-6 text-white px-4">
-            Choisissez un thème pour votre campagne
+    <div className="min-h-screen w-full bg-gray-50 flex items-center justify-center p-6">
+      <div className="max-w-4xl w-full">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-semibold text-gray-900 mb-4">
+            Choisissez un thème
           </h1>
-          <p className="text-lg sm:text-xl md:text-2xl text-white px-4">
-            Donnez vie à votre expérience avec un style visuel adapté.
+          <p className="text-xl text-gray-600">
+            Sélectionnez le style visuel de votre campagne
           </p>
-        </motion.div>
+        </div>
         
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="bg-white/80 backdrop-blur-lg rounded-[20px] sm:rounded-[32px] shadow-2xl p-4 sm:p-6 md:p-8 lg:p-10 space-y-6 sm:space-y-8 lg:space-y-10 border border-white/20 mx-2"
-        >
-          {/* Choix des templates dynamiques par mécanique */}
+        <div className="bg-white rounded-3xl shadow-sm p-8 space-y-10 border border-gray-100">
+          {/* Templates */}
           <div>
-            <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-6 sm:mb-8">
-              Thèmes prédéfinis
+            <h3 className="text-2xl font-semibold text-gray-900 mb-6">
+              Thèmes disponibles
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {currentTemplates.map((template) => (
-                <motion.button
+                <button
                   key={template.id}
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
                   onClick={() => setSelectedTheme(template.id)}
                   className={`
-                    p-4 sm:p-6 md:p-8 rounded-2xl sm:rounded-3xl border-2 transition-all text-left
-                    bg-white/60 backdrop-blur-sm shadow-lg
+                    p-6 rounded-2xl border-2 transition-all text-left bg-white
                     ${
                       selectedTheme === template.id
-                        ? `${template.borderColor} border-4 ${template.glowColor} shadow-xl`
-                        : 'border-gray-200 hover:border-gray-300 hover:shadow-xl'
+                        ? 'border-blue-500 shadow-lg ring-4 ring-blue-500/10'
+                        : 'border-gray-200 hover:border-gray-300 hover:shadow-md'
                     }
                   `}
                 >
@@ -422,49 +398,49 @@ const Step3VisualStyle: React.FC = () => {
                     <img
                       src={template.image}
                       alt={template.name}
-                      className="w-full h-32 sm:h-48 md:h-64 max-h-72 object-contain rounded-xl sm:rounded-2xl mb-4 sm:mb-6 shadow-lg bg-white"
+                      className="w-full h-48 object-contain rounded-xl mb-4 bg-gray-50"
                     />
                   ) : (
                     <div
-                      className={`w-full h-24 sm:h-32 rounded-xl sm:rounded-2xl mb-4 sm:mb-6 ${template.preview} shadow-lg`}
+                      className={`w-full h-32 rounded-xl mb-4 ${template.preview}`}
                     />
                   )}
-                  <h4 className="font-bold text-lg sm:text-xl text-gray-900 mb-2 sm:mb-3">
+                  <h4 className="font-semibold text-lg text-gray-900 mb-2">
                     {template.name}
                   </h4>
-                  <p className="text-gray-600 text-sm sm:text-base">{template.description}</p>
-                </motion.button>
+                  <p className="text-gray-600 text-sm">{template.description}</p>
+                </button>
               ))}
             </div>
           </div>
 
-          {/* Personnalisation des couleurs */}
+          {/* Couleurs */}
           <ColorCustomizer />
 
-          {/* Upload d'image de fond */}
+          {/* Image de fond */}
           <div>
-            <h3 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">
-              Image de fond personnalisée (optionnel)
+            <h3 className="text-2xl font-semibold text-gray-900 mb-6">
+              Image de fond (optionnel)
             </h3>
-            <div className="border-2 border-dashed border-gray-300 rounded-2xl sm:rounded-3xl p-6 sm:p-8 md:p-10 text-center bg-white/40 backdrop-blur-sm">
-              <Upload className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 text-gray-400 mx-auto mb-4 sm:mb-6" />
+            <div className="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center bg-gray-50">
+              <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               {backgroundImage ? (
                 <div>
-                  <p className="text-green-600 font-bold text-base sm:text-lg break-all px-2">
+                  <p className="text-green-600 font-medium mb-2">
                     {backgroundImage.name}
                   </p>
                   <button
                     onClick={() => setBackgroundImage(null)}
-                    className="text-gray-500 hover:text-red-500 mt-2 sm:mt-3 font-medium text-sm sm:text-base"
+                    className="text-gray-500 hover:text-red-500 font-medium"
                   >
                     Supprimer
                   </button>
                 </div>
               ) : (
                 <>
-                  <p className="text-gray-600 mb-2 sm:mb-3 text-base sm:text-lg px-2">
-                    <label className="text-blue-500 cursor-pointer hover:underline font-medium">
-                      Téléchargez une image de fond
+                  <p className="text-gray-600 mb-2">
+                    <label className="text-blue-500 cursor-pointer hover:text-blue-600 font-medium">
+                      Téléchargez une image
                       <input
                         type="file"
                         accept="image/*"
@@ -473,57 +449,48 @@ const Step3VisualStyle: React.FC = () => {
                       />
                     </label>
                   </p>
-                  <p className="text-gray-400 text-sm sm:text-base">PNG, JPG jusqu'à 10MB</p>
+                  <p className="text-gray-400 text-sm">PNG, JPG jusqu'à 10MB</p>
                 </>
               )}
             </div>
           </div>
 
           {/* Navigation */}
-          <div className="flex flex-col sm:flex-row justify-between items-center pt-6 sm:pt-8 space-y-4 sm:space-y-0">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+          <div className="flex justify-between items-center pt-6">
+            <button
               onClick={() => setCurrentStep(2)}
-              className="w-full sm:w-auto flex items-center justify-center space-x-2 sm:space-x-3 px-6 sm:px-8 py-3 sm:py-4 text-gray-600 hover:text-gray-900 transition-colors font-medium rounded-xl sm:rounded-2xl hover:bg-gray-100 text-base sm:text-lg"
+              className="flex items-center space-x-2 px-6 py-3 text-gray-600 hover:text-gray-900 transition-colors font-medium rounded-xl hover:bg-gray-100"
             >
-              <ArrowLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+              <ArrowLeft className="w-5 h-5" />
               <span>Retour</span>
-            </motion.button>
+            </button>
 
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+            <button
               onClick={handleFinish}
               disabled={!selectedTheme}
               className={`
-                w-full sm:w-auto px-8 sm:px-12 py-3 sm:py-4 rounded-xl sm:rounded-2xl font-bold text-base sm:text-lg transition-all
+                px-8 py-3 rounded-xl font-medium transition-all
                 ${
                   selectedTheme
-                    ? 'bg-gradient-to-r from-[#841b60] to-pink-500 text-white hover:shadow-xl'
+                    ? 'bg-blue-500 text-white hover:bg-blue-600'
                     : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                 }
               `}
             >
-              Finaliser
-            </motion.button>
+              Continuer
+            </button>
           </div>
-        </motion.div>
+        </div>
 
-        {/* Progress indicator */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8 }}
-          className="text-center mt-8 sm:mt-12"
-        >
-          <div className="flex items-center justify-center space-x-2 sm:space-x-3 mb-3 sm:mb-4">
-            <div className="w-8 sm:w-12 h-1.5 sm:h-2 bg-gray-300 rounded-full"></div>
-            <div className="w-8 sm:w-12 h-1.5 sm:h-2 bg-gray-300 rounded-full"></div>
-            <div className="w-8 sm:w-12 h-1.5 sm:h-2 bg-gradient-to-r from-[#841b60] to-pink-500 rounded-full"></div>
+        {/* Progress */}
+        <div className="text-center mt-8">
+          <div className="flex items-center justify-center space-x-2 mb-3">
+            <div className="w-8 h-2 bg-gray-300 rounded-full"></div>
+            <div className="w-8 h-2 bg-gray-300 rounded-full"></div>
+            <div className="w-8 h-2 bg-blue-500 rounded-full"></div>
           </div>
-          <p className="text-base sm:text-lg font-medium text-white">Étape 3 sur 3</p>
-        </motion.div>
+          <p className="text-lg font-medium text-gray-600">Étape 3 sur 3</p>
+        </div>
       </div>
     </div>
   );
