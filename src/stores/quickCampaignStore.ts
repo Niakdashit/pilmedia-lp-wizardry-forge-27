@@ -23,6 +23,14 @@ interface QuickCampaignState {
   };
   segmentCount: number;
   
+  // Nouvelles options de bordures pour jackpot
+  jackpotBorders: {
+    containerBorderColor: string;
+    containerBorderWidth: number;
+    slotBorderColor: string;
+    slotBorderWidth: number;
+  };
+  
   // État général
   currentStep: number;
   
@@ -36,6 +44,7 @@ interface QuickCampaignState {
   setBackgroundImage: (file: File | null) => void;
   setCustomColors: (colors: { primary: string; secondary: string; accent?: string }) => void;
   setSegmentCount: (count: number) => void;
+  setJackpotBorders: (borders: { containerBorderColor: string; containerBorderWidth: number; slotBorderColor: string; slotBorderWidth: number }) => void;
   setCurrentStep: (step: number) => void;
   reset: () => void;
   
@@ -58,6 +67,12 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
     accent: '#10b981'
   },
   segmentCount: 6,
+  jackpotBorders: {
+    containerBorderColor: '#ffd700',
+    containerBorderWidth: 4,
+    slotBorderColor: '#ffffff',
+    slotBorderWidth: 2
+  },
   currentStep: 1,
   
   // Actions
@@ -70,6 +85,7 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
   setBackgroundImage: (file) => set({ backgroundImage: file }),
   setCustomColors: (colors) => set({ customColors: colors }),
   setSegmentCount: (count) => set({ segmentCount: count }),
+  setJackpotBorders: (borders) => set({ jackpotBorders: borders }),
   setCurrentStep: (step) => set({ currentStep: step }),
   reset: () => set({
     selectedGameType: null,
@@ -85,6 +101,12 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
       accent: '#10b981'
     },
     segmentCount: 6,
+    jackpotBorders: {
+      containerBorderColor: '#ffd700',
+      containerBorderWidth: 4,
+      slotBorderColor: '#ffffff',
+      slotBorderWidth: 2
+    },
     currentStep: 1,
   }),
 
@@ -227,6 +249,10 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
               backgroundImage: state.backgroundImage ? URL.createObjectURL(state.backgroundImage) : undefined,
               buttonLabel: 'Lancer le Jackpot',
               buttonColor: state.customColors.primary,
+              borderColor: state.jackpotBorders.containerBorderColor,
+              borderWidth: state.jackpotBorders.containerBorderWidth,
+              slotBorderColor: state.jackpotBorders.slotBorderColor,
+              slotBorderWidth: state.jackpotBorders.slotBorderWidth,
               symbols: ['🍒', '🍋', '🍊'],
               reels: 3,
               winMessage: 'JACKPOT ! Vous avez gagné !',

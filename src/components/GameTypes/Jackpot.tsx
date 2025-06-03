@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import confetti from "canvas-confetti";
@@ -37,7 +38,11 @@ interface JackpotProps {
   buttonColor?: string;
   backgroundImage?: string;
   customTemplate?: string;
-  selectedTemplate?: string; // Nouveau prop pour le template
+  selectedTemplate?: string;
+  borderColor?: string;
+  borderWidth?: number;
+  slotBorderColor?: string;
+  slotBorderWidth?: number;
 }
 
 const Jackpot: React.FC<JackpotProps> = ({
@@ -49,7 +54,11 @@ const Jackpot: React.FC<JackpotProps> = ({
   buttonColor = "#ec4899",
   backgroundImage,
   customTemplate,
-  selectedTemplate
+  selectedTemplate,
+  borderColor = "#ffd700",
+  borderWidth = 4,
+  slotBorderColor = "#ffffff",
+  slotBorderWidth = 2
 }) => {
   const [slots, setSlots] = useState<string[]>(['🍒', '🍋', '🍊']);
   const [isRolling, setIsRolling] = useState(false);
@@ -129,7 +138,10 @@ const Jackpot: React.FC<JackpotProps> = ({
     height: '100%',
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    border: `${borderWidth}px solid ${borderColor}`,
+    borderRadius: '12px',
+    padding: '16px'
   };
 
   if (backgroundImage) {
@@ -169,7 +181,7 @@ const Jackpot: React.FC<JackpotProps> = ({
 
       {/* Contenu du jeu avec z-index élevé */}
       <div className="relative z-20 flex flex-col items-center justify-center">
-        {/* Slots */}
+        {/* Slots avec bordures personnalisables */}
         <div style={{
           gap: slotGap,
           flexWrap: 'nowrap',
@@ -182,7 +194,7 @@ const Jackpot: React.FC<JackpotProps> = ({
                 width: slotSize,
                 height: slotSize,
                 borderRadius: 8,
-                border: "2px solid #fff",
+                border: `${slotBorderWidth}px solid ${slotBorderColor}`,
                 boxShadow: "0 2px 8px 0 rgba(0,0,0,0.09)",
                 fontSize: Math.max(20, slotSize * 0.4),
                 fontWeight: 700
@@ -216,7 +228,9 @@ const Jackpot: React.FC<JackpotProps> = ({
               style={{
                 backgroundColor: buttonColor,
                 fontSize: 'clamp(12px, 3.5vw, 16px)',
-                minHeight: '40px'
+                minHeight: '40px',
+                border: `2px solid ${borderColor}`,
+                borderRadius: '8px'
               }}
             >
               {isRolling ? "Roulement..." : buttonLabel}

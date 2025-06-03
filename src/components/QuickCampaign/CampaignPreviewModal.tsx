@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { X, Monitor, Tablet, Smartphone } from 'lucide-react';
@@ -64,6 +63,10 @@ const CampaignPreviewModal: React.FC<CampaignPreviewModalProps> = ({
             buttonColor={mockCampaign.gameConfig?.jackpot?.buttonColor || '#841b60'}
             selectedTemplate={mockCampaign.gameConfig?.jackpot?.template}
             backgroundImage={mockCampaign.gameConfig?.jackpot?.backgroundImage}
+            borderColor={mockCampaign.gameConfig?.jackpot?.borderColor}
+            borderWidth={mockCampaign.gameConfig?.jackpot?.borderWidth}
+            slotBorderColor={mockCampaign.gameConfig?.jackpot?.slotBorderColor}
+            slotBorderWidth={mockCampaign.gameConfig?.jackpot?.slotBorderWidth}
           />
         );
 
