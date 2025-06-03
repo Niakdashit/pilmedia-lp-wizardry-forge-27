@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
@@ -229,10 +228,9 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
         <button
           onClick={handleGameStart}
           disabled={disabled}
-          className="px-6 py-3 rounded-lg font-semibold text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-6 py-3 rounded-lg font-semibold text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90"
           style={{ 
-            backgroundColor: disabled ? '#6b7280' : buttonColor,
-            ':hover': { backgroundColor: disabled ? '#6b7280' : `${buttonColor}dd` }
+            backgroundColor: disabled ? '#6b7280' : buttonColor
           }}
         >
           {disabled ? 'Remplissez le formulaire' : buttonLabel}

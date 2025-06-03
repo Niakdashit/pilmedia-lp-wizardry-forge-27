@@ -1,4 +1,16 @@
-import { CSSProperties } from "react";
+
+import { 
+  Target, 
+  Users, 
+  HelpCircle, 
+  Puzzle, 
+  Brain, 
+  Dice6, 
+  Cookie, 
+  ArrowRight, 
+  FileText,
+  DollarSign
+} from 'lucide-react';
 
 export type CampaignType =
   | 'wheel'
@@ -158,4 +170,62 @@ export const getDefaultGameConfig = (type: CampaignType) => {
   };
 
   return configs[type] || {};
+};
+
+export const getCampaignTypeIcon = (type: string) => {
+  switch (type) {
+    case 'wheel':
+      return Target;
+    case 'jackpot':
+      return DollarSign;
+    case 'memory':
+      return Brain;
+    case 'puzzle':
+      return Puzzle;
+    case 'quiz':
+      return HelpCircle;
+    case 'dice':
+      return Dice6;
+    case 'scratch':
+      return Cookie;
+    case 'swiper':
+      return ArrowRight;
+    case 'form':
+      return FileText;
+    case 'contest':
+      return Target;
+    case 'survey':
+      return Users;
+    default:
+      return HelpCircle;
+  }
+};
+
+export const getCampaignTypeText = (type: string) => {
+  switch (type) {
+    case 'wheel':
+      return 'Roue';
+    case 'jackpot':
+      return 'Jackpot';
+    case 'memory':
+      return 'Memory';
+    case 'puzzle':
+      return 'Puzzle';
+    case 'quiz':
+      return 'Quiz';
+    case 'dice':
+      return 'Dés';
+    case 'scratch':
+      return 'Grattage';
+    case 'swiper':
+      return 'Swiper';
+    case 'form':
+      return 'Formulaire';
+    case 'contest':
+      return 'Concours';
+    case 'survey':
+      return 'Sondage';
+    default:
+      return 'Jeu';
+  }
 };
