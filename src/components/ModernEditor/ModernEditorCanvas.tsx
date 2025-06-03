@@ -49,7 +49,7 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
     }
   };
 
-  // Créer une copie de la campagne avec les paramètres de taille et position
+  // Créer une copie de la campagne avec les paramètres de taille et position mis à jour
   const enhancedCampaign = {
     ...campaign,
     gameSize,
@@ -67,8 +67,13 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
         slotBorderColor: campaign.gameConfig?.[campaign.type]?.slotBorderColor,
         slotBorderWidth: campaign.gameConfig?.[campaign.type]?.slotBorderWidth,
         slotBackgroundColor: campaign.gameConfig?.[campaign.type]?.slotBackgroundColor,
+        // Ajouter la configuration des boutons
+        buttonLabel: campaign.gameConfig?.[campaign.type]?.buttonLabel,
+        buttonColor: campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor,
       }
-    }
+    },
+    // Ajouter la configuration des boutons au niveau de la campagne
+    buttonConfig: campaign.buttonConfig
   };
 
   return (
@@ -77,6 +82,7 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
         <GameCanvasPreview 
           campaign={enhancedCampaign}
           className="w-full h-full"
+          key={`${gameSize}-${gamePosition}-${campaign.buttonConfig?.color}`}
         />
       </div>
     </div>

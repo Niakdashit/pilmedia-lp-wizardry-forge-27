@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Dices, Settings, Palette } from 'lucide-react';
+import { Palette, Upload } from 'lucide-react';
 
 interface JackpotGameConfigProps {
   campaign: any;
@@ -11,274 +11,252 @@ const JackpotGameConfig: React.FC<JackpotGameConfigProps> = ({
   campaign,
   setCampaign
 }) => {
-  const gameConfig = campaign.gameConfig?.jackpot || {};
+  const jackpotConfig = campaign.gameConfig?.jackpot || {};
 
-  const handleConfigChange = (key: string, value: any) => {
+  const updateJackpotConfig = (updates: any) => {
     setCampaign((prev: any) => ({
       ...prev,
       gameConfig: {
         ...prev.gameConfig,
         jackpot: {
           ...prev.gameConfig?.jackpot,
-          [key]: value
+          ...updates
         }
       }
     }));
   };
 
-  const handleJackpotColorChange = (field: string, value: string | number) => {
-    setCampaign((prev: any) => ({
-      ...prev,
-      gameConfig: {
-        ...prev.gameConfig,
-        jackpot: {
-          ...prev.gameConfig?.jackpot,
-          [field]: value
-        }
-      }
-    }));
+  const handleBackgroundImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        updateJackpotConfig({
+          backgroundImage: e.target?.result as string
+        });
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
-  const handleFileUpload = (key: string, file: File) => {
-    const reader = new FileReader();
-    reader.onload = () => {
-      handleConfigChange(key, reader.result as string);
-    };
-    reader.readAsDataURL(file);
+  const handleColorChange = (colorKey: string, value: string) => {
+    updateJackpotConfig({
+      [colorKey]: value
+    });
+  };
+
+  const handleSliderChange = (key: string, value: number) => {
+    updateJackpotConfig({
+      [key]: value
+    });
   };
 
   return (
     <div className="space-y-6">
-      <div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-          <Dices className="w-5 h-5 mr-2" />
-          Configuration du Jackpot
-        </h3>
+      {/* Image de fond */}
+      <div className="space-y-3">
+        <label className="block text-sm font-medium text-gray-700">
+          Image de fond du jeu
+        </label>
+        <div className="flex items-center space-x-3">
+          <label className="cursor-pointer flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+            <Upload className="w-4 h-4" />
+            <span>Choisir un fichier</span>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleBackgroundImageUpload}
+              className="hidden"
+            />
+          </label>
+          <span className="text-sm text-gray-500">
+            {jackpotConfig.backgroundImage ? 'Image sélectionnée' : 'Aucun fichier choisi'}
+          </span>
+        </div>
+        {jackpotConfig.backgroundImage && (
+          <div className="mt-2">
+            <img 
+              src={jackpotConfig.backgroundImage} 
+              alt="Background preview" 
+              className="w-24 h-16 object-cover rounded border"
+            />
+          </div>
+        )}
       </div>
 
-      {/* Paramètres de base */}
+      {/* Couleurs du Jackpot */}
       <div className="space-y-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Texte du bouton
-          </label>
-          <input
-            type="text"
-            value={gameConfig.buttonLabel || 'Lancer le Jackpot'}
-            onChange={(e) => handleConfigChange('buttonLabel', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            Image de fond du jeu
-          </label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (file) handleFileUpload('backgroundImage', file);
-            }}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-          />
-          {gameConfig.backgroundImage && (
-            <div className="mt-2">
-              <img
-                src={gameConfig.backgroundImage}
-                alt="Aperçu image de fond"
-                className="w-32 h-20 object-cover border rounded"
-              />
-            </div>
-          )}
-        </div>
-      </div>
-
-      {/* Personnalisation des couleurs du Jackpot */}
-      <div className="border-t pt-6">
-        <h4 className="text-md font-semibold text-gray-900 mb-4 flex items-center">
-          <Palette className="w-4 h-4 mr-2" />
+        <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+          <Palette className="w-5 h-5 mr-2" />
           Couleurs du Jackpot
-        </h4>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Arrière-plan du conteneur */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">
-              Arrière-plan du conteneur
-            </label>
-            <div className="flex items-center space-x-3">
-              <input
-                type="color"
-                value={gameConfig.containerBackgroundColor || '#1f2937'}
-                onChange={(e) => handleJackpotColorChange('containerBackgroundColor', e.target.value)}
-                className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
-              />
-              <input
-                type="text"
-                value={gameConfig.containerBackgroundColor || '#1f2937'}
-                onChange={(e) => handleJackpotColorChange('containerBackgroundColor', e.target.value)}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#841b60] focus:border-transparent text-sm"
-              />
-            </div>
-          </div>
+        </h3>
 
-          {/* Arrière-plan interne */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">
-              Arrière-plan interne
-            </label>
-            <div className="flex items-center space-x-3">
-              <input
-                type="color"
-                value={gameConfig.backgroundColor || '#c4b5fd30'}
-                onChange={(e) => handleJackpotColorChange('backgroundColor', e.target.value)}
-                className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
-              />
-              <input
-                type="text"
-                value={gameConfig.backgroundColor || '#c4b5fd30'}
-                onChange={(e) => handleJackpotColorChange('backgroundColor', e.target.value)}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#841b60] focus:border-transparent text-sm"
-              />
-            </div>
-          </div>
-
-          {/* Bordure principale */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">
-              Bordure principale
-            </label>
-            <div className="flex items-center space-x-3">
-              <input
-                type="color"
-                value={gameConfig.borderColor || '#8b5cf6'}
-                onChange={(e) => handleJackpotColorChange('borderColor', e.target.value)}
-                className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
-              />
-              <input
-                type="text"
-                value={gameConfig.borderColor || '#8b5cf6'}
-                onChange={(e) => handleJackpotColorChange('borderColor', e.target.value)}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#841b60] focus:border-transparent text-sm"
-              />
-            </div>
-          </div>
-
-          {/* Épaisseur bordure principale */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">
-              Épaisseur bordure principale ({gameConfig.borderWidth || 3}px)
-            </label>
-            <input
-              type="range"
-              min="0"
-              max="10"
-              value={gameConfig.borderWidth || 3}
-              onChange={(e) => handleJackpotColorChange('borderWidth', parseInt(e.target.value))}
-              className="w-full"
+        {/* Arrière-plan du conteneur */}
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700">
+            Arrière-plan du conteneur
+          </label>
+          <div className="flex items-center space-x-3">
+            <div 
+              className="w-8 h-8 rounded border border-gray-300 cursor-pointer"
+              style={{ backgroundColor: jackpotConfig.containerBackgroundColor || '#1f2937' }}
+              onClick={() => document.getElementById('containerBg')?.click()}
             />
-          </div>
-
-          {/* Bordure des slots */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">
-              Bordure des slots
-            </label>
-            <div className="flex items-center space-x-3">
-              <input
-                type="color"
-                value={gameConfig.slotBorderColor || '#a78bfa'}
-                onChange={(e) => handleJackpotColorChange('slotBorderColor', e.target.value)}
-                className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
-              />
-              <input
-                type="text"
-                value={gameConfig.slotBorderColor || '#a78bfa'}
-                onChange={(e) => handleJackpotColorChange('slotBorderColor', e.target.value)}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#841b60] focus:border-transparent text-sm"
-              />
-            </div>
-          </div>
-
-          {/* Épaisseur bordure slots */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">
-              Épaisseur bordure slots ({gameConfig.slotBorderWidth || 2}px)
-            </label>
             <input
-              type="range"
-              min="0"
-              max="6"
-              value={gameConfig.slotBorderWidth || 2}
-              onChange={(e) => handleJackpotColorChange('slotBorderWidth', parseInt(e.target.value))}
-              className="w-full"
+              id="containerBg"
+              type="color"
+              value={jackpotConfig.containerBackgroundColor || '#1f2937'}
+              onChange={(e) => handleColorChange('containerBackgroundColor', e.target.value)}
+              className="sr-only"
             />
-          </div>
-
-          {/* Arrière-plan des slots */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-gray-700">
-              Arrière-plan des slots
-            </label>
-            <div className="flex items-center space-x-3">
-              <input
-                type="color"
-                value={gameConfig.slotBackgroundColor || '#ffffff'}
-                onChange={(e) => handleJackpotColorChange('slotBackgroundColor', e.target.value)}
-                className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
-              />
-              <input
-                type="text"
-                value={gameConfig.slotBackgroundColor || '#ffffff'}
-                onChange={(e) => handleJackpotColorChange('slotBackgroundColor', e.target.value)}
-                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#841b60] focus:border-transparent text-sm"
-              />
-            </div>
+            <input
+              type="text"
+              value={jackpotConfig.containerBackgroundColor || '#1f2937'}
+              onChange={(e) => handleColorChange('containerBackgroundColor', e.target.value)}
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+              placeholder="#1f2937"
+            />
           </div>
         </div>
-      </div>
 
-      {/* Paramètres de probabilité */}
-      <div className="border-t pt-6">
-        <h4 className="text-md font-semibold text-gray-900 mb-4 flex items-center">
-          <Settings className="w-4 h-4 mr-2" />
-          Paramètres de jeu
-        </h4>
-        
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Probabilité de gain ({((gameConfig.instantWin?.winProbability || 0.1) * 100).toFixed(1)}%)
-            </label>
+        {/* Arrière-plan interne */}
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700">
+            Arrière-plan interne
+          </label>
+          <div className="flex items-center space-x-3">
+            <div 
+              className="w-8 h-8 rounded border border-gray-300 cursor-pointer"
+              style={{ backgroundColor: (jackpotConfig.backgroundColor || '#c4b5fd30').replace('30', '') }}
+              onClick={() => document.getElementById('internalBg')?.click()}
+            />
             <input
-              type="range"
-              min="0"
-              max="1"
-              step="0.01"
-              value={gameConfig.instantWin?.winProbability || 0.1}
-              onChange={(e) => handleConfigChange('instantWin', {
-                ...gameConfig.instantWin,
-                winProbability: parseFloat(e.target.value)
-              })}
-              className="w-full"
+              id="internalBg"
+              type="color"
+              value={(jackpotConfig.backgroundColor || '#c4b5fd30').replace('30', '')}
+              onChange={(e) => handleColorChange('backgroundColor', e.target.value + '30')}
+              className="sr-only"
+            />
+            <input
+              type="text"
+              value={jackpotConfig.backgroundColor || '#c4b5fd30'}
+              onChange={(e) => handleColorChange('backgroundColor', e.target.value)}
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+              placeholder="#c4b5fd30"
             />
           </div>
+        </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Nombre maximum de gagnants
-            </label>
+        {/* Bordure principale */}
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700">
+            Bordure principale
+          </label>
+          <div className="flex items-center space-x-3">
+            <div 
+              className="w-8 h-8 rounded border border-gray-300 cursor-pointer"
+              style={{ backgroundColor: jackpotConfig.borderColor || '#8b5cf6' }}
+              onClick={() => document.getElementById('mainBorder')?.click()}
+            />
             <input
-              type="number"
-              min="1"
-              value={gameConfig.instantWin?.maxWinners || 10}
-              onChange={(e) => handleConfigChange('instantWin', {
-                ...gameConfig.instantWin,
-                maxWinners: parseInt(e.target.value)
-              })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
+              id="mainBorder"
+              type="color"
+              value={jackpotConfig.borderColor || '#8b5cf6'}
+              onChange={(e) => handleColorChange('borderColor', e.target.value)}
+              className="sr-only"
+            />
+            <input
+              type="text"
+              value={jackpotConfig.borderColor || '#8b5cf6'}
+              onChange={(e) => handleColorChange('borderColor', e.target.value)}
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+              placeholder="#8b5cf6"
+            />
+          </div>
+        </div>
+
+        {/* Épaisseur bordure principale */}
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700">
+            Épaisseur bordure principale ({jackpotConfig.borderWidth || 3}px)
+          </label>
+          <input
+            type="range"
+            min="1"
+            max="10"
+            value={jackpotConfig.borderWidth || 3}
+            onChange={(e) => handleSliderChange('borderWidth', parseInt(e.target.value))}
+            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+          />
+        </div>
+
+        {/* Bordure des slots */}
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700">
+            Bordure des slots
+          </label>
+          <div className="flex items-center space-x-3">
+            <div 
+              className="w-8 h-8 rounded border border-gray-300 cursor-pointer"
+              style={{ backgroundColor: jackpotConfig.slotBorderColor || '#a78bfa' }}
+              onClick={() => document.getElementById('slotBorder')?.click()}
+            />
+            <input
+              id="slotBorder"
+              type="color"
+              value={jackpotConfig.slotBorderColor || '#a78bfa'}
+              onChange={(e) => handleColorChange('slotBorderColor', e.target.value)}
+              className="sr-only"
+            />
+            <input
+              type="text"
+              value={jackpotConfig.slotBorderColor || '#a78bfa'}
+              onChange={(e) => handleColorChange('slotBorderColor', e.target.value)}
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+              placeholder="#a78bfa"
+            />
+          </div>
+        </div>
+
+        {/* Épaisseur bordure slots */}
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700">
+            Épaisseur bordure slots ({jackpotConfig.slotBorderWidth || 2}px)
+          </label>
+          <input
+            type="range"
+            min="1"
+            max="8"
+            value={jackpotConfig.slotBorderWidth || 2}
+            onChange={(e) => handleSliderChange('slotBorderWidth', parseInt(e.target.value))}
+            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+          />
+        </div>
+
+        {/* Arrière-plan des slots */}
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700">
+            Arrière-plan des slots
+          </label>
+          <div className="flex items-center space-x-3">
+            <div 
+              className="w-8 h-8 rounded border border-gray-300 cursor-pointer"
+              style={{ backgroundColor: jackpotConfig.slotBackgroundColor || '#ffffff' }}
+              onClick={() => document.getElementById('slotBg')?.click()}
+            />
+            <input
+              id="slotBg"
+              type="color"
+              value={jackpotConfig.slotBackgroundColor || '#ffffff'}
+              onChange={(e) => handleColorChange('slotBackgroundColor', e.target.value)}
+              className="sr-only"
+            />
+            <input
+              type="text"
+              value={jackpotConfig.slotBackgroundColor || '#ffffff'}
+              onChange={(e) => handleColorChange('slotBackgroundColor', e.target.value)}
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+              placeholder="#ffffff"
             />
           </div>
         </div>
