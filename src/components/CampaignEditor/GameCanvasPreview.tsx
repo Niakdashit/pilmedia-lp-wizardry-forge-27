@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Jackpot from '../GameTypes/Jackpot';
 import { Quiz } from '../GameTypes';
@@ -17,9 +18,13 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   campaign,
   className = ""
 }) => {
+  console.log('GameCanvasPreview received campaign:', campaign);
+  console.log('Game config:', campaign.gameConfig);
+  console.log('Button config:', campaign.buttonConfig);
+
   const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage;
-  const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel || 'Lancer le Jackpot';
-  const buttonColor = campaign.gameConfig?.[campaign.type]?.buttonColor || '#ec4899';
+  const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel || campaign.buttonConfig?.text || 'Lancer le Jackpot';
+  const buttonColor = campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor || '#ec4899';
 
   // Get game size and position from campaign with proper typing
   const gameSize: GameSize = (campaign.gameSize && Object.keys(GAME_SIZES).includes(campaign.gameSize)) 
@@ -29,6 +34,10 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   
   // Get dimensions based on game size
   const gameDimensions = GAME_SIZES[gameSize];
+  
+  console.log('Using gameSize:', gameSize, 'dimensions:', gameDimensions);
+  console.log('Using gamePosition:', gamePosition);
+  console.log('Using buttonLabel:', buttonLabel, 'buttonColor:', buttonColor);
   
   // Calculate positioning styles based on gamePosition
   const getPositionStyles = () => {
@@ -122,7 +131,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
               onFinish={() => {}}
               gameSize={gameSize}
               gamePosition={gamePosition}
-              key={`${gameSize}-${gamePosition}-${JSON.stringify(campaign.config?.roulette)}`}
+              key={`${gameSize}-${gamePosition}-${JSON.stringify(campaign.gameConfig?.roulette)}`}
             />
           </div>
         );
@@ -163,6 +172,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
     <div 
       className={`relative w-full h-full overflow-hidden ${className}`} 
       style={{ minHeight: '600px' }}
+      key={`game-preview-${gameSize}-${gamePosition}-${buttonColor}-${JSON.stringify(campaign.gameConfig?.[campaign.type])}`}
     >
       {/* Image de fond plein écran */}
       {gameBackgroundImage && (

@@ -15,6 +15,8 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
   gameSize,
   gamePosition
 }) => {
+  console.log('ModernEditorCanvas received:', { gameSize, gamePosition, buttonConfig: campaign.buttonConfig });
+
   const getCanvasStyle = () => {
     const baseStyle = {
       width: '100%',
@@ -54,6 +56,12 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
     ...campaign,
     gameSize,
     gamePosition,
+    // Mettre à jour la configuration des boutons de manière cohérente
+    buttonConfig: {
+      ...campaign.buttonConfig,
+      // S'assurer que la couleur est bien propagée
+      color: campaign.buttonConfig?.color || '#841b60'
+    },
     // S'assurer que les couleurs personnalisées sont incluses
     gameConfig: {
       ...campaign.gameConfig,
@@ -68,13 +76,13 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
         slotBorderWidth: campaign.gameConfig?.[campaign.type]?.slotBorderWidth,
         slotBackgroundColor: campaign.gameConfig?.[campaign.type]?.slotBackgroundColor,
         // Ajouter la configuration des boutons
-        buttonLabel: campaign.gameConfig?.[campaign.type]?.buttonLabel,
+        buttonLabel: campaign.gameConfig?.[campaign.type]?.buttonLabel || campaign.buttonConfig?.text,
         buttonColor: campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor,
       }
-    },
-    // Ajouter la configuration des boutons au niveau de la campagne
-    buttonConfig: campaign.buttonConfig
+    }
   };
+
+  console.log('Enhanced campaign for preview:', enhancedCampaign);
 
   return (
     <div className="w-full h-full flex items-center justify-center bg-gray-100 p-4">
@@ -82,7 +90,6 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
         <GameCanvasPreview 
           campaign={enhancedCampaign}
           className="w-full h-full"
-          key={`${gameSize}-${gamePosition}-${campaign.buttonConfig?.color}`}
         />
       </div>
     </div>

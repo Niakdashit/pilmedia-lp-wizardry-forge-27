@@ -14,16 +14,44 @@ const JackpotGameConfig: React.FC<JackpotGameConfigProps> = ({
   const jackpotConfig = campaign.gameConfig?.jackpot || {};
 
   const updateJackpotConfig = (updates: any) => {
-    setCampaign((prev: any) => ({
-      ...prev,
-      gameConfig: {
-        ...prev.gameConfig,
-        jackpot: {
-          ...prev.gameConfig?.jackpot,
-          ...updates
+    console.log('Updating jackpot config with:', updates);
+    setCampaign((prev: any) => {
+      const updated = {
+        ...prev,
+        gameConfig: {
+          ...prev.gameConfig,
+          jackpot: {
+            ...prev.gameConfig?.jackpot,
+            ...updates
+          }
         }
-      }
-    }));
+      };
+      console.log('Updated campaign:', updated);
+      return updated;
+    });
+  };
+
+  const updateButtonConfig = (buttonUpdates: any) => {
+    console.log('Updating button config with:', buttonUpdates);
+    setCampaign((prev: any) => {
+      const updated = {
+        ...prev,
+        buttonConfig: {
+          ...prev.buttonConfig,
+          ...buttonUpdates
+        },
+        gameConfig: {
+          ...prev.gameConfig,
+          jackpot: {
+            ...prev.gameConfig?.jackpot,
+            buttonLabel: buttonUpdates.text || prev.gameConfig?.jackpot?.buttonLabel,
+            buttonColor: buttonUpdates.color || prev.gameConfig?.jackpot?.buttonColor
+          }
+        }
+      };
+      console.log('Updated campaign with button config:', updated);
+      return updated;
+    });
   };
 
   const handleBackgroundImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,8 +79,66 @@ const JackpotGameConfig: React.FC<JackpotGameConfigProps> = ({
     });
   };
 
+  const handleButtonLabelChange = (value: string) => {
+    updateButtonConfig({ text: value });
+  };
+
+  const handleButtonColorChange = (value: string) => {
+    updateButtonConfig({ color: value });
+  };
+
   return (
     <div className="space-y-6">
+      {/* Configuration du bouton */}
+      <div className="space-y-4">
+        <h3 className="text-lg font-semibold text-gray-900 flex items-center">
+          <Palette className="w-5 h-5 mr-2" />
+          Configuration du bouton
+        </h3>
+
+        {/* Texte du bouton */}
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700">
+            Texte du bouton
+          </label>
+          <input
+            type="text"
+            value={campaign.buttonConfig?.text || jackpotConfig.buttonLabel || 'Lancer le Jackpot'}
+            onChange={(e) => handleButtonLabelChange(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
+            placeholder="Lancer le Jackpot"
+          />
+        </div>
+
+        {/* Couleur du bouton */}
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-gray-700">
+            Couleur du bouton
+          </label>
+          <div className="flex items-center space-x-3">
+            <div 
+              className="w-8 h-8 rounded border border-gray-300 cursor-pointer"
+              style={{ backgroundColor: campaign.buttonConfig?.color || jackpotConfig.buttonColor || '#ec4899' }}
+              onClick={() => document.getElementById('buttonColor')?.click()}
+            />
+            <input
+              id="buttonColor"
+              type="color"
+              value={campaign.buttonConfig?.color || jackpotConfig.buttonColor || '#ec4899'}
+              onChange={(e) => handleButtonColorChange(e.target.value)}
+              className="sr-only"
+            />
+            <input
+              type="text"
+              value={campaign.buttonConfig?.color || jackpotConfig.buttonColor || '#ec4899'}
+              onChange={(e) => handleButtonColorChange(e.target.value)}
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm"
+              placeholder="#ec4899"
+            />
+          </div>
+        </div>
+      </div>
+
       {/* Image de fond */}
       <div className="space-y-3">
         <label className="block text-sm font-medium text-gray-700">
