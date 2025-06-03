@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Target, Zap, Dice1, Gamepad2, Puzzle, ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
+
 const gameTypes = [{
   id: 'wheel',
   name: 'Roue de la fortune',
@@ -36,6 +37,7 @@ const gameTypes = [{
   icon: Puzzle,
   color: 'from-indigo-400 to-purple-500'
 }];
+
 const Step1GameSelection: React.FC = () => {
   const navigate = useNavigate();
   const {
@@ -43,40 +45,44 @@ const Step1GameSelection: React.FC = () => {
     setGameType,
     setCurrentStep
   } = useQuickCampaignStore();
+
   const handleGameSelect = (gameId: string) => {
     setGameType(gameId);
+    // Navigation automatique : passer directement à l'étape suivante
+    setTimeout(() => {
+      setCurrentStep(2);
+    }, 300); // Petit délai pour l'animation de sélection
   };
+
   const handleNext = () => {
     if (selectedGameType) {
       setCurrentStep(2);
     }
   };
+
   const handleBack = () => {
     navigate('/campaigns');
   };
-  return <div className="min-h-screen bg-[#ebf4f7] px-6 py-12">
+
+  return (
+    <div className="min-h-screen bg-[#ebf4f7] px-6 py-12">
       <div className="max-w-6xl mx-auto">
         <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-8 md:p-12">
           {/* Header */}
           <div className="text-center mb-16">
-            <motion.h1 initial={{
-            opacity: 0,
-            y: 20
-          }} animate={{
-            opacity: 1,
-            y: 0
-          }} className="mb-4 text-[#841b60] text-4xl font-semibold">
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-4 text-[#841b60] text-4xl font-semibold"
+            >
               Créer une campagne
             </motion.h1>
-            <motion.p initial={{
-            opacity: 0,
-            y: 20
-          }} animate={{
-            opacity: 1,
-            y: 0
-          }} transition={{
-            delay: 0.1
-          }} className="text-xl font-light text-[#aa5e91]">
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="text-xl font-light text-[#aa5e91]"
+            >
               Choisissez le type d'expérience que vous souhaitez créer
             </motion.p>
           </div>
@@ -84,23 +90,29 @@ const Step1GameSelection: React.FC = () => {
           {/* Game Selection Grid */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
             {gameTypes.map((game, index) => {
-            const IconComponent = game.icon;
-            const isSelected = selectedGameType === game.id;
-            return <motion.div key={game.id} initial={{
-              opacity: 0,
-              y: 20
-            }} animate={{
-              opacity: 1,
-              y: 0
-            }} transition={{
-              delay: index * 0.1
-            }} onClick={() => handleGameSelect(game.id)} className={`
+              const IconComponent = game.icon;
+              const isSelected = selectedGameType === game.id;
+              
+              return (
+                <motion.div
+                  key={game.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  onClick={() => handleGameSelect(game.id)}
+                  className={`
                     relative p-8 rounded-3xl border-2 cursor-pointer transition-all duration-300
-                    ${isSelected ? 'border-[#841b60] bg-[#841b60]/5 shadow-xl' : 'border-gray-200 bg-gray-50 hover:border-[#841b60]/50 hover:shadow-lg'}
-                  `}>
-                  {game.popular && <div className="absolute -top-3 -right-3 bg-[#841b60] text-white text-xs px-3 py-1 rounded-full font-medium">
+                    ${isSelected 
+                      ? 'border-[#841b60] bg-[#841b60]/5 shadow-xl' 
+                      : 'border-gray-200 bg-gray-50 hover:border-[#841b60]/50 hover:shadow-lg'
+                    }
+                  `}
+                >
+                  {game.popular && (
+                    <div className="absolute -top-3 -right-3 bg-[#841b60] text-white text-xs px-3 py-1 rounded-full font-medium">
                       Populaire
-                    </div>}
+                    </div>
+                  )}
                   
                   <div className="text-center">
                     <div className={`
@@ -118,20 +130,31 @@ const Step1GameSelection: React.FC = () => {
                       {game.description}
                     </p>
                   </div>
-                </motion.div>;
-          })}
+                </motion.div>
+              );
+            })}
           </div>
 
           {/* Navigation */}
           <div className="flex justify-between items-center">
-            <button onClick={handleBack} className="px-6 py-3 text-gray-600 hover:text-gray-900 transition-colors font-medium">
+            <button
+              onClick={handleBack}
+              className="px-6 py-3 text-gray-600 hover:text-gray-900 transition-colors font-medium"
+            >
               Retour
             </button>
 
-            <button onClick={handleNext} disabled={!selectedGameType} className={`
+            <button
+              onClick={handleNext}
+              disabled={!selectedGameType}
+              className={`
                 flex items-center space-x-2 px-8 py-4 rounded-2xl font-medium transition-all
-                ${selectedGameType ? 'bg-[#841b60] text-white hover:bg-[#841b60]/90 shadow-lg' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}
-              `}>
+                ${selectedGameType 
+                  ? 'bg-[#841b60] text-white hover:bg-[#841b60]/90 shadow-lg' 
+                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                }
+              `}
+            >
               <span>Continuer</span>
               <ArrowRight className="w-5 h-5" />
             </button>
@@ -148,6 +171,8 @@ const Step1GameSelection: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default Step1GameSelection;
