@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Jackpot from '../GameTypes/Jackpot';
 import { Quiz } from '../GameTypes';
@@ -40,13 +41,14 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
             buttonLabel={buttonLabel}
             buttonColor={buttonColor}
             backgroundImage={gameBackgroundImage}
-            containerBackgroundColor={campaign.gameConfig?.jackpot?.containerBackgroundColor}
-            backgroundColor={campaign.gameConfig?.jackpot?.backgroundColor}
-            borderColor={campaign.gameConfig?.jackpot?.borderColor}
-            borderWidth={campaign.gameConfig?.jackpot?.borderWidth}
-            slotBorderColor={campaign.gameConfig?.jackpot?.slotBorderColor}
-            slotBorderWidth={campaign.gameConfig?.jackpot?.slotBorderWidth}
-            slotBackgroundColor={campaign.gameConfig?.jackpot?.slotBackgroundColor}
+            // Utiliser les nouvelles couleurs personnalisées
+            containerBackgroundColor={campaign.gameConfig?.jackpot?.containerBackgroundColor || '#1f2937'}
+            backgroundColor={campaign.gameConfig?.jackpot?.backgroundColor || '#c4b5fd30'}
+            borderColor={campaign.gameConfig?.jackpot?.borderColor || '#8b5cf6'}
+            borderWidth={campaign.gameConfig?.jackpot?.borderWidth || 3}
+            slotBorderColor={campaign.gameConfig?.jackpot?.slotBorderColor || '#a78bfa'}
+            slotBorderWidth={campaign.gameConfig?.jackpot?.slotBorderWidth || 2}
+            slotBackgroundColor={campaign.gameConfig?.jackpot?.slotBackgroundColor || '#ffffff'}
           />
         );
       case 'quiz':

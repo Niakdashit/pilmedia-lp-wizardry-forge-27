@@ -241,16 +241,16 @@ const ColorCustomizer: React.FC = () => {
             }}
           >
             <div className="flex items-center space-x-2 mb-3">
-              {/* Arrière-plan du conteneur */}
+              {/* Arrière-plan du conteneur - vraie couleur */}
               <div 
                 className="w-5 h-5 rounded-full shadow-sm border border-white/20" 
                 style={{ backgroundColor: palette.colors.containerBg }}
                 title="Arrière-plan du conteneur"
               />
-              {/* Arrière-plan interne */}
+              {/* Arrière-plan interne - vraie couleur avec transparence */}
               <div 
                 className="w-5 h-5 rounded-full shadow-sm border border-white/20" 
-                style={{ backgroundColor: palette.colors.accent + '30' }}
+                style={{ backgroundColor: palette.colors.accent }}
                 title="Arrière-plan interne"
               />
               {/* Bordure principale */}
