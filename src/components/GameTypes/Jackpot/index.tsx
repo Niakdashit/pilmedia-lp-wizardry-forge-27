@@ -80,39 +80,70 @@ const Jackpot: React.FC<JackpotProps> = ({
   // Calculer la largeur nécessaire pour les 3 slots + gaps
   const slotsContainerWidth = (slotSize * 3) + (slotGap * 2);
 
-  // Style pour le conteneur des slots uniquement
+  // Style pour le conteneur des slots avec effets 3D
   const slotsContainerStyle: React.CSSProperties = {
-    width: slotsContainerWidth + (borderWidth * 2) + 20, // +20 pour un peu de padding interne
-    height: slotSize + (borderWidth * 2) + 20,
+    width: slotsContainerWidth + (borderWidth * 2) + 24,
+    height: slotSize + (borderWidth * 2) + 24,
     border: `${borderWidth}px solid ${borderColor}`,
-    borderRadius: '12px',
+    borderRadius: '16px',
     backgroundColor: containerBackgroundColor,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: '10px',
+    padding: '12px',
     position: 'relative',
+    // Effets 3D et ombres comme la roue
+    boxShadow: `
+      0 8px 32px rgba(0, 0, 0, 0.3),
+      0 4px 16px rgba(0, 0, 0, 0.2),
+      inset 0 2px 4px rgba(255, 255, 255, 0.1),
+      inset 0 -2px 4px rgba(0, 0, 0, 0.1)
+    `,
+    background: `
+      linear-gradient(145deg, 
+        ${containerBackgroundColor}, 
+        ${containerBackgroundColor}dd
+      )
+    `,
   };
 
+  // Ajouter l'image de fond si disponible
   if (backgroundImage) {
-    slotsContainerStyle.backgroundImage = `url(${backgroundImage})`;
+    slotsContainerStyle.backgroundImage = `
+      linear-gradient(145deg, 
+        ${containerBackgroundColor}cc, 
+        ${containerBackgroundColor}aa
+      ),
+      url(${backgroundImage})
+    `;
     slotsContainerStyle.backgroundSize = 'cover';
     slotsContainerStyle.backgroundPosition = 'center';
     slotsContainerStyle.backgroundRepeat = 'no-repeat';
   }
 
+  // Style pour la zone interne des slots avec effet de profondeur
+  const innerZoneStyle: React.CSSProperties = {
+    backgroundColor: backgroundColor + 'dd',
+    borderRadius: '12px',
+    padding: '8px',
+    gap: slotGap,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexWrap: 'nowrap' as const,
+    // Effet creusé
+    boxShadow: `
+      inset 0 3px 8px rgba(0, 0, 0, 0.2),
+      inset 0 1px 4px rgba(0, 0, 0, 0.1),
+      0 1px 2px rgba(255, 255, 255, 0.1)
+    `,
+  };
+
   return (
-    <div className="flex flex-col items-center justify-center space-y-4">
-      {/* Conteneur des slots seulement */}
+    <div className="flex flex-col items-center justify-center space-y-6">
+      {/* Conteneur des slots avec effets 3D */}
       <div style={slotsContainerStyle}>
-        <div 
-          className="flex rounded-lg p-2" 
-          style={{ 
-            backgroundColor: backgroundColor + '66',
-            gap: slotGap,
-            flexWrap: 'nowrap'
-          }}
-        >
+        <div style={innerZoneStyle}>
           {slots.map((symbol, i) => 
             <JackpotSlot
               key={i}

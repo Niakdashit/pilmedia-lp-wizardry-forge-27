@@ -19,7 +19,13 @@ const CampaignPreviewModal: React.FC<CampaignPreviewModalProps> = ({
 }) => {
   const [selectedDevice, setSelectedDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
   
-  const { generatePreviewCampaign, campaignName, selectedGameType } = useQuickCampaignStore();
+  const { 
+    generatePreviewCampaign, 
+    campaignName, 
+    selectedGameType,
+    jackpotColors,
+    customColors
+  } = useQuickCampaignStore();
 
   if (!isOpen) return null;
 
@@ -60,15 +66,15 @@ const CampaignPreviewModal: React.FC<CampaignPreviewModalProps> = ({
               winnersCount: 0
             }}
             buttonLabel={mockCampaign.gameConfig?.jackpot?.buttonLabel || 'Lancer le Jackpot'}
-            buttonColor={mockCampaign.gameConfig?.jackpot?.buttonColor || '#841b60'}
+            buttonColor={customColors.primary}
             backgroundImage={mockCampaign.gameConfig?.jackpot?.backgroundImage}
-            containerBackgroundColor={mockCampaign.gameConfig?.jackpot?.containerBackgroundColor}
-            backgroundColor={mockCampaign.gameConfig?.jackpot?.backgroundColor}
-            borderColor={mockCampaign.gameConfig?.jackpot?.borderColor}
-            borderWidth={mockCampaign.gameConfig?.jackpot?.borderWidth}
-            slotBorderColor={mockCampaign.gameConfig?.jackpot?.slotBorderColor}
-            slotBorderWidth={mockCampaign.gameConfig?.jackpot?.slotBorderWidth}
-            slotBackgroundColor={mockCampaign.gameConfig?.jackpot?.slotBackgroundColor}
+            containerBackgroundColor={jackpotColors.containerBackgroundColor}
+            backgroundColor={jackpotColors.backgroundColor}
+            borderColor={jackpotColors.borderColor}
+            borderWidth={jackpotColors.borderWidth}
+            slotBorderColor={jackpotColors.slotBorderColor}
+            slotBorderWidth={jackpotColors.slotBorderWidth}
+            slotBackgroundColor={jackpotColors.slotBackgroundColor}
           />
         );
 
