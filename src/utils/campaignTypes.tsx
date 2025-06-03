@@ -91,7 +91,7 @@ interface FormConfig extends BaseConfig { }
 
 interface InstantWinConfig {
   mode: "instant_winner";
-  winProbability: number; // entre 0 et 1
+  winProbability: number;
   maxWinners?: number;
   winnersCount?: number;
 }
