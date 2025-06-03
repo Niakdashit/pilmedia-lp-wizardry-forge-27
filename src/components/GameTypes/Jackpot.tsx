@@ -108,97 +108,92 @@ const Jackpot: React.FC<JackpotProps> = ({
   const slotSize = getSlotSize();
   const slotGap = Math.max(8, slotSize * 0.15);
 
-  const containerStyle: React.CSSProperties = {
-    minHeight: '400px',
-    position: 'relative',
-    width: '100%',
-    height: '100%',
-    display: 'flex',
+  // Container avec dimensions ajustées au contenu
+  const gameContainerStyle: React.CSSProperties = {
+    display: 'inline-flex',
+    flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
     border: `${borderWidth}px solid ${borderColor}`,
     borderRadius: '12px',
     padding: '20px',
     backgroundColor: containerBackgroundColor,
+    position: 'relative',
   };
 
   if (backgroundImage) {
-    containerStyle.backgroundImage = `url(${backgroundImage})`;
-    containerStyle.backgroundSize = 'cover';
-    containerStyle.backgroundPosition = 'center';
-    containerStyle.backgroundRepeat = 'no-repeat';
+    gameContainerStyle.backgroundImage = `url(${backgroundImage})`;
+    gameContainerStyle.backgroundSize = 'cover';
+    gameContainerStyle.backgroundPosition = 'center';
+    gameContainerStyle.backgroundRepeat = 'no-repeat';
   }
 
   return (
-    <div style={containerStyle} className="flex flex-col items-center justify-center w-full h-full">
-      {/* Contenu du jeu */}
-      <div className="relative z-20 flex flex-col items-center justify-center bg-black/20 backdrop-blur-sm rounded-lg p-6" 
-           style={{ backgroundColor: backgroundColor + '40' }}>
-        
-        {/* Titre Jackpot */}
-        <div className="mb-6">
-          <h2 className="text-4xl font-bold text-center bg-gradient-to-r from-yellow-400 to-yellow-600 bg-clip-text text-transparent">
-            JACKPOT
-          </h2>
-        </div>
+    <div className="flex items-center justify-center w-full h-full">
+      <div style={gameContainerStyle}>
+        {/* Zone de jeu centrale */}
+        <div 
+          className="flex flex-col items-center justify-center rounded-lg p-4" 
+          style={{ backgroundColor: backgroundColor + '66' }}
+        >
+          {/* Slots avec bordures personnalisables */}
+          <div style={{
+            gap: slotGap,
+            flexWrap: 'nowrap',
+            maxWidth: '100%'
+          }} className="flex mb-6 mx-0">
+            {slots.map((symbol, i) => 
+              <motion.div 
+                key={i} 
+                style={{
+                  width: slotSize,
+                  height: slotSize,
+                  borderRadius: 8,
+                  border: `${slotBorderWidth}px solid ${slotBorderColor}`,
+                  backgroundColor: slotBackgroundColor,
+                  boxShadow: "0 4px 12px 0 rgba(0,0,0,0.15)",
+                  fontSize: Math.max(20, slotSize * 0.4),
+                  fontWeight: 700
+                }} 
+                animate={{
+                  scale: isRolling ? [1, 0.93, 1] : 1,
+                  rotateY: isRolling ? [0, 180, 360] : 0
+                }} 
+                transition={{
+                  duration: 0.32,
+                  repeat: isRolling ? Infinity : 0
+                }} 
+                className="shadow-md flex items-center justify-center flex-shrink-0"
+              >
+                {symbol}
+              </motion.div>
+            )}
+          </div>
 
-        {/* Slots avec bordures personnalisables */}
-        <div style={{
-          gap: slotGap,
-          flexWrap: 'nowrap',
-          maxWidth: '100%'
-        }} className="flex mb-6 mx-0">
-          {slots.map((symbol, i) => 
-            <motion.div 
-              key={i} 
-              style={{
-                width: slotSize,
-                height: slotSize,
-                borderRadius: 8,
-                border: `${slotBorderWidth}px solid ${slotBorderColor}`,
-                backgroundColor: slotBackgroundColor,
-                boxShadow: "0 4px 12px 0 rgba(0,0,0,0.15)",
-                fontSize: Math.max(20, slotSize * 0.4),
-                fontWeight: 700
-              }} 
-              animate={{
-                scale: isRolling ? [1, 0.93, 1] : 1,
-                rotateY: isRolling ? [0, 180, 360] : 0
-              }} 
-              transition={{
-                duration: 0.32,
-                repeat: isRolling ? Infinity : 0
-              }} 
-              className="shadow-md flex items-center justify-center flex-shrink-0"
-            >
-              {symbol}
-            </motion.div>
-          )}
-        </div>
-
-        {/* Résultat ou bouton */}
-        <div className="flex flex-col items-center w-full">
-          {result ? (
-            <h3 className={`text-lg font-bold mb-2 text-center ${result === "win" ? "text-green-400" : "text-red-400"}`} 
-                style={{ fontSize: 'clamp(16px, 4vw, 20px)' }}>
-              {result === "win" ? "🎉 JACKPOT ! Vous avez gagné ! 🎉" : "😞 Dommage, pas de jackpot !"}
-            </h3>
-          ) : (
-            <button 
-              onClick={roll} 
-              disabled={isRolling} 
-              className="px-6 py-3 text-white font-medium rounded-lg shadow-lg hover:opacity-90 transition-all duration-200 disabled:opacity-50 max-w-full" 
-              style={{
-                backgroundColor: buttonColor,
-                fontSize: 'clamp(14px, 3.5vw, 18px)',
-                minHeight: '48px',
-                border: `2px solid ${borderColor}`,
-                borderRadius: '8px'
-              }}
-            >
-              {isRolling ? "🎰 Roulement..." : buttonLabel}
-            </button>
-          )}
+          {/* Résultat ou bouton */}
+          <div className="flex flex-col items-center w-full">
+            {result ? (
+              <h3 className={`text-lg font-bold mb-2 text-center ${result === "win" ? "text-green-400" : "text-red-400"}`} 
+                  style={{ fontSize: 'clamp(16px, 4vw, 20px)' }}>
+                {result === "win" ? "🎉 Vous avez gagné ! 🎉" : "😞 Dommage, réessayez !"}
+              </h3>
+            ) : (
+              <button 
+                onClick={roll} 
+                disabled={isRolling} 
+                className="px-6 py-3 text-white font-medium rounded-lg shadow-lg hover:opacity-90 transition-all duration-200 disabled:opacity-50 max-w-full" 
+                style={{
+                  backgroundColor: buttonColor,
+                  fontSize: 'clamp(14px, 3.5vw, 18px)',
+                  minHeight: '48px',
+                  border: `2px solid ${borderColor}`,
+                  borderRadius: '8px'
+                }}
+              >
+                {isRolling ? "🎰 Roulement..." : buttonLabel}
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </div>
