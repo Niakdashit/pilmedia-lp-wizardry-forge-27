@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 import Modal from '../common/Modal';
 import ValidationMessage from '../common/ValidationMessage';
@@ -109,18 +110,6 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
 
   const fields: FieldConfig[] = Array.isArray(campaign.formFields) && campaign.formFields.length > 0
     ? campaign.formFields : DEFAULT_FIELDS;
-
-  // Get button configuration from campaign with custom colors
-  const buttonConfig = campaign?.buttonConfig || {
-    color: customColors?.primary || '#841b60',
-    borderColor: customColors?.primary || '#841b60',
-    borderWidth: 1,
-    borderRadius: 8,
-    size: 'medium',
-    link: '',
-    visible: true,
-    text: 'Remplir le formulaire'
-  };
 
   const handleFormSubmit = async (formData: Record<string, string>) => {
     if (campaign.id) {
@@ -306,3 +295,4 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
 };
 
 export default WheelPreview;
+
