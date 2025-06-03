@@ -78,16 +78,9 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
     setFormValidated(false);
   };
 
-  const selectedTemplateId =
-    campaign?.design?.template ||
-    campaign?.gameConfig?.jackpot?.template ||
-    campaign?.gameConfig?.[campaign.type]?.template ||
-    campaign?.selectedTemplate;
-
   // Rendu du jeu avec dimensions responsive corrigées
   const renderGame = () => {
     const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage;
-    const customTemplate = campaign.gameConfig?.[campaign.type]?.customTemplate;
     const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel;
     const buttonColor = campaign.gameConfig?.[campaign.type]?.buttonColor;
     const contrastBg = mobileConfig?.contrastBackground || campaign.screens?.[2]?.contrastBackground;
@@ -157,8 +150,13 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
               buttonLabel={buttonLabel}
               buttonColor={buttonColor}
               backgroundImage={gameBackgroundImage}
-              customTemplate={customTemplate}
-              selectedTemplate={selectedTemplateId}
+              containerBackgroundColor={campaign.gameConfig?.jackpot?.containerBackgroundColor}
+              backgroundColor={campaign.gameConfig?.jackpot?.backgroundColor}
+              borderColor={campaign.gameConfig?.jackpot?.borderColor}
+              borderWidth={campaign.gameConfig?.jackpot?.borderWidth}
+              slotBorderColor={campaign.gameConfig?.jackpot?.slotBorderColor}
+              slotBorderWidth={campaign.gameConfig?.jackpot?.slotBorderWidth}
+              slotBackgroundColor={campaign.gameConfig?.jackpot?.slotBackgroundColor}
               {...commonProps}
             />
           );

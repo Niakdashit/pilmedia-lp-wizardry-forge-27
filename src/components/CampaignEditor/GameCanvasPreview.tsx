@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Jackpot from '../GameTypes/Jackpot';
 import { Quiz } from '../GameTypes';
@@ -43,7 +42,14 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
             }}
             buttonLabel={buttonLabel}
             buttonColor={buttonColor}
-            selectedTemplate={selectedTemplateId}
+            backgroundImage={gameBackgroundImage}
+            containerBackgroundColor={campaign.gameConfig?.jackpot?.containerBackgroundColor}
+            backgroundColor={campaign.gameConfig?.jackpot?.backgroundColor}
+            borderColor={campaign.gameConfig?.jackpot?.borderColor}
+            borderWidth={campaign.gameConfig?.jackpot?.borderWidth}
+            slotBorderColor={campaign.gameConfig?.jackpot?.slotBorderColor}
+            slotBorderWidth={campaign.gameConfig?.jackpot?.slotBorderWidth}
+            slotBackgroundColor={campaign.gameConfig?.jackpot?.slotBackgroundColor}
           />
         );
       case 'quiz':
