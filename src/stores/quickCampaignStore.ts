@@ -88,45 +88,15 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
     currentStep: 1,
   }),
 
-  // Nouvelle méthode pour générer les données de campagne
+  // Nouvelle méthode pour générer les données de campagne selon le type de jeu
   generatePreviewCampaign: () => {
     const state = get();
     
-    // Générer les segments de la roue avec les couleurs personnalisées
-    const colors = [state.customColors.primary, state.customColors.secondary, state.customColors.accent || '#10b981'];
-    const segments = Array.from({ length: state.segmentCount }).map((_, i) => ({
-      label: `Prix ${i + 1}`,
-      color: colors[i % colors.length],
-      chance: Math.floor(100 / state.segmentCount)
-    }));
-
-    return {
+    // Configuration de base commune
+    const baseConfig = {
       id: 'preview',
       name: state.campaignName || 'Aperçu de la campagne',
-      type: 'wheel',
-      config: {
-        roulette: {
-          segments: segments,
-          theme: state.selectedTheme || 'default',
-          borderColor: state.customColors.primary,
-          pointerColor: state.customColors.primary,
-          centerLogo: state.logoFile ? URL.createObjectURL(state.logoFile) : undefined
-        }
-      },
-      gameConfig: {
-        wheel: {
-          template: state.selectedTheme,
-          backgroundImage: state.backgroundImage ? URL.createObjectURL(state.backgroundImage) : undefined,
-          buttonLabel: 'Lancer la roue',
-          buttonColor: state.customColors.primary,
-          instantWin: {
-            mode: 'instant_winner' as const,
-            winProbability: 0.1,
-            maxWinners: 10,
-            winnersCount: 0
-          }
-        }
-      },
+      type: state.selectedGameType || 'wheel',
       design: {
         template: state.selectedTheme,
         theme: state.selectedTheme,
@@ -145,7 +115,7 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
         borderWidth: 2,
         borderRadius: 12,
         size: 'medium',
-        text: 'Lancer la roue',
+        text: 'Jouer',
         visible: true
       },
       screens: [
@@ -206,5 +176,139 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
         }
       }
     };
+
+    // Configuration spécifique selon le type de jeu
+    switch (state.selectedGameType) {
+      case 'wheel':
+        const colors = [state.customColors.primary, state.customColors.secondary, state.customColors.accent || '#10b981'];
+        const segments = Array.from({ length: state.segmentCount }).map((_, i) => ({
+          label: `Prix ${i + 1}`,
+          color: colors[i % colors.length],
+          chance: Math.floor(100 / state.segmentCount)
+        }));
+
+        return {
+          ...baseConfig,
+          config: {
+            roulette: {
+              segments: segments,
+              theme: state.selectedTheme || 'default',
+              borderColor: state.customColors.primary,
+              pointerColor: state.customColors.primary,
+              centerLogo: state.logoFile ? URL.createObjectURL(state.logoFile) : undefined
+            }
+          },
+          gameConfig: {
+            wheel: {
+              template: state.selectedTheme,
+              backgroundImage: state.backgroundImage ? URL.createObjectURL(state.backgroundImage) : undefined,
+              buttonLabel: 'Lancer la roue',
+              buttonColor: state.customColors.primary,
+              instantWin: {
+                mode: 'instant_winner' as const,
+                winProbability: 0.1,
+                maxWinners: 10,
+                winnersCount: 0
+              }
+            }
+          },
+          buttonConfig: {
+            ...baseConfig.buttonConfig,
+            text: 'Lancer la roue'
+          }
+        };
+
+      case 'jackpot':
+        return {
+          ...baseConfig,
+          gameConfig: {
+            jackpot: {
+              template: state.selectedTheme,
+              backgroundImage: state.backgroundImage ? URL.createObjectURL(state.backgroundImage) : undefined,
+              buttonLabel: 'Lancer le Jackpot',
+              buttonColor: state.customColors.primary,
+              symbols: ['🍒', '🍋', '🍊'],
+              reels: 3,
+              winMessage: 'JACKPOT ! Vous avez gagné !',
+              loseMessage: 'Dommage, pas de jackpot !',
+              instantWin: {
+                enabled: true,
+                mode: 'instant_winner' as const,
+                winProbability: 0.1,
+                maxWinners: 10,
+                winnersCount: 0
+              }
+            }
+          },
+          buttonConfig: {
+            ...baseConfig.buttonConfig,
+            text: 'Lancer le Jackpot'
+          }
+        };
+
+      case 'scratch':
+        return {
+          ...baseConfig,
+          gameConfig: {
+            scratch: {
+              template: state.selectedTheme,
+              backgroundImage: state.backgroundImage ? URL.createObjectURL(state.backgroundImage) : undefined,
+              buttonLabel: 'Gratter',
+              buttonColor: state.customColors.primary,
+              scratchImage: undefined,
+              winMessage: 'Félicitations ! Vous avez gagné !',
+              loseMessage: 'Dommage, réessayez !',
+              instantWin: {
+                enabled: true,
+                mode: 'instant_winner' as const,
+                winProbability: 0.1,
+                maxWinners: 10,
+                winnersCount: 0
+              }
+            }
+          },
+          buttonConfig: {
+            ...baseConfig.buttonConfig,
+            text: 'Gratter'
+          }
+        };
+
+      case 'dice':
+        return {
+          ...baseConfig,
+          gameConfig: {
+            dice: {
+              template: state.selectedTheme,
+              backgroundImage: state.backgroundImage ? URL.createObjectURL(state.backgroundImage) : undefined,
+              buttonLabel: 'Lancer les dés',
+              buttonColor: state.customColors.primary,
+              diceCount: 2,
+              winCondition: 'sum',
+              targetSum: 7,
+              winMessage: 'Félicitations ! Vous avez gagné !',
+              loseMessage: 'Dommage, réessayez !',
+              instantWin: {
+                enabled: true,
+                mode: 'instant_winner' as const,
+                winProbability: 0.1,
+                maxWinners: 10,
+                winnersCount: 0
+              }
+            }
+          },
+          buttonConfig: {
+            ...baseConfig.buttonConfig,
+            text: 'Lancer les dés'
+          }
+        };
+
+      default:
+        // Fallback vers la roue si type non reconnu
+        return {
+          ...baseConfig,
+          type: 'wheel',
+          // ... configuration roue par défaut
+        };
+    }
   }
 }));

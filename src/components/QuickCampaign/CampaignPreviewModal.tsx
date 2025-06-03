@@ -4,6 +4,9 @@ import { motion } from 'framer-motion';
 import { X, Monitor, Tablet, Smartphone } from 'lucide-react';
 import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
 import WheelPreview from '../GameTypes/WheelPreview';
+import { Jackpot } from '../GameTypes';
+import ScratchPreview from '../GameTypes/ScratchPreview';
+import DicePreview from '../GameTypes/DicePreview';
 import MobilePreview from '../CampaignEditor/Mobile/MobilePreview';
 
 interface CampaignPreviewModalProps {
@@ -17,7 +20,7 @@ const CampaignPreviewModal: React.FC<CampaignPreviewModalProps> = ({
 }) => {
   const [selectedDevice, setSelectedDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
   
-  const { generatePreviewCampaign, campaignName } = useQuickCampaignStore();
+  const { generatePreviewCampaign, campaignName, selectedGameType } = useQuickCampaignStore();
 
   if (!isOpen) return null;
 
@@ -25,6 +28,67 @@ const CampaignPreviewModal: React.FC<CampaignPreviewModalProps> = ({
   const mockCampaign = generatePreviewCampaign();
 
   console.log('Preview campaign data:', mockCampaign);
+
+  // Rendu du jeu selon le type sélectionné
+  const renderGameComponent = () => {
+    const gameType = selectedGameType || 'wheel';
+
+    switch (gameType) {
+      case 'wheel':
+        return (
+          <WheelPreview
+            campaign={mockCampaign}
+            config={mockCampaign.gameConfig?.wheel || {
+              mode: "instant_winner" as const,
+              winProbability: 0.1,
+              maxWinners: 10,
+              winnersCount: 0
+            }}
+            gameSize="large"
+            gamePosition="center"
+            previewDevice="desktop"
+          />
+        );
+
+      case 'jackpot':
+        return (
+          <Jackpot
+            isPreview={true}
+            instantWinConfig={mockCampaign.gameConfig?.jackpot?.instantWin || {
+              mode: "instant_winner" as const,
+              winProbability: 0.1,
+              maxWinners: 10,
+              winnersCount: 0
+            }}
+            buttonLabel={mockCampaign.gameConfig?.jackpot?.buttonLabel || 'Lancer le Jackpot'}
+            buttonColor={mockCampaign.gameConfig?.jackpot?.buttonColor || '#841b60'}
+            selectedTemplate={mockCampaign.gameConfig?.jackpot?.template}
+            backgroundImage={mockCampaign.gameConfig?.jackpot?.backgroundImage}
+          />
+        );
+
+      case 'scratch':
+        return (
+          <ScratchPreview 
+            config={mockCampaign.gameConfig?.scratch || {}}
+          />
+        );
+
+      case 'dice':
+        return (
+          <DicePreview 
+            config={mockCampaign.gameConfig?.dice || {}}
+          />
+        );
+
+      default:
+        return (
+          <div className="text-center text-gray-500">
+            <p>Type de jeu non supporté: {gameType}</p>
+          </div>
+        );
+    }
+  };
 
   const renderDesktopPreview = () => (
     <div className="w-full h-full flex items-center justify-center bg-gray-50 relative overflow-hidden">
@@ -49,20 +113,9 @@ const CampaignPreviewModal: React.FC<CampaignPreviewModalProps> = ({
           </p>
         </div>
         
-        {/* Wheel Preview */}
+        {/* Game Component */}
         <div className="flex justify-center">
-          <WheelPreview
-            campaign={mockCampaign}
-            config={mockCampaign.gameConfig?.wheel || {
-              mode: "instant_winner" as const,
-              winProbability: 0.1,
-              maxWinners: 10,
-              winnersCount: 0
-            }}
-            gameSize="large"
-            gamePosition="center"
-            previewDevice="desktop"
-          />
+          {renderGameComponent()}
         </div>
       </div>
     </div>
@@ -90,6 +143,9 @@ const CampaignPreviewModal: React.FC<CampaignPreviewModalProps> = ({
           <div className="flex items-center space-x-4">
             <h2 className="text-lg font-semibold text-gray-800">Aperçu de la campagne</h2>
             <span className="text-sm text-gray-500">{campaignName}</span>
+            <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded">
+              {selectedGameType || 'wheel'}
+            </span>
             
             {/* Device Selector */}
             <div className="flex items-center space-x-1 bg-gray-100 rounded-lg p-1">

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Modal from '../common/Modal';
 import ValidationMessage from '../common/ValidationMessage';
@@ -125,6 +124,7 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
         previewMode: previewMode
       };
 
+      // Utiliser le type de campagne pour rendre le bon jeu
       switch (campaign.type) {
         case 'wheel':
           return (
@@ -137,11 +137,17 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
                 winnersCount: 0
               }}
               onFinish={handleGameFinish}
+              gameSize="medium"
+              gamePosition="center"
+              previewDevice={previewMode}
             />
           );
         case 'scratch':
           return (
-            <ScratchPreview config={campaign.gameConfig?.scratch || {}} />
+            <ScratchPreview 
+              config={campaign.gameConfig?.scratch || {}} 
+              {...commonProps}
+            />
           );
         case 'jackpot':
           return (
@@ -158,10 +164,13 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
           );
         case 'dice':
           return (
-            <DicePreview config={campaign.gameConfig?.dice || {}} />
+            <DicePreview 
+              config={campaign.gameConfig?.dice || {}} 
+              {...commonProps}
+            />
           );
         default:
-          return <div className="text-center text-gray-500">Jeu non supporté</div>;
+          return <div className="text-center text-gray-500">Jeu non supporté: {campaign.type}</div>;
       }
     })();
 
