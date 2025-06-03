@@ -1,5 +1,6 @@
 import React from 'react';
 import { Palette, RefreshCw } from 'lucide-react';
+
 interface ColorPalette {
   name: string;
   colors: {
@@ -9,11 +10,13 @@ interface ColorPalette {
     background?: string;
   };
 }
+
 interface ColorPaletteSelectorProps {
   selectedPalette?: ColorPalette;
   onPaletteSelect: (palette: ColorPalette) => void;
   gameType: string;
 }
+
 const colorPalettes: Record<string, ColorPalette[]> = {
   wheel: [{
     name: 'Classique',
@@ -183,12 +186,14 @@ const colorPalettes: Record<string, ColorPalette[]> = {
     }
   }]
 };
+
 const ColorPaletteSelector: React.FC<ColorPaletteSelectorProps> = ({
   selectedPalette,
   onPaletteSelect,
   gameType
 }) => {
   const palettes = colorPalettes[gameType] || colorPalettes.wheel;
+
   const generateRandomPalette = () => {
     const colors = ['#ef4444', '#f97316', '#f59e0b', '#eab308', '#84cc16', '#22c55e', '#10b981', '#14b8a6', '#06b6d4', '#0ea5e9', '#3b82f6', '#6366f1', '#8b5cf6', '#a855f7', '#c084fc', '#d946ef', '#ec4899', '#f43f5e'];
     const shuffled = [...colors].sort(() => Math.random() - 0.5);
@@ -196,13 +201,64 @@ const ColorPaletteSelector: React.FC<ColorPaletteSelectorProps> = ({
       name: 'Personnalisé',
       colors: {
         primary: shuffled[0],
-        secondary: shuffled[1] + '20',
-        // Ajouter de la transparence
+        secondary: shuffled[1] + '20', // Ajouter de la transparence
         accent: shuffled[2]
       }
     };
     onPaletteSelect(randomPalette);
   };
-  return;
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-medium text-gray-900 flex items-center">
+          <Palette className="w-5 h-5 mr-2" />
+          Combinaisons de couleurs
+        </h3>
+        <button
+          onClick={generateRandomPalette}
+          className="flex items-center space-x-1 px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+        >
+          <RefreshCw className="w-4 h-4" />
+          <span>Aléatoire</span>
+        </button>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3">
+        {palettes.map((palette, index) => (
+          <button
+            key={index}
+            onClick={() => onPaletteSelect(palette)}
+            className={`p-3 rounded-lg border-2 transition-all ${
+              selectedPalette?.name === palette.name
+                ? 'border-[#841b60] bg-[#841b60]/5'
+                : 'border-gray-200 hover:border-gray-300'
+            }`}
+          >
+            <div className="space-y-2">
+              <div className="flex space-x-1">
+                <div
+                  className="w-6 h-6 rounded"
+                  style={{ backgroundColor: palette.colors.primary }}
+                />
+                <div
+                  className="w-6 h-6 rounded"
+                  style={{ backgroundColor: palette.colors.secondary }}
+                />
+                {palette.colors.accent && (
+                  <div
+                    className="w-6 h-6 rounded"
+                    style={{ backgroundColor: palette.colors.accent }}
+                  />
+                )}
+              </div>
+              <p className="text-sm font-medium text-gray-700">{palette.name}</p>
+            </div>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
 };
+
 export default ColorPaletteSelector;

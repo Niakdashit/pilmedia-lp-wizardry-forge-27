@@ -2,20 +2,24 @@ import React, { useState } from 'react';
 import { Plus, Trash2, Upload } from 'lucide-react';
 import ImageUpload from '../../common/ImageUpload';
 import ColorPaletteSelector from './ColorPaletteSelector';
+
 interface WheelGameConfigProps {
   campaign: any;
   setCampaign: React.Dispatch<React.SetStateAction<any>>;
 }
+
 const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
   campaign,
   setCampaign
 }) => {
   const [selectedPalette, setSelectedPalette] = useState<any>(undefined);
+  
   const segments = campaign.config?.roulette?.segments || [];
   const borderColor = campaign.config?.roulette?.borderColor || '#841b60';
   const borderOutlineColor = campaign.config?.roulette?.borderOutlineColor || '#FFD700';
   const segmentColor1 = campaign.config?.roulette?.segmentColor1 || '#ff6b6b';
   const segmentColor2 = campaign.config?.roulette?.segmentColor2 || '#4ecdc4';
+
   const handlePaletteSelect = (palette: any) => {
     setSelectedPalette(palette);
 
@@ -27,10 +31,10 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
           ...prev.config,
           roulette: {
             ...prev.config?.roulette,
-            borderColor: palette.primary,
-            borderOutlineColor: palette.accent || palette.secondary,
-            segmentColor1: palette.primary,
-            segmentColor2: palette.secondary
+            borderColor: palette.colors.primary,
+            borderOutlineColor: palette.colors.accent || palette.colors.secondary,
+            segmentColor1: palette.colors.primary,
+            segmentColor2: palette.colors.secondary
           }
         }
       };
@@ -39,12 +43,13 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
       if (newConfig.config.roulette.segments) {
         newConfig.config.roulette.segments = newConfig.config.roulette.segments.map((segment: any, index: number) => ({
           ...segment,
-          color: index % 2 === 0 ? palette.primary : palette.secondary
+          color: index % 2 === 0 ? palette.colors.primary : palette.colors.secondary
         }));
       }
       return newConfig;
     });
   };
+
   const addSegment = () => {
     const newSegmentIndex = segments.length;
     const segmentColor = newSegmentIndex % 2 === 0 ? segmentColor1 : segmentColor2;
@@ -63,6 +68,7 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
       }
     }));
   };
+
   const updateSegment = (index: number, field: string, value: any) => {
     const updatedSegments = [...segments];
     updatedSegments[index] = {
@@ -80,6 +86,7 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
       }
     }));
   };
+
   const removeSegment = (index: number) => {
     const updatedSegments = segments.filter((_: any, i: number) => i !== index);
     setCampaign((prev: any) => ({
@@ -93,6 +100,7 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
       }
     }));
   };
+
   const updateBorderColor = (color: string) => {
     setCampaign((prev: any) => ({
       ...prev,
@@ -105,6 +113,7 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
       }
     }));
   };
+
   const updateBorderOutlineColor = (color: string) => {
     setCampaign((prev: any) => ({
       ...prev,
@@ -117,7 +126,8 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
       }
     }));
   };
-  const updateSegmentColors = (colorIndex: 1 | 2, color: string) => {
+
+  const updateSegmentColor = (colorIndex: 1 | 2, color: string) => {
     const colorKey = `segmentColor${colorIndex}`;
     setCampaign((prev: any) => {
       const newConfig = {
@@ -135,15 +145,23 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
       if (newConfig.config.roulette.segments) {
         newConfig.config.roulette.segments = newConfig.config.roulette.segments.map((segment: any, index: number) => ({
           ...segment,
-          color: index % 2 === 0 ? colorIndex === 1 ? color : newConfig.config.roulette.segmentColor1 || segmentColor1 : colorIndex === 2 ? color : newConfig.config.roulette.segmentColor2 || segmentColor2
+          color: index % 2 === 0 ? 
+            (colorIndex === 1 ? color : newConfig.config.roulette.segmentColor1 || segmentColor1) : 
+            (colorIndex === 2 ? color : newConfig.config.roulette.segmentColor2 || segmentColor2)
         }));
       }
       return newConfig;
     });
   };
-  return <div className="space-y-6">
+
+  return (
+    <div className="space-y-6">
       {/* Combinaisons de couleurs */}
-      <ColorPaletteSelector selectedPalette={selectedPalette} onPaletteSelect={handlePaletteSelect} gameType="wheel" />
+      <ColorPaletteSelector 
+        selectedPalette={selectedPalette} 
+        onPaletteSelect={handlePaletteSelect} 
+        gameType="wheel" 
+      />
 
       {/* Couleurs de la roue */}
       <div className="space-y-4">
@@ -153,8 +171,18 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
         <div className="space-y-2">
           <label className="text-sm font-medium text-gray-700">Couleur de la bordure</label>
           <div className="flex items-center space-x-2">
-            <input type="color" value={borderColor} onChange={e => updateBorderColor(e.target.value)} className="w-10 h-10 rounded border border-gray-300" />
-            <input type="text" value={borderColor} onChange={e => updateBorderColor(e.target.value)} className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent" />
+            <input
+              type="color"
+              value={borderColor}
+              onChange={(e) => updateBorderColor(e.target.value)}
+              className="w-10 h-10 rounded border border-gray-300"
+            />
+            <input
+              type="text"
+              value={borderColor}
+              onChange={(e) => updateBorderColor(e.target.value)}
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
+            />
           </div>
         </div>
 
@@ -162,19 +190,59 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
         <div className="space-y-2">
           <label className="text-sm font-medium text-gray-700">Couleur du contour de bordure</label>
           <div className="flex items-center space-x-2">
-            <input type="color" value={borderOutlineColor} onChange={e => updateBorderOutlineColor(e.target.value)} className="w-10 h-10 rounded border border-gray-300" />
-            <input type="text" value={borderOutlineColor} onChange={e => updateBorderOutlineColor(e.target.value)} className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent" />
+            <input
+              type="color"
+              value={borderOutlineColor}
+              onChange={(e) => updateBorderOutlineColor(e.target.value)}
+              className="w-10 h-10 rounded border border-gray-300"
+            />
+            <input
+              type="text"
+              value={borderOutlineColor}
+              onChange={(e) => updateBorderOutlineColor(e.target.value)}
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
+            />
           </div>
         </div>
 
         {/* Couleurs des segments alternées */}
         <div className="grid grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700">Couleur segment 1</label>
+            <div className="flex items-center space-x-2">
+              <input
+                type="color"
+                value={segmentColor1}
+                onChange={(e) => updateSegmentColor(1, e.target.value)}
+                className="w-10 h-10 rounded border border-gray-300"
+              />
+              <input
+                type="text"
+                value={segmentColor1}
+                onChange={(e) => updateSegmentColor(1, e.target.value)}
+                className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-[#841b60] focus:border-transparent"
+              />
+            </div>
+          </div>
           
-          
-          
+          <div className="space-y-2">
+            <label className="text-sm font-medium text-gray-700">Couleur segment 2</label>
+            <div className="flex items-center space-x-2">
+              <input
+                type="color"
+                value={segmentColor2}
+                onChange={(e) => updateSegmentColor(2, e.target.value)}
+                className="w-10 h-10 rounded border border-gray-300"
+              />
+              <input
+                type="text"
+                value={segmentColor2}
+                onChange={(e) => updateSegmentColor(2, e.target.value)}
+                className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-[#841b60] focus:border-transparent"
+              />
+            </div>
+          </div>
         </div>
-        
-        
       </div>
 
       {/* Segments */}
@@ -221,6 +289,8 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
             <p className="text-xs">Cliquez sur "Ajouter" pour créer votre premier segment</p>
           </div>}
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default WheelGameConfig;
