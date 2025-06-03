@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Modal from '../common/Modal';
 import ValidationMessage from '../common/ValidationMessage';
@@ -45,7 +46,17 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   gamePosition = 'center',
   previewDevice = 'desktop'
 }) => {
-  const segments = campaign?.config?.roulette?.segments || [];
+  // Récupérer les couleurs des segments depuis la configuration
+  const segmentColor1 = campaign?.config?.roulette?.segmentColor1 || '#ff6b6b';
+  const segmentColor2 = campaign?.config?.roulette?.segmentColor2 || '#4ecdc4';
+  
+  // Appliquer les couleurs alternées aux segments
+  const originalSegments = campaign?.config?.roulette?.segments || [];
+  const segments = originalSegments.map((segment: any, index: number) => ({
+    ...segment,
+    color: index % 2 === 0 ? segmentColor1 : segmentColor2
+  }));
+  
   const centerImage = campaign?.config?.roulette?.centerImage;
   const centerLogo = campaign?.design?.centerLogo;
   const theme = campaign?.config?.roulette?.theme || 'default';
@@ -98,6 +109,18 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
 
   const fields: FieldConfig[] = Array.isArray(campaign.formFields) && campaign.formFields.length > 0
     ? campaign.formFields : DEFAULT_FIELDS;
+
+  // Get button configuration from campaign with custom colors
+  const buttonConfig = campaign?.buttonConfig || {
+    color: customColors?.primary || '#841b60',
+    borderColor: customColors?.primary || '#841b60',
+    borderWidth: 1,
+    borderRadius: 8,
+    size: 'medium',
+    link: '',
+    visible: true,
+    text: 'Remplir le formulaire'
+  };
 
   const handleFormSubmit = async (formData: Record<string, string>) => {
     if (campaign.id) {
