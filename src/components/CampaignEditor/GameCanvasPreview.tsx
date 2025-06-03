@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Jackpot from '../GameTypes/Jackpot';
 import { Quiz } from '../GameTypes';
@@ -7,7 +6,7 @@ import MemoryPreview from '../GameTypes/MemoryPreview';
 import PuzzlePreview from '../GameTypes/PuzzlePreview';
 import ScratchPreview from '../GameTypes/ScratchPreview';
 import DicePreview from '../GameTypes/DicePreview';
-import { GAME_SIZES } from '../configurators/GameSizeSelector';
+import { GAME_SIZES, GameSize } from '../configurators/GameSizeSelector';
 
 interface GameCanvasPreviewProps {
   campaign: any;
@@ -22,8 +21,10 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel || 'Lancer le Jackpot';
   const buttonColor = campaign.gameConfig?.[campaign.type]?.buttonColor || '#ec4899';
 
-  // Get game size and position from campaign
-  const gameSize = campaign.gameSize || 'medium';
+  // Get game size and position from campaign with proper typing
+  const gameSize: GameSize = (campaign.gameSize && Object.keys(GAME_SIZES).includes(campaign.gameSize)) 
+    ? campaign.gameSize as GameSize 
+    : 'medium';
   const gamePosition = campaign.gamePosition || 'center';
   
   // Get dimensions based on game size
