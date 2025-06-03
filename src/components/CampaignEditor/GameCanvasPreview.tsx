@@ -24,9 +24,6 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage;
   const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel || 'Lancer le Jackpot';
   const buttonColor = campaign.gameConfig?.[campaign.type]?.buttonColor || '#ec4899';
-  
-  // Récupération du template sélectionné
-  const selectedTemplateId = campaign?.design?.template || campaign?.gameConfig?.jackpot?.template;
 
   const renderGame = () => {
     switch (campaign.type) {
