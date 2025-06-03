@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { ArrowLeft, Upload, Eye, Settings, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -238,35 +239,35 @@ const Step3VisualStyle: React.FC = () => {
 
   if (showFinalStep) {
     return (
-      <div className="min-h-screen w-full flex items-center justify-center px-8 py-16">
-        <div className="max-w-2xl w-full text-center">
-          <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-16">
+      <div className="min-h-screen bg-white flex items-center justify-center px-6 py-12">
+        <div className="max-w-lg w-full text-center">
+          <div className="bg-white border border-gray-200 rounded-3xl p-12 shadow-xl">
             <div className="mb-8">
               {creationSuccess ? (
-                <CheckCircle className="w-16 h-16 text-green-400 mx-auto" />
+                <CheckCircle className="w-16 h-16 text-green-500 mx-auto" />
               ) : (
-                <div className="w-16 h-16 bg-white/10 rounded-2xl flex items-center justify-center mx-auto">
-                  <CheckCircle className="w-8 h-8 text-white" />
+                <div className="w-16 h-16 bg-[#841b60]/10 rounded-2xl flex items-center justify-center mx-auto">
+                  <CheckCircle className="w-8 h-8 text-[#841b60]" />
                 </div>
               )}
             </div>
-            <h1 className="text-4xl font-light text-white mb-6">
+            <h1 className="text-3xl font-light text-gray-900 mb-6">
               {creationSuccess ? 'Campagne créée avec succès !' : 'Votre campagne est prête !'}
             </h1>
             {creationSuccess ? (
-              <p className="text-xl text-white/70 font-light">
+              <p className="text-xl text-gray-600 font-light">
                 Redirection vers vos campagnes...
               </p>
             ) : (
               <>
-                <p className="text-xl text-white/70 font-light mb-12">
+                <p className="text-lg text-gray-600 font-light mb-12">
                   Vous pouvez maintenant la tester ou la personnaliser davantage.
                 </p>
                 <div className="space-y-4">
                   <button
                     onClick={handlePreview}
-                    className="w-full py-4 bg-white/10 text-white font-medium rounded-2xl 
-                               border border-white/20 hover:bg-white/15 transition-all 
+                    className="w-full py-4 bg-gray-50 text-gray-900 font-medium rounded-2xl 
+                               border border-gray-200 hover:bg-gray-100 transition-all 
                                flex items-center justify-center space-x-3"
                   >
                     <Eye className="w-5 h-5" />
@@ -275,8 +276,8 @@ const Step3VisualStyle: React.FC = () => {
                   <button
                     onClick={handleCreateCampaign}
                     disabled={isCreating}
-                    className="w-full py-4 bg-green-500 text-white font-medium rounded-2xl 
-                               hover:bg-green-600 transition-all disabled:opacity-50"
+                    className="w-full py-4 bg-[#841b60] text-white font-medium rounded-2xl 
+                               hover:bg-[#841b60]/90 transition-all disabled:opacity-50"
                   >
                     {isCreating ? (
                       <div className="flex items-center justify-center space-x-2">
@@ -290,8 +291,8 @@ const Step3VisualStyle: React.FC = () => {
                   <button
                     onClick={handleAdvancedSettings}
                     disabled={isCreating}
-                    className="w-full py-4 bg-white/10 text-white font-medium rounded-2xl 
-                               border border-white/20 hover:bg-white/15 transition-all 
+                    className="w-full py-4 bg-gray-50 text-gray-900 font-medium rounded-2xl 
+                               border border-gray-200 hover:bg-gray-100 transition-all 
                                flex items-center justify-center space-x-3 disabled:opacity-50"
                   >
                     <Settings className="w-5 h-5" />
@@ -308,35 +309,35 @@ const Step3VisualStyle: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center px-8 py-16">
-      <div className="max-w-6xl w-full">
+    <div className="min-h-screen bg-white px-6 py-12">
+      <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-16">
-          <h1 className="text-5xl font-light text-white mb-6 tracking-tight">
-            Choisissez un thème
+          <h1 className="text-4xl font-light text-gray-900 mb-4">
+            Style visuel
           </h1>
-          <p className="text-xl text-white/80 font-light">
-            Donnez vie à votre expérience avec un style visuel adapté.
+          <p className="text-xl text-gray-600 font-light">
+            Personnalisez l'apparence de votre expérience
           </p>
         </div>
         
-        <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-12 space-y-12">
+        <div className="bg-white border border-gray-200 rounded-3xl p-8 space-y-12 shadow-sm">
           {/* Templates */}
           <div>
-            <h3 className="text-2xl font-light text-white mb-8">Thèmes</h3>
+            <h3 className="text-2xl font-light text-gray-900 mb-8">Thèmes</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {currentTemplates.map((template) => (
                 <div
                   key={template.id}
                   className={`p-6 rounded-2xl border-2 transition-all cursor-pointer ${
                     selectedTheme === template.id
-                      ? 'border-blue-400 bg-blue-400/10'
-                      : 'border-white/20 bg-white/5 hover:border-white/40'
+                      ? 'border-[#841b60] bg-[#841b60]/5'
+                      : 'border-gray-200 hover:border-[#841b60]/30'
                   }`}
                   onClick={() => useQuickCampaignStore.getState().setSelectedTheme(template.id)}
                 >
                   {template.image ? (
-                    <div className="aspect-video mb-4 rounded-lg overflow-hidden bg-white/10">
+                    <div className="aspect-video mb-4 rounded-lg overflow-hidden bg-gray-50">
                       <img
                         src={template.image}
                         alt={template.name}
@@ -344,12 +345,12 @@ const Step3VisualStyle: React.FC = () => {
                       />
                     </div>
                   ) : (
-                    <div className={`aspect-video mb-4 rounded-lg ${template.preview || 'bg-white/10'}`} />
+                    <div className={`aspect-video mb-4 rounded-lg ${template.preview || 'bg-gray-50'}`} />
                   )}
-                  <h4 className="text-lg font-medium text-white mb-2">
+                  <h4 className="text-lg font-medium text-gray-900 mb-2">
                     {template.name}
                   </h4>
-                  <p className="text-white/60 text-sm">
+                  <p className="text-gray-600 text-sm">
                     {template.description}
                   </p>
                 </div>
@@ -362,27 +363,27 @@ const Step3VisualStyle: React.FC = () => {
 
           {/* Background Upload */}
           <div>
-            <h3 className="text-2xl font-light text-white mb-8">
-              Image de fond <span className="text-white/50 font-light">(optionnel)</span>
+            <h3 className="text-2xl font-light text-gray-900 mb-8">
+              Image de fond <span className="text-gray-400 font-light">(optionnel)</span>
             </h3>
-            <div className="border-2 border-dashed border-white/20 rounded-2xl p-8 text-center bg-white/5">
-              <Upload className="w-12 h-12 text-white/40 mx-auto mb-4" />
+            <div className="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center bg-gray-50/50">
+              <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               {backgroundImage ? (
                 <div>
-                  <p className="text-white font-medium mb-2">
+                  <p className="text-gray-900 font-medium mb-2">
                     {backgroundImage.name}
                   </p>
                   <button
                     onClick={() => setBackgroundImage(null)}
-                    className="text-white/60 hover:text-red-400 transition-colors"
+                    className="text-red-500 hover:text-red-600 transition-colors"
                   >
                     Supprimer
                   </button>
                 </div>
               ) : (
                 <>
-                  <p className="text-white/70 mb-2">
-                    <label className="text-blue-400 cursor-pointer hover:text-blue-300 transition-colors">
+                  <p className="text-gray-600 mb-2">
+                    <label className="text-[#841b60] cursor-pointer hover:text-[#841b60]/80 transition-colors">
                       Téléchargez une image de fond
                       <input
                         type="file"
@@ -392,7 +393,7 @@ const Step3VisualStyle: React.FC = () => {
                       />
                     </label>
                   </p>
-                  <p className="text-white/50 text-sm">PNG, JPG jusqu'à 10MB</p>
+                  <p className="text-gray-400 text-sm">PNG, JPG jusqu'à 10MB</p>
                 </>
               )}
             </div>
@@ -403,8 +404,8 @@ const Step3VisualStyle: React.FC = () => {
         <div className="flex justify-between items-center mt-12">
           <button
             onClick={() => setCurrentStep(2)}
-            className="flex items-center space-x-2 px-6 py-3 text-white/70 hover:text-white 
-                       transition-colors font-light"
+            className="flex items-center space-x-2 px-6 py-3 text-gray-600 hover:text-gray-900 
+                       transition-colors font-medium"
           >
             <ArrowLeft className="w-5 h-5" />
             <span>Retour</span>
@@ -416,8 +417,8 @@ const Step3VisualStyle: React.FC = () => {
             className={`
               px-8 py-4 rounded-2xl font-medium transition-all
               ${selectedTheme 
-                ? 'bg-blue-500 text-white hover:bg-blue-600' 
-                : 'bg-white/10 text-white/40 cursor-not-allowed'
+                ? 'bg-[#841b60] text-white hover:bg-[#841b60]/90 shadow-lg' 
+                : 'bg-gray-100 text-gray-400 cursor-not-allowed'
               }
             `}
           >
@@ -428,11 +429,11 @@ const Step3VisualStyle: React.FC = () => {
         {/* Progress */}
         <div className="text-center mt-16">
           <div className="flex items-center justify-center space-x-2 mb-4">
-            <div className="w-8 h-1 bg-white/30 rounded-full"></div>
-            <div className="w-8 h-1 bg-white/30 rounded-full"></div>
-            <div className="w-8 h-1 bg-white rounded-full"></div>
+            <div className="w-8 h-1 bg-[#841b60] rounded-full"></div>
+            <div className="w-8 h-1 bg-[#841b60] rounded-full"></div>
+            <div className="w-8 h-1 bg-[#841b60] rounded-full"></div>
           </div>
-          <p className="text-white/60 font-light">Étape 3 sur 3</p>
+          <p className="text-gray-500 font-light">Étape 3 sur 3</p>
         </div>
       </div>
     </div>

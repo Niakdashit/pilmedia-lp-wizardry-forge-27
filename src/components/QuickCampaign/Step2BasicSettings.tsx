@@ -1,34 +1,8 @@
 
 import React, { useState } from 'react';
-import { ArrowLeft, Calendar, Target, FileText, Image } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { ArrowLeft, ArrowRight, Upload, Calendar, Target } from 'lucide-react';
 import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
-
-const marketingGoals = [
-  {
-    id: 'acquisition',
-    label: 'Acquisition de prospects',
-    description: 'Générer des leads qualifiés',
-    icon: '🎯'
-  },
-  {
-    id: 'notoriete',
-    label: 'Notoriété de marque',
-    description: 'Faire connaître votre marque',
-    icon: '📢'
-  },
-  {
-    id: 'engagement',
-    label: 'Engagement communauté',
-    description: 'Fidéliser votre audience',
-    icon: '❤️'
-  },
-  {
-    id: 'autre',
-    label: 'Autre objectif',
-    description: 'Objectif personnalisé',
-    icon: '⚡'
-  }
-];
 
 const Step2BasicSettings: React.FC = () => {
   const {
@@ -45,161 +19,165 @@ const Step2BasicSettings: React.FC = () => {
 
   const [dragActive, setDragActive] = useState(false);
 
+  const marketingGoals = [
+    { id: 'leads', label: 'Générer des leads', description: 'Collecter des contacts qualifiés' },
+    { id: 'engagement', label: 'Engagement client', description: 'Fidéliser votre audience' },
+    { id: 'brand', label: 'Notoriété de marque', description: 'Faire connaître votre marque' },
+    { id: 'sales', label: 'Augmenter les ventes', description: 'Convertir plus de prospects' }
+  ];
+
   const handleFileUpload = (files: FileList | null) => {
     if (files && files[0]) {
       setLogoFile(files[0]);
     }
   };
 
+  const handleDrag = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (e.type === 'dragenter' || e.type === 'dragover') {
+      setDragActive(true);
+    } else if (e.type === 'dragleave') {
+      setDragActive(false);
+    }
+  };
+
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     setDragActive(false);
-    handleFileUpload(e.dataTransfer.files);
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      setLogoFile(e.dataTransfer.files[0]);
+    }
   };
 
   const canProceed = campaignName.trim() && launchDate && marketingGoal;
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center px-8 py-16">
-      <div className="max-w-4xl w-full">
+    <div className="min-h-screen bg-white px-6 py-12">
+      <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="text-center mb-16">
-          <h1 className="text-5xl font-light text-white mb-6 tracking-tight">
-            Paramétrez votre campagne
-          </h1>
-          <p className="text-xl text-white/80 font-light">
-            Vos réglages sont personnalisables à tout moment.
-          </p>
+          <motion.h1 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-4xl font-light text-gray-900 mb-4"
+          >
+            Paramètres essentiels
+          </motion.h1>
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-xl text-gray-600 font-light"
+          >
+            Configurons les bases de votre campagne
+          </motion.p>
         </div>
 
-        {/* Form */}
-        <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-12 space-y-12">
+        <div className="space-y-12">
           {/* Campaign Name */}
-          <div className="space-y-4">
-            <div className="flex items-center space-x-3">
-              <FileText className="w-6 h-6 text-white/70" />
-              <label className="text-lg font-medium text-white">
-                Nom de votre campagne
-              </label>
-            </div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+          >
+            <label className="block text-lg font-medium text-gray-900 mb-4">
+              Nom de la campagne
+            </label>
             <input
               type="text"
               value={campaignName}
               onChange={(e) => setCampaignName(e.target.value)}
-              placeholder="Ex: Jeu de Noël 2024"
-              className="w-full px-6 py-4 bg-white/10 border border-white/20 rounded-2xl 
-                       text-white placeholder-white/50 focus:outline-none focus:border-white/40
-                       transition-colors font-light text-lg backdrop-blur-sm"
+              placeholder="Ex: Jeu concours été 2024"
+              className="w-full px-6 py-4 border-2 border-gray-200 rounded-2xl focus:border-[#841b60] focus:outline-none transition-all text-lg bg-white"
             />
-          </div>
+          </motion.div>
 
           {/* Launch Date */}
-          <div className="space-y-4">
-            <div className="flex items-center space-x-3">
-              <Calendar className="w-6 h-6 text-white/70" />
-              <label className="text-lg font-medium text-white">
-                Date de lancement
-              </label>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <input
-                type="date"
-                value={launchDate}
-                onChange={(e) => setLaunchDate(e.target.value)}
-                className="px-6 py-4 bg-white/10 border border-white/20 rounded-2xl 
-                         text-white focus:outline-none focus:border-white/40
-                         transition-colors font-light backdrop-blur-sm"
-              />
-              <button
-                onClick={() => setLaunchDate(new Date().toISOString().split('T')[0])}
-                className="px-6 py-4 bg-blue-500 text-white font-medium rounded-2xl 
-                         hover:bg-blue-600 transition-colors"
-              >
-                Commencer maintenant
-              </button>
-            </div>
-          </div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 }}
+          >
+            <label className="block text-lg font-medium text-gray-900 mb-4">
+              <Calendar className="w-5 h-5 inline mr-2" />
+              Date de lancement
+            </label>
+            <input
+              type="date"
+              value={launchDate}
+              onChange={(e) => setLaunchDate(e.target.value)}
+              className="w-full px-6 py-4 border-2 border-gray-200 rounded-2xl focus:border-[#841b60] focus:outline-none transition-all text-lg bg-white"
+            />
+          </motion.div>
 
           {/* Marketing Goal */}
-          <div className="space-y-4">
-            <div className="flex items-center space-x-3">
-              <Target className="w-6 h-6 text-white/70" />
-              <label className="text-lg font-medium text-white">
-                Objectif marketing
-              </label>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+          >
+            <label className="block text-lg font-medium text-gray-900 mb-6">
+              <Target className="w-5 h-5 inline mr-2" />
+              Objectif marketing
+            </label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {marketingGoals.map((goal) => (
-                <button
+                <div
                   key={goal.id}
                   onClick={() => setMarketingGoal(goal.id)}
                   className={`
-                    p-6 text-left rounded-2xl border transition-all
-                    ${marketingGoal === goal.id 
-                      ? 'bg-white/20 border-white/40' 
-                      : 'bg-white/5 border-white/20 hover:bg-white/10 hover:border-white/30'
+                    p-6 rounded-2xl border-2 cursor-pointer transition-all
+                    ${marketingGoal === goal.id
+                      ? 'border-[#841b60] bg-[#841b60]/5'
+                      : 'border-gray-200 hover:border-[#841b60]/50'
                     }
                   `}
                 >
-                  <div className="flex items-start space-x-4">
-                    <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center text-xl">
-                      {goal.icon}
-                    </div>
-                    <div>
-                      <div className="font-medium text-white mb-1">
-                        {goal.label}
-                      </div>
-                      <div className="text-white/70 text-sm">
-                        {goal.description}
-                      </div>
-                    </div>
-                  </div>
-                </button>
+                  <h3 className="font-semibold text-gray-900 mb-2">{goal.label}</h3>
+                  <p className="text-gray-600 text-sm">{goal.description}</p>
+                </div>
               ))}
             </div>
-          </div>
+          </motion.div>
 
           {/* Logo Upload */}
-          <div className="space-y-4">
-            <div className="flex items-center space-x-3">
-              <Image className="w-6 h-6 text-white/70" />
-              <label className="text-lg font-medium text-white">
-                Logo <span className="text-white/50 font-light">(optionnel)</span>
-              </label>
-            </div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+          >
+            <label className="block text-lg font-medium text-gray-900 mb-4">
+              Logo <span className="text-gray-500 font-normal">(optionnel)</span>
+            </label>
             <div
-              onDrop={handleDrop}
-              onDragOver={(e) => {
-                e.preventDefault();
-                setDragActive(true);
-              }}
-              onDragLeave={() => setDragActive(false)}
               className={`
-                border-2 border-dashed rounded-2xl p-8 text-center transition-all
-                ${dragActive ? 'border-white/40 bg-white/10' : 'border-white/20 bg-white/5'}
+                relative border-2 border-dashed rounded-2xl p-8 text-center transition-all
+                ${dragActive ? 'border-[#841b60] bg-[#841b60]/5' : 'border-gray-300'}
+                ${logoFile ? 'border-green-400 bg-green-50' : ''}
               `}
+              onDragEnter={handleDrag}
+              onDragLeave={handleDrag}
+              onDragOver={handleDrag}
+              onDrop={handleDrop}
             >
+              <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
               {logoFile ? (
                 <div>
-                  <p className="text-white font-medium mb-2">
-                    {logoFile.name}
-                  </p>
+                  <p className="text-gray-900 font-medium mb-2">{logoFile.name}</p>
                   <button
                     onClick={() => setLogoFile(null)}
-                    className="text-white/60 hover:text-red-400 transition-colors"
+                    className="text-red-500 hover:text-red-600 transition-colors"
                   >
                     Supprimer
                   </button>
                 </div>
               ) : (
                 <>
-                  <div className="w-12 h-12 bg-white/10 rounded-xl flex items-center justify-center mx-auto mb-4">
-                    <Image className="w-6 h-6 text-white/60" />
-                  </div>
-                  <p className="text-white/70 mb-2">
-                    Glissez votre logo ici ou{' '}
-                    <label className="text-blue-400 cursor-pointer hover:text-blue-300 transition-colors">
-                      parcourez
+                  <p className="text-gray-600 mb-2">
+                    <label className="text-[#841b60] cursor-pointer hover:text-[#841b60]/80 transition-colors">
+                      Cliquez pour télécharger
                       <input
                         type="file"
                         accept="image/*"
@@ -207,20 +185,20 @@ const Step2BasicSettings: React.FC = () => {
                         className="hidden"
                       />
                     </label>
+                    {' '}ou glissez-déposez votre logo
                   </p>
-                  <p className="text-white/50 text-sm">PNG, JPG jusqu'à 5MB</p>
+                  <p className="text-gray-400 text-sm">PNG, JPG jusqu'à 10MB</p>
                 </>
               )}
             </div>
-          </div>
+          </motion.div>
         </div>
 
         {/* Navigation */}
-        <div className="flex justify-between items-center mt-12">
+        <div className="flex justify-between items-center mt-16">
           <button
             onClick={() => setCurrentStep(1)}
-            className="flex items-center space-x-2 px-6 py-3 text-white/70 hover:text-white 
-                     transition-colors font-light"
+            className="flex items-center space-x-2 px-6 py-3 text-gray-600 hover:text-gray-900 transition-colors font-medium"
           >
             <ArrowLeft className="w-5 h-5" />
             <span>Retour</span>
@@ -230,25 +208,26 @@ const Step2BasicSettings: React.FC = () => {
             onClick={() => setCurrentStep(3)}
             disabled={!canProceed}
             className={`
-              px-8 py-4 rounded-2xl font-medium transition-all
-              ${canProceed 
-                ? 'bg-blue-500 text-white hover:bg-blue-600' 
-                : 'bg-white/10 text-white/40 cursor-not-allowed'
+              flex items-center space-x-2 px-8 py-4 rounded-2xl font-medium transition-all
+              ${canProceed
+                ? 'bg-[#841b60] text-white hover:bg-[#841b60]/90 shadow-lg'
+                : 'bg-gray-100 text-gray-400 cursor-not-allowed'
               }
             `}
           >
-            Continuer
+            <span>Continuer</span>
+            <ArrowRight className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Progress */}
+        {/* Progress Indicator */}
         <div className="text-center mt-16">
           <div className="flex items-center justify-center space-x-2 mb-4">
-            <div className="w-8 h-1 bg-white/30 rounded-full"></div>
-            <div className="w-8 h-1 bg-white rounded-full"></div>
-            <div className="w-8 h-1 bg-white/30 rounded-full"></div>
+            <div className="w-8 h-1 bg-[#841b60] rounded-full"></div>
+            <div className="w-8 h-1 bg-[#841b60] rounded-full"></div>
+            <div className="w-8 h-1 bg-gray-200 rounded-full"></div>
           </div>
-          <p className="text-white/60 font-light">Étape 2 sur 3</p>
+          <p className="text-gray-500 font-light">Étape 2 sur 3</p>
         </div>
       </div>
     </div>
