@@ -60,11 +60,11 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           accept="image/*"
           onChange={handleFileChange}
           className="hidden"
-          id={`image-upload-${Math.random()}`}
+          id="image-upload"
         />
         
         <label
-          htmlFor={`image-upload-${Math.random()}`}
+          htmlFor="image-upload"
           className="cursor-pointer"
         >
           <div className="text-center">

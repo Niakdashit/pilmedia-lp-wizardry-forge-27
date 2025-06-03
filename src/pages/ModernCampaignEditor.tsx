@@ -46,8 +46,10 @@ const ModernCampaignEditor: React.FC = () => {
     type: campaignType,
     formFields: defaultFormFields,
     gameConfig: getDefaultGameConfig(campaignType),
+    // Game layout configuration
     gameSize: 'medium' as 'small' | 'medium' | 'large' | 'xlarge',
     gamePosition: 'center' as 'top' | 'center' | 'bottom' | 'left' | 'right',
+    // Button configuration
     buttonConfig: {
       color: '#841b60',
       borderColor: '#841b60',
@@ -66,6 +68,7 @@ const ModernCampaignEditor: React.FC = () => {
       buttonColor: '#841b60',
       fontFamily: 'Inter',
       borderRadius: '0.5rem',
+      // Custom text configuration
       customText: {
         enabled: false,
         text: 'Texte personnalisé',
@@ -169,29 +172,28 @@ const ModernCampaignEditor: React.FC = () => {
 
   return (
     <div className="h-screen flex bg-gray-50">
-      {/* Header - Made responsive */}
-      <div className="fixed top-0 left-0 right-0 z-30 bg-white border-b border-gray-200 px-4 sm:px-6 py-3 sm:py-4">
+      {/* Header */}
+      <div className="fixed top-0 left-0 right-0 z-30 bg-white border-b border-gray-200 px-6 py-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center space-x-2 sm:space-x-4 flex-1 min-w-0">
+          <div className="flex items-center space-x-4">
             <button
               onClick={() => navigate('/gamification')}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0"
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
-            <div className="min-w-0 flex-1">
-              <h1 className="text-lg sm:text-xl font-bold text-gray-900 truncate">
+            <div>
+              <h1 className="text-xl font-bold text-gray-900">
                 {isNewCampaign ? 'Nouvel Éditeur' : campaign.name}
               </h1>
-              <p className="text-xs sm:text-sm text-gray-500 truncate">
-                <span className="hidden sm:inline">{gameTypeLabels[campaignType]} • </span>
-                {isNewCampaign ? 'Brouillon' : campaign.status}
+              <p className="text-sm text-gray-500">
+                {gameTypeLabels[campaignType]} • {isNewCampaign ? 'Brouillon' : campaign.status}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center space-x-2 sm:space-x-3 flex-shrink-0">
-            <div className="hidden sm:flex items-center bg-gray-100 rounded-lg p-1">
+          <div className="flex items-center space-x-3">
+            <div className="flex items-center bg-gray-100 rounded-lg p-1">
               <button
                 onClick={() => setPreviewDevice('desktop')}
                 className={`p-2 rounded-md transition-colors ${
@@ -212,27 +214,26 @@ const ModernCampaignEditor: React.FC = () => {
             
             <button
               onClick={() => setShowPreviewModal(true)}
-              className="flex items-center space-x-1 sm:space-x-2 px-3 sm:px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+              className="flex items-center space-x-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
             >
               <Eye className="w-4 h-4" />
-              <span className="hidden sm:inline">Aperçu</span>
+              <span>Aperçu</span>
             </button>
             
             <button
               onClick={() => handleSave(true)}
               disabled={isLoading}
-              className="flex items-center space-x-1 sm:space-x-2 px-3 sm:px-4 py-2 bg-[#841b60] hover:bg-[#6d164f] text-white rounded-lg transition-colors disabled:opacity-50"
+              className="flex items-center space-x-2 px-4 py-2 bg-[#841b60] hover:bg-[#6d164f] text-white rounded-lg transition-colors disabled:opacity-50"
             >
               <Save className="w-4 h-4" />
-              <span className="hidden sm:inline">{isLoading ? 'Sauvegarde...' : 'Sauvegarder'}</span>
-              <span className="sm:hidden">💾</span>
+              <span>{isLoading ? 'Sauvegarde...' : 'Sauvegarder'}</span>
             </button>
           </div>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="flex w-full pt-16 sm:pt-20">
+      <div className="flex w-full pt-20">
         {/* Sidebar */}
         <ModernEditorSidebar
           activeTab={activeTab}
@@ -242,8 +243,8 @@ const ModernCampaignEditor: React.FC = () => {
 
         {/* Content Area */}
         <div className="flex-1 flex">
-          {/* Configuration Panel - Made responsive */}
-          <div className="w-80 sm:w-96 bg-white border-r border-gray-200 overflow-y-auto">
+          {/* Configuration Panel */}
+          <div className="w-96 bg-white border-r border-gray-200 overflow-y-auto">
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeTab}
@@ -251,7 +252,7 @@ const ModernCampaignEditor: React.FC = () => {
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 20 }}
                 transition={{ duration: 0.2 }}
-                className="p-4 sm:p-6"
+                className="p-6"
               >
                 {activeTab === 'general' && (
                   <ModernGeneralTab
