@@ -66,7 +66,7 @@ const Step2BasicSettings: React.FC = () => {
           }} animate={{
             opacity: 1,
             y: 0
-          }} className="text-4xl mb-4 text-[#841b60] font-medium">
+          }} className="text-4xl mb-4 text-[#841b60] font-semibold">
               Paramètres essentiels
             </motion.h1>
             <motion.p initial={{
