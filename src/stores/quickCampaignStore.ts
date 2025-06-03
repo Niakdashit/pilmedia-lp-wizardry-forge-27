@@ -5,6 +5,12 @@ export interface QuickCampaignState {
   currentStep: number;
   campaignName: string;
   selectedGameType: string | null;
+  launchDate: string;
+  marketingGoal: string;
+  logoFile: File | null;
+  selectedTheme: string;
+  backgroundImage: File | null;
+  segmentCount: number;
   customColors: {
     primary: string;
     secondary: string;
@@ -22,6 +28,12 @@ export interface QuickCampaignState {
   setCurrentStep: (step: number) => void;
   setCampaignName: (name: string) => void;
   setSelectedGameType: (type: string) => void;
+  setLaunchDate: (date: string) => void;
+  setMarketingGoal: (goal: string) => void;
+  setLogoFile: (file: File | null) => void;
+  setSelectedTheme: (theme: string) => void;
+  setBackgroundImage: (file: File | null) => void;
+  setSegmentCount: (count: number) => void;
   setCustomColors: (colors: { primary: string; secondary: string; accent?: string }) => void;
   setJackpotColors: (colors: any) => void;
   generatePreviewCampaign: () => any;
@@ -32,6 +44,12 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
   currentStep: 1,
   campaignName: 'Ma Nouvelle Campagne',
   selectedGameType: null,
+  launchDate: '',
+  marketingGoal: '',
+  logoFile: null,
+  selectedTheme: 'default',
+  backgroundImage: null,
+  segmentCount: 4,
   // Couleurs harmonieuses par défaut
   customColors: {
     primary: '#3B82F6', // Bleu corporate moderne
@@ -51,6 +69,12 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
   setCurrentStep: (step) => set({ currentStep: step }),
   setCampaignName: (name) => set({ campaignName: name }),
   setSelectedGameType: (type) => set({ selectedGameType: type }),
+  setLaunchDate: (date) => set({ launchDate: date }),
+  setMarketingGoal: (goal) => set({ marketingGoal: goal }),
+  setLogoFile: (file) => set({ logoFile: file }),
+  setSelectedTheme: (theme) => set({ selectedTheme: theme }),
+  setBackgroundImage: (file) => set({ backgroundImage: file }),
+  setSegmentCount: (count) => set({ segmentCount: count }),
   setCustomColors: (colors) => set({ customColors: colors }),
   setJackpotColors: (colors) => set({ jackpotColors: colors }),
 
@@ -82,17 +106,16 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
     if (state.selectedGameType === 'wheel') {
       baseConfig.config = {
         roulette: {
-          segments: [
-            { label: 'Prix 1', color: state.customColors.primary, image: null },
-            { label: 'Prix 2', color: state.customColors.secondary, image: null },
-            { label: 'Prix 3', color: state.customColors.primary, image: null },
-            { label: 'Dommage', color: state.customColors.secondary, image: null }
-          ],
+          segments: Array.from({ length: state.segmentCount }).map((_, i) => ({
+            label: '',
+            color: i % 2 === 0 ? state.customColors.primary : state.customColors.secondary,
+            image: null
+          })),
           borderColor: state.customColors.primary,
           borderOutlineColor: state.customColors.accent || state.customColors.primary,
           segmentColor1: state.customColors.primary,
           segmentColor2: state.customColors.secondary,
-          theme: 'default'
+          theme: state.selectedTheme
         }
       };
 
@@ -129,6 +152,12 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
     currentStep: 1,
     campaignName: 'Ma Nouvelle Campagne',
     selectedGameType: null,
+    launchDate: '',
+    marketingGoal: '',
+    logoFile: null,
+    selectedTheme: 'default',
+    backgroundImage: null,
+    segmentCount: 4,
     customColors: {
       primary: '#3B82F6',
       secondary: '#E3F2FD',

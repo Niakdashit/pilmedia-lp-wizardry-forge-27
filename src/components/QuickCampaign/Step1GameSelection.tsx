@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Target, Zap, Dice1, Gamepad2, Puzzle, ArrowRight } from 'lucide-react';
@@ -42,12 +43,12 @@ const Step1GameSelection: React.FC = () => {
   const navigate = useNavigate();
   const {
     selectedGameType,
-    setGameType,
+    setSelectedGameType,
     setCurrentStep
   } = useQuickCampaignStore();
 
   const handleGameSelect = (gameId: string) => {
-    setGameType(gameId);
+    setSelectedGameType(gameId);
     // Navigation automatique : passer directement à l'étape suivante
     setTimeout(() => {
       setCurrentStep(2);
