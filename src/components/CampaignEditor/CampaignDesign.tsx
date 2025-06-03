@@ -17,6 +17,12 @@ const CampaignDesign: React.FC<CampaignDesignProps> = ({ campaign, setCampaign }
     }));
   };
 
+  const handleImageChange = (key: string, value: string | File) => {
+    // Convert File to string URL if needed
+    const imageValue = typeof value === 'string' ? value : URL.createObjectURL(value);
+    updateDesign(key, imageValue);
+  };
+
   return (
     <div className="space-y-8">
       {/* Apparence du jeu spécifique au Jackpot */}
@@ -150,13 +156,13 @@ const CampaignDesign: React.FC<CampaignDesignProps> = ({ campaign, setCampaign }
           <ImageUpload
             label="Logo"
             value={campaign.design.logoUrl}
-            onChange={(value) => updateDesign('logoUrl', value)}
+            onChange={(value) => handleImageChange('logoUrl', value)}
           />
           
           <ImageUpload
             label="Image d'arrière-plan générale"
             value={campaign.design.backgroundImage}
-            onChange={(value) => updateDesign('backgroundImage', value)}
+            onChange={(value) => handleImageChange('backgroundImage', value)}
           />
         </div>
       </div>

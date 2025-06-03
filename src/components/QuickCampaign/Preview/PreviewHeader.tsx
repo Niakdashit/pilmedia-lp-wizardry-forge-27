@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { X, Monitor, Tablet, Smartphone } from 'lucide-react';
-import DeviceSelector from './DeviceSelector';
 
 interface PreviewHeaderProps {
   campaignName: string;

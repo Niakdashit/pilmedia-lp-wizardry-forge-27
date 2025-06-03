@@ -12,12 +12,6 @@ interface WheelCanvasProps {
   rotation: number;
   centerImage?: string | File | null;
   centerLogo?: string | File | null;
-  theme?: string;
-  customColors?: {
-    primary: string;
-    secondary: string;
-    accent?: string;
-  };
   borderColor?: string;
   borderOutlineColor?: string;
   canvasSize: number;
@@ -29,8 +23,6 @@ const WheelCanvas: React.FC<WheelCanvasProps> = ({
   rotation,
   centerImage,
   centerLogo,
-  theme = 'default',
-  customColors,
   borderColor = '#841b60',
   borderOutlineColor = '#FFD700',
   canvasSize,
