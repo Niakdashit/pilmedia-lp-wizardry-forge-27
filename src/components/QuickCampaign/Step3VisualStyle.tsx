@@ -6,74 +6,7 @@ import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
 import { useCampaigns } from '../../hooks/useCampaigns';
 import CampaignPreviewModal from './CampaignPreviewModal';
 import ColorCustomizer from './ColorCustomizer';
-
-// Template imports
-import Tjackpot1 from '../../assets/templates/Tjackpot1.svg';
-import Tjackpot2 from '../../assets/templates/Tjackpot2.svg';
-import Tjackpot3 from '../../assets/templates/Tjackpot3.svg';
-import Tjackpot4 from '../../assets/templates/Tjackpot4.svg';
-import Tjackpot5 from '../../assets/templates/Tjackpot5.svg';
-
-const templatesByMechanic: Record<string, Array<{
-  id: string;
-  name: string;
-  description: string;
-  colors?: {
-    primary: string;
-    secondary: string;
-    background: string;
-  };
-  preview?: string;
-  image?: string;
-}>> = {
-  jackpot: [{
-    id: 'Tjackpot1',
-    name: 'Classic',
-    description: 'Élégant et intemporel',
-    image: Tjackpot1
-  }, {
-    id: 'Tjackpot2',
-    name: 'Vegas',
-    description: 'Ambiance néon éclatante',
-    image: Tjackpot2
-  }, {
-    id: 'Tjackpot3',
-    name: 'Luxe',
-    description: 'Premium et sophistiqué',
-    image: Tjackpot3
-  }, {
-    id: 'Tjackpot4',
-    name: 'Fun',
-    description: 'Coloré et familial',
-    image: Tjackpot4
-  }, {
-    id: 'Tjackpot5',
-    name: 'Minimal',
-    description: 'Épuré et moderne',
-    image: Tjackpot5
-  }],
-  quiz: [{
-    id: 'modern',
-    name: 'Moderne',
-    description: 'Design épuré et interactif',
-    colors: {
-      primary: '#8b5cf6',
-      secondary: '#06b6d4',
-      background: '#f0f9ff'
-    },
-    preview: 'bg-gradient-to-br from-purple-500 to-cyan-400'
-  }, {
-    id: 'educ',
-    name: 'Éducatif',
-    description: 'Apprentissage et couleurs douces',
-    colors: {
-      primary: '#f59e42',
-      secondary: '#34d399',
-      background: '#fff9e6'
-    },
-    preview: 'bg-gradient-to-br from-orange-300 to-green-200'
-  }]
-};
+import JackpotPreview from './Preview/JackpotPreview';
 
 const Step3VisualStyle: React.FC = () => {
   const navigate = useNavigate();
@@ -87,6 +20,7 @@ const Step3VisualStyle: React.FC = () => {
     selectedTheme,
     backgroundImage,
     customColors,
+    jackpotColors,
     segmentCount,
     setBackgroundImage,
     setCurrentStep,
@@ -97,8 +31,6 @@ const Step3VisualStyle: React.FC = () => {
   const [isCreating, setIsCreating] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [creationSuccess, setCreationSuccess] = useState(false);
-  
-  const currentTemplates = templatesByMechanic[selectedGameType || 'quiz'] || templatesByMechanic['quiz'];
 
   const handleFileUpload = (files: FileList | null) => {
     if (files && files[0]) {
@@ -117,18 +49,18 @@ const Step3VisualStyle: React.FC = () => {
   const handleCreateCampaign = async () => {
     setIsCreating(true);
     try {
-      const selectedTemplate = currentTemplates.find(tpl => tpl.id === selectedTheme) || currentTemplates[0];
       const campaignData = {
         name: campaignName,
         description: `Campagne ${selectedGameType} - ${marketingGoal}`,
         type: selectedGameType || 'quiz',
         game_config: {
-          theme: selectedTheme,
+          theme: selectedTheme || 'default',
           launchDate,
           marketingGoal,
           hasLogo: !!logoFile,
           hasBackgroundImage: !!backgroundImage,
           customColors,
+          jackpotColors,
           ...(selectedGameType === 'roue' && {
             segmentCount,
             roulette: {
@@ -139,26 +71,27 @@ const Step3VisualStyle: React.FC = () => {
                 color: [customColors.primary, customColors.secondary, customColors.accent || '#10b981'][i % 3],
                 chance: Math.floor(100 / segmentCount)
               })),
-              theme: selectedTheme,
+              theme: selectedTheme || 'default',
               borderColor: customColors.primary
             }
           }),
           [selectedGameType || 'quiz']: {
             ...(selectedGameType === 'jackpot' && {
-              template: selectedTheme
+              template: selectedTheme || 'default',
+              ...jackpotColors
             })
           }
         },
         design: {
-          theme: selectedTheme,
+          theme: selectedTheme || 'default',
           colors: {
-            ...selectedTemplate?.colors,
             primary: customColors.primary,
             secondary: customColors.secondary,
             accent: customColors.accent
           },
-          template: selectedTheme,
-          customColors
+          template: selectedTheme || 'default',
+          customColors,
+          jackpotColors
         },
         status: 'draft' as const
       };
@@ -180,18 +113,18 @@ const Step3VisualStyle: React.FC = () => {
   const handleAdvancedSettings = async () => {
     setIsCreating(true);
     try {
-      const selectedTemplate = currentTemplates.find(tpl => tpl.id === selectedTheme) || currentTemplates[0];
       const campaignData = {
         name: campaignName,
         description: `Campagne ${selectedGameType} - ${marketingGoal}`,
         type: selectedGameType || 'quiz',
         game_config: {
-          theme: selectedTheme,
+          theme: selectedTheme || 'default',
           launchDate,
           marketingGoal,
           hasLogo: !!logoFile,
           hasBackgroundImage: !!backgroundImage,
           customColors,
+          jackpotColors,
           ...(selectedGameType === 'roue' && {
             segmentCount,
             roulette: {
@@ -202,26 +135,27 @@ const Step3VisualStyle: React.FC = () => {
                 color: [customColors.primary, customColors.secondary, customColors.accent || '#10b981'][i % 3],
                 chance: Math.floor(100 / segmentCount)
               })),
-              theme: selectedTheme,
+              theme: selectedTheme || 'default',
               borderColor: customColors.primary
             }
           }),
           [selectedGameType || 'quiz']: {
             ...(selectedGameType === 'jackpot' && {
-              template: selectedTheme
+              template: selectedTheme || 'default',
+              ...jackpotColors
             })
           }
         },
         design: {
-          theme: selectedTheme,
+          theme: selectedTheme || 'default',
           colors: {
-            ...selectedTemplate?.colors,
             primary: customColors.primary,
             secondary: customColors.secondary,
             accent: customColors.accent
           },
-          template: selectedTheme,
-          customColors
+          template: selectedTheme || 'default',
+          customColors,
+          jackpotColors
         },
         status: 'draft' as const
       };
@@ -323,41 +257,15 @@ const Step3VisualStyle: React.FC = () => {
           </div>
           
           <div className="space-y-12">
-            {/* Templates */}
-            <div>
-              <h3 className="text-2xl font-light text-gray-900 mb-8">Thèmes</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {currentTemplates.map((template) => (
-                  <div
-                    key={template.id}
-                    className={`p-6 rounded-2xl border-2 transition-all cursor-pointer ${
-                      selectedTheme === template.id
-                        ? 'border-[#841b60] bg-[#841b60]/5'
-                        : 'border-gray-200 hover:border-[#841b60]/30 bg-gray-50'
-                    }`}
-                    onClick={() => useQuickCampaignStore.getState().setSelectedTheme(template.id)}
-                  >
-                    {template.image ? (
-                      <div className="aspect-video mb-4 rounded-lg overflow-hidden bg-gray-100">
-                        <img
-                          src={template.image}
-                          alt={template.name}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                    ) : (
-                      <div className={`aspect-video mb-4 rounded-lg ${template.preview || 'bg-gray-100'}`} />
-                    )}
-                    <h4 className="text-lg font-medium text-gray-900 mb-2">
-                      {template.name}
-                    </h4>
-                    <p className="text-gray-600 text-sm">
-                      {template.description}
-                    </p>
-                  </div>
-                ))}
+            {/* Aperçu dynamique du Jackpot pour le type jackpot */}
+            {selectedGameType === 'jackpot' && (
+              <div className="bg-gray-50 rounded-2xl p-8">
+                <JackpotPreview
+                  customColors={customColors}
+                  jackpotColors={jackpotColors}
+                />
               </div>
-            </div>
+            )}
 
             {/* Color Customizer */}
             <ColorCustomizer />
@@ -414,14 +322,8 @@ const Step3VisualStyle: React.FC = () => {
 
             <button
               onClick={handleFinish}
-              disabled={!selectedTheme}
-              className={`
-                px-8 py-4 rounded-2xl font-medium transition-all
-                ${selectedTheme 
-                  ? 'bg-[#841b60] text-white hover:bg-[#841b60]/90 shadow-lg' 
-                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                }
-              `}
+              className="px-8 py-4 rounded-2xl font-medium transition-all
+                         bg-[#841b60] text-white hover:bg-[#841b60]/90 shadow-lg"
             >
               Finaliser
             </button>
