@@ -1,7 +1,8 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Plus, Trash2, Upload } from 'lucide-react';
 import ImageUpload from '../../common/ImageUpload';
+import ColorPaletteSelector from './ColorPaletteSelector';
 
 interface WheelGameConfigProps {
   campaign: any;
@@ -12,11 +13,44 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
   campaign,
   setCampaign
 }) => {
+  const [selectedPalette, setSelectedPalette] = useState<any>(undefined);
+  
   const segments = campaign.config?.roulette?.segments || [];
   const borderColor = campaign.config?.roulette?.borderColor || '#841b60';
   const borderOutlineColor = campaign.config?.roulette?.borderOutlineColor || '#FFD700';
   const segmentColor1 = campaign.config?.roulette?.segmentColor1 || '#ff6b6b';
   const segmentColor2 = campaign.config?.roulette?.segmentColor2 || '#4ecdc4';
+
+  const handlePaletteSelect = (palette: any) => {
+    setSelectedPalette(palette);
+    
+    // Appliquer la palette aux couleurs spécifiques de la roue
+    setCampaign((prev: any) => {
+      const newConfig = {
+        ...prev,
+        config: {
+          ...prev.config,
+          roulette: {
+            ...prev.config?.roulette,
+            borderColor: palette.primary,
+            borderOutlineColor: palette.accent || palette.secondary,
+            segmentColor1: palette.primary,
+            segmentColor2: palette.secondary
+          }
+        }
+      };
+
+      // Mettre à jour les segments existants avec les nouvelles couleurs alternées
+      if (newConfig.config.roulette.segments) {
+        newConfig.config.roulette.segments = newConfig.config.roulette.segments.map((segment: any, index: number) => ({
+          ...segment,
+          color: index % 2 === 0 ? palette.primary : palette.secondary
+        }));
+      }
+
+      return newConfig;
+    });
+  };
 
   const addSegment = () => {
     const newSegmentIndex = segments.length;
@@ -128,9 +162,16 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
 
   return (
     <div className="space-y-6">
+      {/* Combinaisons de couleurs */}
+      <ColorPaletteSelector
+        selectedPalette={selectedPalette}
+        onPaletteSelect={handlePaletteSelect}
+        gameType="wheel"
+      />
+
       {/* Couleurs de la roue */}
       <div className="space-y-4">
-        <h3 className="text-lg font-medium text-gray-900">Couleurs de la roue</h3>
+        <h3 className="text-lg font-medium text-gray-900">Couleurs personnalisées</h3>
         
         {/* Couleur de bordure principale */}
         <div className="space-y-2">
