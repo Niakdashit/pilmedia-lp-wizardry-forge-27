@@ -43,12 +43,12 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
       )}
       
       {/* Content container */}
-      <div className="relative z-10 w-full max-w-4xl mx-auto p-4 sm:p-8 text-center">
-        <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-3 sm:mb-4 break-words">
+      <div className="relative z-10 max-w-2xl mx-auto p-8 text-center">
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
             {mockCampaign.screens?.[0]?.title || 'Tentez votre chance !'}
           </h1>
-          <p className="text-base sm:text-lg text-gray-600 break-words">
+          <p className="text-lg text-gray-600">
             {mockCampaign.screens?.[0]?.description || 'Participez pour avoir une chance de gagner !'}
           </p>
         </div>
@@ -69,7 +69,7 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
   );
 
   const renderMobilePreview = () => (
-    <div className="w-full h-full flex items-center justify-center p-2 sm:p-4 bg-gray-50">
+    <div className="w-full h-full flex items-center justify-center p-4 bg-gray-50">
       <MobilePreview
         campaign={mockCampaign}
         previewMode={selectedDevice === 'tablet' ? 'tablet' : 'mobile'}
@@ -78,7 +78,7 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
   );
 
   return (
-    <div className="flex-1 pt-16 sm:pt-20 overflow-auto">
+    <div className="flex-1 pt-20 overflow-auto">
       {selectedDevice === 'desktop' ? renderDesktopPreview() : renderMobilePreview()}
     </div>
   );

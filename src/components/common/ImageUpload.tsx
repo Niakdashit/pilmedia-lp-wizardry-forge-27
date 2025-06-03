@@ -3,12 +3,11 @@ import React, { useCallback } from 'react';
 import { Upload } from 'lucide-react';
 
 interface ImageUploadProps {
-  value?: string | File;
-  onChange: (value: string | File) => void;
+  value?: string;
+  onChange: (value: string) => void;
   label?: string;
   className?: string;
   compact?: boolean;
-  acceptFiles?: boolean; // Pour accepter les objets File
 }
 
 const ImageUpload: React.FC<ImageUploadProps> = ({ 
@@ -16,49 +15,30 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   onChange, 
   label, 
   className,
-  compact = false,
-  acceptFiles = false
+  compact = false 
 }) => {
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
     if (file && file.type.startsWith('image/')) {
-      if (acceptFiles) {
-        onChange(file);
-      } else {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          onChange(reader.result as string);
-        };
-        reader.readAsDataURL(file);
-      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        onChange(reader.result as string);
+      };
+      reader.readAsDataURL(file);
     }
-  }, [onChange, acceptFiles]);
+  }, [onChange]);
 
   const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (acceptFiles) {
-        onChange(file);
-      } else {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          onChange(reader.result as string);
-        };
-        reader.readAsDataURL(file);
-      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        onChange(reader.result as string);
+      };
+      reader.readAsDataURL(file);
     }
-  }, [onChange, acceptFiles]);
-
-  // Fonction pour obtenir l'URL d'aperçu
-  const getPreviewUrl = () => {
-    if (!value) return null;
-    if (typeof value === 'string') return value;
-    if (value instanceof File) return URL.createObjectURL(value);
-    return null;
-  };
-
-  const previewUrl = getPreviewUrl();
+  }, [onChange]);
 
   return (
     <div className={className}>
@@ -88,17 +68,17 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           className="cursor-pointer"
         >
           <div className="text-center">
-            {previewUrl ? (
+            {value ? (
               <div className="relative">
                 <img 
-                  src={previewUrl} 
+                  src={value} 
                   alt="Preview" 
                   className={compact ? "max-h-16 mx-auto rounded" : "max-h-48 mx-auto rounded-lg"}
                 />
                 <button
                   onClick={(e) => {
                     e.preventDefault();
-                    onChange(acceptFiles ? null as any : '');
+                    onChange('');
                   }}
                   className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 text-xs"
                 >
