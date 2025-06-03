@@ -65,7 +65,7 @@ const Step1GameSelection: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#ebf4f7] px-6 py-12">
-      <div className="max-w-2xl mx-auto">
+      <div className="max-w-4xl mx-auto">
         <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-8 md:p-12">
           {/* Header */}
           <div className="text-center mb-16">
@@ -87,7 +87,7 @@ const Step1GameSelection: React.FC = () => {
           </div>
 
           {/* Game Selection Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
             {gameTypes.map((game, index) => {
               const IconComponent = game.icon;
               const isSelected = selectedGameType === game.id;
