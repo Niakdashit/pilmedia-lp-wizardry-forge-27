@@ -77,61 +77,66 @@ const Jackpot: React.FC<JackpotProps> = ({
   const slotSize = getSlotSize();
   const slotGap = getSlotGap(slotSize);
 
-  const gameContainerStyle: React.CSSProperties = {
-    display: 'inline-flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
+  // Calculer la largeur nécessaire pour les 3 slots + gaps
+  const slotsContainerWidth = (slotSize * 3) + (slotGap * 2);
+
+  // Style pour le conteneur des slots uniquement
+  const slotsContainerStyle: React.CSSProperties = {
+    width: slotsContainerWidth + (borderWidth * 2) + 20, // +20 pour un peu de padding interne
+    height: slotSize + (borderWidth * 2) + 20,
     border: `${borderWidth}px solid ${borderColor}`,
     borderRadius: '12px',
-    padding: '20px',
     backgroundColor: containerBackgroundColor,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '10px',
     position: 'relative',
   };
 
   if (backgroundImage) {
-    gameContainerStyle.backgroundImage = `url(${backgroundImage})`;
-    gameContainerStyle.backgroundSize = 'cover';
-    gameContainerStyle.backgroundPosition = 'center';
-    gameContainerStyle.backgroundRepeat = 'no-repeat';
+    slotsContainerStyle.backgroundImage = `url(${backgroundImage})`;
+    slotsContainerStyle.backgroundSize = 'cover';
+    slotsContainerStyle.backgroundPosition = 'center';
+    slotsContainerStyle.backgroundRepeat = 'no-repeat';
   }
 
   return (
-    <div className="flex items-center justify-center w-full h-full">
-      <div style={gameContainerStyle}>
+    <div className="flex flex-col items-center justify-center space-y-4">
+      {/* Conteneur des slots seulement */}
+      <div style={slotsContainerStyle}>
         <div 
-          className="flex flex-col items-center justify-center rounded-lg p-4" 
-          style={{ backgroundColor: backgroundColor + '66' }}
-        >
-          <div style={{
+          className="flex rounded-lg p-2" 
+          style={{ 
+            backgroundColor: backgroundColor + '66',
             gap: slotGap,
-            flexWrap: 'nowrap',
-            maxWidth: '100%'
-          }} className="flex mb-6 mx-0">
-            {slots.map((symbol, i) => 
-              <JackpotSlot
-                key={i}
-                symbol={symbol}
-                isRolling={isRolling}
-                slotSize={slotSize}
-                slotBorderColor={slotBorderColor}
-                slotBorderWidth={slotBorderWidth}
-                slotBackgroundColor={slotBackgroundColor}
-              />
-            )}
-          </div>
-
-          <div className="flex flex-col items-center w-full">
-            <JackpotControls
-              result={result}
+            flexWrap: 'nowrap'
+          }}
+        >
+          {slots.map((symbol, i) => 
+            <JackpotSlot
+              key={i}
+              symbol={symbol}
               isRolling={isRolling}
-              onRoll={roll}
-              buttonLabel={buttonLabel}
-              buttonColor={buttonColor}
-              borderColor={borderColor}
+              slotSize={slotSize}
+              slotBorderColor={slotBorderColor}
+              slotBorderWidth={slotBorderWidth}
+              slotBackgroundColor={slotBackgroundColor}
             />
-          </div>
+          )}
         </div>
+      </div>
+
+      {/* Bouton de contrôle séparé */}
+      <div className="flex flex-col items-center">
+        <JackpotControls
+          result={result}
+          isRolling={isRolling}
+          onRoll={roll}
+          buttonLabel={buttonLabel}
+          buttonColor={buttonColor}
+          borderColor={borderColor}
+        />
       </div>
     </div>
   );
