@@ -19,46 +19,46 @@ interface ColorPaletteSelectorProps {
 
 const colorPalettes: Record<string, ColorPalette[]> = {
   wheel: [{
-    name: 'Classique',
+    name: 'Rose Pastel',
     colors: {
-      primary: '#841b60',
-      secondary: '#f3f4f6',
-      accent: '#10b981'
+      primary: '#FFB3BA',
+      secondary: '#FFDFBA',
+      accent: '#FFFFBA'
     }
   }, {
-    name: 'Casino',
+    name: 'Bleu Pastel',
     colors: {
-      primary: '#000000',
-      secondary: '#FFD700',
-      accent: '#FF0000'
+      primary: '#BAE1FF',
+      secondary: '#BAFFC9',
+      accent: '#C9BAFF'
     }
   }, {
-    name: 'Océan',
+    name: 'Lavande Douce',
     colors: {
-      primary: '#0ea5e9',
-      secondary: '#bae6fd',
-      accent: '#0284c7'
+      primary: '#E6E6FA',
+      secondary: '#F0E68C',
+      accent: '#DDA0DD'
     }
   }, {
-    name: 'Sunset',
+    name: 'Menthe Pastel',
     colors: {
-      primary: '#f97316',
-      secondary: '#fed7aa',
-      accent: '#ea580c'
+      primary: '#98FB98',
+      secondary: '#F0FFF0',
+      accent: '#AFEEEE'
     }
   }, {
-    name: 'Nature',
+    name: 'Pêche Pastel',
     colors: {
-      primary: '#16a34a',
-      secondary: '#dcfce7',
-      accent: '#15803d'
+      primary: '#FFDAB9',
+      secondary: '#FFE4E1',
+      accent: '#FFF8DC'
     }
   }, {
-    name: 'Royal',
+    name: 'Lilas Tendre',
     colors: {
-      primary: '#7c3aed',
-      secondary: '#ede9fe',
-      accent: '#6d28d9'
+      primary: '#DCD0FF',
+      secondary: '#FFD0DC',
+      accent: '#D0FFDC'
     }
   }],
   scratch: [{
@@ -195,13 +195,13 @@ const ColorPaletteSelector: React.FC<ColorPaletteSelectorProps> = ({
   const palettes = colorPalettes[gameType] || colorPalettes.wheel;
 
   const generateRandomPalette = () => {
-    const colors = ['#ef4444', '#f97316', '#f59e0b', '#eab308', '#84cc16', '#22c55e', '#10b981', '#14b8a6', '#06b6d4', '#0ea5e9', '#3b82f6', '#6366f1', '#8b5cf6', '#a855f7', '#c084fc', '#d946ef', '#ec4899', '#f43f5e'];
-    const shuffled = [...colors].sort(() => Math.random() - 0.5);
+    const pastelColors = ['#FFB3BA', '#FFDFBA', '#FFFFBA', '#BAE1FF', '#BAFFC9', '#C9BAFF', '#E6E6FA', '#F0E68C', '#DDA0DD', '#98FB98', '#F0FFF0', '#AFEEEE'];
+    const shuffled = [...pastelColors].sort(() => Math.random() - 0.5);
     const randomPalette: ColorPalette = {
       name: 'Personnalisé',
       colors: {
         primary: shuffled[0],
-        secondary: shuffled[1] + '20', // Ajouter de la transparence
+        secondary: shuffled[1],
         accent: shuffled[2]
       }
     };

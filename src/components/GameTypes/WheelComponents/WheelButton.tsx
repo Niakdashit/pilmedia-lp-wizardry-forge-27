@@ -45,11 +45,11 @@ const WheelButton: React.FC<WheelButtonProps> = ({
       disabled={spinning || disabled}
       style={{
         background: `linear-gradient(45deg, ${buttonConfig.color}, ${buttonConfig.color}dd)`,
-        borderColor: '#FFD700',
-        borderWidth: '2px',
+        borderColor: buttonConfig.borderColor,
+        borderWidth: `${buttonConfig.borderWidth}px`,
         borderRadius: `${buttonConfig.borderRadius}px`,
         borderStyle: 'solid',
-        boxShadow: '0 4px 15px rgba(255, 215, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
+        boxShadow: `0 4px 15px ${buttonConfig.borderColor}30, inset 0 1px 0 rgba(255, 255, 255, 0.2)`
       }}
       className={`${getButtonSizeClasses()} text-white font-bold disabled:opacity-50 hover:opacity-90 transition-all duration-200 relative overflow-hidden`}
     >
