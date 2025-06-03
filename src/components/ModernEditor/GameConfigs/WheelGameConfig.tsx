@@ -1,16 +1,20 @@
+
 import React from 'react';
-import { Plus, Trash2, Palette, Upload } from 'lucide-react';
+import { Plus, Trash2, Upload } from 'lucide-react';
 import ImageUpload from '../../common/ImageUpload';
+
 interface WheelGameConfigProps {
   campaign: any;
   setCampaign: React.Dispatch<React.SetStateAction<any>>;
 }
+
 const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
   campaign,
   setCampaign
 }) => {
   const segments = campaign.config?.roulette?.segments || [];
   const borderColor = campaign.config?.roulette?.borderColor || '#841b60';
+
   const addSegment = () => {
     setCampaign((prev: any) => ({
       ...prev,
@@ -27,12 +31,14 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
       }
     }));
   };
+
   const updateSegment = (index: number, field: string, value: any) => {
     const updatedSegments = [...segments];
     updatedSegments[index] = {
       ...updatedSegments[index],
       [field]: value
     };
+
     setCampaign((prev: any) => ({
       ...prev,
       config: {
@@ -44,6 +50,7 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
       }
     }));
   };
+
   const removeSegment = (index: number) => {
     const updatedSegments = segments.filter((_: any, i: number) => i !== index);
     setCampaign((prev: any) => ({
@@ -57,6 +64,7 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
       }
     }));
   };
+
   const updateBorderColor = (color: string) => {
     setCampaign((prev: any) => ({
       ...prev,
@@ -69,26 +77,8 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
       }
     }));
   };
-  const themes = [{
-    value: 'default',
-    label: 'Classique'
-  }, {
-    value: 'casino',
-    label: 'Casino'
-  }, {
-    value: 'luxury',
-    label: 'Luxe'
-  }, {
-    value: 'noel',
-    label: 'Noël'
-  }, {
-    value: 'halloween',
-    label: 'Halloween'
-  }];
-  return <div className="space-y-6">
-      {/* Thème de la roue */}
-      
 
+  return <div className="space-y-6">
       {/* Couleur de bordure de la roue */}
       <div className="space-y-2">
         <label className="text-sm font-medium text-gray-700">Couleur de la bordure</label>
@@ -142,4 +132,5 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
       </div>
     </div>;
 };
+
 export default WheelGameConfig;
