@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Palette, RotateCcw } from 'lucide-react';
 import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
@@ -53,21 +54,18 @@ const colorPalettes = [{
     accent: '#9ca3af'
   }
 }];
+
 const ColorCustomizer: React.FC = () => {
   const {
     customColors,
     setCustomColors,
     selectedGameType
   } = useQuickCampaignStore();
+
   const handlePaletteSelect = (palette: typeof colorPalettes[0]) => {
     setCustomColors(palette.colors);
   };
-  const handleColorChange = (colorType: 'primary' | 'secondary' | 'accent', value: string) => {
-    setCustomColors({
-      ...customColors,
-      [colorType]: value
-    });
-  };
+
   const resetToDefault = () => {
     setCustomColors({
       primary: '#841b60',
@@ -75,6 +73,7 @@ const ColorCustomizer: React.FC = () => {
       accent: '#10b981'
     });
   };
+
   return <div className="space-y-8">
       <div className="flex items-center justify-between">
         <h3 className="text-2xl font-light text-gray-900 flex items-center">
@@ -107,23 +106,11 @@ const ColorCustomizer: React.FC = () => {
           </div>)}
       </div>
 
-      {/* Couleurs personnalisées */}
-      <div className="space-y-4">
-        
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          
-
-          
-
-          
-        </div>
-      </div>
-
       {/* Configuration spécifique au jackpot */}
       {selectedGameType === 'jackpot' && <div className="border-t pt-8">
           <JackpotBorderCustomizer />
         </div>}
     </div>;
 };
+
 export default ColorCustomizer;
