@@ -1,3 +1,4 @@
+
 import React from 'react';
 import ImageUpload from '../common/ImageUpload';
 
@@ -10,30 +11,28 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
   campaign,
   setCampaign
 }) => {
-  const handleBackgroundImageChange = (value: string | File) => {
-    const imageValue = typeof value === 'string' ? value : URL.createObjectURL(value);
+  const handleBackgroundImageChange = (image: string) => {
     setCampaign((prev: any) => ({
       ...prev,
       design: {
         ...prev.design,
-        backgroundImage: imageValue
+        backgroundImage: image
       }
     }));
   };
 
-  const handleCenterLogoChange = (value: string | File) => {
-    const imageValue = typeof value === 'string' ? value : URL.createObjectURL(value);
+  const handleCenterLogoChange = (image: string) => {
     setCampaign((prev: any) => ({
       ...prev,
       design: {
         ...prev.design,
-        centerLogo: imageValue
+        centerLogo: image
       },
       config: {
         ...prev.config,
         roulette: {
           ...prev.config?.roulette,
-          centerImage: imageValue
+          centerImage: image
         }
       }
     }));

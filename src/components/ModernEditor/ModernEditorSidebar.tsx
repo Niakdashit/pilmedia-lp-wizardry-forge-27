@@ -10,7 +10,8 @@ interface ModernEditorSidebarProps {
 
 const ModernEditorSidebar: React.FC<ModernEditorSidebarProps> = ({
   activeTab,
-  onTabChange
+  onTabChange,
+  campaignType
 }) => {
   const tabs = [
     { id: 'general', label: 'Général', icon: Settings },
