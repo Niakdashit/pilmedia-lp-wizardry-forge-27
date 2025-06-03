@@ -310,7 +310,7 @@ const Step3VisualStyle: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#ebf4f7] px-6 py-12">
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-6xl mx-auto">
         <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-8 md:p-12">
           {/* Header */}
           <div className="text-center mb-16">
