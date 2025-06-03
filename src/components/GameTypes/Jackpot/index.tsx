@@ -37,6 +37,12 @@ const Jackpot: React.FC<JackpotProps> = ({
     slotBackgroundColor
   });
 
+  console.log('Jackpot component props breakdown:', {
+    buttonColor,
+    backgroundImage,
+    isPreview
+  });
+
   const roll = () => {
     if (isRolling || result) return;
     
@@ -90,7 +96,7 @@ const Jackpot: React.FC<JackpotProps> = ({
   // Calculer la largeur nécessaire pour les 3 slots + gaps
   const slotsContainerWidth = (slotSize * 3) + (slotGap * 2);
 
-  // Style pour le conteneur des slots avec effets 3D
+  // Style pour le conteneur des slots avec effets 3D - utilisant les couleurs reçues en props
   const slotsContainerStyle: React.CSSProperties = {
     width: slotsContainerWidth + (borderWidth * 2) + 24,
     height: slotSize + (borderWidth * 2) + 24,
@@ -131,7 +137,7 @@ const Jackpot: React.FC<JackpotProps> = ({
     slotsContainerStyle.backgroundRepeat = 'no-repeat';
   }
 
-  // Style pour la zone interne des slots avec effet de profondeur
+  // Style pour la zone interne des slots avec effet de profondeur - utilisant backgroundColor reçu en props
   const innerZoneStyle: React.CSSProperties = {
     backgroundColor: backgroundColor + 'dd',
     borderRadius: '12px',
