@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Target, Zap, Dice1, Gamepad2, Puzzle, ArrowRight } from 'lucide-react';
@@ -65,108 +66,110 @@ const Step1GameSelection: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#ebf4f7] px-6 py-12">
       <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-4xl font-light text-gray-900 mb-4"
-          >
-            Créer une campagne
-          </motion.h1>
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            className="text-xl text-gray-600 font-light"
-          >
-            Choisissez le type d'expérience que vous souhaitez créer
-          </motion.p>
-        </div>
-
-        {/* Game Selection Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
-          {gameTypes.map((game, index) => {
-            const IconComponent = game.icon;
-            const isSelected = selectedGameType === game.id;
-            
-            return (
-              <motion.div
-                key={game.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
-                onClick={() => handleGameSelect(game.id)}
-                className={`
-                  relative p-8 rounded-3xl border-2 cursor-pointer transition-all duration-300
-                  ${isSelected 
-                    ? 'border-[#841b60] bg-[#841b60]/5 shadow-xl' 
-                    : 'border-gray-200 bg-white hover:border-[#841b60]/50 hover:shadow-lg'
-                  }
-                `}
-              >
-                {game.popular && (
-                  <div className="absolute -top-3 -right-3 bg-[#841b60] text-white text-xs px-3 py-1 rounded-full font-medium">
-                    Populaire
-                  </div>
-                )}
-                
-                <div className="text-center">
-                  <div className={`
-                    w-16 h-16 mx-auto mb-6 rounded-2xl flex items-center justify-center
-                    ${isSelected ? 'bg-[#841b60]' : 'bg-gray-100'}
-                  `}>
-                    <IconComponent 
-                      className={`w-8 h-8 ${isSelected ? 'text-white' : 'text-gray-600'}`} 
-                    />
-                  </div>
-                  
-                  <h3 className="text-xl font-semibold text-gray-900 mb-3">
-                    {game.name}
-                  </h3>
-                  
-                  <p className="text-gray-600 text-sm leading-relaxed">
-                    {game.description}
-                  </p>
-                </div>
-              </motion.div>
-            );
-          })}
-        </div>
-
-        {/* Navigation */}
-        <div className="flex justify-between items-center">
-          <button
-            onClick={handleBack}
-            className="px-6 py-3 text-gray-600 hover:text-gray-900 transition-colors font-medium"
-          >
-            Retour
-          </button>
-
-          <button
-            onClick={handleNext}
-            disabled={!selectedGameType}
-            className={`
-              flex items-center space-x-2 px-8 py-4 rounded-2xl font-medium transition-all
-              ${selectedGameType
-                ? 'bg-[#841b60] text-white hover:bg-[#841b60]/90 shadow-lg'
-                : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-              }
-            `}
-          >
-            <span>Continuer</span>
-            <ArrowRight className="w-5 h-5" />
-          </button>
-        </div>
-
-        {/* Progress Indicator */}
-        <div className="text-center mt-16">
-          <div className="flex items-center justify-center space-x-2 mb-4">
-            <div className="w-8 h-1 bg-[#841b60] rounded-full"></div>
-            <div className="w-8 h-1 bg-gray-200 rounded-full"></div>
-            <div className="w-8 h-1 bg-gray-200 rounded-full"></div>
+        <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-8 md:p-12">
+          {/* Header */}
+          <div className="text-center mb-16">
+            <motion.h1 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-4xl font-light text-gray-900 mb-4"
+            >
+              Créer une campagne
+            </motion.h1>
+            <motion.p 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.1 }}
+              className="text-xl text-gray-600 font-light"
+            >
+              Choisissez le type d'expérience que vous souhaitez créer
+            </motion.p>
           </div>
-          <p className="text-gray-500 font-light">Étape 1 sur 3</p>
+
+          {/* Game Selection Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+            {gameTypes.map((game, index) => {
+              const IconComponent = game.icon;
+              const isSelected = selectedGameType === game.id;
+              
+              return (
+                <motion.div
+                  key={game.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  onClick={() => handleGameSelect(game.id)}
+                  className={`
+                    relative p-8 rounded-3xl border-2 cursor-pointer transition-all duration-300
+                    ${isSelected 
+                      ? 'border-[#841b60] bg-[#841b60]/5 shadow-xl' 
+                      : 'border-gray-200 bg-gray-50 hover:border-[#841b60]/50 hover:shadow-lg'
+                    }
+                  `}
+                >
+                  {game.popular && (
+                    <div className="absolute -top-3 -right-3 bg-[#841b60] text-white text-xs px-3 py-1 rounded-full font-medium">
+                      Populaire
+                    </div>
+                  )}
+                  
+                  <div className="text-center">
+                    <div className={`
+                      w-16 h-16 mx-auto mb-6 rounded-2xl flex items-center justify-center
+                      ${isSelected ? 'bg-[#841b60]' : 'bg-gray-100'}
+                    `}>
+                      <IconComponent 
+                        className={`w-8 h-8 ${isSelected ? 'text-white' : 'text-gray-600'}`} 
+                      />
+                    </div>
+                    
+                    <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                      {game.name}
+                    </h3>
+                    
+                    <p className="text-gray-600 text-sm leading-relaxed">
+                      {game.description}
+                    </p>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+
+          {/* Navigation */}
+          <div className="flex justify-between items-center">
+            <button
+              onClick={handleBack}
+              className="px-6 py-3 text-gray-600 hover:text-gray-900 transition-colors font-medium"
+            >
+              Retour
+            </button>
+
+            <button
+              onClick={handleNext}
+              disabled={!selectedGameType}
+              className={`
+                flex items-center space-x-2 px-8 py-4 rounded-2xl font-medium transition-all
+                ${selectedGameType
+                  ? 'bg-[#841b60] text-white hover:bg-[#841b60]/90 shadow-lg'
+                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                }
+              `}
+            >
+              <span>Continuer</span>
+              <ArrowRight className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Progress Indicator */}
+          <div className="text-center mt-16">
+            <div className="flex items-center justify-center space-x-2 mb-4">
+              <div className="w-8 h-1 bg-[#841b60] rounded-full"></div>
+              <div className="w-8 h-1 bg-gray-200 rounded-full"></div>
+              <div className="w-8 h-1 bg-gray-200 rounded-full"></div>
+            </div>
+            <p className="text-gray-500 font-light">Étape 1 sur 3</p>
+          </div>
         </div>
       </div>
     </div>

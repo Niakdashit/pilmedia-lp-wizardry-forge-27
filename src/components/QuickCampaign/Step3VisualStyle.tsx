@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { ArrowLeft, Upload, Eye, Settings, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -310,129 +311,131 @@ const Step3VisualStyle: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#ebf4f7] px-6 py-12">
       <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-16">
-          <h1 className="text-4xl font-light text-gray-900 mb-4">
-            Style visuel
-          </h1>
-          <p className="text-xl text-gray-600 font-light">
-            Personnalisez l'apparence de votre expérience
-          </p>
-        </div>
-        
-        <div className="bg-white border border-gray-200 rounded-3xl p-8 space-y-12 shadow-sm">
-          {/* Templates */}
-          <div>
-            <h3 className="text-2xl font-light text-gray-900 mb-8">Thèmes</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {currentTemplates.map((template) => (
-                <div
-                  key={template.id}
-                  className={`p-6 rounded-2xl border-2 transition-all cursor-pointer ${
-                    selectedTheme === template.id
-                      ? 'border-[#841b60] bg-[#841b60]/5'
-                      : 'border-gray-200 hover:border-[#841b60]/30'
-                  }`}
-                  onClick={() => useQuickCampaignStore.getState().setSelectedTheme(template.id)}
-                >
-                  {template.image ? (
-                    <div className="aspect-video mb-4 rounded-lg overflow-hidden bg-gray-50">
-                      <img
-                        src={template.image}
-                        alt={template.name}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  ) : (
-                    <div className={`aspect-video mb-4 rounded-lg ${template.preview || 'bg-gray-50'}`} />
-                  )}
-                  <h4 className="text-lg font-medium text-gray-900 mb-2">
-                    {template.name}
-                  </h4>
-                  <p className="text-gray-600 text-sm">
-                    {template.description}
-                  </p>
-                </div>
-              ))}
-            </div>
+        <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-8 md:p-12">
+          {/* Header */}
+          <div className="text-center mb-16">
+            <h1 className="text-4xl font-light text-gray-900 mb-4">
+              Style visuel
+            </h1>
+            <p className="text-xl text-gray-600 font-light">
+              Personnalisez l'apparence de votre expérience
+            </p>
           </div>
-
-          {/* Color Customizer */}
-          <ColorCustomizer />
-
-          {/* Background Upload */}
-          <div>
-            <h3 className="text-2xl font-light text-gray-900 mb-8">
-              Image de fond <span className="text-gray-400 font-light">(optionnel)</span>
-            </h3>
-            <div className="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center bg-gray-50/50">
-              <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              {backgroundImage ? (
-                <div>
-                  <p className="text-gray-900 font-medium mb-2">
-                    {backgroundImage.name}
-                  </p>
-                  <button
-                    onClick={() => setBackgroundImage(null)}
-                    className="text-red-500 hover:text-red-600 transition-colors"
+          
+          <div className="space-y-12">
+            {/* Templates */}
+            <div>
+              <h3 className="text-2xl font-light text-gray-900 mb-8">Thèmes</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {currentTemplates.map((template) => (
+                  <div
+                    key={template.id}
+                    className={`p-6 rounded-2xl border-2 transition-all cursor-pointer ${
+                      selectedTheme === template.id
+                        ? 'border-[#841b60] bg-[#841b60]/5'
+                        : 'border-gray-200 hover:border-[#841b60]/30 bg-gray-50'
+                    }`}
+                    onClick={() => useQuickCampaignStore.getState().setSelectedTheme(template.id)}
                   >
-                    Supprimer
-                  </button>
-                </div>
-              ) : (
-                <>
-                  <p className="text-gray-600 mb-2">
-                    <label className="text-[#841b60] cursor-pointer hover:text-[#841b60]/80 transition-colors">
-                      Téléchargez une image de fond
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={(e) => handleFileUpload(e.target.files)}
-                        className="hidden"
-                      />
-                    </label>
-                  </p>
-                  <p className="text-gray-400 text-sm">PNG, JPG jusqu'à 10MB</p>
-                </>
-              )}
+                    {template.image ? (
+                      <div className="aspect-video mb-4 rounded-lg overflow-hidden bg-gray-100">
+                        <img
+                          src={template.image}
+                          alt={template.name}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className={`aspect-video mb-4 rounded-lg ${template.preview || 'bg-gray-100'}`} />
+                    )}
+                    <h4 className="text-lg font-medium text-gray-900 mb-2">
+                      {template.name}
+                    </h4>
+                    <p className="text-gray-600 text-sm">
+                      {template.description}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Color Customizer */}
+            <ColorCustomizer />
+
+            {/* Background Upload */}
+            <div>
+              <h3 className="text-2xl font-light text-gray-900 mb-8">
+                Image de fond <span className="text-gray-400 font-light">(optionnel)</span>
+              </h3>
+              <div className="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center bg-gray-50">
+                <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                {backgroundImage ? (
+                  <div>
+                    <p className="text-gray-900 font-medium mb-2">
+                      {backgroundImage.name}
+                    </p>
+                    <button
+                      onClick={() => setBackgroundImage(null)}
+                      className="text-red-500 hover:text-red-600 transition-colors"
+                    >
+                      Supprimer
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <p className="text-gray-600 mb-2">
+                      <label className="text-[#841b60] cursor-pointer hover:text-[#841b60]/80 transition-colors">
+                        Téléchargez une image de fond
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={(e) => handleFileUpload(e.target.files)}
+                          className="hidden"
+                        />
+                      </label>
+                    </p>
+                    <p className="text-gray-400 text-sm">PNG, JPG jusqu'à 10MB</p>
+                  </>
+                )}
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Navigation */}
-        <div className="flex justify-between items-center mt-12">
-          <button
-            onClick={() => setCurrentStep(2)}
-            className="flex items-center space-x-2 px-6 py-3 text-gray-600 hover:text-gray-900 
-                       transition-colors font-medium"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            <span>Retour</span>
-          </button>
+          {/* Navigation */}
+          <div className="flex justify-between items-center mt-12">
+            <button
+              onClick={() => setCurrentStep(2)}
+              className="flex items-center space-x-2 px-6 py-3 text-gray-600 hover:text-gray-900 
+                         transition-colors font-medium"
+            >
+              <ArrowLeft className="w-5 h-5" />
+              <span>Retour</span>
+            </button>
 
-          <button
-            onClick={handleFinish}
-            disabled={!selectedTheme}
-            className={`
-              px-8 py-4 rounded-2xl font-medium transition-all
-              ${selectedTheme 
-                ? 'bg-[#841b60] text-white hover:bg-[#841b60]/90 shadow-lg' 
-                : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-              }
-            `}
-          >
-            Finaliser
-          </button>
-        </div>
-
-        {/* Progress */}
-        <div className="text-center mt-16">
-          <div className="flex items-center justify-center space-x-2 mb-4">
-            <div className="w-8 h-1 bg-[#841b60] rounded-full"></div>
-            <div className="w-8 h-1 bg-[#841b60] rounded-full"></div>
-            <div className="w-8 h-1 bg-[#841b60] rounded-full"></div>
+            <button
+              onClick={handleFinish}
+              disabled={!selectedTheme}
+              className={`
+                px-8 py-4 rounded-2xl font-medium transition-all
+                ${selectedTheme 
+                  ? 'bg-[#841b60] text-white hover:bg-[#841b60]/90 shadow-lg' 
+                  : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                }
+              `}
+            >
+              Finaliser
+            </button>
           </div>
-          <p className="text-gray-500 font-light">Étape 3 sur 3</p>
+
+          {/* Progress */}
+          <div className="text-center mt-16">
+            <div className="flex items-center justify-center space-x-2 mb-4">
+              <div className="w-8 h-1 bg-[#841b60] rounded-full"></div>
+              <div className="w-8 h-1 bg-[#841b60] rounded-full"></div>
+              <div className="w-8 h-1 bg-[#841b60] rounded-full"></div>
+            </div>
+            <p className="text-gray-500 font-light">Étape 3 sur 3</p>
+          </div>
         </div>
       </div>
     </div>
