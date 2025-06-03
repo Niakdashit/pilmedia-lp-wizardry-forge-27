@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Upload, Calendar, Target } from 'lucide-react';
@@ -54,7 +53,7 @@ const Step2BasicSettings: React.FC = () => {
   const canProceed = campaignName.trim() && launchDate && marketingGoal;
 
   return (
-    <div className="min-h-screen bg-white px-6 py-12">
+    <div className="min-h-screen bg-[#ebf4f7] px-6 py-12">
       <div className="max-w-2xl mx-auto">
         {/* Header */}
         <div className="text-center mb-16">

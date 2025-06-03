@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { ArrowLeft, Upload, Eye, Settings, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -239,7 +238,7 @@ const Step3VisualStyle: React.FC = () => {
 
   if (showFinalStep) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center px-6 py-12">
+      <div className="min-h-screen bg-[#ebf4f7] flex items-center justify-center px-6 py-12">
         <div className="max-w-lg w-full text-center">
           <div className="bg-white border border-gray-200 rounded-3xl p-12 shadow-xl">
             <div className="mb-8">
@@ -309,7 +308,7 @@ const Step3VisualStyle: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white px-6 py-12">
+    <div className="min-h-screen bg-[#ebf4f7] px-6 py-12">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-16">

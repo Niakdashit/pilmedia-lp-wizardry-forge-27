@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Target, Zap, Dice1, Gamepad2, Puzzle, ArrowRight } from 'lucide-react';
@@ -64,7 +63,7 @@ const Step1GameSelection: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-white px-6 py-12">
+    <div className="min-h-screen bg-[#ebf4f7] px-6 py-12">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
         <div className="text-center mb-16">
