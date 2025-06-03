@@ -4,78 +4,115 @@ import { Palette, RotateCcw, RefreshCw } from 'lucide-react';
 import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
 import JackpotBorderCustomizer from './JackpotBorderCustomizer';
 
-// Palettes de base plus attrayantes
+// Palettes harmonieuses et équilibrées
 const baseColorPalettes = [
   {
     id: 'violet-corporate',
     name: 'Violet Corporate',
     colors: {
-      primary: '#841b60',
-      secondary: '#3b82f6',
-      accent: '#10b981'
+      primary: '#8b5cf6',
+      secondary: '#a78bfa',
+      accent: '#c4b5fd'
     }
   },
   {
-    id: 'orange-energique',
-    name: 'Orange Énergique',
+    id: 'ocean-blue',
+    name: 'Océan Bleu',
     colors: {
-      primary: '#f97316',
-      secondary: '#dc2626',
-      accent: '#facc15'
+      primary: '#3b82f6',
+      secondary: '#60a5fa',
+      accent: '#93c5fd'
     }
   },
   {
-    id: 'bleu-professionnel',
-    name: 'Bleu Professionnel',
+    id: 'emerald-nature',
+    name: 'Émeraude Nature',
     colors: {
-      primary: '#1d4ed8',
-      secondary: '#0891b2',
-      accent: '#059669'
+      primary: '#10b981',
+      secondary: '#34d399',
+      accent: '#6ee7b7'
     }
   },
   {
-    id: 'emeraude-moderne',
-    name: 'Émeraude Moderne',
+    id: 'sunset-warm',
+    name: 'Coucher de Soleil',
     colors: {
-      primary: '#059669',
-      secondary: '#0d9488',
-      accent: '#f59e0b'
+      primary: '#f59e0b',
+      secondary: '#fbbf24',
+      accent: '#fcd34d'
     }
   },
   {
-    id: 'rose-elegante',
-    name: 'Rose Élégante',
+    id: 'rose-elegant',
+    name: 'Rose Élégant',
     colors: {
       primary: '#ec4899',
-      secondary: '#8b5cf6',
-      accent: '#06b6d4'
+      secondary: '#f472b6',
+      accent: '#f9a8d4'
     }
   },
   {
-    id: 'rouge-passion',
-    name: 'Rouge Passion',
+    id: 'crimson-passion',
+    name: 'Passion Cramoisie',
     colors: {
       primary: '#dc2626',
-      secondary: '#ea580c',
-      accent: '#eab308'
+      secondary: '#ef4444',
+      accent: '#f87171'
     }
   }
 ];
 
-// Couleurs avancées pour génération aléatoire
-const advancedColors = {
-  primaries: ['#7c3aed', '#db2777', '#059669', '#dc2626', '#ea580c', '#d97706', '#ca8a04', '#65a30d', '#16a34a', '#0891b2', '#0284c7', '#2563eb', '#4f46e5', '#7c2d12', '#92400e'],
-  secondaries: ['#8b5cf6', '#f472b6', '#10b981', '#f87171', '#fb7185', '#fbbf24', '#a3e635', '#34d399', '#22d3ee', '#60a5fa', '#818cf8', '#a78bfa', '#c084fc', '#f9a8d4'],
-  accents: ['#fef08a', '#fed7aa', '#fca5a5', '#f9a8d4', '#ddd6fe', '#bfdbfe', '#a7f3d0', '#86efac', '#67e8f9', '#7dd3fc', '#93c5fd', '#c7d2fe', '#e879f9', '#fbbf24']
-};
+// Palettes harmonieuses pour génération aléatoire - couleurs qui vont bien ensemble
+const harmonicColorSets = [
+  // Set bleu-violet
+  {
+    primaries: ['#6366f1', '#8b5cf6', '#3b82f6'],
+    secondaries: ['#818cf8', '#a78bfa', '#60a5fa'],
+    accents: ['#c7d2fe', '#ddd6fe', '#bfdbfe']
+  },
+  // Set vert-émeraude
+  {
+    primaries: ['#059669', '#10b981', '#065f46'],
+    secondaries: ['#0d9488', '#34d399', '#047857'],
+    accents: ['#5eead4', '#6ee7b7', '#86efac']
+  },
+  // Set orange-rouge
+  {
+    primaries: ['#dc2626', '#ea580c', '#d97706'],
+    secondaries: ['#ef4444', '#f97316', '#f59e0b'],
+    accents: ['#fca5a5', '#fed7aa', '#fcd34d']
+  },
+  // Set rose-violet
+  {
+    primaries: ['#db2777', '#ec4899', '#be185d'],
+    secondaries: ['#f472b6', '#f9a8d4', '#ec4899'],
+    accents: ['#fbcfe8', '#fce7f3', '#fdf2f8']
+  },
+  // Set bleu marine-cyan
+  {
+    primaries: ['#0c4a6e', '#0284c7', '#0891b2'],
+    secondaries: ['#0369a1', '#0ea5e9', '#06b6d4'],
+    accents: ['#7dd3fc', '#67e8f9', '#a5f3fc']
+  },
+  // Set terre-brun
+  {
+    primaries: ['#92400e', '#c2410c', '#ea580c'],
+    secondaries: ['#d97706', '#f59e0b', '#fbbf24'],
+    accents: ['#fed7aa', '#fef3c7', '#fffbeb']
+  }
+];
 
 const generateRandomPalettes = () => {
   const palettes = [];
   
   for (let i = 0; i < 6; i++) {
-    const primary = advancedColors.primaries[Math.floor(Math.random() * advancedColors.primaries.length)];
-    const secondary = advancedColors.secondaries[Math.floor(Math.random() * advancedColors.secondaries.length)];
-    const accent = advancedColors.accents[Math.floor(Math.random() * advancedColors.accents.length)];
+    // Choisir un set harmonique aléatoire
+    const colorSet = harmonicColorSets[Math.floor(Math.random() * harmonicColorSets.length)];
+    
+    // Sélectionner des couleurs du même set pour garantir l'harmonie
+    const primary = colorSet.primaries[Math.floor(Math.random() * colorSet.primaries.length)];
+    const secondary = colorSet.secondaries[Math.floor(Math.random() * colorSet.secondaries.length)];
+    const accent = colorSet.accents[Math.floor(Math.random() * colorSet.accents.length)];
     
     palettes.push({
       id: `random-${i}`,
@@ -103,9 +140,9 @@ const ColorCustomizer: React.FC = () => {
 
   const resetToDefault = () => {
     setCustomColors({
-      primary: '#841b60',
-      secondary: '#3b82f6',
-      accent: '#10b981'
+      primary: '#8b5cf6',
+      secondary: '#a78bfa',
+      accent: '#c4b5fd'
     });
   };
 
@@ -129,7 +166,7 @@ const ColorCustomizer: React.FC = () => {
           <button 
             onClick={refreshPalettes}
             disabled={isRefreshing}
-            className="flex items-center space-x-2 px-4 py-2 text-[#841b60] hover:text-[#6b1548] transition-colors disabled:opacity-50"
+            className="flex items-center space-x-2 px-4 py-2 text-[#8b5cf6] hover:text-[#7c3aed] transition-colors disabled:opacity-50"
           >
             <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
             <span>Actualiser</span>
@@ -155,20 +192,20 @@ const ColorCustomizer: React.FC = () => {
               borderColor: customColors.primary === palette.colors.primary && 
                           customColors.secondary === palette.colors.secondary && 
                           customColors.accent === palette.colors.accent 
-                          ? '#841b60' : '#e5e7eb'
+                          ? '#8b5cf6' : '#e5e7eb'
             }}
           >
             <div className="flex items-center space-x-3 mb-3">
               <div 
-                className="w-6 h-6 rounded-full shadow-sm" 
+                className="w-6 h-6 rounded-full shadow-sm border border-white/20" 
                 style={{ backgroundColor: palette.colors.primary }} 
               />
               <div 
-                className="w-6 h-6 rounded-full shadow-sm" 
+                className="w-6 h-6 rounded-full shadow-sm border border-white/20" 
                 style={{ backgroundColor: palette.colors.secondary }} 
               />
               <div 
-                className="w-6 h-6 rounded-full shadow-sm" 
+                className="w-6 h-6 rounded-full shadow-sm border border-white/20" 
                 style={{ backgroundColor: palette.colors.accent }} 
               />
             </div>
