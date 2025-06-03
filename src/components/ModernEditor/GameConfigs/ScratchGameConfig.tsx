@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Image, Percent, Type } from 'lucide-react';
 import ColorPaletteSelector from './ColorPaletteSelector';
@@ -12,7 +11,7 @@ const ScratchGameConfig: React.FC<ScratchGameConfigProps> = ({
   campaign,
   setCampaign
 }) => {
-  const [selectedPalette, setSelectedPalette] = useState(null);
+  const [selectedPalette, setSelectedPalette] = useState<any>(undefined);
 
   const handleScratchChange = (field: string, value: any) => {
     setCampaign((prev: any) => ({

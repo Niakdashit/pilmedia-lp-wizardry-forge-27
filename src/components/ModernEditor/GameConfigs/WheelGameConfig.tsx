@@ -14,7 +14,7 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
 }) => {
   const segments = campaign.config?.roulette?.segments || [];
   const borderColor = campaign.config?.roulette?.borderColor || '#841b60';
-  const [selectedPalette, setSelectedPalette] = useState(null);
+  const [selectedPalette, setSelectedPalette] = useState<any>(undefined);
 
   const addSegment = () => {
     setCampaign((prev: any) => ({

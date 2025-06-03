@@ -11,7 +11,7 @@ const MemoryGameConfig: React.FC<MemoryGameConfigProps> = ({
   campaign,
   setCampaign
 }) => {
-  const [selectedPalette, setSelectedPalette] = useState(null);
+  const [selectedPalette, setSelectedPalette] = useState<any>(undefined);
 
   const handleMemoryChange = (field: string, value: any) => {
     setCampaign((prev: any) => ({

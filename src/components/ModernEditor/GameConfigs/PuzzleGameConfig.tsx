@@ -11,7 +11,7 @@ const PuzzleGameConfig: React.FC<PuzzleGameConfigProps> = ({
   campaign,
   setCampaign
 }) => {
-  const [selectedPalette, setSelectedPalette] = useState(null);
+  const [selectedPalette, setSelectedPalette] = useState<any>(undefined);
 
   const handlePuzzleChange = (field: string, value: any) => {
     setCampaign((prev: any) => ({

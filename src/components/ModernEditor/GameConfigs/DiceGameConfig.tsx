@@ -11,7 +11,7 @@ const DiceGameConfig: React.FC<DiceGameConfigProps> = ({
   campaign,
   setCampaign
 }) => {
-  const [selectedPalette, setSelectedPalette] = useState(null);
+  const [selectedPalette, setSelectedPalette] = useState<any>(undefined);
 
   const handleDiceChange = (field: string, value: any) => {
     setCampaign((prev: any) => ({
