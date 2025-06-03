@@ -1,5 +1,4 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Modal from '../common/Modal';
 import ValidationMessage from '../common/ValidationMessage';
 import DynamicContactForm, { FieldConfig } from '../forms/DynamicContactForm';
@@ -10,12 +9,6 @@ import WheelPointer from './WheelComponents/WheelPointer';
 import WheelButton from './WheelComponents/WheelButton';
 import WheelDecorations from './WheelComponents/WheelDecorations';
 import WheelContainer from './WheelComponents/WheelContainer';
-
-interface Segment {
-  label: string;
-  color?: string;
-  image?: string | null;
-}
 
 interface InstantWinConfig {
   mode: "instant_winner";

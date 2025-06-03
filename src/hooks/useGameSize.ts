@@ -2,6 +2,11 @@
 import { useState, useCallback } from 'react';
 import { GameSize, GAME_SIZES } from '../components/configurators/GameSizeSelector';
 
+export interface GameDimensions {
+  width: number;
+  height: number;
+}
+
 export const useGameSize = (initialSize: GameSize = 'small') => {
   const [gameSize, setGameSize] = useState<GameSize>(initialSize);
 
@@ -9,7 +14,7 @@ export const useGameSize = (initialSize: GameSize = 'small') => {
     setGameSize(size);
   }, []);
 
-  const getGameDimensions = useCallback(() => {
+  const getGameDimensions = useCallback((): GameDimensions => {
     return GAME_SIZES[gameSize];
   }, [gameSize]);
 
