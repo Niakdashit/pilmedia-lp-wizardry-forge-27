@@ -1,6 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
-import { toast } from 'react-hot-toast';
+import React, { useState } from 'react';
 import { useCampaigns } from '../../hooks/useCampaigns';
 import { useParticipations } from '../../hooks/useParticipations';
 import GameRenderer from './components/GameRenderer';
@@ -17,7 +16,7 @@ interface FunnelUnlockedGameProps {
 export interface FieldConfig {
   id: string;
   label: string;
-  type: 'text' | 'email' | 'tel' | 'textarea' | 'select' | 'checkbox' | 'radio';
+  type: 'text' | 'email' | 'tel' | 'textarea' | 'select' | 'checkbox';
   required?: boolean;
   options?: string[];
 }
@@ -35,8 +34,7 @@ const FunnelUnlockedGame: React.FC<FunnelUnlockedGameProps> = ({
   const [gameResult, setGameResult] = useState<'win' | 'lose' | null>(null);
   const [participationLoading, setParticipationLoading] = useState(false);
 
-  const { saveCampaign } = useCampaigns();
-  const { addParticipation } = useParticipations();
+  const { createParticipation } = useParticipations();
 
   console.log('FunnelUnlockedGame state:', {
     gameStarted,
@@ -64,11 +62,10 @@ const FunnelUnlockedGame: React.FC<FunnelUnlockedGameProps> = ({
     
     try {
       if (campaign.id) {
-        await addParticipation({
+        await createParticipation({
           campaign_id: campaign.id,
-          participant_data: formData,
-          game_result: null,
-          participation_date: new Date().toISOString()
+          form_data: formData,
+          user_email: formData.email
         });
       }
 
@@ -83,7 +80,8 @@ const FunnelUnlockedGame: React.FC<FunnelUnlockedGameProps> = ({
       console.log('Form validation completed, formValidated set to true');
     } catch (error) {
       console.error('Erreur lors de la soumission:', error);
-      toast.error('Erreur lors de la soumission du formulaire');
+      // Simple alert instead of toast for now
+      alert('Erreur lors de la soumission du formulaire');
     } finally {
       setParticipationLoading(false);
     }
@@ -101,11 +99,10 @@ const FunnelUnlockedGame: React.FC<FunnelUnlockedGameProps> = ({
     // Sauvegarder le résultat si on a un ID de campagne
     try {
       if (campaign.id) {
-        await addParticipation({
+        await createParticipation({
           campaign_id: campaign.id,
-          participant_data: {},
-          game_result: result,
-          participation_date: new Date().toISOString()
+          form_data: { game_result: result },
+          user_email: ''
         });
       }
     } catch (error) {

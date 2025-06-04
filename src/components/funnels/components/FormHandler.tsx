@@ -1,7 +1,16 @@
 
 import React from 'react';
 import Modal from '../../common/Modal';
-import DynamicContactForm, { FieldConfig } from '../../forms/DynamicContactForm';
+import DynamicContactForm from '../../forms/DynamicContactForm';
+import { FieldConfig as DynamicFormFieldConfig } from '../../forms/DynamicContactForm';
+
+interface FieldConfig {
+  id: string;
+  label: string;
+  type: 'text' | 'email' | 'tel' | 'textarea' | 'select' | 'checkbox';
+  required?: boolean;
+  options?: string[];
+}
 
 interface FormHandlerProps {
   showFormModal: boolean;
@@ -24,6 +33,15 @@ const FormHandler: React.FC<FormHandlerProps> = ({
 }) => {
   if (!showFormModal) return null;
 
+  // Convertir les fields vers le format attendu par DynamicContactForm
+  const convertedFields: DynamicFormFieldConfig[] = fields.map(field => ({
+    id: field.id,
+    label: field.label,
+    type: field.type === 'radio' ? 'text' : field.type, // Convertir radio en text si nécessaire
+    required: field.required,
+    options: field.options
+  }));
+
   return (
     <Modal
       onClose={onClose}
@@ -31,7 +49,7 @@ const FormHandler: React.FC<FormHandlerProps> = ({
       contained={modalContained}
     >
       <DynamicContactForm
-        fields={fields}
+        fields={convertedFields}
         submitLabel={participationLoading ? 'Chargement...' : campaign.screens?.[1]?.buttonText || "C'est parti !"}
         onSubmit={onSubmit}
       />
