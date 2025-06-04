@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useParticipations } from '../../hooks/useParticipations';
 import GameRenderer from './components/GameRenderer';
@@ -14,7 +15,7 @@ interface FunnelUnlockedGameProps {
 export interface FieldConfig {
   id: string;
   label: string;
-  type: 'text' | 'email' | 'tel' | 'textarea' | 'select' | 'checkbox';
+  type: 'text' | 'email' | 'tel' | 'textarea' | 'select' | 'checkbox' | 'radio';
   required?: boolean;
   options?: string[];
 }
@@ -78,7 +79,6 @@ const FunnelUnlockedGame: React.FC<FunnelUnlockedGameProps> = ({
       console.log('Form validation completed, formValidated set to true');
     } catch (error) {
       console.error('Erreur lors de la soumission:', error);
-      // Simple alert instead of toast for now
       alert('Erreur lors de la soumission du formulaire');
     } finally {
       setParticipationLoading(false);

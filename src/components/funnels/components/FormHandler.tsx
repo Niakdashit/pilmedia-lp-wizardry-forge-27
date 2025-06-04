@@ -7,7 +7,7 @@ import { FieldConfig as DynamicFormFieldConfig } from '../../forms/DynamicContac
 interface FieldConfig {
   id: string;
   label: string;
-  type: 'text' | 'email' | 'tel' | 'textarea' | 'select' | 'checkbox';
+  type: 'text' | 'email' | 'tel' | 'textarea' | 'select' | 'checkbox' | 'radio';
   required?: boolean;
   options?: string[];
 }
@@ -34,13 +34,16 @@ const FormHandler: React.FC<FormHandlerProps> = ({
   if (!showFormModal) return null;
 
   // Convertir les fields vers le format attendu par DynamicContactForm
-  const convertedFields: DynamicFormFieldConfig[] = fields.map(field => ({
-    id: field.id,
-    label: field.label,
-    type: field.type,
-    required: field.required,
-    options: field.options
-  }));
+  // Exclure le type 'radio' qui n'est pas supporté
+  const convertedFields: DynamicFormFieldConfig[] = fields
+    .filter(field => field.type !== 'radio') // Filtrer les champs radio non supportés
+    .map(field => ({
+      id: field.id,
+      label: field.label,
+      type: field.type as 'text' | 'email' | 'tel' | 'textarea' | 'select' | 'checkbox',
+      required: field.required,
+      options: field.options
+    }));
 
   return (
     <Modal
