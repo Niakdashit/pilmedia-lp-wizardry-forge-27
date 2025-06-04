@@ -1,5 +1,5 @@
 
-import React, { useCallback, useId } from 'react';
+import React, { useCallback, useState } from 'react';
 import { Upload } from 'lucide-react';
 
 interface ImageUploadProps {
@@ -17,7 +17,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   className,
   compact = false 
 }) => {
-  const inputId = useId(); // ID stable généré une seule fois
+  const [inputId] = useState(() => `image-upload-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();

@@ -65,11 +65,21 @@ const GameRenderer: React.FC<GameRendererProps> = ({
     };
   };
 
+  const handleGameComplete = (result: 'win' | 'lose') => {
+    console.log('Game completed with result:', result);
+    onGameFinish(result);
+  };
+
+  const handleGameStartInternal = () => {
+    console.log('Game started');
+    onGameStart();
+  };
+
   const renderGameComponent = () => {
     const commonProps = {
       disabled: !formValidated,
-      onFinish: onGameFinish,
-      onStart: onGameStart,
+      onFinish: handleGameComplete,
+      onStart: handleGameStartInternal,
       previewMode: previewMode
     };
 
@@ -84,10 +94,12 @@ const GameRenderer: React.FC<GameRendererProps> = ({
               maxWinners: campaign.gameConfig?.wheel?.maxWinners,
               winnersCount: 0
             }}
-            onFinish={onGameFinish}
+            onFinish={handleGameComplete}
+            onStart={handleGameStartInternal}
             gameSize={gameSize}
             gamePosition={gamePosition}
             previewDevice={previewMode}
+            disabled={!formValidated}
           />
         );
       case 'scratch':

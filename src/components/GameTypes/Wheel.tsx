@@ -8,6 +8,7 @@ interface WheelProps {
   isPreview?: boolean;
   onComplete?: (prize: string) => void;
   onFinish?: (result: 'win' | 'lose') => void;
+  onStart?: () => void;
   currentWinners?: number;
   maxWinners?: number;
   winRate?: number;
@@ -19,7 +20,8 @@ const Wheel: React.FC<WheelProps> = ({
   config, 
   isPreview, 
   onComplete, 
-  onFinish, 
+  onFinish,
+  onStart,
   disabled = false,
   gameSize = 'small'
 }) => {
@@ -48,6 +50,11 @@ const Wheel: React.FC<WheelProps> = ({
   const spin = () => {
     if (!wheelRef.current || isSpinning || disabled) return;
 
+    // Déclencher l'événement de début de jeu
+    if (onStart) {
+      onStart();
+    }
+
     setIsSpinning(true);
     const randomRotation = Math.random() * 360 + 1440; // Au moins 4 tours
     
@@ -60,14 +67,19 @@ const Wheel: React.FC<WheelProps> = ({
       const prizeIndex = Math.floor(normalizedRotation / segmentAngle);
       const selectedSegment = segments[prizeIndex] || segments[0];
       
+      console.log('Wheel spin result:', selectedSegment);
+      
       // Appeler onComplete si fourni (pour la compatibilité)
-      onComplete?.(selectedSegment.label);
+      if (onComplete) {
+        onComplete(selectedSegment.label);
+      }
       
       // Appeler onFinish si fourni (pour la cohérence avec les autres jeux)
       if (onFinish) {
         // Simuler un résultat win/lose - si c'est "Dommage" ou "Rejouer" = lose, sinon win
         const result = selectedSegment.label.toLowerCase().includes('dommage') || 
                       selectedSegment.label.toLowerCase().includes('rejouer') ? 'lose' : 'win';
+        console.log('Calling onFinish with result:', result);
         onFinish(result);
       }
     }, 3000);
