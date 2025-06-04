@@ -1,6 +1,4 @@
-
 import React, { useState } from 'react';
-import { useCampaigns } from '../../hooks/useCampaigns';
 import { useParticipations } from '../../hooks/useParticipations';
 import GameRenderer from './components/GameRenderer';
 import ResultScreen from './components/ResultScreen';

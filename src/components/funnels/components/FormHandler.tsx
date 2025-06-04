@@ -37,7 +37,7 @@ const FormHandler: React.FC<FormHandlerProps> = ({
   const convertedFields: DynamicFormFieldConfig[] = fields.map(field => ({
     id: field.id,
     label: field.label,
-    type: field.type === 'radio' ? 'text' : field.type, // Convertir radio en text si nécessaire
+    type: field.type,
     required: field.required,
     options: field.options
   }));
