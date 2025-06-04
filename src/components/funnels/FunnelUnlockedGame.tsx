@@ -221,31 +221,69 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
     );
   };
 
-  // -- Rendu FIN (écran de sortie/victoire/défaite)
+  // -- Rendu FIN (écran de sortie/victoire/défaite) - CORRIGÉ
   if (gamePlayed) {
     const resultScreen = campaign.screens?.[3] || {};
     const contrastBg = mobileConfig?.contrastBackground || resultScreen.contrastBackground;
+    
+    // Messages par défaut selon le résultat
+    const defaultWinMessage = "Félicitations ! Vous avez gagné !";
+    const defaultLoseMessage = "Dommage ! Tentez votre chance une prochaine fois.";
+    const defaultThankYouMessage = "Merci pour votre participation !";
+
+    // Récupérer les messages configurés ou utiliser les valeurs par défaut
+    const winMessage = resultScreen?.winMessage || defaultWinMessage;
+    const loseMessage = resultScreen?.loseMessage || defaultLoseMessage;
+    const thankYouMessage = resultScreen?.description || defaultThankYouMessage;
 
     return (
       <div className="w-full max-w-lg mx-auto p-4 flex flex-col items-center space-y-4">
         <ContrastBackground
           enabled={contrastBg?.enabled}
           config={contrastBg}
-          className="text-center space-y-3 w-full"
+          className="text-center space-y-4 w-full p-6 rounded-lg"
         >
-          <h3 className="text-xl font-semibold">
-            {gameResult === 'win' ? resultScreen?.winMessage || 'Félicitations, vous avez gagné !' : resultScreen?.loseMessage || 'Dommage, réessayez !'}
-          </h3>
-          <p className="text-sm">{resultScreen?.ctaMessage || 'Découvrez nos offres ou partagez votre participation.'}</p>
-          <div className="flex flex-col space-y-2">
-            {resultScreen?.ctaLink && (
-              <a href={resultScreen.ctaLink} target="_blank" rel="noopener noreferrer" className="bg-blue-600 text-white px-4 py-2 text-sm rounded hover:bg-blue-700 transition-colors">
-                {resultScreen?.ctaText || "Découvrir l'offre"}
+          <div className="space-y-3">
+            <h2 className="text-2xl font-bold text-gray-900">
+              {gameResult === 'win' ? winMessage : loseMessage}
+            </h2>
+            <p className="text-lg text-gray-600">
+              {thankYouMessage}
+            </p>
+          </div>
+
+          <div className="flex flex-col space-y-3 pt-4">
+            {/* Bouton d'action selon le résultat */}
+            {gameResult === 'win' && resultScreen?.ctaLink && (
+              <a 
+                href={resultScreen.ctaLink} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="inline-flex items-center justify-center px-6 py-3 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 transition-colors"
+              >
+                {resultScreen?.ctaText || "Récupérer mon gain"}
               </a>
             )}
-            <button onClick={reset} className="bg-gray-800 text-white px-4 py-2 text-sm rounded hover:bg-gray-900 transition-colors">
+            
+            {/* Bouton pour rejouer */}
+            <button 
+              onClick={reset} 
+              className="inline-flex items-center justify-center px-6 py-2 bg-[#841b60] text-white font-medium rounded-lg hover:bg-[#6d164f] transition-colors"
+            >
               {resultScreen?.replayButtonText || 'Rejouer'}
             </button>
+
+            {/* Lien CTA secondaire */}
+            {resultScreen?.secondaryCtaLink && (
+              <a 
+                href={resultScreen.secondaryCtaLink} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-sm text-[#841b60] hover:text-[#6d164f] underline"
+              >
+                {resultScreen?.secondaryCtaText || "Découvrir nos offres"}
+              </a>
+            )}
           </div>
         </ContrastBackground>
       </div>
@@ -260,12 +298,12 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
         {showFormModal && (
           <Modal
             onClose={() => setShowFormModal(false)}
-            title={campaign.screens[1]?.title || 'Vos informations'}
+            title={campaign.screens?.[1]?.title || 'Vos informations'}
             contained={modalContained}
           >
             <DynamicContactForm
               fields={fields}
-              submitLabel={participationLoading ? 'Chargement...' : campaign.screens[1]?.buttonText || "C'est parti !"}
+              submitLabel={participationLoading ? 'Chargement...' : campaign.screens?.[1]?.buttonText || "C'est parti !"}
               onSubmit={handleFormSubmit}
             />
           </Modal>
@@ -304,12 +342,12 @@ const FunnelUnlockedGame: React.FC<GameFunnelProps> = ({
       {showFormModal && (
         <Modal
           onClose={() => setShowFormModal(false)}
-          title={campaign.screens[1]?.title || 'Vos informations'}
+          title={campaign.screens?.[1]?.title || 'Vos informations'}
           contained={modalContained}
         >
           <DynamicContactForm
             fields={fields}
-            submitLabel={participationLoading ? 'Chargement...' : campaign.screens[1]?.buttonText || "C'est parti !"}
+            submitLabel={participationLoading ? 'Chargement...' : campaign.screens?.[1]?.buttonText || "C'est parti !"}
             onSubmit={handleFormSubmit}
           />
         </Modal>

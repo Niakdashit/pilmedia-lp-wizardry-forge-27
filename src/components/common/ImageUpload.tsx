@@ -1,5 +1,5 @@
 
-import React, { useCallback } from 'react';
+import React, { useCallback, useId } from 'react';
 import { Upload } from 'lucide-react';
 
 interface ImageUploadProps {
@@ -17,6 +17,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   className,
   compact = false 
 }) => {
+  const inputId = useId(); // ID stable généré une seule fois
+
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     const file = e.dataTransfer.files[0];
@@ -66,11 +68,11 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           accept="image/*"
           onChange={handleFileChange}
           className="hidden"
-          id={`image-upload-${Math.random()}`}
+          id={inputId}
         />
         
         <label
-          htmlFor={`image-upload-${Math.random()}`}
+          htmlFor={inputId}
           className="cursor-pointer"
         >
           <div className="text-center">
