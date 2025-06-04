@@ -40,6 +40,12 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     }
   }, [onChange]);
 
+  const handleRemoveImage = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onChange('');
+  }, [onChange]);
+
   return (
     <div className={className}>
       {label && (
@@ -60,11 +66,11 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
           accept="image/*"
           onChange={handleFileChange}
           className="hidden"
-          id="image-upload"
+          id={`image-upload-${Math.random()}`}
         />
         
         <label
-          htmlFor="image-upload"
+          htmlFor={`image-upload-${Math.random()}`}
           className="cursor-pointer"
         >
           <div className="text-center">
@@ -76,10 +82,8 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                   className={compact ? "max-h-16 mx-auto rounded" : "max-h-48 mx-auto rounded-lg"}
                 />
                 <button
-                  onClick={(e) => {
-                    e.preventDefault();
-                    onChange('');
-                  }}
+                  type="button"
+                  onClick={handleRemoveImage}
                   className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 text-xs"
                 >
                   ×

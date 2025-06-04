@@ -1,5 +1,3 @@
-
-
 import React, { useState } from 'react';
 import Modal from '../common/Modal';
 import ValidationMessage from '../common/ValidationMessage';
@@ -59,7 +57,8 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   }));
   
   const centerImage = campaign?.config?.roulette?.centerImage;
-  const centerLogo = campaign?.design?.centerLogo;
+  // Prioriser centerLogo du design, puis centerImage de la config
+  const centerLogo = campaign?.design?.centerLogo || campaign?.config?.roulette?.centerImage;
   const theme = campaign?.config?.roulette?.theme || 'default';
   
   // Récupérer les couleurs de bordure personnalisées
@@ -207,22 +206,22 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
         height: canvasSize,
         overflow: shouldCropWheel ? 'hidden' : 'visible'
       }}>
-        {/* Enhanced shadow with golden glow */}
+        {/* Ombre réduite */}
         <div 
           style={{
             position: 'absolute',
-            width: canvasSize - 10,
-            height: canvasSize - 10,
-            left: shouldCropWheel ? (gamePosition === 'left' ? '5px' : `-${canvasSize * 0.5 + 5}px`) : '5px',
-            top: '10px',
+            width: canvasSize - 15, // Réduit de 10 à 15
+            height: canvasSize - 15,
+            left: shouldCropWheel ? (gamePosition === 'left' ? '8px' : `-${canvasSize * 0.5 + 8}px`) : '8px',
+            top: '12px', // Légèrement augmenté pour moins d'ombre
             borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(255,215,0,0.3) 0%, rgba(255,215,0,0.1) 50%, rgba(0,0,0,0.2) 100%)',
-            filter: 'blur(15px)',
+            background: 'radial-gradient(circle, rgba(255,215,0,0.2) 0%, rgba(255,215,0,0.05) 50%, rgba(0,0,0,0.1) 100%)', // Réduit l'opacité
+            filter: 'blur(10px)', // Réduit le blur de 15 à 10
             zIndex: 0
           }}
         />
         
-        {/* Canvas avec couleurs de bordure personnalisées */}
+        {/* Canvas avec images dynamiques */}
         <WheelCanvas
           segments={segments}
           rotation={rotation}
@@ -295,4 +294,3 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
 };
 
 export default WheelPreview;
-

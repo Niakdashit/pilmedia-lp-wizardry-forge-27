@@ -10,24 +10,25 @@ interface CampaignPreviewProps {
 const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
   const { design } = campaign;
 
-  // UNIQUEMENT les images de fond du mode desktop/contenu - pas les images mobiles
-  const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage || design.backgroundImage;
+  // Prioriser l'image de fond du design général
+  const backgroundImage = design?.backgroundImage || campaign.gameConfig?.[campaign.type]?.backgroundImage;
 
   const containerStyle = {
     width: '100%',
     height: '100%',
     position: 'relative' as const,
     overflow: 'hidden',
-    backgroundColor: design.background || '#ebf4f7', // Configuration desktop uniquement
+    backgroundColor: design?.background || '#f8fafc',
   };
 
-  const backgroundStyle = gameBackgroundImage ? {
+  const backgroundStyle = backgroundImage ? {
     position: 'absolute' as const,
     inset: 0,
-    backgroundImage: `url(${gameBackgroundImage})`,
+    backgroundImage: `url(${backgroundImage})`,
     backgroundPosition: 'center',
     backgroundRepeat: 'no-repeat',
     backgroundSize: 'cover',
+    opacity: 0.3,
     zIndex: 0,
   } : {};
 
@@ -42,17 +43,15 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
     padding: '20px',
   };
 
-  const customStyles = design.customCSS ? (
+  const customStyles = design?.customCSS ? (
     <style dangerouslySetInnerHTML={{ __html: design.customCSS }} />
   ) : null;
 
-  const customHTML = design.customHTML ? (
+  const customHTML = design?.customHTML ? (
     <div dangerouslySetInnerHTML={{ __html: design.customHTML }} />
   ) : null;
 
-  // Choisir le bon funnel selon le type de campagne - logique corrigée
   const getFunnelComponent = () => {
-    // Types de jeux qui utilisent FunnelUnlockedGame (jeux instantanés)
     if (['wheel', 'scratch', 'jackpot', 'dice'].includes(campaign.type)) {
       return (
         <FunnelUnlockedGame 
@@ -62,7 +61,6 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
         />
       );
     }
-    // Types de jeux qui utilisent FunnelStandard (jeux avec étapes)
     return <FunnelStandard campaign={campaign} />;
   };
 
@@ -70,10 +68,10 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
     <div style={containerStyle}>
       {customStyles}
 
-      {/* Fond DESKTOP uniquement */}
-      {gameBackgroundImage && <div style={backgroundStyle} />}
+      {/* Image de fond avec affichage dynamique */}
+      {backgroundImage && <div style={backgroundStyle} />}
 
-      {/* Contenu DESKTOP */}
+      {/* Contenu */}
       <div style={contentWrapperStyle}>
         {customHTML}
         {getFunnelComponent()}
