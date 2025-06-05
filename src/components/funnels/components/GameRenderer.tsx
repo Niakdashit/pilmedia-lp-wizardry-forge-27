@@ -41,6 +41,14 @@ const GameRenderer: React.FC<GameRendererProps> = ({
     : 'medium';
   const gamePosition = campaign.gamePosition || 'center';
 
+  console.log('GameRenderer - Current state:', {
+    formValidated,
+    gameStarted,
+    campaignType: campaign.type,
+    gameSize,
+    gamePosition
+  });
+
   const getGameContainerStyle = (): React.CSSProperties => {
     const gameDimensions = GAME_SIZES[gameSize];
     let scaleFactor = 1;
@@ -66,23 +74,23 @@ const GameRenderer: React.FC<GameRendererProps> = ({
   };
 
   const handleGameComplete = (result: 'win' | 'lose') => {
-    console.log('Game completed with result:', result);
+    console.log('GameRenderer - Game completed with result:', result);
     onGameFinish(result);
   };
 
   const handleGameStartInternal = () => {
-    console.log('Game started');
+    console.log('GameRenderer - Game started');
     onGameStart();
   };
 
-  const renderGameComponent = () => {
-    const commonProps = {
-      disabled: !formValidated,
-      onFinish: handleGameComplete,
-      onStart: handleGameStartInternal,
-      previewMode: previewMode
-    };
+  const handleGameClick = () => {
+    console.log('GameRenderer - Game clicked, formValidated:', formValidated);
+    if (!formValidated) {
+      onGameButtonClick();
+    }
+  };
 
+  const renderGameComponent = () => {
     switch (campaign.type) {
       case 'wheel':
         return (
@@ -116,7 +124,10 @@ const GameRenderer: React.FC<GameRendererProps> = ({
               maxWinners: 10,
               winnersCount: 0
             }}
-            {...commonProps}
+            disabled={!formValidated}
+            onFinish={handleGameComplete}
+            onStart={handleGameStartInternal}
+            previewMode={previewMode}
           />
         );
       case 'jackpot':
@@ -134,14 +145,20 @@ const GameRenderer: React.FC<GameRendererProps> = ({
             slotBorderColor={campaign.gameConfig?.jackpot?.slotBorderColor}
             slotBorderWidth={campaign.gameConfig?.jackpot?.slotBorderWidth}
             slotBackgroundColor={campaign.gameConfig?.jackpot?.slotBackgroundColor}
-            {...commonProps}
+            disabled={!formValidated}
+            onFinish={handleGameComplete}
+            onStart={handleGameStartInternal}
+            previewMode={previewMode}
           />
         );
       case 'dice':
         return (
           <DicePreview 
             config={campaign.gameConfig?.dice || {}} 
-            {...commonProps}
+            disabled={!formValidated}
+            onFinish={handleGameComplete}
+            onStart={handleGameStartInternal}
+            previewMode={previewMode}
           />
         );
       default:
@@ -161,9 +178,9 @@ const GameRenderer: React.FC<GameRendererProps> = ({
         </ContrastBackground>
       </div>
       
-      {!formValidated && !gameStarted && (
+      {!formValidated && (
         <div 
-          onClick={onGameButtonClick}
+          onClick={handleGameClick}
           className="absolute inset-0 flex items-center justify-center z-30 rounded-lg cursor-pointer bg-black/0" 
         />
       )}
