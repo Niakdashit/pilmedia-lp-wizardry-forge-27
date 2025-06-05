@@ -1,4 +1,3 @@
-
 import { create } from 'zustand';
 
 export interface QuickCampaignState {
@@ -80,7 +79,7 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
 
   generatePreviewCampaign: () => {
     const state = get();
-    
+
     const baseConfig = {
       id: 'quick-preview',
       name: state.campaignName,
