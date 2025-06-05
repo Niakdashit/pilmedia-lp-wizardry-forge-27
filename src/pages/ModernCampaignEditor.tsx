@@ -1,218 +1,112 @@
 
-import React from 'react';
-import GameCanvasPreview from '../components/CampaignEditor/GameCanvasPreview';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import ModernEditorCanvas from '../components/ModernEditor/ModernEditorCanvas';
 
-interface ModernEditorCanvasProps {
-  campaign: any;
-  previewDevice: 'desktop' | 'tablet' | 'mobile';
-  gameSize: 'small' | 'medium' | 'large' | 'xlarge';
-  gamePosition: 'top' | 'center' | 'bottom' | 'left' | 'right';
-}
+const ModernCampaignEditor: React.FC = () => {
+  const { id } = useParams();
+  const [campaign, setCampaign] = useState<any>(null);
+  const [previewDevice, setPreviewDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
+  const [gameSize, setGameSize] = useState<'small' | 'medium' | 'large' | 'xlarge'>('medium');
+  const [gamePosition, setGamePosition] = useState<'top' | 'center' | 'bottom' | 'left' | 'right'>('center');
 
-const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
-  campaign,
-  previewDevice,
-  gameSize,
-  gamePosition
-}) => {
-  console.log('ModernEditorCanvas received:', { gameSize, gamePosition, buttonConfig: campaign.buttonConfig });
-
-  const getCanvasStyle = () => {
-    const baseStyle = {
-      width: '100%',
-      height: '100%',
-      backgroundColor: campaign.design?.background || '#f8fafc',
-      backgroundImage: campaign.design?.backgroundImage
-        ? `url(${campaign.design.backgroundImage})`
-        : undefined,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      transition: 'all 0.3s ease',
-    };
-
-    switch (previewDevice) {
-      case 'tablet':
-        return {
-          ...baseStyle,
-          maxWidth: '768px',
-          maxHeight: '1024px',
-          margin: '0 auto',
-          border: '1px solid #e5e7eb',
-          borderRadius: '12px',
-          overflow: 'hidden'
-        };
-      case 'mobile':
-        return {
-          ...baseStyle,
-          maxWidth: '375px',
-          maxHeight: '812px',
-          margin: '0 auto',
-          border: '1px solid #e5e7eb',
-          borderRadius: '20px',
-          overflow: 'hidden'
-        };
-      default:
-        return baseStyle;
-    }
-  };
-
-  // Créer une copie de la campagne avec les paramètres de taille et position mis à jour
-  const enhancedCampaign = {
-    ...campaign,
-    gameSize,
-    gamePosition,
-    // S'assurer que la configuration des boutons est cohérente
-    buttonConfig: {
-      ...campaign.buttonConfig,
-      // Synchroniser avec la configuration du jeu si elle existe
-      text: campaign.buttonConfig?.text || campaign.gameConfig?.[campaign.type]?.buttonLabel,
-      color: campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor || '#841b60'
-    },
-    // S'assurer que les couleurs personnalisées sont incluses
-    gameConfig: {
-      ...campaign.gameConfig,
-      [campaign.type]: {
-        ...campaign.gameConfig?.[campaign.type],
-        // Synchroniser la configuration des boutons
-        buttonLabel: campaign.buttonConfig?.text || campaign.gameConfig?.[campaign.type]?.buttonLabel,
-        buttonColor: campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor,
-        // Garder les autres couleurs existantes
-        containerBackgroundColor: campaign.gameConfig?.[campaign.type]?.containerBackgroundColor,
-        backgroundColor: campaign.gameConfig?.[campaign.type]?.backgroundColor,
-        borderColor: campaign.gameConfig?.[campaign.type]?.borderColor,
-        borderWidth: campaign.gameConfig?.[campaign.type]?.borderWidth,
-        slotBorderColor: campaign.gameConfig?.[campaign.type]?.slotBorderColor,
-        slotBorderWidth: campaign.gameConfig?.[campaign.type]?.slotBorderWidth,
-        slotBackgroundColor: campaign.gameConfig?.[campaign.type]?.slotBackgroundColor,
+  useEffect(() => {
+    // Mock campaign data for now - in real app this would fetch from API
+    const mockCampaign = {
+      id,
+      name: 'Test Campaign',
+      type: 'wheel',
+      design: {
+        background: '#f8fafc',
+        backgroundImage: null,
+      },
+      buttonConfig: {
+        text: 'Jouer',
+        color: '#841b60'
+      },
+      gameConfig: {
+        wheel: {
+          mode: 'instant_winner',
+          winProbability: 0.1,
+          maxWinners: 10,
+          winnersCount: 0
+        }
       }
-    }
-  };
+    };
+    setCampaign(mockCampaign);
+  }, [id]);
 
-  const headerBanner = campaign.design?.headerBanner;
-  const footerBanner = campaign.design?.footerBanner;
-  const headerText = campaign.design?.headerText;
-  const footerText = campaign.design?.footerText;
-  const customText = campaign.design?.customText;
-
-  const sizeMap: Record<string, string> = {
-    small: '0.875rem',
-    medium: '1rem',
-    large: '1.25rem'
-  };
-
-  const customTextPosition: Record<string, React.CSSProperties> = {
-    top: { top: '8px', left: '50%', transform: 'translateX(-50%)' },
-    bottom: { bottom: '8px', left: '50%', transform: 'translateX(-50%)' },
-    left: { left: '8px', top: '50%', transform: 'translateY(-50%)' },
-    right: { right: '8px', top: '50%', transform: 'translateY(-50%)' },
-    center: { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }
-  };
-
-  console.log('Enhanced campaign for preview:', enhancedCampaign);
+  if (!campaign) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Chargement de la campagne...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="w-full h-full flex items-center justify-center bg-gray-100 p-4">
-      <div style={getCanvasStyle()} className="flex flex-col h-full w-full relative">
-        {headerBanner?.enabled && (
-          <div
-            className="relative w-full"
-            style={{
-              backgroundImage: `url(${headerBanner.image})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              height: headerBanner.height || '120px'
-            }}
-          >
-            {headerBanner.overlay && (
-              <div className="absolute inset-0 bg-black opacity-40" />
-            )}
-            {headerText?.enabled && (
-              <div
-                className="relative w-full text-center flex items-center justify-center h-full"
-                style={{
-                  color: headerText.color,
-                  fontSize: sizeMap[headerText.size] || '1rem',
-                  ...(headerText.showFrame
-                    ? {
-                        backgroundColor: headerText.frameColor,
-                        border: `1px solid ${headerText.frameBorderColor}`,
-                        padding: '4px 8px',
-                        borderRadius: '4px'
-                      }
-                    : {})
-                }}
-              >
-                {headerText.text}
-              </div>
-            )}
-          </div>
-        )}
-
-        <div className="flex-1 flex relative">
-          <GameCanvasPreview
-            campaign={enhancedCampaign}
-            className="w-full h-full"
-            key={`preview-${gameSize}-${gamePosition}-${campaign.buttonConfig?.color}-${JSON.stringify(campaign.gameConfig?.[campaign.type])}`}
-          />
-          {customText?.enabled && (
-            <div
-              style={{
-                position: 'absolute',
-                ...customTextPosition[customText.position || 'top'],
-                color: customText.color,
-                fontSize: sizeMap[customText.size] || '1rem',
-                ...(customText.showFrame
-                  ? {
-                      backgroundColor: customText.frameColor,
-                      border: `1px solid ${customText.frameBorderColor}`,
-                      padding: '4px 8px',
-                      borderRadius: '4px'
-                    }
-                  : {})
-              }}
+    <div className="min-h-screen bg-gray-50">
+      {/* Header with controls */}
+      <div className="bg-white border-b border-gray-200 p-4">
+        <div className="flex justify-between items-center max-w-7xl mx-auto">
+          <h1 className="text-xl font-semibold text-gray-900">
+            Éditeur Moderne - {campaign.name}
+          </h1>
+          
+          <div className="flex gap-4 items-center">
+            {/* Device selector */}
+            <select 
+              value={previewDevice} 
+              onChange={(e) => setPreviewDevice(e.target.value as any)}
+              className="px-3 py-2 border border-gray-300 rounded-md"
             >
-              {customText.text}
-            </div>
-          )}
-        </div>
+              <option value="desktop">Bureau</option>
+              <option value="tablet">Tablette</option>
+              <option value="mobile">Mobile</option>
+            </select>
 
-        {footerBanner?.enabled && (
-          <div
-            className="relative w-full"
-            style={{
-              backgroundImage: `url(${footerBanner.image})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              height: footerBanner.height || '120px'
-            }}
-          >
-            {footerBanner.overlay && (
-              <div className="absolute inset-0 bg-black opacity-40" />
-            )}
-            {footerText?.enabled && (
-              <div
-                className="relative w-full text-center flex items-center justify-center h-full"
-                style={{
-                  color: footerText.color,
-                  fontSize: sizeMap[footerText.size] || '1rem',
-                  ...(footerText.showFrame
-                    ? {
-                        backgroundColor: footerText.frameColor,
-                        border: `1px solid ${footerText.frameBorderColor}`,
-                        padding: '4px 8px',
-                        borderRadius: '4px'
-                      }
-                    : {})
-                }}
-              >
-                {footerText.text}
-              </div>
-            )}
+            {/* Game size selector */}
+            <select 
+              value={gameSize} 
+              onChange={(e) => setGameSize(e.target.value as any)}
+              className="px-3 py-2 border border-gray-300 rounded-md"
+            >
+              <option value="small">Petit</option>
+              <option value="medium">Moyen</option>
+              <option value="large">Grand</option>
+              <option value="xlarge">Très grand</option>
+            </select>
+
+            {/* Game position selector */}
+            <select 
+              value={gamePosition} 
+              onChange={(e) => setGamePosition(e.target.value as any)}
+              className="px-3 py-2 border border-gray-300 rounded-md"
+            >
+              <option value="top">Haut</option>
+              <option value="center">Centre</option>
+              <option value="bottom">Bas</option>
+              <option value="left">Gauche</option>
+              <option value="right">Droite</option>
+            </select>
           </div>
-        )}
+        </div>
+      </div>
+
+      {/* Main content */}
+      <div className="flex-1">
+        <ModernEditorCanvas
+          campaign={campaign}
+          previewDevice={previewDevice}
+          gameSize={gameSize}
+          gamePosition={gamePosition}
+        />
       </div>
     </div>
   );
 };
 
-export default ModernEditorCanvas;
+export default ModernCampaignEditor;
