@@ -1,5 +1,6 @@
+
 import React from 'react';
-import GameCanvasPreview from '../CampaignEditor/GameCanvasPreview';
+import GameCanvasPreview from '../components/CampaignEditor/GameCanvasPreview';
 
 interface ModernEditorCanvasProps {
   campaign: any;
