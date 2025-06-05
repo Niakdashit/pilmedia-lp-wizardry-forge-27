@@ -1,5 +1,5 @@
 
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useState, useId } from 'react';
 import { Upload } from 'lucide-react';
 
 interface ImageUploadProps {
@@ -17,22 +17,26 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   className,
   compact = false 
 }) => {
-  const [inputId] = useState(() => `image-upload-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
+  const inputId = useId();
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
+    e.stopPropagation();
     console.log('Drop event triggered');
     const file = e.dataTransfer.files[0];
     if (file && file.type.startsWith('image/')) {
       console.log('Processing dropped file:', file.name);
       const reader = new FileReader();
       reader.onloadend = () => {
-        console.log('File read complete, calling onChange');
+        console.log('File read complete, calling onChange with:', reader.result);
         onChange(reader.result as string);
+      };
+      reader.onerror = () => {
+        console.error('Error reading dropped file');
       };
       reader.readAsDataURL(file);
     } else {
-      console.log('Invalid file type or no file');
+      console.log('Invalid file type or no file dropped');
     }
   }, [onChange]);
 
@@ -40,14 +44,14 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     console.log('File input change triggered');
     const file = e.target.files?.[0];
     if (file) {
-      console.log('Processing selected file:', file.name);
+      console.log('Processing selected file:', file.name, 'type:', file.type);
       const reader = new FileReader();
       reader.onloadend = () => {
-        console.log('File read complete, calling onChange');
+        console.log('File read complete, calling onChange with:', reader.result);
         onChange(reader.result as string);
       };
       reader.onerror = () => {
-        console.error('Error reading file');
+        console.error('Error reading selected file');
       };
       reader.readAsDataURL(file);
     } else {
@@ -62,15 +66,33 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
     onChange('');
   }, [onChange]);
 
-  const handleClick = useCallback(() => {
-    console.log('Upload area clicked, triggering file input');
+  const handleClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    console.log('Upload area clicked, attempting to trigger file input with id:', inputId);
+    
+    // Utiliser une approche plus directe pour déclencher l'input
     const input = document.getElementById(inputId) as HTMLInputElement;
     if (input) {
+      console.log('File input found, triggering click');
       input.click();
     } else {
       console.error('File input not found with id:', inputId);
+      // Fallback: chercher par sélecteur
+      const fallbackInput = document.querySelector(`#${CSS.escape(inputId)}`) as HTMLInputElement;
+      if (fallbackInput) {
+        console.log('Found input via fallback selector, triggering click');
+        fallbackInput.click();
+      } else {
+        console.error('No file input found with any method');
+      }
     }
   }, [inputId]);
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  }, []);
 
   return (
     <div className={className}>
@@ -84,7 +106,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         className={`relative border-2 border-dashed border-gray-300 rounded-lg hover:border-[#841b60] transition-colors duration-200 cursor-pointer ${
           compact ? 'p-2' : 'p-6'
         }`}
-        onDragOver={(e) => e.preventDefault()}
+        onDragOver={handleDragOver}
         onDrop={handleDrop}
         onClick={handleClick}
       >
@@ -103,6 +125,9 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
                 src={value} 
                 alt="Preview" 
                 className={compact ? "max-h-16 mx-auto rounded" : "max-h-48 mx-auto rounded-lg"}
+                onError={(e) => {
+                  console.error('Error loading image preview:', e);
+                }}
               />
               <button
                 type="button"

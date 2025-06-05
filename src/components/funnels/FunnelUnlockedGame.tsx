@@ -35,11 +35,12 @@ const FunnelUnlockedGame: React.FC<FunnelUnlockedGameProps> = ({
 
   const { createParticipation } = useParticipations();
 
-  console.log('FunnelUnlockedGame state:', {
+  console.log('FunnelUnlockedGame render - Current state:', {
     gameStarted,
     formValidated,
     gameResult,
-    showFormModal
+    showFormModal,
+    showValidationMessage
   });
 
   const fields: FieldConfig[] = campaign.formFields || [
@@ -49,9 +50,12 @@ const FunnelUnlockedGame: React.FC<FunnelUnlockedGameProps> = ({
   ];
 
   const handleGameButtonClick = () => {
-    console.log('Game button clicked, formValidated:', formValidated);
+    console.log('Game button clicked - formValidated:', formValidated);
     if (!formValidated) {
+      console.log('Form not validated, showing form modal');
       setShowFormModal(true);
+    } else {
+      console.log('Form already validated, game should be playable');
     }
   };
 
@@ -61,22 +65,27 @@ const FunnelUnlockedGame: React.FC<FunnelUnlockedGameProps> = ({
     
     try {
       if (campaign.id) {
+        console.log('Creating participation for campaign:', campaign.id);
         await createParticipation({
           campaign_id: campaign.id,
           form_data: formData,
           user_email: formData.email
         });
+        console.log('Participation created successfully');
+      } else {
+        console.log('No campaign ID, skipping participation creation');
       }
 
+      console.log('Setting form as validated');
       setFormValidated(true);
       setShowFormModal(false);
       setShowValidationMessage(true);
       
       setTimeout(() => {
+        console.log('Hiding validation message');
         setShowValidationMessage(false);
       }, 2000);
 
-      console.log('Form validation completed, formValidated set to true');
     } catch (error) {
       console.error('Erreur lors de la soumission:', error);
       alert('Erreur lors de la soumission du formulaire');
@@ -92,27 +101,33 @@ const FunnelUnlockedGame: React.FC<FunnelUnlockedGameProps> = ({
 
   const handleGameFinish = async (result: 'win' | 'lose') => {
     console.log('Game finished with result:', result);
-    setGameResult(result);
     
-    // Sauvegarder le résultat si on a un ID de campagne
     try {
+      // Sauvegarder le résultat du jeu si on a un ID de campagne
       if (campaign.id) {
+        console.log('Saving game result to participation');
         await createParticipation({
           campaign_id: campaign.id,
           form_data: { game_result: result },
           user_email: ''
         });
+        console.log('Game result saved successfully');
       }
     } catch (error) {
       console.error('Erreur lors de la sauvegarde du résultat:', error);
     }
+    
+    console.log('Setting game result:', result);
+    setGameResult(result);
   };
 
   const handleReset = () => {
-    console.log('Resetting game');
+    console.log('Resetting game to initial state');
     setGameStarted(false);
     setGameResult(null);
     setFormValidated(false);
+    setShowFormModal(false);
+    setShowValidationMessage(false);
   };
 
   // Si on a un résultat de jeu, afficher l'écran de résultat
@@ -129,6 +144,7 @@ const FunnelUnlockedGame: React.FC<FunnelUnlockedGameProps> = ({
   }
 
   // Sinon, afficher le jeu
+  console.log('Rendering game interface');
   return (
     <div className="w-full h-full flex flex-col items-center justify-center space-y-6 p-4">
       {/* Titre et description */}
@@ -161,7 +177,10 @@ const FunnelUnlockedGame: React.FC<FunnelUnlockedGameProps> = ({
         fields={fields}
         participationLoading={participationLoading}
         modalContained={modalContained}
-        onClose={() => setShowFormModal(false)}
+        onClose={() => {
+          console.log('Closing form modal');
+          setShowFormModal(false);
+        }}
         onSubmit={handleFormSubmit}
       />
     </div>
