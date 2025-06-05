@@ -22,7 +22,9 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   console.log('Game config:', campaign.gameConfig);
   console.log('Button config:', campaign.buttonConfig);
 
-  const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage;
+  const gameBackgroundImage =
+    campaign.gameConfig?.[campaign.type]?.backgroundImage ||
+    campaign.design?.backgroundImage;
   const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel || campaign.buttonConfig?.text || 'Jouer';
   const buttonColor = campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor || '#841b60';
 

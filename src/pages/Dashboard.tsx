@@ -101,8 +101,8 @@ const Dashboard: React.FC = () => {
       <div className="px-6 space-y-6">
         {/* Quick Action Section */}
         <div className="flex justify-center mt-6">
-          <Link 
-            to="/campaign/quick"
+          <Link
+            to="/quick-campaign"
             className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-[#841b60] to-[#a855f7] text-white font-semibold rounded-2xl hover:from-[#6d164f] hover:to-[#9333ea] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
           >
             <Zap className="w-6 h-6 mr-3" />

@@ -56,7 +56,7 @@ const Step3VisualStyle: React.FC = () => {
           hasBackgroundImage: !!backgroundImage,
           customColors,
           jackpotColors,
-          ...(selectedGameType === 'roue' && {
+          ...(selectedGameType === 'wheel' && {
             segmentCount,
             roulette: {
               segments: Array.from({
@@ -119,7 +119,7 @@ const Step3VisualStyle: React.FC = () => {
           hasBackgroundImage: !!backgroundImage,
           customColors,
           jackpotColors,
-          ...(selectedGameType === 'roue' && {
+          ...(selectedGameType === 'wheel' && {
             segmentCount,
             roulette: {
               segments: Array.from({
