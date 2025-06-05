@@ -127,7 +127,6 @@ const GameRenderer: React.FC<GameRendererProps> = ({
             disabled={!formValidated}
             onFinish={handleGameComplete}
             onStart={handleGameStartInternal}
-            previewMode={previewMode}
           />
         );
       case 'jackpot':
@@ -145,20 +144,16 @@ const GameRenderer: React.FC<GameRendererProps> = ({
             slotBorderColor={campaign.gameConfig?.jackpot?.slotBorderColor}
             slotBorderWidth={campaign.gameConfig?.jackpot?.slotBorderWidth}
             slotBackgroundColor={campaign.gameConfig?.jackpot?.slotBackgroundColor}
-            disabled={!formValidated}
             onFinish={handleGameComplete}
             onStart={handleGameStartInternal}
-            previewMode={previewMode}
           />
         );
       case 'dice':
         return (
           <DicePreview 
             config={campaign.gameConfig?.dice || {}} 
-            disabled={!formValidated}
             onFinish={handleGameComplete}
             onStart={handleGameStartInternal}
-            previewMode={previewMode}
           />
         );
       default:
