@@ -1,4 +1,3 @@
-
 import React from 'react';
 import ContrastBackground from '../../common/ContrastBackground';
 import ValidationMessage from '../../common/ValidationMessage';
@@ -152,8 +151,6 @@ const GameRenderer: React.FC<GameRendererProps> = ({
         return (
           <DicePreview 
             config={campaign.gameConfig?.dice || {}} 
-            onFinish={handleGameComplete}
-            onStart={handleGameStartInternal}
           />
         );
       default:
