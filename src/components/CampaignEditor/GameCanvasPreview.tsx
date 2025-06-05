@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Jackpot from '../GameTypes/Jackpot';
 import { Quiz } from '../GameTypes';
@@ -22,23 +21,25 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   console.log('Game config:', campaign.gameConfig);
   console.log('Button config:', campaign.buttonConfig);
 
-  const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage;
+  const gameBackgroundImage =
+    campaign.gameConfig?.[campaign.type]?.backgroundImage ||
+    campaign.design?.backgroundImage;
   const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel || campaign.buttonConfig?.text || 'Jouer';
   const buttonColor = campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor || '#841b60';
 
   // Get game size and position from campaign with proper typing
-  const gameSize: GameSize = (campaign.gameSize && Object.keys(GAME_SIZES).includes(campaign.gameSize)) 
-    ? campaign.gameSize as GameSize 
+  const gameSize: GameSize = (campaign.gameSize && Object.keys(GAME_SIZES).includes(campaign.gameSize))
+    ? campaign.gameSize as GameSize
     : 'medium';
   const gamePosition = campaign.gamePosition || 'center';
-  
+
   // Get dimensions based on game size
   const gameDimensions = GAME_SIZES[gameSize];
-  
+
   console.log('Using gameSize:', gameSize, 'dimensions:', gameDimensions);
   console.log('Using gamePosition:', gamePosition);
   console.log('Using buttonLabel:', buttonLabel, 'buttonColor:', buttonColor);
-  
+
   // Calculate positioning styles based on gamePosition
   const getPositionStyles = () => {
     const baseStyles = {
@@ -85,7 +86,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
 
   const renderGame = () => {
     const gameContainerStyle = getPositionStyles();
-    
+
     switch (campaign.type) {
       case 'jackpot':
         return (
@@ -138,7 +139,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
       case 'scratch':
         return (
           <div style={gameContainerStyle}>
-            <ScratchPreview 
+            <ScratchPreview
               config={campaign.gameConfig?.scratch || {}}
               buttonLabel={buttonLabel}
               buttonColor={buttonColor}
@@ -181,18 +182,18 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   };
 
   return (
-    <div 
-      className={`relative w-full h-full overflow-hidden ${className}`} 
+    <div
+      className={`relative w-full h-full overflow-hidden ${className}`}
       style={{ minHeight: '600px' }}
       key={`game-preview-${gameSize}-${gamePosition}-${buttonColor}-${JSON.stringify(campaign.gameConfig?.[campaign.type])}`}
     >
       {/* Image de fond plein écran */}
       {gameBackgroundImage && (
-        <img 
-          src={gameBackgroundImage} 
-          alt="Background" 
-          className="absolute inset-0 w-full h-full object-cover z-0" 
-          style={{ pointerEvents: 'none' }} 
+        <img
+          src={gameBackgroundImage}
+          alt="Background"
+          className="absolute inset-0 w-full h-full object-cover z-0"
+          style={{ pointerEvents: 'none' }}
         />
       )}
 
