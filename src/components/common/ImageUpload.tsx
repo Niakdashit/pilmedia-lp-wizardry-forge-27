@@ -1,5 +1,4 @@
-
-import React, { useCallback, useState, useId } from 'react';
+import React, { useCallback, useId } from 'react';
 import { Upload } from 'lucide-react';
 
 interface ImageUploadProps {
