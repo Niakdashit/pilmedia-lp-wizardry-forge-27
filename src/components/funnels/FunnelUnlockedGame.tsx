@@ -52,7 +52,10 @@ const FunnelUnlockedGame: React.FC<FunnelUnlockedGameProps> = ({
   const handleGameButtonClick = () => {
     console.log('FunnelUnlockedGame - Game button clicked, formValidated:', formValidated);
     if (!formValidated) {
+      console.log('FunnelUnlockedGame - Opening form modal');
       setShowFormModal(true);
+    } else {
+      console.log('FunnelUnlockedGame - Form already validated, game should be playable');
     }
   };
 
@@ -71,11 +74,13 @@ const FunnelUnlockedGame: React.FC<FunnelUnlockedGameProps> = ({
         console.log('Participation created successfully');
       }
 
+      console.log('FunnelUnlockedGame - Setting form as validated');
       setFormValidated(true);
       setShowFormModal(false);
       setShowValidationMessage(true);
       
       setTimeout(() => {
+        console.log('FunnelUnlockedGame - Hiding validation message');
         setShowValidationMessage(false);
       }, 2000);
 

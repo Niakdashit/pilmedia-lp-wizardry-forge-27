@@ -1,3 +1,4 @@
+
 import React from 'react';
 import ContrastBackground from '../../common/ContrastBackground';
 import ValidationMessage from '../../common/ValidationMessage';
@@ -82,16 +83,10 @@ const GameRenderer: React.FC<GameRendererProps> = ({
     onGameStart();
   };
 
-  const handleGameClick = () => {
-    console.log('GameRenderer - Game clicked, formValidated:', formValidated);
-    if (!formValidated) {
-      onGameButtonClick();
-    }
-  };
-
   const renderGameComponent = () => {
     switch (campaign.type) {
       case 'wheel':
+        console.log('GameRenderer - Rendering wheel with formValidated:', formValidated);
         return (
           <WheelPreview 
             campaign={campaign} 
@@ -172,7 +167,10 @@ const GameRenderer: React.FC<GameRendererProps> = ({
       
       {!formValidated && (
         <div 
-          onClick={handleGameClick}
+          onClick={() => {
+            console.log('GameRenderer - Game overlay clicked, calling onGameButtonClick');
+            onGameButtonClick();
+          }}
           className="absolute inset-0 flex items-center justify-center z-30 rounded-lg cursor-pointer bg-black/0" 
         />
       )}

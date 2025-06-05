@@ -1,4 +1,5 @@
-import React, { useCallback, useId } from 'react';
+
+import React, { useCallback, useRef } from 'react';
 import { Upload } from 'lucide-react';
 
 interface ImageUploadProps {
@@ -16,7 +17,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   className,
   compact = false 
 }) => {
-  const inputId = useId();
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -68,25 +69,15 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   const handleClick = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log('Upload area clicked, attempting to trigger file input with id:', inputId);
+    console.log('Upload area clicked, triggering file input');
     
-    // Utiliser une approche plus directe pour déclencher l'input
-    const input = document.getElementById(inputId) as HTMLInputElement;
-    if (input) {
+    if (inputRef.current) {
       console.log('File input found, triggering click');
-      input.click();
+      inputRef.current.click();
     } else {
-      console.error('File input not found with id:', inputId);
-      // Fallback: chercher par sélecteur
-      const fallbackInput = document.querySelector(`#${CSS.escape(inputId)}`) as HTMLInputElement;
-      if (fallbackInput) {
-        console.log('Found input via fallback selector, triggering click');
-        fallbackInput.click();
-      } else {
-        console.error('No file input found with any method');
-      }
+      console.error('File input ref not available');
     }
-  }, [inputId]);
+  }, []);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -110,11 +101,11 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
         onClick={handleClick}
       >
         <input
+          ref={inputRef}
           type="file"
           accept="image/*"
           onChange={handleFileChange}
           className="hidden"
-          id={inputId}
         />
         
         <div className="text-center pointer-events-none">
