@@ -98,7 +98,8 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
         visible: true
       },
       config: {},
-      gameConfig: {}
+      gameConfig: {},
+      mobileConfig: {}
     };
 
     // Configuration spécifique pour la roue
@@ -143,6 +144,14 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
         }
       };
     }
+
+    baseConfig.mobileConfig = {
+      roulette: baseConfig.config.roulette,
+      buttonColor: state.customColors.primary,
+      buttonTextColor: '#ffffff',
+      buttonPlacement: 'bottom',
+      gamePosition: 'center'
+    };
 
     return baseConfig;
   },
