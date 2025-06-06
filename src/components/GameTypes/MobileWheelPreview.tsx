@@ -39,7 +39,7 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
       case 'left':
         return {
           ...baseStyle,
-          left: `30px`,
+          right: `50px`,
           top: '50%',
           transform: 'translateY(-50%)',
           width: canvasSize / 2, // Conteneur réduit à 50%
