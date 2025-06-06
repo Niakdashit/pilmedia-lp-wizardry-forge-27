@@ -32,14 +32,15 @@ const WheelContainer: React.FC<WheelContainerProps> = ({
 
     const safeMargin = 20;
 
-    // For mobile cropping scenarios
+    // For mobile cropping scenarios - position wheel to show only desired part
     if (shouldCropWheel) {
       switch (gamePosition) {
         case 'left':
+          // Show only right part of wheel (wheel positioned so left half is cut off)
           return {
             ...containerStyle,
             flexDirection: 'row-reverse',
-            left: '0px', // Stick to left edge
+            left: `-${gameDimensions.width / 2}px`, // Move wheel left so only right half shows
             top: '50%',
             transform: 'translateY(-50%)',
             width: `${gameDimensions.width}px`,
@@ -47,10 +48,11 @@ const WheelContainer: React.FC<WheelContainerProps> = ({
             overflow: 'hidden'
           };
         case 'right':
+          // Show only left part of wheel (wheel positioned so right half is cut off)
           return {
             ...containerStyle,
             flexDirection: 'row',
-            right: '0px', // Stick to right edge
+            right: `-${gameDimensions.width / 2}px`, // Move wheel right so only left half shows
             top: '50%',
             transform: 'translateY(-50%)',
             width: `${gameDimensions.width}px`,
@@ -58,10 +60,11 @@ const WheelContainer: React.FC<WheelContainerProps> = ({
             overflow: 'hidden'
           };
         case 'bottom':
+          // Show only top part of wheel (wheel positioned so bottom half is cut off)
           return {
             ...containerStyle,
             flexDirection: 'column',
-            bottom: '0px', // Stick to bottom edge
+            bottom: `-${gameDimensions.height / 2}px`, // Move wheel down so only top half shows
             left: '50%',
             transform: 'translateX(-50%)',
             width: `${gameDimensions.width}px`,

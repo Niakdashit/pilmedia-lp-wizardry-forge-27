@@ -58,36 +58,14 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
       maxHeight: `${gameDimensions.height}px`,
     };
 
-    // For cropped wheel positions, adjust the container
+    // For wheel games with mobile cropping, let WheelContainer handle positioning
     if (shouldCropWheel) {
-      const croppedStyles = { ...baseStyles };
-      
-      switch (gamePosition) {
-        case 'left':
-          return {
-            ...croppedStyles,
-            alignSelf: 'center',
-            margin: 'auto 0 auto 0', // Stick to left edge
-            overflow: 'hidden',
-            width: `${gameDimensions.width * 0.6}px`, // Show 60% of the wheel
-          };
-        case 'right':
-          return {
-            ...croppedStyles,
-            alignSelf: 'center',
-            margin: 'auto 0 auto auto', // Stick to right edge
-            overflow: 'hidden',
-            width: `${gameDimensions.width * 0.6}px`, // Show 60% of the wheel
-          };
-        case 'bottom':
-          return {
-            ...croppedStyles,
-            alignSelf: 'flex-end',
-            margin: '0 auto 0 auto', // Stick to bottom edge
-            overflow: 'hidden',
-            height: `${gameDimensions.height * 0.6}px`, // Show 60% of the wheel
-          };
-      }
+      return {
+        width: '100%',
+        height: '100%',
+        position: 'relative' as const,
+        overflow: 'hidden'
+      };
     }
 
     // Default positioning for non-cropped cases
