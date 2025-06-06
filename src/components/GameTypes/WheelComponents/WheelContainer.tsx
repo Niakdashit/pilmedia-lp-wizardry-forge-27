@@ -1,21 +1,25 @@
+
 import React from 'react';
 import { GameDimensions } from '../../../hooks/useGameSize';
+
 interface WheelContainerProps {
   children: React.ReactNode;
   gamePosition: 'top' | 'center' | 'bottom' | 'left' | 'right';
   gameDimensions: GameDimensions;
   previewDevice: 'desktop' | 'tablet' | 'mobile';
 }
+
 const WheelContainer: React.FC<WheelContainerProps> = ({
   children,
   gamePosition,
   gameDimensions,
   previewDevice
 }) => {
-  // Check if we're on mobile/tablet and position is left/right for 50% cropping
-  const isMobileTablet = previewDevice === 'mobile' || previewDevice === 'tablet';
-  const isLeftRightPosition = gamePosition === 'left' || gamePosition === 'right';
-  const shouldCropWheel = isMobileTablet && isLeftRightPosition;
+  // Check if we're on mobile and position requires cropping
+  const isMobile = previewDevice === 'mobile';
+  const isCroppablePosition = ['left', 'right', 'bottom'].includes(gamePosition);
+  const shouldCropWheel = isMobile && isCroppablePosition;
+
   const getAbsolutePositionStyles = (): React.CSSProperties => {
     const containerStyle: React.CSSProperties = {
       position: 'absolute',
@@ -25,7 +29,49 @@ const WheelContainer: React.FC<WheelContainerProps> = ({
       gap: '16px',
       zIndex: 10
     };
+
     const safeMargin = 20;
+
+    // For mobile cropping scenarios
+    if (shouldCropWheel) {
+      switch (gamePosition) {
+        case 'left':
+          return {
+            ...containerStyle,
+            flexDirection: 'row-reverse',
+            left: '0px', // Stick to left edge
+            top: '50%',
+            transform: 'translateY(-50%)',
+            width: `${gameDimensions.width}px`,
+            height: `${gameDimensions.height}px`,
+            overflow: 'hidden'
+          };
+        case 'right':
+          return {
+            ...containerStyle,
+            flexDirection: 'row',
+            right: '0px', // Stick to right edge
+            top: '50%',
+            transform: 'translateY(-50%)',
+            width: `${gameDimensions.width}px`,
+            height: `${gameDimensions.height}px`,
+            overflow: 'hidden'
+          };
+        case 'bottom':
+          return {
+            ...containerStyle,
+            flexDirection: 'column',
+            bottom: '0px', // Stick to bottom edge
+            left: '50%',
+            transform: 'translateX(-50%)',
+            width: `${gameDimensions.width}px`,
+            height: `${gameDimensions.height}px`,
+            overflow: 'hidden'
+          };
+      }
+    }
+
+    // Default positioning for non-cropped cases
     switch (gamePosition) {
       case 'top':
         return {
@@ -50,8 +96,8 @@ const WheelContainer: React.FC<WheelContainerProps> = ({
       case 'left':
         return {
           ...containerStyle,
-          flexDirection: shouldCropWheel ? 'row-reverse' : 'row',
-          left: shouldCropWheel ? '0px' : `${safeMargin}px`,
+          flexDirection: 'row-reverse',
+          left: `${safeMargin}px`,
           top: '50%',
           transform: 'translateY(-50%)',
           width: `${gameDimensions.width}px`,
@@ -60,8 +106,8 @@ const WheelContainer: React.FC<WheelContainerProps> = ({
       case 'right':
         return {
           ...containerStyle,
-          flexDirection: shouldCropWheel ? 'row' : 'row-reverse',
-          right: shouldCropWheel ? '0px' : `${safeMargin}px`,
+          flexDirection: 'row-reverse',
+          right: `${safeMargin}px`,
           top: '50%',
           transform: 'translateY(-50%)',
           width: `${gameDimensions.width}px`,
@@ -80,8 +126,12 @@ const WheelContainer: React.FC<WheelContainerProps> = ({
         };
     }
   };
-  return <div style={getAbsolutePositionStyles()} className="px-[71px]">
+
+  return (
+    <div style={getAbsolutePositionStyles()}>
       {children}
-    </div>;
+    </div>
+  );
 };
+
 export default WheelContainer;

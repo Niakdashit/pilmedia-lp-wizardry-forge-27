@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Jackpot from '../GameTypes/Jackpot';
 import { Quiz } from '../GameTypes';
@@ -11,11 +12,13 @@ import { GAME_SIZES, GameSize } from '../configurators/GameSizeSelector';
 interface GameCanvasPreviewProps {
   campaign: any;
   className?: string;
+  previewDevice?: 'desktop' | 'tablet' | 'mobile';
 }
 
 const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   campaign,
-  className = ""
+  className = "",
+  previewDevice = 'desktop'
 }) => {
   console.log('GameCanvasPreview received campaign:', campaign);
   console.log('Game config:', campaign.gameConfig);
@@ -40,6 +43,12 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   console.log('Using gamePosition:', gamePosition);
   console.log('Using buttonLabel:', buttonLabel, 'buttonColor:', buttonColor);
 
+  // Check if we should crop the wheel (mobile + left/right/bottom positions for wheel games)
+  const isMobile = previewDevice === 'mobile';
+  const isWheelGame = campaign.type === 'wheel';
+  const isCroppablePosition = ['left', 'right', 'bottom'].includes(gamePosition);
+  const shouldCropWheel = isMobile && isWheelGame && isCroppablePosition;
+
   // Calculate positioning styles based on gamePosition
   const getPositionStyles = () => {
     const baseStyles = {
@@ -49,6 +58,39 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
       maxHeight: `${gameDimensions.height}px`,
     };
 
+    // For cropped wheel positions, adjust the container
+    if (shouldCropWheel) {
+      const croppedStyles = { ...baseStyles };
+      
+      switch (gamePosition) {
+        case 'left':
+          return {
+            ...croppedStyles,
+            alignSelf: 'center',
+            margin: 'auto 0 auto 0', // Stick to left edge
+            overflow: 'hidden',
+            width: `${gameDimensions.width * 0.6}px`, // Show 60% of the wheel
+          };
+        case 'right':
+          return {
+            ...croppedStyles,
+            alignSelf: 'center',
+            margin: 'auto 0 auto auto', // Stick to right edge
+            overflow: 'hidden',
+            width: `${gameDimensions.width * 0.6}px`, // Show 60% of the wheel
+          };
+        case 'bottom':
+          return {
+            ...croppedStyles,
+            alignSelf: 'flex-end',
+            margin: '0 auto 0 auto', // Stick to bottom edge
+            overflow: 'hidden',
+            height: `${gameDimensions.height * 0.6}px`, // Show 60% of the wheel
+          };
+      }
+    }
+
+    // Default positioning for non-cropped cases
     switch (gamePosition) {
       case 'top':
         return {
@@ -132,7 +174,8 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
               onFinish={() => {}}
               gameSize={gameSize}
               gamePosition={gamePosition}
-              key={`${gameSize}-${gamePosition}-${JSON.stringify(campaign.gameConfig?.wheel)}`}
+              previewDevice={previewDevice}
+              key={`${gameSize}-${gamePosition}-${previewDevice}-${JSON.stringify(campaign.gameConfig?.wheel)}`}
             />
           </div>
         );
@@ -185,7 +228,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
     <div
       className={`relative w-full h-full overflow-hidden ${className}`}
       style={{ minHeight: '600px' }}
-      key={`game-preview-${gameSize}-${gamePosition}-${buttonColor}-${JSON.stringify(campaign.gameConfig?.[campaign.type])}`}
+      key={`game-preview-${gameSize}-${gamePosition}-${previewDevice}-${buttonColor}-${JSON.stringify(campaign.gameConfig?.[campaign.type])}`}
     >
       {/* Image de fond plein écran */}
       {gameBackgroundImage && (
