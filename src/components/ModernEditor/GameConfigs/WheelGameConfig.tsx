@@ -8,6 +8,13 @@ interface WheelGameConfigProps {
   setCampaign: React.Dispatch<React.SetStateAction<any>>;
 }
 
+const POSITION_OPTIONS = [
+  { value: 'gauche', label: 'Gauche (moitié droite visible)' },
+  { value: 'droite', label: 'Droite (moitié gauche visible)' },
+  { value: 'bas', label: 'Bas (moitié haute visible)' },
+  { value: 'centre', label: 'Centre (tout visible)' }
+];
+
 const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
   campaign,
   setCampaign
@@ -19,6 +26,8 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
   const borderOutlineColor = campaign.config?.roulette?.borderOutlineColor || '#FFD700';
   const segmentColor1 = campaign.config?.roulette?.segmentColor1 || '#FFB3BA';
   const segmentColor2 = campaign.config?.roulette?.segmentColor2 || '#BAFFC9';
+  // 🟢 Position ajoutée
+  const position = campaign.config?.roulette?.position || 'centre';
 
   // Initialize with 4 default segments
   useEffect(() => {
@@ -71,6 +80,20 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
       }
       return newConfig;
     });
+  };
+
+  const handlePositionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const newPosition = e.target.value;
+    setCampaign((prev: any) => ({
+      ...prev,
+      config: {
+        ...prev.config,
+        roulette: {
+          ...prev.config?.roulette,
+          position: newPosition
+        }
+      }
+    }));
   };
 
   const addSegment = () => {
@@ -178,11 +201,27 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
 
   return (
     <div className="space-y-6">
+      {/* PALETTE */}
       <ColorPaletteSelector 
         selectedPalette={selectedPalette} 
         onPaletteSelect={handlePaletteSelect} 
         gameType="wheel" 
       />
+
+      {/* 🟢 NOUVEAU - Sélection de la position */}
+      <div className="space-y-2">
+        <label className="text-sm font-medium text-gray-700">Position de la roue</label>
+        <select
+          value={position}
+          onChange={handlePositionChange}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
+        >
+          {POSITION_OPTIONS.map((opt) => (
+            <option key={opt.value} value={opt.value}>{opt.label}</option>
+          ))}
+        </select>
+      </div>
+      {/* FIN AJOUT POSITION */}
 
       <div className="space-y-4">
         <h3 className="text-lg font-medium text-gray-900">Couleurs personnalisées</h3>
