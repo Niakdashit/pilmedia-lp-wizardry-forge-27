@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
@@ -19,6 +20,12 @@ interface ScratchPreviewProps {
   };
 }
 
+interface CardState {
+  isRevealed: boolean;
+  scratchPercentage: number;
+  result: 'win' | 'lose' | null;
+}
+
 const ScratchPreview: React.FC<ScratchPreviewProps> = ({
   config = {},
   onFinish,
@@ -29,12 +36,9 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
   gameSize = 'medium',
   instantWinConfig
 }) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [isRevealed, setIsRevealed] = useState(false);
-  const [scratchPercentage, setScratchPercentage] = useState(0);
   const [gameStarted, setGameStarted] = useState(false);
-  const [result, setResult] = useState<'win' | 'lose' | null>(null);
-  const [currentCard, setCurrentCard] = useState(0);
+  const [cardsState, setCardsState] = useState<CardState[]>([]);
+  const canvasRefs = useRef<(HTMLCanvasElement | null)[]>([]);
 
   // Calculer le résultat avec la logique instant win
   const calculateResult = (): 'win' | 'lose' => {
@@ -56,8 +60,14 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
     if (disabled) return;
     
     setGameStarted(true);
-    const gameResult = calculateResult();
-    setResult(gameResult);
+    const cards = config?.cards || [{}];
+    const initialStates = cards.map(() => ({
+      isRevealed: false,
+      scratchPercentage: 0,
+      result: calculateResult()
+    }));
+    setCardsState(initialStates);
+    canvasRefs.current = new Array(cards.length).fill(null);
     
     if (onStart) onStart();
   };
@@ -65,21 +75,31 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
   // Dimensions selon la taille
   const getDimensions = () => {
     switch (gameSize) {
-      case 'small': return { width: 200, height: 140 };
-      case 'medium': return { width: 280, height: 200 };
-      case 'large': return { width: 350, height: 250 };
-      case 'xlarge': return { width: 420, height: 300 };
-      default: return { width: 280, height: 200 };
+      case 'small': return { width: 160, height: 110 };
+      case 'medium': return { width: 200, height: 140 };
+      case 'large': return { width: 240, height: 170 };
+      case 'xlarge': return { width: 280, height: 200 };
+      default: return { width: 200, height: 140 };
     }
   };
 
   const { width, height } = getDimensions();
-  const totalCards = Array.isArray(config.cards) ? config.cards.length : 1;
+  const cards = config?.cards || [{}];
+
+  // Classes CSS responsive pour la grille
+  const getGridClasses = () => {
+    return "grid grid-cols-2 md:grid-cols-3 gap-4";
+  };
 
   useEffect(() => {
-    const card = config?.cards ? config.cards[currentCard] || {} : {};
-    if (canvasRef.current && gameStarted && !isRevealed) {
-      const canvas = canvasRef.current;
+    if (!gameStarted || cardsState.length === 0) return;
+
+    cardsState.forEach((cardState, cardIndex) => {
+      const canvas = canvasRefs.current[cardIndex];
+      const card = cards[cardIndex] || {};
+      
+      if (!canvas || cardState.isRevealed) return;
+
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
@@ -100,10 +120,10 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
         
         // Texture métallique par défaut
         ctx.fillStyle = '#999';
-        ctx.font = '16px Arial';
+        ctx.font = '14px Arial';
         ctx.textAlign = 'center';
-        ctx.fillText('Grattez ici', canvas.width / 2, canvas.height / 2 - 10);
-        ctx.fillText('pour découvrir', canvas.width / 2, canvas.height / 2 + 10);
+        ctx.fillText('Grattez ici', canvas.width / 2, canvas.height / 2 - 8);
+        ctx.fillText('pour découvrir', canvas.width / 2, canvas.height / 2 + 8);
       }
 
       let isDrawing = false;
@@ -128,7 +148,7 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
 
         ctx.globalCompositeOperation = 'destination-out';
         ctx.beginPath();
-        ctx.arc(x, y, 20, 0, Math.PI * 2);
+        ctx.arc(x, y, 15, 0, Math.PI * 2);
         ctx.fill();
 
         // Calculer le pourcentage gratté
@@ -141,13 +161,23 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
         }
 
         const percentage = (transparentPixels / (pixels.length / 4)) * 100;
-        setScratchPercentage(Math.round(percentage));
+        
+        setCardsState(prev => {
+          const newState = [...prev];
+          newState[cardIndex] = { ...newState[cardIndex], scratchPercentage: Math.round(percentage) };
+          return newState;
+        });
 
         const requiredPercent = config?.scratchArea || 70;
-        if (percentage >= requiredPercent && !isRevealed) {
-          setIsRevealed(true);
-          if (onFinish && result) {
-            setTimeout(() => onFinish(result), 500);
+        if (percentage >= requiredPercent && !cardState.isRevealed) {
+          setCardsState(prev => {
+            const newState = [...prev];
+            newState[cardIndex] = { ...newState[cardIndex], isRevealed: true };
+            return newState;
+          });
+          
+          if (onFinish && cardState.result) {
+            setTimeout(() => onFinish(cardState.result!), 500);
           }
         }
       };
@@ -175,13 +205,15 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
         canvas.removeEventListener('touchmove', scratch);
         canvas.removeEventListener('touchend', stopDrawing);
       };
-    }
-  }, [config, isRevealed, gameStarted, result, width, height, onFinish, currentCard]);
+    });
+  }, [gameStarted, cardsState, width, height, config, cards, onFinish]);
 
-  const getResultContent = () => {
-    const card = config?.cards ? config.cards[currentCard] || {} : {};
+  const getResultContent = (cardIndex: number) => {
+    const card = cards[cardIndex] || {};
+    const cardState = cardsState[cardIndex];
     const revealImage = card.revealImage || config?.revealImage;
     const revealMessage = card.revealMessage || config?.revealMessage;
+
     if (revealImage) {
       return (
         <img
@@ -194,49 +226,45 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
 
     return (
       <div className={`w-full h-full flex flex-col items-center justify-center ${
-        result === 'win' ? 'bg-gradient-to-br from-yellow-300 to-yellow-500' : 'bg-gradient-to-br from-gray-300 to-gray-500'
+        cardState?.result === 'win' ? 'bg-gradient-to-br from-yellow-300 to-yellow-500' : 'bg-gradient-to-br from-gray-300 to-gray-500'
       }`}>
-        <div className="text-4xl mb-2">
-          {result === 'win' ? '🎉' : '😔'}
+        <div className="text-2xl mb-1">
+          {cardState?.result === 'win' ? '🎉' : '😔'}
         </div>
-        <div className="text-lg font-bold text-gray-800">
-          {result === 'win'
+        <div className="text-sm font-bold text-gray-800 text-center px-2">
+          {cardState?.result === 'win'
             ? revealMessage || 'Félicitations !'
-            : 'Dommage, réessayez !'}
+            : 'Dommage !'}
         </div>
       </div>
     );
   };
 
   const resetGame = () => {
-    setIsRevealed(false);
-    setScratchPercentage(0);
     setGameStarted(false);
-    setResult(null);
-    if (config?.cards && currentCard < config.cards.length - 1) {
-      setCurrentCard(prev => prev + 1);
-    }
+    setCardsState([]);
+    canvasRefs.current = [];
   };
 
   // Si le jeu n'a pas encore commencé, afficher le bouton
   if (!gameStarted) {
     return (
       <div className="flex flex-col items-center space-y-4">
-        <div
-          className="relative rounded-lg overflow-hidden border-2 border-gray-300"
-          style={{ width: `${width}px`, height: `${height}px` }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center">
-            <div className="text-white text-center">
-              <div className="text-2xl mb-2">🎫</div>
-              <div className="text-sm">Carte à gratter</div>
-            </div>
-            {totalCards > 1 && (
-              <div className="absolute top-2 right-2 text-xs bg-black/60 text-white px-2 py-1 rounded">
-                {currentCard + 1}/{totalCards}
+        <div className={getGridClasses()}>
+          {cards.map((_, index) => (
+            <div
+              key={index}
+              className="relative rounded-lg overflow-hidden border-2 border-gray-300"
+              style={{ width: `${width}px`, height: `${height}px` }}
+            >
+              <div className="absolute inset-0 bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center">
+                <div className="text-white text-center">
+                  <div className="text-xl mb-1">🎫</div>
+                  <div className="text-xs">Carte {index + 1}</div>
+                </div>
               </div>
-            )}
-          </div>
+            </div>
+          ))}
         </div>
 
         <button
@@ -253,73 +281,80 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
     );
   }
 
+  // Afficher toutes les cartes en cours de jeu
   return (
     <div className="w-full flex flex-col items-center space-y-4">
-      {gameStarted && !isRevealed && (
-        <div className="text-center">
-          {totalCards > 1 && (
-            <div className="text-xs text-gray-500 mb-1">
-              Carte {currentCard + 1}/{totalCards}
-            </div>
-          )}
-          <div className="text-sm text-gray-600 mb-2">
-            Progression: {scratchPercentage}% / {config?.scratchArea || 70}%
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-2 max-w-xs mx-auto">
-            <div 
-              className="bg-[#841b60] h-2 rounded-full transition-all duration-300"
-              style={{ width: `${Math.min(scratchPercentage, 100)}%` }}
-            />
-          </div>
-        </div>
-      )}
+      <div className={getGridClasses()}>
+        {cards.map((card, cardIndex) => {
+          const cardState = cardsState[cardIndex];
+          if (!cardState) return null;
 
-      <div className="relative rounded-lg overflow-hidden border-2 border-gray-300" style={{ width: `${width}px`, height: `${height}px` }}>
-        {/* Contenu à révéler */}
-        <div className="absolute inset-0">
-          {getResultContent()}
-        </div>
-
-        {/* Canvas de grattage */}
-        {gameStarted && !isRevealed && (
-          <canvas
-            ref={canvasRef}
-            className="absolute inset-0 w-full h-full cursor-crosshair"
-            style={{ touchAction: 'none' }}
-          />
-        )}
-
-        {/* Overlay de résultat */}
-        {isRevealed && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="absolute inset-0 flex items-center justify-center bg-black/80"
-          >
-            <div className="bg-white p-4 rounded-lg shadow-lg text-center">
-              <div className="text-2xl mb-2">
-                {result === 'win' ? '🎊' : '💫'}
-              </div>
-              <p className="text-lg font-bold mb-2">
-                {result === 'win'
-                  ? (config?.cards ? (config.cards[currentCard]?.revealMessage || config?.revealMessage) : config?.revealMessage) || 'Vous avez gagné !'
-                  : 'Réessayez !'}
-              </p>
-              {totalCards > 1 && (
-                <p className="text-xs text-gray-500 mb-2">
-                  Carte {currentCard + 1}/{totalCards}
-                </p>
+          return (
+            <div key={cardIndex} className="flex flex-col items-center space-y-2">
+              {/* Indicateur de progression pour chaque carte */}
+              {!cardState.isRevealed && (
+                <div className="w-full max-w-[200px]">
+                  <div className="text-xs text-gray-600 mb-1 text-center">
+                    Carte {cardIndex + 1}: {cardState.scratchPercentage}% / {config?.scratchArea || 70}%
+                  </div>
+                  <div className="w-full bg-gray-200 rounded-full h-1">
+                    <div 
+                      className="bg-[#841b60] h-1 rounded-full transition-all duration-300"
+                      style={{ width: `${Math.min(cardState.scratchPercentage, 100)}%` }}
+                    />
+                  </div>
+                </div>
               )}
-              <button
-                onClick={resetGame}
-                className="px-4 py-2 bg-[#841b60] text-white rounded hover:bg-[#6d1650] transition-colors"
+
+              <div 
+                className="relative rounded-lg overflow-hidden border-2 border-gray-300" 
+                style={{ width: `${width}px`, height: `${height}px` }}
               >
-                {config?.cards && currentCard < (config.cards.length - 1) ? 'Carte suivante' : 'Rejouer'}
-              </button>
+                {/* Contenu à révéler */}
+                <div className="absolute inset-0">
+                  {getResultContent(cardIndex)}
+                </div>
+
+                {/* Canvas de grattage */}
+                {!cardState.isRevealed && (
+                  <canvas
+                    ref={el => canvasRefs.current[cardIndex] = el}
+                    className="absolute inset-0 w-full h-full cursor-crosshair"
+                    style={{ touchAction: 'none' }}
+                  />
+                )}
+
+                {/* Badge de statut */}
+                {cardState.isRevealed && (
+                  <div className="absolute top-1 right-1 z-10">
+                    <div className={`text-xs px-2 py-1 rounded-full text-white ${
+                      cardState.result === 'win' ? 'bg-green-500' : 'bg-gray-500'
+                    }`}>
+                      {cardState.result === 'win' ? 'Gagné !' : 'Perdu'}
+                    </div>
+                  </div>
+                )}
+              </div>
             </div>
-          </motion.div>
-        )}
+          );
+        })}
       </div>
+
+      {/* Bouton de reset quand toutes les cartes sont révélées */}
+      {cardsState.length > 0 && cardsState.every(card => card.isRevealed) && (
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="text-center mt-4"
+        >
+          <button
+            onClick={resetGame}
+            className="px-6 py-3 bg-[#841b60] text-white rounded-lg hover:bg-[#6d1650] transition-colors font-semibold"
+          >
+            Rejouer
+          </button>
+        </motion.div>
+      )}
     </div>
   );
 };
