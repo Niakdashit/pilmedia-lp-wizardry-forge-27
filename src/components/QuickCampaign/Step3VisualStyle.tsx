@@ -240,6 +240,9 @@ const Step3VisualStyle: React.FC = () => {
               <div
                 className="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center bg-gray-50"
                 onClick={() => fileInputRef.current?.click()}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => e.key === 'Enter' && fileInputRef.current?.click()}
               >
                 <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                 {backgroundImage ? <div>
