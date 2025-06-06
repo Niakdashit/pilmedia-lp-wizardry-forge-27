@@ -48,7 +48,8 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
   };
 
   const getFunnelComponent = () => {
-    if (unlockedTypes.includes(selectedGameType)) {
+    const funnel = enhancedCampaign.funnel || (unlockedTypes.includes(selectedGameType) ? 'unlocked_game' : 'standard');
+    if (funnel === 'unlocked_game') {
       return (
         <FunnelUnlockedGame
           campaign={enhancedCampaign}

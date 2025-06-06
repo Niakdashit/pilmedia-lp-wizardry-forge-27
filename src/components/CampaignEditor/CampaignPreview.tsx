@@ -52,10 +52,11 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
   ) : null;
 
   const getFunnelComponent = () => {
-    if (['wheel', 'scratch', 'jackpot', 'dice'].includes(campaign.type)) {
+    const funnel = campaign.funnel || (['wheel', 'scratch', 'jackpot', 'dice'].includes(campaign.type) ? 'unlocked_game' : 'standard');
+    if (funnel === 'unlocked_game') {
       return (
-        <FunnelUnlockedGame 
-          campaign={campaign} 
+        <FunnelUnlockedGame
+          campaign={campaign}
           previewMode="desktop"
           modalContained={false}
         />

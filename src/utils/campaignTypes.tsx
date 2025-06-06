@@ -61,6 +61,13 @@ interface ScratchConfig extends BaseConfig {
   instantWin: InstantWinConfig;
   scratchArea: number;
   revealMessage: string;
+  cards?: ScratchCard[];
+}
+
+interface ScratchCard {
+  id: number;
+  revealImage: string;
+  revealMessage: string;
 }
 
 interface MemoryConfig extends BaseConfig {
@@ -131,6 +138,9 @@ export const getDefaultGameConfig = (type: CampaignType) => {
       },
       scratchArea: 70,
       revealMessage: 'Félicitations !',
+      cards: [
+        { id: 1, revealImage: '', revealMessage: 'Félicitations !' }
+      ],
       buttonLabel: 'Gratter',
       buttonColor: '#841b60'
     },
