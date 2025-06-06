@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
@@ -19,66 +20,42 @@ interface ScratchPreviewProps {
   };
 }
 
-const ScratchPreview: React.FC<ScratchPreviewProps> = ({
-  config = {},
-  onFinish,
-  onStart,
-  disabled = false,
-  buttonLabel = 'Gratter',
-  buttonColor = '#841b60',
-  gameSize = 'medium',
-  instantWinConfig
-}) => {
+const ScratchCard: React.FC<{
+  card: any;
+  index: number;
+  gameSize: string;
+  gameStarted: boolean;
+  onCardFinish: (result: 'win' | 'lose') => void;
+  config: any;
+}> = ({ card, index, gameSize, gameStarted, onCardFinish, config }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isRevealed, setIsRevealed] = useState(false);
   const [scratchPercentage, setScratchPercentage] = useState(0);
-  const [gameStarted, setGameStarted] = useState(false);
   const [result, setResult] = useState<'win' | 'lose' | null>(null);
-  const [currentCard, setCurrentCard] = useState(0);
-
-  // Calculer le résultat avec la logique instant win
-  const calculateResult = (): 'win' | 'lose' => {
-    if (instantWinConfig && instantWinConfig.mode === 'instant_winner') {
-      const hasReachedMaxWinners = instantWinConfig.maxWinners 
-        ? (instantWinConfig.winnersCount || 0) >= instantWinConfig.maxWinners 
-        : false;
-      
-      if (hasReachedMaxWinners) return 'lose';
-      
-      return Math.random() < instantWinConfig.winProbability ? 'win' : 'lose';
-    }
-    
-    return Math.random() > 0.7 ? 'win' : 'lose';
-  };
-
-  // Gérer le démarrage du jeu
-  const handleGameStart = () => {
-    if (disabled) return;
-    
-    setGameStarted(true);
-    const gameResult = calculateResult();
-    setResult(gameResult);
-    
-    if (onStart) onStart();
-  };
 
   // Dimensions selon la taille
   const getDimensions = () => {
     switch (gameSize) {
-      case 'small': return { width: 200, height: 140 };
-      case 'medium': return { width: 280, height: 200 };
-      case 'large': return { width: 350, height: 250 };
-      case 'xlarge': return { width: 420, height: 300 };
-      default: return { width: 280, height: 200 };
+      case 'small': return { width: 160, height: 120 };
+      case 'medium': return { width: 200, height: 140 };
+      case 'large': return { width: 240, height: 180 };
+      case 'xlarge': return { width: 280, height: 200 };
+      default: return { width: 200, height: 140 };
     }
   };
 
   const { width, height } = getDimensions();
-  const totalCards = Array.isArray(config.cards) ? config.cards.length : 1;
 
   useEffect(() => {
-    const card = config?.cards ? config.cards[currentCard] || {} : {};
-    if (canvasRef.current && gameStarted && !isRevealed) {
+    if (gameStarted && !result) {
+      // Calculer le résultat pour cette carte
+      const gameResult = Math.random() > 0.7 ? 'win' : 'lose';
+      setResult(gameResult);
+    }
+  }, [gameStarted, result]);
+
+  useEffect(() => {
+    if (canvasRef.current && gameStarted && !isRevealed && result) {
       const canvas = canvasRef.current;
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
@@ -100,10 +77,10 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
         
         // Texture métallique par défaut
         ctx.fillStyle = '#999';
-        ctx.font = '16px Arial';
+        ctx.font = '12px Arial';
         ctx.textAlign = 'center';
-        ctx.fillText('Grattez ici', canvas.width / 2, canvas.height / 2 - 10);
-        ctx.fillText('pour découvrir', canvas.width / 2, canvas.height / 2 + 10);
+        ctx.fillText('Grattez ici', canvas.width / 2, canvas.height / 2 - 5);
+        ctx.fillText('pour découvrir', canvas.width / 2, canvas.height / 2 + 8);
       }
 
       let isDrawing = false;
@@ -128,7 +105,7 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
 
         ctx.globalCompositeOperation = 'destination-out';
         ctx.beginPath();
-        ctx.arc(x, y, 20, 0, Math.PI * 2);
+        ctx.arc(x, y, 15, 0, Math.PI * 2);
         ctx.fill();
 
         // Calculer le pourcentage gratté
@@ -146,8 +123,8 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
         const requiredPercent = config?.scratchArea || 70;
         if (percentage >= requiredPercent && !isRevealed) {
           setIsRevealed(true);
-          if (onFinish && result) {
-            setTimeout(() => onFinish(result), 500);
+          if (onCardFinish && result) {
+            setTimeout(() => onCardFinish(result), 500);
           }
         }
       };
@@ -176,12 +153,12 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
         canvas.removeEventListener('touchend', stopDrawing);
       };
     }
-  }, [config, isRevealed, gameStarted, result, width, height, onFinish, currentCard]);
+  }, [config, isRevealed, gameStarted, result, width, height, onCardFinish, card]);
 
   const getResultContent = () => {
-    const card = config?.cards ? config.cards[currentCard] || {} : {};
     const revealImage = card.revealImage || config?.revealImage;
     const revealMessage = card.revealMessage || config?.revealMessage;
+    
     if (revealImage) {
       return (
         <img
@@ -196,78 +173,46 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
       <div className={`w-full h-full flex flex-col items-center justify-center ${
         result === 'win' ? 'bg-gradient-to-br from-yellow-300 to-yellow-500' : 'bg-gradient-to-br from-gray-300 to-gray-500'
       }`}>
-        <div className="text-4xl mb-2">
+        <div className="text-2xl mb-1">
           {result === 'win' ? '🎉' : '😔'}
         </div>
-        <div className="text-lg font-bold text-gray-800">
+        <div className="text-sm font-bold text-gray-800 text-center px-2">
           {result === 'win'
             ? revealMessage || 'Félicitations !'
-            : 'Dommage, réessayez !'}
+            : 'Dommage !'}
         </div>
       </div>
     );
   };
 
-  const resetGame = () => {
-    setIsRevealed(false);
-    setScratchPercentage(0);
-    setGameStarted(false);
-    setResult(null);
-    if (config?.cards && currentCard < config.cards.length - 1) {
-      setCurrentCard(prev => prev + 1);
-    }
-  };
-
-  // Si le jeu n'a pas encore commencé, afficher le bouton
   if (!gameStarted) {
     return (
-      <div className="flex flex-col items-center space-y-4">
+      <div className="flex flex-col items-center">
         <div
-          className="relative rounded-lg overflow-hidden border-2 border-gray-300"
+          className="relative rounded-lg overflow-hidden border-2 border-gray-300 mb-2"
           style={{ width: `${width}px`, height: `${height}px` }}
         >
           <div className="absolute inset-0 bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center">
             <div className="text-white text-center">
-              <div className="text-2xl mb-2">🎫</div>
-              <div className="text-sm">Carte à gratter</div>
+              <div className="text-lg mb-1">🎫</div>
+              <div className="text-xs">Carte {index + 1}</div>
             </div>
-            {totalCards > 1 && (
-              <div className="absolute top-2 right-2 text-xs bg-black/60 text-white px-2 py-1 rounded">
-                {currentCard + 1}/{totalCards}
-              </div>
-            )}
           </div>
         </div>
-
-        <button
-          onClick={handleGameStart}
-          disabled={disabled}
-          className="px-6 py-3 rounded-lg font-semibold text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90"
-          style={{
-            backgroundColor: disabled ? '#6b7280' : buttonColor
-          }}
-        >
-          {disabled ? 'Remplissez le formulaire' : buttonLabel}
-        </button>
       </div>
     );
   }
 
   return (
-    <div className="w-full flex flex-col items-center space-y-4">
+    <div className="flex flex-col items-center">
       {gameStarted && !isRevealed && (
-        <div className="text-center">
-          {totalCards > 1 && (
-            <div className="text-xs text-gray-500 mb-1">
-              Carte {currentCard + 1}/{totalCards}
-            </div>
-          )}
-          <div className="text-sm text-gray-600 mb-2">
-            Progression: {scratchPercentage}% / {config?.scratchArea || 70}%
+        <div className="text-center mb-2">
+          <div className="text-xs text-gray-600 mb-1">
+            Carte {index + 1} - {scratchPercentage}%
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2 max-w-xs mx-auto">
+          <div className="w-full bg-gray-200 rounded-full h-1 max-w-[120px] mx-auto">
             <div 
-              className="bg-[#841b60] h-2 rounded-full transition-all duration-300"
+              className="bg-[#841b60] h-1 rounded-full transition-all duration-300"
               style={{ width: `${Math.min(scratchPercentage, 100)}%` }}
             />
           </div>
@@ -296,29 +241,133 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
             animate={{ opacity: 1 }}
             className="absolute inset-0 flex items-center justify-center bg-black/80"
           >
-            <div className="bg-white p-4 rounded-lg shadow-lg text-center">
-              <div className="text-2xl mb-2">
+            <div className="bg-white p-3 rounded-lg shadow-lg text-center max-w-[90%]">
+              <div className="text-xl mb-1">
                 {result === 'win' ? '🎊' : '💫'}
               </div>
-              <p className="text-lg font-bold mb-2">
+              <p className="text-sm font-bold">
                 {result === 'win'
-                  ? (config?.cards ? (config.cards[currentCard]?.revealMessage || config?.revealMessage) : config?.revealMessage) || 'Vous avez gagné !'
+                  ? card.revealMessage || config?.revealMessage || 'Vous avez gagné !'
                   : 'Réessayez !'}
               </p>
-              {totalCards > 1 && (
-                <p className="text-xs text-gray-500 mb-2">
-                  Carte {currentCard + 1}/{totalCards}
-                </p>
-              )}
-              <button
-                onClick={resetGame}
-                className="px-4 py-2 bg-[#841b60] text-white rounded hover:bg-[#6d1650] transition-colors"
-              >
-                {config?.cards && currentCard < (config.cards.length - 1) ? 'Carte suivante' : 'Rejouer'}
-              </button>
             </div>
           </motion.div>
         )}
+      </div>
+    </div>
+  );
+};
+
+const ScratchPreview: React.FC<ScratchPreviewProps> = ({
+  config = {},
+  onFinish,
+  onStart,
+  disabled = false,
+  buttonLabel = 'Gratter',
+  buttonColor = '#841b60',
+  gameSize = 'medium',
+  instantWinConfig
+}) => {
+  const [gameStarted, setGameStarted] = useState(false);
+  const [finishedCards, setFinishedCards] = useState<Set<number>>(new Set());
+  const [hasWon, setHasWon] = useState(false);
+
+  // Calculer le résultat avec la logique instant win
+  const calculateResult = (): 'win' | 'lose' => {
+    if (instantWinConfig && instantWinConfig.mode === 'instant_winner') {
+      const hasReachedMaxWinners = instantWinConfig.maxWinners 
+        ? (instantWinConfig.winnersCount || 0) >= instantWinConfig.maxWinners 
+        : false;
+      
+      if (hasReachedMaxWinners) return 'lose';
+      
+      return Math.random() < instantWinConfig.winProbability ? 'win' : 'lose';
+    }
+    
+    return Math.random() > 0.7 ? 'win' : 'lose';
+  };
+
+  // Gérer le démarrage du jeu
+  const handleGameStart = () => {
+    if (disabled) return;
+    
+    setGameStarted(true);
+    if (onStart) onStart();
+  };
+
+  const handleCardFinish = (result: 'win' | 'lose', cardIndex: number) => {
+    setFinishedCards(prev => new Set([...prev, cardIndex]));
+    
+    if (result === 'win') {
+      setHasWon(true);
+    }
+    
+    // Vérifier si toutes les cartes sont terminées
+    const totalCards = config?.cards?.length || 1;
+    if (finishedCards.size + 1 >= totalCards) {
+      if (onFinish) {
+        onFinish(hasWon || result === 'win' ? 'win' : 'lose');
+      }
+    }
+  };
+
+  const cards = config?.cards || [{ id: 1, revealImage: '', revealMessage: '' }];
+
+  // Si le jeu n'a pas encore commencé, afficher le bouton
+  if (!gameStarted) {
+    return (
+      <div className="flex flex-col items-center space-y-4">
+        {/* Grille des cartes avant le jeu */}
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+          {cards.map((card: any, index: number) => (
+            <ScratchCard
+              key={card.id || index}
+              card={card}
+              index={index}
+              gameSize={gameSize}
+              gameStarted={false}
+              onCardFinish={() => {}}
+              config={config}
+            />
+          ))}
+        </div>
+
+        <button
+          onClick={handleGameStart}
+          disabled={disabled}
+          className="px-6 py-3 rounded-lg font-semibold text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90"
+          style={{
+            backgroundColor: disabled ? '#6b7280' : buttonColor
+          }}
+        >
+          {disabled ? 'Remplissez le formulaire' : buttonLabel}
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full flex flex-col items-center space-y-4">
+      {/* Grille responsive des cartes */}
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+        {cards.map((card: any, index: number) => (
+          <ScratchCard
+            key={card.id || index}
+            card={card}
+            index={index}
+            gameSize={gameSize}
+            gameStarted={gameStarted}
+            onCardFinish={(result) => handleCardFinish(result, index)}
+            config={config}
+          />
+        ))}
+      </div>
+
+      {/* Indicateur de progression */}
+      <div className="text-center">
+        <div className="text-sm text-gray-600">
+          Cartes terminées: {finishedCards.size}/{cards.length}
+        </div>
       </div>
     </div>
   );
