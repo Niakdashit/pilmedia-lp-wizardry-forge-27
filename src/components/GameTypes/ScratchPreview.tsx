@@ -74,6 +74,7 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
   };
 
   const { width, height } = getDimensions();
+  const totalCards = Array.isArray(config.cards) ? config.cards.length : 1;
 
   useEffect(() => {
     const card = config?.cards ? config.cards[currentCard] || {} : {};
@@ -221,7 +222,7 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
   if (!gameStarted) {
     return (
       <div className="flex flex-col items-center space-y-4">
-        <div 
+        <div
           className="relative rounded-lg overflow-hidden border-2 border-gray-300"
           style={{ width: `${width}px`, height: `${height}px` }}
         >
@@ -230,14 +231,19 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
               <div className="text-2xl mb-2">🎫</div>
               <div className="text-sm">Carte à gratter</div>
             </div>
+            {totalCards > 1 && (
+              <div className="absolute top-2 right-2 text-xs bg-black/60 text-white px-2 py-1 rounded">
+                {currentCard + 1}/{totalCards}
+              </div>
+            )}
           </div>
         </div>
-        
+
         <button
           onClick={handleGameStart}
           disabled={disabled}
           className="px-6 py-3 rounded-lg font-semibold text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90"
-          style={{ 
+          style={{
             backgroundColor: disabled ? '#6b7280' : buttonColor
           }}
         >
@@ -251,6 +257,11 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
     <div className="w-full flex flex-col items-center space-y-4">
       {gameStarted && !isRevealed && (
         <div className="text-center">
+          {totalCards > 1 && (
+            <div className="text-xs text-gray-500 mb-1">
+              Carte {currentCard + 1}/{totalCards}
+            </div>
+          )}
           <div className="text-sm text-gray-600 mb-2">
             Progression: {scratchPercentage}% / {config?.scratchArea || 70}%
           </div>
@@ -294,6 +305,11 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
                   ? (config?.cards ? (config.cards[currentCard]?.revealMessage || config?.revealMessage) : config?.revealMessage) || 'Vous avez gagné !'
                   : 'Réessayez !'}
               </p>
+              {totalCards > 1 && (
+                <p className="text-xs text-gray-500 mb-2">
+                  Carte {currentCard + 1}/{totalCards}
+                </p>
+              )}
               <button
                 onClick={resetGame}
                 className="px-4 py-2 bg-[#841b60] text-white rounded hover:bg-[#6d1650] transition-colors"
