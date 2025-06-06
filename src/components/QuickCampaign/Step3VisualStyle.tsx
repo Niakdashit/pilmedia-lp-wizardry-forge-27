@@ -6,6 +6,7 @@ import { useCampaigns } from '../../hooks/useCampaigns';
 import CampaignPreviewModal from './CampaignPreviewModal';
 import ColorCustomizer from './ColorCustomizer';
 import JackpotPreview from './Preview/JackpotPreview';
+
 const Step3VisualStyle: React.FC = () => {
   const navigate = useNavigate();
   const {
@@ -56,7 +57,7 @@ const Step3VisualStyle: React.FC = () => {
           hasBackgroundImage: !!backgroundImage,
           customColors,
           jackpotColors,
-          ...(selectedGameType === 'roue' && {
+          ...(selectedGameType === 'wheel' && {
             segmentCount,
             roulette: {
               segments: Array.from({
@@ -119,7 +120,7 @@ const Step3VisualStyle: React.FC = () => {
           hasBackgroundImage: !!backgroundImage,
           customColors,
           jackpotColors,
-          ...(selectedGameType === 'roue' && {
+          ...(selectedGameType === 'wheel' && {
             segmentCount,
             roulette: {
               segments: Array.from({
@@ -183,21 +184,21 @@ const Step3VisualStyle: React.FC = () => {
                   Vous pouvez maintenant la tester ou la personnaliser davantage.
                 </p>
                 <div className="space-y-4">
-                  <button onClick={handlePreview} className="w-full py-4 bg-gray-50 text-gray-900 font-medium rounded-2xl 
-                               border border-gray-200 hover:bg-gray-100 transition-all 
+                  <button onClick={handlePreview} className="w-full py-4 bg-gray-50 text-gray-900 font-medium rounded-2xl
+                               border border-gray-200 hover:bg-gray-100 transition-all
                                flex items-center justify-center space-x-3">
                     <Eye className="w-5 h-5" />
                     <span>Voir un aperçu</span>
                   </button>
-                  <button onClick={handleCreateCampaign} disabled={isCreating} className="w-full py-4 bg-[#841b60] text-white font-medium rounded-2xl 
+                  <button onClick={handleCreateCampaign} disabled={isCreating} className="w-full py-4 bg-[#841b60] text-white font-medium rounded-2xl
                                hover:bg-[#841b60]/90 transition-all disabled:opacity-50">
                     {isCreating ? <div className="flex items-center justify-center space-x-2">
                         <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
                         <span>Création...</span>
                       </div> : 'Créer la campagne'}
                   </button>
-                  <button onClick={handleAdvancedSettings} disabled={isCreating} className="w-full py-4 bg-gray-50 text-gray-900 font-medium rounded-2xl 
-                               border border-gray-200 hover:bg-gray-100 transition-all 
+                  <button onClick={handleAdvancedSettings} disabled={isCreating} className="w-full py-4 bg-gray-50 text-gray-900 font-medium rounded-2xl
+                               border border-gray-200 hover:bg-gray-100 transition-all
                                flex items-center justify-center space-x-3 disabled:opacity-50">
                     <Settings className="w-5 h-5" />
                     <span>Réglages avancés</span>
@@ -221,7 +222,7 @@ const Step3VisualStyle: React.FC = () => {
               Personnalisez l'apparence de votre expérience
             </p>
           </div>
-          
+
           <div className="space-y-12">
             {/* Aperçu dynamique du Jackpot pour le type jackpot */}
             {selectedGameType === 'jackpot' && <div className="bg-gray-50 rounded-2xl p-8 py-0 px-[31px]">
@@ -260,7 +261,7 @@ const Step3VisualStyle: React.FC = () => {
 
           {/* Navigation */}
           <div className="flex justify-between items-center mt-12">
-            <button onClick={() => setCurrentStep(2)} className="flex items-center space-x-2 px-6 py-3 text-gray-600 hover:text-gray-900 
+            <button onClick={() => setCurrentStep(2)} className="flex items-center space-x-2 px-6 py-3 text-gray-600 hover:text-gray-900
                          transition-colors font-medium">
               <ArrowLeft className="w-5 h-5" />
               <span>Retour</span>
@@ -285,4 +286,5 @@ const Step3VisualStyle: React.FC = () => {
       </div>
     </div>;
 };
+
 export default Step3VisualStyle;
