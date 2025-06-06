@@ -35,7 +35,6 @@ const FunnelUnlockedGame: React.FC<FunnelUnlockedGameProps> = ({
 
   const { createParticipation } = useParticipations();
 
-
   const fields: FieldConfig[] = campaign.formFields || [
     { id: 'prenom', label: 'Prénom', type: 'text', required: true },
     { id: 'nom', label: 'Nom', type: 'text', required: true },
@@ -132,7 +131,6 @@ const FunnelUnlockedGame: React.FC<FunnelUnlockedGameProps> = ({
       <GameRenderer
         campaign={campaign}
         formValidated={formValidated}
-        gameStarted={gameStarted}
         showValidationMessage={showValidationMessage}
         previewMode={previewMode}
         mobileConfig={mobileConfig}
