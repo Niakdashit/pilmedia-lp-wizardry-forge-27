@@ -9,7 +9,7 @@ const Dashboard: React.FC = () => {
     value: '5',
     change: '+2 cette semaine',
     icon: <Target className="w-6 h-6 text-[#841b60]" />
-  }, {
+  }, { 
     name: 'Participations',
     value: '1254',
     change: '+18% ce mois',
