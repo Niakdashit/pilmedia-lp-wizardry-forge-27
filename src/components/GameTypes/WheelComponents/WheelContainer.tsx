@@ -27,7 +27,8 @@ const WheelContainer: React.FC<WheelContainerProps> = ({
       alignItems: 'center',
       justifyContent: 'center',
       gap: '16px',
-      zIndex: 10
+      zIndex: 10,
+      overflow: shouldCropWheel ? 'hidden' : 'visible'
     };
 
     const safeMargin = 20;
@@ -36,40 +37,40 @@ const WheelContainer: React.FC<WheelContainerProps> = ({
     if (shouldCropWheel) {
       switch (gamePosition) {
         case 'left':
-          // Show only right part of wheel (wheel positioned so left half is cut off)
+          // Position la roue pour que seule la moitié droite soit visible
           return {
             ...containerStyle,
             flexDirection: 'row-reverse',
-            left: `0px`, // Position container at left edge
+            left: `0px`,
             top: '50%',
             transform: 'translateY(-50%)',
-            width: `${gameDimensions.width / 2}px`, // Container shows only half width
+            width: `${gameDimensions.width / 2}px`, // Container ne montre que la moitié
             height: `${gameDimensions.height}px`,
-            overflow: 'hidden'
+            clipPath: 'inset(0 0 0 50%)', // Coupe la moitié gauche
           };
         case 'right':
-          // Show only left part of wheel (wheel positioned so right half is cut off)
+          // Position la roue pour que seule la moitié gauche soit visible
           return {
             ...containerStyle,
             flexDirection: 'row',
-            right: `0px`, // Position container at right edge
+            right: `0px`,
             top: '50%',
             transform: 'translateY(-50%)',
-            width: `${gameDimensions.width / 2}px`, // Container shows only half width
+            width: `${gameDimensions.width / 2}px`, // Container ne montre que la moitié
             height: `${gameDimensions.height}px`,
-            overflow: 'hidden'
+            clipPath: 'inset(0 50% 0 0)', // Coupe la moitié droite
           };
         case 'bottom':
-          // Show only top part of wheel (wheel positioned so bottom half is cut off)
+          // Position la roue pour que seule la moitié haute soit visible
           return {
             ...containerStyle,
             flexDirection: 'column',
-            bottom: `0px`, // Position container at bottom edge
+            bottom: `0px`,
             left: '50%',
             transform: 'translateX(-50%)',
             width: `${gameDimensions.width}px`,
-            height: `${gameDimensions.height / 2}px`, // Container shows only half height
-            overflow: 'hidden'
+            height: `${gameDimensions.height / 2}px`, // Container ne montre que la moitié
+            clipPath: 'inset(0 0 50% 0)', // Coupe la moitié basse
           };
       }
     }

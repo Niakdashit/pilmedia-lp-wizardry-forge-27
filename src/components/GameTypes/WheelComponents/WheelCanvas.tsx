@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect } from 'react';
 
 interface Segment {
@@ -25,18 +24,20 @@ interface WheelCanvasProps {
   position?: 'gauche' | 'droite' | 'bas' | 'centre';
 }
 
-const getClipPath = (position: string | undefined) => {
-  switch (position) {
-    case 'gauche':
-      return 'inset(0 0 0 50%)';
-    case 'droite':
-      return 'inset(0 50% 0 0)';
-    case 'bas':
-      return 'inset(0 0 50% 0)';
-    case 'centre':
-    default:
-      return 'none';
+const getClipPath = (position: string | undefined, gamePosition?: string) => {
+  // Pour mobile uniquement, applique le clipping selon gamePosition
+  if (gamePosition === 'left') {
+    // Position gauche : montre seulement la moitié droite de la roue
+    return 'inset(0 0 0 50%)';
+  } else if (gamePosition === 'right') {
+    // Position droite : montre seulement la moitié gauche de la roue  
+    return 'inset(0 50% 0 0)';
+  } else if (gamePosition === 'bottom') {
+    // Position bas : montre seulement la moitié haute de la roue
+    return 'inset(0 0 50% 0)';
   }
+  
+  return 'none'; // Position centre ou autres : pas de clipping
 };
 
 const getThemeColors = (theme: string): string[] => {
@@ -213,8 +214,6 @@ const WheelCanvas: React.FC<WheelCanvasProps> = ({
         left: offset,
         top: 0,
         zIndex: 1,
-        clipPath: getClipPath(position),
-        WebkitClipPath: getClipPath(position),
         overflow: 'hidden',
       }}
       className="rounded-full"

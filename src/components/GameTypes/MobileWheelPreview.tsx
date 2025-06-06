@@ -28,7 +28,7 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
     return null;
   }
 
-  // Positionnement absolu fixe pour chaque position - complètement indépendant du contenu
+  // Positionnement absolu pour chaque position avec cropping correct
   const getAbsoluteGameStyle = (): React.CSSProperties => {
     const baseStyle: React.CSSProperties = {
       position: 'absolute',
@@ -40,41 +40,45 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
       case 'left':
         return {
           ...baseStyle,
-          left: `-${canvasSize / 2}px`, // Toujours à moitié cachée
+          left: `0px`,
           top: '50%',
           transform: 'translateY(-50%)',
-          width: canvasSize,
-          height: canvasSize
+          width: canvasSize / 2, // Conteneur réduit à 50%
+          height: canvasSize,
+          overflow: 'hidden'
         };
       
       case 'right':
         return {
           ...baseStyle,
-          right: `-${canvasSize / 2}px`, // Toujours à moitié cachée
+          right: `0px`,
           top: '50%',
           transform: 'translateY(-50%)',
-          width: canvasSize,
-          height: canvasSize
+          width: canvasSize / 2, // Conteneur réduit à 50%
+          height: canvasSize,
+          overflow: 'hidden'
         };
       
       case 'top':
         return {
           ...baseStyle,
-          top: `-${canvasSize / 2}px`, // Toujours à moitié cachée
+          top: `0px`,
           left: '50%',
           transform: 'translateX(-50%)',
           width: canvasSize,
-          height: canvasSize
+          height: canvasSize / 2, // Conteneur réduit à 50%
+          overflow: 'hidden'
         };
       
       case 'bottom':
         return {
           ...baseStyle,
-          bottom: `-${canvasSize / 2}px`, // Toujours à moitié cachée
+          bottom: `0px`,
           left: '50%',
           transform: 'translateX(-50%)',
           width: canvasSize,
-          height: canvasSize
+          height: canvasSize / 2, // Conteneur réduit à 50%
+          overflow: 'hidden'
         };
       
       case 'center':
@@ -90,26 +94,31 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
     }
   };
 
-  // Détermine si on doit couper la roue (positions left/right/bottom)
-  const shouldCropWheel = ['left', 'right', 'bottom'].includes(gamePosition);
-
-  const containerWidth =
-    shouldCropWheel && (gamePosition === 'left' || gamePosition === 'right')
-      ? canvasSize / 2
-      : canvasSize;
-
-  const containerHeight =
-    shouldCropWheel && gamePosition === 'bottom' ? canvasSize / 2 : canvasSize;
-  
-  // Offset pour le canvas dans le conteneur
+  // Détermine l'offset du canvas dans le conteneur pour les positions croppées
   const getCanvasOffset = () => {
-    if (!shouldCropWheel) return '0px';
-    if (gamePosition === 'right') return `-${canvasSize / 2}px`;
-    return '0px';
+    switch (gamePosition) {
+      case 'left':
+        return '0px'; // Canvas à gauche du conteneur, seule la partie droite visible
+      case 'right':
+        return `-${canvasSize / 2}px`; // Canvas décalé à gauche, seule la partie gauche visible
+      case 'bottom':
+        return '0px'; // Canvas en haut du conteneur, seule la partie haute visible
+      default:
+        return '0px';
+    }
   };
 
+  const containerWidth = ['left', 'right'].includes(gamePosition) ? canvasSize / 2 : canvasSize;
+  const containerHeight = ['top', 'bottom'].includes(gamePosition) ? canvasSize / 2 : canvasSize;
+  const shouldCropWheel = ['left', 'right', 'bottom'].includes(gamePosition);
+
   const renderWheelContainer = () => (
-    <div style={{ position: 'relative', width: containerWidth, height: containerHeight, overflow: 'hidden' }}>
+    <div style={{ 
+      position: 'relative', 
+      width: containerWidth, 
+      height: containerHeight, 
+      overflow: shouldCropWheel ? 'hidden' : 'visible' 
+    }}>
       <WheelCanvas
         segments={segments}
         centerImage={centerImage}
