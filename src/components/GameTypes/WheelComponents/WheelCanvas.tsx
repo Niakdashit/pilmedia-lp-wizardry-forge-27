@@ -38,7 +38,7 @@ const getClipPath = (position: string | undefined) => {
   }
 };
 
-const getCanvasStyles = (position: string | undefined, canvasSize: number): React.CSSProperties => {
+const getCanvasStyles = (position: string | undefined): React.CSSProperties => {
   const baseStyles: React.CSSProperties = {
     position: 'absolute',
     zIndex: 1,
@@ -49,28 +49,28 @@ const getCanvasStyles = (position: string | undefined, canvasSize: number): Reac
 
   switch (position) {
     case 'gauche':
-      // Roue alignée à gauche, centre sur le bord gauche du conteneur
+      // Centre de la roue sur le bord gauche du conteneur (left: 50% de la roue)
       return {
         ...baseStyles,
-        left: '0px',
+        left: '50%', // Position le centre de la roue sur le bord gauche du conteneur
         top: '50%',
-        transform: 'translateY(-50%)',
+        transform: 'translate(-50%, -50%)',
       };
     case 'droite':
-      // Roue alignée à droite, centre sur le bord droit du conteneur
+      // Centre de la roue sur le bord droit du conteneur
       return {
         ...baseStyles,
-        right: '0px',
+        right: '50%', // Position le centre de la roue sur le bord droit du conteneur
         top: '50%',
-        transform: 'translateY(-50%)',
+        transform: 'translate(50%, -50%)',
       };
     case 'bas':
-      // Roue alignée en bas, centre sur le bord bas du conteneur
+      // Centre de la roue sur le bord bas du conteneur
       return {
         ...baseStyles,
-        bottom: '0px',
+        bottom: '50%', // Position le centre de la roue sur le bord bas du conteneur
         left: '50%',
-        transform: 'translateX(-50%)',
+        transform: 'translate(-50%, 50%)',
       };
     case 'centre':
     default:
@@ -252,7 +252,7 @@ const WheelCanvas: React.FC<WheelCanvasProps> = ({
       ref={canvasRef}
       width={canvasSize}
       height={canvasSize}
-      style={getCanvasStyles(position, canvasSize)}
+      style={getCanvasStyles(position)}
       className="rounded-full"
     />
   );
