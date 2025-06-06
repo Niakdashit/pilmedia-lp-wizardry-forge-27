@@ -230,7 +230,7 @@ const Step3VisualStyle: React.FC = () => {
             {/* Aperçu dynamique du jeu - Design unifié pour toutes les mécaniques */}
             <div className="flex justify-center">
               <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-3xl p-12 shadow-inner border border-gray-200/50 max-w-2xl w-full py-0">
-                <div className="flex flex-col items-center justify-center space-y-8 min-h-[400px]">
+                <div className="flex flex-col items-center justify-center space-y- min-h-[100px]">
                   {selectedGameType === 'jackpot' ? <JackpotPreview customColors={customColors} jackpotColors={jackpotColors} /> : <div className="flex flex-col items-center space-y-8">
                       {/* Titre de la mécanique */}
                       <div className="text-center">
