@@ -8,7 +8,6 @@ import GameRenderer from './Preview/GameRenderer';
 
 const Step3VisualStyle: React.FC = () => {
   const {
-    currentStep,
     setCurrentStep,
     selectedGameType,
     customColors,
@@ -53,7 +52,7 @@ const Step3VisualStyle: React.FC = () => {
         <p className="text-gray-600">Personnalisez l'apparence de votre expérience</p>
       </div>
 
-      {/* Aperçu de la roue - Repositionné ici */}
+      {/* Aperçu de la roue */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-semibold text-gray-900">Aperçu en temps réel</h3>
