@@ -99,7 +99,7 @@ const Step1GameSelection: React.FC = () => {
                   key={game.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
+                  transition={{ duration: 0.3 }}
                   onClick={() => handleGameSelect(game.id)}
                   className={`
                     relative p-8 rounded-3xl border-2 cursor-pointer transition-all duration-300
