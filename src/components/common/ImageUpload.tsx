@@ -1,156 +1,153 @@
 
-import React, { useCallback, useRef } from 'react';
-import { Upload } from 'lucide-react';
+import React, { useRef } from 'react';
+import { Upload, X } from 'lucide-react';
 
 interface ImageUploadProps {
-  value?: string;
+  value: string;
   onChange: (value: string) => void;
-  label?: string;
-  className?: string;
+  label: string;
   compact?: boolean;
+  accept?: string;
 }
 
-const ImageUpload: React.FC<ImageUploadProps> = ({ 
-  value, 
-  onChange, 
-  label, 
-  className,
-  compact = false 
+const ImageUpload: React.FC<ImageUploadProps> = ({
+  value,
+  onChange,
+  label,
+  compact = false,
+  accept = "image/*"
 }) => {
-  const inputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
+  const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log('Drop event triggered');
-    const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith('image/')) {
-      console.log('Processing dropped file:', file.name);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        console.log('File read complete, calling onChange with:', reader.result);
-        onChange(reader.result as string);
-      };
-      reader.onerror = () => {
-        console.error('Error reading dropped file');
-      };
-      reader.readAsDataURL(file);
+    console.log('Upload area clicked, triggering file input');
+    if (fileInputRef.current) {
+      console.log('File input found, triggering click');
+      fileInputRef.current.click();
     } else {
-      console.log('Invalid file type or no file dropped');
+      console.error('File input ref not found');
     }
-  }, [onChange]);
+  };
 
-  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('File input change triggered');
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      console.log('Processing selected file:', file.name, 'type:', file.type);
+      console.log('File selected:', file.name);
       const reader = new FileReader();
-      reader.onloadend = () => {
-        console.log('File read complete, calling onChange with:', reader.result);
-        onChange(reader.result as string);
+      reader.onload = () => {
+        const result = reader.result as string;
+        console.log('File read successfully, calling onChange');
+        onChange(result);
       };
       reader.onerror = () => {
-        console.error('Error reading selected file');
+        console.error('Error reading file');
       };
       reader.readAsDataURL(file);
-    } else {
-      console.log('No file selected');
     }
-  }, [onChange]);
+    // Reset input value to allow selecting the same file again
+    e.target.value = '';
+  };
 
-  const handleRemoveImage = useCallback((e: React.MouseEvent) => {
+  const handleRemove = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     console.log('Removing image');
     onChange('');
-  }, [onChange]);
+  };
 
-  const handleClick = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    console.log('Upload area clicked, triggering file input');
-    
-    if (inputRef.current) {
-      console.log('File input found, triggering click');
-      inputRef.current.click();
-    } else {
-      console.error('File input ref not available');
-    }
-  }, []);
-
-  const handleDragOver = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-  }, []);
+  if (compact) {
+    return (
+      <div className="space-y-2">
+        {value ? (
+          <div className="relative inline-block">
+            <img
+              src={value}
+              alt="Preview"
+              className="w-16 h-16 object-cover rounded border border-gray-300"
+            />
+            <button
+              onClick={handleRemove}
+              className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center text-xs hover:bg-red-600 transition-colors"
+              type="button"
+            >
+              <X className="w-3 h-3" />
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={handleClick}
+            className="w-16 h-16 border-2 border-dashed border-gray-300 rounded flex items-center justify-center hover:border-gray-400 hover:bg-gray-50 transition-colors cursor-pointer"
+            type="button"
+          >
+            <Upload className="w-4 h-4 text-gray-400" />
+          </button>
+        )}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept={accept}
+          onChange={handleFileChange}
+          className="hidden"
+        />
+      </div>
+    );
+  }
 
   return (
-    <div className={className}>
+    <div className="space-y-2">
       {label && (
-        <label className="block text-sm font-medium text-gray-700 mb-1">
+        <label className="block text-sm font-medium text-gray-700">
           {label}
         </label>
       )}
       
-      <div 
-        className={`relative border-2 border-dashed border-gray-300 rounded-lg hover:border-[#841b60] transition-colors duration-200 cursor-pointer ${
-          compact ? 'p-2' : 'p-6'
-        }`}
-        onDragOver={handleDragOver}
-        onDrop={handleDrop}
-        onClick={handleClick}
-      >
-        <input
-          ref={inputRef}
-          type="file"
-          accept="image/*"
-          onChange={handleFileChange}
-          className="hidden"
-        />
-        
-        <div className="text-center pointer-events-none">
-          {value ? (
-            <div className="relative">
-              <img 
-                src={value} 
-                alt="Preview" 
-                className={compact ? "max-h-16 mx-auto rounded" : "max-h-48 mx-auto rounded-lg"}
-                onError={(e) => {
-                  console.error('Error loading image preview:', e);
-                }}
-              />
-              <button
-                type="button"
-                onClick={handleRemoveImage}
-                className="absolute top-1 right-1 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 text-xs pointer-events-auto"
-              >
-                ×
-              </button>
-            </div>
-          ) : (
-            <>
-              <div className={`mx-auto bg-[#f8f0f5] rounded-full flex items-center justify-center mb-2 ${
-                compact ? 'w-8 h-8' : 'w-12 h-12 mb-3'
-              }`}>
-                <Upload className={compact ? "w-4 h-4 text-[#841b60]" : "w-6 h-6 text-[#841b60]"} />
-              </div>
-              <p className={compact ? "text-xs text-gray-500" : "text-sm text-gray-500"}>
-                {compact ? "Ajouter image" : "Glissez-déposez une image ici ou cliquez"}
-                {!compact && (
-                  <span className="text-[#841b60] hover:text-[#6d164f] ml-1">
-                    pour parcourir vos fichiers
-                  </span>
-                )}
-              </p>
-              {!compact && (
-                <p className="text-xs text-gray-400 mt-1">
-                  PNG, JPG jusqu'à 5MB
-                </p>
-              )}
-            </>
-          )}
+      {value ? (
+        <div className="relative inline-block">
+          <img
+            src={value}
+            alt="Preview"
+            className="max-w-full h-32 object-cover rounded border border-gray-300"
+          />
+          <button
+            onClick={handleRemove}
+            className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors"
+            type="button"
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
-      </div>
+      ) : (
+        <div
+          onClick={handleClick}
+          className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-gray-400 hover:bg-gray-50 transition-colors"
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              handleClick(e as any);
+            }
+          }}
+        >
+          <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+          <p className="text-sm text-gray-600">
+            Cliquez pour ajouter une image
+          </p>
+          <p className="text-xs text-gray-400 mt-1">
+            PNG, JPG jusqu'à 10MB
+          </p>
+        </div>
+      )}
+      
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept={accept}
+        onChange={handleFileChange}
+        className="hidden"
+      />
     </div>
   );
 };
