@@ -7,6 +7,7 @@ import CampaignPreviewModal from './CampaignPreviewModal';
 import ColorCustomizer from './ColorCustomizer';
 import JackpotPreview from './Preview/JackpotPreview';
 import GameRenderer from './Preview/GameRenderer';
+
 const Step3VisualStyle: React.FC = () => {
   const navigate = useNavigate();
   const {
@@ -229,21 +230,27 @@ const Step3VisualStyle: React.FC = () => {
           <div className="space-y-16">
             {/* Aperçu dynamique du jeu - Design unifié pour toutes les mécaniques */}
             <div className="flex justify-center">
-              <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-3xl p-12 shadow-inner border border-gray-200/50 max-w-2xl w-full px-0 py-0">
-                <div className="flex flex-col items-center justify-center space-y- min-h-[100px] px-0 py-0">
-                  {selectedGameType === 'jackpot' ? <JackpotPreview customColors={customColors} jackpotColors={jackpotColors} className="mx-0" /> : <div className="flex flex-col items-center space-y-8">
-                      {/* Titre de la mécanique */}
-                      <div className="text-center py-[69px] my-0">
-                        
-                        
-                      </div>
-                      
-                      {/* Conteneur du jeu avec échelle adaptée */}
-                      <div className="transform scale-90 origin-center">
-                        <GameRenderer gameType={selectedGameType || 'wheel'} mockCampaign={previewCampaign} customColors={customColors} jackpotColors={jackpotColors} gameSize="medium" gamePosition="center" previewDevice="desktop" />
-                      </div>
-                    </div>}
-                </div>
+              <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-3xl shadow-inner border border-gray-200/50 max-w-2xl w-full flex items-center justify-center min-h-[400px] p-8">
+                {selectedGameType === 'jackpot' ? (
+                  <JackpotPreview 
+                    customColors={customColors} 
+                    jackpotColors={jackpotColors}
+                  />
+                ) : (
+                  <div className="flex flex-col items-center justify-center w-full h-full">
+                    <div className="transform scale-90 origin-center">
+                      <GameRenderer 
+                        gameType={selectedGameType || 'wheel'} 
+                        mockCampaign={previewCampaign} 
+                        customColors={customColors} 
+                        jackpotColors={jackpotColors} 
+                        gameSize="medium" 
+                        gamePosition="center" 
+                        previewDevice="desktop" 
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -307,4 +314,5 @@ const Step3VisualStyle: React.FC = () => {
       </div>
     </div>;
 };
+
 export default Step3VisualStyle;
