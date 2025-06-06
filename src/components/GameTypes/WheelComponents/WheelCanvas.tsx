@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect } from 'react';
 
 interface Segment {
@@ -33,6 +32,20 @@ const getClipPath = (position: string | undefined) => {
       return 'inset(0 50% 0 0)';
     case 'bas':
       return 'inset(0 0 50% 0)';
+    case 'centre':
+    default:
+      return 'none';
+  }
+};
+
+const getWheelTranslation = (position: string | undefined) => {
+  switch (position) {
+    case 'gauche':
+      return 'translateX(-25%)';
+    case 'droite':
+      return 'translateX(25%)';
+    case 'bas':
+      return 'translateY(-25%)';
     case 'centre':
     default:
       return 'none';
@@ -216,6 +229,8 @@ const WheelCanvas: React.FC<WheelCanvasProps> = ({
         clipPath: getClipPath(position),
         WebkitClipPath: getClipPath(position),
         overflow: 'hidden',
+        transform: getWheelTranslation(position), // 🟢 translation dynamique
+        transition: 'transform 0.3s',
       }}
       className="rounded-full"
     />
