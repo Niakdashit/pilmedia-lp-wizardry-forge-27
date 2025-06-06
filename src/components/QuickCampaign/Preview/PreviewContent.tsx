@@ -2,7 +2,6 @@
 import React from 'react';
 import FunnelUnlockedGame from '../../funnels/FunnelUnlockedGame';
 import FunnelStandard from '../../funnels/FunnelStandard';
-import MobilePreview from '../../CampaignEditor/Mobile/MobilePreview';
 
 interface PreviewContentProps {
   selectedDevice: 'desktop' | 'tablet' | 'mobile';
@@ -46,37 +45,85 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
     return <FunnelStandard campaign={mockCampaign} />;
   };
 
-  const renderDesktopPreview = () => (
-    <div className="w-full h-full flex items-center justify-center bg-gray-50 relative overflow-hidden">
-      {/* Background image if available */}
-      {mockCampaign.design?.backgroundImage && (
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30"
-          style={{
-            backgroundImage: `url(${mockCampaign.design.backgroundImage})`
-          }}
-        />
-      )}
-      
-      {/* Content container */}
-      <div className="relative z-10 max-w-2xl mx-auto p-8">
-        {getFunnelComponent()}
-      </div>
-    </div>
-  );
+  const getContainerStyle = () => {
+    const baseStyle = {
+      width: '100%',
+      height: '100%',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: '#f9fafb',
+      position: 'relative' as const,
+      overflow: 'hidden' as const
+    };
 
-  const renderMobilePreview = () => (
-    <div className="w-full h-full flex items-center justify-center p-4 bg-gray-50">
-      <MobilePreview
-        campaign={mockCampaign}
-        previewMode={selectedDevice === 'tablet' ? 'tablet' : 'mobile'}
-      />
-    </div>
-  );
+    // Background image if available
+    if (mockCampaign.design?.backgroundImage) {
+      return {
+        ...baseStyle,
+        backgroundImage: `url(${mockCampaign.design.backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      };
+    }
+
+    return baseStyle;
+  };
+
+  const getDeviceContainerStyle = () => {
+    switch (selectedDevice) {
+      case 'tablet':
+        return {
+          maxWidth: '768px',
+          maxHeight: '1024px',
+          margin: '0 auto',
+          border: '1px solid #e5e7eb',
+          borderRadius: '12px',
+          overflow: 'hidden' as const,
+          backgroundColor: '#ffffff'
+        };
+      case 'mobile':
+        return {
+          maxWidth: '375px',
+          maxHeight: '812px',
+          margin: '0 auto',
+          border: '1px solid #e5e7eb',
+          borderRadius: '20px',
+          overflow: 'hidden' as const,
+          backgroundColor: '#ffffff'
+        };
+      default:
+        return {
+          width: '100%',
+          height: '100%'
+        };
+    }
+  };
 
   return (
     <div className="flex-1 pt-20 overflow-auto">
-      {selectedDevice === 'desktop' ? renderDesktopPreview() : renderMobilePreview()}
+      <div className="w-full h-full flex items-center justify-center p-4">
+        <div style={getDeviceContainerStyle()}>
+          <div style={getContainerStyle()}>
+            {/* Background overlay for better contrast if background image exists */}
+            {mockCampaign.design?.backgroundImage && (
+              <div 
+                className="absolute inset-0 bg-black opacity-20"
+                style={{ zIndex: 1 }}
+              />
+            )}
+            
+            {/* Content container */}
+            <div 
+              className="relative z-10 w-full h-full flex items-center justify-center p-4"
+              style={{ minHeight: selectedDevice === 'desktop' ? '600px' : '100%' }}
+            >
+              {getFunnelComponent()}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
