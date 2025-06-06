@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import ValidationMessage from '../common/ValidationMessage';
 import { useParticipations } from '../../hooks/useParticipations';
@@ -77,7 +76,6 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   
   const { canvasSize, containerWidth, pointerSize } = getWheelDimensions(
     gameDimensions,
-    previewDevice,
     gamePosition,
     shouldCropWheel
   );
@@ -169,7 +167,6 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
         
         <WheelInteractionHandler
           formValidated={formValidated}
-          buttonConfig={buttonConfig}
           onWheelClick={handleWheelClick}
         >
           <WheelCanvas

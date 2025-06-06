@@ -21,7 +21,6 @@ export const getWheelSegments = (campaign: any) => {
 
 export const getWheelDimensions = (
   gameDimensions: any,
-  previewDevice: string,
   gamePosition: string,
   shouldCropWheel: boolean
 ) => {

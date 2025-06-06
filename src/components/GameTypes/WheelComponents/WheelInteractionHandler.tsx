@@ -3,14 +3,12 @@ import React from 'react';
 
 interface WheelInteractionHandlerProps {
   formValidated: boolean;
-  buttonConfig: any;
   onWheelClick: () => void;
   children: React.ReactNode;
 }
 
 const WheelInteractionHandler: React.FC<WheelInteractionHandlerProps> = ({
   formValidated,
-  buttonConfig,
   onWheelClick,
   children
 }) => {
