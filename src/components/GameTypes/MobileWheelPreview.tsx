@@ -36,16 +36,16 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
     };
 
     switch (gamePosition) {
-     case 'left':
-  return {
-    ...baseStyle,
-    left: '50px',
-    top: '50%',
-    transform: 'translateY(-50%)',
-    width: canvasSize / 2,
-    height: canvasSize,
-    overflow: 'hidden'
-  };
+      case 'left':
+        return {
+          ...baseStyle,
+          right: `50px`,
+          top: '50%',
+          transform: 'translateY(-350%)',
+          width: canvasSize / 2, // Conteneur réduit à 50%
+          height: canvasSize,
+          overflow: 'hidden'
+        };
       
       case 'right':
         return {
