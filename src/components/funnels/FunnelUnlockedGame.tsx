@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParticipations } from '../../hooks/useParticipations';
 import GameRenderer from './components/GameRenderer';
@@ -26,7 +25,6 @@ const FunnelUnlockedGame: React.FC<FunnelUnlockedGameProps> = ({
   mobileConfig,
   modalContained = true
 }) => {
-  const [gameStarted, setGameStarted] = useState(false);
   const [formValidated, setFormValidated] = useState(false);
   const [showFormModal, setShowFormModal] = useState(false);
   const [showValidationMessage, setShowValidationMessage] = useState(false);
@@ -74,7 +72,7 @@ const FunnelUnlockedGame: React.FC<FunnelUnlockedGameProps> = ({
   };
 
   const handleGameStart = () => {
-    setGameStarted(true);
+    // Game started logic if needed
   };
 
   const handleGameFinish = async (result: 'win' | 'lose') => {
@@ -95,9 +93,8 @@ const FunnelUnlockedGame: React.FC<FunnelUnlockedGameProps> = ({
   };
 
   const handleReset = () => {
-    setGameStarted(false);
-    setGameResult(null);
     setFormValidated(false);
+    setGameResult(null);
     setShowFormModal(false);
     setShowValidationMessage(false);
   };
