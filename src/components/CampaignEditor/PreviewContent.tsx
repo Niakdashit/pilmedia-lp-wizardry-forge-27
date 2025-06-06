@@ -1,8 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import Color from 'color';
 import confetti from 'canvas-confetti';
 import { Quiz, Wheel, Scratch, Memory, Puzzle, Dice } from '../GameTypes';
+import FormPreview from '../GameTypes/FormPreview';
 
 interface PreviewContentProps {
   campaign: any;
@@ -115,6 +115,14 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
           <Dice 
             config={campaign.gameConfig.dice} 
             onConfigChange={() => {}}
+          />
+        );
+
+      case 'form':
+        return (
+          <FormPreview
+            campaign={campaign}
+            gameSize="medium"
           />
         );
 

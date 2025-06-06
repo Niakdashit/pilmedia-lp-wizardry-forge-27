@@ -6,6 +6,7 @@ import MemoryPreview from '../GameTypes/MemoryPreview';
 import PuzzlePreview from '../GameTypes/PuzzlePreview';
 import ScratchPreview from '../GameTypes/ScratchPreview';
 import DicePreview from '../GameTypes/DicePreview';
+import FormPreview from '../GameTypes/FormPreview';
 import { GAME_SIZES, GameSize } from '../configurators/GameSizeSelector';
 
 interface GameCanvasPreviewProps {
@@ -189,6 +190,15 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
         return (
           <div style={gameContainerStyle}>
             <DicePreview config={campaign.gameConfig?.dice || {}} />
+          </div>
+        );
+      case 'form':
+        return (
+          <div style={gameContainerStyle}>
+            <FormPreview
+              campaign={campaign}
+              gameSize={gameSize}
+            />
           </div>
         );
       default:

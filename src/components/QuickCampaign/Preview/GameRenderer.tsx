@@ -1,9 +1,9 @@
-
 import React from 'react';
 import WheelPreview from '../../GameTypes/WheelPreview';
 import { Jackpot } from '../../GameTypes';
 import ScratchPreview from '../../GameTypes/ScratchPreview';
 import DicePreview from '../../GameTypes/DicePreview';
+import FormPreview from '../../GameTypes/FormPreview';
 
 interface GameRendererProps {
   gameType: string;
@@ -116,6 +116,14 @@ const GameRenderer: React.FC<GameRendererProps> = ({
       return (
         <DicePreview 
           config={mockCampaign.gameConfig?.dice || {}}
+        />
+      );
+
+    case 'form':
+      return (
+        <FormPreview
+          campaign={synchronizedCampaign}
+          gameSize={gameSize}
         />
       );
 
