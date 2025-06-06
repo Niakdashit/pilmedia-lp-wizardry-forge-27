@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Image, Percent, Type } from 'lucide-react';
+import { Image, Percent, Type, Plus, Trash2 } from 'lucide-react';
 import ColorPaletteSelector from './ColorPaletteSelector';
 
 interface ScratchGameConfigProps {
@@ -12,6 +12,7 @@ const ScratchGameConfig: React.FC<ScratchGameConfigProps> = ({
   setCampaign
 }) => {
   const [selectedPalette, setSelectedPalette] = useState<any>(undefined);
+  const MAX_CARDS = 6;
 
   const handleScratchChange = (field: string, value: any) => {
     setCampaign((prev: any) => ({
@@ -24,6 +25,25 @@ const ScratchGameConfig: React.FC<ScratchGameConfigProps> = ({
         }
       }
     }));
+  };
+
+  const addCard = () => {
+    const cards = campaign.gameConfig?.scratch?.cards || [];
+    if (cards.length >= MAX_CARDS) return;
+    const newCard = { id: Date.now(), revealImage: '', revealMessage: '' };
+    handleScratchChange('cards', [...cards, newCard]);
+  };
+
+  const removeCard = (index: number) => {
+    const cards = [...(campaign.gameConfig?.scratch?.cards || [])];
+    cards.splice(index, 1);
+    handleScratchChange('cards', cards);
+  };
+
+  const updateCard = (index: number, field: string, value: string) => {
+    const cards = [...(campaign.gameConfig?.scratch?.cards || [])];
+    cards[index] = { ...cards[index], [field]: value };
+    handleScratchChange('cards', cards);
   };
 
   const handlePaletteSelect = (palette: any) => {
@@ -153,6 +173,64 @@ const ScratchGameConfig: React.FC<ScratchGameConfigProps> = ({
         <p className="text-xs text-gray-500">
           Image qui sera utilisée comme surface à gratter (par défaut: couleur métallique)
         </p>
+      </div>
+
+      {/* Cartes */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <label className="text-sm font-medium text-gray-700">
+            Cartes ({(campaign.gameConfig?.scratch?.cards || []).length})
+          </label>
+          {(campaign.gameConfig?.scratch?.cards || []).length < MAX_CARDS && (
+            <button
+              type="button"
+              onClick={addCard}
+              className="text-sm text-[#841b60] hover:text-[#6d164f] flex items-center"
+            >
+              <Plus className="w-4 h-4 mr-1" /> Ajouter une carte
+            </button>
+          )}
+        </div>
+
+        {(campaign.gameConfig?.scratch?.cards || []).map((card: any, index: number) => (
+          <div key={card.id} className="border border-gray-200 rounded-lg p-4 space-y-4">
+            <div className="flex justify-between items-start">
+              <h4 className="text-sm font-medium text-gray-700">Carte {index + 1}</h4>
+              <button onClick={() => removeCard(index)} className="p-1 text-red-500 hover:bg-red-50 rounded">
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">Message</label>
+              <input
+                type="text"
+                value={card.revealMessage}
+                onChange={(e) => updateCard(index, 'revealMessage', e.target.value)}
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#841b60]"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-medium text-gray-700">Image</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) {
+                    const url = URL.createObjectURL(file);
+                    updateCard(index, 'revealImage', url);
+                  }
+                }}
+                className="w-full"
+              />
+              {card.revealImage && (
+                <img src={card.revealImage} alt="Aperçu" className="w-full h-20 object-cover rounded border" />
+              )}
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );
