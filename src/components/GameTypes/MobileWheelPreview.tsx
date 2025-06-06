@@ -15,14 +15,14 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
   campaign,
   gamePosition = 'center'
 }) => {
-  const mobileRouletteConfig = campaign?.mobileConfig?.roulette || {};
-  const segments = mobileRouletteConfig.segments || [];
-  const centerImage = mobileRouletteConfig.centerImage;
-  const theme = mobileRouletteConfig.theme || 'default';
-  const borderColor = mobileRouletteConfig.borderColor || '#841b60';
-  const pointerColor = mobileRouletteConfig.pointerColor || '#841b60';
+  const mobileRouletteConfig = campaign?.mobileConfig?.roulette || campaign?.config?.roulette || {};
+  const segments = mobileRouletteConfig.segments || campaign?.config?.roulette?.segments || [];
+  const centerImage = mobileRouletteConfig.centerImage || campaign?.config?.roulette?.centerImage;
+  const theme = mobileRouletteConfig.theme || campaign?.config?.roulette?.theme || 'default';
+  const borderColor = mobileRouletteConfig.borderColor || campaign?.config?.roulette?.borderColor || '#841b60';
+  const pointerColor = mobileRouletteConfig.pointerColor || campaign?.config?.roulette?.pointerColor || '#841b60';
 
-  const canvasSize = mobileRouletteConfig.size || mobileRouletteConfig.width || CANVAS_SIZE;
+  const canvasSize = mobileRouletteConfig.size || mobileRouletteConfig.width || campaign?.config?.roulette?.size || campaign?.config?.roulette?.width || CANVAS_SIZE;
 
   if (segments.length === 0) {
     return null;

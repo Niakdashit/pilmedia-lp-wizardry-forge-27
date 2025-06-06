@@ -16,7 +16,8 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
   campaign,
   previewMode
 }) => {
-  const mobileConfig = campaign.mobileConfig || {};
+  const fallbackMobile = campaign.config?.mobileConfig || {};
+  const mobileConfig = { ...fallbackMobile, ...(campaign.mobileConfig || {}) };
   const specs = DEVICE_SPECS[previewMode];
   const gamePosition = mobileConfig.gamePosition || 'left';
   const deviceWidth = specs.width;

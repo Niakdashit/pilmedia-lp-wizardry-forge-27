@@ -1,8 +1,0 @@
-<svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-  <!-- Bordure jaune affinée -->
-  <circle cx="50" cy="50" r="47" fill="none" stroke="gold" stroke-width="3"/>
-  <!-- Pointillés blancs -->
-  <circle cx="50" cy="50" r="44" fill="none" stroke="#fff" stroke-dasharray="4 4" stroke-width="2"/>
-  <!-- Pointillés violets -->
-  <circle cx="50" cy="50" r="40" fill="none" stroke="#841b60" stroke-dasharray="2 8" stroke-width="2"/>
-</svg>

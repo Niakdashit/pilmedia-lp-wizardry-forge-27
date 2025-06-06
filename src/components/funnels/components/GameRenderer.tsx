@@ -41,13 +41,6 @@ const GameRenderer: React.FC<GameRendererProps> = ({
     : 'medium';
   const gamePosition = campaign.gamePosition || 'center';
 
-  console.log('GameRenderer - Current state:', {
-    formValidated,
-    gameStarted,
-    campaignType: campaign.type,
-    gameSize,
-    gamePosition
-  });
 
   const getGameContainerStyle = (): React.CSSProperties => {
     const gameDimensions = GAME_SIZES[gameSize];
@@ -74,21 +67,18 @@ const GameRenderer: React.FC<GameRendererProps> = ({
   };
 
   const handleGameComplete = (result: 'win' | 'lose') => {
-    console.log('GameRenderer - Game completed with result:', result);
     onGameFinish(result);
   };
 
   const handleGameStartInternal = () => {
-    console.log('GameRenderer - Game started');
     onGameStart();
   };
 
   const renderGameComponent = () => {
     switch (campaign.type) {
       case 'wheel':
-        console.log('GameRenderer - Rendering wheel with formValidated:', formValidated);
         return (
-          <WheelPreview 
+          <WheelPreview
             campaign={campaign} 
             config={{
               mode: 'instant_winner' as const,
@@ -168,7 +158,6 @@ const GameRenderer: React.FC<GameRendererProps> = ({
       {!formValidated && (
         <div 
           onClick={() => {
-            console.log('GameRenderer - Game overlay clicked, calling onGameButtonClick');
             onGameButtonClick();
           }}
           className="absolute inset-0 flex items-center justify-center z-30 rounded-lg cursor-pointer bg-black/0" 
