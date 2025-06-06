@@ -22,7 +22,22 @@ interface WheelCanvasProps {
   borderOutlineColor?: string;
   canvasSize: number;
   offset: string;
+  position?: 'gauche' | 'droite' | 'bas' | 'centre';
 }
+
+const getClipPath = (position: string | undefined) => {
+  switch (position) {
+    case 'gauche':
+      return 'inset(0 0 0 50%)';
+    case 'droite':
+      return 'inset(0 50% 0 0)';
+    case 'bas':
+      return 'inset(0 0 50% 0)';
+    case 'centre':
+    default:
+      return 'none';
+  }
+};
 
 const getThemeColors = (theme: string): string[] => {
   switch (theme) {
@@ -48,7 +63,8 @@ const WheelCanvas: React.FC<WheelCanvasProps> = ({
   borderColor = '#841b60',
   borderOutlineColor = '#FFD700',
   canvasSize,
-  offset
+  offset,
+  position = 'centre'
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -185,7 +201,7 @@ const WheelCanvas: React.FC<WheelCanvasProps> = ({
 
   useEffect(() => {
     drawWheel();
-  }, [segments, rotation, centerImage, centerLogo, theme, customColors, borderColor, borderOutlineColor, canvasSize]);
+  }, [segments, rotation, centerImage, centerLogo, theme, customColors, borderColor, borderOutlineColor, canvasSize, position]);
 
   return (
     <canvas
@@ -196,7 +212,10 @@ const WheelCanvas: React.FC<WheelCanvasProps> = ({
         position: 'absolute',
         left: offset,
         top: 0,
-        zIndex: 1
+        zIndex: 1,
+        clipPath: getClipPath(position),
+        WebkitClipPath: getClipPath(position),
+        overflow: 'hidden',
       }}
       className="rounded-full"
     />
