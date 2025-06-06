@@ -31,6 +31,11 @@ const GameRenderer: React.FC<GameRendererProps> = ({
   buttonColor,
   gameBackgroundImage
 }) => {
+  // Ensure gamePosition is properly typed for WheelPreview
+  const validGamePosition = (['top', 'center', 'bottom', 'left', 'right'].includes(gamePosition) 
+    ? gamePosition 
+    : 'center') as 'top' | 'center' | 'bottom' | 'left' | 'right';
+
   switch (campaign.type) {
     case 'jackpot':
       return (
@@ -75,7 +80,7 @@ const GameRenderer: React.FC<GameRendererProps> = ({
             }}
             onFinish={() => {}}
             gameSize={gameSize}
-            gamePosition={gamePosition}
+            gamePosition={validGamePosition}
             previewDevice={previewDevice}
             key={`${gameSize}-${gamePosition}-${previewDevice}-${JSON.stringify(campaign.gameConfig?.wheel)}`}
           />
