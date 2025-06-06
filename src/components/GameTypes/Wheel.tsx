@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect, useState } from 'react';
 import WheelStyleSelector from '../configurators/WheelStyleSelector';
 import { useGameSize } from '../../hooks/useGameSize';
@@ -14,7 +13,23 @@ interface WheelProps {
   winRate?: number;
   disabled?: boolean;
   gameSize?: 'small' | 'medium' | 'large' | 'xlarge';
+  position?: 'gauche' | 'droite' | 'bas' | 'centre'; // AJOUT DE LA POSITION
 }
+
+const getClipPath = (position: string | undefined) => {
+  // Retourne le clip-path CSS adapté à la position choisie
+  switch (position) {
+    case 'gauche':
+      return 'inset(0 0 0 50%)';
+    case 'droite':
+      return 'inset(0 50% 0 0)';
+    case 'bas':
+      return 'inset(0 0 50% 0)';
+    case 'centre':
+    default:
+      return 'none';
+  }
+};
 
 const Wheel: React.FC<WheelProps> = ({ 
   config, 
@@ -23,7 +38,8 @@ const Wheel: React.FC<WheelProps> = ({
   onFinish,
   onStart,
   disabled = false,
-  gameSize = 'small'
+  gameSize = 'small',
+  position = 'centre' // NOUVEAU : par défaut "centre"
 }) => {
   const wheelRef = useRef<HTMLDivElement>(null);
   const [isSpinning, setIsSpinning] = useState(false);
@@ -112,7 +128,21 @@ const Wheel: React.FC<WheelProps> = ({
         maxHeight: `${gameDimensions.height}px`
       }}
     >
-      <div className="relative" style={{ width: wheelSize, height: wheelSize }}>
+      {/* --- CLIPPING RESPONSIVE --- */}
+      <div 
+        className="relative"
+        style={{
+          width: wheelSize,
+          height: wheelSize,
+          // CLIPPING dynamique selon la position
+          clipPath: getClipPath(position),
+          WebkitClipPath: getClipPath(position), // pour Safari
+          overflow: 'hidden', // sécurité
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
         {/* Roue */}
         <div
           ref={wheelRef}
