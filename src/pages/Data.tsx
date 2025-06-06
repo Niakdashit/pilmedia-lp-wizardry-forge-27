@@ -79,7 +79,7 @@ const Data: React.FC = () => {
               </div>
             </div>
             
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <div className="border border-gray-200 rounded-lg p-4">
                 <h3 className="text-sm font-medium text-gray-600 mb-2">Top 10 réponses</h3>
                 <div className="h-48 flex items-center justify-center bg-gray-50 rounded">

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Target, Zap, Dice1, Gamepad2, Puzzle, ArrowRight } from 'lucide-react';
@@ -88,8 +89,8 @@ const Step1GameSelection: React.FC = () => {
           </div>
 
           {/* Game Selection Grid */}
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mb-16">
-            {gameTypes.map((game) => {
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-16">
+            {gameTypes.map((game, index) => {
               const IconComponent = game.icon;
               const isSelected = selectedGameType === game.id;
               
@@ -98,7 +99,7 @@ const Step1GameSelection: React.FC = () => {
                   key={game.id}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
+                  transition={{ delay: index * 0.1 }}
                   onClick={() => handleGameSelect(game.id)}
                   className={`
                     relative p-8 rounded-3xl border-2 cursor-pointer transition-all duration-300

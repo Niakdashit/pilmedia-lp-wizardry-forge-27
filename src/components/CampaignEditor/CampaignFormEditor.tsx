@@ -87,7 +87,7 @@ const CampaignFormEditor: React.FC<FormEditorProps> = ({ formFields, setFormFiel
             key={field.id}
             className="p-4 rounded-md border flex flex-col md:flex-row md:items-end gap-4 bg-gray-50 relative"
           >
-            <div className="flex-1 grid grid-cols-2 md:grid-cols-3 gap-3">
+            <div className="flex-1 grid grid-cols-1 md:grid-cols-3 gap-3">
               {/* Label */}
               <div>
                 <label className="block text-xs mb-1 font-medium">Label affiché</label>

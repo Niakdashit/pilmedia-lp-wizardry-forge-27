@@ -62,7 +62,7 @@ const ParticipationsManager: React.FC<ParticipationsManagerProps> = ({
   return (
     <div className="space-y-6">
       {/* Statistiques */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-white p-4 rounded-lg border border-gray-200">
           <div className="flex items-center">
             <Users className="w-8 h-8 text-blue-500" />
