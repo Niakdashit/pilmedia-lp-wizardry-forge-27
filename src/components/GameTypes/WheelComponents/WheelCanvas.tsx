@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect } from 'react';
 
 interface Segment {
@@ -37,20 +38,49 @@ const getClipPath = (position: string | undefined) => {
   }
 };
 
-const getCanvasTransform = (position: string | undefined, canvasSize: number) => {
+const getCanvasStyles = (position: string | undefined, canvasSize: number): React.CSSProperties => {
+  const baseStyles: React.CSSProperties = {
+    position: 'absolute',
+    zIndex: 1,
+    clipPath: getClipPath(position),
+    WebkitClipPath: getClipPath(position),
+    transition: 'transform 0.3s ease, clip-path 0.3s ease',
+  };
+
   switch (position) {
     case 'gauche':
-      // Déplace la roue vers la droite pour montrer seulement la partie droite
-      return `translateX(${canvasSize / 2}px)`;
+      // Roue alignée à gauche, centre sur le bord gauche du conteneur
+      return {
+        ...baseStyles,
+        left: '0px',
+        top: '50%',
+        transform: 'translateY(-50%)',
+      };
     case 'droite':
-      // Déplace la roue vers la gauche pour montrer seulement la partie gauche
-      return `translateX(-${canvasSize / 2}px)`;
+      // Roue alignée à droite, centre sur le bord droit du conteneur
+      return {
+        ...baseStyles,
+        right: '0px',
+        top: '50%',
+        transform: 'translateY(-50%)',
+      };
     case 'bas':
-      // Déplace la roue vers le haut pour montrer seulement la partie supérieure
-      return `translateY(-${canvasSize / 2}px)`;
+      // Roue alignée en bas, centre sur le bord bas du conteneur
+      return {
+        ...baseStyles,
+        bottom: '0px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+      };
     case 'centre':
     default:
-      return 'none';
+      // Roue parfaitement centrée
+      return {
+        ...baseStyles,
+        left: '50%',
+        top: '50%',
+        transform: 'translate(-50%, -50%)',
+      };
   }
 };
 
@@ -222,16 +252,7 @@ const WheelCanvas: React.FC<WheelCanvasProps> = ({
       ref={canvasRef}
       width={canvasSize}
       height={canvasSize}
-      style={{
-        position: 'absolute',
-        left: '50%',
-        top: '50%',
-        transform: `translate(-50%, -50%) ${getCanvasTransform(position, canvasSize)}`,
-        zIndex: 1,
-        clipPath: getClipPath(position),
-        WebkitClipPath: getClipPath(position),
-        transition: 'transform 0.3s ease, clip-path 0.3s ease',
-      }}
+      style={getCanvasStyles(position, canvasSize)}
       className="rounded-full"
     />
   );
