@@ -7,7 +7,6 @@ import CampaignPreviewModal from './CampaignPreviewModal';
 import ColorCustomizer from './ColorCustomizer';
 import JackpotPreview from './Preview/JackpotPreview';
 import GameRenderer from './Preview/GameRenderer';
-
 const Step3VisualStyle: React.FC = () => {
   const navigate = useNavigate();
   const {
@@ -35,21 +34,17 @@ const Step3VisualStyle: React.FC = () => {
   const [creationSuccess, setCreationSuccess] = useState(false);
   const previewCampaign = generatePreviewCampaign();
   const fileInputRef = useRef<HTMLInputElement>(null);
-
   const handleFileUpload = (files: FileList | null) => {
     if (files && files[0]) {
       setBackgroundImage(files[0]);
     }
   };
-
   const handleFinish = () => {
     setShowFinalStep(true);
   };
-
   const handlePreview = () => {
     setShowPreview(true);
   };
-
   const handleCreateCampaign = async () => {
     setIsCreating(true);
     try {
@@ -113,7 +108,6 @@ const Step3VisualStyle: React.FC = () => {
       setIsCreating(false);
     }
   };
-
   const handleAdvancedSettings = async () => {
     setIsCreating(true);
     try {
@@ -174,7 +168,6 @@ const Step3VisualStyle: React.FC = () => {
       setIsCreating(false);
     }
   };
-
   if (showFinalStep) {
     return <div className="min-h-screen bg-[#ebf4f7] flex items-center justify-center px-6 py-12">
         <div className="max-w-lg w-full text-center">
@@ -220,7 +213,6 @@ const Step3VisualStyle: React.FC = () => {
         <CampaignPreviewModal isOpen={showPreview} onClose={() => setShowPreview(false)} />
       </div>;
   }
-
   return <div className="min-h-screen bg-[#ebf4f7] px-6 py-12">
       <div className="max-w-6xl mx-auto">
         <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-8 md:p-12">
@@ -237,37 +229,22 @@ const Step3VisualStyle: React.FC = () => {
           <div className="space-y-16">
             {/* Aperçu dynamique du jeu - Design unifié pour toutes les mécaniques */}
             <div className="flex justify-center">
-              <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-3xl p-12 shadow-inner border border-gray-200/50 max-w-2xl w-full">
+              <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-3xl p-12 shadow-inner border border-gray-200/50 max-w-2xl w-full py-0">
                 <div className="flex flex-col items-center justify-center space-y-8 min-h-[400px]">
-                  {selectedGameType === 'jackpot' ? (
-                    <JackpotPreview customColors={customColors} jackpotColors={jackpotColors} />
-                  ) : (
-                    <div className="flex flex-col items-center space-y-8">
+                  {selectedGameType === 'jackpot' ? <JackpotPreview customColors={customColors} jackpotColors={jackpotColors} /> : <div className="flex flex-col items-center space-y-8">
                       {/* Titre de la mécanique */}
                       <div className="text-center">
                         <h3 className="text-2xl font-semibold text-gray-800 mb-2">
-                          {selectedGameType === 'wheel' ? 'Roue de la Fortune' : 
-                           selectedGameType === 'scratch' ? 'Carte à Gratter' :
-                           selectedGameType === 'dice' ? 'Lancer de Dés' :
-                           'Aperçu du Jeu'}
+                          {selectedGameType === 'wheel' ? 'Roue de la Fortune' : selectedGameType === 'scratch' ? 'Carte à Gratter' : selectedGameType === 'dice' ? 'Lancer de Dés' : 'Aperçu du Jeu'}
                         </h3>
                         <p className="text-gray-600">Personnalisez avec vos couleurs</p>
                       </div>
                       
                       {/* Conteneur du jeu avec échelle adaptée */}
                       <div className="transform scale-90 origin-center">
-                        <GameRenderer
-                          gameType={selectedGameType || 'wheel'}
-                          mockCampaign={previewCampaign}
-                          customColors={customColors}
-                          jackpotColors={jackpotColors}
-                          gameSize="medium"
-                          gamePosition="center"
-                          previewDevice="desktop"
-                        />
+                        <GameRenderer gameType={selectedGameType || 'wheel'} mockCampaign={previewCampaign} customColors={customColors} jackpotColors={jackpotColors} gameSize="medium" gamePosition="center" previewDevice="desktop" />
                       </div>
-                    </div>
-                  )}
+                    </div>}
                 </div>
               </div>
             </div>
@@ -280,25 +257,16 @@ const Step3VisualStyle: React.FC = () => {
               <h3 className="text-2xl font-light text-gray-900 mb-8">
                 Image de fond <span className="text-gray-400 font-light">(optionnel)</span>
               </h3>
-              <div
-                className="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer"
-                onClick={() => fileInputRef.current?.click()}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => e.key === 'Enter' && fileInputRef.current?.click()}
-              >
+              <div className="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer" onClick={() => fileInputRef.current?.click()} role="button" tabIndex={0} onKeyDown={e => e.key === 'Enter' && fileInputRef.current?.click()}>
                 <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                 {backgroundImage ? <div>
                     <p className="text-gray-900 font-medium mb-2">
                       {backgroundImage.name}
                     </p>
-                    <button 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setBackgroundImage(null);
-                      }} 
-                      className="text-red-500 hover:text-red-600 transition-colors"
-                    >
+                    <button onClick={e => {
+                  e.stopPropagation();
+                  setBackgroundImage(null);
+                }} className="text-red-500 hover:text-red-600 transition-colors">
                       Supprimer
                     </button>
                   </div> : <>
@@ -309,13 +277,7 @@ const Step3VisualStyle: React.FC = () => {
                     </p>
                     <p className="text-gray-400 text-sm">PNG, JPG jusqu'à 10MB</p>
                   </>}
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={e => handleFileUpload(e.target.files)}
-                  className="hidden"
-                />
+                <input ref={fileInputRef} type="file" accept="image/*" onChange={e => handleFileUpload(e.target.files)} className="hidden" />
               </div>
             </div>
           </div>
@@ -347,5 +309,4 @@ const Step3VisualStyle: React.FC = () => {
       </div>
     </div>;
 };
-
 export default Step3VisualStyle;
