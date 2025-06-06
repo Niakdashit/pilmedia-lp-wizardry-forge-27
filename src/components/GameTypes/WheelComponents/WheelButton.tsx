@@ -46,7 +46,7 @@ const WheelButton: React.FC<WheelButtonProps> = ({
       </span>
       <div style={{
       transform: 'skewX(-15deg)'
-    }} className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 mx-0 px-0" />
+    }} className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 mx-[9px] px-[16px]" />
     </button>;
 };
 export default WheelButton;
