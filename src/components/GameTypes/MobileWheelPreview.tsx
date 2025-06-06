@@ -122,10 +122,12 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
           theme={theme}
           borderColor={borderColor}
           canvasSize={canvasSize}
+          offset={offset.left}
         />
         <WheelDecorations
           theme={theme}
           canvasSize={canvasSize}
+          offset={offset.left}
         />
       </div>
 
