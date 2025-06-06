@@ -20,7 +20,7 @@ interface WheelPreviewContentProps {
   containerHeight: number;
   pointerSize: number;
   shouldCropWheel: boolean;
-  gamePosition: string;
+  gamePosition: 'top' | 'center' | 'bottom' | 'left' | 'right';
   formValidated: boolean;
   showValidationMessage: boolean;
   onWheelClick: () => void;
