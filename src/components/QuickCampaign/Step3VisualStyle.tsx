@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { ArrowLeft, Upload, Eye, Settings, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
@@ -31,6 +31,7 @@ const Step3VisualStyle: React.FC = () => {
   const [isCreating, setIsCreating] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [creationSuccess, setCreationSuccess] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const handleFileUpload = (files: FileList | null) => {
     if (files && files[0]) {
       setBackgroundImage(files[0]);
@@ -237,7 +238,13 @@ const Step3VisualStyle: React.FC = () => {
               <h3 className="text-2xl font-light text-gray-900 mb-8">
                 Image de fond <span className="text-gray-400 font-light">(optionnel)</span>
               </h3>
-              <div className="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center bg-gray-50">
+              <div
+                className="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center bg-gray-50"
+                onClick={() => fileInputRef.current?.click()}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => e.key === 'Enter' && fileInputRef.current?.click()}
+              >
                 <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                 {backgroundImage ? <div>
                     <p className="text-gray-900 font-medium mb-2">
@@ -250,7 +257,13 @@ const Step3VisualStyle: React.FC = () => {
                     <p className="text-gray-600 mb-2">
                       <label className="text-[#841b60] cursor-pointer hover:text-[#841b60]/80 transition-colors">
                         Téléchargez une image de fond
-                        <input type="file" accept="image/*" onChange={e => handleFileUpload(e.target.files)} className="hidden" />
+                        <input
+                          ref={fileInputRef}
+                          type="file"
+                          accept="image/*"
+                          onChange={e => handleFileUpload(e.target.files)}
+                          className="hidden"
+                        />
                       </label>
                     </p>
                     <p className="text-gray-400 text-sm">PNG, JPG jusqu'à 10MB</p>
