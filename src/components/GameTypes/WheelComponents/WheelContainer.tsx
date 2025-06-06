@@ -52,7 +52,7 @@ const WheelContainer: React.FC<WheelContainerProps> = ({
           return {
             ...containerStyle,
             flexDirection: 'row',
-            right: `0px`, // Position container at right edge
+            right: `0px`, // Position container at right edge  
             top: '50%',
             transform: 'translateY(-50%)',
             width: `${gameDimensions.width / 2}px`, // Container shows only half width
@@ -132,7 +132,15 @@ const WheelContainer: React.FC<WheelContainerProps> = ({
 
   return (
     <div style={getAbsolutePositionStyles()}>
-      {children}
+      {/* For cropped positions, we need to position the wheel so it overflows and gets cut */}
+      <div style={shouldCropWheel ? {
+        position: 'relative',
+        left: gamePosition === 'left' ? `${gameDimensions.width / 2}px` : 
+              gamePosition === 'right' ? `-${gameDimensions.width / 2}px` : '0px',
+        top: gamePosition === 'bottom' ? `-${gameDimensions.height / 2}px` : '0px'
+      } : {}}>
+        {children}
+      </div>
     </div>
   );
 };
