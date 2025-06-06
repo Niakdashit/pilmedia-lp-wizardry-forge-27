@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect } from 'react';
 
 interface Segment {
@@ -21,7 +20,6 @@ interface WheelCanvasProps {
   borderColor?: string;
   borderOutlineColor?: string;
   canvasSize: number;
-  offset: string;
   position?: 'gauche' | 'droite' | 'bas' | 'centre';
 }
 
@@ -80,7 +78,6 @@ const WheelCanvas: React.FC<WheelCanvasProps> = ({
   borderColor = '#841b60',
   borderOutlineColor = '#FFD700',
   canvasSize,
-  offset,
   position = 'centre'
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
