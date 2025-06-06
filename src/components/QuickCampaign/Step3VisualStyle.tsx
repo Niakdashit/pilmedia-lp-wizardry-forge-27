@@ -229,15 +229,13 @@ const Step3VisualStyle: React.FC = () => {
           <div className="space-y-16">
             {/* Aperçu dynamique du jeu - Design unifié pour toutes les mécaniques */}
             <div className="flex justify-center">
-              <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-3xl p-12 shadow-inner border border-gray-200/50 max-w-2xl w-full py-0">
-                <div className="flex flex-col items-center justify-center space-y- min-h-[100px]">
-                  {selectedGameType === 'jackpot' ? <JackpotPreview customColors={customColors} jackpotColors={jackpotColors} /> : <div className="flex flex-col items-center space-y-8">
+              <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-3xl p-12 shadow-inner border border-gray-200/50 max-w-2xl w-full px-0 py-0">
+                <div className="flex flex-col items-center justify-center space-y- min-h-[100px] px-0 py-0">
+                  {selectedGameType === 'jackpot' ? <JackpotPreview customColors={customColors} jackpotColors={jackpotColors} className="mx-0" /> : <div className="flex flex-col items-center space-y-8">
                       {/* Titre de la mécanique */}
                       <div className="text-center">
-                        <h3 className="text-2xl font-semibold text-gray-800 mb-2">
-                          {selectedGameType === 'wheel' ? 'Roue de la Fortune' : selectedGameType === 'scratch' ? 'Carte à Gratter' : selectedGameType === 'dice' ? 'Lancer de Dés' : 'Aperçu du Jeu'}
-                        </h3>
-                        <p className="text-gray-600">Personnalisez avec vos couleurs</p>
+                        
+                        
                       </div>
                       
                       {/* Conteneur du jeu avec échelle adaptée */}
