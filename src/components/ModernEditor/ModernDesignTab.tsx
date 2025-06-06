@@ -388,6 +388,7 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
               <ImageUpload
                 value={headerBanner.image || ''}
                 onChange={(value) => handleHeaderBannerChange('image', value)}
+                label="Image de bannière d'en-tête"
                 compact={true}
               />
               
@@ -521,6 +522,7 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
           <ImageUpload
             value={campaign.design?.backgroundImage || ''}
             onChange={(value) => handleDesignChange('backgroundImage', value)}
+            label="Image de fond"
             compact={true}
           />
         </div>
@@ -536,6 +538,7 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
             <ImageUpload
               value={campaign.design?.centerLogo || ''}
               onChange={(value) => handleDesignChange('centerLogo', value)}
+              label="Logo central"
               compact={true}
             />
           </div>
@@ -622,6 +625,7 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
               <ImageUpload
                 value={footerBanner.image || ''}
                 onChange={(value) => handleFooterBannerChange('image', value)}
+                label="Image de bannière de pied de page"
                 compact={true}
               />
 

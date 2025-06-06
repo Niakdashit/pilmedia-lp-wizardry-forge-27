@@ -158,7 +158,6 @@ const CampaignContent: React.FC<CampaignContentProps> = ({
                     }));
                   }}
                   label="Téléchargez ou sélectionnez une image de fond pour votre jeu"
-                  className="w-full"
                 />
               </div>
             </>
