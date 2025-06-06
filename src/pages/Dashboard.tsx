@@ -110,7 +110,7 @@ const Dashboard: React.FC = () => {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-6 mt-6">
           {stats.map((stat, index) => <div key={index} className="bg-white p-6 rounded-2xl shadow-md flex justify-between items-start">
               <div>
                 <p className="text-gray-700 font-semibold">{stat.name}</p>
@@ -135,7 +135,7 @@ const Dashboard: React.FC = () => {
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
               {recentCampaigns.map(campaign => {
               const IconComponent = getCampaignTypeIcon(campaign.type);
               return <div key={campaign.id} className="bg-white rounded-xl shadow hover:shadow-md transition-all duration-300 overflow-hidden">
