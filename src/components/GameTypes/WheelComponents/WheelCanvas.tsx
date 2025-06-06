@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect } from 'react';
 
 interface Segment {
@@ -27,26 +28,28 @@ interface WheelCanvasProps {
 const getClipPath = (position: string | undefined) => {
   switch (position) {
     case 'gauche':
-      return 'inset(0 0 0 50%)';
+      return 'inset(0 50% 0 0)'; // Coupe la moitié droite (garde la gauche)
     case 'droite':
-      return 'inset(0 50% 0 0)';
+      return 'inset(0 0 0 50%)'; // Coupe la moitié gauche (garde la droite)
     case 'bas':
-      return 'inset(0 0 50% 0)';
+      return 'inset(50% 0 0 0)'; // Coupe la moitié supérieure (garde le bas)
     case 'centre':
     default:
       return 'none';
   }
 };
 
-// ✅ Correction ici : -50% et 50%
-const getWheelTranslation = (position: string | undefined) => {
+const getCanvasTransform = (position: string | undefined, canvasSize: number) => {
   switch (position) {
     case 'gauche':
-      return 'translateX(-50%)';
+      // Déplace la roue vers la droite pour montrer seulement la partie droite
+      return `translateX(${canvasSize / 2}px)`;
     case 'droite':
-      return 'translateX(50%)';
+      // Déplace la roue vers la gauche pour montrer seulement la partie gauche
+      return `translateX(-${canvasSize / 2}px)`;
     case 'bas':
-      return 'translateY(-50%)';
+      // Déplace la roue vers le haut pour montrer seulement la partie supérieure
+      return `translateY(-${canvasSize / 2}px)`;
     case 'centre':
     default:
       return 'none';
@@ -176,13 +179,13 @@ const WheelCanvas: React.FC<WheelCanvasProps> = ({
     ctx.strokeStyle = borderColor;
     ctx.stroke();
 
-    // Draw center circle - taille réduite comme demandé
-    const centerRadius = 25; // Réduit de 35 à 25
+    // Draw center circle
+    const centerRadius = 25;
     const logoToDisplay = centerLogo || centerImage;
     
     // Center border
     ctx.beginPath();
-    ctx.arc(center, center, centerRadius + 3, 0, 2 * Math.PI); // Bordure réduite aussi
+    ctx.arc(center, center, centerRadius + 3, 0, 2 * Math.PI);
     const centerGradient = ctx.createLinearGradient(0, 0, size, size);
     centerGradient.addColorStop(0, borderOutlineColor);
     centerGradient.addColorStop(0.5, borderOutlineColor);
@@ -224,14 +227,13 @@ const WheelCanvas: React.FC<WheelCanvasProps> = ({
       height={canvasSize}
       style={{
         position: 'absolute',
-        left: offset,
-        top: 0,
+        left: '50%',
+        top: '50%',
+        transform: `translate(-50%, -50%) ${getCanvasTransform(position, canvasSize)}`,
         zIndex: 1,
         clipPath: getClipPath(position),
         WebkitClipPath: getClipPath(position),
-        overflow: 'hidden',
-        transform: getWheelTranslation(position), // 🟢 translation dynamique (corrigée)
-        transition: 'transform 0.3s',
+        transition: 'transform 0.3s ease, clip-path 0.3s ease',
       }}
       className="rounded-full"
     />
