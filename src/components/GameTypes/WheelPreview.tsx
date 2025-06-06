@@ -1,15 +1,17 @@
 
 import React, { useState } from 'react';
-import Modal from '../common/Modal';
 import ValidationMessage from '../common/ValidationMessage';
-import DynamicContactForm, { FieldConfig } from '../forms/DynamicContactForm';
 import { useParticipations } from '../../hooks/useParticipations';
 import { useGameSize } from '../../hooks/useGameSize';
+import { useWheelSpin } from '../../hooks/useWheelSpin';
 import WheelCanvas from './WheelComponents/WheelCanvas';
 import WheelPointer from './WheelComponents/WheelPointer';
 import WheelButton from './WheelComponents/WheelButton';
 import WheelDecorations from './WheelComponents/WheelDecorations';
 import WheelContainer from './WheelComponents/WheelContainer';
+import WheelFormModal from './WheelComponents/WheelFormModal';
+import WheelInteractionHandler from './WheelComponents/WheelInteractionHandler';
+import { DEFAULT_FIELDS, getWheelSegments, getWheelDimensions } from '../../utils/wheelConfig';
 
 interface InstantWinConfig {
   mode: "instant_winner";
@@ -29,13 +31,6 @@ interface WheelPreviewProps {
   previewDevice?: 'desktop' | 'tablet' | 'mobile';
 }
 
-const DEFAULT_FIELDS: FieldConfig[] = [
-  { id: "civilite", label: "Civilité", type: "select", options: ["M.", "Mme"], required: false },
-  { id: "prenom", label: "Prénom", required: true },
-  { id: "nom", label: "Nom", required: true },
-  { id: "email", label: "Email", type: "email", required: true }
-];
-
 const WheelPreview: React.FC<WheelPreviewProps> = ({
   campaign,
   config,
@@ -46,17 +41,8 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   gamePosition = 'center',
   previewDevice = 'desktop'
 }) => {
-  // Récupérer la position dynamique choisie par l’utilisateur
   const position = campaign?.config?.roulette?.position || 'centre';
-
-  const segmentColor1 = campaign?.config?.roulette?.segmentColor1 || '#ff6b6b';
-  const segmentColor2 = campaign?.config?.roulette?.segmentColor2 || '#4ecdc4';
-  
-  const originalSegments = campaign?.config?.roulette?.segments || [];
-  const segments = originalSegments.map((segment: any, index: number) => ({
-    ...segment,
-    color: index % 2 === 0 ? segmentColor1 : segmentColor2
-  }));
+  const segments = getWheelSegments(campaign);
   
   const centerImage = campaign?.config?.roulette?.centerImage;
   const centerLogo = campaign?.design?.centerLogo || campaign?.config?.roulette?.centerImage;
@@ -78,8 +64,6 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
     text: 'Remplir le formulaire'
   };
   
-  const [rotation, setRotation] = useState(0);
-  const [spinning, setSpinning] = useState(false);
   const [formValidated, setFormValidated] = useState(false);
   const [showFormModal, setShowFormModal] = useState(false);
   const [showValidationMessage, setShowValidationMessage] = useState(false);
@@ -91,21 +75,27 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   const isCroppablePosition = ['left', 'right', 'bottom'].includes(gamePosition);
   const shouldCropWheel = isMobile && isCroppablePosition;
   
-  const baseCanvasSize = Math.min(gameDimensions.width, gameDimensions.height) - 60;
-  const canvasSize = baseCanvasSize;
-  const containerWidth =
-    shouldCropWheel && (gamePosition === 'left' || gamePosition === 'right')
-      ? baseCanvasSize * 0.5
-      : baseCanvasSize;
-  
-  const pointerSize = Math.max(30, canvasSize * 0.08);
+  const { canvasSize, containerWidth, pointerSize } = getWheelDimensions(
+    gameDimensions,
+    previewDevice,
+    gamePosition,
+    shouldCropWheel
+  );
+
+  const { rotation, spinning, spinWheel } = useWheelSpin({
+    segments,
+    disabled,
+    config,
+    onStart,
+    onFinish
+  });
 
   const {
     createParticipation,
     loading: participationLoading
   } = useParticipations();
 
-  const fields: FieldConfig[] = Array.isArray(campaign.formFields) && campaign.formFields.length > 0
+  const fields = Array.isArray(campaign.formFields) && campaign.formFields.length > 0
     ? campaign.formFields : DEFAULT_FIELDS;
 
   const handleFormSubmit = async (formData: Record<string, string>) => {
@@ -133,51 +123,6 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
       return;
     }
     spinWheel();
-  };
-
-  const spinWheel = () => {
-    if (spinning || segments.length === 0 || disabled) return;
-    setSpinning(true);
-
-    if (onStart) onStart();
-
-    const totalSpins = 5;
-    const randomOffset = Math.random() * 360;
-    const finalRotationDeg = totalSpins * 360 + randomOffset;
-    const finalRotation = (finalRotationDeg * Math.PI) / 180;
-
-    const duration = 4500;
-    const start = Date.now();
-    const initialRotation = rotation;
-
-    function easeOutCubic(t: number) {
-      return 1 - Math.pow(1 - t, 3);
-    }
-
-    const animate = () => {
-      const now = Date.now();
-      const elapsed = now - start;
-      const t = Math.min(elapsed / duration, 1);
-      const easedT = easeOutCubic(t);
-      const current = initialRotation + easedT * (finalRotation - initialRotation);
-      setRotation(current);
-
-      if (t < 1) {
-        requestAnimationFrame(animate);
-      } else {
-        setSpinning(false);
-        setRotation(current % (2 * Math.PI));
-        let result: 'win' | 'lose' = 'lose';
-        if (
-          config.mode === 'instant_winner' &&
-          (!config.maxWinners || (config.winnersCount ?? 0) < config.maxWinners)
-        ) {
-          result = Math.random() < (config.winProbability ?? 0) ? 'win' : 'lose';
-        }
-        if (typeof onFinish === 'function') onFinish(result);
-      }
-    };
-    animate();
   };
 
   if (segments.length === 0) {
@@ -222,44 +167,39 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
           }}
         />
         
-        {/* Canvas avec images dynamiques */}
-        <WheelCanvas
-          segments={segments}
-          rotation={rotation}
-          centerImage={centerImage}
-          centerLogo={centerLogo}
-          theme={theme}
-          customColors={customColors}
-          borderColor={borderColor}
-          borderOutlineColor={borderOutlineColor}
-          canvasSize={canvasSize}
-          offset={shouldCropWheel && gamePosition === 'right' ? `-${canvasSize * 0.5}px` : '0px'}
-          position={position}
-        />
-        
-        {/* Theme decoration */}
-        <WheelDecorations
-          theme={theme}
-          canvasSize={canvasSize}
-          shouldCropWheel={shouldCropWheel}
-          gamePosition={gamePosition}
-        />
-        
-        {/* Enhanced Pointer with golden styling */}
-        <WheelPointer
-          canvasSize={canvasSize}
-          shouldCropWheel={shouldCropWheel}
-          gamePosition={gamePosition}
-          pointerSize={pointerSize}
-        />
-
-        {/* Click overlay for non-validated form */}
-        {!formValidated && (
-          <div 
-            onClick={handleWheelClick}
-            className="absolute inset-0 flex items-center justify-center z-30 rounded-full cursor-pointer bg-black/0" 
+        <WheelInteractionHandler
+          formValidated={formValidated}
+          buttonConfig={buttonConfig}
+          onWheelClick={handleWheelClick}
+        >
+          <WheelCanvas
+            segments={segments}
+            rotation={rotation}
+            centerImage={centerImage}
+            centerLogo={centerLogo}
+            theme={theme}
+            customColors={customColors}
+            borderColor={borderColor}
+            borderOutlineColor={borderOutlineColor}
+            canvasSize={canvasSize}
+            offset={shouldCropWheel && gamePosition === 'right' ? `-${canvasSize * 0.5}px` : '0px'}
+            position={position}
           />
-        )}
+          
+          <WheelDecorations
+            theme={theme}
+            canvasSize={canvasSize}
+            shouldCropWheel={shouldCropWheel}
+            gamePosition={gamePosition}
+          />
+          
+          <WheelPointer
+            canvasSize={canvasSize}
+            shouldCropWheel={shouldCropWheel}
+            gamePosition={gamePosition}
+            pointerSize={pointerSize}
+          />
+        </WheelInteractionHandler>
 
         <ValidationMessage
           show={showValidationMessage}
@@ -268,7 +208,6 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
         />
       </div>
 
-      {/* Enhanced button with golden styling */}
       <WheelButton
         buttonConfig={buttonConfig}
         spinning={spinning}
@@ -277,20 +216,14 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
         onClick={handleWheelClick}
       />
 
-      {/* Form modal */}
-      {showFormModal && (
-        <Modal
-          onClose={() => setShowFormModal(false)}
-          title={campaign.screens?.[1]?.title || 'Vos informations'}
-          contained={true}
-        >
-          <DynamicContactForm
-            fields={fields}
-            submitLabel={participationLoading ? 'Chargement...' : campaign.screens?.[1]?.buttonText || "C'est parti !"}
-            onSubmit={handleFormSubmit}
-          />
-        </Modal>
-      )}
+      <WheelFormModal
+        showFormModal={showFormModal}
+        onClose={() => setShowFormModal(false)}
+        campaign={campaign}
+        fields={fields}
+        participationLoading={participationLoading}
+        onSubmit={handleFormSubmit}
+      />
     </WheelContainer>
   );
 };
