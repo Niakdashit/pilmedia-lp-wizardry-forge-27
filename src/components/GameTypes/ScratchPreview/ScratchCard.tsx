@@ -1,6 +1,5 @@
-
 import React, { useRef, useEffect } from 'react';
-import { ScratchCardProps, CardState } from './types';
+import { ScratchCardProps } from './types';
 
 const ScratchCard: React.FC<ScratchCardProps> = ({
   cardIndex,
