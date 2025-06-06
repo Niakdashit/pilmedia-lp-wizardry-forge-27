@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Modal from '../common/Modal';
 import ValidationMessage from '../common/ValidationMessage';
@@ -233,7 +234,6 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
           borderOutlineColor={borderOutlineColor}
           canvasSize={canvasSize}
           offset={shouldCropWheel && gamePosition === 'right' ? `-${canvasSize * 0.5}px` : '0px'}
-          /** 🟢 Passe la position ici **/
           position={position}
         />
         
