@@ -20,7 +20,6 @@ const FormPreview: React.FC<FormPreviewProps> = ({
     ? campaign.formFields 
     : DEFAULT_FIELDS;
 
-  const buttonColor = campaign.buttonConfig?.color || campaign.gameConfig?.form?.buttonColor || '#841b60';
   const buttonLabel = campaign.buttonConfig?.text || campaign.gameConfig?.form?.buttonLabel || 'Valider le formulaire';
 
   const handleFormSubmit = (formData: Record<string, string>) => {
