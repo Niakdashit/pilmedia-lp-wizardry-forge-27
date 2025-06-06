@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect } from 'react';
 
 interface Segment {
@@ -24,22 +25,6 @@ interface WheelCanvasProps {
   position?: 'gauche' | 'droite' | 'bas' | 'centre';
 }
 
-const getClipPath = (position: string | undefined, gamePosition?: string) => {
-  // Pour mobile uniquement, applique le clipping selon gamePosition
-  if (gamePosition === 'left') {
-    // Position gauche : montre seulement la moitié droite de la roue
-    return 'inset(0 0 0 50%)';
-  } else if (gamePosition === 'right') {
-    // Position droite : montre seulement la moitié gauche de la roue  
-    return 'inset(0 50% 0 0)';
-  } else if (gamePosition === 'bottom') {
-    // Position bas : montre seulement la moitié haute de la roue
-    return 'inset(0 0 50% 0)';
-  }
-  
-  return 'none'; // Position centre ou autres : pas de clipping
-};
-
 const getThemeColors = (theme: string): string[] => {
   switch (theme) {
     case 'promo': return ['#FFD700', '#841b60', '#FF6F61'];
@@ -64,8 +49,7 @@ const WheelCanvas: React.FC<WheelCanvasProps> = ({
   borderColor = '#841b60',
   borderOutlineColor = '#FFD700',
   canvasSize,
-  offset,
-  position = 'centre'
+  offset
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -202,7 +186,7 @@ const WheelCanvas: React.FC<WheelCanvasProps> = ({
 
   useEffect(() => {
     drawWheel();
-  }, [segments, rotation, centerImage, centerLogo, theme, customColors, borderColor, borderOutlineColor, canvasSize, position]);
+  }, [segments, rotation, centerImage, centerLogo, theme, customColors, borderColor, borderOutlineColor, canvasSize]);
 
   return (
     <canvas

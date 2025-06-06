@@ -1,3 +1,4 @@
+
 import React, { useRef, useEffect } from 'react';
 
 interface Segment {
@@ -23,8 +24,7 @@ const WheelCanvas: React.FC<WheelCanvasProps> = ({
   theme,
   borderColor,
   canvasSize,
-  offset,
-  position = 'centre'
+  offset
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rotation = 0;
