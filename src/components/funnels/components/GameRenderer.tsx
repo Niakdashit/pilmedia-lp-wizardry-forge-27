@@ -1,4 +1,3 @@
-
 import React from 'react';
 import ContrastBackground from '../../common/ContrastBackground';
 import ValidationMessage from '../../common/ValidationMessage';
@@ -11,7 +10,6 @@ import { GAME_SIZES, GameSize } from '../../configurators/GameSizeSelector';
 interface GameRendererProps {
   campaign: any;
   formValidated: boolean;
-  gameStarted: boolean;
   showValidationMessage: boolean;
   previewMode: 'mobile' | 'tablet' | 'desktop';
   mobileConfig?: any;
@@ -23,7 +21,6 @@ interface GameRendererProps {
 const GameRenderer: React.FC<GameRendererProps> = ({
   campaign,
   formValidated,
-  gameStarted,
   showValidationMessage,
   previewMode,
   mobileConfig,
@@ -40,7 +37,6 @@ const GameRenderer: React.FC<GameRendererProps> = ({
     ? campaign.gameSize as GameSize 
     : 'medium';
   const gamePosition = campaign.gamePosition || 'center';
-
 
   const getGameContainerStyle = (): React.CSSProperties => {
     const gameDimensions = GAME_SIZES[gameSize];

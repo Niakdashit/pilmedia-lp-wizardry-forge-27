@@ -1,4 +1,3 @@
-
 import React from 'react';
 import FunnelUnlockedGame from '../../funnels/FunnelUnlockedGame';
 import FunnelStandard from '../../funnels/FunnelStandard';
@@ -32,17 +31,33 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
 }) => {
   const unlockedTypes = ['wheel', 'scratch', 'jackpot', 'dice'];
 
+  // Enhance mockCampaign with custom colors
+  const enhancedCampaign = {
+    ...mockCampaign,
+    design: {
+      ...mockCampaign.design,
+      customColors: customColors
+    },
+    gameConfig: {
+      ...mockCampaign.gameConfig,
+      jackpot: {
+        ...mockCampaign.gameConfig?.jackpot,
+        ...jackpotColors
+      }
+    }
+  };
+
   const getFunnelComponent = () => {
     if (unlockedTypes.includes(selectedGameType)) {
       return (
         <FunnelUnlockedGame
-          campaign={mockCampaign}
+          campaign={enhancedCampaign}
           previewMode={selectedDevice === 'desktop' ? 'desktop' : selectedDevice}
           modalContained={false}
         />
       );
     }
-    return <FunnelStandard campaign={mockCampaign} />;
+    return <FunnelStandard campaign={enhancedCampaign} />;
   };
 
   const getContainerStyle = () => {

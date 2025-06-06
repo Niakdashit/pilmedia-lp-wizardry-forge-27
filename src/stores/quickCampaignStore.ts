@@ -97,26 +97,26 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
         text: 'Jouer maintenant !',
         visible: true
       },
-      config: {},
+      config: {
+        roulette: {}
+      },
       gameConfig: {},
       mobileConfig: {}
     };
 
     // Configuration spécifique pour la roue
     if (state.selectedGameType === 'wheel') {
-      baseConfig.config = {
-        roulette: {
-          segments: Array.from({ length: state.segmentCount }).map((_, i) => ({
-            label: '',
-            color: i % 2 === 0 ? state.customColors.primary : state.customColors.secondary,
-            image: null
-          })),
-          borderColor: state.customColors.primary,
-          borderOutlineColor: state.customColors.accent || state.customColors.primary,
-          segmentColor1: state.customColors.primary,
-          segmentColor2: state.customColors.secondary,
-          theme: state.selectedTheme
-        }
+      baseConfig.config.roulette = {
+        segments: Array.from({ length: state.segmentCount }).map((_, i) => ({
+          label: '',
+          color: i % 2 === 0 ? state.customColors.primary : state.customColors.secondary,
+          image: null
+        })),
+        borderColor: state.customColors.primary,
+        borderOutlineColor: state.customColors.accent || state.customColors.primary,
+        segmentColor1: state.customColors.primary,
+        segmentColor2: state.customColors.secondary,
+        theme: state.selectedTheme
       };
 
       baseConfig.gameConfig = {
