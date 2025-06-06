@@ -27,6 +27,7 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
     return null;
   }
 
+  // Positionnement absolu pour chaque position avec cropping correct
   const getAbsoluteGameStyle = (): React.CSSProperties => {
     const baseStyle: React.CSSProperties = {
       position: 'absolute',
@@ -35,46 +36,50 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
     };
 
     switch (gamePosition) {
-      case 'left':
-        return {
-          ...baseStyle,
-          left: '0px',
-          top: '50%',
-          transform: 'translateY(-50%)',
-          width: canvasSize / 2,
-          height: canvasSize,
-          overflow: 'hidden'
-        };
+     case 'left':
+  return {
+    ...baseStyle,
+    left: '50px',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    width: canvasSize / 2,
+    height: canvasSize,
+    overflow: 'hidden'
+  };
+      
       case 'right':
         return {
           ...baseStyle,
-          right: '0px',
+          right: `0px`,
           top: '50%',
           transform: 'translateY(-50%)',
-          width: canvasSize / 2,
+          width: canvasSize / 2, // Conteneur réduit à 50%
           height: canvasSize,
           overflow: 'hidden'
         };
+      
       case 'top':
         return {
           ...baseStyle,
-          top: '0px',
+          top: `0px`,
           left: '50%',
           transform: 'translateX(-50%)',
           width: canvasSize,
-          height: canvasSize / 2,
+          height: canvasSize / 2, // Conteneur réduit à 50%
           overflow: 'hidden'
         };
+      
       case 'bottom':
         return {
           ...baseStyle,
-          bottom: '0px',
+          bottom: `0px`,
           left: '50%',
           transform: 'translateX(-50%)',
           width: canvasSize,
-          height: canvasSize / 2,
+          height: canvasSize / 2, // Conteneur réduit à 50%
           overflow: 'hidden'
         };
+      
       case 'center':
       default:
         return {
@@ -88,25 +93,23 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
     }
   };
 
-  const getCanvasOffset = (): { top: string; left: string } => {
+  // Détermine l'offset du canvas dans le conteneur pour les positions croppées
+  const getCanvasOffset = () => {
     switch (gamePosition) {
       case 'left':
-        return { top: '0px', left: '0px' };
+        return '0px'; // Canvas à gauche du conteneur, seule la partie droite visible
       case 'right':
-        return { top: '0px', left: `-${canvasSize / 2}px` };
-      case 'top':
-        return { top: '0px', left: '0px' };
+        return `-${canvasSize / 2}px`; // Canvas décalé à gauche, seule la partie gauche visible
       case 'bottom':
-        return { top: `-${canvasSize / 2}px`, left: '0px' };
+        return '0px'; // Canvas en haut du conteneur, seule la partie haute visible
       default:
-        return { top: '0px', left: '0px' };
+        return '0px';
     }
   };
 
   const containerWidth = ['left', 'right'].includes(gamePosition) ? canvasSize / 2 : canvasSize;
   const containerHeight = ['top', 'bottom'].includes(gamePosition) ? canvasSize / 2 : canvasSize;
-  const shouldCropWheel = ['left', 'right', 'top', 'bottom'].includes(gamePosition);
-  const offset = getCanvasOffset();
+  const shouldCropWheel = ['left', 'right', 'bottom'].includes(gamePosition);
 
   const renderWheelContainer = () => (
     <div style={{ 
@@ -115,20 +118,21 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
       height: containerHeight, 
       overflow: shouldCropWheel ? 'hidden' : 'visible' 
     }}>
-      <div style={{ position: 'absolute', top: offset.top, left: offset.left }}>
-        <WheelCanvas
-          segments={segments}
-          centerImage={centerImage}
-          theme={theme}
-          borderColor={borderColor}
-          canvasSize={canvasSize}
-        />
-        <WheelDecorations
-          theme={theme}
-          canvasSize={canvasSize}
-        />
-      </div>
-
+      <WheelCanvas
+        segments={segments}
+        centerImage={centerImage}
+        theme={theme}
+        borderColor={borderColor}
+        canvasSize={canvasSize}
+        offset={getCanvasOffset()}
+      />
+      
+      <WheelDecorations
+        theme={theme}
+        canvasSize={canvasSize}
+        offset={getCanvasOffset()}
+      />
+      
       <WheelPointer
         pointerColor={pointerColor}
         gamePosition={gamePosition}
