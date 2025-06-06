@@ -45,11 +45,12 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   gamePosition = 'center',
   previewDevice = 'desktop'
 }) => {
-  // Récupérer les couleurs des segments depuis la configuration
+  // Récupérer la position dynamique choisie par l’utilisateur
+  const position = campaign?.config?.roulette?.position || 'centre';
+
   const segmentColor1 = campaign?.config?.roulette?.segmentColor1 || '#ff6b6b';
   const segmentColor2 = campaign?.config?.roulette?.segmentColor2 || '#4ecdc4';
   
-  // Appliquer les couleurs alternées aux segments
   const originalSegments = campaign?.config?.roulette?.segments || [];
   const segments = originalSegments.map((segment: any, index: number) => ({
     ...segment,
@@ -57,18 +58,14 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   }));
   
   const centerImage = campaign?.config?.roulette?.centerImage;
-  // Prioriser centerLogo du design, puis centerImage de la config
   const centerLogo = campaign?.design?.centerLogo || campaign?.config?.roulette?.centerImage;
   const theme = campaign?.config?.roulette?.theme || 'default';
   
-  // Récupérer les couleurs de bordure personnalisées
   const borderColor = campaign?.config?.roulette?.borderColor || '#841b60';
   const borderOutlineColor = campaign?.config?.roulette?.borderOutlineColor || '#FFD700';
   
-  // Utiliser les couleurs personnalisées du store QuickCampaign ou valeurs par défaut
   const customColors = campaign?.design?.customColors;
   
-  // Get button configuration from campaign with custom colors
   const buttonConfig = campaign?.buttonConfig || {
     color: customColors?.primary || '#841b60',
     borderColor: customColors?.primary || '#841b60',
@@ -89,12 +86,10 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
   const { getGameDimensions } = useGameSize(gameSize);
   const gameDimensions = getGameDimensions();
   
-  // Determine if the wheel should be cropped on mobile for specific positions
   const isMobile = previewDevice === 'mobile';
   const isCroppablePosition = ['left', 'right', 'bottom'].includes(gamePosition);
   const shouldCropWheel = isMobile && isCroppablePosition;
   
-  // Adjust canvas and container sizes for cropping
   const baseCanvasSize = Math.min(gameDimensions.width, gameDimensions.height) - 60;
   const canvasSize = baseCanvasSize;
   const containerWidth =
@@ -102,7 +97,6 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
       ? baseCanvasSize * 0.5
       : baseCanvasSize;
   
-  // Taille du pointeur proportionnelle
   const pointerSize = Math.max(30, canvasSize * 0.08);
 
   const {
@@ -213,16 +207,16 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
         <div 
           style={{
             position: 'absolute',
-            width: canvasSize - 15, // Réduit de 10 à 15
+            width: canvasSize - 15,
             height: canvasSize - 15,
             left:
               shouldCropWheel && gamePosition === 'right'
                 ? `-${canvasSize * 0.5 + 8}px`
                 : '8px',
-            top: '12px', // Légèrement augmenté pour moins d'ombre
+            top: '12px',
             borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(255,215,0,0.2) 0%, rgba(255,215,0,0.05) 50%, rgba(0,0,0,0.1) 100%)', // Réduit l'opacité
-            filter: 'blur(10px)', // Réduit le blur de 15 à 10
+            background: 'radial-gradient(circle, rgba(255,215,0,0.2) 0%, rgba(255,215,0,0.05) 50%, rgba(0,0,0,0.1) 100%)',
+            filter: 'blur(10px)',
             zIndex: 0
           }}
         />
@@ -239,6 +233,8 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
           borderOutlineColor={borderOutlineColor}
           canvasSize={canvasSize}
           offset={shouldCropWheel && gamePosition === 'right' ? `-${canvasSize * 0.5}px` : '0px'}
+          /** 🟢 Passe la position ici **/
+          position={position}
         />
         
         {/* Theme decoration */}
