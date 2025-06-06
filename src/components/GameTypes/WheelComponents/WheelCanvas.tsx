@@ -38,14 +38,15 @@ const getClipPath = (position: string | undefined) => {
   }
 };
 
+// ✅ Correction ici : -50% et 50%
 const getWheelTranslation = (position: string | undefined) => {
   switch (position) {
     case 'gauche':
-      return 'translateX(-25%)';
+      return 'translateX(-50%)';
     case 'droite':
-      return 'translateX(25%)';
+      return 'translateX(50%)';
     case 'bas':
-      return 'translateY(-25%)';
+      return 'translateY(-50%)';
     case 'centre':
     default:
       return 'none';
@@ -229,7 +230,7 @@ const WheelCanvas: React.FC<WheelCanvasProps> = ({
         clipPath: getClipPath(position),
         WebkitClipPath: getClipPath(position),
         overflow: 'hidden',
-        transform: getWheelTranslation(position), // 🟢 translation dynamique
+        transform: getWheelTranslation(position), // 🟢 translation dynamique (corrigée)
         transition: 'transform 0.3s',
       }}
       className="rounded-full"
