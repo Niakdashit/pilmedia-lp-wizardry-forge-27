@@ -15,7 +15,6 @@ interface WheelCanvasProps {
   borderColor: string;
   canvasSize: number;
   offset: string;
-  position?: 'gauche' | 'droite' | 'bas' | 'centre';
 }
 
 const WheelCanvas: React.FC<WheelCanvasProps> = ({
