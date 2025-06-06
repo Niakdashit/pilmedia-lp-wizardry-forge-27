@@ -19,7 +19,7 @@ interface ScratchPreviewProps {
   };
 }
 
-const ScratchPreview: React.FC<ScratchPreviewProps> = ({ 
+const ScratchPreview: React.FC<ScratchPreviewProps> = ({
   config = {},
   onFinish,
   onStart,
@@ -34,6 +34,7 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
   const [scratchPercentage, setScratchPercentage] = useState(0);
   const [gameStarted, setGameStarted] = useState(false);
   const [result, setResult] = useState<'win' | 'lose' | null>(null);
+  const [currentCard, setCurrentCard] = useState(0);
 
   // Calculer le résultat avec la logique instant win
   const calculateResult = (): 'win' | 'lose' => {
@@ -75,6 +76,7 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
   const { width, height } = getDimensions();
 
   useEffect(() => {
+    const card = config?.cards ? config.cards[currentCard] || {} : {};
     if (canvasRef.current && gameStarted && !isRevealed) {
       const canvas = canvasRef.current;
       const ctx = canvas.getContext('2d');
@@ -84,14 +86,15 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
       canvas.height = height;
 
       // Surface à gratter
-      if (config?.scratchSurface) {
+      const surface = card.scratchSurface || config?.scratchSurface;
+      if (surface) {
         const img = new Image();
         img.onload = () => {
           ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         };
-        img.src = config.scratchSurface;
+        img.src = surface;
       } else {
-        ctx.fillStyle = config?.scratchColor || '#C0C0C0';
+        ctx.fillStyle = card.scratchColor || config?.scratchColor || '#C0C0C0';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         
         // Texture métallique par défaut
@@ -172,13 +175,16 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
         canvas.removeEventListener('touchend', stopDrawing);
       };
     }
-  }, [config, isRevealed, gameStarted, result, width, height, onFinish]);
+  }, [config, isRevealed, gameStarted, result, width, height, onFinish, currentCard]);
 
   const getResultContent = () => {
-    if (config?.revealImage) {
+    const card = config?.cards ? config.cards[currentCard] || {} : {};
+    const revealImage = card.revealImage || config?.revealImage;
+    const revealMessage = card.revealMessage || config?.revealMessage;
+    if (revealImage) {
       return (
         <img
-          src={config.revealImage}
+          src={revealImage}
           alt="Contenu révélé"
           className="w-full h-full object-cover"
         />
@@ -193,8 +199,8 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
           {result === 'win' ? '🎉' : '😔'}
         </div>
         <div className="text-lg font-bold text-gray-800">
-          {result === 'win' 
-            ? config?.revealMessage || 'Félicitations !' 
+          {result === 'win'
+            ? revealMessage || 'Félicitations !'
             : 'Dommage, réessayez !'}
         </div>
       </div>
@@ -206,6 +212,9 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
     setScratchPercentage(0);
     setGameStarted(false);
     setResult(null);
+    if (config?.cards && currentCard < config.cards.length - 1) {
+      setCurrentCard(prev => prev + 1);
+    }
   };
 
   // Si le jeu n'a pas encore commencé, afficher le bouton
@@ -281,15 +290,15 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
                 {result === 'win' ? '🎊' : '💫'}
               </div>
               <p className="text-lg font-bold mb-2">
-                {result === 'win' 
-                  ? config?.revealMessage || 'Vous avez gagné !' 
+                {result === 'win'
+                  ? (config?.cards ? (config.cards[currentCard]?.revealMessage || config?.revealMessage) : config?.revealMessage) || 'Vous avez gagné !'
                   : 'Réessayez !'}
               </p>
               <button
                 onClick={resetGame}
                 className="px-4 py-2 bg-[#841b60] text-white rounded hover:bg-[#6d1650] transition-colors"
               >
-                Rejouer
+                {config?.cards && currentCard < (config.cards.length - 1) ? 'Carte suivante' : 'Rejouer'}
               </button>
             </div>
           </motion.div>
