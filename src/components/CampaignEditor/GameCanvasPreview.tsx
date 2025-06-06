@@ -42,11 +42,10 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   console.log('Using gamePosition:', gamePosition);
   console.log('Using buttonLabel:', buttonLabel, 'buttonColor:', buttonColor);
 
-  // Check if we should crop the wheel (mobile + left/right/bottom positions for wheel games)
-  const isMobile = previewDevice === 'mobile';
+  // Check if we should crop the wheel based on its position
   const isWheelGame = campaign.type === 'wheel';
   const isCroppablePosition = ['left', 'right', 'bottom'].includes(gamePosition);
-  const shouldCropWheel = isMobile && isWheelGame && isCroppablePosition;
+  const shouldCropWheel = isWheelGame && isCroppablePosition;
 
   // Calculate positioning styles based on gamePosition
   const getPositionStyles = () => {
