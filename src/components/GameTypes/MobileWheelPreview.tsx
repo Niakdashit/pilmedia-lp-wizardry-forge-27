@@ -1,4 +1,3 @@
-
 import React from 'react';
 import WheelCanvas from './MobileWheel/WheelCanvas';
 import WheelDecorations from './MobileWheel/WheelDecorations';
@@ -126,15 +125,6 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
         borderColor={borderColor}
         canvasSize={canvasSize}
         offset={getCanvasOffset()}
-        position={
-          gamePosition === 'left'
-            ? 'gauche'
-            : gamePosition === 'right'
-            ? 'droite'
-            : gamePosition === 'bottom'
-            ? 'bas'
-            : 'centre'
-        }
       />
       
       <WheelDecorations
