@@ -40,10 +40,10 @@ const WheelContainer: React.FC<WheelContainerProps> = ({
           return {
             ...containerStyle,
             flexDirection: 'row-reverse',
-            left: `-${gameDimensions.width / 2}px`, // Move wheel left so only right half shows
+            left: `0px`, // Position container at left edge
             top: '50%',
             transform: 'translateY(-50%)',
-            width: `${gameDimensions.width}px`,
+            width: `${gameDimensions.width / 2}px`, // Container shows only half width
             height: `${gameDimensions.height}px`,
             overflow: 'hidden'
           };
@@ -52,10 +52,10 @@ const WheelContainer: React.FC<WheelContainerProps> = ({
           return {
             ...containerStyle,
             flexDirection: 'row',
-            right: `-${gameDimensions.width / 2}px`, // Move wheel right so only left half shows
+            right: `0px`, // Position container at right edge
             top: '50%',
             transform: 'translateY(-50%)',
-            width: `${gameDimensions.width}px`,
+            width: `${gameDimensions.width / 2}px`, // Container shows only half width
             height: `${gameDimensions.height}px`,
             overflow: 'hidden'
           };
@@ -64,11 +64,11 @@ const WheelContainer: React.FC<WheelContainerProps> = ({
           return {
             ...containerStyle,
             flexDirection: 'column',
-            bottom: `-${gameDimensions.height / 2}px`, // Move wheel down so only top half shows
+            bottom: `0px`, // Position container at bottom edge
             left: '50%',
             transform: 'translateX(-50%)',
             width: `${gameDimensions.width}px`,
-            height: `${gameDimensions.height}px`,
+            height: `${gameDimensions.height / 2}px`, // Container shows only half height
             overflow: 'hidden'
           };
       }

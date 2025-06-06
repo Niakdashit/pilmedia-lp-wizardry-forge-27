@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Jackpot from '../GameTypes/Jackpot';
 import { Quiz } from '../GameTypes';
@@ -58,13 +57,12 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
       maxHeight: `${gameDimensions.height}px`,
     };
 
-    // For wheel games with mobile cropping, let WheelContainer handle positioning
+    // For wheel games with mobile cropping, let WheelContainer handle positioning completely
     if (shouldCropWheel) {
       return {
         width: '100%',
         height: '100%',
-        position: 'relative' as const,
-        overflow: 'hidden'
+        position: 'relative' as const
       };
     }
 
