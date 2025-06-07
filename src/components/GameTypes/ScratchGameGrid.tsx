@@ -17,18 +17,25 @@ const ScratchGameGrid: React.FC<ScratchGameGridProps> = ({
   onCardFinish,
   config
 }) => {
+  const gridClasses =
+    cards.length === 1
+      ?
+        'grid grid-cols-1 justify-center place-items-center'
+      :
+        'grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 justify-items-center';
+
   return (
     <div className="w-full max-w-4xl mx-auto px-6">
-      <div className="grid grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
+      <div className={gridClasses}>
         {cards.map((card: any, index: number) => (
-          <ScratchCard 
-            key={card.id || index} 
-            card={card} 
-            index={index} 
-            gameSize={gameSize} 
-            gameStarted={gameStarted} 
-            onCardFinish={(result) => onCardFinish(result, index)} 
-            config={config} 
+          <ScratchCard
+            key={card.id || index}
+            card={card}
+            index={index}
+            gameSize={gameSize}
+            gameStarted={gameStarted}
+            onCardFinish={(result) => onCardFinish(result, index)}
+            config={config}
           />
         ))}
       </div>
@@ -37,3 +44,4 @@ const ScratchGameGrid: React.FC<ScratchGameGridProps> = ({
 };
 
 export default ScratchGameGrid;
+
