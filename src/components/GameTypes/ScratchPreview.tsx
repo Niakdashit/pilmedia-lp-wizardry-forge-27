@@ -33,27 +33,11 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
   const [selectedCard, setSelectedCard] = useState<number | null>(null);
   const [scratchStarted, setScratchStarted] = useState(false);
 
-  // Load state only if scratching has actually started in a previous session
+  // Clear any previous session data on component mount to ensure fresh start
   useEffect(() => {
-    const storedScratchStarted = localStorage.getItem(SCRATCH_STARTED_KEY);
-    
-    // Only restore state if scratching has actually started
-    if (storedScratchStarted === 'true') {
-      const storedCard = localStorage.getItem(STORAGE_KEY);
-      if (storedCard !== null) {
-        const index = parseInt(storedCard, 10);
-        if (!Number.isNaN(index)) {
-          setSelectedCard(index);
-          setScratchStarted(true);
-          console.log(`Restored session: card ${index} was being scratched`);
-        }
-      }
-    } else {
-      // Clear any leftover data from incomplete sessions
-      localStorage.removeItem(STORAGE_KEY);
-      localStorage.removeItem(SCRATCH_STARTED_KEY);
-      console.log('Starting fresh session - no cards selected');
-    }
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(SCRATCH_STARTED_KEY);
+    console.log('Starting fresh session - all cards are selectable');
   }, []);
 
   // Automatically start the game in preview mode if autoStart is enabled
