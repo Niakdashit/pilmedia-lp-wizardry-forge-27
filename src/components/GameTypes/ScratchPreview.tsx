@@ -114,18 +114,20 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
 
   if (!gameStarted) {
     return (
-      <div className="flex flex-col items-center justify-center space-y-8 py-8 min-h-[400px]">
-        <ScratchGameGrid
-          cards={cards}
-          gameSize={gameSize}
-          gameStarted={false}
-          onCardFinish={() => {}}
-          onCardSelect={() => {}}
-          onScratchStart={() => {}}
-          selectedCard={null}
-          scratchStarted={false}
-          config={config}
-        />
+      <div className="min-h-screen flex flex-col items-center justify-center space-y-8 px-4 py-8">
+        <div className="w-full max-w-6xl mx-auto">
+          <ScratchGameGrid
+            cards={cards}
+            gameSize={gameSize}
+            gameStarted={false}
+            onCardFinish={() => {}}
+            onCardSelect={() => {}}
+            onScratchStart={() => {}}
+            selectedCard={null}
+            scratchStarted={false}
+            config={config}
+          />
+        </div>
 
         <button
           onClick={handleGameStart}
@@ -140,7 +142,7 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
   }
 
   return (
-    <div className="w-full flex flex-col items-center space-y-8 py-6 min-h-[500px]">
+    <div className="min-h-screen w-full">
       <ScratchGameGrid
         cards={cards}
         gameSize={gameSize}
@@ -154,23 +156,26 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
         onReplay={handleReplay}
       />
 
-      <div className="text-center space-y-4 max-w-md mx-auto px-4">
-        <div className="text-base text-gray-600 font-medium">
-          {!scratchStarted && selectedCard === null && "Choisissez une carte à gratter"}
-          {!scratchStarted && selectedCard !== null && "Grattez votre carte sélectionnée"}
-          {scratchStarted && `Cartes terminées: ${finishedCards.size}/${cards.length}`}
-        </div>
-        
-        {scratchStarted && (
-          <div className="w-full max-w-xs mx-auto">
-            <div className="w-full bg-gray-200 rounded-full h-3 shadow-inner">
-              <div 
-                className="bg-[#841b60] h-3 rounded-full transition-all duration-300 shadow-sm" 
-                style={{ width: `${(finishedCards.size / cards.length) * 100}%` }} 
-              />
-            </div>
+      {/* Instructions et progrès */}
+      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-gray-200 px-4 py-4">
+        <div className="max-w-4xl mx-auto text-center space-y-3">
+          <div className="text-sm sm:text-base text-gray-600 font-medium">
+            {!scratchStarted && selectedCard === null && "Choisissez une carte à gratter"}
+            {!scratchStarted && selectedCard !== null && "Grattez votre carte sélectionnée"}
+            {scratchStarted && `Cartes terminées: ${finishedCards.size}/${cards.length}`}
           </div>
-        )}
+          
+          {scratchStarted && (
+            <div className="w-full max-w-xs mx-auto">
+              <div className="w-full bg-gray-200 rounded-full h-2.5 shadow-inner">
+                <div 
+                  className="bg-[#841b60] h-2.5 rounded-full transition-all duration-300 shadow-sm" 
+                  style={{ width: `${(finishedCards.size / cards.length) * 100}%` }} 
+                />
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
