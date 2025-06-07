@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import DraggableTextZone from './DraggableTextZone';
 import ContrastBackground from '../../common/ContrastBackground';
 import { Plus, Type } from 'lucide-react';
@@ -29,26 +29,53 @@ const TextZoneManager: React.FC<TextZoneManagerProps> = ({
   gameArea,
   containerBounds
 }) => {
-  const [textZones, setTextZones] = useState<TextZone[]>(() => {
+  const [textZones, setTextZones] = useState<TextZone[]>([]);
+
+  useEffect(() => {
     const initialTitle = campaign?.screens?.[1]?.title || '';
     const initialDescription = campaign?.screens?.[1]?.description || '';
-    if (initialTitle || initialDescription) {
-      return [
-        {
-          id: 'main-text',
-          position: { x: 20, y: 20 },
-          size: { width: 200, height: 80 },
-          content: {
-            title: initialTitle,
-            description: initialDescription,
-            showTitle: mobileConfig.showTitle !== false,
-            showDescription: mobileConfig.showDescription !== false,
+
+    setTextZones(prevZones => {
+      const mainIndex = prevZones.findIndex(zone => zone.id === 'main-text');
+
+      if (initialTitle || initialDescription) {
+        if (mainIndex !== -1) {
+          const updatedZone = {
+            ...prevZones[mainIndex],
+            content: {
+              ...prevZones[mainIndex].content,
+              title: initialTitle,
+              description: initialDescription,
+            },
+          };
+          return prevZones.map((zone, idx) =>
+            idx === mainIndex ? updatedZone : zone
+          );
+        }
+
+        return [
+          ...prevZones,
+          {
+            id: 'main-text',
+            position: { x: 20, y: 20 },
+            size: { width: 200, height: 80 },
+            content: {
+              title: initialTitle,
+              description: initialDescription,
+              showTitle: mobileConfig.showTitle !== false,
+              showDescription: mobileConfig.showDescription !== false,
+            },
           },
-        },
-      ];
-    }
-    return [];
-  });
+        ];
+      }
+
+      if (mainIndex !== -1) {
+        return prevZones.filter(zone => zone.id !== 'main-text');
+      }
+
+      return prevZones;
+    });
+  }, [campaign?.screens]);
   const [selectedZone, setSelectedZone] = useState<string | null>(null);
 
   const handlePositionChange = (id: string, position: { x: number; y: number }) => {
