@@ -98,12 +98,6 @@ const GameRenderer: React.FC<GameRendererProps> = ({
             buttonColor={buttonColor}
             gameSize={gameSize}
             isPreview={true}
-            instantWinConfig={campaign.gameConfig?.scratch?.instantWin || {
-              mode: 'instant_winner' as const,
-              winProbability: 0.1,
-              maxWinners: 10,
-              winnersCount: 0
-            }}
             disabled={!formValidated}
             onFinish={handleGameComplete}
             onStart={handleGameStartInternal}
