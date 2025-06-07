@@ -20,18 +20,29 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
       width: '100%',
       height: '100%',
       backgroundColor: campaign.design?.background || '#f8fafc',
-      backgroundImage: campaign.design?.backgroundImage
-        ? `url(${campaign.design.backgroundImage})`
-        : undefined,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       transition: 'all 0.3s ease',
     };
 
+    const baseBackground = campaign.design?.backgroundImage;
+    const mobileBackground = campaign.design?.mobileBackgroundImage;
+    const backgroundImage =
+      previewDevice === 'mobile' && mobileBackground
+        ? `url(${mobileBackground})`
+        : baseBackground
+        ? `url(${baseBackground})`
+        : undefined;
+
+    const styleWithBackground = {
+      ...baseStyle,
+      backgroundImage,
+    };
+
     switch (previewDevice) {
       case 'tablet':
         return {
-          ...baseStyle,
+          ...styleWithBackground,
           maxWidth: '768px',
           maxHeight: '1024px',
           margin: '0 auto',
@@ -41,7 +52,7 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
         };
       case 'mobile':
         return {
-          ...baseStyle,
+          ...styleWithBackground,
           maxWidth: '375px',
           maxHeight: '812px',
           margin: '0 auto',
@@ -50,7 +61,7 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
           overflow: 'hidden'
         };
       default:
-        return baseStyle;
+        return styleWithBackground;
     }
   };
 
