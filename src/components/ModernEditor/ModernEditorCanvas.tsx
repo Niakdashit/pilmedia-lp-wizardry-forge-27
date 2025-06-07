@@ -3,6 +3,11 @@ import React, { useState, useRef, useCallback } from 'react';
 import GameCanvasPreview from '../CampaignEditor/GameCanvasPreview';
 import TextElement from './TextElement';
 import ImageElement from './ImageElement';
+import CanvasHeader from './components/CanvasHeader';
+import CanvasFooter from './components/CanvasFooter';
+import CanvasBackground from './components/CanvasBackground';
+import GridToggle from './components/GridToggle';
+import { useCanvasElements } from './hooks/useCanvasElements';
 
 interface ModernEditorCanvasProps {
   campaign: any;
@@ -17,58 +22,19 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
   gameSize,
   gamePosition
 }) => {
-  const [selectedElement, setSelectedElement] = useState<{type: 'text' | 'image', id: number} | null>(null);
   const [showGridLines, setShowGridLines] = useState(false);
   const canvasRef = useRef<HTMLDivElement>(null);
 
-  const getCanvasStyle = () => {
-    const baseStyle = {
-      width: '100%',
-      height: '100%',
-      backgroundColor: campaign.design?.background || '#f8fafc',
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      transition: 'background-color 0.3s ease',
-      position: 'relative' as const,
-      overflow: 'hidden'
-    };
-
-    // Determine background image based on device
-    let backgroundImage;
-    if (previewDevice === 'mobile' && campaign.design?.mobileBackgroundImage) {
-      backgroundImage = `url(${campaign.design.mobileBackgroundImage})`;
-    } else if (previewDevice !== 'mobile' && campaign.design?.backgroundImage) {
-      backgroundImage = `url(${campaign.design.backgroundImage})`;
-    }
-
-    const styleWithBackground = {
-      ...baseStyle,
-      backgroundImage,
-    };
-
-    switch (previewDevice) {
-      case 'tablet':
-        return {
-          ...styleWithBackground,
-          maxWidth: '768px',
-          maxHeight: '1024px',
-          margin: '0 auto',
-          border: '1px solid #e5e7eb',
-          borderRadius: '12px'
-        };
-      case 'mobile':
-        return {
-          ...styleWithBackground,
-          maxWidth: '375px',
-          maxHeight: '812px',
-          margin: '0 auto',
-          border: '1px solid #e5e7eb',
-          borderRadius: '20px'
-        };
-      default:
-        return styleWithBackground;
-    }
-  };
+  const {
+    selectedElement,
+    setSelectedElement,
+    customTexts,
+    customImages,
+    updateTextElement,
+    updateImageElement,
+    deleteTextElement,
+    deleteImageElement
+  } = useCanvasElements(campaign);
 
   // Enhanced campaign with proper settings propagation
   const enhancedCampaign = {
@@ -107,8 +73,6 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
   const footerBanner = campaign.design?.footerBanner;
   const headerText = campaign.design?.headerText;
   const footerText = campaign.design?.footerText;
-  const customTexts = campaign.design?.customTexts || [];
-  const customImages = campaign.design?.customImages || [];
 
   const sizeMap: Record<string, string> = {
     xs: '10px',
@@ -126,56 +90,6 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
     '9xl': '72px'
   };
 
-  const updateTextElement = useCallback((id: number, updates: any) => {
-    const updatedCampaign = {
-      ...campaign,
-      design: {
-        ...campaign.design,
-        customTexts: customTexts.map((text: any) => 
-          text.id === id ? { ...text, ...updates } : text
-        )
-      }
-    };
-    Object.assign(campaign, updatedCampaign);
-  }, [campaign, customTexts]);
-
-  const updateImageElement = useCallback((id: number, updates: any) => {
-    const updatedCampaign = {
-      ...campaign,
-      design: {
-        ...campaign.design,
-        customImages: customImages.map((img: any) => 
-          img.id === id ? { ...img, ...updates } : img
-        )
-      }
-    };
-    Object.assign(campaign, updatedCampaign);
-  }, [campaign, customImages]);
-
-  const deleteTextElement = useCallback((id: number) => {
-    const updatedCampaign = {
-      ...campaign,
-      design: {
-        ...campaign.design,
-        customTexts: customTexts.filter((text: any) => text.id !== id)
-      }
-    };
-    Object.assign(campaign, updatedCampaign);
-    setSelectedElement(null);
-  }, [campaign, customTexts]);
-
-  const deleteImageElement = useCallback((id: number) => {
-    const updatedCampaign = {
-      ...campaign,
-      design: {
-        ...campaign.design,
-        customImages: customImages.filter((img: any) => img.id !== id)
-      }
-    };
-    Object.assign(campaign, updatedCampaign);
-    setSelectedElement(null);
-  }, [campaign, customImages]);
-
   const handleCanvasClick = (e: React.MouseEvent) => {
     // Only deselect if clicking directly on the canvas, not on child elements
     if (e.target === e.currentTarget) {
@@ -185,60 +99,18 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
 
   return (
     <div className="w-full h-full flex items-center justify-center bg-gray-100 p-4">
-      <div 
-        ref={canvasRef}
-        style={getCanvasStyle()} 
-        className="flex flex-col h-full w-full relative"
-        onClick={handleCanvasClick}
+      <CanvasBackground
+        campaign={campaign}
+        previewDevice={previewDevice}
+        showGridLines={showGridLines}
+        onCanvasClick={handleCanvasClick}
+        canvasRef={canvasRef}
       >
-        {/* Grid lines for alignment (optional visual aid) */}
-        {showGridLines && (
-          <div className="absolute inset-0 pointer-events-none z-10">
-            <svg width="100%" height="100%" className="opacity-20">
-              <defs>
-                <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
-                  <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#3b82f6" strokeWidth="0.5"/>
-                </pattern>
-              </defs>
-              <rect width="100%" height="100%" fill="url(#grid)" />
-            </svg>
-          </div>
-        )}
-
-        {headerBanner?.enabled && (
-          <div
-            className="relative w-full"
-            style={{
-              backgroundImage: `url(${headerBanner.image})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              height: headerBanner.height || '120px'
-            }}
-          >
-            {headerBanner.overlay && (
-              <div className="absolute inset-0 bg-black opacity-40" />
-            )}
-            {headerText?.enabled && (
-              <div
-                className="relative w-full text-center flex items-center justify-center h-full"
-                style={{
-                  color: headerText.color,
-                  fontSize: sizeMap[headerText.size] || '1rem',
-                  ...(headerText.showFrame
-                    ? {
-                        backgroundColor: headerText.frameColor,
-                        border: `1px solid ${headerText.frameBorderColor}`,
-                        padding: '4px 8px',
-                        borderRadius: '4px'
-                      }
-                    : {})
-                }}
-              >
-                {headerText.text}
-              </div>
-            )}
-          </div>
-        )}
+        <CanvasHeader
+          headerBanner={headerBanner}
+          headerText={headerText}
+          sizeMap={sizeMap}
+        />
 
         <div className="flex-1 flex relative">
           <GameCanvasPreview
@@ -278,50 +150,17 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
           ))}
         </div>
 
-        {footerBanner?.enabled && (
-          <div
-            className="relative w-full"
-            style={{
-              backgroundImage: `url(${footerBanner.image})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center',
-              height: footerBanner.height || '120px'
-            }}
-          >
-            {footerBanner.overlay && (
-              <div className="absolute inset-0 bg-black opacity-40" />
-            )}
-            {footerText?.enabled && (
-              <div
-                className="relative w-full text-center flex items-center justify-center h-full"
-                style={{
-                  color: footerText.color,
-                  fontSize: sizeMap[footerText.size] || '1rem',
-                  ...(footerText.showFrame
-                    ? {
-                        backgroundColor: footerText.frameColor,
-                        border: `1px solid ${footerText.frameBorderColor}`,
-                        padding: '4px 8px',
-                        borderRadius: '4px'
-                      }
-                    : {})
-                }}
-              >
-                {footerText.text}
-              </div>
-            )}
-          </div>
-        )}
+        <CanvasFooter
+          footerBanner={footerBanner}
+          footerText={footerText}
+          sizeMap={sizeMap}
+        />
 
-        {/* Grid toggle button (for development/alignment) */}
-        <button
-          onClick={() => setShowGridLines(!showGridLines)}
-          className="absolute top-2 right-2 p-2 bg-white/80 hover:bg-white rounded-lg shadow-sm text-xs z-40"
-          title="Afficher/masquer la grille d'alignement"
-        >
-          📐
-        </button>
-      </div>
+        <GridToggle
+          showGridLines={showGridLines}
+          onToggle={() => setShowGridLines(!showGridLines)}
+        />
+      </CanvasBackground>
     </div>
   );
 };
