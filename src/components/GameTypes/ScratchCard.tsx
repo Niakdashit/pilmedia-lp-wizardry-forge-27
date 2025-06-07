@@ -8,8 +8,12 @@ interface ScratchCardProps {
   gameSize: string;
   gameStarted: boolean;
   onCardFinish: (result: 'win' | 'lose') => void;
+  onCardSelect: () => void;
   onScratchStart: () => void;
   locked: boolean;
+  selectable: boolean;
+  canScratch: boolean;
+  isSelected: boolean;
   config: any;
 }
 
@@ -19,8 +23,12 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
   gameSize,
   gameStarted,
   onCardFinish,
+  onCardSelect,
   onScratchStart,
   locked,
+  selectable,
+  canScratch,
+  isSelected,
   config
 }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -28,6 +36,7 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
   const [scratchPercentage, setScratchPercentage] = useState(0);
   const [result, setResult] = useState<'win' | 'lose' | null>(null);
   const [hasNotifiedResult, setHasNotifiedResult] = useState(false);
+  const [scratchStarted, setScratchStarted] = useState(false);
 
   // Dimensions selon la taille
   const getDimensions = () => {
@@ -56,7 +65,7 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
   }, [gameStarted, result]);
 
   useEffect(() => {
-    if (canvasRef.current && gameStarted && !isRevealed && result) {
+    if (canvasRef.current && canScratch && !isRevealed && result && !scratchStarted) {
       const canvas = canvasRef.current;
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
@@ -90,7 +99,6 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
       }
       
       let isDrawing = false;
-      let scratchBegan = false;
       
       const getXY = (e: MouseEvent | TouchEvent) => {
         const rect = canvas.getBoundingClientRect();
@@ -107,15 +115,15 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
       };
       
       const scratch = (e: MouseEvent | TouchEvent) => {
-        if (!isDrawing || locked) return;
+        if (!isDrawing) return;
         const { x, y } = getXY(e);
         ctx.globalCompositeOperation = 'destination-out';
         ctx.beginPath();
         ctx.arc(x, y, Math.max(10, width * 0.08), 0, Math.PI * 2);
         ctx.fill();
 
-        if (!scratchBegan) {
-          scratchBegan = true;
+        if (!scratchStarted) {
+          setScratchStarted(true);
           onScratchStart();
         }
 
@@ -140,7 +148,6 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
       };
       
       const startDrawing = (e: Event) => {
-        if (locked) return;
         e.preventDefault();
         isDrawing = true;
       };
@@ -165,7 +172,7 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
         canvas.removeEventListener('touchend', stopDrawing);
       };
     }
-  }, [config, isRevealed, gameStarted, result, width, height, onCardFinish, card, hasNotifiedResult]);
+  }, [config, isRevealed, canScratch, result, width, height, onCardFinish, card, hasNotifiedResult, scratchStarted, onScratchStart]);
 
   const getResultContent = () => {
     const revealImage = card.revealImage || config?.revealImage;
@@ -189,6 +196,12 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
     );
   };
 
+  const handleCardClick = () => {
+    if (selectable) {
+      onCardSelect();
+    }
+  };
+
   if (!gameStarted) {
     return (
       <div className="flex flex-col items-center">
@@ -209,7 +222,7 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
 
   return (
     <div className="flex flex-col items-center">
-      {gameStarted && !isRevealed && (
+      {gameStarted && canScratch && !isRevealed && (
         <div className="text-center mb-2">
           <div className="text-xs text-gray-600 mb-1">
             Carte {index + 1} - {scratchPercentage}%
@@ -224,14 +237,19 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
       )}
 
       <div
-        className="relative rounded-lg overflow-hidden border-2 border-gray-300"
+        className={`relative rounded-lg overflow-hidden border-2 transition-all duration-200 ${
+          isSelected ? 'border-[#841b60] shadow-lg' : 
+          selectable ? 'border-gray-300 hover:border-[#841b60] cursor-pointer' : 
+          'border-gray-300'
+        }`}
         style={{
           width: '100%',
           maxWidth: `${width}px`,
           height: `${height}px`,
-          pointerEvents: locked && !isRevealed ? 'none' : 'auto',
-          opacity: locked && !isRevealed ? 0.5 : 1
+          pointerEvents: locked ? 'none' : 'auto',
+          opacity: locked ? 0.5 : 1
         }}
+        onClick={handleCardClick}
       >
         {/* Contenu à révéler */}
         <div className="absolute inset-0">
@@ -239,7 +257,7 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
         </div>
 
         {/* Canvas de grattage */}
-        {gameStarted && !isRevealed && (
+        {canScratch && !isRevealed && (
           <canvas
             ref={canvasRef}
             className="absolute inset-0 w-full h-full cursor-crosshair"
@@ -247,7 +265,21 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
           />
         )}
 
-        {locked && !isRevealed && (
+        {/* État de sélection */}
+        {selectable && (
+          <div className="absolute inset-0 bg-black/20 flex items-center justify-center text-white text-sm font-semibold">
+            Cliquez pour sélectionner
+          </div>
+        )}
+
+        {/* État sélectionné mais pas encore gratté */}
+        {isSelected && !canScratch && !locked && (
+          <div className="absolute inset-0 bg-[#841b60]/20 flex items-center justify-center text-[#841b60] text-sm font-semibold">
+            Carte sélectionnée
+          </div>
+        )}
+
+        {locked && (
           <div className="absolute inset-0 bg-black/40 flex items-center justify-center text-white text-sm font-semibold">
             Carte verrouillée
           </div>

@@ -7,8 +7,10 @@ interface ScratchGameGridProps {
   gameSize: string;
   gameStarted: boolean;
   onCardFinish: (result: 'win' | 'lose', cardIndex: number) => void;
-  onCardStart: (index: number) => void;
-  activeCard: number | null;
+  onCardSelect: (index: number) => void;
+  onScratchStart: (index: number) => void;
+  selectedCard: number | null;
+  scratchStarted: boolean;
   config: any;
 }
 
@@ -17,8 +19,10 @@ const ScratchGameGrid: React.FC<ScratchGameGridProps> = ({
   gameSize,
   gameStarted,
   onCardFinish,
-  onCardStart,
-  activeCard,
+  onCardSelect,
+  onScratchStart,
+  selectedCard,
+  scratchStarted,
   config
 }) => {
   // Responsive grid: 2 cards on mobile, 3 on tablet/desktop
@@ -37,19 +41,32 @@ const ScratchGameGrid: React.FC<ScratchGameGridProps> = ({
   return (
     <div className="w-full max-w-6xl mx-auto px-4">
       <div className={`${gridClasses} ${spacingClasses}`}>
-        {cards.map((card: any, index: number) => (
-          <ScratchCard
-            key={card.id || index}
-            card={card}
-            index={index}
-            gameSize={gameSize}
-            gameStarted={gameStarted}
-            onCardFinish={(result) => onCardFinish(result, index)}
-            onScratchStart={() => onCardStart(index)}
-            locked={activeCard !== null && activeCard !== index}
-            config={config}
-          />
-        ))}
+        {cards.map((card: any, index: number) => {
+          // Determine if this card should be locked
+          const isLocked = gameStarted && scratchStarted && selectedCard !== index;
+          // Determine if this card is selectable (can be clicked to select)
+          const isSelectable = gameStarted && !scratchStarted && selectedCard === null;
+          // Determine if this card can be scratched
+          const canScratch = gameStarted && selectedCard === index && !scratchStarted;
+
+          return (
+            <ScratchCard
+              key={card.id || index}
+              card={card}
+              index={index}
+              gameSize={gameSize}
+              gameStarted={gameStarted}
+              onCardFinish={(result) => onCardFinish(result, index)}
+              onCardSelect={() => onCardSelect(index)}
+              onScratchStart={() => onScratchStart(index)}
+              locked={isLocked}
+              selectable={isSelectable}
+              canScratch={canScratch}
+              isSelected={selectedCard === index}
+              config={config}
+            />
+          );
+        })}
       </div>
     </div>
   );

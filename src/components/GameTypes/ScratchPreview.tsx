@@ -11,15 +11,11 @@ interface ScratchPreviewProps {
   buttonColor?: string;
   gameSize?: 'small' | 'medium' | 'large' | 'xlarge';
   gamePosition?: 'top' | 'center' | 'bottom' | 'left' | 'right';
-  /**
-   * When true, the game starts immediately without requiring the user to
-   * click the start button. Useful for preview mode where we want to display
-   * the interactive game directly.
-   */
   autoStart?: boolean;
 }
 
-const STORAGE_KEY = 'scratch_active_card';
+const STORAGE_KEY = 'scratch_session_card';
+const SCRATCH_STARTED_KEY = 'scratch_session_started';
 
 const ScratchPreview: React.FC<ScratchPreviewProps> = ({
   config = {},
@@ -34,26 +30,25 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
   const [gameStarted, setGameStarted] = useState(autoStart && !disabled);
   const [finishedCards, setFinishedCards] = useState<Set<number>>(new Set());
   const [hasWon, setHasWon] = useState(false);
-  const [activeCard, setActiveCard] = useState<number | null>(null);
+  const [selectedCard, setSelectedCard] = useState<number | null>(null);
+  const [scratchStarted, setScratchStarted] = useState(false);
 
-  // Load any previously selected card from storage to enforce single play per session
+  // Load any previously selected card and scratch state from storage
   useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored !== null) {
-      const index = parseInt(stored, 10);
+    const storedCard = localStorage.getItem(STORAGE_KEY);
+    const storedScratchStarted = localStorage.getItem(SCRATCH_STARTED_KEY);
+    
+    if (storedCard !== null) {
+      const index = parseInt(storedCard, 10);
       if (!Number.isNaN(index)) {
-        setActiveCard(index);
+        setSelectedCard(index);
       }
     }
-  }, []);
-
-  // Automatically start the game in preview mode if autoStart is enabled
-  useEffect(() => {
-    if (autoStart && !gameStarted && !disabled) {
-      setGameStarted(true);
-      if (onStart) onStart();
+    
+    if (storedScratchStarted === 'true') {
+      setScratchStarted(true);
     }
-  }, [autoStart, gameStarted, disabled, onStart]);
+  }, []);
 
   // Automatically start the game in preview mode if autoStart is enabled
   useEffect(() => {
@@ -69,11 +64,19 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
     if (onStart) onStart();
   };
 
-  const handleCardStart = (index: number) => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (activeCard === null && stored === null) {
-      setActiveCard(index);
+  const handleCardSelect = (index: number) => {
+    // Only allow selection if no card has been selected yet and scratch hasn't started
+    if (selectedCard === null && !scratchStarted) {
+      setSelectedCard(index);
       localStorage.setItem(STORAGE_KEY, index.toString());
+    }
+  };
+
+  const handleScratchStart = (index: number) => {
+    // Only allow scratch to start on the selected card
+    if (selectedCard === index && !scratchStarted) {
+      setScratchStarted(true);
+      localStorage.setItem(SCRATCH_STARTED_KEY, 'true');
     }
   };
 
@@ -113,8 +116,10 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
           gameSize={gameSize}
           gameStarted={false}
           onCardFinish={() => {}}
-          onCardStart={() => {}}
-          activeCard={null}
+          onCardSelect={() => {}}
+          onScratchStart={() => {}}
+          selectedCard={null}
+          scratchStarted={false}
           config={config}
         />
 
@@ -137,22 +142,28 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
         gameSize={gameSize}
         gameStarted={gameStarted}
         onCardFinish={handleCardFinish}
-        onCardStart={handleCardStart}
-        activeCard={activeCard}
+        onCardSelect={handleCardSelect}
+        onScratchStart={handleScratchStart}
+        selectedCard={selectedCard}
+        scratchStarted={scratchStarted}
         config={config}
       />
 
       <div className="text-center">
         <div className="text-sm text-gray-600">
-          Cartes terminées: {finishedCards.size}/{cards.length}
+          {!selectedCard && !scratchStarted && "Choisissez une carte"}
+          {selectedCard !== null && !scratchStarted && "Grattez votre carte sélectionnée"}
+          {scratchStarted && `Cartes terminées: ${finishedCards.size}/${cards.length}`}
         </div>
         
-        <div className="w-48 bg-gray-200 rounded-full h-2 mt-2">
-          <div 
-            className="bg-[#841b60] h-2 rounded-full transition-all duration-300" 
-            style={{ width: `${(finishedCards.size / cards.length) * 100}%` }} 
-          />
-        </div>
+        {scratchStarted && (
+          <div className="w-48 bg-gray-200 rounded-full h-2 mt-2">
+            <div 
+              className="bg-[#841b60] h-2 rounded-full transition-all duration-300" 
+              style={{ width: `${(finishedCards.size / cards.length) * 100}%` }} 
+            />
+          </div>
+        )}
       </div>
     </div>
   );
