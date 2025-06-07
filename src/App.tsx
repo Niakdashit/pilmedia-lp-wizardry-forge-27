@@ -1,6 +1,8 @@
 
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { AppProvider } from './context/AppContext';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import Layout from './components/Layout/Layout';
 import Dashboard from './pages/Dashboard';
 import Campaigns from './pages/Campaigns';
@@ -34,8 +36,9 @@ function App() {
             <Route path="/data" element={<Layout><Data /></Layout>} />
             <Route path="/statistics" element={<Layout><Statistics /></Layout>} />
             <Route path="/studies" element={<Layout><Studies /></Layout>} />
-            <Route path="/account" element={<Layout><Account /></Layout>} />
-          </Routes>
+          <Route path="/account" element={<Layout><Account /></Layout>} />
+        </Routes>
+        <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
         </div>
       </Router>
     </AppProvider>

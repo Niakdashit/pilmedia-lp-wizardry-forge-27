@@ -69,7 +69,8 @@ const Sidebar: React.FC = () => {
                 className={`flex items-center px-3 py-2 rounded-xl transition-all duration-200 group ${isActive ? 'bg-[#841b60] text-white' : 'text-gray-600 hover:bg-[#f8f0f5] hover:text-[#841b60]'}`}
               >
                 <div className={`flex items-center justify-center w-8 h-8 rounded-lg ${isActive ? 'bg-white/20' : 'bg-white group-hover:bg-white'}`}>{item.icon}</div>
-                {!sidebarCollapsed && <span className="ml-3 font-medium">{item.name}</span>}
+                {/* On garde truncate pour forcer le texte à ne jamais déborder */}
+                {!sidebarCollapsed && <span className="ml-3 font-medium truncate">{item.name}</span>}
               </Link>
             );
           })}

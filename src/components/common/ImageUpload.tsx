@@ -22,9 +22,7 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log('Upload area clicked, triggering file input');
     if (fileInputRef.current) {
-      console.log('File input found, triggering click');
       fileInputRef.current.click();
     } else {
       console.error('File input ref not found');
@@ -34,11 +32,9 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      console.log('File selected:', file.name);
       const reader = new FileReader();
       reader.onload = () => {
         const result = reader.result as string;
-        console.log('File read successfully, calling onChange');
         onChange(result);
       };
       reader.onerror = () => {
@@ -53,7 +49,6 @@ const ImageUpload: React.FC<ImageUploadProps> = ({
   const handleRemove = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log('Removing image');
     onChange('');
   };
 

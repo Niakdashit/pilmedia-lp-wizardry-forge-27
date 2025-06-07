@@ -35,7 +35,6 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
   const handleStart = () => setStep('form');
   
   const handleFormSubmit = async (formData: Record<string, string>) => {
-    console.log('Form data submitted:', formData);
     
     if (campaign.id) {
       const participation = await createParticipation({
@@ -45,7 +44,6 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
       });
       
       if (participation) {
-        console.log('Participation sauvegardée:', participation);
       }
     }
     

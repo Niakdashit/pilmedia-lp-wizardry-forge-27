@@ -11,7 +11,7 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { sidebarCollapsed, toggleSidebar } = useAppContext();
 
-  // prevent background scrolling when the sidebar is open on small screens
+  // Empêche le scroll du background quand la sidebar est ouverte sur mobile
   useEffect(() => {
     if (typeof document !== 'undefined') {
       document.body.classList.toggle('overflow-hidden', !sidebarCollapsed);
@@ -21,7 +21,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <div className="flex min-h-screen bg-[#ebf4f7] overflow-hidden">
       <Sidebar />
-      {/* Overlay for mobile when sidebar is open */}
+      {/* Overlay mobile/tablette pour cliquer et fermer la sidebar */}
       <div
         onClick={toggleSidebar}
         className={`md:hidden fixed inset-0 bg-black/30 transition-opacity ${sidebarCollapsed ? 'pointer-events-none opacity-0' : 'opacity-100'}`}

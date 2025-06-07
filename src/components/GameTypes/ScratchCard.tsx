@@ -79,7 +79,6 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
   const handleCardClick = () => {
     if (selectable && !locked) {
       onCardSelect();
-      console.log(`Card ${index} selected`);
     }
   };
 

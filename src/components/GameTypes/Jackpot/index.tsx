@@ -27,21 +27,7 @@ const Jackpot: React.FC<JackpotProps> = ({
   const [isRolling, setIsRolling] = useState(false);
   const [result, setResult] = useState<GameResult>(null);
 
-  console.log('Jackpot component received colors:', {
-    containerBackgroundColor,
-    backgroundColor,
-    borderColor,
-    borderWidth,
-    slotBorderColor,
-    slotBorderWidth,
-    slotBackgroundColor
-  });
 
-  console.log('Jackpot component props breakdown:', {
-    buttonColor,
-    backgroundImage,
-    isPreview
-  });
 
   const roll = () => {
     if (isRolling || result) return;

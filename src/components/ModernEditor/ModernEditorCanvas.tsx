@@ -14,7 +14,6 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
   gameSize,
   gamePosition
 }) => {
-  console.log('ModernEditorCanvas received:', { gameSize, gamePosition, buttonConfig: campaign.buttonConfig });
 
   const getCanvasStyle = () => {
     const baseStyle = {
@@ -112,7 +111,6 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
     center: { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }
   };
 
-  console.log('Enhanced campaign for preview:', enhancedCampaign);
 
   return (
     <div className="w-full h-full flex items-center justify-center bg-gray-100 p-4">
