@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { X, Monitor, Tablet, Smartphone } from 'lucide-react';
 import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
 import FunnelStandard from '../funnels/FunnelStandard';
-import MobilePreview from './Mobile/MobilePreview';
+import CampaignPreview from './CampaignPreview';
 
 interface PreviewModalProps {
   isOpen: boolean;
@@ -76,19 +76,35 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
     </div>
   );
 
-  const renderMobilePreview = () => (
-    <div className="w-full h-full flex items-center justify-center p-4">
-      <MobilePreview
-        campaign={campaign}
-        previewMode={selectedDevice === 'tablet' ? 'tablet' : 'mobile'}
-        key={`mobile-${campaign.id}-${JSON.stringify({
-          mobileConfig: campaign.mobileConfig,
-          gameConfig: campaign.gameConfig,
-          design: campaign.design
-        })}`} // Force re-render with comprehensive dependencies
-      />
-    </div>
-  );
+  const renderMobilePreview = () => {
+    const specs = selectedDevice === 'tablet'
+      ? { width: 768, height: 1024, borderRadius: 20 }
+      : { width: 375, height: 667, borderRadius: 24 };
+
+    return (
+      <div className="w-full h-full flex items-center justify-center p-4">
+        <div
+          style={{
+            width: specs.width,
+            height: specs.height,
+            border: '1px solid #e5e7eb',
+            borderRadius: specs.borderRadius,
+            overflow: 'hidden',
+            backgroundColor: '#ffffff'
+          }}
+        >
+          <CampaignPreview
+            campaign={campaign}
+            key={`mobile-${campaign.id}-${JSON.stringify({
+              gameConfig: campaign.gameConfig,
+              design: campaign.design,
+              screens: campaign.screens
+            })}`}
+          />
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
