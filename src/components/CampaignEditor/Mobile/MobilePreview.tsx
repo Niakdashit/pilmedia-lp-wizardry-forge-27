@@ -130,7 +130,6 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
         <FreeTextManager 
           containerBounds={containerBounds} 
           previewMode={previewMode}
-          campaign={campaign}
         />
 
         {/* Button Layer - only show if not hidden */}

@@ -1,6 +1,6 @@
 
 import React, { useState, useRef } from 'react';
-import { Edit3, Trash2, Move, Maximize2 } from 'lucide-react';
+import { Trash2, Move, Maximize2 } from 'lucide-react';
 
 interface FreeTextZoneProps {
   id: string;
