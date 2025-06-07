@@ -1,4 +1,3 @@
-
 import React from 'react';
 import ScratchCard from './ScratchCard';
 
@@ -12,7 +11,6 @@ interface ScratchGameGridProps {
   selectedCard: number | null;
   scratchStarted: boolean;
   config: any;
-  onReplay?: () => void;
   isModal?: boolean;
 }
 
@@ -26,7 +24,6 @@ const ScratchGameGrid: React.FC<ScratchGameGridProps> = ({
   selectedCard,
   scratchStarted,
   config,
-  onReplay,
   isModal = false
 }) => {
   // Configuration responsive de la grille
