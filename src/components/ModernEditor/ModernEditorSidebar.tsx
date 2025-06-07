@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Settings, Gamepad2, Palette, FormInput, Sliders } from 'lucide-react';
+import { Settings, Gamepad2, Palette, FormInput, Sliders, Smartphone } from 'lucide-react';
 import { CampaignType } from '../../utils/campaignTypes';
 
 interface ModernEditorSidebarProps {
@@ -26,7 +26,8 @@ const ModernEditorSidebar: React.FC<ModernEditorSidebarProps> = ({
     { id: 'game', label: 'Jeu', icon: Gamepad2 },
     { id: 'gameconfig', label: 'Configuration', icon: Sliders, description: 'Taille et position' },
     { id: 'design', label: 'Design', icon: Palette },
-    { id: 'form', label: 'Formulaire', icon: FormInput }
+    { id: 'form', label: 'Formulaire', icon: FormInput },
+    { id: 'mobile', label: 'Mobile', icon: Smartphone }
   ];
 
   return (
