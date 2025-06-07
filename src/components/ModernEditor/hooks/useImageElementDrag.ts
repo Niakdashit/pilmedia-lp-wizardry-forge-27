@@ -1,11 +1,6 @@
 
 import { useState, useCallback, useRef } from 'react';
 
-interface DragState {
-  x: number;
-  y: number;
-}
-
 export const useImageElementDrag = (
   elementRef: React.RefObject<HTMLDivElement>,
   containerRef: React.RefObject<HTMLDivElement>,

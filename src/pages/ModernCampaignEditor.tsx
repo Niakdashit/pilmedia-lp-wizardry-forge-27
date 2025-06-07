@@ -285,7 +285,13 @@ const ModernCampaignEditor: React.FC = () => {
 
           {/* Canvas Preview */}
           <div className="flex-1 bg-gray-100">
-            <ModernEditorCanvas campaign={campaign} previewDevice={previewDevice} gameSize={campaign.gameSize} gamePosition={campaign.gamePosition} />
+            <ModernEditorCanvas 
+              campaign={campaign} 
+              setCampaign={setCampaign}
+              previewDevice={previewDevice} 
+              gameSize={campaign.gameSize} 
+              gamePosition={campaign.gamePosition} 
+            />
           </div>
         </div>
       </div>
