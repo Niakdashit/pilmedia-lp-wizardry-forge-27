@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 interface ScratchPreviewProps {
@@ -280,10 +279,12 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
 
   // Si le jeu n'a pas encore commencé, afficher le bouton
   if (!gameStarted) {
-    return <div className="flex flex-col items-center space-y-4 my-[25px]">
-        {/* Grille des cartes avant le jeu - responsive avec espacement approprié */}
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 mx-auto px-4 my-[17px] py-0 max-w-fit">
-          {cards.map((card: any, index: number) => <ScratchCard key={card.id || index} card={card} index={index} gameSize={gameSize} gameStarted={false} onCardFinish={() => {}} config={config} />)}
+    return <div className="flex flex-col items-center space-y-6 my-6">
+        {/* Grille des cartes avant le jeu - responsive avec espacement renforcé */}
+        <div className="w-full max-w-4xl mx-auto px-6">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
+            {cards.map((card: any, index: number) => <ScratchCard key={card.id || index} card={card} index={index} gameSize={gameSize} gameStarted={false} onCardFinish={() => {}} config={config} />)}
+          </div>
         </div>
 
         <button onClick={handleGameStart} disabled={disabled} className="px-6 py-3 rounded-lg font-semibold text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90" style={{
@@ -293,10 +294,12 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
         </button>
       </div>;
   }
-  return <div className="w-full flex flex-col items-center space-y-4">
-      {/* Grille responsive des cartes - toutes affichées simultanément avec espacement approprié */}
-      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 max-w-fit mx-auto px-4">
-        {cards.map((card: any, index: number) => <ScratchCard key={card.id || index} card={card} index={index} gameSize={gameSize} gameStarted={gameStarted} onCardFinish={result => handleCardFinish(result, index)} config={config} />)}
+  return <div className="w-full flex flex-col items-center space-y-6">
+      {/* Grille responsive des cartes - toutes affichées simultanément avec espacement renforcé */}
+      <div className="w-full max-w-4xl mx-auto px-6">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
+          {cards.map((card: any, index: number) => <ScratchCard key={card.id || index} card={card} index={index} gameSize={gameSize} gameStarted={gameStarted} onCardFinish={result => handleCardFinish(result, index)} config={config} />)}
+        </div>
       </div>
 
       {/* Indicateur de progression */}
