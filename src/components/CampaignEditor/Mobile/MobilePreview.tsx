@@ -25,6 +25,20 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
   const screenStyle = getScreenStyle(mobileConfig);
   const contentLayoutStyle = getContentLayoutStyle(mobileConfig);
 
+  // Get custom images for mobile
+  const customImages = campaign.design?.customImages || [];
+
+  // Helper function to get mobile-specific config for elements
+  const getElementMobileConfig = (element: any) => {
+    const mobileConfig = element.deviceConfig?.mobile;
+    return {
+      x: mobileConfig?.x ?? element.x ?? 0,
+      y: mobileConfig?.y ?? element.y ?? 0,
+      width: mobileConfig?.width ?? element.width ?? 100,
+      height: mobileConfig?.height ?? element.height ?? 100
+    };
+  };
+
   return (
     <div style={deviceStyle} key={`mobile-preview-${campaign.gameSize}-${JSON.stringify(mobileConfig)}`}>
       <div style={screenStyle}>
@@ -52,6 +66,39 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
             />
           </div>
         )}
+
+        {/* Custom Images Layer */}
+        {customImages.map((customImage: any) => {
+          if (!customImage?.src) return null;
+          
+          const mobileConfig = getElementMobileConfig(customImage);
+          
+          return (
+            <div
+              key={`mobile-image-${customImage.id}`}
+              style={{
+                position: 'absolute',
+                transform: `translate3d(${mobileConfig.x}px, ${mobileConfig.y}px, 0) rotate(${customImage.rotation || 0}deg)`,
+                width: mobileConfig.width,
+                height: mobileConfig.height,
+                zIndex: 15,
+                pointerEvents: 'none'
+              }}
+            >
+              <img
+                src={customImage.src}
+                alt="Custom element"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  borderRadius: '4px'
+                }}
+                draggable={false}
+              />
+            </div>
+          );
+        })}
 
         {/* Content Layer */}
         <div style={contentLayoutStyle}>

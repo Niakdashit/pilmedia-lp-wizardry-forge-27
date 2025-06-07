@@ -2,6 +2,7 @@
 import React from 'react';
 import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
 import FunnelStandard from '../funnels/FunnelStandard';
+import MobilePreview from './Mobile/MobilePreview';
 
 interface CampaignPreviewProps {
   campaign: any;
@@ -10,6 +11,11 @@ interface CampaignPreviewProps {
 
 const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevice = 'desktop' }) => {
   const { design } = campaign;
+
+  // If mobile preview, use the dedicated MobilePreview component
+  if (previewDevice === 'mobile') {
+    return <MobilePreview campaign={campaign} previewMode="mobile" />;
+  }
 
   // Get background image depending on device
   const baseBackground = design?.backgroundImage || campaign.gameConfig?.[campaign.type]?.backgroundImage;
@@ -53,6 +59,21 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
   const customHTML = design?.customHTML ? (
     <div dangerouslySetInnerHTML={{ __html: design.customHTML }} />
   ) : null;
+
+  // Get custom images for desktop/tablet
+  const customImages = campaign.design?.customImages || [];
+
+  // Helper function to get device-specific config for elements
+  const getElementDeviceConfig = (element: any) => {
+    const deviceKey = previewDevice === 'mobile' ? 'mobile' : 'desktop';
+    const deviceConfig = element.deviceConfig?.[deviceKey];
+    return {
+      x: deviceConfig?.x ?? element.x ?? 0,
+      y: deviceConfig?.y ?? element.y ?? 0,
+      width: deviceConfig?.width ?? element.width ?? 100,
+      height: deviceConfig?.height ?? element.height ?? 100
+    };
+  };
 
   const getFunnelComponent = () => {
     const funnel = campaign.funnel || (['wheel', 'scratch', 'jackpot', 'dice'].includes(campaign.type) ? 'unlocked_game' : 'standard');
@@ -111,6 +132,39 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
       <div style={contentWrapperStyle}>
         {customHTML}
         {getFunnelComponent()}
+        
+        {/* Custom Images for desktop/tablet */}
+        {customImages.map((customImage: any) => {
+          if (!customImage?.src) return null;
+          
+          const deviceConfig = getElementDeviceConfig(customImage);
+          
+          return (
+            <div
+              key={`preview-image-${customImage.id}`}
+              style={{
+                position: 'absolute',
+                transform: `translate3d(${deviceConfig.x}px, ${deviceConfig.y}px, 0) rotate(${customImage.rotation || 0}deg)`,
+                width: deviceConfig.width,
+                height: deviceConfig.height,
+                zIndex: 20,
+                pointerEvents: 'none'
+              }}
+            >
+              <img
+                src={customImage.src}
+                alt="Custom element"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  borderRadius: '4px'
+                }}
+                draggable={false}
+              />
+            </div>
+          );
+        })}
       </div>
     </div>
   );
