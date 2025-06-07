@@ -124,7 +124,8 @@ const ModernCampaignEditor: React.FC = () => {
         showFrame: false,
         frameColor: '#ffffff',
         frameBorderColor: '#e5e7eb'
-      }
+      },
+      customTexts: []
     },
     screens: {
       1: {
