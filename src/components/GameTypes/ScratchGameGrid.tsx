@@ -50,16 +50,13 @@ const ScratchGameGrid: React.FC<ScratchGameGridProps> = ({
           // 3. If a card is selected but scratch hasn't started -> only selected card can be scratched, others locked
           // 4. If scratch has started -> only the scratched card is active, all others permanently locked
           
-          const isLocked = gameStarted && (
-            (scratchStarted && !isThisCardSelected) || // Once scratching starts, lock all non-selected cards
-            (selectedCard !== null && !isThisCardSelected && !scratchStarted) // If a card is selected but scratching hasn't started, lock others
-          );
+          const isLocked = gameStarted && scratchStarted && !isThisCardSelected;
           
           // Cards are selectable only when game started, no scratch started, and no card is selected yet
           const isSelectable = gameStarted && !scratchStarted && selectedCard === null;
           
-          // Only the selected card can be scratched (and only if scratching hasn't started yet)
-          const canScratch = gameStarted && isThisCardSelected && !scratchStarted;
+          // Only the selected card can be scratched (and only after selection)
+          const canScratch = gameStarted && isThisCardSelected;
 
           console.log(`Card ${index}: selected=${isThisCardSelected}, locked=${isLocked}, selectable=${isSelectable}, canScratch=${canScratch}`);
 

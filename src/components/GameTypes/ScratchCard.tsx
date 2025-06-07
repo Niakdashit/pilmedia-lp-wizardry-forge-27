@@ -1,5 +1,7 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
+
 interface ScratchCardProps {
   card: any;
   index: number;
@@ -14,6 +16,7 @@ interface ScratchCardProps {
   isSelected: boolean;
   config: any;
 }
+
 const ScratchCard: React.FC<ScratchCardProps> = ({
   card,
   index,
@@ -40,36 +43,20 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
   const getDimensions = () => {
     switch (gameSize) {
       case 'small':
-        return {
-          width: 160,
-          height: 120
-        };
+        return { width: 160, height: 120 };
       case 'medium':
-        return {
-          width: 200,
-          height: 140
-        };
+        return { width: 200, height: 140 };
       case 'large':
-        return {
-          width: 240,
-          height: 180
-        };
+        return { width: 240, height: 180 };
       case 'xlarge':
-        return {
-          width: 280,
-          height: 200
-        };
+        return { width: 280, height: 200 };
       default:
-        return {
-          width: 200,
-          height: 140
-        };
+        return { width: 200, height: 140 };
     }
   };
-  const {
-    width,
-    height
-  } = getDimensions();
+
+  const { width, height } = getDimensions();
+
   useEffect(() => {
     if (gameStarted && !result) {
       // Calculer le résultat pour cette carte (70% de chance de perdre, 30% de gagner)
@@ -77,16 +64,19 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
       setResult(gameResult);
     }
   }, [gameStarted, result]);
+
   useEffect(() => {
-    if (canvasRef.current && canScratch && !isRevealed && result && !hasScratchStarted) {
+    if (canvasRef.current && canScratch && !isRevealed && result) {
       const canvas = canvasRef.current;
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
+
       canvas.width = width;
       canvas.height = height;
 
       // Surface à gratter - utiliser l'image personnalisée ou la couleur
       const surface = card.scratchSurface || config?.scratchSurface;
+      
       if (surface) {
         const img = new Image();
         img.onload = () => {
@@ -101,6 +91,7 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
       } else {
         drawDefaultSurface(ctx);
       }
+
       function drawDefaultSurface(ctx: CanvasRenderingContext2D) {
         // Surface métallique par défaut avec la couleur configurée
         const scratchColor = card.scratchColor || config?.scratchColor || '#C0C0C0';
@@ -108,6 +99,7 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
         gradient.addColorStop(0, scratchColor);
         gradient.addColorStop(0.5, scratchColor + 'DD');
         gradient.addColorStop(1, scratchColor + 'BB');
+        
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -118,7 +110,9 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
         ctx.fillText('Grattez ici', canvas.width / 2, canvas.height / 2 - 5);
         ctx.fillText('pour découvrir', canvas.width / 2, canvas.height / 2 + 10);
       }
+
       let isDrawing = false;
+
       const getXY = (e: MouseEvent | TouchEvent) => {
         const rect = canvas.getBoundingClientRect();
         if ('touches' in e) {
@@ -132,12 +126,11 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
           y: (e.clientY - rect.top) * (canvas.height / rect.height)
         };
       };
+
       const scratch = (e: MouseEvent | TouchEvent) => {
         if (!isDrawing) return;
-        const {
-          x,
-          y
-        } = getXY(e);
+        
+        const { x, y } = getXY(e);
         ctx.globalCompositeOperation = 'destination-out';
         ctx.beginPath();
         ctx.arc(x, y, Math.max(10, width * 0.08), 0, Math.PI * 2);
@@ -155,11 +148,14 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         const pixels = imageData.data;
         let transparentPixels = 0;
+        
         for (let i = 0; i < pixels.length; i += 4) {
           if (pixels[i + 3] === 0) transparentPixels++;
         }
-        const percentage = transparentPixels / (pixels.length / 4) * 100;
+        
+        const percentage = (transparentPixels / (pixels.length / 4)) * 100;
         setScratchPercentage(Math.round(percentage));
+
         const requiredPercent = config?.scratchArea || 70;
         if (percentage >= requiredPercent && !isRevealed && !hasNotifiedResult) {
           setIsRevealed(true);
@@ -169,11 +165,14 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
           }
         }
       };
+
       const startDrawing = (e: Event) => {
         e.preventDefault();
         isDrawing = true;
       };
+
       const stopDrawing = () => isDrawing = false;
+
       canvas.addEventListener('mousedown', startDrawing);
       canvas.addEventListener('mousemove', scratch);
       canvas.addEventListener('mouseup', stopDrawing);
@@ -181,6 +180,7 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
       canvas.addEventListener('touchstart', startDrawing);
       canvas.addEventListener('touchmove', scratch);
       canvas.addEventListener('touchend', stopDrawing);
+
       return () => {
         canvas.removeEventListener('mousedown', startDrawing);
         canvas.removeEventListener('mousemove', scratch);
@@ -192,121 +192,172 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
       };
     }
   }, [config, isRevealed, canScratch, result, width, height, onCardFinish, card, hasNotifiedResult, hasScratchStarted, onScratchStart, index]);
+
   const getResultContent = () => {
     const revealImage = card.revealImage || config?.revealImage;
     const revealMessage = card.revealMessage || config?.revealMessage || 'Félicitations !';
+
     if (revealImage) {
       return <img src={revealImage} alt="Contenu révélé" className="w-full h-full object-cover" />;
     }
-    return <div className={`w-full h-full flex flex-col items-center justify-center ${result === 'win' ? 'bg-gradient-to-br from-yellow-300 to-yellow-500' : 'bg-gradient-to-br from-gray-300 to-gray-500'}`}>
+
+    return (
+      <div className={`w-full h-full flex flex-col items-center justify-center ${
+        result === 'win' 
+          ? 'bg-gradient-to-br from-yellow-300 to-yellow-500' 
+          : 'bg-gradient-to-br from-gray-300 to-gray-500'
+      }`}>
         <div className="text-2xl mb-1">
           {result === 'win' ? '🎉' : '😔'}
         </div>
         <div className="text-sm font-bold text-gray-800 text-center px-2">
           {result === 'win' ? revealMessage : 'Dommage !'}
         </div>
-      </div>;
+      </div>
+    );
   };
+
   const getScratchSurface = () => {
     const surface = card.scratchSurface || config?.scratchSurface;
     const scratchColor = card.scratchColor || config?.scratchColor || '#C0C0C0';
+
     if (surface) {
-      return <div className="absolute inset-0" style={{
-        backgroundImage: `url(${surface})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
-      }} />;
+      return (
+        <div 
+          className="absolute inset-0" 
+          style={{
+            backgroundImage: `url(${surface})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          }} 
+        />
+      );
     }
-    return <div className="absolute inset-0 flex items-center justify-center" style={{
-      background: `linear-gradient(145deg, ${scratchColor}, ${scratchColor}DD)`
-    }}>
+
+    return (
+      <div 
+        className="absolute inset-0 flex items-center justify-center" 
+        style={{
+          background: `linear-gradient(145deg, ${scratchColor}, ${scratchColor}DD)`
+        }}
+      >
         <div className="text-white text-center">
           <div className="text-lg mb-1">🎫</div>
           <div className="text-xs">Carte {index + 1}</div>
         </div>
-      </div>;
+      </div>
+    );
   };
+
   const handleCardClick = () => {
-    if (selectable) {
+    if (selectable && !locked) {
       onCardSelect();
       console.log(`Card ${index} selected`);
     }
   };
+
   if (!gameStarted) {
-    return <div className="flex flex-col items-center">
-        <div className="relative rounded-lg overflow-hidden border-2 border-gray-300 mb-2" style={{
-        width: '100%',
-        maxWidth: `${width}px`,
-        height: `${height}px`
-      }}>
+    return (
+      <div className="flex flex-col items-center">
+        <div 
+          className="relative rounded-lg overflow-hidden border-2 border-gray-300 mb-2" 
+          style={{
+            width: '100%',
+            maxWidth: `${width}px`,
+            height: `${height}px`
+          }}
+        >
           {getScratchSurface()}
         </div>
-      </div>;
+      </div>
+    );
   }
-  return <div className="flex flex-col items-center">
-      {gameStarted && canScratch && !isRevealed && <div className="text-center mb-2">
-          
-          <div className="w-full bg-gray-200 rounded-full h-1 max-w-[120px] mx-auto">
-            <div className="bg-[#841b60] h-1 rounded-full transition-all duration-300" style={{
-          width: `${Math.min(scratchPercentage, 100)}%`
-        }} />
-          </div>
-        </div>}
 
-      <div className={`relative rounded-lg overflow-hidden border-2 transition-all duration-200 ${isSelected ? 'border-[#841b60] shadow-lg' : selectable ? 'border-gray-300 hover:border-[#841b60] cursor-pointer' : locked ? 'border-gray-200 opacity-50' : 'border-gray-300'}`} style={{
-      width: '100%',
-      maxWidth: `${width}px`,
-      height: `${height}px`,
-      pointerEvents: locked ? 'none' : 'auto'
-    }} onClick={handleCardClick}>
+  return (
+    <div className="flex flex-col items-center">
+      {gameStarted && canScratch && !isRevealed && (
+        <div className="text-center mb-2">
+          <div className="w-full bg-gray-200 rounded-full h-1 max-w-[120px] mx-auto">
+            <div 
+              className="bg-[#841b60] h-1 rounded-full transition-all duration-300" 
+              style={{ width: `${Math.min(scratchPercentage, 100)}%` }} 
+            />
+          </div>
+        </div>
+      )}
+
+      <div 
+        className={`relative rounded-lg overflow-hidden border-2 transition-all duration-200 ${
+          isSelected 
+            ? 'border-[#841b60] shadow-lg' 
+            : selectable && !locked
+              ? 'border-gray-300 hover:border-[#841b60] cursor-pointer' 
+              : 'border-gray-300'
+        } ${locked ? 'opacity-50' : ''}`}
+        style={{
+          width: '100%',
+          maxWidth: `${width}px`,
+          height: `${height}px`,
+          pointerEvents: locked ? 'none' : 'auto'
+        }}
+        onClick={handleCardClick}
+      >
         {/* Contenu à révéler - only visible when scratching has started */}
-        {showRevealContent && <div className="absolute inset-0">
+        {showRevealContent && (
+          <div className="absolute inset-0">
             {getResultContent()}
-          </div>}
+          </div>
+        )}
 
         {/* Canvas de grattage */}
-        {canScratch && !isRevealed && <canvas ref={canvasRef} className="absolute inset-0 w-full h-full cursor-crosshair" style={{
-        touchAction: 'none'
-      }} />}
+        {canScratch && !isRevealed && (
+          <canvas 
+            ref={canvasRef} 
+            className="absolute inset-0 w-full h-full cursor-crosshair" 
+            style={{ touchAction: 'none' }} 
+          />
+        )}
 
         {/* Default surface when no scratching has started */}
         {!showRevealContent && getScratchSurface()}
 
         {/* État de sélection */}
-        {selectable && <div className="absolute inset-0 bg-black/20 flex items-center justify-center text-white text-sm font-semibold">
+        {selectable && !locked && (
+          <div className="absolute inset-0 bg-black/20 flex items-center justify-center text-white text-sm font-semibold">
             Cliquez pour sélectionner
-          </div>}
+          </div>
+        )}
 
         {/* État sélectionné mais pas encore gratté */}
-        {isSelected && !canScratch && !locked && <div className="absolute inset-0 bg-[#841b60]/20 flex items-center justify-center text-[#841b60] text-sm font-semibold">
+        {isSelected && !canScratch && !locked && (
+          <div className="absolute inset-0 bg-[#841b60]/20 flex items-center justify-center text-[#841b60] text-sm font-semibold">
             Carte sélectionnée
-          </div>}
-
-        {/* État verrouillé */}
-        {locked && <div className="absolute inset-0 bg-black/60 flex items-center justify-center text-white text-sm font-semibold">
-            <div className="text-center">
-              <div className="text-lg mb-1">🔒</div>
-              <div className="text-xs">Carte verrouillée</div>
-            </div>
-          </div>}
+          </div>
+        )}
 
         {/* Overlay de résultat */}
-        {isRevealed && <motion.div initial={{
-        opacity: 0
-      }} animate={{
-        opacity: 1
-      }} className="absolute inset-0 flex items-center justify-center bg-black/80">
+        {isRevealed && (
+          <motion.div 
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            className="absolute inset-0 flex items-center justify-center bg-black/80"
+          >
             <div className="bg-white p-3 rounded-lg shadow-lg text-center max-w-[90%]">
               <div className="text-xl mb-1">
                 {result === 'win' ? '🎊' : '💫'}
               </div>
               <p className="text-sm font-bold">
-                {result === 'win' ? card.revealMessage || config?.revealMessage || 'Vous avez gagné !' : 'Réessayez !'}
+                {result === 'win' 
+                  ? card.revealMessage || config?.revealMessage || 'Vous avez gagné !' 
+                  : 'Réessayez !'}
               </p>
             </div>
-          </motion.div>}
+          </motion.div>
+        )}
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default ScratchCard;
