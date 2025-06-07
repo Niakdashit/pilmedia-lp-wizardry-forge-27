@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
@@ -12,12 +11,6 @@ interface ScratchPreviewProps {
   gameSize?: 'small' | 'medium' | 'large' | 'xlarge';
   gamePosition?: 'top' | 'center' | 'bottom' | 'left' | 'right';
   isPreview?: boolean;
-  instantWinConfig?: {
-    mode: 'instant_winner';
-    winProbability: number;
-    maxWinners?: number;
-    winnersCount?: number;
-  };
 }
 
 const ScratchCard: React.FC<{
@@ -265,8 +258,7 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
   disabled = false,
   buttonLabel = 'Gratter',
   buttonColor = '#841b60',
-  gameSize = 'medium',
-  instantWinConfig
+  gameSize = 'medium'
 }) => {
   const [gameStarted, setGameStarted] = useState(false);
   const [finishedCards, setFinishedCards] = useState<Set<number>>(new Set());
