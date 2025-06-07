@@ -1,4 +1,3 @@
-
 import React from 'react';
 import ScratchCard from './ScratchCard';
 
@@ -43,13 +42,14 @@ const ScratchGameGrid: React.FC<ScratchGameGridProps> = ({
 
     if (cardCount === 2) {
       return {
+        // Choix : flex wrap + grid 2 colonnes pour éviter la coupure et garantir la responsivité
         containerClass: 'w-full flex flex-wrap justify-center',
-        gridClass: 'grid grid-cols-2 md:grid-cols-3 place-items-center',
-        spacing: isModal ? 'gap-4 sm:gap-6 md:gap-8' : 'gap-6 sm:gap-8 md:gap-10'
+        gridClass: 'grid grid-cols-2 place-items-center',
+        spacing: isModal ? 'gap-4 sm:gap-6' : 'gap-6 sm:gap-8'
       };
     }
 
-    // Pour 3 cartes ou plus
+    // Pour 3 cartes ou plus, grid fluide (col2 mobile, col3 md+)
     return {
       containerClass: 'w-full flex flex-wrap justify-center',
       gridClass: 'grid grid-cols-2 md:grid-cols-3 place-items-center',
@@ -70,7 +70,8 @@ const ScratchGameGrid: React.FC<ScratchGameGridProps> = ({
             const isSelectable = gameStarted && !scratchStarted && selectedCard === null;
             const canScratch = gameStarted && isThisCardSelected;
 
-            console.log(`Card ${index}: selected=${isThisCardSelected}, locked=${isLocked}, selectable=${isSelectable}, canScratch=${canScratch}`);
+            // Tu peux supprimer le console.log en prod si besoin
+            // console.log(`Card ${index}: selected=${isThisCardSelected}, locked=${isLocked}, selectable=${isSelectable}, canScratch=${canScratch}`);
 
             return (
               <div key={card.id || index} className="w-full flex justify-center">
