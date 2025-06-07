@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useCallback } from 'react';
 import GameCanvasPreview from '../CampaignEditor/GameCanvasPreview';
 import TextElement from './TextElement';
@@ -26,7 +27,9 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
       backgroundColor: campaign.design?.background || '#f8fafc',
       backgroundSize: 'cover',
       backgroundPosition: 'center',
-      transition: 'all 0.3s ease',
+      transition: 'background-color 0.3s ease',
+      position: 'relative' as const,
+      overflow: 'hidden'
     };
 
     // Déterminer quelle image de fond utiliser
@@ -50,8 +53,7 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
           maxHeight: '1024px',
           margin: '0 auto',
           border: '1px solid #e5e7eb',
-          borderRadius: '12px',
-          overflow: 'hidden'
+          borderRadius: '12px'
         };
       case 'mobile':
         return {
@@ -60,8 +62,7 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
           maxHeight: '812px',
           margin: '0 auto',
           border: '1px solid #e5e7eb',
-          borderRadius: '20px',
-          overflow: 'hidden'
+          borderRadius: '20px'
         };
       default:
         return styleWithBackground;

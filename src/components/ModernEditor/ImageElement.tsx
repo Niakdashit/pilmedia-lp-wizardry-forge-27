@@ -1,6 +1,6 @@
 
 import React, { useState, useRef } from 'react';
-import { Trash2, RotateCw, Move, Maximize2 } from 'lucide-react';
+import { Trash2, RotateCw, Maximize2 } from 'lucide-react';
 
 interface ImageElementProps {
   element: any;
@@ -21,6 +21,7 @@ const ImageElement: React.FC<ImageElementProps> = ({
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const elementRef = useRef<HTMLDivElement>(null);
 
   const handleMouseDown = (e: React.MouseEvent, action: 'drag' | 'resize') => {
@@ -28,17 +29,29 @@ const ImageElement: React.FC<ImageElementProps> = ({
     e.stopPropagation();
     onSelect();
 
+    if (!containerRef.current || !elementRef.current) return;
+
     if (action === 'drag') {
+      const elementRect = elementRef.current.getBoundingClientRect();
+      const offsetX = e.clientX - elementRect.left;
+      const offsetY = e.clientY - elementRect.top;
+      
+      setDragOffset({ x: offsetX, y: offsetY });
       setIsDragging(true);
-      const startX = e.clientX - element.x;
-      const startY = e.clientY - element.y;
 
       const handleMouseMove = (moveEvent: MouseEvent) => {
         if (!containerRef.current) return;
         
         const containerRect = containerRef.current.getBoundingClientRect();
-        const newX = Math.max(0, Math.min(moveEvent.clientX - startX, containerRect.width - element.width));
-        const newY = Math.max(0, Math.min(moveEvent.clientY - startY, containerRect.height - element.height));
+        
+        const newX = Math.max(0, Math.min(
+          moveEvent.clientX - containerRect.left - offsetX,
+          containerRect.width - element.width
+        ));
+        const newY = Math.max(0, Math.min(
+          moveEvent.clientY - containerRect.top - offsetY,
+          containerRect.height - element.height
+        ));
         
         onUpdate({ x: newX, y: newY });
       };
@@ -92,10 +105,11 @@ const ImageElement: React.FC<ImageElementProps> = ({
         cursor: isDragging ? 'grabbing' : 'grab',
         zIndex: isSelected ? 30 : 20,
         transform: `rotate(${element.rotation || 0}deg)`,
-        transition: isDragging || isResizing ? 'none' : 'all 0.2s ease'
+        transition: isDragging || isResizing ? 'none' : 'all 0.1s ease-out',
+        willChange: isDragging || isResizing ? 'transform' : 'auto'
       }}
       onMouseDown={(e) => handleMouseDown(e, 'drag')}
-      className={`${isSelected ? 'ring-2 ring-blue-500' : 'hover:ring-2 hover:ring-gray-300'} transition-all duration-200`}
+      className={`${isSelected ? 'ring-2 ring-blue-500' : 'hover:ring-2 hover:ring-gray-300'} transition-all duration-100`}
     >
       <img
         src={element.src}
@@ -132,7 +146,7 @@ const ImageElement: React.FC<ImageElementProps> = ({
 
           {/* Resize handle */}
           <div
-            className="absolute -bottom-1 -right-1 w-4 h-4 bg-blue-500 rounded cursor-se-resize"
+            className="absolute -bottom-1 -right-1 w-4 h-4 bg-blue-500 rounded cursor-se-resize hover:bg-blue-600"
             onMouseDown={(e) => handleMouseDown(e, 'resize')}
             title="Redimensionner"
           >

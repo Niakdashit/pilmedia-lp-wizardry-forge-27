@@ -1,6 +1,6 @@
 
 import React, { useState, useRef } from 'react';
-import { Trash2, Move, Type } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 
 interface TextElementProps {
   element: any;
@@ -22,30 +22,38 @@ const TextElement: React.FC<TextElementProps> = ({
   sizeMap
 }) => {
   const [isDragging, setIsDragging] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const elementRef = useRef<HTMLDivElement>(null);
 
   const handleMouseDown = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     onSelect();
+    
+    if (!containerRef.current || !elementRef.current) return;
+    
+    const containerRect = containerRef.current.getBoundingClientRect();
+    const elementRect = elementRef.current.getBoundingClientRect();
+    
+    const offsetX = e.clientX - elementRect.left;
+    const offsetY = e.clientY - elementRect.top;
+    
+    setDragOffset({ x: offsetX, y: offsetY });
     setIsDragging(true);
 
-    const startX = e.clientX - element.x;
-    const startY = e.clientY - element.y;
-
     const handleMouseMove = (moveEvent: MouseEvent) => {
-      if (!containerRef.current || !elementRef.current) return;
+      if (!containerRef.current) return;
       
       const containerRect = containerRef.current.getBoundingClientRect();
-      const elementRect = elementRef.current.getBoundingClientRect();
       
+      // Calculate new position relative to container
       const newX = Math.max(0, Math.min(
-        moveEvent.clientX - containerRect.left - startX,
-        containerRect.width - elementRect.width
+        moveEvent.clientX - containerRect.left - offsetX,
+        containerRect.width - (elementRef.current?.offsetWidth || 0)
       ));
       const newY = Math.max(0, Math.min(
-        moveEvent.clientY - containerRect.top - startY,
-        containerRect.height - elementRect.height
+        moveEvent.clientY - containerRect.top - offsetY,
+        containerRect.height - (elementRef.current?.offsetHeight || 0)
       ));
       
       onUpdate({ x: newX, y: newY });
@@ -70,7 +78,8 @@ const TextElement: React.FC<TextElementProps> = ({
     fontFamily: element.fontFamily || 'Inter, sans-serif',
     cursor: isDragging ? 'grabbing' : 'grab',
     userSelect: 'none',
-    transition: isDragging ? 'none' : 'all 0.2s ease',
+    transition: isDragging ? 'none' : 'all 0.1s ease-out',
+    willChange: isDragging ? 'transform' : 'auto',
     ...(element.showFrame
       ? {
           backgroundColor: element.frameColor || '#ffffff',
@@ -96,7 +105,7 @@ const TextElement: React.FC<TextElementProps> = ({
         isSelected 
           ? 'ring-2 ring-blue-500 shadow-lg' 
           : 'hover:ring-2 hover:ring-gray-300'
-      } transition-all duration-200 ${
+      } transition-all duration-100 ${
         isDragging ? 'scale-105' : ''
       }`}
     >

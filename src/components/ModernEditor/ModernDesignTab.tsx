@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { Bold, Italic, Underline, Plus, Trash2, Image as ImageIcon } from 'lucide-react';
+import { Bold, Italic, Underline, Plus, Trash2, Upload, Image } from 'lucide-react';
 import ImageUpload from '../common/ImageUpload';
 
 interface ModernDesignTabProps {
@@ -36,13 +35,23 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
     });
   };
 
+  const getInitialPosition = (type: 'text' | 'image') => {
+    const basePosition = { x: 100, y: 100 };
+    const offset = type === 'text' ? customTexts.length * 20 : customImages.length * 20;
+    return {
+      x: basePosition.x + offset,
+      y: basePosition.y + offset
+    };
+  };
+
   const addCustomText = () => {
+    const position = getInitialPosition('text');
     const newText = {
       id: Date.now(),
       enabled: true,
       text: `Texte personnalisé ${customTexts.length + 1}`,
-      x: 50,
-      y: 50,
+      x: position.x,
+      y: position.y,
       size: 'base',
       color: '#000000',
       fontFamily: 'Inter, sans-serif',
@@ -63,14 +72,15 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
     });
   };
 
-  const addCustomImage = (imageUrl: string) => {
+  const addCustomImage = () => {
+    const position = getInitialPosition('image');
     const newImage = {
       id: Date.now(),
-      src: imageUrl,
-      x: 100,
-      y: 100,
-      width: 150,
-      height: 150,
+      src: '',
+      x: position.x,
+      y: position.y,
+      width: 100,
+      height: 100,
       rotation: 0
     };
 
@@ -110,6 +120,18 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
         ...design,
         customTexts: customTexts.map((text: any) => 
           text.id === id ? { ...text, [field]: value } : text
+        )
+      }
+    });
+  };
+
+  const handleCustomImageChange = (id: number, field: string, value: any) => {
+    setCampaign({
+      ...campaign,
+      design: {
+        ...design,
+        customImages: customImages.map((img: any) => 
+          img.id === id ? { ...img, [field]: value } : img
         )
       }
     });
@@ -186,43 +208,7 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
         </div>
       </div>
 
-      {/* Custom Images */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-gray-900">Éléments visuels</h3>
-        </div>
-        
-        <div>
-          <ImageUpload
-            value=""
-            onChange={addCustomImage}
-            label="Ajouter une image/sticker"
-            icon={<ImageIcon className="w-5 h-5" />}
-          />
-        </div>
-
-        {customImages.length > 0 && (
-          <div className="space-y-2">
-            <p className="text-sm text-gray-600">Images ajoutées :</p>
-            {customImages.map((img: any, index: number) => (
-              <div key={img.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                <div className="flex items-center space-x-3">
-                  <img src={img.src} alt={`Image ${index + 1}`} className="w-12 h-12 object-cover rounded" />
-                  <span className="text-sm">Image #{index + 1}</span>
-                </div>
-                <button
-                  onClick={() => removeCustomImage(img.id)}
-                  className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-
-      {/* Custom Texts */}
+      {/* Custom Texts Settings */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <h3 className="text-lg font-semibold text-gray-900">Textes personnalisés</h3>
@@ -281,40 +267,38 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
                   />
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Police
-                    </label>
-                    <select
-                      value={customText.fontFamily || 'Inter, sans-serif'}
-                      onChange={(e) => handleCustomTextChange(customText.id, 'fontFamily', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    >
-                      {fontFamilyOptions.map(option => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Police
+                  </label>
+                  <select
+                    value={customText.fontFamily || 'Inter, sans-serif'}
+                    onChange={(e) => handleCustomTextChange(customText.id, 'fontFamily', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    {fontFamilyOptions.map(option => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Taille
-                    </label>
-                    <select
-                      value={customText.size || 'base'}
-                      onChange={(e) => handleCustomTextChange(customText.id, 'size', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                    >
-                      {fontSizeOptions.map(option => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Taille
+                  </label>
+                  <select
+                    value={customText.size || 'base'}
+                    onChange={(e) => handleCustomTextChange(customText.id, 'size', e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    {fontSizeOptions.map(option => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <div>
@@ -420,6 +404,50 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
                 </div>
               </div>
             )}
+          </div>
+        ))}
+      </div>
+
+      {/* Custom Images Settings */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-semibold text-gray-900">Images personnalisées</h3>
+          <button
+            onClick={addCustomImage}
+            className="flex items-center space-x-2 px-3 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+          >
+            <Image className="w-4 h-4" />
+            <span>Ajouter</span>
+          </button>
+        </div>
+
+        {customImages.length === 0 && (
+          <p className="text-gray-500 text-sm">Aucune image personnalisée. Cliquez sur "Ajouter" pour en créer une.</p>
+        )}
+
+        {customImages.map((customImage: any, index: number) => (
+          <div key={customImage.id} className="space-y-4 bg-gray-50 p-4 rounded-lg border">
+            <div className="flex items-center justify-between">
+              <label className="text-sm font-medium text-gray-700">
+                Image #{index + 1}
+              </label>
+              
+              <button
+                onClick={() => removeCustomImage(customImage.id)}
+                className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                title="Supprimer cette image"
+              >
+                <Trash2 className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div>
+              <ImageUpload
+                value={customImage.src || ''}
+                onChange={(imageUrl) => handleCustomImageChange(customImage.id, 'src', imageUrl)}
+                label="Image"
+              />
+            </div>
           </div>
         ))}
       </div>
