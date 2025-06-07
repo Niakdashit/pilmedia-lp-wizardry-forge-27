@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import DynamicContactForm from '../forms/DynamicContactForm';
 import { DEFAULT_FIELDS } from '../../utils/wheelConfig';
@@ -22,7 +21,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({
 
   const buttonLabel = campaign.buttonConfig?.text || campaign.gameConfig?.form?.buttonLabel || 'Valider le formulaire';
 
-  const handleFormSubmit = (formData: Record<string, string>) => {
+  const handleFormSubmit = () => {
     setIsSubmitted(true);
     setTimeout(() => setIsSubmitted(false), 2000);
   };
