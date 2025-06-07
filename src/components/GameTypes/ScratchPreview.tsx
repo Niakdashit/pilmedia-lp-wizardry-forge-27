@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ScratchGameGrid from './ScratchGameGrid';
 
 interface ScratchPreviewProps {
@@ -11,6 +11,12 @@ interface ScratchPreviewProps {
   buttonColor?: string;
   gameSize?: 'small' | 'medium' | 'large' | 'xlarge';
   gamePosition?: 'top' | 'center' | 'bottom' | 'left' | 'right';
+  /**
+   * When true, the game starts immediately without requiring the user to
+   * click the start button. Useful for preview mode where we want to display
+   * the interactive game directly.
+   */
+  autoStart?: boolean;
 }
 
 const ScratchPreview: React.FC<ScratchPreviewProps> = ({
@@ -20,11 +26,20 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
   disabled = false,
   buttonLabel = 'Gratter',
   buttonColor = '#841b60',
-  gameSize = 'medium'
+  gameSize = 'medium',
+  autoStart = false
 }) => {
-  const [gameStarted, setGameStarted] = useState(false);
+  const [gameStarted, setGameStarted] = useState(autoStart && !disabled);
   const [finishedCards, setFinishedCards] = useState<Set<number>>(new Set());
   const [hasWon, setHasWon] = useState(false);
+
+  // Automatically start the game in preview mode if autoStart is enabled
+  useEffect(() => {
+    if (autoStart && !gameStarted && !disabled) {
+      setGameStarted(true);
+      if (onStart) onStart();
+    }
+  }, [autoStart, gameStarted, disabled, onStart]);
 
   const handleGameStart = () => {
     if (disabled) return;
