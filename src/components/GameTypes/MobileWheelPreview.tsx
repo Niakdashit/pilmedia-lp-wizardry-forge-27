@@ -3,6 +3,7 @@ import React from 'react';
 import WheelCanvas from './MobileWheel/WheelCanvas';
 import WheelDecorations from './MobileWheel/WheelDecorations';
 import WheelPointer from './MobileWheel/WheelPointer';
+import { GAME_SIZES, GameSize } from '../configurators/GameSizeSelector';
 
 interface MobileWheelPreviewProps {
   campaign: any;
@@ -11,7 +12,7 @@ interface MobileWheelPreviewProps {
   horizontalOffset?: number;
 }
 
-const CANVAS_SIZE = 280;
+const DEFAULT_CANVAS_SIZE = 280;
 
 const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
   campaign,
@@ -28,12 +29,21 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
   const pointerColor = desktopRouletteConfig.pointerColor || '#841b60';
   const hideLaunchButton = campaign?.mobileConfig?.hideLaunchButton || false;
 
+  // Get game size from campaign and calculate canvas size
+  const gameSize: GameSize = campaign.gameSize || 'medium';
+  const gameDimensions = GAME_SIZES[gameSize];
+  
+  // Scale the wheel size based on game size settings
+  // Use the smaller dimension to maintain aspect ratio
+  const scaleFactor = Math.min(gameDimensions.width, gameDimensions.height) / 400; // 400 is our reference size
+  const calculatedCanvasSize = Math.max(200, Math.min(600, DEFAULT_CANVAS_SIZE * scaleFactor));
+
   const canvasSize =
     mobileRouletteConfig.size ||
     mobileRouletteConfig.width ||
     desktopRouletteConfig.size ||
     desktopRouletteConfig.width ||
-    CANVAS_SIZE;
+    calculatedCanvasSize;
 
   if (segments.length === 0) {
     return null;
@@ -134,12 +144,12 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
             color: 'white',
             border: 'none',
             borderRadius: '50%',
-            width: '60px',
-            height: '60px',
+            width: Math.max(40, canvasSize * 0.15),
+            height: Math.max(40, canvasSize * 0.15),
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '12px',
+            fontSize: Math.max(10, canvasSize * 0.035),
             fontWeight: 'bold',
             cursor: 'pointer',
             boxShadow: '0 4px 12px rgba(0,0,0,0.2)'

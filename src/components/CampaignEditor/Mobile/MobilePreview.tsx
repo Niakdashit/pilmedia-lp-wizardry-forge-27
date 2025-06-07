@@ -26,7 +26,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
   const contentLayoutStyle = getContentLayoutStyle(mobileConfig);
 
   return (
-    <div style={deviceStyle}>
+    <div style={deviceStyle} key={`mobile-preview-${campaign.gameSize}-${JSON.stringify(mobileConfig)}`}>
       <div style={screenStyle}>
         <MobileOverlays mobileConfig={mobileConfig} previewMode={previewMode} />
 
