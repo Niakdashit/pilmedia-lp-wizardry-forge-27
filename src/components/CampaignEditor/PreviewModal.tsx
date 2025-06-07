@@ -95,6 +95,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
         >
           <CampaignPreview
             campaign={campaign}
+            previewDevice={selectedDevice}
             key={`mobile-${campaign.id}-${JSON.stringify({
               gameConfig: campaign.gameConfig,
               design: campaign.design,
