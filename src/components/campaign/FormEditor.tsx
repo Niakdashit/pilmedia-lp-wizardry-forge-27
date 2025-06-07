@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, MoveUp, MoveDown, Eye } from 'lucide-react';
 import DynamicContactForm from '../forms/DynamicContactForm';
@@ -14,6 +15,7 @@ export interface FormField {
 interface FormEditorProps {
   formFields: FormField[];
   setFormFields: (fields: FormField[]) => void;
+  campaign?: any;
 }
 
 const FIELD_TYPES = [
@@ -29,7 +31,8 @@ const generateId = () => `field_${Date.now()}_${Math.random().toString(36).subst
 
 const FormEditor: React.FC<FormEditorProps> = ({
   formFields,
-  setFormFields
+  setFormFields,
+  campaign
 }) => {
   const [fields, setFields] = useState<FormField[]>(formFields || []);
   const [showPreview, setShowPreview] = useState(false);
@@ -224,8 +227,8 @@ const FormEditor: React.FC<FormEditorProps> = ({
                 onSubmit={handlePreview}
                 submitLabel="Aperçu - Valider"
                 textStyles={{
-                  label: campaign.design.textStyles?.label,
-                  button: campaign.design.textStyles?.button
+                  label: campaign?.design?.textStyles?.label,
+                  button: campaign?.design?.textStyles?.button
                 }}
               />
             </div>
