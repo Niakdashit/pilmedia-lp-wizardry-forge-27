@@ -1,4 +1,3 @@
-
 import React from 'react';
 import MobileWheelPreview from '../../GameTypes/MobileWheelPreview';
 import MobileButton from './MobileButton';
@@ -21,6 +20,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
   const specs = DEVICE_SPECS[previewMode];
   const gamePosition = mobileConfig.gamePosition || 'left';
   const verticalOffset = mobileConfig.gameVerticalOffset || 0;
+  const horizontalOffset = mobileConfig.gameHorizontalOffset || 0;
   const deviceWidth = specs.width;
 
   const deviceStyle = getDeviceStyle(specs, deviceWidth);
@@ -50,6 +50,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
               campaign={campaign}
               gamePosition={gamePosition}
               verticalOffset={verticalOffset}
+              horizontalOffset={horizontalOffset}
             />
           </div>
         )}

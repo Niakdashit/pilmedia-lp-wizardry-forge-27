@@ -40,9 +40,7 @@ const defaultJackpotConfig = {
   }
 };
 const CampaignEditor: React.FC = () => {
-  const {
-    id
-  } = useParams();
+  const { id } = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const isNewCampaign = id === 'new';
@@ -155,6 +153,7 @@ const CampaignEditor: React.FC = () => {
       descriptionAlignment: 'text-center',
       gameVerticalAlign: 'center',
       gameVerticalOffset: 0,
+      gameHorizontalOffset: 0, // <--- merge OK
       gameMaxWidth: 90,
       gameMaxHeight: 60,
       gamePaddingX: 16,

@@ -15,6 +15,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   className = "",
   previewDevice = 'desktop'
 }) => {
+  // Affichage Mobile & Tablette = composant device simulé
   if (previewDevice === 'mobile' || previewDevice === 'tablet') {
     return (
       <div className={`w-full h-full ${className}`}>
@@ -23,16 +24,17 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
     );
   }
 
-  // At this point, previewDevice can only be 'desktop'
+  // Desktop : rendu standard
   const baseBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage || campaign.design?.backgroundImage;
   const gameBackgroundImage = baseBackgroundImage;
   const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel || campaign.buttonConfig?.text || 'Jouer';
   const buttonColor = campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor || '#841b60';
 
+  // Récup taille et position du jeu
   const gameSize: GameSize = campaign.gameSize && Object.keys(GAME_SIZES).includes(campaign.gameSize) ? campaign.gameSize as GameSize : 'medium';
   const gamePosition = campaign.gamePosition || 'center';
 
-  // Since we're in desktop mode, we don't crop the wheel
+  // Desktop : pas de crop
   const shouldCropWheel = false;
   const { getPositionStyles } = useGamePositionCalculator({
     gameSize,

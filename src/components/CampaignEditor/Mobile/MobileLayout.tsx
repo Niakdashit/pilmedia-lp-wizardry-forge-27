@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Move, ArrowUp, ArrowDown, Layers } from 'lucide-react';
 
@@ -82,6 +81,26 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({ campaign, setCampaign }) =>
             />
             <div className="text-xs text-gray-500 mt-1">
               {mobileConfig.gameVerticalOffset || 0}%
+            </div>
+          </div>
+        )}
+        {['left', 'center', 'right'].includes(mobileConfig.gamePosition) && (
+          <div className="mt-4">
+            <label className="block text-xs text-gray-600 mb-1">
+              Décalage horizontal (%)
+            </label>
+            <input
+              type="range"
+              min="-50"
+              max="50"
+              value={mobileConfig.gameHorizontalOffset || 0}
+              onChange={(e) =>
+                updateMobileConfig('gameHorizontalOffset', Number(e.target.value))
+              }
+              className="w-full"
+            />
+            <div className="text-xs text-gray-500 mt-1">
+              {mobileConfig.gameHorizontalOffset || 0}%
             </div>
           </div>
         )}
