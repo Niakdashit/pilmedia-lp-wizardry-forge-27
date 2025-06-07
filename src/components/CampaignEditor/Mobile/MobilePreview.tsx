@@ -4,7 +4,6 @@ import MobileWheelPreview from '../../GameTypes/MobileWheelPreview';
 import MobileButton from './MobileButton';
 import MobileContent from './MobileContent';
 import MobileOverlays from './MobileOverlays';
-import { PREVIEW_CONTAINER_SPECS } from './constants';
 import { getDeviceStyle, getScreenStyle, getContentLayoutStyle } from './styles';
 
 interface MobilePreviewProps {
@@ -18,14 +17,12 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
 }) => {
   const fallbackMobile = campaign.config?.mobileConfig || {};
   const mobileConfig = { ...fallbackMobile, ...(campaign.mobileConfig || {}) };
-  const specs = PREVIEW_CONTAINER_SPECS[previewMode];
   const gamePosition = mobileConfig.gamePosition || 'left';
   const verticalOffset = mobileConfig.gameVerticalOffset || 0;
   const horizontalOffset = mobileConfig.gameHorizontalOffset || 0;
-  const deviceWidth = specs.width;
 
-  const deviceStyle = getDeviceStyle(specs, deviceWidth);
-  const screenStyle = getScreenStyle(mobileConfig, previewMode);
+  const deviceStyle = getDeviceStyle();
+  const screenStyle = getScreenStyle(mobileConfig);
   const contentLayoutStyle = getContentLayoutStyle(mobileConfig);
 
   return (

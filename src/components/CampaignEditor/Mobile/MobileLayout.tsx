@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { Move, ArrowUp, ArrowDown, Layers, Eye, EyeOff } from 'lucide-react';
+import { Move, ArrowUp, ArrowDown, Layers } from 'lucide-react';
 
 interface MobileLayoutProps {
   campaign: any;

@@ -1,7 +1,7 @@
 
 import { PREVIEW_CONTAINER_SPECS, MOBILE_FORMAT_SPECS } from './constants';
 
-export const getDeviceStyle = (specs: any, deviceWidth: number) => ({
+export const getDeviceStyle = () => ({
   width: PREVIEW_CONTAINER_SPECS.mobile.width,
   height: PREVIEW_CONTAINER_SPECS.mobile.height,
   backgroundColor: '#1f2937',
@@ -12,7 +12,7 @@ export const getDeviceStyle = (specs: any, deviceWidth: number) => ({
   overflow: 'hidden'
 });
 
-export const getScreenStyle = (mobileConfig: any, previewMode: string) => ({
+export const getScreenStyle = (mobileConfig: any) => ({
   width: '100%',
   height: '100%',
   backgroundColor: mobileConfig.backgroundColor || '#ebf4f7',
@@ -46,3 +46,7 @@ export const getContentLayoutStyle = (mobileConfig: any) => {
     pointerEvents: 'none' as const
   };
 };
+
+export const getTextBlockStyle = () => ({
+  width: '100%'
+});
