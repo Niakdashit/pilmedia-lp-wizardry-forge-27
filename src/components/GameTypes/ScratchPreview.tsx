@@ -19,6 +19,8 @@ interface ScratchPreviewProps {
   autoStart?: boolean;
 }
 
+const STORAGE_KEY = 'scratch_active_card';
+
 const ScratchPreview: React.FC<ScratchPreviewProps> = ({
   config = {},
   onFinish,
@@ -33,6 +35,17 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
   const [finishedCards, setFinishedCards] = useState<Set<number>>(new Set());
   const [hasWon, setHasWon] = useState(false);
   const [activeCard, setActiveCard] = useState<number | null>(null);
+
+  // Load any previously selected card from storage to enforce single play per session
+  useEffect(() => {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored !== null) {
+      const index = parseInt(stored, 10);
+      if (!Number.isNaN(index)) {
+        setActiveCard(index);
+      }
+    }
+  }, []);
 
   // Automatically start the game in preview mode if autoStart is enabled
   useEffect(() => {
@@ -57,8 +70,10 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
   };
 
   const handleCardStart = (index: number) => {
-    if (activeCard === null) {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (activeCard === null && stored === null) {
       setActiveCard(index);
+      localStorage.setItem(STORAGE_KEY, index.toString());
     }
   };
 
