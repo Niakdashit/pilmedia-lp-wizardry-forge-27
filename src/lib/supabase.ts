@@ -9,19 +9,19 @@ export const supabase = {
       })
     }),
     select: (_columns?: string) => {
-      const result = {
-        eq: (_column: string, _value: any) => ({
-          order: (_orderColumn: string, _options?: { ascending?: boolean }) => 
-            Promise.resolve({ data: [], error: null })
-        }),
-        order: (_orderColumn: string, _options?: { ascending?: boolean }) => 
-          Promise.resolve({ data: [], error: null }),
-        // Make it thenable so it can be awaited directly
-        then: (resolve: any) => resolve({ data: [], error: null }),
-        catch: (reject: any) => Promise.resolve({ data: [], error: null })
-      };
+      // Create a promise that also has chaining methods
+      const promise = Promise.resolve({ data: [], error: null });
       
-      return result;
+      // Add chaining methods
+      promise.eq = (_column: string, _value: any) => ({
+        order: (_orderColumn: string, _options?: { ascending?: boolean }) => 
+          Promise.resolve({ data: [], error: null })
+      });
+      
+      promise.order = (_orderColumn: string, _options?: { ascending?: boolean }) => 
+        Promise.resolve({ data: [], error: null });
+      
+      return promise;
     },
     update: (data: any) => ({
       eq: (_column: string, _value: any) => ({
