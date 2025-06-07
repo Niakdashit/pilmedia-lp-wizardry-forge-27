@@ -13,6 +13,7 @@ interface ScratchGameGridProps {
   scratchStarted: boolean;
   config: any;
   onReplay?: () => void;
+  modalContained?: boolean;
 }
 
 const ScratchGameGrid: React.FC<ScratchGameGridProps> = ({
@@ -25,39 +26,53 @@ const ScratchGameGrid: React.FC<ScratchGameGridProps> = ({
   selectedCard,
   scratchStarted,
   config,
-  onReplay
+  onReplay,
+  modalContained = false
 }) => {
   // Configuration responsive de la grille
   const getGridConfig = () => {
+    const isSmallContainer = modalContained || window.innerWidth < 1200;
+    
     if (cards.length === 1) {
       return {
-        containerClass: 'flex justify-center items-start',
-        gridClass: 'w-full max-w-md',
-        spacing: 'gap-6'
+        containerClass: 'flex justify-center items-center',
+        gridClass: 'w-full max-w-sm mx-auto',
+        spacing: 'gap-4'
       };
     }
     
     if (cards.length === 2) {
       return {
-        containerClass: 'grid grid-cols-1 sm:grid-cols-2 place-items-start justify-center',
-        gridClass: 'w-full max-w-4xl',
-        spacing: 'gap-6 sm:gap-8'
+        containerClass: 'grid grid-cols-1 md:grid-cols-2 place-items-center justify-center',
+        gridClass: 'w-full max-w-3xl mx-auto',
+        spacing: 'gap-4 md:gap-6'
       };
     }
     
-    // Pour 3 cartes ou plus
+    // Pour 3 cartes ou plus - ajustement pour modal
+    if (isSmallContainer) {
+      return {
+        containerClass: 'grid grid-cols-1 sm:grid-cols-2 place-items-center justify-center',
+        gridClass: 'w-full max-w-4xl mx-auto',
+        spacing: 'gap-4 sm:gap-6'
+      };
+    }
+    
     return {
-      containerClass: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 place-items-start justify-center',
-      gridClass: 'w-full max-w-6xl',
-      spacing: 'gap-6 sm:gap-8 lg:gap-6'
+      containerClass: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 place-items-center justify-center',
+      gridClass: 'w-full max-w-6xl mx-auto',
+      spacing: 'gap-4 sm:gap-6 lg:gap-8'
     };
   };
 
   const { containerClass, gridClass, spacing } = getGridConfig();
 
+  const containerPadding = modalContained ? 'p-4' : 'p-6 lg:p-8';
+  const minHeight = modalContained ? 'min-h-[400px]' : 'min-h-screen';
+
   return (
-    <div className="w-full min-h-screen flex flex-col items-center px-4 py-8">
-      <div className={`${gridClass} mx-auto`}>
+    <div className={`w-full ${minHeight} flex flex-col items-center justify-center ${containerPadding}`}>
+      <div className={gridClass}>
         <div className={`${containerClass} ${spacing}`}>
           {cards.map((card: any, index: number) => {
             const isThisCardSelected = selectedCard === index;
@@ -84,6 +99,7 @@ const ScratchGameGrid: React.FC<ScratchGameGridProps> = ({
                   isSelected={isThisCardSelected}
                   config={config}
                   onReplay={onReplay}
+                  modalContained={modalContained}
                 />
               </div>
             );

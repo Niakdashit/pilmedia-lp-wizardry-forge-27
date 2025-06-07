@@ -12,6 +12,7 @@ interface ScratchPreviewProps {
   gameSize?: 'small' | 'medium' | 'large' | 'xlarge';
   gamePosition?: 'top' | 'center' | 'bottom' | 'left' | 'right';
   autoStart?: boolean;
+  modalContained?: boolean;
 }
 
 const STORAGE_KEY = 'scratch_session_card';
@@ -25,7 +26,8 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
   buttonLabel = 'Gratter',
   buttonColor = '#841b60',
   gameSize = 'medium',
-  autoStart = false
+  autoStart = false,
+  modalContained = false
 }) => {
   const [gameStarted, setGameStarted] = useState(autoStart && !disabled);
   const [finishedCards, setFinishedCards] = useState<Set<number>>(new Set());
@@ -113,8 +115,12 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
       }];
 
   if (!gameStarted) {
+    const containerClass = modalContained 
+      ? 'flex flex-col items-center justify-center space-y-6 p-6' 
+      : 'min-h-screen flex flex-col items-center justify-center space-y-8 px-4 py-8';
+
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center space-y-8 px-4 py-8">
+      <div className={containerClass}>
         <div className="w-full max-w-6xl mx-auto">
           <ScratchGameGrid
             cards={cards}
@@ -126,6 +132,7 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
             selectedCard={null}
             scratchStarted={false}
             config={config}
+            modalContained={modalContained}
           />
         </div>
 
@@ -141,8 +148,12 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
     );
   }
 
+  const gameContainerClass = modalContained 
+    ? 'w-full h-full' 
+    : 'min-h-screen w-full';
+
   return (
-    <div className="min-h-screen w-full">
+    <div className={gameContainerClass}>
       <ScratchGameGrid
         cards={cards}
         gameSize={gameSize}
@@ -154,29 +165,32 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
         scratchStarted={scratchStarted}
         config={config}
         onReplay={handleReplay}
+        modalContained={modalContained}
       />
 
-      {/* Instructions et progrès */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-gray-200 px-4 py-4">
-        <div className="max-w-4xl mx-auto text-center space-y-3">
-          <div className="text-sm sm:text-base text-gray-600 font-medium">
-            {!scratchStarted && selectedCard === null && "Choisissez une carte à gratter"}
-            {!scratchStarted && selectedCard !== null && "Grattez votre carte sélectionnée"}
-            {scratchStarted && `Cartes terminées: ${finishedCards.size}/${cards.length}`}
-          </div>
-          
-          {scratchStarted && (
-            <div className="w-full max-w-xs mx-auto">
-              <div className="w-full bg-gray-200 rounded-full h-2.5 shadow-inner">
-                <div 
-                  className="bg-[#841b60] h-2.5 rounded-full transition-all duration-300 shadow-sm" 
-                  style={{ width: `${(finishedCards.size / cards.length) * 100}%` }} 
-                />
-              </div>
+      {/* Instructions et progrès - uniquement si pas dans une modal */}
+      {!modalContained && (
+        <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-t border-gray-200 px-4 py-4">
+          <div className="max-w-4xl mx-auto text-center space-y-3">
+            <div className="text-sm sm:text-base text-gray-600 font-medium">
+              {!scratchStarted && selectedCard === null && "Choisissez une carte à gratter"}
+              {!scratchStarted && selectedCard !== null && "Grattez votre carte sélectionnée"}
+              {scratchStarted && `Cartes terminées: ${finishedCards.size}/${cards.length}`}
             </div>
-          )}
+            
+            {scratchStarted && (
+              <div className="w-full max-w-xs mx-auto">
+                <div className="w-full bg-gray-200 rounded-full h-2.5 shadow-inner">
+                  <div 
+                    className="bg-[#841b60] h-2.5 rounded-full transition-all duration-300 shadow-sm" 
+                    style={{ width: `${(finishedCards.size / cards.length) * 100}%` }} 
+                  />
+                </div>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

@@ -20,6 +20,7 @@ interface ScratchCardProps {
   isSelected: boolean;
   config: any;
   onReplay?: () => void;
+  modalContained?: boolean;
 }
 
 const ScratchCard: React.FC<ScratchCardProps> = ({
@@ -35,15 +36,18 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
   canScratch,
   isSelected,
   config,
-  onReplay
+  onReplay,
+  modalContained = false
 }) => {
-  // Dimensions responsives selon la taille
+  // Dimensions responsives selon la taille et le contexte
   const getDimensions = () => {
+    const scaleFactor = modalContained ? 0.85 : 1;
+    
     const baseSize = {
-      small: { width: 220, height: 160 },
-      medium: { width: 280, height: 200 },
-      large: { width: 320, height: 240 },
-      xlarge: { width: 360, height: 280 }
+      small: { width: 180 * scaleFactor, height: 130 * scaleFactor },
+      medium: { width: 240 * scaleFactor, height: 170 * scaleFactor },
+      large: { width: 300 * scaleFactor, height: 210 * scaleFactor },
+      xlarge: { width: 350 * scaleFactor, height: 250 * scaleFactor }
     };
     
     return baseSize[gameSize as keyof typeof baseSize] || baseSize.medium;
@@ -80,7 +84,7 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
     return (
       <div className="flex flex-col items-center space-y-4">
         <div 
-          className="relative rounded-lg overflow-hidden border-2 border-gray-300 shadow-sm bg-white" 
+          className="relative rounded-xl overflow-hidden border-2 border-gray-300 shadow-sm bg-white" 
           style={{
             width: `${width}px`,
             height: `${height}px`,
@@ -100,13 +104,13 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
   }
 
   return (
-    <div className="flex flex-col items-center space-y-6 w-full max-w-sm">
+    <div className="flex flex-col items-center w-full max-w-sm mx-auto">
       {/* Progress bar pour le grattage */}
       {gameStarted && canScratch && !isRevealed && (
-        <div className="w-full px-4">
-          <div className="w-full bg-gray-200 rounded-full h-2.5">
+        <div className="w-full px-4 mb-4">
+          <div className="w-full bg-gray-200 rounded-full h-2">
             <div 
-              className="bg-[#841b60] h-2.5 rounded-full transition-all duration-300" 
+              className="bg-[#841b60] h-2 rounded-full transition-all duration-300" 
               style={{ width: `${Math.min(scratchPercentage, 100)}%` }} 
             />
           </div>
@@ -161,18 +165,18 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
         <motion.div 
           initial={{ opacity: 0, y: 20 }} 
           animate={{ opacity: 1, y: 0 }} 
-          className="w-full max-w-md mx-auto px-4 mt-6"
+          className="w-full max-w-xs mx-auto px-2 mt-4"
         >
-          <div className="bg-white p-6 sm:p-8 rounded-2xl shadow-xl border border-gray-200 text-center">
-            <div className="text-4xl sm:text-5xl mb-3 sm:mb-4">
+          <div className="bg-white p-4 sm:p-6 rounded-xl shadow-lg border border-gray-200 text-center">
+            <div className="text-2xl sm:text-3xl mb-2 sm:mb-3">
               {result === 'win' ? '🎊' : '💫'}
             </div>
-            <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-gray-900">
+            <h3 className="text-lg sm:text-xl font-bold mb-2 sm:mb-3 text-gray-900">
               {result === 'win' 
                 ? card.revealMessage || config?.revealMessage || 'Vous avez gagné !' 
                 : 'Dommage ! Réessayez !'}
             </h3>
-            <p className="text-gray-600 mb-6 sm:mb-8 leading-relaxed text-base sm:text-lg">
+            <p className="text-gray-600 mb-4 sm:mb-6 leading-relaxed text-sm sm:text-base">
               {result === 'win' 
                 ? 'Félicitations pour votre victoire !' 
                 : 'Tentez votre chance une prochaine fois.'}
@@ -180,7 +184,7 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
             {onReplay && (
               <button
                 onClick={onReplay}
-                className="px-8 sm:px-10 py-3 sm:py-4 bg-[#841b60] text-white font-semibold rounded-xl hover:bg-[#6d164f] transition-colors shadow-lg hover:shadow-xl text-base sm:text-lg"
+                className="px-6 sm:px-8 py-2 sm:py-3 bg-[#841b60] text-white font-semibold rounded-lg hover:bg-[#6d164f] transition-colors shadow-md hover:shadow-lg text-sm sm:text-base"
               >
                 Rejouer
               </button>
