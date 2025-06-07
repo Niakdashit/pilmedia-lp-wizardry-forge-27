@@ -74,20 +74,30 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
       canvas.width = width;
       canvas.height = height;
 
-      // Surface à gratter
+      // Surface à gratter - utiliser l'image personnalisée ou la couleur
       const surface = card.scratchSurface || config?.scratchSurface;
       if (surface) {
         const img = new Image();
         img.onload = () => {
           ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
         };
+        img.onerror = () => {
+          console.error('Failed to load scratch surface image:', surface);
+          // Fallback vers la surface par défaut
+          drawDefaultSurface(ctx);
+        };
         img.src = surface;
       } else {
-        // Surface métallique par défaut
+        drawDefaultSurface(ctx);
+      }
+
+      function drawDefaultSurface(ctx: CanvasRenderingContext2D) {
+        // Surface métallique par défaut avec la couleur configurée
+        const scratchColor = card.scratchColor || config?.scratchColor || '#C0C0C0';
         const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-        gradient.addColorStop(0, '#E5E5E5');
-        gradient.addColorStop(0.5, '#C0C0C0');
-        gradient.addColorStop(1, '#A0A0A0');
+        gradient.addColorStop(0, scratchColor);
+        gradient.addColorStop(0.5, scratchColor + 'DD');
+        gradient.addColorStop(1, scratchColor + 'BB');
         ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -200,6 +210,39 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
     );
   };
 
+  const getScratchSurface = () => {
+    const surface = card.scratchSurface || config?.scratchSurface;
+    const scratchColor = card.scratchColor || config?.scratchColor || '#C0C0C0';
+    
+    if (surface) {
+      return (
+        <div 
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `url(${surface})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            backgroundRepeat: 'no-repeat'
+          }}
+        />
+      );
+    }
+    
+    return (
+      <div 
+        className="absolute inset-0 flex items-center justify-center"
+        style={{
+          background: `linear-gradient(145deg, ${scratchColor}, ${scratchColor}DD)`
+        }}
+      >
+        <div className="text-white text-center">
+          <div className="text-lg mb-1">🎫</div>
+          <div className="text-xs">Carte {index + 1}</div>
+        </div>
+      </div>
+    );
+  };
+
   const handleCardClick = () => {
     if (selectable) {
       onCardSelect();
@@ -214,12 +257,7 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
           className="relative rounded-lg overflow-hidden border-2 border-gray-300 mb-2"
           style={{ width: '100%', maxWidth: `${width}px`, height: `${height}px` }}
         >
-          <div className="absolute inset-0 bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center">
-            <div className="text-white text-center">
-              <div className="text-lg mb-1">🎫</div>
-              <div className="text-xs">Carte {index + 1}</div>
-            </div>
-          </div>
+          {getScratchSurface()}
         </div>
       </div>
     );
@@ -273,14 +311,7 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
         )}
 
         {/* Default surface when no scratching has started */}
-        {!showRevealContent && (
-          <div className="absolute inset-0 bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center">
-            <div className="text-white text-center">
-              <div className="text-lg mb-1">🎫</div>
-              <div className="text-xs">Carte {index + 1}</div>
-            </div>
-          </div>
-        )}
+        {!showRevealContent && getScratchSurface()}
 
         {/* État de sélection */}
         {selectable && (

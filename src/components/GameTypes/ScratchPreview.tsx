@@ -38,15 +38,13 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
     const storedCard = localStorage.getItem(STORAGE_KEY);
     const storedScratchStarted = localStorage.getItem(SCRATCH_STARTED_KEY);
     
-    if (storedCard !== null) {
+    // Only restore state if scratching has actually started
+    if (storedScratchStarted === 'true' && storedCard !== null) {
       const index = parseInt(storedCard, 10);
       if (!Number.isNaN(index)) {
         setSelectedCard(index);
+        setScratchStarted(true);
       }
-    }
-    
-    if (storedScratchStarted === 'true') {
-      setScratchStarted(true);
     }
   }, []);
 
@@ -65,10 +63,11 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
   };
 
   const handleCardSelect = (index: number) => {
-    // Only allow selection if no scratch has started in this session
+    // Only allow selection if no scratch has started and no card is selected
     if (!scratchStarted && selectedCard === null) {
       setSelectedCard(index);
-      localStorage.setItem(STORAGE_KEY, index.toString());
+      // Don't save to localStorage until scratching actually starts
+      console.log(`Card ${index} selected but not saved to storage yet`);
     }
   };
 
@@ -76,6 +75,7 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
     // Only allow scratch to start on the selected card and if no scratch has started yet
     if (selectedCard === index && !scratchStarted) {
       setScratchStarted(true);
+      localStorage.setItem(STORAGE_KEY, index.toString());
       localStorage.setItem(SCRATCH_STARTED_KEY, 'true');
       console.log(`Scratch started on card ${index}, all other cards are now locked`);
     }
