@@ -13,7 +13,6 @@ import ModernDesignTab from '../components/ModernEditor/ModernDesignTab';
 import ModernFormTab from '../components/ModernEditor/ModernFormTab';
 import ModernGameConfigTab from '../components/ModernEditor/ModernGameConfigTab';
 import ModernMobileTab from '../components/ModernEditor/ModernMobileTab';
-
 const defaultFormFields = [{
   id: 'prenom',
   label: 'Prénom',
@@ -30,9 +29,10 @@ const defaultFormFields = [{
   type: 'email',
   required: true
 }];
-
 const ModernCampaignEditor: React.FC = () => {
-  const { id } = useParams();
+  const {
+    id
+  } = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const isNewCampaign = id === 'new';
@@ -41,8 +41,10 @@ const ModernCampaignEditor: React.FC = () => {
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [previewDevice, setPreviewDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
   const [isLoading, setIsLoading] = useState(false);
-  const { saveCampaign, getCampaign } = useCampaigns();
-
+  const {
+    saveCampaign,
+    getCampaign
+  } = useCampaigns();
   const [campaign, setCampaign] = useState<any>({
     id: undefined,
     name: isNewCampaign ? 'Nouvelle Campagne' : 'Ma Campagne',
@@ -56,8 +58,8 @@ const ModernCampaignEditor: React.FC = () => {
     type: campaignType,
     formFields: defaultFormFields,
     gameConfig: getDefaultGameConfig(campaignType),
-    // Taille par défaut plus grande et position centrée
-    gameSize: 'large' as 'small' | 'medium' | 'large' | 'xlarge',
+    // Game layout configuration
+    gameSize: 'medium' as 'small' | 'medium' | 'large' | 'xlarge',
     gamePosition: 'center' as 'top' | 'center' | 'bottom' | 'left' | 'right',
     // Button configuration
     buttonConfig: {
@@ -126,28 +128,25 @@ const ModernCampaignEditor: React.FC = () => {
     },
     screens: {
       1: {
-        title: '',
-        description: '',
-        buttonText: '',
+        title: 'Bienvenue !',
+        description: 'Participez à notre jeu et tentez de gagner !',
+        buttonText: 'Participer',
         showTitle: true,
         showDescription: true
       },
       3: {
-        title: '',
-        description: '',
+        title: 'Félicitations !',
+        description: 'Merci pour votre participation !',
         showTitle: true,
         showDescription: true
       }
-    },
-    freeTextZones: []
+    }
   });
-
   useEffect(() => {
     if (!isNewCampaign && id) {
       loadCampaign(id);
     }
   }, [id, isNewCampaign]);
-
   const loadCampaign = async (campaignId: string) => {
     setIsLoading(true);
     try {
@@ -155,22 +154,19 @@ const ModernCampaignEditor: React.FC = () => {
       if (existingCampaign) {
         setCampaign({
           ...existingCampaign,
-          formFields: existingCampaign.form_fields || existingCampaign.formFields || defaultFormFields,
-          freeTextZones: existingCampaign.free_text_zones || existingCampaign.freeTextZones || []
+          formFields: existingCampaign.form_fields || defaultFormFields
         });
       }
     } finally {
       setIsLoading(false);
     }
   };
-
   const handleSave = async (continueEditing = false) => {
     setIsLoading(true);
     try {
       const campaignData = {
         ...campaign,
-        form_fields: campaign.formFields,
-        free_text_zones: campaign.freeTextZones
+        form_fields: campaign.formFields
       };
       const savedCampaign = await saveCampaign(campaignData);
       if (savedCampaign && !continueEditing) {
@@ -185,28 +181,24 @@ const ModernCampaignEditor: React.FC = () => {
       setIsLoading(false);
     }
   };
-
   const handleGameSizeChange = (size: 'small' | 'medium' | 'large' | 'xlarge') => {
     setCampaign((prev: any) => ({
       ...prev,
       gameSize: size
     }));
   };
-
   const handleGamePositionChange = (position: 'top' | 'center' | 'bottom' | 'left' | 'right') => {
     setCampaign((prev: any) => ({
       ...prev,
       gamePosition: position
     }));
   };
-
   const handleButtonConfigChange = (config: any) => {
     setCampaign((prev: any) => ({
       ...prev,
       buttonConfig: config
     }));
   };
-
   const gameTypeLabels: Record<CampaignType, string> = {
     wheel: 'Roue de la Fortune',
     jackpot: 'Jackpot',
@@ -218,7 +210,6 @@ const ModernCampaignEditor: React.FC = () => {
     swiper: 'Swiper',
     form: 'Formulaire Dynamique'
   };
-
   return <div className="h-screen flex bg-gray-50">
       {/* Header */}
       <div className="fixed top-0 left-0 right-0 z-30 bg-white border-b border-gray-200 px-6 py-4">
@@ -294,15 +285,7 @@ const ModernCampaignEditor: React.FC = () => {
 
           {/* Canvas Preview */}
           <div className="flex-1 bg-gray-100">
-            <ModernEditorCanvas
-              campaign={campaign}
-              previewDevice={previewDevice}
-              gameSize={campaign.gameSize}
-              gamePosition={campaign.gamePosition}
-              onFreeTextZonesChange={(zones) =>
-                setCampaign((prev: any) => ({ ...prev, freeTextZones: zones }))
-              }
-            />
+            <ModernEditorCanvas campaign={campaign} previewDevice={previewDevice} gameSize={campaign.gameSize} gamePosition={campaign.gamePosition} />
           </div>
         </div>
       </div>
@@ -311,5 +294,4 @@ const ModernCampaignEditor: React.FC = () => {
       {showPreviewModal && <ModernPreviewModal isOpen={showPreviewModal} onClose={() => setShowPreviewModal(false)} campaign={campaign} />}
     </div>;
 };
-
 export default ModernCampaignEditor;

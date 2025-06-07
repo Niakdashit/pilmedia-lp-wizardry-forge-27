@@ -13,10 +13,11 @@ interface WheelProps {
   winRate?: number;
   disabled?: boolean;
   gameSize?: 'small' | 'medium' | 'large' | 'xlarge';
-  position?: 'gauche' | 'droite' | 'bas' | 'centre';
+  position?: 'gauche' | 'droite' | 'bas' | 'centre'; // AJOUT DE LA POSITION
 }
 
 const getClipPath = (position: string | undefined) => {
+  // Retourne le clip-path CSS adapté à la position choisie
   switch (position) {
     case 'gauche':
       return 'inset(0 0 0 50%)';
@@ -37,8 +38,8 @@ const Wheel: React.FC<WheelProps> = ({
   onFinish,
   onStart,
   disabled = false,
-  gameSize = 'large',
-  position = 'centre'
+  gameSize = 'small',
+  position = 'centre' // NOUVEAU : par défaut "centre"
 }) => {
   const wheelRef = useRef<HTMLDivElement>(null);
   const [isSpinning, setIsSpinning] = useState(false);
@@ -59,18 +60,19 @@ const Wheel: React.FC<WheelProps> = ({
 
   const segments = config?.segments?.length > 0 ? config.segments : defaultSegments;
   
-  // Calculer la taille de la roue en fonction des dimensions du jeu - taille augmentée
-  const wheelSize = Math.min(gameDimensions.width, gameDimensions.height) - 20; // Réduction de marge pour une roue plus grande
+  // Calculer la taille de la roue en fonction des dimensions du jeu
+  const wheelSize = Math.min(gameDimensions.width, gameDimensions.height) - 40;
 
   const spin = () => {
     if (!wheelRef.current || isSpinning || disabled) return;
 
+    // Déclencher l'événement de début de jeu
     if (onStart) {
       onStart();
     }
 
     setIsSpinning(true);
-    const randomRotation = Math.random() * 360 + 1440;
+    const randomRotation = Math.random() * 360 + 1440; // Au moins 4 tours
     
     wheelRef.current.style.transform = `rotate(${randomRotation}deg)`;
     
@@ -81,11 +83,15 @@ const Wheel: React.FC<WheelProps> = ({
       const prizeIndex = Math.floor(normalizedRotation / segmentAngle);
       const selectedSegment = segments[prizeIndex] || segments[0];
       
+      
+      // Appeler onComplete si fourni (pour la compatibilité)
       if (onComplete) {
         onComplete(selectedSegment.label);
       }
       
+      // Appeler onFinish si fourni (pour la cohérence avec les autres jeux)
       if (onFinish) {
+        // Simuler un résultat win/lose - si c'est "Dommage" ou "Rejouer" = lose, sinon win
         const result = selectedSegment.label.toLowerCase().includes('dommage') || 
                       selectedSegment.label.toLowerCase().includes('rejouer') ? 'lose' : 'win';
         onFinish(result);
@@ -112,7 +118,7 @@ const Wheel: React.FC<WheelProps> = ({
 
   return (
     <div 
-      className="flex flex-col items-center justify-center space-y-6"
+      className="flex flex-col items-center space-y-6"
       style={{
         width: `${gameDimensions.width}px`,
         height: `${gameDimensions.height}px`,
@@ -120,19 +126,22 @@ const Wheel: React.FC<WheelProps> = ({
         maxHeight: `${gameDimensions.height}px`
       }}
     >
+      {/* --- CLIPPING RESPONSIVE --- */}
       <div 
         className="relative"
         style={{
           width: wheelSize,
           height: wheelSize,
+          // CLIPPING dynamique selon la position
           clipPath: getClipPath(position),
-          WebkitClipPath: getClipPath(position),
-          overflow: 'hidden',
+          WebkitClipPath: getClipPath(position), // pour Safari
+          overflow: 'hidden', // sécurité
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center'
         }}
       >
+        {/* Roue */}
         <div
           ref={wheelRef}
           className="relative rounded-full border-4 border-gray-800 overflow-hidden"
@@ -161,7 +170,7 @@ const Wheel: React.FC<WheelProps> = ({
                   className="transform text-center leading-tight"
                   style={{ 
                     transform: `rotate(${segmentAngle / 2}deg)`,
-                    fontSize: wheelSize < 250 ? '12px' : '14px',
+                    fontSize: wheelSize < 250 ? '10px' : '12px',
                     maxWidth: '80%'
                   }}
                 >
@@ -172,13 +181,14 @@ const Wheel: React.FC<WheelProps> = ({
           })}
         </div>
         
+        {/* Pointeur central */}
         <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
           <div 
             className="border-l-4 border-r-4 border-b-8 border-transparent border-b-gray-800"
             style={{
-              borderBottomWidth: wheelSize < 250 ? '8px' : '10px',
-              borderLeftWidth: wheelSize < 250 ? '4px' : '5px',
-              borderRightWidth: wheelSize < 250 ? '4px' : '5px'
+              borderBottomWidth: wheelSize < 250 ? '6px' : '8px',
+              borderLeftWidth: wheelSize < 250 ? '3px' : '4px',
+              borderRightWidth: wheelSize < 250 ? '3px' : '4px'
             }}
           ></div>
         </div>
@@ -189,8 +199,8 @@ const Wheel: React.FC<WheelProps> = ({
         disabled={isSpinning || disabled}
         className="px-6 py-3 bg-[#841b60] text-white font-bold rounded-xl hover:bg-[#6d164f] disabled:opacity-50 transition-colors duration-200"
         style={{
-          fontSize: wheelSize < 250 ? '16px' : '18px',
-          padding: wheelSize < 250 ? '12px 24px' : '14px 28px'
+          fontSize: wheelSize < 250 ? '14px' : '16px',
+          padding: wheelSize < 250 ? '10px 20px' : '12px 24px'
         }}
       >
         {isSpinning ? 'Rotation...' : 'Faire tourner'}

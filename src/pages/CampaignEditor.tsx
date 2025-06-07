@@ -64,18 +64,18 @@ const CampaignEditor: React.FC = () => {
     type: campaignType,
     screens: {
       1: {
-        title: '',
-        description: '',
-        buttonText: '',
+        title: 'Bienvenue !',
+        description: 'Participez à notre jeu et tentez de gagner !',
+        buttonText: 'Participer',
         buttonLink: '',
         showTitle: true,
         showDescription: true
       },
       2: {},
       3: {
-        title: '',
-        description: '',
-        buttonText: '',
+        title: 'Félicitations !',
+        description: 'Merci pour votre participation !',
+        buttonText: 'Rejouer',
         buttonLink: '',
         showTitle: true,
         showDescription: true,
@@ -119,7 +119,6 @@ const CampaignEditor: React.FC = () => {
         pointerColor: '#841b60'
       }
     },
-    freeTextZones: [],
     mobileConfig: {
       roulette: {
         segments: [],
@@ -188,16 +187,14 @@ const CampaignEditor: React.FC = () => {
     if (existingCampaign) {
       setCampaign({
         ...existingCampaign,
-        formFields: existingCampaign.form_fields || existingCampaign.formFields || defaultFormFields,
-        freeTextZones: existingCampaign.free_text_zones || existingCampaign.freeTextZones || []
+        formFields: existingCampaign.form_fields || defaultFormFields
       });
     }
   };
   const handleSave = async (continueEditing = false) => {
     const campaignData = {
       ...campaign,
-      form_fields: campaign.formFields,
-      free_text_zones: campaign.freeTextZones
+      form_fields: campaign.formFields
     };
     const savedCampaign = await saveCampaign(campaignData);
     if (savedCampaign && !continueEditing) {

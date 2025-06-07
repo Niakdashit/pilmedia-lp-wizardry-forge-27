@@ -1,150 +1,149 @@
 
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
+import { FormField } from '../components/campaign/FormEditor';
 
-interface Campaign {
-  id?: string;
+export interface Campaign {
+  id: string;
   name: string;
-  description: string;
-  url: string;
-  startDate: string;
-  startTime: string;
-  endDate: string;
-  endTime: string;
-  status: 'draft' | 'active' | 'inactive';
+  description?: string;
   type: string;
-  formFields: any[];
-  gameConfig: any;
+  form_fields?: FormField[];
+  game_config?: any;
   design?: any;
-  mobileConfig?: any;
-  freeTextZones?: any[];
-  form_fields?: any[];
-  free_text_zones?: any[];
+  screens?: any;
+  status: 'draft' | 'active' | 'paused' | 'ended';
+  created_at: string;
+  updated_at: string;
 }
 
 export const useCampaigns = () => {
-  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<Error | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const fetchCampaigns = async () => {
-    setIsLoading(true);
+  const saveCampaign = async (campaignData: Partial<Campaign>): Promise<Campaign | null> => {
+    setLoading(true);
+    setError(null);
+
     try {
-      const result = await supabase
-        .from('campaigns')
-        .select('*');
+      const isUpdate = !!campaignData.id;
+      
+      if (isUpdate) {
+        const { data, error } = await supabase
+          .from('campaigns')
+          .update({
+            name: campaignData.name,
+            description: campaignData.description,
+            type: campaignData.type,
+            form_fields: campaignData.form_fields || [],
+            game_config: campaignData.game_config,
+            design: campaignData.design,
+            screens: campaignData.screens,
+            status: campaignData.status,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', campaignData.id)
+          .select()
+          .single();
 
-      if (result.error) {
-        setError(result.error);
+        if (error) {
+          console.error('Erreur lors de la mise à jour:', error);
+          setError('Erreur lors de la mise à jour');
+          return null;
+        }
+
+        return data;
       } else {
-        setCampaigns(result.data || []);
+        const { data, error } = await supabase
+          .from('campaigns')
+          .insert({
+            name: campaignData.name,
+            description: campaignData.description,
+            type: campaignData.type,
+            form_fields: campaignData.form_fields || [],
+            game_config: campaignData.game_config,
+            design: campaignData.design,
+            screens: campaignData.screens,
+            status: campaignData.status || 'draft'
+          })
+          .select()
+          .single();
+
+        if (error) {
+          console.error('Erreur lors de la création:', error);
+          setError('Erreur lors de la création');
+          return null;
+        }
+
+        return data;
       }
-    } catch (err: any) {
-      setError(err);
+    } catch (err) {
+      console.error('Erreur inattendue:', err);
+      setError('Une erreur inattendue s\'est produite');
+      return null;
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   const getCampaign = async (id: string): Promise<Campaign | null> => {
-    setIsLoading(true);
-    try {
-      // For mock, return a default campaign structure
-      const mockCampaign: Campaign = {
-        id,
-        name: 'Campaign Test',
-        description: 'Test campaign',
-        url: 'test-campaign',
-        startDate: '2025-01-01',
-        startTime: '09:00',
-        endDate: '2025-12-31',
-        endTime: '18:00',
-        status: 'draft',
-        type: 'wheel',
-        formFields: [],
-        gameConfig: {},
-        design: {},
-        mobileConfig: {},
-        freeTextZones: [],
-        form_fields: [],
-        free_text_zones: []
-      };
+    setLoading(true);
+    setError(null);
 
-      return mockCampaign;
-    } catch (err: any) {
-      setError(err);
-      console.error('Error fetching campaign:', err);
+    try {
+      const { data, error } = await supabase
+        .from('campaigns')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error) {
+        console.error('Erreur lors de la récupération:', error);
+        setError('Erreur lors de la récupération');
+        return null;
+      }
+
+      return data;
+    } catch (err) {
+      console.error('Erreur inattendue:', err);
+      setError('Une erreur inattendue s\'est produite');
       return null;
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
-  const saveCampaign = async (campaignData: any) => {
-    setIsLoading(true);
+  const getCampaigns = async (): Promise<Campaign[]> => {
+    setLoading(true);
+    setError(null);
+
     try {
-      const campaignToSave = {
-        ...campaignData,
-        form_fields: campaignData.formFields || campaignData.form_fields,
-        free_text_zones: campaignData.freeTextZones || campaignData.free_text_zones || []
-      };
-
-      if (campaignToSave.id) {
-        const result = await supabase
-          .from('campaigns')
-          .update(campaignToSave)
-          .eq('id', campaignToSave.id)
-          .select()
-          .single();
-
-        if (result.error) throw result.error;
-        return result.data;
-      } else {
-        delete campaignToSave.id;
-        const result = await supabase
-          .from('campaigns')
-          .insert([campaignToSave])
-          .select()
-          .single();
-
-        if (result.error) throw result.error;
-        return result.data;
-      }
-    } catch (error) {
-      console.error('Error saving campaign:', error);
-      throw error;
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const deleteCampaign = async (id: string) => {
-    setIsLoading(true);
-    try {
-      const result = await supabase
+      const { data, error } = await supabase
         .from('campaigns')
-        .delete()
-        .eq('id', id);
+        .select('*')
+        .order('created_at', { ascending: false });
 
-      if (result.error) {
-        setError(result.error);
-      } else {
-        setCampaigns(campaigns.filter(campaign => campaign.id !== id));
+      if (error) {
+        console.error('Erreur lors de la récupération:', error);
+        setError('Erreur lors de la récupération');
+        return [];
       }
-    } catch (err: any) {
-      setError(err);
+
+      return data || [];
+    } catch (err) {
+      console.error('Erreur inattendue:', err);
+      setError('Une erreur inattendue s\'est produite');
+      return [];
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   return {
-    campaigns,
-    isLoading,
+    loading,
     error,
-    fetchCampaigns,
-    getCampaign,
     saveCampaign,
-    deleteCampaign,
+    getCampaign,
+    getCampaigns
   };
 };
