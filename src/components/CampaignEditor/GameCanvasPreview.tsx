@@ -1,13 +1,16 @@
+
 import React from 'react';
 import GameRenderer from './GameRenderer';
 import { useGamePositionCalculator } from './GamePositionCalculator';
 import { GAME_SIZES, GameSize } from '../configurators/GameSizeSelector';
 import MobilePreview from './Mobile/MobilePreview';
+
 interface GameCanvasPreviewProps {
   campaign: any;
   className?: string;
   previewDevice?: 'desktop' | 'tablet' | 'mobile';
 }
+
 const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   campaign,
   className = "",
@@ -20,6 +23,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
       </div>
     );
   }
+
   const baseBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage || campaign.design?.backgroundImage;
   const mobileBackgroundImage = campaign.design?.mobileBackgroundImage;
   const gameBackgroundImage = previewDevice === 'mobile' && mobileBackgroundImage
@@ -59,4 +63,5 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
       </div>
     </div>;
 };
+
 export default GameCanvasPreview;
