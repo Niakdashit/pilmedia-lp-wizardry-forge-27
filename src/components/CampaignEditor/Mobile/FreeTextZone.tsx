@@ -1,6 +1,5 @@
 
 import React, { useState } from 'react';
-import { Type, Settings, X } from 'lucide-react';
 
 interface FreeTextZoneProps {
   id: string;

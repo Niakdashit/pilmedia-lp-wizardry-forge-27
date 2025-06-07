@@ -32,9 +32,13 @@ const FreeTextManager: React.FC<FreeTextManagerProps> = ({ containerBounds }) =>
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
 
+    // Ensure position is within container bounds
+    const clampedX = Math.max(0, Math.min(x, containerBounds.width - 100));
+    const clampedY = Math.max(0, Math.min(y, containerBounds.height - 30));
+
     const newZone: FreeTextZone = {
       id: `free-text-${Date.now()}`,
-      position: { x, y },
+      position: { x: clampedX, y: clampedY },
       content: 'Nouveau texte',
       style: {
         fontSize: 16,
