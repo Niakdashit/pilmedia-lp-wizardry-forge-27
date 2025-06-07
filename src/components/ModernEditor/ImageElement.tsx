@@ -34,7 +34,6 @@ const ImageElement: React.FC<ImageElementProps> = ({
 
     if (action === 'drag') {
       const elementRect = elementRef.current.getBoundingClientRect();
-      const containerRect = containerRef.current.getBoundingClientRect();
       
       const offsetX = e.clientX - elementRect.left;
       const offsetY = e.clientY - elementRect.top;

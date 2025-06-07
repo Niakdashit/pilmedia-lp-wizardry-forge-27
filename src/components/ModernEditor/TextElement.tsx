@@ -33,7 +33,6 @@ const TextElement: React.FC<TextElementProps> = ({
     if (!containerRef.current || !elementRef.current) return;
     
     const elementRect = elementRef.current.getBoundingClientRect();
-    const containerRect = containerRef.current.getBoundingClientRect();
     
     const offsetX = e.clientX - elementRect.left;
     const offsetY = e.clientY - elementRect.top;
@@ -70,7 +69,7 @@ const TextElement: React.FC<TextElementProps> = ({
 
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
-  }, [onSelect, onUpdate, containerRef]);
+  }, [onSelect, onUpdate, containerRef, tempPosition]);
 
   const handleCenterElement = useCallback(() => {
     if (!containerRef.current || !elementRef.current) return;
