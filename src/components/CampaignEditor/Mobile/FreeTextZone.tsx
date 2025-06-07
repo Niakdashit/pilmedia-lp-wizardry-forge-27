@@ -46,6 +46,8 @@ const FreeTextZone: React.FC<FreeTextZoneProps> = ({
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const [resizeStart, setResizeStart] = useState({ width: 0, height: 0 });
   const zoneRef = useRef<HTMLDivElement>(null);
+  const stylePanelRef = useRef<HTMLDivElement>(null);
+  const [showStyleBelow, setShowStyleBelow] = useState(false);
 
   const handleMouseDown = (e: React.MouseEvent, action: 'drag' | 'resize') => {
     e.preventDefault();
@@ -93,6 +95,21 @@ const FreeTextZone: React.FC<FreeTextZoneProps> = ({
       };
     }
   }, [isDragging, isResizing, dragStart, resizeStart, position, size, containerBounds]);
+
+  // Ensure style panel stays within bounds
+  React.useEffect(() => {
+    if (!isEditing) return;
+    const panelHeight = stylePanelRef.current?.offsetHeight || 0;
+    const overshootTop = position.y - panelHeight < 0;
+    const overshootBottom = position.y + size.height + panelHeight > containerBounds.height;
+    if (overshootTop && !overshootBottom) {
+      setShowStyleBelow(true);
+    } else if (overshootBottom && !overshootTop) {
+      setShowStyleBelow(false);
+    } else {
+      setShowStyleBelow(overshootTop);
+    }
+  }, [isEditing, position.y, size.height, containerBounds.height]);
 
   return (
     <div
@@ -206,11 +223,13 @@ const FreeTextZone: React.FC<FreeTextZoneProps> = ({
 
           {/* Style Controls */}
           <div
+            ref={stylePanelRef}
             style={{
               position: 'absolute',
-              bottom: '100%',
               left: '0px',
-              transform: 'translateY(-4px)',
+              ...(showStyleBelow
+                ? { top: '100%', transform: 'translateY(4px)' }
+                : { bottom: '100%', transform: 'translateY(-4px)' }),
               background: 'rgba(255, 255, 255, 0.9)',
               padding: '4px',
               borderRadius: '4px',
