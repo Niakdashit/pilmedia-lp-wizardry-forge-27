@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useCallback } from 'react';
 import GameCanvasPreview from '../CampaignEditor/GameCanvasPreview';
 
@@ -187,7 +186,6 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
     if (!canvas) return;
 
     const textRect = textElement.getBoundingClientRect();
-    const canvasRect = canvas.getBoundingClientRect();
     
     setDragOffset({
       x: e.clientX - textRect.left,
