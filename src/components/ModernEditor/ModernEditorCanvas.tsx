@@ -1,5 +1,7 @@
 import React, { useState, useRef, useCallback } from 'react';
 import GameCanvasPreview from '../CampaignEditor/GameCanvasPreview';
+import TextElement from './TextElement';
+import ImageElement from './ImageElement';
 
 interface ModernEditorCanvasProps {
   campaign: any;
@@ -14,9 +16,7 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
   gameSize,
   gamePosition
 }) => {
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
-  const [tempPosition, setTempPosition] = useState<{ x: number; y: number } | null>(null);
+  const [selectedElement, setSelectedElement] = useState<{type: 'text' | 'image', id: number} | null>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
 
   const getCanvasStyle = () => {
@@ -29,14 +29,13 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
       transition: 'all 0.3s ease',
     };
 
-    const baseBackground = campaign.design?.backgroundImage;
-    const mobileBackground = campaign.design?.mobileBackgroundImage;
-    const backgroundImage =
-      previewDevice === 'mobile' && mobileBackground
-        ? `url(${mobileBackground})`
-        : baseBackground
-        ? `url(${baseBackground})`
-        : undefined;
+    // Déterminer quelle image de fond utiliser
+    let backgroundImage;
+    if (previewDevice === 'mobile' && campaign.design?.mobileBackgroundImage) {
+      backgroundImage = `url(${campaign.design.mobileBackgroundImage})`;
+    } else if (previewDevice !== 'mobile' && campaign.design?.backgroundImage) {
+      backgroundImage = `url(${campaign.design.backgroundImage})`;
+    }
 
     const styleWithBackground = {
       ...baseStyle,
@@ -74,27 +73,23 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
     ...campaign,
     gameSize,
     gamePosition,
-    // Ensure button configuration is properly synchronized
     buttonConfig: {
       ...campaign.buttonConfig,
       text: campaign.buttonConfig?.text || campaign.gameConfig?.[campaign.type]?.buttonLabel || 'Jouer',
       color: campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor || '#841b60'
     },
-    // Enhanced design configuration
     design: {
       ...campaign.design,
       buttonColor: campaign.buttonConfig?.color || campaign.design?.buttonColor || '#841b60',
       titleColor: campaign.design?.titleColor || '#000000',
       background: campaign.design?.background || '#f8fafc'
     },
-    // Enhanced game configuration
     gameConfig: {
       ...campaign.gameConfig,
       [campaign.type]: {
         ...campaign.gameConfig?.[campaign.type],
         buttonLabel: campaign.buttonConfig?.text || campaign.gameConfig?.[campaign.type]?.buttonLabel || 'Jouer',
         buttonColor: campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor || '#841b60',
-        // Keep existing colors for other elements
         containerBackgroundColor: campaign.gameConfig?.[campaign.type]?.containerBackgroundColor,
         backgroundColor: campaign.gameConfig?.[campaign.type]?.backgroundColor,
         borderColor: campaign.gameConfig?.[campaign.type]?.borderColor,
@@ -110,7 +105,8 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
   const footerBanner = campaign.design?.footerBanner;
   const headerText = campaign.design?.headerText;
   const footerText = campaign.design?.footerText;
-  const customText = campaign.design?.customText;
+  const customTexts = campaign.design?.customTexts || [];
+  const customImages = campaign.design?.customImages || [];
 
   const sizeMap: Record<string, string> = {
     xs: '10px',
@@ -128,124 +124,55 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
     '9xl': '72px'
   };
 
-  // Get custom text position with improved drag support
-  const getCustomTextPosition = (): React.CSSProperties => {
-    const basePosition = customText?.position || 'top';
-    const dragPosition = tempPosition || customText?.dragPosition;
-
-    // If we have a drag position, use it
-    if (dragPosition) {
-      return {
-        position: 'absolute',
-        left: `${dragPosition.x}px`,
-        top: `${dragPosition.y}px`,
-        transform: 'none'
-      };
-    }
-
-    // Otherwise use the predefined position
-    const positions: Record<string, React.CSSProperties> = {
-      top: { top: '8px', left: '50%', transform: 'translateX(-50%)' },
-      bottom: { bottom: '8px', left: '50%', transform: 'translateX(-50%)' },
-      left: { left: '8px', top: '50%', transform: 'translateY(-50%)' },
-      right: { right: '8px', top: '50%', transform: 'translateY(-50%)' },
-      center: { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }
-    };
-
-    return {
-      position: 'absolute',
-      ...positions[basePosition]
-    };
-  };
-
-  const updateCampaignPosition = useCallback((newPosition: { x: number; y: number }) => {
+  const updateTextElement = useCallback((id: number, updates: any) => {
     const updatedCampaign = {
       ...campaign,
       design: {
         ...campaign.design,
-        customText: {
-          ...customText,
-          dragPosition: newPosition
-        }
+        customTexts: customTexts.map((text: any) => 
+          text.id === id ? { ...text, ...updates } : text
+        )
       }
     };
-    
-    // Update the campaign object directly for immediate preview
     Object.assign(campaign, updatedCampaign);
-  }, [campaign, customText]);
+  }, [campaign, customTexts]);
 
-  const handleTextMouseDown = (e: React.MouseEvent) => {
-    if (!customText?.enabled) return;
-    
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(true);
-    
-    const textElement = e.currentTarget as HTMLElement;
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-
-    const textRect = textElement.getBoundingClientRect();
-    
-    setDragOffset({
-      x: e.clientX - textRect.left,
-      y: e.clientY - textRect.top
-    });
-
-    const handleMouseMove = (moveEvent: MouseEvent) => {
-      if (!canvas) return;
-      
-      const canvasRect = canvas.getBoundingClientRect();
-      const newX = Math.max(0, Math.min(
-        moveEvent.clientX - canvasRect.left - dragOffset.x,
-        canvasRect.width - textRect.width
-      ));
-      const newY = Math.max(0, Math.min(
-        moveEvent.clientY - canvasRect.top - dragOffset.y,
-        canvasRect.height - textRect.height
-      ));
-      
-      setTempPosition({ x: newX, y: newY });
-    };
-
-    const handleMouseUp = () => {
-      setIsDragging(false);
-      if (tempPosition) {
-        updateCampaignPosition(tempPosition);
-        setTempPosition(null);
+  const updateImageElement = useCallback((id: number, updates: any) => {
+    const updatedCampaign = {
+      ...campaign,
+      design: {
+        ...campaign.design,
+        customImages: customImages.map((img: any) => 
+          img.id === id ? { ...img, ...updates } : img
+        )
       }
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
     };
+    Object.assign(campaign, updatedCampaign);
+  }, [campaign, customImages]);
 
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
-  };
-
-  const getTextStyles = (): React.CSSProperties => {
-    const styles: React.CSSProperties = {
-      color: customText?.color || '#000000',
-      fontSize: sizeMap[customText?.size || 'base'] || '14px',
-      cursor: isDragging ? 'grabbing' : 'grab',
-      userSelect: 'none',
-      zIndex: 20,
-      fontWeight: customText?.bold ? 'bold' : 'normal',
-      fontStyle: customText?.italic ? 'italic' : 'normal',
-      textDecoration: customText?.underline ? 'underline' : 'none',
-      fontFamily: customText?.fontFamily || 'Inter, sans-serif',
-      transition: isDragging ? 'none' : 'all 0.2s ease',
-      ...(customText?.showFrame
-        ? {
-            backgroundColor: customText.frameColor,
-            border: `1px solid ${customText.frameBorderColor}`,
-            padding: '4px 8px',
-            borderRadius: '4px'
-          }
-        : {})
+  const deleteTextElement = useCallback((id: number) => {
+    const updatedCampaign = {
+      ...campaign,
+      design: {
+        ...campaign.design,
+        customTexts: customTexts.filter((text: any) => text.id !== id)
+      }
     };
+    Object.assign(campaign, updatedCampaign);
+    setSelectedElement(null);
+  }, [campaign, customTexts]);
 
-    return styles;
-  };
+  const deleteImageElement = useCallback((id: number) => {
+    const updatedCampaign = {
+      ...campaign,
+      design: {
+        ...campaign.design,
+        customImages: customImages.filter((img: any) => img.id !== id)
+      }
+    };
+    Object.assign(campaign, updatedCampaign);
+    setSelectedElement(null);
+  }, [campaign, customImages]);
 
   return (
     <div className="w-full h-full flex items-center justify-center bg-gray-100 p-4">
@@ -253,6 +180,7 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
         ref={canvasRef}
         style={getCanvasStyle()} 
         className="flex flex-col h-full w-full relative"
+        onClick={() => setSelectedElement(null)}
       >
         {headerBanner?.enabled && (
           <div
@@ -297,19 +225,34 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
             previewDevice={previewDevice}
           />
           
-          {/* Enhanced Draggable Custom Text */}
-          {customText?.enabled && (
-            <div
-              style={{
-                ...getCustomTextPosition(),
-                ...getTextStyles()
-              }}
-              onMouseDown={handleTextMouseDown}
-              className={`${isDragging ? 'shadow-lg scale-105' : 'hover:shadow-md'} transition-all duration-200`}
-            >
-              {customText.text}
-            </div>
-          )}
+          {/* Custom Text Elements */}
+          {customTexts.map((customText: any) => (
+            customText?.enabled && (
+              <TextElement
+                key={customText.id}
+                element={customText}
+                isSelected={selectedElement?.type === 'text' && selectedElement?.id === customText.id}
+                onSelect={() => setSelectedElement({ type: 'text', id: customText.id })}
+                onUpdate={(updates) => updateTextElement(customText.id, updates)}
+                onDelete={() => deleteTextElement(customText.id)}
+                containerRef={canvasRef}
+                sizeMap={sizeMap}
+              />
+            )
+          ))}
+
+          {/* Custom Image Elements */}
+          {customImages.map((customImage: any) => (
+            <ImageElement
+              key={customImage.id}
+              element={customImage}
+              isSelected={selectedElement?.type === 'image' && selectedElement?.id === customImage.id}
+              onSelect={() => setSelectedElement({ type: 'image', id: customImage.id })}
+              onUpdate={(updates) => updateImageElement(customImage.id, updates)}
+              onDelete={() => deleteImageElement(customImage.id)}
+              containerRef={canvasRef}
+            />
+          ))}
         </div>
 
         {footerBanner?.enabled && (
