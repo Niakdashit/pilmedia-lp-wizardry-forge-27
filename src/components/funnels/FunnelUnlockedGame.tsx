@@ -1,175 +1,120 @@
-
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import DynamicContactForm from '../forms/DynamicContactForm';
+import React, { useState } from 'react';
+import { useParticipations } from '../../hooks/useParticipations';
 import GameRenderer from './components/GameRenderer';
 import ResultScreen from './components/ResultScreen';
-import ContrastBackground from '../common/ContrastBackground';
-
+import FormHandler from './components/FormHandler';
 interface FunnelUnlockedGameProps {
   campaign: any;
   previewMode?: 'mobile' | 'tablet' | 'desktop';
   mobileConfig?: any;
   modalContained?: boolean;
 }
-
+export interface FieldConfig {
+  id: string;
+  label: string;
+  type: 'text' | 'email' | 'tel' | 'textarea' | 'select' | 'checkbox' | 'radio';
+  required?: boolean;
+  options?: string[];
+}
 const FunnelUnlockedGame: React.FC<FunnelUnlockedGameProps> = ({
   campaign,
   previewMode = 'desktop',
   mobileConfig,
-  modalContained = false
+  modalContained = true
 }) => {
-  const [currentScreen, setCurrentScreen] = useState(1);
   const [formValidated, setFormValidated] = useState(false);
-  const [gameResult, setGameResult] = useState<'win' | 'lose' | null>(null);
+  const [showFormModal, setShowFormModal] = useState(false);
   const [showValidationMessage, setShowValidationMessage] = useState(false);
-
-  const handleFormValidation = () => {
-    setFormValidated(true);
-    setShowValidationMessage(true);
-    setTimeout(() => setShowValidationMessage(false), 2000);
-  };
-
-  const handleGameFinish = (result: 'win' | 'lose') => {
-    setGameResult(result);
-    setCurrentScreen(3);
-  };
-
-  const handleGameStart = () => {
-    // Game started logic
-  };
-
+  const [gameResult, setGameResult] = useState<'win' | 'lose' | null>(null);
+  const [participationLoading, setParticipationLoading] = useState(false);
+  const {
+    createParticipation
+  } = useParticipations();
+  const fields: FieldConfig[] = campaign.formFields || [{
+    id: 'prenom',
+    label: 'Prénom',
+    type: 'text',
+    required: true
+  }, {
+    id: 'nom',
+    label: 'Nom',
+    type: 'text',
+    required: true
+  }, {
+    id: 'email',
+    label: 'Email',
+    type: 'email',
+    required: true
+  }];
   const handleGameButtonClick = () => {
     if (!formValidated) {
-      // Focus on form or show validation message
-      const formElement = document.querySelector('form');
-      if (formElement) {
-        formElement.scrollIntoView({ behavior: 'smooth' });
+      setShowFormModal(true);
+    }
+  };
+  const handleFormSubmit = async (formData: Record<string, string>) => {
+    setParticipationLoading(true);
+    try {
+      if (campaign.id) {
+        await createParticipation({
+          campaign_id: campaign.id,
+          form_data: formData,
+          user_email: formData.email
+        });
       }
+      setFormValidated(true);
+      setShowFormModal(false);
+      setShowValidationMessage(true);
+      setTimeout(() => setShowValidationMessage(false), 2000);
+    } catch (error) {
+      console.error('Erreur lors de la soumission:', error);
+      alert('Erreur lors de la soumission du formulaire');
+    } finally {
+      setParticipationLoading(false);
     }
   };
-
-  const getLayoutClasses = () => {
-    if (modalContained) {
-      return {
-        container: 'w-full h-full flex flex-col overflow-auto',
-        content: 'flex-1 flex flex-col lg:flex-row gap-8 p-6',
-        formSection: 'w-full lg:w-1/3 flex-shrink-0',
-        gameSection: 'w-full lg:w-2/3 flex items-center justify-center min-h-[500px]'
-      };
+  const handleGameStart = () => {
+    // Game started logic if needed
+  };
+  const handleGameFinish = async (result: 'win' | 'lose') => {
+    try {
+      if (campaign.id) {
+        await createParticipation({
+          campaign_id: campaign.id,
+          form_data: {
+            game_result: result
+          },
+          user_email: ''
+        });
+      }
+    } catch (error) {
+      console.error('Erreur lors de la sauvegarde du résultat:', error);
     }
-
-    if (previewMode === 'mobile') {
-      return {
-        container: 'min-h-screen flex flex-col',
-        content: 'flex-1 flex flex-col gap-6 p-4',
-        formSection: 'w-full order-2',
-        gameSection: 'w-full order-1 flex items-center justify-center min-h-[400px]'
-      };
-    }
-
-    return {
-      container: 'min-h-screen flex flex-col lg:flex-row',
-      content: 'flex-1 flex flex-col lg:flex-row gap-8 p-8',
-      formSection: 'w-full lg:w-1/3 lg:max-w-md flex-shrink-0',
-      gameSection: 'w-full lg:w-2/3 flex items-center justify-center min-h-[600px]'
-    };
+    setGameResult(result);
+  };
+  const handleReset = () => {
+    setFormValidated(false);
+    setGameResult(null);
+    setShowFormModal(false);
+    setShowValidationMessage(false);
   };
 
-  const layoutClasses = getLayoutClasses();
-
-  if (currentScreen === 3) {
-    return (
-      <div className={layoutClasses.container}>
-        <ResultScreen
-          campaign={campaign}
-          result={gameResult}
-          onRestart={() => {
-            setCurrentScreen(1);
-            setFormValidated(false);
-            setGameResult(null);
-          }}
-          previewMode={previewMode}
-          mobileConfig={mobileConfig}
-        />
-      </div>
-    );
+  // Si on a un résultat de jeu, afficher l'écran de résultat
+  if (gameResult) {
+    return <ResultScreen gameResult={gameResult} campaign={campaign} mobileConfig={mobileConfig} onReset={handleReset} />;
   }
 
-  return (
-    <div 
-      className={layoutClasses.container}
-      style={{
-        backgroundColor: campaign.design?.background || '#f8fafc',
-        backgroundImage: campaign.design?.backgroundImage ? `url(${campaign.design.backgroundImage})` : undefined,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
-      }}
-    >
-      {campaign.design?.backgroundImage && (
-        <div className="absolute inset-0 bg-black/20 z-0" />
-      )}
+  // Sinon, afficher le jeu
+  return <div className="w-full h-full flex flex-col items-center justify-center space-y-6 p-4">
+      {/* Titre et description */}
+      
 
-      <div className={`${layoutClasses.content} relative z-10`}>
-        {/* Form Section */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className={layoutClasses.formSection}
-        >
-          <ContrastBackground
-            enabled={mobileConfig?.contrastBackground?.enabled || campaign.screens?.[1]?.contrastBackground?.enabled}
-            config={mobileConfig?.contrastBackground || campaign.screens?.[1]?.contrastBackground}
-            className="h-full"
-          >
-            <div className="bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl p-6 lg:p-8 h-full">
-              {campaign.screens?.[1]?.showTitle && (
-                <h1 
-                  className="text-2xl lg:text-3xl font-bold mb-4"
-                  style={{ color: campaign.design?.titleColor || '#000000' }}
-                >
-                  {campaign.screens?.[1]?.title || 'Participez à notre jeu !'}
-                </h1>
-              )}
-              
-              {campaign.screens?.[1]?.showDescription && (
-                <p className="text-gray-600 mb-6 lg:mb-8 text-sm lg:text-base">
-                  {campaign.screens?.[1]?.description || 'Remplissez le formulaire pour jouer'}
-                </p>
-              )}
+      {/* Jeu */}
+      <GameRenderer campaign={campaign} formValidated={formValidated} showValidationMessage={showValidationMessage} previewMode={previewMode} mobileConfig={mobileConfig} onGameFinish={handleGameFinish} onGameStart={handleGameStart} onGameButtonClick={handleGameButtonClick} />
 
-              <DynamicContactForm
-                campaign={campaign}
-                onValidSubmit={handleFormValidation}
-                validated={formValidated}
-                buttonColor={campaign.buttonConfig?.color || campaign.design?.buttonColor || '#841b60'}
-                buttonText={campaign.buttonConfig?.text || 'Participer'}
-              />
-            </div>
-          </ContrastBackground>
-        </motion.div>
-
-        {/* Game Section */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          className={layoutClasses.gameSection}
-        >
-          <GameRenderer
-            campaign={campaign}
-            formValidated={formValidated}
-            showValidationMessage={showValidationMessage}
-            previewMode={previewMode}
-            mobileConfig={mobileConfig}
-            onGameFinish={handleGameFinish}
-            onGameStart={handleGameStart}
-            onGameButtonClick={handleGameButtonClick}
-          />
-        </motion.div>
-      </div>
-    </div>
-  );
+      {/* Modal de formulaire */}
+      <FormHandler showFormModal={showFormModal} campaign={campaign} fields={fields} participationLoading={participationLoading} modalContained={modalContained} onClose={() => {
+      setShowFormModal(false);
+    }} onSubmit={handleFormSubmit} />
+    </div>;
 };
-
 export default FunnelUnlockedGame;
