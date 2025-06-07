@@ -55,27 +55,32 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
     }
   };
 
-  // Créer une copie de la campagne avec les paramètres de taille et position mis à jour
+  // Enhanced campaign with proper settings propagation
   const enhancedCampaign = {
     ...campaign,
     gameSize,
     gamePosition,
-    // S'assurer que la configuration des boutons est cohérente
+    // Ensure button configuration is properly synchronized
     buttonConfig: {
       ...campaign.buttonConfig,
-      // Synchroniser avec la configuration du jeu si elle existe
-      text: campaign.buttonConfig?.text || campaign.gameConfig?.[campaign.type]?.buttonLabel,
+      text: campaign.buttonConfig?.text || campaign.gameConfig?.[campaign.type]?.buttonLabel || 'Jouer',
       color: campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor || '#841b60'
     },
-    // S'assurer que les couleurs personnalisées sont incluses
+    // Enhanced design configuration
+    design: {
+      ...campaign.design,
+      buttonColor: campaign.buttonConfig?.color || campaign.design?.buttonColor || '#841b60',
+      titleColor: campaign.design?.titleColor || '#000000',
+      background: campaign.design?.background || '#f8fafc'
+    },
+    // Enhanced game configuration
     gameConfig: {
       ...campaign.gameConfig,
       [campaign.type]: {
         ...campaign.gameConfig?.[campaign.type],
-        // Synchroniser la configuration des boutons
-        buttonLabel: campaign.buttonConfig?.text || campaign.gameConfig?.[campaign.type]?.buttonLabel,
-        buttonColor: campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor,
-        // Garder les autres couleurs existantes
+        buttonLabel: campaign.buttonConfig?.text || campaign.gameConfig?.[campaign.type]?.buttonLabel || 'Jouer',
+        buttonColor: campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor || '#841b60',
+        // Keep existing colors for other elements
         containerBackgroundColor: campaign.gameConfig?.[campaign.type]?.containerBackgroundColor,
         backgroundColor: campaign.gameConfig?.[campaign.type]?.backgroundColor,
         borderColor: campaign.gameConfig?.[campaign.type]?.borderColor,
@@ -152,6 +157,7 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
             campaign={enhancedCampaign}
             className="w-full h-full"
             key={`preview-${gameSize}-${gamePosition}-${campaign.buttonConfig?.color}-${JSON.stringify(campaign.gameConfig?.[campaign.type])}`}
+            previewDevice={previewDevice}
           />
           {customText?.enabled && (
             <div

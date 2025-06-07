@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import ScratchGameGrid from './ScratchGameGrid';
 
@@ -49,9 +50,15 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
     }
   };
 
+  // Ensure we have at least one card with proper defaults
   const cards = config?.cards && config.cards.length > 0 
     ? config.cards 
-    : [{ id: 1, revealImage: '', revealMessage: 'Félicitations !', scratchColor: config?.scratchColor }];
+    : [{ 
+        id: 1, 
+        revealImage: config?.revealImage || '', 
+        revealMessage: config?.revealMessage || 'Félicitations !', 
+        scratchColor: config?.scratchColor || '#C0C0C0' 
+      }];
 
   if (!gameStarted) {
     return (

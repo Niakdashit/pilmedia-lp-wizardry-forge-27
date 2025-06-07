@@ -10,7 +10,7 @@ interface CampaignPreviewProps {
 const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
   const { design } = campaign;
 
-  // Prioriser l'image de fond du design général
+  // Get background image from design or game config
   const backgroundImage = design?.backgroundImage || campaign.gameConfig?.[campaign.type]?.backgroundImage;
 
   const containerStyle = {
@@ -53,10 +53,32 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
 
   const getFunnelComponent = () => {
     const funnel = campaign.funnel || (['wheel', 'scratch', 'jackpot', 'dice'].includes(campaign.type) ? 'unlocked_game' : 'standard');
+    
+    // Enhanced campaign with proper settings propagation
+    const enhancedCampaign = {
+      ...campaign,
+      design: {
+        ...campaign.design,
+        // Ensure colors are properly set
+        buttonColor: campaign.buttonConfig?.color || campaign.design?.buttonColor || '#841b60',
+        titleColor: campaign.design?.titleColor || '#000000',
+        background: campaign.design?.background || '#f8fafc'
+      },
+      gameConfig: {
+        ...campaign.gameConfig,
+        [campaign.type]: {
+          ...campaign.gameConfig?.[campaign.type],
+          // Ensure button configuration is propagated
+          buttonLabel: campaign.buttonConfig?.text || campaign.gameConfig?.[campaign.type]?.buttonLabel || 'Jouer',
+          buttonColor: campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor || '#841b60'
+        }
+      }
+    };
+    
     if (funnel === 'unlocked_game') {
       return (
         <FunnelUnlockedGame
-          campaign={campaign}
+          campaign={enhancedCampaign}
           previewMode="desktop"
           modalContained={false}
         />
@@ -64,11 +86,12 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
     }
     return (
       <FunnelStandard
-        campaign={campaign}
+        campaign={enhancedCampaign}
         key={`${campaign.id}-${JSON.stringify({
-          gameConfig: campaign.gameConfig,
-          design: campaign.design,
-          screens: campaign.screens,
+          gameConfig: enhancedCampaign.gameConfig,
+          design: enhancedCampaign.design,
+          screens: enhancedCampaign.screens,
+          buttonConfig: enhancedCampaign.buttonConfig
         })}`}
       />
     );
@@ -78,10 +101,10 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
     <div style={containerStyle}>
       {customStyles}
 
-      {/* Image de fond avec affichage dynamique */}
+      {/* Background image with proper display */}
       {backgroundImage && <div style={backgroundStyle} />}
 
-      {/* Contenu */}
+      {/* Content */}
       <div style={contentWrapperStyle}>
         {customHTML}
         {getFunnelComponent()}

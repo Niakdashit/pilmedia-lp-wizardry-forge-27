@@ -1,3 +1,4 @@
+
 import React from 'react';
 import FunnelUnlockedGame from '../../funnels/FunnelUnlockedGame';
 import FunnelStandard from '../../funnels/FunnelStandard';
@@ -31,18 +32,32 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
 }) => {
   const unlockedTypes = ['wheel', 'scratch', 'jackpot', 'dice'];
 
-  // Enhance mockCampaign with custom colors
+  // Enhanced campaign with custom colors and proper configuration
   const enhancedCampaign = {
     ...mockCampaign,
     design: {
       ...mockCampaign.design,
-      customColors: customColors
+      customColors: customColors,
+      buttonColor: customColors.primary,
+      titleColor: mockCampaign.design?.titleColor || '#000000',
+      background: mockCampaign.design?.background || '#f8fafc'
+    },
+    buttonConfig: {
+      ...mockCampaign.buttonConfig,
+      color: customColors.primary,
+      borderColor: customColors.primary
     },
     gameConfig: {
       ...mockCampaign.gameConfig,
       jackpot: {
         ...mockCampaign.gameConfig?.jackpot,
-        ...jackpotColors
+        ...jackpotColors,
+        buttonColor: customColors.primary
+      },
+      [selectedGameType]: {
+        ...mockCampaign.gameConfig?.[selectedGameType],
+        buttonColor: customColors.primary,
+        buttonLabel: mockCampaign.gameConfig?.[selectedGameType]?.buttonLabel || 'Jouer'
       }
     }
   };
@@ -65,6 +80,7 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
           gameConfig: enhancedCampaign.gameConfig,
           design: enhancedCampaign.design,
           screens: enhancedCampaign.screens,
+          customColors: customColors
         })}
       />
     );
@@ -77,16 +93,16 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: '#f9fafb',
+      backgroundColor: enhancedCampaign.design?.background || '#f9fafb',
       position: 'relative' as const,
       overflow: 'hidden' as const
     };
 
     // Background image if available
-    if (mockCampaign.design?.backgroundImage) {
+    if (enhancedCampaign.design?.backgroundImage) {
       return {
         ...baseStyle,
-        backgroundImage: `url(${mockCampaign.design.backgroundImage})`,
+        backgroundImage: `url(${enhancedCampaign.design.backgroundImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'
@@ -132,7 +148,7 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
         <div style={getDeviceContainerStyle()}>
           <div style={getContainerStyle()}>
             {/* Background overlay for better contrast if background image exists */}
-            {mockCampaign.design?.backgroundImage && (
+            {enhancedCampaign.design?.backgroundImage && (
               <div 
                 className="absolute inset-0 bg-black opacity-20"
                 style={{ zIndex: 1 }}
