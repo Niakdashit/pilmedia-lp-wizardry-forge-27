@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Type, Image, Layout, AlignCenter, MoreHorizontal, ChevronDown, ChevronUp, Plus, Trash2, Bold, Italic, Underline, Palette } from 'lucide-react';
 import ImageUpload from '../common/ImageUpload';
+
 interface ModernDesignTabProps {
   campaign: any;
   setCampaign: React.Dispatch<React.SetStateAction<any>>;
