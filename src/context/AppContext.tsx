@@ -19,7 +19,7 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 const initialState: AppState = {
   user: null,
   campaigns: [],
-  sidebarCollapsed: false,
+  sidebarCollapsed: typeof window !== 'undefined' ? window.innerWidth < 768 : false,
 };
 
 function appReducer(state: AppState, action: any): AppState {
