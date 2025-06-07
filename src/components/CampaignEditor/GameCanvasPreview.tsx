@@ -1,4 +1,3 @@
-
 import React from 'react';
 import GameRenderer from './GameRenderer';
 import { useGamePositionCalculator } from './GamePositionCalculator';
@@ -26,20 +25,16 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
 
   // At this point, previewDevice can only be 'desktop'
   const baseBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage || campaign.design?.backgroundImage;
-  // Since we're in desktop mode, we don't need to check for mobile background
   const gameBackgroundImage = baseBackgroundImage;
   const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel || campaign.buttonConfig?.text || 'Jouer';
   const buttonColor = campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor || '#841b60';
 
-  // Get game size and position from campaign with proper typing
   const gameSize: GameSize = campaign.gameSize && Object.keys(GAME_SIZES).includes(campaign.gameSize) ? campaign.gameSize as GameSize : 'medium';
   const gamePosition = campaign.gamePosition || 'center';
 
   // Since we're in desktop mode, we don't crop the wheel
   const shouldCropWheel = false;
-  const {
-    getPositionStyles
-  } = useGamePositionCalculator({
+  const { getPositionStyles } = useGamePositionCalculator({
     gameSize,
     gamePosition,
     shouldCropWheel

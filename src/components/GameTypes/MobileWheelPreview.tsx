@@ -6,13 +6,15 @@ import WheelPointer from './MobileWheel/WheelPointer';
 interface MobileWheelPreviewProps {
   campaign: any;
   gamePosition?: 'left' | 'right' | 'center' | 'top' | 'bottom';
+  verticalOffset?: number;
 }
 
 const CANVAS_SIZE = 280;
 
 const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
   campaign,
-  gamePosition = 'center'
+  gamePosition = 'center',
+  verticalOffset = 0
 }) => {
   const mobileRouletteConfig = campaign?.mobileConfig?.roulette || {};
   const desktopRouletteConfig = campaign?.config?.roulette || {};
@@ -64,7 +66,7 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
       case 'top':
         return {
           ...baseStyle,
-          top: '0px',
+          top: `${verticalOffset}%`,
           left: '50%',
           transform: 'translateX(-50%)',
           width: canvasSize,
@@ -74,7 +76,7 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
       case 'bottom':
         return {
           ...baseStyle,
-          bottom: '0px',
+          bottom: `${-verticalOffset}%`,
           left: '50%',
           transform: 'translateX(-50%)',
           width: canvasSize,
@@ -87,7 +89,7 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
           ...baseStyle,
           top: '50%',
           left: '50%',
-          transform: 'translate(-50%, -50%)',
+          transform: `translate(-50%, calc(-50% + ${verticalOffset}%))`,
           width: canvasSize,
           height: canvasSize
         };
