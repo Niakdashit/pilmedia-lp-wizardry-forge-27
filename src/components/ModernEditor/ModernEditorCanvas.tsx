@@ -7,13 +7,15 @@ interface ModernEditorCanvasProps {
   previewDevice: 'desktop' | 'tablet' | 'mobile';
   gameSize: 'small' | 'medium' | 'large' | 'xlarge';
   gamePosition: 'top' | 'center' | 'bottom' | 'left' | 'right';
+  onFreeTextZonesChange?: (zones: any[]) => void;
 }
 
 const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
   campaign,
   previewDevice,
   gameSize,
-  gamePosition
+  gamePosition,
+  onFreeTextZonesChange
 }) => {
 
   const getCanvasStyle = () => {
@@ -184,7 +186,12 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
             key={`preview-${gameSize}-${gamePosition}-${campaign.buttonConfig?.color}-${JSON.stringify(campaign.gameConfig?.[campaign.type])}`}
             previewDevice={previewDevice}
           />
-          <FreeTextManager containerBounds={containerBounds} previewMode={previewDevice} />
+          <FreeTextManager
+            containerBounds={containerBounds}
+            previewMode={previewDevice}
+            zones={campaign.freeTextZones}
+            onChange={onFreeTextZonesChange}
+          />
           {customText?.enabled && (
             <div
               style={{

@@ -117,7 +117,11 @@ const CampaignMobile: React.FC<CampaignMobileProps> = ({
           {/* Preview - Better centered and sized */}
           <div className="flex-1 p-6 flex items-center justify-center overflow-y-auto bg-gradient-to-br from-gray-100 to-gray-200">
             <div className="flex justify-center items-center w-full h-full">
-              <MobilePreview campaign={campaign} previewMode={previewMode} />
+              <MobilePreview
+                campaign={campaign}
+                setCampaign={setCampaign}
+                previewMode={previewMode}
+              />
             </div>
           </div>
         </div>

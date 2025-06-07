@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import FreeTextZone from './FreeTextZone';
 import { Plus, Type } from 'lucide-react';
 
@@ -33,13 +33,27 @@ interface FreeTextZone {
 interface FreeTextManagerProps {
   containerBounds: { width: number; height: number };
   previewMode: 'mobile' | 'tablet' | 'desktop';
+  zones?: FreeTextZone[];
+  onChange?: (zones: FreeTextZone[]) => void;
 }
 
-const FreeTextManager: React.FC<FreeTextManagerProps> = ({ 
-  containerBounds, 
-  previewMode
+const FreeTextManager: React.FC<FreeTextManagerProps> = ({
+  containerBounds,
+  previewMode,
+  zones,
+  onChange
 }) => {
   const [freeTextZones, setFreeTextZones] = useState<FreeTextZone[]>([]);
+
+  useEffect(() => {
+    if (zones) {
+      setFreeTextZones(zones);
+    }
+  }, [zones]);
+
+  useEffect(() => {
+    onChange?.(freeTextZones);
+  }, [freeTextZones, onChange]);
   const [editingZone, setEditingZone] = useState<string>('');
   const [isPlacementMode, setIsPlacementMode] = useState(false);
 
