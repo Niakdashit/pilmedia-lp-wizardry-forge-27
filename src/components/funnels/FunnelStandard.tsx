@@ -79,8 +79,7 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
           <h2
             className="text-2xl font-bold mb-4"
             style={{
-              color: campaign.design.titleColor,
-              fontFamily: campaign.design.titleFont
+              ...campaign.design.textStyles?.title
             }}
           >
             {campaign.screens[0]?.title || 'Ready to Play?'}
@@ -88,8 +87,8 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
           <p
             className="mb-6"
             style={{
-              color: getContrastColor(campaign.design.blockColor),
-              fontFamily: campaign.design.textFont
+              ...campaign.design.textStyles?.description,
+              color: campaign.design.textStyles?.description?.color || getContrastColor(campaign.design.blockColor)
             }}
           >
             {campaign.screens[0]?.description || 'Click below to participate'}
@@ -99,9 +98,9 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
             className="px-8 py-3 font-medium transition-colors duration-200 hover:opacity-90"
             style={{
               backgroundColor: campaign.design.buttonColor,
-              color: getContrastColor(campaign.design.buttonColor),
               borderRadius: campaign.design.borderRadius,
-              fontFamily: campaign.design.textFont
+              ...campaign.design.textStyles?.button,
+              color: campaign.design.textStyles?.button?.color || getContrastColor(campaign.design.buttonColor)
             }}
           >
             {campaign.screens[0]?.buttonText || 'Participate'}
@@ -114,8 +113,7 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
           <h2
             className="text-2xl font-bold mb-4"
             style={{
-              color: campaign.design.titleColor,
-              fontFamily: campaign.design.titleFont
+              ...campaign.design.textStyles?.title
             }}
           >
             {campaign.screens[1]?.title || 'Your Information'}
@@ -124,6 +122,10 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
             fields={fields}
             submitLabel={participationLoading ? "Chargement..." : (campaign.screens[1]?.buttonText || "Continuer")}
             onSubmit={handleFormSubmit}
+            textStyles={{
+              label: campaign.design.textStyles?.label,
+              button: campaign.design.textStyles?.button
+            }}
           />
         </div>
       )}
@@ -132,17 +134,18 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
         <div className="w-full p-6">
           {getGameComponent()}
           <div className="mt-6 text-center">
-            <button
-              onClick={handleEnd}
-              className="px-6 py-3 transition-colors duration-200 hover:opacity-90"
-              style={{
-                backgroundColor: campaign.design.buttonColor,
-                color: getContrastColor(campaign.design.buttonColor),
-                borderRadius: campaign.design.borderRadius
-              }}
-            >
-              {campaign.screens[2]?.buttonText || 'Submit'}
-            </button>
+          <button
+            onClick={handleEnd}
+            className="px-6 py-3 transition-colors duration-200 hover:opacity-90"
+            style={{
+              backgroundColor: campaign.design.buttonColor,
+              color: campaign.design.textStyles?.button?.color || getContrastColor(campaign.design.buttonColor),
+              borderRadius: campaign.design.borderRadius,
+              ...campaign.design.textStyles?.button
+            }}
+          >
+            {campaign.screens[2]?.buttonText || 'Submit'}
+          </button>
           </div>
         </div>
       )}
@@ -152,8 +155,7 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
           <h2
             className="text-3xl font-bold mb-4"
             style={{
-              color: campaign.design.titleColor,
-              fontFamily: campaign.design.titleFont
+              ...campaign.design.textStyles?.title
             }}
           >
             {campaign.screens[3]?.confirmationTitle || 'Thank you!'}
@@ -161,8 +163,8 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
           <p
             className="mb-6"
             style={{
-              color: getContrastColor(campaign.design.blockColor),
-              fontFamily: campaign.design.textFont
+              ...campaign.design.textStyles?.description,
+              color: campaign.design.textStyles?.description?.color || getContrastColor(campaign.design.blockColor)
             }}
           >
             {campaign.screens[3]?.confirmationMessage || 'Your participation has been recorded.'}
@@ -172,8 +174,9 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
             className="px-6 py-3 font-medium transition-colors duration-200 hover:opacity-90"
             style={{
               backgroundColor: campaign.design.buttonColor,
-              color: getContrastColor(campaign.design.buttonColor),
-              borderRadius: campaign.design.borderRadius
+              color: campaign.design.textStyles?.button?.color || getContrastColor(campaign.design.buttonColor),
+              borderRadius: campaign.design.borderRadius,
+              ...campaign.design.textStyles?.button
             }}
           >
             {campaign.screens[3]?.replayButtonText || 'Play Again'}

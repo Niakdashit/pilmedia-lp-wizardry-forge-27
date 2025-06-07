@@ -32,6 +32,10 @@ const WheelFormModal: React.FC<WheelFormModalProps> = ({
         fields={fields}
         submitLabel={participationLoading ? 'Chargement...' : campaign.screens?.[1]?.buttonText || "C'est parti !"}
         onSubmit={onSubmit}
+        textStyles={{
+          label: campaign.design.textStyles?.label,
+          button: campaign.design.textStyles?.button
+        }}
       />
     </Modal>
   );
