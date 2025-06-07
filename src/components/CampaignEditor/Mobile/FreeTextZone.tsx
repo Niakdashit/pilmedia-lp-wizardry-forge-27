@@ -1,9 +1,11 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
+import { Edit3, Trash2, Move, Maximize2 } from 'lucide-react';
 
 interface FreeTextZoneProps {
   id: string;
   position: { x: number; y: number };
+  size: { width: number; height: number };
   content: string;
   style: {
     fontSize: number;
@@ -14,182 +16,242 @@ interface FreeTextZoneProps {
   };
   isEditing: boolean;
   onEdit: (id: string) => void;
-  onUpdate: (id: string, updates: any) => void;
-  onDelete: (id: string) => void;
+  onPositionChange: (id: string, position: { x: number; y: number }) => void;
+  onSizeChange: (id: string, size: { width: number; height: number }) => void;
   onContentChange: (id: string, content: string) => void;
+  onStyleChange: (id: string, style: any) => void;
+  onDelete: (id: string) => void;
+  containerBounds: { width: number; height: number };
 }
 
 const FreeTextZone: React.FC<FreeTextZoneProps> = ({
   id,
   position,
+  size,
   content,
   style,
   isEditing,
   onEdit,
-  onUpdate,
+  onPositionChange,
+  onSizeChange,
+  onContentChange,
+  onStyleChange,
   onDelete,
-  onContentChange
+  containerBounds
 }) => {
-  const [tempContent, setTempContent] = useState(content);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isResizing, setIsResizing] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [resizeStart, setResizeStart] = useState({ width: 0, height: 0 });
+  const zoneRef = useRef<HTMLDivElement>(null);
 
-  const handleContentSubmit = () => {
-    onContentChange(id, tempContent);
-    onEdit('');
+  const handleMouseDown = (e: React.MouseEvent, action: 'drag' | 'resize') => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (action === 'drag') {
+      setIsDragging(true);
+      setDragStart({ 
+        x: e.clientX - position.x, 
+        y: e.clientY - position.y 
+      });
+    } else {
+      setIsResizing(true);
+      setResizeStart({ 
+        width: e.clientX - position.x, 
+        height: e.clientY - position.y 
+      });
+    }
   };
 
-  const handleStyleChange = (key: string, value: any) => {
-    onUpdate(id, { style: { ...style, [key]: value } });
+  const handleMouseMove = (e: MouseEvent) => {
+    if (isDragging) {
+      const newX = Math.max(0, Math.min(e.clientX - dragStart.x, containerBounds.width - size.width));
+      const newY = Math.max(0, Math.min(e.clientY - dragStart.y, containerBounds.height - size.height));
+      onPositionChange(id, { x: newX, y: newY });
+    } else if (isResizing) {
+      const newWidth = Math.max(50, Math.min(e.clientX - position.x, containerBounds.width - position.x));
+      const newHeight = Math.max(20, Math.min(e.clientY - position.y, containerBounds.height - position.y));
+      onSizeChange(id, { width: newWidth, height: newHeight });
+    }
   };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+    setIsResizing(false);
+  };
+
+  React.useEffect(() => {
+    if (isDragging || isResizing) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [isDragging, isResizing, dragStart, resizeStart, position, size, containerBounds]);
 
   return (
-    <>
-      {/* Text Display */}
-      <div
-        style={{
-          position: 'absolute',
-          left: position.x,
-          top: position.y,
-          fontSize: `${style.fontSize}px`,
-          fontWeight: style.fontWeight,
-          color: style.color,
-          textAlign: style.textAlign,
-          fontFamily: style.fontFamily,
-          zIndex: 150,
-          cursor: 'pointer',
-          userSelect: 'none',
-          whiteSpace: 'nowrap',
-          pointerEvents: isEditing ? 'none' : 'auto'
-        }}
-        onClick={() => onEdit(id)}
-      >
-        {content}
-      </div>
-
-      {/* Edit Controls */}
-      {isEditing && (
+    <div
+      ref={zoneRef}
+      style={{
+        position: 'absolute',
+        left: `${position.x}px`,
+        top: `${position.y}px`,
+        width: `${size.width}px`,
+        height: `${size.height}px`,
+        zIndex: 150,
+        border: isEditing ? '2px dashed #841b60' : '1px solid transparent',
+        backgroundColor: 'transparent',
+        cursor: isDragging ? 'grabbing' : 'grab',
+        userSelect: 'none',
+        overflow: 'hidden'
+      }}
+      onClick={(e) => {
+        e.stopPropagation();
+        onEdit(isEditing ? '' : id);
+      }}
+    >
+      {/* Text Content */}
+      {isEditing ? (
+        <textarea
+          value={content}
+          onChange={(e) => onContentChange(id, e.target.value)}
+          style={{
+            width: '100%',
+            height: '100%',
+            border: 'none',
+            background: 'transparent',
+            resize: 'none',
+            outline: 'none',
+            fontSize: `${style.fontSize}px`,
+            fontWeight: style.fontWeight,
+            color: style.color,
+            textAlign: style.textAlign,
+            fontFamily: style.fontFamily,
+            padding: '2px'
+          }}
+          onClick={(e) => e.stopPropagation()}
+        />
+      ) : (
         <div
           style={{
-            position: 'absolute',
-            left: position.x,
-            top: position.y - 40,
-            background: 'white',
-            border: '1px solid #e5e7eb',
-            borderRadius: '8px',
-            padding: '12px',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.15)',
-            zIndex: 200,
-            minWidth: '300px'
+            width: '100%',
+            height: '100%',
+            fontSize: `${style.fontSize}px`,
+            fontWeight: style.fontWeight,
+            color: style.color,
+            textAlign: style.textAlign,
+            fontFamily: style.fontFamily,
+            padding: '2px',
+            overflow: 'hidden',
+            wordWrap: 'break-word'
           }}
         >
-          {/* Content Editor */}
-          <div className="mb-3">
-            <input
-              type="text"
-              value={tempContent}
-              onChange={(e) => setTempContent(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleContentSubmit()}
-              style={{
-                width: '100%',
-                padding: '6px 8px',
-                border: '1px solid #d1d5db',
-                borderRadius: '4px',
-                fontSize: '14px'
-              }}
-              placeholder="Tapez votre texte..."
-              autoFocus
-            />
+          {content}
+        </div>
+      )}
+
+      {/* Controls */}
+      {isEditing && (
+        <>
+          {/* Drag Handle */}
+          <div
+            style={{
+              position: 'absolute',
+              top: '-20px',
+              left: '0px',
+              background: '#841b60',
+              color: 'white',
+              padding: '2px 6px',
+              borderRadius: '4px 4px 0 0',
+              cursor: 'grab',
+              fontSize: '10px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px'
+            }}
+            onMouseDown={(e) => handleMouseDown(e, 'drag')}
+          >
+            <Move className="w-3 h-3" />
+            <span>Déplacer</span>
+          </div>
+
+          {/* Resize Handle */}
+          <div
+            style={{
+              position: 'absolute',
+              bottom: '-2px',
+              right: '-2px',
+              width: '12px',
+              height: '12px',
+              background: '#841b60',
+              cursor: 'nw-resize',
+              borderRadius: '0 0 4px 0'
+            }}
+            onMouseDown={(e) => handleMouseDown(e, 'resize')}
+          >
+            <Maximize2 className="w-3 h-3 text-white" style={{ fontSize: '8px' }} />
           </div>
 
           {/* Style Controls */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', fontSize: '12px' }}>
-            {/* Font Size */}
-            <div>
-              <label style={{ display: 'block', marginBottom: '2px', fontWeight: '500' }}>Taille</label>
-              <input
-                type="range"
-                min="10"
-                max="32"
-                value={style.fontSize}
-                onChange={(e) => handleStyleChange('fontSize', parseInt(e.target.value))}
-                style={{ width: '100%' }}
-              />
-              <span style={{ fontSize: '10px', color: '#666' }}>{style.fontSize}px</span>
-            </div>
-
-            {/* Font Weight */}
-            <div>
-              <label style={{ display: 'block', marginBottom: '2px', fontWeight: '500' }}>Poids</label>
-              <select
-                value={style.fontWeight}
-                onChange={(e) => handleStyleChange('fontWeight', e.target.value)}
-                style={{ width: '100%', padding: '2px', fontSize: '12px' }}
-              >
-                <option value="normal">Normal</option>
-                <option value="bold">Gras</option>
-                <option value="600">Semi-gras</option>
-              </select>
-            </div>
-
-            {/* Color */}
-            <div>
-              <label style={{ display: 'block', marginBottom: '2px', fontWeight: '500' }}>Couleur</label>
-              <input
-                type="color"
-                value={style.color}
-                onChange={(e) => handleStyleChange('color', e.target.value)}
-                style={{ width: '100%', height: '24px', padding: '0', border: 'none' }}
-              />
-            </div>
-
-            {/* Text Align */}
-            <div>
-              <label style={{ display: 'block', marginBottom: '2px', fontWeight: '500' }}>Alignement</label>
-              <select
-                value={style.textAlign}
-                onChange={(e) => handleStyleChange('textAlign', e.target.value)}
-                style={{ width: '100%', padding: '2px', fontSize: '12px' }}
-              >
-                <option value="left">Gauche</option>
-                <option value="center">Centre</option>
-                <option value="right">Droite</option>
-              </select>
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div style={{ marginTop: '12px', display: 'flex', justifyContent: 'space-between', gap: '8px' }}>
-            <button
-              onClick={handleContentSubmit}
-              style={{
-                background: '#841b60',
-                color: 'white',
-                border: 'none',
-                borderRadius: '4px',
-                padding: '6px 12px',
-                fontSize: '12px',
-                cursor: 'pointer'
-              }}
+          <div
+            style={{
+              position: 'absolute',
+              top: '-20px',
+              right: '0px',
+              background: 'rgba(255, 255, 255, 0.9)',
+              padding: '4px',
+              borderRadius: '4px',
+              display: 'flex',
+              gap: '4px',
+              fontSize: '10px'
+            }}
+          >
+            <input
+              type="color"
+              value={style.color}
+              onChange={(e) => onStyleChange(id, { color: e.target.value })}
+              style={{ width: '20px', height: '20px', border: 'none', cursor: 'pointer' }}
+            />
+            <input
+              type="number"
+              value={style.fontSize}
+              onChange={(e) => onStyleChange(id, { fontSize: parseInt(e.target.value) || 16 })}
+              style={{ width: '40px', padding: '2px', border: '1px solid #ccc', borderRadius: '2px' }}
+              min="8"
+              max="72"
+            />
+            <select
+              value={style.textAlign}
+              onChange={(e) => onStyleChange(id, { textAlign: e.target.value })}
+              style={{ padding: '2px', border: '1px solid #ccc', borderRadius: '2px' }}
             >
-              Valider
-            </button>
+              <option value="left">←</option>
+              <option value="center">↔</option>
+              <option value="right">→</option>
+            </select>
             <button
-              onClick={() => onDelete(id)}
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(id);
+              }}
               style={{
                 background: '#dc2626',
                 color: 'white',
                 border: 'none',
-                borderRadius: '4px',
-                padding: '6px 12px',
-                fontSize: '12px',
+                borderRadius: '2px',
+                padding: '2px 4px',
                 cursor: 'pointer'
               }}
             >
-              Supprimer
+              <Trash2 className="w-3 h-3" />
             </button>
           </div>
-        </div>
+        </>
       )}
-    </>
+    </div>
   );
 };
 

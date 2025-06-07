@@ -25,13 +25,32 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
   const deviceStyle = getDeviceStyle();
   const screenStyle = getScreenStyle(mobileConfig);
 
+  // Enforce strict 1080x1920 pixel limit
+  const containerStyle = {
+    ...deviceStyle,
+    maxWidth: '1080px',
+    maxHeight: '1920px',
+    overflow: 'hidden',
+    position: 'relative' as const
+  };
+
+  const screenStyleWithBounds = {
+    ...screenStyle,
+    width: '100%',
+    height: '100%',
+    maxWidth: '1080px',
+    maxHeight: '1920px',
+    overflow: 'hidden',
+    position: 'relative' as const
+  };
+
   // Calculate game area bounds for collision detection
   const getGameArea = () => {
     if (campaign.type !== 'wheel') return undefined;
     
     const canvasSize = 280; // Default wheel size
-    const containerWidth = deviceStyle.width - 16; // Account for device padding
-    const containerHeight = deviceStyle.height - 16;
+    const containerWidth = Math.min(deviceStyle.width - 16, 1080); // Account for device padding and max width
+    const containerHeight = Math.min(deviceStyle.height - 16, 1920); // Account for device padding and max height
     
     let gameArea = { x: 0, y: 0, width: canvasSize, height: canvasSize };
     
@@ -67,13 +86,13 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
   };
 
   const containerBounds = {
-    width: deviceStyle.width - 16,
-    height: deviceStyle.height - 16
+    width: Math.min(deviceStyle.width - 16, 1080),
+    height: Math.min(deviceStyle.height - 16, 1920)
   };
 
   return (
-    <div style={deviceStyle} key={`mobile-preview-${campaign.gameSize}-${JSON.stringify(mobileConfig)}`}>
-      <div style={screenStyle}>
+    <div style={containerStyle} key={`mobile-preview-${campaign.gameSize}-${JSON.stringify(mobileConfig)}`}>
+      <div style={screenStyleWithBounds}>
         <MobileOverlays mobileConfig={mobileConfig} previewMode={previewMode} />
 
         {/* Game Container */}
@@ -87,7 +106,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
               height: '100%',
               zIndex: 10,
               pointerEvents: 'none',
-              overflow: 'visible'
+              overflow: 'hidden'
             }}
           >
             <MobileWheelPreview
@@ -107,8 +126,12 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
           containerBounds={containerBounds}
         />
 
-        {/* Free Text Manager - New layer for free text zones */}
-        <FreeTextManager containerBounds={containerBounds} />
+        {/* Free Text Manager - Enhanced with device-specific positioning */}
+        <FreeTextManager 
+          containerBounds={containerBounds} 
+          previewMode={previewMode}
+          campaign={campaign}
+        />
 
         {/* Button Layer - only show if not hidden */}
         {!mobileConfig.hideLaunchButton && (

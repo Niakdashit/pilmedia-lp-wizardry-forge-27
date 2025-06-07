@@ -16,9 +16,25 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
   const mobileBackground = design?.mobileBackgroundImage;
   const backgroundImage = previewDevice === 'mobile' && mobileBackground ? mobileBackground : baseBackground;
 
+  // Enforce strict 1080x1920 pixel limit for all preview modes
+  const getContainerDimensions = () => {
+    switch (previewDevice) {
+      case 'mobile':
+        return { maxWidth: '375px', maxHeight: '812px' };
+      case 'tablet':
+        return { maxWidth: '768px', maxHeight: '1024px' };
+      case 'desktop':
+      default:
+        return { maxWidth: '1080px', maxHeight: '1920px' };
+    }
+  };
+
+  const dimensions = getContainerDimensions();
+
   const containerStyle = {
     width: '100%',
     height: '100%',
+    ...dimensions,
     position: 'relative' as const,
     overflow: 'hidden',
     backgroundColor: design?.background || '#f8fafc',
@@ -44,6 +60,7 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
     alignItems: 'center',
     justifyContent: 'center',
     padding: '20px',
+    overflow: 'hidden'
   };
 
   const customStyles = design?.customCSS ? (

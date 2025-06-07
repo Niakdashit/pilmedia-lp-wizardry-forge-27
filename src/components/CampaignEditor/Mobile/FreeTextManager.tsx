@@ -5,7 +5,6 @@ import { Plus, Type } from 'lucide-react';
 
 interface FreeTextZone {
   id: string;
-  position: { x: number; y: number };
   content: string;
   style: {
     fontSize: number;
@@ -14,13 +13,32 @@ interface FreeTextZone {
     textAlign: 'left' | 'center' | 'right';
     fontFamily: string;
   };
+  // Device-specific positioning and sizing
+  mobile: {
+    position: { x: number; y: number };
+    size: { width: number; height: number };
+  };
+  tablet: {
+    position: { x: number; y: number };
+    size: { width: number; height: number };
+  };
+  desktop: {
+    position: { x: number; y: number };
+    size: { width: number; height: number };
+  };
 }
 
 interface FreeTextManagerProps {
   containerBounds: { width: number; height: number };
+  previewMode: 'mobile' | 'tablet';
+  campaign: any;
 }
 
-const FreeTextManager: React.FC<FreeTextManagerProps> = ({ containerBounds }) => {
+const FreeTextManager: React.FC<FreeTextManagerProps> = ({ 
+  containerBounds, 
+  previewMode,
+  campaign 
+}) => {
   const [freeTextZones, setFreeTextZones] = useState<FreeTextZone[]>([]);
   const [editingZone, setEditingZone] = useState<string>('');
   const [isPlacementMode, setIsPlacementMode] = useState(false);
@@ -32,13 +50,16 @@ const FreeTextManager: React.FC<FreeTextManagerProps> = ({ containerBounds }) =>
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
 
-    // Ensure position is within container bounds
+    // Ensure position is within strict container bounds
     const clampedX = Math.max(0, Math.min(x, containerBounds.width - 100));
     const clampedY = Math.max(0, Math.min(y, containerBounds.height - 30));
 
+    // Default positioning and sizing for all devices
+    const defaultPosition = { x: clampedX, y: clampedY };
+    const defaultSize = { width: 120, height: 40 };
+
     const newZone: FreeTextZone = {
       id: `free-text-${Date.now()}`,
-      position: { x: clampedX, y: clampedY },
       content: 'Nouveau texte',
       style: {
         fontSize: 16,
@@ -46,6 +67,18 @@ const FreeTextManager: React.FC<FreeTextManagerProps> = ({ containerBounds }) =>
         color: '#000000',
         textAlign: 'left',
         fontFamily: 'Inter, sans-serif'
+      },
+      mobile: {
+        position: { ...defaultPosition },
+        size: { ...defaultSize }
+      },
+      tablet: {
+        position: { ...defaultPosition },
+        size: { width: defaultSize.width * 1.2, height: defaultSize.height * 1.2 }
+      },
+      desktop: {
+        position: { ...defaultPosition },
+        size: { width: defaultSize.width * 1.5, height: defaultSize.height * 1.5 }
       }
     };
 
@@ -62,10 +95,56 @@ const FreeTextManager: React.FC<FreeTextManagerProps> = ({ containerBounds }) =>
     );
   };
 
+  const updateZonePosition = (id: string, position: { x: number; y: number }) => {
+    setFreeTextZones(prev =>
+      prev.map(zone =>
+        zone.id === id 
+          ? { 
+              ...zone, 
+              [previewMode]: { 
+                ...zone[previewMode], 
+                position: {
+                  x: Math.max(0, Math.min(position.x, containerBounds.width - zone[previewMode].size.width)),
+                  y: Math.max(0, Math.min(position.y, containerBounds.height - zone[previewMode].size.height))
+                }
+              }
+            } 
+          : zone
+      )
+    );
+  };
+
+  const updateZoneSize = (id: string, size: { width: number; height: number }) => {
+    setFreeTextZones(prev =>
+      prev.map(zone =>
+        zone.id === id 
+          ? { 
+              ...zone, 
+              [previewMode]: { 
+                ...zone[previewMode], 
+                size: {
+                  width: Math.max(50, Math.min(size.width, containerBounds.width - zone[previewMode].position.x)),
+                  height: Math.max(20, Math.min(size.height, containerBounds.height - zone[previewMode].position.y))
+                }
+              }
+            } 
+          : zone
+      )
+    );
+  };
+
   const updateZoneContent = (id: string, content: string) => {
     setFreeTextZones(prev =>
       prev.map(zone =>
         zone.id === id ? { ...zone, content } : zone
+      )
+    );
+  };
+
+  const updateZoneStyle = (id: string, style: any) => {
+    setFreeTextZones(prev =>
+      prev.map(zone =>
+        zone.id === id ? { ...zone, style: { ...zone.style, ...style } } : zone
       )
     );
   };
@@ -125,20 +204,27 @@ const FreeTextManager: React.FC<FreeTextManagerProps> = ({ containerBounds }) =>
       )}
 
       {/* Free Text Zones */}
-      {freeTextZones.map((zone) => (
-        <FreeTextZone
-          key={zone.id}
-          id={zone.id}
-          position={zone.position}
-          content={zone.content}
-          style={zone.style}
-          isEditing={editingZone === zone.id}
-          onEdit={setEditingZone}
-          onUpdate={updateZone}
-          onDelete={deleteZone}
-          onContentChange={updateZoneContent}
-        />
-      ))}
+      {freeTextZones.map((zone) => {
+        const deviceConfig = zone[previewMode];
+        return (
+          <FreeTextZone
+            key={zone.id}
+            id={zone.id}
+            position={deviceConfig.position}
+            size={deviceConfig.size}
+            content={zone.content}
+            style={zone.style}
+            isEditing={editingZone === zone.id}
+            onEdit={setEditingZone}
+            onPositionChange={updateZonePosition}
+            onSizeChange={updateZoneSize}
+            onContentChange={updateZoneContent}
+            onStyleChange={updateZoneStyle}
+            onDelete={deleteZone}
+            containerBounds={containerBounds}
+          />
+        );
+      })}
 
       {/* Instructions */}
       {isPlacementMode && (
@@ -161,6 +247,23 @@ const FreeTextManager: React.FC<FreeTextManagerProps> = ({ containerBounds }) =>
           Cliquez n'importe où pour placer un texte libre
         </div>
       )}
+
+      {/* Device indicator */}
+      <div
+        style={{
+          position: 'absolute',
+          top: '10px',
+          right: '10px',
+          background: 'rgba(0, 0, 0, 0.7)',
+          color: 'white',
+          padding: '4px 8px',
+          borderRadius: '4px',
+          fontSize: '10px',
+          zIndex: 200
+        }}
+      >
+        {previewMode}
+      </div>
     </>
   );
 };
