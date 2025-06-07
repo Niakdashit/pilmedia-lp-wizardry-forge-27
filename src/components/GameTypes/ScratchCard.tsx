@@ -37,6 +37,7 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
   const [result, setResult] = useState<'win' | 'lose' | null>(null);
   const [hasNotifiedResult, setHasNotifiedResult] = useState(false);
   const [hasScratchStarted, setHasScratchStarted] = useState(false);
+  const [showRevealContent, setShowRevealContent] = useState(false);
 
   // Dimensions selon la taille
   const getDimensions = () => {
@@ -125,6 +126,7 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
         // Notify that scratching has started (only once)
         if (!hasScratchStarted) {
           setHasScratchStarted(true);
+          setShowRevealContent(true); // Show the hidden content when scratching starts
           onScratchStart();
           console.log(`Started scratching card ${index}`);
         }
@@ -254,10 +256,12 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
         }}
         onClick={handleCardClick}
       >
-        {/* Contenu à révéler */}
-        <div className="absolute inset-0">
-          {getResultContent()}
-        </div>
+        {/* Contenu à révéler - only visible when scratching has started */}
+        {showRevealContent && (
+          <div className="absolute inset-0">
+            {getResultContent()}
+          </div>
+        )}
 
         {/* Canvas de grattage */}
         {canScratch && !isRevealed && (
@@ -266,6 +270,16 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
             className="absolute inset-0 w-full h-full cursor-crosshair"
             style={{ touchAction: 'none' }}
           />
+        )}
+
+        {/* Default surface when no scratching has started */}
+        {!showRevealContent && (
+          <div className="absolute inset-0 bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center">
+            <div className="text-white text-center">
+              <div className="text-lg mb-1">🎫</div>
+              <div className="text-xs">Carte {index + 1}</div>
+            </div>
+          </div>
         )}
 
         {/* État de sélection */}
