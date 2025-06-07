@@ -119,8 +119,8 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
 
   if (!gameStarted) {
     return (
-      <div className={`flex flex-col items-center justify-center space-y-8 ${isModal ? 'py-4 min-h-[300px]' : 'py-8 min-h-[400px]'} bg-gradient-to-br from-gray-50 to-gray-100`}>
-        <div className="w-full">
+      <div className={`flex flex-col items-center justify-center ${isModal ? 'py-6 min-h-[400px]' : 'py-12 min-h-[500px]'} bg-gradient-to-br from-gray-50 to-gray-100`}>
+        <div className="w-full mb-8">
           <ScratchGameGrid
             cards={cards}
             gameSize={gameSize}
@@ -157,41 +157,45 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
   }
 
   return (
-    <div className={`w-full flex flex-col items-center ${isModal ? 'space-y-4 py-4 min-h-[400px]' : 'space-y-8 py-6 min-h-[500px]'} bg-gradient-to-br from-gray-50 to-gray-100`}>
-      <ScratchGameGrid
-        cards={cards}
-        gameSize={gameSize}
-        gameStarted={gameStarted}
-        onCardFinish={handleCardFinish}
-        onCardSelect={handleCardSelect}
-        onScratchStart={handleScratchStart}
-        selectedCard={selectedCard}
-        scratchStarted={scratchStarted}
-        config={config}
-        onReplay={handleReplay}
-        isModal={isModal}
-      />
+    <div className={`w-full flex flex-col items-center ${isModal ? 'py-6 min-h-[500px]' : 'py-8 min-h-[600px]'} bg-gradient-to-br from-gray-50 to-gray-100`}>
+      <div className="w-full flex-1">
+        <ScratchGameGrid
+          cards={cards}
+          gameSize={gameSize}
+          gameStarted={gameStarted}
+          onCardFinish={handleCardFinish}
+          onCardSelect={handleCardSelect}
+          onScratchStart={handleScratchStart}
+          selectedCard={selectedCard}
+          scratchStarted={scratchStarted}
+          config={config}
+          onReplay={handleReplay}
+          isModal={isModal}
+        />
+      </div>
 
-      {/* Message d'instruction et progression - séparé des cartes */}
+      {/* Message d'instruction et progression - en bas, séparé des cartes */}
       {!showResult && !isModal && (
-        <div className="text-center space-y-4 max-w-md mx-auto px-4">
-          <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 shadow-sm">
-            <div className="text-base text-gray-700 font-medium mb-2">
-              {!scratchStarted && selectedCard === null && "🎯 Choisissez une carte à gratter"}
-              {!scratchStarted && selectedCard !== null && "✨ Grattez votre carte sélectionnée"}
-              {scratchStarted && `🎮 Progression: ${finishedCards.size}/${cards.length} cartes`}
-            </div>
-            
-            {scratchStarted && (
-              <div className="w-full max-w-xs mx-auto">
-                <div className="w-full bg-gray-200 rounded-full h-3 shadow-inner">
-                  <div 
-                    className="bg-gradient-to-r from-[#841b60] to-[#a91e6b] h-3 rounded-full transition-all duration-500 shadow-sm" 
-                    style={{ width: `${(finishedCards.size / cards.length) * 100}%` }} 
-                  />
-                </div>
+        <div className="w-full max-w-4xl px-6 mt-8">
+          <div className="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-lg border border-white/20">
+            <div className="text-center space-y-4">
+              <div className="text-lg text-gray-700 font-medium">
+                {!scratchStarted && selectedCard === null && "🎯 Choisissez une carte à gratter"}
+                {!scratchStarted && selectedCard !== null && "✨ Grattez votre carte sélectionnée"}
+                {scratchStarted && `🎮 Progression: ${finishedCards.size}/${cards.length} cartes`}
               </div>
-            )}
+              
+              {scratchStarted && (
+                <div className="w-full max-w-md mx-auto">
+                  <div className="w-full bg-gray-200 rounded-full h-3 shadow-inner">
+                    <div 
+                      className="bg-gradient-to-r from-[#841b60] to-[#a91e6b] h-3 rounded-full transition-all duration-500 shadow-sm" 
+                      style={{ width: `${(finishedCards.size / cards.length) * 100}%` }} 
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       )}

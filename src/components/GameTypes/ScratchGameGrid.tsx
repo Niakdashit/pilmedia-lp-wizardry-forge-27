@@ -1,3 +1,4 @@
+
 import React from 'react';
 import ScratchCard from './ScratchCard';
 
@@ -35,43 +36,31 @@ const ScratchGameGrid: React.FC<ScratchGameGridProps> = ({
     if (cardCount === 1) {
       return {
         containerClass: 'w-full flex justify-center',
-        gridClass: 'grid grid-cols-1 place-items-center',
-        spacing: isModal ? 'gap-4' : 'gap-6'
+        gridClass: 'flex justify-center',
+        spacing: isModal ? 'gap-6' : 'gap-8'
       };
     }
 
-    if (cardCount === 2) {
-      return {
-        // Choix : flex wrap + grid 2 colonnes pour éviter la coupure et garantir la responsivité
-        containerClass: 'w-full flex flex-wrap justify-center',
-        gridClass: 'grid grid-cols-2 place-items-center',
-        spacing: isModal ? 'gap-4 sm:gap-6' : 'gap-6 sm:gap-8'
-      };
-    }
-
-    // Pour 3 cartes ou plus, grid fluide (col2 mobile, col3 md+)
+    // Pour 2+ cartes : responsive grid
     return {
-      containerClass: 'w-full flex flex-wrap justify-center',
-      gridClass: 'grid grid-cols-2 md:grid-cols-3 place-items-center',
-      spacing: isModal ? 'gap-4 sm:gap-6 md:gap-8' : 'gap-6 sm:gap-8 md:gap-10'
+      containerClass: 'w-full',
+      gridClass: 'grid grid-cols-2 lg:grid-cols-3 place-items-center',
+      spacing: isModal ? 'gap-6 sm:gap-8' : 'gap-8 sm:gap-10 lg:gap-12'
     };
   };
 
   const { containerClass, gridClass, spacing } = getGridConfig();
 
   return (
-    <div className={`w-full mx-auto ${isModal ? 'max-w-4xl px-2 py-4' : 'max-w-6xl px-4 py-6'} overflow-x-hidden`}>
+    <div className={`w-full mx-auto ${isModal ? 'max-w-5xl px-4 py-6' : 'max-w-7xl px-6 py-8'}`}>
       <div className={containerClass}>
-        <div className={`${gridClass} ${spacing} w-full`}>
+        <div className={`${gridClass} ${spacing} w-full max-w-6xl`}>
           {cards.map((card: any, index: number) => {
             const isThisCardSelected = selectedCard === index;
             
             const isLocked = gameStarted && scratchStarted && !isThisCardSelected;
             const isSelectable = gameStarted && !scratchStarted && selectedCard === null;
             const canScratch = gameStarted && isThisCardSelected;
-
-            // Tu peux supprimer le console.log en prod si besoin
-            // console.log(`Card ${index}: selected=${isThisCardSelected}, locked=${isLocked}, selectable=${isSelectable}, canScratch=${canScratch}`);
 
             return (
               <div key={card.id || index} className="w-full flex justify-center">
@@ -88,7 +77,6 @@ const ScratchGameGrid: React.FC<ScratchGameGridProps> = ({
                   canScratch={canScratch}
                   isSelected={isThisCardSelected}
                   config={config}
-                  onReplay={onReplay}
                   isModal={isModal}
                 />
               </div>
