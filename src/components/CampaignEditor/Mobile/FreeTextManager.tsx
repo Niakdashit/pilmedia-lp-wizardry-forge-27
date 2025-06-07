@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import FreeTextZone from './FreeTextZone';
-import { Plus, Type, Copy } from 'lucide-react';
+import { Plus, Type } from 'lucide-react';
 
 interface FreeTextZone {
   id: string;
@@ -15,7 +15,6 @@ interface FreeTextZone {
     lineHeight: number;
     letterSpacing: number;
   };
-  // Device-specific positioning and sizing
   mobile: {
     position: { x: number; y: number };
     size: { width: number; height: number };
@@ -44,6 +43,8 @@ const FreeTextManager: React.FC<FreeTextManagerProps> = ({
   onChange
 }) => {
   const [freeTextZones, setFreeTextZones] = useState<FreeTextZone[]>([]);
+  const [editingZone, setEditingZone] = useState<string>('');
+  const [isPlacementMode, setIsPlacementMode] = useState(false);
 
   useEffect(() => {
     if (zones) {
@@ -54,19 +55,6 @@ const FreeTextManager: React.FC<FreeTextManagerProps> = ({
   useEffect(() => {
     onChange?.(freeTextZones);
   }, [freeTextZones, onChange]);
-  const [editingZone, setEditingZone] = useState<string>('');
-  const [isPlacementMode, setIsPlacementMode] = useState(false);
-  const [copyFromDevice, setCopyFromDevice] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');
-
-  const copyLayoutFrom = (source: 'mobile' | 'tablet' | 'desktop') => {
-    if (source === previewMode) return;
-    setFreeTextZones(prev =>
-      prev.map(zone => ({
-        ...zone,
-        [previewMode]: { ...zone[source] }
-      }))
-    );
-  };
 
   const addFreeText = (event: React.MouseEvent) => {
     if (!isPlacementMode) return;
@@ -77,17 +65,15 @@ const FreeTextManager: React.FC<FreeTextManagerProps> = ({
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
 
-    // Ensure position is within strict container bounds
     const clampedX = Math.max(0, Math.min(x, containerBounds.width - 100));
     const clampedY = Math.max(0, Math.min(y, containerBounds.height - 30));
 
-    // Default positioning and sizing for all devices
     const defaultPosition = { x: clampedX, y: clampedY };
     const defaultSize = { width: 120, height: 40 };
 
     const newZone: FreeTextZone = {
       id: `free-text-${Date.now()}`,
-      content: '',
+      content: 'Nouveau texte',
       style: {
         fontSize: 16,
         fontWeight: 'normal',
@@ -194,7 +180,7 @@ const FreeTextManager: React.FC<FreeTextManagerProps> = ({
 
   return (
     <>
-      {/* Add Free Text Button */}
+      {/* Add Free Text Button - Clean single button */}
       <div
         style={{
           position: 'absolute',
@@ -209,17 +195,19 @@ const FreeTextManager: React.FC<FreeTextManagerProps> = ({
             background: isPlacementMode ? '#059669' : '#841b60',
             color: 'white',
             border: 'none',
-            borderRadius: '4px',
-            padding: '6px 8px',
+            borderRadius: '6px',
+            padding: '8px 12px',
             cursor: 'pointer',
-            fontSize: '10px',
+            fontSize: '12px',
             display: 'flex',
             alignItems: 'center',
-            gap: '4px'
+            gap: '6px',
+            fontFamily: 'Inter, sans-serif',
+            fontWeight: '500'
           }}
         >
-          <Plus className="w-3 h-3" />
-          <Type className="w-3 h-3" />
+          <Plus className="w-4 h-4" />
+          <Type className="w-4 h-4" />
           {isPlacementMode ? 'Cliquez pour placer' : 'Texte libre'}
         </button>
       </div>
@@ -275,70 +263,17 @@ const FreeTextManager: React.FC<FreeTextManagerProps> = ({
             background: 'rgba(255, 255, 255, 0.95)',
             backdropFilter: 'blur(4px)',
             padding: '8px 12px',
-            borderRadius: '4px',
-            fontSize: '10px',
+            borderRadius: '6px',
+            fontSize: '12px',
             zIndex: 200,
             border: '1px solid #e5e7eb',
-            textAlign: 'center'
+            textAlign: 'center',
+            fontFamily: 'Inter, sans-serif'
           }}
         >
           Cliquez n'importe où pour placer un texte libre
         </div>
       )}
-
-      {/* Device indicator */}
-      <div
-        title="Chaque aperçu conserve son propre agencement de zones de texte"
-        style={{
-          position: 'absolute',
-          top: '10px',
-          right: '10px',
-          background: 'rgba(0, 0, 0, 0.7)',
-          color: 'white',
-          padding: '4px 8px',
-          borderRadius: '4px',
-          fontSize: '10px',
-          zIndex: 200
-        }}
-      >
-        {previewMode}
-        <div style={{ marginTop: '4px', display: 'flex', alignItems: 'center' }}>
-          <select
-            value={copyFromDevice}
-            onChange={(e) =>
-              setCopyFromDevice(e.target.value as 'mobile' | 'tablet' | 'desktop')
-            }
-            style={{
-              fontSize: '10px',
-              color: '#000',
-              marginRight: '4px'
-            }}
-          >
-            {['mobile', 'tablet', 'desktop']
-              .filter((d) => d !== previewMode)
-              .map((d) => (
-                <option key={d} value={d}>
-                  {d}
-                </option>
-              ))}
-          </select>
-          <button
-            onClick={() => copyLayoutFrom(copyFromDevice)}
-            style={{
-              background: '#841b60',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              fontSize: '10px',
-              padding: '2px 4px',
-              cursor: 'pointer',
-              display: 'flex'
-            }}
-          >
-            <Copy className="w-3 h-3" />
-          </button>
-        </div>
-      </div>
     </>
   );
 };

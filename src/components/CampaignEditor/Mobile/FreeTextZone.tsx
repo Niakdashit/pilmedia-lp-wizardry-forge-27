@@ -44,10 +44,8 @@ const FreeTextZone: React.FC<FreeTextZoneProps> = ({
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
   const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  const [resizeStart, setResizeStart] = useState({ width: 0, height: 0 });
   const zoneRef = useRef<HTMLDivElement>(null);
-  const stylePanelRef = useRef<HTMLDivElement>(null);
-  const [showStyleBelow, setShowStyleBelow] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleMouseDown = (e: React.MouseEvent, action: 'drag' | 'resize') => {
     e.preventDefault();
@@ -61,10 +59,6 @@ const FreeTextZone: React.FC<FreeTextZoneProps> = ({
       });
     } else {
       setIsResizing(true);
-      setResizeStart({ 
-        width: e.clientX - position.x, 
-        height: e.clientY - position.y 
-      });
     }
   };
 
@@ -94,22 +88,15 @@ const FreeTextZone: React.FC<FreeTextZoneProps> = ({
         document.removeEventListener('mouseup', handleMouseUp);
       };
     }
-  }, [isDragging, isResizing, dragStart, resizeStart, position, size, containerBounds]);
+  }, [isDragging, isResizing, dragStart, position, size, containerBounds]);
 
-  // Ensure style panel stays within bounds
+  // Auto-focus textarea when editing starts
   React.useEffect(() => {
-    if (!isEditing) return;
-    const panelHeight = stylePanelRef.current?.offsetHeight || 0;
-    const overshootTop = position.y - panelHeight < 0;
-    const overshootBottom = position.y + size.height + panelHeight > containerBounds.height;
-    if (overshootTop && !overshootBottom) {
-      setShowStyleBelow(true);
-    } else if (overshootBottom && !overshootTop) {
-      setShowStyleBelow(false);
-    } else {
-      setShowStyleBelow(overshootTop);
+    if (isEditing && textareaRef.current) {
+      textareaRef.current.focus();
+      textareaRef.current.select();
     }
-  }, [isEditing, position.y, size.height, containerBounds.height]);
+  }, [isEditing]);
 
   return (
     <div
@@ -124,21 +111,21 @@ const FreeTextZone: React.FC<FreeTextZoneProps> = ({
         zIndex: 200,
         border: isEditing ? '2px dashed #841b60' : '1px solid transparent',
         backgroundColor: 'transparent',
-        cursor: isDragging ? 'grabbing' : 'grab',
-        userSelect: 'none',
+        cursor: isDragging ? 'grabbing' : (isEditing ? 'default' : 'pointer'),
+        userSelect: isEditing ? 'text' : 'none',
         overflow: 'hidden'
-      }}
-      onMouseDown={(e) => {
-        if (isEditing) handleMouseDown(e, 'drag');
       }}
       onClick={(e) => {
         e.stopPropagation();
-        onEdit(isEditing ? '' : id);
+        if (!isEditing) {
+          onEdit(id);
+        }
       }}
     >
       {/* Text Content */}
       {isEditing ? (
         <textarea
+          ref={textareaRef}
           value={content}
           onChange={(e) => onContentChange(id, e.target.value)}
           style={{
@@ -155,9 +142,11 @@ const FreeTextZone: React.FC<FreeTextZoneProps> = ({
             fontFamily: style.fontFamily,
             lineHeight: style.lineHeight,
             letterSpacing: `${style.letterSpacing}px`,
-            padding: '2px'
+            padding: '4px'
           }}
           onClick={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+          placeholder="Saisissez votre texte..."
         />
       ) : (
         <div
@@ -171,33 +160,36 @@ const FreeTextZone: React.FC<FreeTextZoneProps> = ({
             fontFamily: style.fontFamily,
             lineHeight: style.lineHeight,
             letterSpacing: `${style.letterSpacing}px`,
-            padding: '2px',
+            padding: '4px',
             overflow: 'hidden',
-            wordWrap: 'break-word'
+            wordWrap: 'break-word',
+            display: 'flex',
+            alignItems: 'flex-start'
           }}
         >
-          {content}
+          {content || 'Cliquez pour éditer'}
         </div>
       )}
 
-      {/* Controls */}
+      {/* Controls - Only show when editing */}
       {isEditing && (
         <>
           {/* Drag Handle */}
           <div
             style={{
               position: 'absolute',
-              top: '-20px',
+              top: '-24px',
               left: '0px',
               background: '#841b60',
               color: 'white',
-              padding: '2px 6px',
+              padding: '4px 8px',
               borderRadius: '4px 4px 0 0',
               cursor: 'grab',
-              fontSize: '10px',
+              fontSize: '11px',
               display: 'flex',
               alignItems: 'center',
-              gap: '4px'
+              gap: '4px',
+              fontFamily: 'Inter, sans-serif'
             }}
             onMouseDown={(e) => handleMouseDown(e, 'drag')}
           >
@@ -215,31 +207,29 @@ const FreeTextZone: React.FC<FreeTextZoneProps> = ({
               height: '12px',
               background: '#841b60',
               cursor: 'nw-resize',
-              borderRadius: '0 0 4px 0'
+              borderRadius: '0 0 4px 0',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
             }}
             onMouseDown={(e) => handleMouseDown(e, 'resize')}
           >
-            <Maximize2 className="w-3 h-3 text-white" style={{ fontSize: '8px' }} />
+            <Maximize2 className="w-3 h-3 text-white" />
           </div>
 
           {/* Style Controls */}
           <div
-            ref={stylePanelRef}
             style={{
               position: 'absolute',
-              left: '0px',
-              ...(showStyleBelow
-                ? { top: '100%', transform: 'translateY(4px)' }
-                : { bottom: '100%', transform: 'translateY(-4px)' }),
-              background: 'rgba(255, 255, 255, 0.9)',
+              right: '0px',
+              top: '-24px',
+              background: 'rgba(255, 255, 255, 0.95)',
               padding: '4px',
               borderRadius: '4px',
               display: 'flex',
-              flexWrap: 'wrap',
               gap: '4px',
-              fontSize: '10px',
-              maxHeight: '140px',
-              overflowY: 'auto'
+              fontSize: '11px',
+              border: '1px solid #e5e7eb'
             }}
           >
             <input
@@ -247,6 +237,7 @@ const FreeTextZone: React.FC<FreeTextZoneProps> = ({
               value={style.color}
               onChange={(e) => onStyleChange(id, { color: e.target.value })}
               style={{ width: '20px', height: '20px', border: 'none', cursor: 'pointer' }}
+              title="Couleur du texte"
             />
             <input
               type="number"
@@ -255,52 +246,17 @@ const FreeTextZone: React.FC<FreeTextZoneProps> = ({
               style={{ width: '40px', padding: '2px', border: '1px solid #ccc', borderRadius: '2px' }}
               min="8"
               max="72"
+              title="Taille de police"
             />
             <select
               value={style.fontWeight}
               onChange={(e) => onStyleChange(id, { fontWeight: e.target.value })}
               style={{ padding: '2px', border: '1px solid #ccc', borderRadius: '2px' }}
+              title="Poids de police"
             >
               <option value="normal">Normal</option>
-              <option value="bold">Bold</option>
-              <option value="lighter">Light</option>
-            </select>
-            <select
-              value={style.fontFamily}
-              onChange={(e) => onStyleChange(id, { fontFamily: e.target.value })}
-              style={{ padding: '2px', border: '1px solid #ccc', borderRadius: '2px' }}
-            >
-              <option value="Inter, sans-serif">Inter</option>
-              <option value="Arial, sans-serif">Arial</option>
-              <option value="Helvetica, sans-serif">Helvetica</option>
-              <option value="Georgia, serif">Georgia</option>
-              <option value="Times New Roman, serif">Times</option>
-            </select>
-            <input
-              type="number"
-              value={style.lineHeight}
-              step="0.1"
-              onChange={(e) => onStyleChange(id, { lineHeight: parseFloat(e.target.value) || 1 })}
-              style={{ width: '40px', padding: '2px', border: '1px solid #ccc', borderRadius: '2px' }}
-              min="0.5"
-              max="3"
-            />
-            <input
-              type="number"
-              value={style.letterSpacing}
-              onChange={(e) => onStyleChange(id, { letterSpacing: parseFloat(e.target.value) || 0 })}
-              style={{ width: '40px', padding: '2px', border: '1px solid #ccc', borderRadius: '2px' }}
-              min="-5"
-              max="20"
-            />
-            <select
-              value={style.textAlign}
-              onChange={(e) => onStyleChange(id, { textAlign: e.target.value })}
-              style={{ padding: '2px', border: '1px solid #ccc', borderRadius: '2px' }}
-            >
-              <option value="left">←</option>
-              <option value="center">↔</option>
-              <option value="right">→</option>
+              <option value="bold">Gras</option>
+              <option value="lighter">Léger</option>
             </select>
             <button
               onClick={(e) => {
@@ -315,6 +271,7 @@ const FreeTextZone: React.FC<FreeTextZoneProps> = ({
                 padding: '2px 4px',
                 cursor: 'pointer'
               }}
+              title="Supprimer"
             >
               <Trash2 className="w-3 h-3" />
             </button>
