@@ -8,6 +8,7 @@ export interface Campaign {
   name: string;
   description?: string;
   type: string;
+  free_text_zones?: any[];
   form_fields?: FormField[];
   game_config?: any;
   design?: any;
@@ -36,6 +37,7 @@ export const useCampaigns = () => {
             description: campaignData.description,
             type: campaignData.type,
             form_fields: campaignData.form_fields || [],
+            free_text_zones: campaignData.free_text_zones || [],
             game_config: campaignData.game_config,
             design: campaignData.design,
             screens: campaignData.screens,
@@ -61,6 +63,7 @@ export const useCampaigns = () => {
             description: campaignData.description,
             type: campaignData.type,
             form_fields: campaignData.form_fields || [],
+            free_text_zones: campaignData.free_text_zones || [],
             game_config: campaignData.game_config,
             design: campaignData.design,
             screens: campaignData.screens,
@@ -103,7 +106,10 @@ export const useCampaigns = () => {
         return null;
       }
 
-      return data;
+      return {
+        ...data,
+        free_text_zones: data?.free_text_zones || []
+      } as Campaign;
     } catch (err) {
       console.error('Erreur inattendue:', err);
       setError('Une erreur inattendue s\'est produite');
@@ -129,7 +135,12 @@ export const useCampaigns = () => {
         return [];
       }
 
-      return data || [];
+      return (
+        data?.map((c: any) => ({
+          ...c,
+          free_text_zones: c.free_text_zones || []
+        })) || []
+      );
     } catch (err) {
       console.error('Erreur inattendue:', err);
       setError('Une erreur inattendue s\'est produite');

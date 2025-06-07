@@ -138,7 +138,8 @@ const ModernCampaignEditor: React.FC = () => {
         showTitle: true,
         showDescription: true
       }
-    }
+    },
+    freeTextZones: []
   });
 
   useEffect(() => {
@@ -154,7 +155,8 @@ const ModernCampaignEditor: React.FC = () => {
       if (existingCampaign) {
         setCampaign({
           ...existingCampaign,
-          formFields: existingCampaign.form_fields || defaultFormFields
+          formFields: existingCampaign.form_fields || defaultFormFields,
+          freeTextZones: existingCampaign.free_text_zones || []
         });
       }
     } finally {
@@ -167,7 +169,8 @@ const ModernCampaignEditor: React.FC = () => {
     try {
       const campaignData = {
         ...campaign,
-        form_fields: campaign.formFields
+        form_fields: campaign.formFields,
+        free_text_zones: campaign.freeTextZones
       };
       const savedCampaign = await saveCampaign(campaignData);
       if (savedCampaign && !continueEditing) {
@@ -291,7 +294,15 @@ const ModernCampaignEditor: React.FC = () => {
 
           {/* Canvas Preview */}
           <div className="flex-1 bg-gray-100">
-            <ModernEditorCanvas campaign={campaign} previewDevice={previewDevice} gameSize={campaign.gameSize} gamePosition={campaign.gamePosition} />
+            <ModernEditorCanvas
+              campaign={campaign}
+              previewDevice={previewDevice}
+              gameSize={campaign.gameSize}
+              gamePosition={campaign.gamePosition}
+              onFreeTextZonesChange={(zones) =>
+                setCampaign((prev: any) => ({ ...prev, freeTextZones: zones }))
+              }
+            />
           </div>
         </div>
       </div>

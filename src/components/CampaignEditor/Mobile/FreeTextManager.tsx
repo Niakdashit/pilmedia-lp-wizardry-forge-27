@@ -33,13 +33,27 @@ interface FreeTextZone {
 interface FreeTextManagerProps {
   containerBounds: { width: number; height: number };
   previewMode: 'mobile' | 'tablet' | 'desktop';
+  zones?: FreeTextZone[];
+  onChange?: (zones: FreeTextZone[]) => void;
 }
 
-const FreeTextManager: React.FC<FreeTextManagerProps> = ({ 
-  containerBounds, 
-  previewMode
+const FreeTextManager: React.FC<FreeTextManagerProps> = ({
+  containerBounds,
+  previewMode,
+  zones,
+  onChange
 }) => {
   const [freeTextZones, setFreeTextZones] = useState<FreeTextZone[]>([]);
+
+  useEffect(() => {
+    if (zones) {
+      setFreeTextZones(zones);
+    }
+  }, [zones]);
+
+  useEffect(() => {
+    onChange?.(freeTextZones);
+  }, [freeTextZones, onChange]);
   const [editingZone, setEditingZone] = useState<string>('');
   const [isPlacementMode, setIsPlacementMode] = useState(false);
   const [copyFromDevice, setCopyFromDevice] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');

@@ -10,11 +10,13 @@ import { getDeviceStyle, getScreenStyle } from './styles';
 interface MobilePreviewProps {
   campaign: any;
   previewMode: 'mobile' | 'tablet';
+  setCampaign?: React.Dispatch<React.SetStateAction<any>>;
 }
 
 const MobilePreview: React.FC<MobilePreviewProps> = ({
   campaign,
-  previewMode
+  previewMode,
+  setCampaign
 }) => {
   const fallbackMobile = campaign.config?.mobileConfig || {};
   const mobileConfig = { ...fallbackMobile, ...(campaign.mobileConfig || {}) };
@@ -127,9 +129,13 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
         />
 
         {/* Free Text Manager - Enhanced with device-specific positioning */}
-        <FreeTextManager 
-          containerBounds={containerBounds} 
+        <FreeTextManager
+          containerBounds={containerBounds}
           previewMode={previewMode}
+          zones={campaign.freeTextZones}
+          onChange={(zones) =>
+            setCampaign?.((prev: any) => ({ ...prev, freeTextZones: zones }))
+          }
         />
 
         {/* Button Layer - only show if not hidden */}

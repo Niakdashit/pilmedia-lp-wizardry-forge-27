@@ -119,6 +119,7 @@ const CampaignEditor: React.FC = () => {
         pointerColor: '#841b60'
       }
     },
+    freeTextZones: [],
     mobileConfig: {
       roulette: {
         segments: [],
@@ -187,14 +188,16 @@ const CampaignEditor: React.FC = () => {
     if (existingCampaign) {
       setCampaign({
         ...existingCampaign,
-        formFields: existingCampaign.form_fields || defaultFormFields
+        formFields: existingCampaign.form_fields || defaultFormFields,
+        freeTextZones: existingCampaign.free_text_zones || []
       });
     }
   };
   const handleSave = async (continueEditing = false) => {
     const campaignData = {
       ...campaign,
-      form_fields: campaign.formFields
+      form_fields: campaign.formFields,
+      free_text_zones: campaign.freeTextZones
     };
     const savedCampaign = await saveCampaign(campaignData);
     if (savedCampaign && !continueEditing) {
