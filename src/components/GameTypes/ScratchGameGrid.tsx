@@ -23,9 +23,10 @@ const ScratchGameGrid: React.FC<ScratchGameGridProps> = ({
     : 'grid grid-cols-2 md:grid-cols-3 justify-items-center';
 
   // Spacing based on number of cards and screen size
+  // Ajout d'un espacement plus généreux entre les cartes
   const spacingClasses = cards.length === 1
     ? 'gap-0'
-    : 'gap-4 md:gap-6';
+    : 'gap-6 md:gap-8';
 
   return (
     <div className="w-full max-w-6xl mx-auto px-4">
