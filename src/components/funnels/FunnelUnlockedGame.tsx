@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { useParticipations } from '../../hooks/useParticipations';
+import { toast } from 'react-toastify';
 import GameRenderer from './components/GameRenderer';
 import ResultScreen from './components/ResultScreen';
 import FormHandler from './components/FormHandler';
@@ -75,7 +76,7 @@ const FunnelUnlockedGame: React.FC<FunnelUnlockedGameProps> = ({
       setTimeout(() => setShowValidationMessage(false), 2000);
     } catch (error) {
       console.error('Erreur lors de la soumission:', error);
-      alert('Erreur lors de la soumission du formulaire');
+      toast.error('Erreur lors de la soumission du formulaire');
     } finally {
       setParticipationLoading(false);
     }

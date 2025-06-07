@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
 import { Sparkles, Save, Eye } from 'lucide-react';
+import { toast } from 'react-toastify';
 import { useNewsletterStore } from '@/stores/newsletterStore';
 
 interface Template {
@@ -71,7 +72,7 @@ export const SettingsTab: React.FC = () => {
     if (!generatedContent) return;
     setFromGeneratedHTML(generatedContent);
     loadGeneratedAsModules();
-    alert('Le template a bien été transféré dans l\'onglet Modifier.');
+    toast.success("Le template a bien été transféré dans l'onglet Modifier.");
   };
 
   return (
