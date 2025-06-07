@@ -83,7 +83,6 @@ const Wheel: React.FC<WheelProps> = ({
       const prizeIndex = Math.floor(normalizedRotation / segmentAngle);
       const selectedSegment = segments[prizeIndex] || segments[0];
       
-      console.log('Wheel spin result:', selectedSegment);
       
       // Appeler onComplete si fourni (pour la compatibilité)
       if (onComplete) {
@@ -95,7 +94,6 @@ const Wheel: React.FC<WheelProps> = ({
         // Simuler un résultat win/lose - si c'est "Dommage" ou "Rejouer" = lose, sinon win
         const result = selectedSegment.label.toLowerCase().includes('dommage') || 
                       selectedSegment.label.toLowerCase().includes('rejouer') ? 'lose' : 'win';
-        console.log('Calling onFinish with result:', result);
         onFinish(result);
       }
     }, 3000);

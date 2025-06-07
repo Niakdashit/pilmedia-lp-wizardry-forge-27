@@ -23,7 +23,6 @@ const FormPreview: React.FC<FormPreviewProps> = ({
   const buttonLabel = campaign.buttonConfig?.text || campaign.gameConfig?.form?.buttonLabel || 'Valider le formulaire';
 
   const handleFormSubmit = (formData: Record<string, string>) => {
-    console.log('Form preview submission:', formData);
     setIsSubmitted(true);
     setTimeout(() => setIsSubmitted(false), 2000);
   };

@@ -75,7 +75,6 @@ const FormEditor: React.FC<FormEditorProps> = ({
     updateParent(newFields);
   };
   const handlePreview = (formData: Record<string, string>) => {
-    console.log('Preview form data:', formData);
     // Dans un vrai cas, on pourrait envoyer ça à une API de test
   };
   return <div className="h-[calc(150vh-3rem)] flex flex-col my-[24px] mx-[21px]">

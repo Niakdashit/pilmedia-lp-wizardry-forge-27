@@ -112,7 +112,6 @@ export const useScratchCard = ({
           setHasScratchStarted(true);
           setShowRevealContent(true);
           onScratchStart();
-          console.log(`Started scratching card ${index}`);
         }
 
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);

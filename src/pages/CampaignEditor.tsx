@@ -191,7 +191,6 @@ const CampaignEditor: React.FC = () => {
     }
   };
   const handleSave = async (continueEditing = false) => {
-    console.log('Saving campaign:', campaign);
     const campaignData = {
       ...campaign,
       form_fields: campaign.formFields

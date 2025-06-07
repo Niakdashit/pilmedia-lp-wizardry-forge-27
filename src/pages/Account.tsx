@@ -14,7 +14,6 @@ const Account: React.FC = () => {
   const handleProfileUpdate = (e: React.FormEvent) => {
     e.preventDefault();
     // In a real app, this would update the profile
-    console.log('Profile updated:', profile);
   };
   return <div className="-mx-6 -mt-6">
       <div className="relative h-[100px] bg-[#841b60] overflow-hidden">

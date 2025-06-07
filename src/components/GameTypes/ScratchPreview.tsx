@@ -40,7 +40,6 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
   useEffect(() => {
     localStorage.removeItem(STORAGE_KEY);
     localStorage.removeItem(SCRATCH_STARTED_KEY);
-    console.log('Starting fresh session - all cards are selectable');
   }, []);
 
   // Automatically start the game in preview mode if autoStart is enabled
@@ -61,7 +60,6 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
     // Only allow selection if no scratch has started and no card is selected
     if (!scratchStarted && selectedCard === null) {
       setSelectedCard(index);
-      console.log(`Card ${index} selected but not saved to storage yet`);
     }
   };
 
@@ -71,7 +69,6 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
       setScratchStarted(true);
       localStorage.setItem(STORAGE_KEY, index.toString());
       localStorage.setItem(SCRATCH_STARTED_KEY, 'true');
-      console.log(`Scratch started on card ${index}, all other cards are now permanently locked`);
     }
   };
 

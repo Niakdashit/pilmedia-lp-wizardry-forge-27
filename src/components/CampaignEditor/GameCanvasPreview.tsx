@@ -12,9 +12,6 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   className = "",
   previewDevice = 'desktop'
 }) => {
-  console.log('GameCanvasPreview received campaign:', campaign);
-  console.log('Game config:', campaign.gameConfig);
-  console.log('Button config:', campaign.buttonConfig);
   const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage || campaign.design?.backgroundImage;
   const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel || campaign.buttonConfig?.text || 'Jouer';
   const buttonColor = campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor || '#841b60';
@@ -22,9 +19,6 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   // Get game size and position from campaign with proper typing
   const gameSize: GameSize = campaign.gameSize && Object.keys(GAME_SIZES).includes(campaign.gameSize) ? campaign.gameSize as GameSize : 'medium';
   const gamePosition = campaign.gamePosition || 'center';
-  console.log('Using gameSize:', gameSize);
-  console.log('Using gamePosition:', gamePosition);
-  console.log('Using buttonLabel:', buttonLabel, 'buttonColor:', buttonColor);
 
   // Check if we should crop the wheel on mobile for left/right/bottom positions
   const isWheelGame = campaign.type === 'wheel';
