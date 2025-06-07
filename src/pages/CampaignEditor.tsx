@@ -102,7 +102,8 @@ const CampaignEditor: React.FC = () => {
       fontSize: 'normal',
       fontWeight: 'normal',
       logoUrl: '',
-      backgroundImage: ''
+      backgroundImage: '',
+      mobileBackgroundImage: ''
     },
     rewards: {
       mode: 'probability',

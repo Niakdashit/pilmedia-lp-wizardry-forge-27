@@ -5,13 +5,16 @@ import FunnelStandard from '../funnels/FunnelStandard';
 
 interface CampaignPreviewProps {
   campaign: any;
+  previewDevice?: 'desktop' | 'tablet' | 'mobile';
 }
 
-const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
+const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevice = 'desktop' }) => {
   const { design } = campaign;
 
-  // Get background image from design or game config
-  const backgroundImage = design?.backgroundImage || campaign.gameConfig?.[campaign.type]?.backgroundImage;
+  // Get background image depending on device
+  const baseBackground = design?.backgroundImage || campaign.gameConfig?.[campaign.type]?.backgroundImage;
+  const mobileBackground = design?.mobileBackgroundImage;
+  const backgroundImage = previewDevice === 'mobile' && mobileBackground ? mobileBackground : baseBackground;
 
   const containerStyle = {
     width: '100%',
@@ -79,7 +82,7 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
       return (
         <FunnelUnlockedGame
           campaign={enhancedCampaign}
-          previewMode="desktop"
+          previewMode={previewDevice}
           modalContained={false}
         />
       );

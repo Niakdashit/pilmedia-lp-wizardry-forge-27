@@ -86,7 +86,8 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
       type: state.selectedGameType || 'wheel',
       design: {
         customColors: state.customColors,
-        centerLogo: null
+        centerLogo: null,
+        mobileBackgroundImage: null
       },
       buttonConfig: {
         color: state.customColors.primary,

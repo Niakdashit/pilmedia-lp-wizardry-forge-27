@@ -98,11 +98,15 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
       overflow: 'hidden' as const
     };
 
-    // Background image if available
-    if (enhancedCampaign.design?.backgroundImage) {
+    const mobileBg = enhancedCampaign.design?.mobileBackgroundImage;
+    const bgImage = selectedDevice === 'mobile' && mobileBg
+      ? mobileBg
+      : enhancedCampaign.design?.backgroundImage;
+
+    if (bgImage) {
       return {
         ...baseStyle,
-        backgroundImage: `url(${enhancedCampaign.design.backgroundImage})`,
+        backgroundImage: `url(${bgImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'
@@ -148,8 +152,10 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
         <div style={getDeviceContainerStyle()}>
           <div style={getContainerStyle()}>
             {/* Background overlay for better contrast if background image exists */}
-            {enhancedCampaign.design?.backgroundImage && (
-              <div 
+            {(selectedDevice === 'mobile'
+              ? enhancedCampaign.design?.mobileBackgroundImage
+              : enhancedCampaign.design?.backgroundImage) && (
+              <div
                 className="absolute inset-0 bg-black opacity-20"
                 style={{ zIndex: 1 }}
               />
