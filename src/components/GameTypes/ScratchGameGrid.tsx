@@ -1,3 +1,4 @@
+
 import React from 'react';
 import ScratchCard from './ScratchCard';
 
@@ -38,11 +39,11 @@ const ScratchGameGrid: React.FC<ScratchGameGridProps> = ({
       };
     }
 
-    // Pour 2+ cartes : responsive grid
+    // Pour 2+ cartes : responsive grid avec maximum 2 cartes par ligne sur mobile
     return {
       containerClass: 'w-full',
-      gridClass: 'grid grid-cols-2 lg:grid-cols-3 place-items-center',
-      spacing: isModal ? 'gap-6 sm:gap-8' : 'gap-8 sm:gap-10 lg:gap-12'
+      gridClass: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 place-items-center',
+      spacing: isModal ? 'gap-4 sm:gap-6 lg:gap-8' : 'gap-6 sm:gap-8 lg:gap-10 xl:gap-12'
     };
   };
 
