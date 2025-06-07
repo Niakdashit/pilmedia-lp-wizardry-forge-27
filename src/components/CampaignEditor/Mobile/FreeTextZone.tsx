@@ -93,8 +93,11 @@ const FreeTextZone: React.FC<FreeTextZoneProps> = ({
   // Auto-focus textarea when editing starts
   React.useEffect(() => {
     if (isEditing && textareaRef.current) {
-      textareaRef.current.focus();
-      textareaRef.current.select();
+      const textarea = textareaRef.current;
+      setTimeout(() => {
+        textarea.focus();
+        textarea.select();
+      }, 50);
     }
   }, [isEditing]);
 
@@ -108,16 +111,17 @@ const FreeTextZone: React.FC<FreeTextZoneProps> = ({
         top: `${position.y}px`,
         width: `${size.width}px`,
         height: `${size.height}px`,
-        zIndex: 200,
-        border: isEditing ? '2px dashed #841b60' : '1px solid transparent',
+        zIndex: isEditing ? 300 : 200,
+        border: isEditing ? '2px solid #841b60' : '1px solid rgba(132, 27, 96, 0.3)',
         backgroundColor: 'transparent',
-        cursor: isDragging ? 'grabbing' : (isEditing ? 'default' : 'pointer'),
+        cursor: isDragging ? 'grabbing' : (isEditing ? 'text' : 'pointer'),
         userSelect: isEditing ? 'text' : 'none',
-        overflow: 'hidden'
+        overflow: 'visible',
+        boxShadow: isEditing ? '0 4px 12px rgba(132, 27, 96, 0.2)' : 'none'
       }}
       onClick={(e) => {
         e.stopPropagation();
-        if (!isEditing) {
+        if (!isEditing && !isDragging && !isResizing) {
           onEdit(id);
         }
       }}
@@ -132,7 +136,7 @@ const FreeTextZone: React.FC<FreeTextZoneProps> = ({
             width: '100%',
             height: '100%',
             border: 'none',
-            background: 'transparent',
+            background: 'rgba(255, 255, 255, 0.9)',
             resize: 'none',
             outline: 'none',
             fontSize: `${style.fontSize}px`,
@@ -142,7 +146,8 @@ const FreeTextZone: React.FC<FreeTextZoneProps> = ({
             fontFamily: style.fontFamily,
             lineHeight: style.lineHeight,
             letterSpacing: `${style.letterSpacing}px`,
-            padding: '4px'
+            padding: '4px',
+            borderRadius: '2px'
           }}
           onClick={(e) => e.stopPropagation()}
           onMouseDown={(e) => e.stopPropagation()}
@@ -164,7 +169,9 @@ const FreeTextZone: React.FC<FreeTextZoneProps> = ({
             overflow: 'hidden',
             wordWrap: 'break-word',
             display: 'flex',
-            alignItems: 'flex-start'
+            alignItems: 'flex-start',
+            background: content ? 'transparent' : 'rgba(255, 255, 255, 0.7)',
+            borderRadius: '2px'
           }}
         >
           {content || 'Cliquez pour éditer'}
@@ -178,7 +185,7 @@ const FreeTextZone: React.FC<FreeTextZoneProps> = ({
           <div
             style={{
               position: 'absolute',
-              top: '-24px',
+              top: '-28px',
               left: '0px',
               background: '#841b60',
               color: 'white',
@@ -189,7 +196,8 @@ const FreeTextZone: React.FC<FreeTextZoneProps> = ({
               display: 'flex',
               alignItems: 'center',
               gap: '4px',
-              fontFamily: 'Inter, sans-serif'
+              fontFamily: 'Inter, sans-serif',
+              whiteSpace: 'nowrap'
             }}
             onMouseDown={(e) => handleMouseDown(e, 'drag')}
           >
@@ -222,21 +230,22 @@ const FreeTextZone: React.FC<FreeTextZoneProps> = ({
             style={{
               position: 'absolute',
               right: '0px',
-              top: '-24px',
+              top: '-28px',
               background: 'rgba(255, 255, 255, 0.95)',
               padding: '4px',
               borderRadius: '4px',
               display: 'flex',
               gap: '4px',
               fontSize: '11px',
-              border: '1px solid #e5e7eb'
+              border: '1px solid #e5e7eb',
+              backdropFilter: 'blur(4px)'
             }}
           >
             <input
               type="color"
               value={style.color}
               onChange={(e) => onStyleChange(id, { color: e.target.value })}
-              style={{ width: '20px', height: '20px', border: 'none', cursor: 'pointer' }}
+              style={{ width: '20px', height: '20px', border: 'none', cursor: 'pointer', borderRadius: '2px' }}
               title="Couleur du texte"
             />
             <input

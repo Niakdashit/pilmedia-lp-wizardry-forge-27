@@ -1,98 +1,50 @@
-
 import { useState } from 'react';
-import { supabase } from '../lib/supabase';
-import { FormField } from '../components/campaign/FormEditor';
+import { supabase } from '../utils/supabaseClient';
 
-export interface Campaign {
-  id: string;
+interface Campaign {
+  id?: string;
   name: string;
-  description?: string;
+  description: string;
+  url: string;
+  startDate: string;
+  startTime: string;
+  endDate: string;
+  endTime: string;
+  status: 'draft' | 'active' | 'inactive';
   type: string;
-  free_text_zones?: any[];
-  form_fields?: FormField[];
-  game_config?: any;
+  formFields: any[];
+  gameConfig: any;
   design?: any;
-  screens?: any;
-  status: 'draft' | 'active' | 'paused' | 'ended';
-  created_at: string;
-  updated_at: string;
+  mobileConfig?: any;
+  freeTextZones?: any[];
 }
 
 export const useCampaigns = () => {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
 
-  const saveCampaign = async (campaignData: Partial<Campaign>): Promise<Campaign | null> => {
-    setLoading(true);
-    setError(null);
-
+  const fetchCampaigns = async () => {
+    setIsLoading(true);
     try {
-      const isUpdate = !!campaignData.id;
-      
-      if (isUpdate) {
-        const { data, error } = await supabase
-          .from('campaigns')
-          .update({
-            name: campaignData.name,
-            description: campaignData.description,
-            type: campaignData.type,
-            form_fields: campaignData.form_fields || [],
-            free_text_zones: campaignData.free_text_zones || [],
-            game_config: campaignData.game_config,
-            design: campaignData.design,
-            screens: campaignData.screens,
-            status: campaignData.status,
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', campaignData.id)
-          .select()
-          .single();
+      const { data, error } = await supabase
+        .from('campaigns')
+        .select('*');
 
-        if (error) {
-          console.error('Erreur lors de la mise à jour:', error);
-          setError('Erreur lors de la mise à jour');
-          return null;
-        }
-
-        return data;
+      if (error) {
+        setError(error);
       } else {
-        const { data, error } = await supabase
-          .from('campaigns')
-          .insert({
-            name: campaignData.name,
-            description: campaignData.description,
-            type: campaignData.type,
-            form_fields: campaignData.form_fields || [],
-            free_text_zones: campaignData.free_text_zones || [],
-            game_config: campaignData.game_config,
-            design: campaignData.design,
-            screens: campaignData.screens,
-            status: campaignData.status || 'draft'
-          })
-          .select()
-          .single();
-
-        if (error) {
-          console.error('Erreur lors de la création:', error);
-          setError('Erreur lors de la création');
-          return null;
-        }
-
-        return data;
+        setCampaigns(data || []);
       }
-    } catch (err) {
-      console.error('Erreur inattendue:', err);
-      setError('Une erreur inattendue s\'est produite');
-      return null;
+    } catch (err: any) {
+      setError(err);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  const getCampaign = async (id: string): Promise<Campaign | null> => {
-    setLoading(true);
-    setError(null);
-
+  const getCampaign = async (id: string) => {
+    setIsLoading(true);
     try {
       const { data, error } = await supabase
         .from('campaigns')
@@ -101,60 +53,85 @@ export const useCampaigns = () => {
         .single();
 
       if (error) {
-        console.error('Erreur lors de la récupération:', error);
-        setError('Erreur lors de la récupération');
-        return null;
+        setError(error);
+        console.error('Error fetching campaign:', error);
       }
 
-      return {
-        ...data,
-        free_text_zones: data?.free_text_zones || []
-      } as Campaign;
-    } catch (err) {
-      console.error('Erreur inattendue:', err);
-      setError('Une erreur inattendue s\'est produite');
+      return data;
+    } catch (err: any) {
+      setError(err);
+      console.error('Error fetching campaign:', err);
       return null;
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
-  const getCampaigns = async (): Promise<Campaign[]> => {
-    setLoading(true);
-    setError(null);
-
+  const saveCampaign = async (campaignData: any) => {
+    setIsLoading(true);
     try {
-      const { data, error } = await supabase
+      const campaignToSave = {
+        ...campaignData,
+        form_fields: campaignData.formFields || campaignData.form_fields,
+        free_text_zones: campaignData.freeTextZones || campaignData.free_text_zones || []
+      };
+
+      if (campaignToSave.id) {
+        const { data, error } = await supabase
+          .from('campaigns')
+          .update(campaignToSave)
+          .eq('id', campaignToSave.id)
+          .select()
+          .single();
+
+        if (error) throw error;
+        return data;
+      } else {
+        delete campaignToSave.id;
+        const { data, error } = await supabase
+          .from('campaigns')
+          .insert([campaignToSave])
+          .select()
+          .single();
+
+        if (error) throw error;
+        return data;
+      }
+    } catch (error) {
+      console.error('Error saving campaign:', error);
+      throw error;
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const deleteCampaign = async (id: string) => {
+    setIsLoading(true);
+    try {
+      const { error } = await supabase
         .from('campaigns')
-        .select('*')
-        .order('created_at', { ascending: false });
+        .delete()
+        .eq('id', id);
 
       if (error) {
-        console.error('Erreur lors de la récupération:', error);
-        setError('Erreur lors de la récupération');
-        return [];
+        setError(error);
+      } else {
+        setCampaigns(campaigns.filter(campaign => campaign.id !== id));
       }
-
-      return (
-        data?.map((c: any) => ({
-          ...c,
-          free_text_zones: c.free_text_zones || []
-        })) || []
-      );
-    } catch (err) {
-      console.error('Erreur inattendue:', err);
-      setError('Une erreur inattendue s\'est produite');
-      return [];
+    } catch (err: any) {
+      setError(err);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
   return {
-    loading,
+    campaigns,
+    isLoading,
     error,
-    saveCampaign,
+    fetchCampaigns,
     getCampaign,
-    getCampaigns
+    saveCampaign,
+    deleteCampaign,
   };
 };

@@ -47,13 +47,15 @@ const FreeTextManager: React.FC<FreeTextManagerProps> = ({
   const [isPlacementMode, setIsPlacementMode] = useState(false);
 
   useEffect(() => {
-    if (zones) {
+    if (zones && Array.isArray(zones)) {
       setFreeTextZones(zones);
     }
   }, [zones]);
 
   useEffect(() => {
-    onChange?.(freeTextZones);
+    if (onChange) {
+      onChange(freeTextZones);
+    }
   }, [freeTextZones, onChange]);
 
   const addFreeText = (event: React.MouseEvent) => {
@@ -65,8 +67,8 @@ const FreeTextManager: React.FC<FreeTextManagerProps> = ({
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
 
-    const clampedX = Math.max(0, Math.min(x, containerBounds.width - 100));
-    const clampedY = Math.max(0, Math.min(y, containerBounds.height - 30));
+    const clampedX = Math.max(0, Math.min(x, containerBounds.width - 120));
+    const clampedY = Math.max(0, Math.min(y, containerBounds.height - 40));
 
     const defaultPosition = { x: clampedX, y: clampedY };
     const defaultSize = { width: 120, height: 40 };
@@ -148,10 +150,10 @@ const FreeTextManager: React.FC<FreeTextManagerProps> = ({
     );
   };
 
-  const updateZoneStyle = (id: string, style: any) => {
+  const updateZoneStyle = (id: string, styleUpdate: any) => {
     setFreeTextZones(prev =>
       prev.map(zone =>
-        zone.id === id ? { ...zone, style: { ...zone.style, ...style } } : zone
+        zone.id === id ? { ...zone, style: { ...zone.style, ...styleUpdate } } : zone
       )
     );
   };
@@ -170,23 +172,21 @@ const FreeTextManager: React.FC<FreeTextManagerProps> = ({
       }
     };
 
-    const canvas = document.getElementById('root');
-    canvas?.addEventListener('click', handleCanvasClick);
-
+    document.addEventListener('click', handleCanvasClick);
     return () => {
-      canvas?.removeEventListener('click', handleCanvasClick);
+      document.removeEventListener('click', handleCanvasClick);
     };
   }, [isPlacementMode]);
 
   return (
     <>
-      {/* Add Free Text Button - Clean single button */}
+      {/* Add Free Text Button */}
       <div
         style={{
           position: 'absolute',
           top: '10px',
           left: '10px',
-          zIndex: 200
+          zIndex: 400
         }}
       >
         <button
@@ -203,7 +203,8 @@ const FreeTextManager: React.FC<FreeTextManagerProps> = ({
             alignItems: 'center',
             gap: '6px',
             fontFamily: 'Inter, sans-serif',
-            fontWeight: '500'
+            fontWeight: '500',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
           }}
         >
           <Plus className="w-4 h-4" />
@@ -222,9 +223,9 @@ const FreeTextManager: React.FC<FreeTextManagerProps> = ({
             left: 0,
             width: '100%',
             height: '100%',
-            zIndex: 100,
+            zIndex: 350,
             cursor: 'crosshair',
-            backgroundColor: 'rgba(132, 27, 96, 0.1)'
+            backgroundColor: 'rgba(132, 27, 96, 0.08)'
           }}
         />
       )}
@@ -265,10 +266,11 @@ const FreeTextManager: React.FC<FreeTextManagerProps> = ({
             padding: '8px 12px',
             borderRadius: '6px',
             fontSize: '12px',
-            zIndex: 200,
+            zIndex: 400,
             border: '1px solid #e5e7eb',
             textAlign: 'center',
-            fontFamily: 'Inter, sans-serif'
+            fontFamily: 'Inter, sans-serif',
+            boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
           }}
         >
           Cliquez n'importe où pour placer un texte libre
