@@ -1,4 +1,3 @@
-
 import React from 'react';
 import WheelCanvas from './MobileWheel/WheelCanvas';
 import WheelDecorations from './MobileWheel/WheelDecorations';
@@ -12,7 +11,6 @@ interface MobileWheelPreviewProps {
 }
 
 const CANVAS_SIZE = 280;
-const MAX_DISPLAY_PERCENTAGE = 50; // Maximum 50% of screen display
 
 const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
   campaign,
@@ -45,51 +43,37 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
       zIndex: 10,
       pointerEvents: 'none',
       width: canvasSize,
-      height: canvasSize,
-      overflow: 'hidden' // Ensure cropping
+      height: canvasSize
     };
-
-    // Calculate limited offsets to ensure max 50% display
-    const maxOffset = 25; // Reduced from 50 to ensure 50% max display
-    const limitedVerticalOffset = Math.max(-maxOffset, Math.min(maxOffset, verticalOffset));
-    const limitedHorizontalOffset = Math.max(-maxOffset, Math.min(maxOffset, horizontalOffset));
 
     switch (gamePosition) {
       case 'left':
         return {
           ...baseStyle,
           top: '50%',
-          left: `${-25 + limitedHorizontalOffset}%`, // Start at -25% max to show only 50%
-          transform: 'translateY(-50%)',
-          width: '50%', // Limit width to 50%
-          height: canvasSize
+          left: '0%',
+          transform: `translate(${horizontalOffset}%, -50%)`
         };
       case 'right':
         return {
           ...baseStyle,
           top: '50%',
-          right: `${-25 + Math.abs(limitedHorizontalOffset)}%`, // Start at -25% max to show only 50%
-          transform: 'translateY(-50%)',
-          width: '50%', // Limit width to 50%
-          height: canvasSize
+          right: '0%',
+          transform: `translate(${horizontalOffset}%, -50%)`
         };
       case 'top':
         return {
           ...baseStyle,
-          top: `${-25 + limitedVerticalOffset}%`, // Start at -25% max to show only 50%
+          top: `${verticalOffset}%`,
           left: '50%',
-          transform: 'translateX(-50%)',
-          width: canvasSize,
-          height: '50%' // Limit height to 50%
+          transform: 'translateX(-50%)'
         };
       case 'bottom':
         return {
           ...baseStyle,
-          bottom: `${-25 + Math.abs(limitedVerticalOffset)}%`, // Start at -25% max to show only 50%
+          bottom: `${-verticalOffset}%`,
           left: '50%',
-          transform: 'translateX(-50%)',
-          width: canvasSize,
-          height: '50%' // Limit height to 50%
+          transform: 'translateX(-50%)'
         };
       case 'center':
       default:
@@ -97,9 +81,7 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
           ...baseStyle,
           top: '50%',
           left: '50%',
-          transform: `translate(calc(-50% + ${limitedHorizontalOffset}%), calc(-50% + ${limitedVerticalOffset}%))`,
-          maxWidth: '50%', // Ensure center position doesn't exceed 50%
-          maxHeight: '50%'
+          transform: `translate(calc(-50% + ${horizontalOffset}%), calc(-50% + ${verticalOffset}%))`
         };
     }
   };
@@ -110,7 +92,7 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
 
   const containerWidth = canvasSize;
   const containerHeight = canvasSize;
-  const shouldCropWheel = ['left', 'right', 'top', 'bottom'].includes(gamePosition);
+  const shouldCropWheel = false;
   const offset = getCanvasOffset();
 
   const renderWheelContainer = () => (

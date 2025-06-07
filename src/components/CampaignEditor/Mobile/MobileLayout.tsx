@@ -56,23 +56,23 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({ campaign, setCampaign }) =>
             >
               <div className="text-sm font-medium capitalize">{position}</div>
               <div className="text-xs text-gray-500 mt-1">
-                {position === 'top' && 'En haut (50% max)'}
-                {position === 'center' && 'Centré (50% max)'}
-                {position === 'bottom' && 'En bas (50% max)'}
+                {position === 'top' && 'En haut'}
+                {position === 'center' && 'Centré'}
+                {position === 'bottom' && 'En bas'}
               </div>
             </button>
           ))}
         </div>
         
-        {/* Décalage vertical - limité pour 50% max */}
+        {/* Décalage vertical - toujours affiché */}
         <div className="mt-4">
           <label className="block text-xs text-gray-600 mb-1">
-            Décalage vertical (%) - Max 50% d'affichage
+            Décalage vertical (%)
           </label>
           <input
             type="range"
-            min="-25"
-            max="25"
+            min="-50"
+            max="50"
             value={mobileConfig.gameVerticalOffset || 0}
             onChange={(e) =>
               updateMobileConfig('gameVerticalOffset', Number(e.target.value))
@@ -80,19 +80,19 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({ campaign, setCampaign }) =>
             className="w-full"
           />
           <div className="text-xs text-gray-500 mt-1">
-            {mobileConfig.gameVerticalOffset || 0}% (Affichage max: 50%)
+            {mobileConfig.gameVerticalOffset || 0}%
           </div>
         </div>
         
-        {/* Décalage horizontal - limité pour 50% max */}
+        {/* Décalage horizontal - toujours affiché */}
         <div className="mt-4">
           <label className="block text-xs text-gray-600 mb-1">
-            Décalage horizontal (%) - Max 50% d'affichage
+            Décalage horizontal (%)
           </label>
           <input
             type="range"
-            min="-25"
-            max="25"
+            min="-50"
+            max="50"
             value={mobileConfig.gameHorizontalOffset || 0}
             onChange={(e) =>
               updateMobileConfig('gameHorizontalOffset', Number(e.target.value))
@@ -100,7 +100,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({ campaign, setCampaign }) =>
             className="w-full"
           />
           <div className="text-xs text-gray-500 mt-1">
-            {mobileConfig.gameHorizontalOffset || 0}% (Affichage max: 50%)
+            {mobileConfig.gameHorizontalOffset || 0}%
           </div>
         </div>
       </div>
