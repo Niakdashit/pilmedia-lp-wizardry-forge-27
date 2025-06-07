@@ -1,5 +1,8 @@
 import { resend } from './resend';
 
+const defaultFrom =
+  import.meta.env.VITE_DEFAULT_FROM_EMAIL || 'Leadya <contact@leadya.fr>';
+
 export const sendBasicEmail = async (to: string, subject: string, html: string) => {
   try {
     if (!to || !subject || !html) {
@@ -7,7 +10,7 @@ export const sendBasicEmail = async (to: string, subject: string, html: string) 
     }
 
     const res = await resend.emails.send({
-      from: 'Leadya <contact@leadya.fr>',
+      from: defaultFrom,
       to,
       subject,
       html,
