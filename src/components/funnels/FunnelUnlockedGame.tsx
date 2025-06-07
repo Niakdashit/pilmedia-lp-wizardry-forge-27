@@ -1,14 +1,17 @@
+
 import React, { useState } from 'react';
 import { useParticipations } from '../../hooks/useParticipations';
 import GameRenderer from './components/GameRenderer';
 import ResultScreen from './components/ResultScreen';
 import FormHandler from './components/FormHandler';
+
 interface FunnelUnlockedGameProps {
   campaign: any;
   previewMode?: 'mobile' | 'tablet' | 'desktop';
   mobileConfig?: any;
   modalContained?: boolean;
 }
+
 export interface FieldConfig {
   id: string;
   label: string;
@@ -16,6 +19,7 @@ export interface FieldConfig {
   required?: boolean;
   options?: string[];
 }
+
 const FunnelUnlockedGame: React.FC<FunnelUnlockedGameProps> = ({
   campaign,
   previewMode = 'desktop',
@@ -27,9 +31,11 @@ const FunnelUnlockedGame: React.FC<FunnelUnlockedGameProps> = ({
   const [showValidationMessage, setShowValidationMessage] = useState(false);
   const [gameResult, setGameResult] = useState<'win' | 'lose' | null>(null);
   const [participationLoading, setParticipationLoading] = useState(false);
+  
   const {
     createParticipation
   } = useParticipations();
+
   const fields: FieldConfig[] = campaign.formFields || [{
     id: 'prenom',
     label: 'Prénom',
@@ -46,11 +52,13 @@ const FunnelUnlockedGame: React.FC<FunnelUnlockedGameProps> = ({
     type: 'email',
     required: true
   }];
+
   const handleGameButtonClick = () => {
     if (!formValidated) {
       setShowFormModal(true);
     }
   };
+
   const handleFormSubmit = async (formData: Record<string, string>) => {
     setParticipationLoading(true);
     try {
@@ -72,9 +80,11 @@ const FunnelUnlockedGame: React.FC<FunnelUnlockedGameProps> = ({
       setParticipationLoading(false);
     }
   };
+
   const handleGameStart = () => {
     // Game started logic if needed
   };
+
   const handleGameFinish = async (result: 'win' | 'lose') => {
     try {
       if (campaign.id) {
@@ -91,6 +101,7 @@ const FunnelUnlockedGame: React.FC<FunnelUnlockedGameProps> = ({
     }
     setGameResult(result);
   };
+
   const handleReset = () => {
     setFormValidated(false);
     setGameResult(null);
@@ -100,21 +111,46 @@ const FunnelUnlockedGame: React.FC<FunnelUnlockedGameProps> = ({
 
   // Si on a un résultat de jeu, afficher l'écran de résultat
   if (gameResult) {
-    return <ResultScreen gameResult={gameResult} campaign={campaign} mobileConfig={mobileConfig} onReset={handleReset} />;
+    return <ResultScreen 
+      gameResult={gameResult} 
+      campaign={campaign} 
+      mobileConfig={mobileConfig} 
+      onReset={handleReset} 
+    />;
   }
 
   // Sinon, afficher le jeu
-  return <div className="w-full h-full flex flex-col items-center justify-center space-y-6 p-4">
+  return (
+    <div className="w-full h-full flex flex-col items-center justify-center space-y-6 p-4">
       {/* Titre et description */}
       
 
       {/* Jeu */}
-      <GameRenderer campaign={campaign} formValidated={formValidated} showValidationMessage={showValidationMessage} previewMode={previewMode} mobileConfig={mobileConfig} onGameFinish={handleGameFinish} onGameStart={handleGameStart} onGameButtonClick={handleGameButtonClick} />
+      <GameRenderer 
+        campaign={campaign} 
+        formValidated={formValidated} 
+        showValidationMessage={showValidationMessage} 
+        previewMode={previewMode} 
+        mobileConfig={mobileConfig} 
+        onGameFinish={handleGameFinish} 
+        onGameStart={handleGameStart} 
+        onGameButtonClick={handleGameButtonClick} 
+      />
 
       {/* Modal de formulaire */}
-      <FormHandler showFormModal={showFormModal} campaign={campaign} fields={fields} participationLoading={participationLoading} modalContained={modalContained} onClose={() => {
-      setShowFormModal(false);
-    }} onSubmit={handleFormSubmit} />
-    </div>;
+      <FormHandler 
+        showFormModal={showFormModal} 
+        campaign={campaign} 
+        fields={fields} 
+        participationLoading={participationLoading} 
+        modalContained={modalContained} 
+        onClose={() => {
+          setShowFormModal(false);
+        }} 
+        onSubmit={handleFormSubmit} 
+      />
+    </div>
+  );
 };
+
 export default FunnelUnlockedGame;
