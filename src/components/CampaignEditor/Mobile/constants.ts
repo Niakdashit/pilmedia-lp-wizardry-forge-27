@@ -14,12 +14,12 @@ export const DEVICE_SPECS = {
   }
 };
 
-// Updated mobile format specs for 1080×1920px
+// Updated mobile format specs for 1080×1920px with better preview scale
 export const MOBILE_FORMAT_SPECS = {
   width: 1080,
   height: 1920,
   aspectRatio: 1080 / 1920,
-  previewScale: 0.2 // Scale down for preview
+  previewScale: 0.35 // Increased scale for better visibility
 };
 
 export const PREVIEW_CONTAINER_SPECS = {
