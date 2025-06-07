@@ -85,12 +85,13 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
 
   if (!gameStarted) {
     return (
-      <div className="flex flex-col items-center w-full max-w-xs mx-auto">
-        <div 
-          className="relative rounded-xl overflow-hidden border-2 border-gray-200 shadow-sm bg-white" 
+      <div className="flex flex-col items-center w-full max-w-sm mx-auto">
+        <div
+          className="relative rounded-xl overflow-hidden border-2 border-gray-200 shadow-sm bg-white"
           style={{
-            width: `${width}px`,
-            height: `${height}px`
+            width: '100%',
+            maxWidth: `${width}px`,
+            aspectRatio: `${width} / ${height}`
           }}
         >
           <ScratchCardContent
@@ -106,7 +107,7 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
   }
 
   return (
-    <div className="flex flex-col items-center w-full max-w-xs mx-auto">
+    <div className="flex flex-col items-center w-full max-w-sm mx-auto">
       {/* Progress bar pour le grattage - seulement si pas dans modal */}
       {!isModal && gameStarted && canScratch && !isRevealed && (
         <div className="w-full mb-3">
@@ -129,8 +130,9 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
               : 'border-gray-200'
         } ${locked ? 'opacity-50' : ''}`}
         style={{
-          width: `${width}px`,
-          height: `${height}px`,
+          width: '100%',
+          maxWidth: `${width}px`,
+          aspectRatio: `${width} / ${height}`,
           pointerEvents: locked ? 'none' : 'auto'
         }}
         onClick={handleCardClick}
