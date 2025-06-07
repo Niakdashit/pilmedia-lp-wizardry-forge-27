@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import FreeTextZone from './FreeTextZone';
-import { Plus, Type } from 'lucide-react';
+import { Plus, Type, Copy } from 'lucide-react';
 
 interface FreeTextZone {
   id: string;
@@ -42,6 +42,17 @@ const FreeTextManager: React.FC<FreeTextManagerProps> = ({
   const [freeTextZones, setFreeTextZones] = useState<FreeTextZone[]>([]);
   const [editingZone, setEditingZone] = useState<string>('');
   const [isPlacementMode, setIsPlacementMode] = useState(false);
+  const [copyFromDevice, setCopyFromDevice] = useState<'mobile' | 'tablet' | 'desktop'>('desktop');
+
+  const copyLayoutFrom = (source: 'mobile' | 'tablet' | 'desktop') => {
+    if (source === previewMode) return;
+    setFreeTextZones(prev =>
+      prev.map(zone => ({
+        ...zone,
+        [previewMode]: { ...zone[source] }
+      }))
+    );
+  };
 
   const addFreeText = (event: React.MouseEvent) => {
     if (!isPlacementMode) return;
@@ -244,6 +255,7 @@ const FreeTextManager: React.FC<FreeTextManagerProps> = ({
 
       {/* Device indicator */}
       <div
+        title="Chaque aperçu conserve son propre agencement de zones de texte"
         style={{
           position: 'absolute',
           top: '10px',
@@ -257,6 +269,42 @@ const FreeTextManager: React.FC<FreeTextManagerProps> = ({
         }}
       >
         {previewMode}
+        <div style={{ marginTop: '4px', display: 'flex', alignItems: 'center' }}>
+          <select
+            value={copyFromDevice}
+            onChange={(e) =>
+              setCopyFromDevice(e.target.value as 'mobile' | 'tablet' | 'desktop')
+            }
+            style={{
+              fontSize: '10px',
+              color: '#000',
+              marginRight: '4px'
+            }}
+          >
+            {['mobile', 'tablet', 'desktop']
+              .filter((d) => d !== previewMode)
+              .map((d) => (
+                <option key={d} value={d}>
+                  {d}
+                </option>
+              ))}
+          </select>
+          <button
+            onClick={() => copyLayoutFrom(copyFromDevice)}
+            style={{
+              background: '#841b60',
+              color: 'white',
+              border: 'none',
+              borderRadius: '4px',
+              fontSize: '10px',
+              padding: '2px 4px',
+              cursor: 'pointer',
+              display: 'flex'
+            }}
+          >
+            <Copy className="w-3 h-3" />
+          </button>
+        </div>
       </div>
     </>
   );
