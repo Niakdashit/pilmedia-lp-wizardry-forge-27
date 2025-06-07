@@ -110,6 +110,9 @@ const FreeTextZone: React.FC<FreeTextZoneProps> = ({
         userSelect: 'none',
         overflow: 'hidden'
       }}
+      onMouseDown={(e) => {
+        if (isEditing) handleMouseDown(e, 'drag');
+      }}
       onClick={(e) => {
         e.stopPropagation();
         onEdit(isEditing ? '' : id);
@@ -205,14 +208,18 @@ const FreeTextZone: React.FC<FreeTextZoneProps> = ({
           <div
             style={{
               position: 'absolute',
-              top: '-20px',
-              right: '0px',
+              bottom: '100%',
+              left: '0px',
+              transform: 'translateY(-4px)',
               background: 'rgba(255, 255, 255, 0.9)',
               padding: '4px',
               borderRadius: '4px',
               display: 'flex',
+              flexWrap: 'wrap',
               gap: '4px',
-              fontSize: '10px'
+              fontSize: '10px',
+              maxHeight: '140px',
+              overflowY: 'auto'
             }}
           >
             <input

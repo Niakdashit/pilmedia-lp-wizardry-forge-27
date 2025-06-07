@@ -60,7 +60,7 @@ const FreeTextManager: React.FC<FreeTextManagerProps> = ({
 
     const newZone: FreeTextZone = {
       id: `free-text-${Date.now()}`,
-      content: 'Nouveau texte',
+      content: '',
       style: {
         fontSize: 16,
         fontWeight: 'normal',
