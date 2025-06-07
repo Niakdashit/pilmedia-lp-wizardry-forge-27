@@ -77,18 +77,6 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
       }
     }));
   };
-  const handleHeaderTextChange = (field: string, value: any) => {
-    setCampaign((prev: any) => ({
-      ...prev,
-      design: {
-        ...prev.design,
-        headerText: {
-          ...prev.design.headerText,
-          [field]: value
-        }
-      }
-    }));
-  };
   const handleFooterBannerChange = (field: string, value: any) => {
     setCampaign((prev: any) => ({
       ...prev,
@@ -434,9 +422,6 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
             </>}
         </div>
 
-        {/* Texte personnalisé d'en-tête - Version compacte */}
-        
-        
         {/* Texte personnalisé libre - Version compacte */}
         <div className="space-y-3 border-t pt-3">
           <div className="grid grid-cols-2 gap-4 items-center">
