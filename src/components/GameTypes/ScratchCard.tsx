@@ -90,6 +90,7 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
       }
       
       let isDrawing = false;
+      let scratchBegan = false;
       
       const getXY = (e: MouseEvent | TouchEvent) => {
         const rect = canvas.getBoundingClientRect();
@@ -112,6 +113,11 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
         ctx.beginPath();
         ctx.arc(x, y, Math.max(10, width * 0.08), 0, Math.PI * 2);
         ctx.fill();
+
+        if (!scratchBegan) {
+          scratchBegan = true;
+          onScratchStart();
+        }
 
         // Calculer le pourcentage gratté
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
@@ -137,7 +143,6 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
         if (locked) return;
         e.preventDefault();
         isDrawing = true;
-        onScratchStart();
       };
       
       const stopDrawing = () => isDrawing = false;
