@@ -1,4 +1,5 @@
-import React, { useState, useRef } from 'react';
+
+import React, { useState, useRef, useCallback } from 'react';
 import { Trash2, RotateCw, Target, Lock, Unlock } from 'lucide-react';
 
 interface ImageElementProps {
@@ -21,9 +22,10 @@ const ImageElement: React.FC<ImageElementProps> = ({
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
   const [aspectRatioLocked, setAspectRatioLocked] = useState(true);
+  const [tempTransform, setTempTransform] = useState<{x?: number, y?: number, width?: number, height?: number} | null>(null);
   const elementRef = useRef<HTMLDivElement>(null);
 
-  const handleMouseDown = (e: React.MouseEvent, action: 'drag' | 'resize') => {
+  const handleMouseDown = useCallback((e: React.MouseEvent, action: 'drag' | 'resize') => {
     e.preventDefault();
     e.stopPropagation();
     onSelect();
@@ -32,6 +34,7 @@ const ImageElement: React.FC<ImageElementProps> = ({
 
     if (action === 'drag') {
       const elementRect = elementRef.current.getBoundingClientRect();
+      const containerRect = containerRef.current.getBoundingClientRect();
       
       const offsetX = e.clientX - elementRect.left;
       const offsetY = e.clientY - elementRect.top;
@@ -47,17 +50,21 @@ const ImageElement: React.FC<ImageElementProps> = ({
         let newY = moveEvent.clientY - containerRect.top - offsetY;
         
         // Constrain to container bounds
-        newX = Math.max(0, Math.min(newX, containerRect.width - element.width));
-        newY = Math.max(0, Math.min(newY, containerRect.height - element.height));
+        newX = Math.max(0, Math.min(newX, containerRect.width - (tempTransform?.width || element.width)));
+        newY = Math.max(0, Math.min(newY, containerRect.height - (tempTransform?.height || element.height)));
         
-        // Use requestAnimationFrame for smooth updates
-        requestAnimationFrame(() => {
-          onUpdate({ x: newX, y: newY });
-        });
+        setTempTransform(prev => ({ ...prev, x: newX, y: newY }));
       };
 
       const handleMouseUp = () => {
         setIsDragging(false);
+        if (tempTransform && (tempTransform.x !== undefined || tempTransform.y !== undefined)) {
+          onUpdate({ 
+            x: tempTransform.x ?? element.x, 
+            y: tempTransform.y ?? element.y 
+          });
+        }
+        setTempTransform(null);
         document.removeEventListener('mousemove', handleMouseMove);
         document.removeEventListener('mouseup', handleMouseUp);
       };
@@ -68,8 +75,8 @@ const ImageElement: React.FC<ImageElementProps> = ({
       setIsResizing(true);
       const startX = e.clientX;
       const startY = e.clientY;
-      const startWidth = element.width;
-      const startHeight = element.height;
+      const startWidth = tempTransform?.width || element.width;
+      const startHeight = tempTransform?.height || element.height;
       const aspectRatio = startWidth / startHeight;
 
       const handleMouseMove = (moveEvent: MouseEvent) => {
@@ -89,9 +96,9 @@ const ImageElement: React.FC<ImageElementProps> = ({
           newHeight = newWidth / aspectRatio;
         }
         
-        // Constrain to container bounds
-        const maxWidth = containerRect.width - element.x;
-        const maxHeight = containerRect.height - element.y;
+        // Constrain to container bounds (1080x1920 safe zone)
+        const maxWidth = Math.min(containerRect.width - (tempTransform?.x || element.x), 1080);
+        const maxHeight = Math.min(containerRect.height - (tempTransform?.y || element.y), 1920);
         
         newWidth = Math.min(newWidth, maxWidth);
         newHeight = Math.min(newHeight, maxHeight);
@@ -105,13 +112,22 @@ const ImageElement: React.FC<ImageElementProps> = ({
           }
         }
         
-        requestAnimationFrame(() => {
-          onUpdate({ width: newWidth, height: newHeight });
-        });
+        setTempTransform(prev => ({ 
+          ...prev, 
+          width: newWidth, 
+          height: newHeight 
+        }));
       };
 
       const handleMouseUp = () => {
         setIsResizing(false);
+        if (tempTransform && (tempTransform.width !== undefined || tempTransform.height !== undefined)) {
+          onUpdate({ 
+            width: tempTransform.width ?? element.width, 
+            height: tempTransform.height ?? element.height 
+          });
+        }
+        setTempTransform(null);
         document.removeEventListener('mousemove', handleMouseMove);
         document.removeEventListener('mouseup', handleMouseUp);
       };
@@ -119,29 +135,31 @@ const ImageElement: React.FC<ImageElementProps> = ({
       document.addEventListener('mousemove', handleMouseMove);
       document.addEventListener('mouseup', handleMouseUp);
     }
-  };
+  }, [onSelect, onUpdate, containerRef, element, aspectRatioLocked, tempTransform]);
 
-  const handleCenterElement = () => {
+  const handleCenterElement = useCallback(() => {
     if (!containerRef.current) return;
     
     const containerRect = containerRef.current.getBoundingClientRect();
-    const centerX = (containerRect.width - element.width) / 2;
-    const centerY = (containerRect.height - element.height) / 2;
+    const currentWidth = tempTransform?.width || element.width;
+    const currentHeight = tempTransform?.height || element.height;
+    
+    const centerX = (containerRect.width - currentWidth) / 2;
+    const centerY = (containerRect.height - currentHeight) / 2;
     
     onUpdate({ x: centerX, y: centerY });
-  };
+  }, [onUpdate, containerRef, element, tempTransform]);
 
-  const toggleAspectRatio = () => {
+  const toggleAspectRatio = useCallback(() => {
     setAspectRatioLocked(!aspectRatioLocked);
-  };
+  }, [aspectRatioLocked]);
 
   if (!element.src) {
     return (
       <div
         style={{
           position: 'absolute',
-          left: element.x,
-          top: element.y,
+          transform: `translate3d(${element.x}px, ${element.y}px, 0)`,
           width: element.width,
           height: element.height,
           border: '2px dashed #cbd5e1',
@@ -160,23 +178,28 @@ const ImageElement: React.FC<ImageElementProps> = ({
     );
   }
 
+  // Use temp transform for immediate feedback, fallback to element values
+  const currentTransform = {
+    x: tempTransform?.x ?? element.x,
+    y: tempTransform?.y ?? element.y,
+    width: tempTransform?.width ?? element.width,
+    height: tempTransform?.height ?? element.height
+  };
+
   return (
     <div
       ref={elementRef}
       style={{
         position: 'absolute',
-        left: element.x,
-        top: element.y,
-        width: element.width,
-        height: element.height,
+        transform: `translate3d(${currentTransform.x}px, ${currentTransform.y}px, 0) rotate(${element.rotation || 0}deg)`,
+        width: currentTransform.width,
+        height: currentTransform.height,
         cursor: isDragging ? 'grabbing' : 'grab',
         zIndex: isSelected ? 30 : 20,
-        transform: `rotate(${element.rotation || 0}deg) ${isDragging ? 'scale(1.02)' : 'scale(1)'}`,
-        transition: isDragging || isResizing ? 'none' : 'all 0.1s ease-out',
         willChange: isDragging || isResizing ? 'transform' : 'auto'
       }}
       onMouseDown={(e) => handleMouseDown(e, 'drag')}
-      className={`${isSelected ? 'ring-2 ring-blue-500' : 'hover:ring-2 hover:ring-gray-300'} transition-all duration-100`}
+      className={`${isSelected ? 'ring-2 ring-blue-500' : 'hover:ring-2 hover:ring-gray-300'} transition-shadow duration-100`}
     >
       <img
         src={element.src}

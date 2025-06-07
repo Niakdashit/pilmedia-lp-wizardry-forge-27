@@ -1,4 +1,5 @@
-import React, { useState, useRef } from 'react';
+
+import React, { useState, useRef, useCallback } from 'react';
 import { Trash2, Target } from 'lucide-react';
 
 interface TextElementProps {
@@ -21,9 +22,10 @@ const TextElement: React.FC<TextElementProps> = ({
   sizeMap
 }) => {
   const [isDragging, setIsDragging] = useState(false);
+  const [tempPosition, setTempPosition] = useState<{x: number, y: number} | null>(null);
   const elementRef = useRef<HTMLDivElement>(null);
 
-  const handleMouseDown = (e: React.MouseEvent) => {
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     onSelect();
@@ -31,6 +33,7 @@ const TextElement: React.FC<TextElementProps> = ({
     if (!containerRef.current || !elementRef.current) return;
     
     const elementRect = elementRef.current.getBoundingClientRect();
+    const containerRect = containerRef.current.getBoundingClientRect();
     
     const offsetX = e.clientX - elementRect.left;
     const offsetY = e.clientY - elementRect.top;
@@ -44,31 +47,32 @@ const TextElement: React.FC<TextElementProps> = ({
       const elementWidth = elementRef.current?.offsetWidth || 0;
       const elementHeight = elementRef.current?.offsetHeight || 0;
       
-      // Calculate new position with smooth movement
       let newX = moveEvent.clientX - containerRect.left - offsetX;
       let newY = moveEvent.clientY - containerRect.top - offsetY;
       
-      // Constrain to container bounds with padding
+      // Constrain to container bounds
       newX = Math.max(0, Math.min(newX, containerRect.width - elementWidth));
       newY = Math.max(0, Math.min(newY, containerRect.height - elementHeight));
       
-      // Use requestAnimationFrame for smooth updates
-      requestAnimationFrame(() => {
-        onUpdate({ x: newX, y: newY });
-      });
+      // Update temp position for immediate visual feedback
+      setTempPosition({ x: newX, y: newY });
     };
 
     const handleMouseUp = () => {
       setIsDragging(false);
+      if (tempPosition) {
+        onUpdate(tempPosition);
+        setTempPosition(null);
+      }
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
 
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
-  };
+  }, [onSelect, onUpdate, containerRef]);
 
-  const handleCenterElement = () => {
+  const handleCenterElement = useCallback(() => {
     if (!containerRef.current || !elementRef.current) return;
     
     const containerRect = containerRef.current.getBoundingClientRect();
@@ -79,9 +83,9 @@ const TextElement: React.FC<TextElementProps> = ({
     const centerY = (containerRect.height - elementHeight) / 2;
     
     onUpdate({ x: centerX, y: centerY });
-  };
+  }, [onUpdate, containerRef]);
 
-  const getTextStyles = (): React.CSSProperties => ({
+  const getTextStyles = useCallback((): React.CSSProperties => ({
     color: element.color || '#000000',
     fontSize: sizeMap[element.size || 'base'] || '14px',
     fontWeight: element.bold ? 'bold' : 'normal',
@@ -90,9 +94,7 @@ const TextElement: React.FC<TextElementProps> = ({
     fontFamily: element.fontFamily || 'Inter, sans-serif',
     cursor: isDragging ? 'grabbing' : 'grab',
     userSelect: 'none',
-    transition: isDragging ? 'none' : 'all 0.1s ease-out',
     willChange: isDragging ? 'transform' : 'auto',
-    transform: isDragging ? 'scale(1.02)' : 'scale(1)',
     ...(element.showFrame
       ? {
           backgroundColor: element.frameColor || '#ffffff',
@@ -101,15 +103,17 @@ const TextElement: React.FC<TextElementProps> = ({
           borderRadius: '4px'
         }
       : {})
-  });
+  }), [element, sizeMap, isDragging]);
+
+  // Use temp position for immediate feedback, fallback to element position
+  const currentPosition = tempPosition || { x: element.x, y: element.y };
 
   return (
     <div
       ref={elementRef}
       style={{
         position: 'absolute',
-        left: element.x,
-        top: element.y,
+        transform: `translate3d(${currentPosition.x}px, ${currentPosition.y}px, 0)`,
         zIndex: isSelected ? 30 : 20,
         ...getTextStyles()
       }}
@@ -118,7 +122,7 @@ const TextElement: React.FC<TextElementProps> = ({
         isSelected 
           ? 'ring-2 ring-blue-500 shadow-lg' 
           : 'hover:ring-2 hover:ring-gray-300'
-      } transition-all duration-100`}
+      } transition-shadow duration-100`}
     >
       {element.text}
       
