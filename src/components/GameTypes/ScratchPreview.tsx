@@ -272,21 +272,6 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
   const [finishedCards, setFinishedCards] = useState<Set<number>>(new Set());
   const [hasWon, setHasWon] = useState(false);
 
-  // Calculer le résultat avec la logique instant win
-  const calculateResult = (): 'win' | 'lose' => {
-    if (instantWinConfig && instantWinConfig.mode === 'instant_winner') {
-      const hasReachedMaxWinners = instantWinConfig.maxWinners 
-        ? (instantWinConfig.winnersCount || 0) >= instantWinConfig.maxWinners 
-        : false;
-      
-      if (hasReachedMaxWinners) return 'lose';
-      
-      return Math.random() < instantWinConfig.winProbability ? 'win' : 'lose';
-    }
-    
-    return Math.random() > 0.7 ? 'win' : 'lose';
-  };
-
   // Gérer le démarrage du jeu
   const handleGameStart = () => {
     if (disabled) return;
@@ -317,7 +302,7 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
   if (!gameStarted) {
     return (
       <div className="flex flex-col items-center space-y-4">
-        {/* Grille des cartes avant le jeu */}
+        {/* Grille des cartes avant le jeu - responsive */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {cards.map((card: any, index: number) => (
             <ScratchCard
@@ -348,7 +333,7 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
 
   return (
     <div className="w-full flex flex-col items-center space-y-4">
-      {/* Grille responsive des cartes */}
+      {/* Grille responsive des cartes - toutes affichées simultanément */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
         {cards.map((card: any, index: number) => (
           <ScratchCard
