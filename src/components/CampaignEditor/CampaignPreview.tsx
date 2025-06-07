@@ -62,7 +62,16 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
         />
       );
     }
-    return <FunnelStandard campaign={campaign} />;
+    return (
+      <FunnelStandard
+        campaign={campaign}
+        key={`${campaign.id}-${JSON.stringify({
+          gameConfig: campaign.gameConfig,
+          design: campaign.design,
+          screens: campaign.screens,
+        })}`}
+      />
+    );
   };
 
   return (

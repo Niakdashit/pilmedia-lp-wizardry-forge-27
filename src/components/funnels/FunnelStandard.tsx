@@ -49,6 +49,11 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
       }
     }
     
+    if (campaign.type === 'form') {
+      setStep('end');
+      return;
+    }
+
     setStep('game');
   };
   
