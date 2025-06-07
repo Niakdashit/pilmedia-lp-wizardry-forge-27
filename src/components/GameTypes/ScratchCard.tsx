@@ -41,15 +41,15 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
   const getDimensions = () => {
     switch (gameSize) {
       case 'small':
-        return { width: 200, height: 160 };
+        return { width: 180, height: 140 };
       case 'medium':
-        return { width: 250, height: 200 };
+        return { width: 220, height: 170 };
       case 'large':
-        return { width: 300, height: 240 };
+        return { width: 260, height: 200 };
       case 'xlarge':
-        return { width: 350, height: 280 };
+        return { width: 300, height: 230 };
       default:
-        return { width: 250, height: 200 };
+        return { width: 220, height: 170 };
     }
   };
 
@@ -84,11 +84,11 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
     return (
       <div className="flex flex-col items-center w-full">
         <div 
-          className="relative rounded-lg overflow-hidden border-2 border-gray-300 shadow-sm" 
+          className="relative rounded-xl overflow-hidden border-2 border-gray-200 shadow-sm bg-white" 
           style={{
-            width: `min(100%, ${width}px)`,
+            width: `${width}px`,
             height: `${height}px`,
-            aspectRatio: `${width}/${height}`
+            maxWidth: '100%'
           }}
         >
           <ScratchCardContent
@@ -104,10 +104,10 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
   }
 
   return (
-    <div className="flex flex-col items-center w-full space-y-4">
+    <div className="flex flex-col items-center w-full space-y-3">
       {/* Progress bar pour le grattage */}
       {gameStarted && canScratch && !isRevealed && (
-        <div className="w-full max-w-[200px] px-2">
+        <div className="w-full max-w-[180px]">
           <div className="w-full bg-gray-200 rounded-full h-2">
             <div 
               className="bg-[#841b60] h-2 rounded-full transition-all duration-300" 
@@ -119,17 +119,17 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
 
       {/* Carte à gratter */}
       <div 
-        className={`relative rounded-lg overflow-hidden border-2 transition-all duration-200 shadow-md ${
+        className={`relative rounded-xl overflow-hidden border-2 transition-all duration-200 shadow-lg bg-white ${
           isSelected 
-            ? 'border-[#841b60] shadow-lg ring-2 ring-[#841b60]/20' 
+            ? 'border-[#841b60] shadow-xl ring-2 ring-[#841b60]/20' 
             : selectable && !locked
-              ? 'border-gray-300 hover:border-[#841b60] cursor-pointer hover:shadow-lg' 
-              : 'border-gray-300'
+              ? 'border-gray-200 hover:border-[#841b60] cursor-pointer hover:shadow-xl' 
+              : 'border-gray-200'
         } ${locked ? 'opacity-50' : ''}`}
         style={{
-          width: `min(100%, ${width}px)`,
+          width: `${width}px`,
           height: `${height}px`,
-          aspectRatio: `${width}/${height}`,
+          maxWidth: '100%',
           pointerEvents: locked ? 'none' : 'auto'
         }}
         onClick={handleCardClick}
@@ -153,6 +153,10 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
           locked={locked}
           isSelected={isSelected}
           canScratch={canScratch}
+          isRevealed={isRevealed}
+          result={result}
+          card={card}
+          config={config}
         />
       </div>
 
@@ -161,18 +165,18 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
         <motion.div 
           initial={{ opacity: 0, y: 20 }} 
           animate={{ opacity: 1, y: 0 }} 
-          className="w-full max-w-md mx-auto"
+          className="w-full max-w-sm mx-auto mt-4"
         >
-          <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200 text-center mx-4">
-            <div className="text-4xl mb-3">
+          <div className="bg-white p-4 rounded-xl shadow-lg border border-gray-100 text-center">
+            <div className="text-3xl mb-2">
               {result === 'win' ? '🎊' : '💫'}
             </div>
-            <h3 className="text-xl font-bold mb-3 text-gray-900">
+            <h3 className="text-lg font-bold mb-2 text-gray-900">
               {result === 'win' 
                 ? card.revealMessage || config?.revealMessage || 'Vous avez gagné !' 
                 : 'Dommage ! Réessayez !'}
             </h3>
-            <p className="text-gray-600 mb-6 leading-relaxed">
+            <p className="text-sm text-gray-600 mb-4">
               {result === 'win' 
                 ? 'Félicitations pour votre victoire !' 
                 : 'Tentez votre chance une prochaine fois.'}
@@ -180,7 +184,7 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
             {onReplay && (
               <button
                 onClick={onReplay}
-                className="px-8 py-3 bg-[#841b60] text-white font-medium rounded-lg hover:bg-[#6d164f] transition-colors shadow-sm"
+                className="px-6 py-2 bg-[#841b60] text-white font-medium rounded-lg hover:bg-[#6d164f] transition-colors shadow-sm"
               >
                 Rejouer
               </button>

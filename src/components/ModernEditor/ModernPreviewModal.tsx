@@ -39,7 +39,8 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
       justifyContent: 'center',
       backgroundColor: campaign.design?.background || '#f9fafb',
       position: 'relative' as const,
-      overflow: 'hidden' as const
+      overflow: 'auto' as const,
+      padding: '20px'
     } as React.CSSProperties;
 
     if (campaign.design?.backgroundImage) {
@@ -100,7 +101,7 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
       <div className="bg-white w-full h-full flex flex-col relative overflow-hidden rounded-3xl shadow-2xl max-w-7xl max-h-[90vh]">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b">
+        <div className="flex items-center justify-between p-4 border-b bg-white">
           <div className="flex items-center space-x-4">
             <h2 className="text-lg font-semibold">Aperçu - {campaign.name}</h2>
             <div className="flex items-center bg-gray-100 rounded-lg p-1">
@@ -139,15 +140,18 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
         </div>
 
         {/* Preview Content */}
-        <div className="flex-1 pt-20 overflow-auto">
-          <div className="w-full h-full flex items-center justify-center p-4">
-            <div style={getDeviceStyles()}>
+        <div className="flex-1 overflow-hidden bg-gray-100">
+          <div className="w-full h-full flex items-center justify-center p-8">
+            <div 
+              className="shadow-2xl rounded-2xl overflow-hidden border border-gray-200"
+              style={getDeviceStyles()}
+            >
               <div style={getContainerStyle()}>
                 {campaign.design?.backgroundImage && (
                   <div className="absolute inset-0 bg-black opacity-20" style={{ zIndex: 1 }} />
                 )}
                 <div
-                  className="relative z-10 w-full h-full flex items-center justify-center p-4"
+                  className="relative z-10 w-full h-full"
                   style={{ minHeight: device === 'desktop' ? '600px' : '100%' }}
                 >
                   {getFunnelComponent()}

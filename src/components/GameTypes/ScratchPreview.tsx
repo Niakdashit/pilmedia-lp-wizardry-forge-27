@@ -114,33 +114,42 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
 
   if (!gameStarted) {
     return (
-      <div className="flex flex-col items-center justify-center space-y-8 py-8 min-h-[400px]">
-        <ScratchGameGrid
-          cards={cards}
-          gameSize={gameSize}
-          gameStarted={false}
-          onCardFinish={() => {}}
-          onCardSelect={() => {}}
-          onScratchStart={() => {}}
-          selectedCard={null}
-          scratchStarted={false}
-          config={config}
-        />
+      <div className="flex flex-col items-center justify-center space-y-8 py-8 min-h-[400px] bg-gradient-to-br from-gray-50 to-gray-100">
+        <div className="w-full">
+          <ScratchGameGrid
+            cards={cards}
+            gameSize={gameSize}
+            gameStarted={false}
+            onCardFinish={() => {}}
+            onCardSelect={() => {}}
+            onScratchStart={() => {}}
+            selectedCard={null}
+            scratchStarted={false}
+            config={config}
+          />
+        </div>
 
-        <button
-          onClick={handleGameStart}
-          disabled={disabled}
-          className="px-8 py-4 rounded-lg font-semibold text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 shadow-lg"
-          style={{ backgroundColor: disabled ? '#6b7280' : buttonColor }}
-        >
-          {disabled ? 'Remplissez le formulaire' : buttonLabel}
-        </button>
+        <div className="text-center space-y-6">
+          <div className="space-y-2">
+            <h3 className="text-xl font-bold text-gray-800">Cartes à gratter</h3>
+            <p className="text-gray-600">Cliquez sur le bouton pour commencer à jouer</p>
+          </div>
+          
+          <button
+            onClick={handleGameStart}
+            disabled={disabled}
+            className="px-8 py-4 rounded-xl font-semibold text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 shadow-lg"
+            style={{ backgroundColor: disabled ? '#6b7280' : buttonColor }}
+          >
+            {disabled ? 'Remplissez le formulaire' : buttonLabel}
+          </button>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="w-full flex flex-col items-center space-y-8 py-6 min-h-[500px]">
+    <div className="w-full flex flex-col items-center space-y-8 py-6 min-h-[500px] bg-gradient-to-br from-gray-50 to-gray-100">
       <ScratchGameGrid
         cards={cards}
         gameSize={gameSize}
@@ -155,22 +164,24 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
       />
 
       <div className="text-center space-y-4 max-w-md mx-auto px-4">
-        <div className="text-base text-gray-600 font-medium">
-          {!scratchStarted && selectedCard === null && "Choisissez une carte à gratter"}
-          {!scratchStarted && selectedCard !== null && "Grattez votre carte sélectionnée"}
-          {scratchStarted && `Cartes terminées: ${finishedCards.size}/${cards.length}`}
-        </div>
-        
-        {scratchStarted && (
-          <div className="w-full max-w-xs mx-auto">
-            <div className="w-full bg-gray-200 rounded-full h-3 shadow-inner">
-              <div 
-                className="bg-[#841b60] h-3 rounded-full transition-all duration-300 shadow-sm" 
-                style={{ width: `${(finishedCards.size / cards.length) * 100}%` }} 
-              />
-            </div>
+        <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 shadow-sm">
+          <div className="text-base text-gray-700 font-medium mb-2">
+            {!scratchStarted && selectedCard === null && "🎯 Choisissez une carte à gratter"}
+            {!scratchStarted && selectedCard !== null && "✨ Grattez votre carte sélectionnée"}
+            {scratchStarted && `🎮 Progression: ${finishedCards.size}/${cards.length} cartes`}
           </div>
-        )}
+          
+          {scratchStarted && (
+            <div className="w-full max-w-xs mx-auto">
+              <div className="w-full bg-gray-200 rounded-full h-3 shadow-inner">
+                <div 
+                  className="bg-gradient-to-r from-[#841b60] to-[#a91e6b] h-3 rounded-full transition-all duration-500 shadow-sm" 
+                  style={{ width: `${(finishedCards.size / cards.length) * 100}%` }} 
+                />
+              </div>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
