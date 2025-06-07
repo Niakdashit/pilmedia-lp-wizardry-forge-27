@@ -58,7 +58,16 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
         />
       );
     }
-    return <FunnelStandard campaign={enhancedCampaign} />;
+    return (
+      <FunnelStandard
+        campaign={enhancedCampaign}
+        key={JSON.stringify({
+          gameConfig: enhancedCampaign.gameConfig,
+          design: enhancedCampaign.design,
+          screens: enhancedCampaign.screens,
+        })}
+      />
+    );
   };
 
   const getContainerStyle = () => {
