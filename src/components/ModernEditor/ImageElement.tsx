@@ -44,14 +44,14 @@ const ImageElement: React.FC<ImageElementProps> = ({
     if (!containerRef.current) return;
     
     const containerRect = containerRef.current.getBoundingClientRect();
-    const currentWidth = tempResize?.width || tempPosition?.width || element.width;
-    const currentHeight = tempResize?.height || tempPosition?.height || element.height;
+    const currentWidth = tempResize?.width || element.width;
+    const currentHeight = tempResize?.height || element.height;
     
     const centerX = (containerRect.width - currentWidth) / 2;
     const centerY = (containerRect.height - currentHeight) / 2;
     
     onUpdate({ x: centerX, y: centerY });
-  }, [onUpdate, containerRef, element, tempPosition, tempResize]);
+  }, [onUpdate, containerRef, element, tempResize]);
 
   const toggleAspectRatio = useCallback(() => {
     setAspectRatioLocked(!aspectRatioLocked);

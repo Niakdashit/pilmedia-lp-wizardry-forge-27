@@ -36,13 +36,11 @@ export const useImageElementDrag = (
       let newX = moveEvent.clientX - containerRect.left - offsetX;
       let newY = moveEvent.clientY - containerRect.top - offsetY;
       
-      // Constrain to container bounds
-      const currentWidth = tempPosition?.width || element.width;
-      const currentHeight = tempPosition?.height || element.height;
-      newX = Math.max(0, Math.min(newX, containerRect.width - currentWidth));
-      newY = Math.max(0, Math.min(newY, containerRect.height - currentHeight));
+      // Constrain to container bounds using current element dimensions
+      newX = Math.max(0, Math.min(newX, containerRect.width - element.width));
+      newY = Math.max(0, Math.min(newY, containerRect.height - element.height));
       
-      setTempPosition(prev => ({ ...prev, x: newX, y: newY }));
+      setTempPosition({ x: newX, y: newY });
     };
 
     const handleMouseUp = () => {
@@ -60,7 +58,7 @@ export const useImageElementDrag = (
 
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
-  }, [containerRef, element, onUpdate, tempPosition]);
+  }, [containerRef, element, onUpdate]);
 
   return {
     isDragging,
