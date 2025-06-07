@@ -12,11 +12,26 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { sidebarCollapsed, toggleSidebar } = useAppContext();
 
-  // Empêche le scroll du background quand la sidebar est ouverte sur mobile
+  // Empêche le scroll du background seulement quand la sidebar est ouverte sur mobile
   useEffect(() => {
     if (typeof document !== 'undefined') {
-      document.body.classList.toggle('overflow-hidden', !sidebarCollapsed);
+      // Seulement empêcher le scroll sur mobile quand la sidebar est ouverte
+      const isMobile = window.innerWidth < 768;
+      document.body.classList.toggle('overflow-hidden', isMobile && !sidebarCollapsed);
     }
+  }, [sidebarCollapsed]);
+
+  // Écouter les changements de taille d'écran pour réajuster le scroll
+  useEffect(() => {
+    const handleResize = () => {
+      if (typeof document !== 'undefined') {
+        const isMobile = window.innerWidth < 768;
+        document.body.classList.toggle('overflow-hidden', isMobile && !sidebarCollapsed);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, [sidebarCollapsed]);
 
   return (
