@@ -1,8 +1,7 @@
 
 import React, { useState } from 'react';
 import { X, Monitor, Smartphone, Tablet } from 'lucide-react';
-import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
-import FunnelStandard from '../funnels/FunnelStandard';
+import CampaignPreview from '../CampaignEditor/CampaignPreview';
 
 interface ModernPreviewModalProps {
   isOpen: boolean;
@@ -31,28 +30,14 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
   };
 
   const getContainerStyle = () => {
-    const baseStyle = {
+    return {
       width: '100%',
       height: '100%',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: campaign.design?.background || '#f9fafb',
-      position: 'relative' as const,
-      overflow: 'auto' as const,
-      padding: '20px'
+      backgroundColor: '#ffffff'
     } as React.CSSProperties;
-
-    if (campaign.design?.backgroundImage) {
-      return {
-        ...baseStyle,
-        backgroundImage: `url(${campaign.design.backgroundImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
-      };
-    }
-    return baseStyle;
   };
 
   const enhancedCampaign = {
@@ -80,22 +65,6 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
     }
   };
 
-  const getFunnelComponent = () => {
-    const unlockedTypes = ['wheel', 'scratch', 'jackpot', 'dice'];
-    const funnel =
-      enhancedCampaign.funnel ||
-      (unlockedTypes.includes(enhancedCampaign.type) ? 'unlocked_game' : 'standard');
-    if (funnel === 'unlocked_game') {
-      return (
-        <FunnelUnlockedGame
-          campaign={enhancedCampaign}
-          previewMode={device === 'desktop' ? 'desktop' : device}
-          modalContained={false}
-        />
-      );
-    }
-    return <FunnelStandard campaign={enhancedCampaign} />;
-  };
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -147,15 +116,15 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
               style={getDeviceStyles()}
             >
               <div style={getContainerStyle()}>
-                {campaign.design?.backgroundImage && (
-                  <div className="absolute inset-0 bg-black opacity-20" style={{ zIndex: 1 }} />
-                )}
-                <div
-                  className="relative z-10 w-full h-full"
-                  style={{ minHeight: device === 'desktop' ? '600px' : '100%' }}
-                >
-                  {getFunnelComponent()}
-                </div>
+                <CampaignPreview
+                  campaign={enhancedCampaign}
+                  previewDevice={device}
+                  key={`${device}-${campaign.id}-${JSON.stringify({
+                    gameConfig: enhancedCampaign.gameConfig,
+                    design: enhancedCampaign.design,
+                    screens: enhancedCampaign.screens
+                  })}`}
+                />
               </div>
             </div>
           </div>
