@@ -93,7 +93,6 @@ const GameRenderer: React.FC<GameRendererProps> = ({
             buttonLabel={buttonLabel}
             buttonColor={buttonColor}
             gameSize={gameSize}
-            isPreview={true}
           />
         </div>
       );

@@ -90,6 +90,7 @@ const GameRenderer: React.FC<GameRendererProps> = ({
             disabled={!formValidated}
           />
         );
+      
       case 'scratch':
         return (
           <ScratchPreview 
@@ -97,12 +98,12 @@ const GameRenderer: React.FC<GameRendererProps> = ({
             buttonLabel={buttonLabel}
             buttonColor={buttonColor}
             gameSize={gameSize}
-            isPreview={true}
             disabled={!formValidated}
             onFinish={handleGameComplete}
             onStart={handleGameStartInternal}
           />
         );
+      
       case 'jackpot':
         return (
           <Jackpot
