@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { Trash2, RotateCw, Target, Lock, Unlock } from 'lucide-react';
 
@@ -33,7 +32,6 @@ const ImageElement: React.FC<ImageElementProps> = ({
 
     if (action === 'drag') {
       const elementRect = elementRef.current.getBoundingClientRect();
-      const containerRect = containerRef.current.getBoundingClientRect();
       
       const offsetX = e.clientX - elementRect.left;
       const offsetY = e.clientY - elementRect.top;
