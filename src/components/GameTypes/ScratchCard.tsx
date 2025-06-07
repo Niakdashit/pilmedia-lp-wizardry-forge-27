@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useScratchCard } from './useScratchCard';
 import ScratchCanvas from './ScratchCanvas';
@@ -141,8 +140,6 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
           canvasRef={canvasRef}
           canScratch={canScratch}
           isRevealed={isRevealed}
-          width={width}
-          height={height}
         />
 
         <ScratchCardOverlays

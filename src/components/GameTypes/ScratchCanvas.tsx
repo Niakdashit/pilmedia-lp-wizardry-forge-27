@@ -5,16 +5,12 @@ interface ScratchCanvasProps {
   canvasRef: React.RefObject<HTMLCanvasElement>;
   canScratch: boolean;
   isRevealed: boolean;
-  width: number;
-  height: number;
 }
 
 const ScratchCanvas: React.FC<ScratchCanvasProps> = ({
   canvasRef,
   canScratch,
-  isRevealed,
-  width,
-  height
+  isRevealed
 }) => {
   if (!canScratch || isRevealed) {
     return null;
