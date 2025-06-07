@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import GameCanvasPreview from '../CampaignEditor/GameCanvasPreview';
 
 interface ModernEditorCanvasProps {
@@ -14,6 +14,9 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
   gameSize,
   gamePosition
 }) => {
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const canvasRef = useRef<HTMLDivElement>(null);
 
   const getCanvasStyle = () => {
     const baseStyle = {
@@ -114,18 +117,95 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
     large: '1.25rem'
   };
 
-  const customTextPosition: Record<string, React.CSSProperties> = {
-    top: { top: '8px', left: '50%', transform: 'translateX(-50%)' },
-    bottom: { bottom: '8px', left: '50%', transform: 'translateX(-50%)' },
-    left: { left: '8px', top: '50%', transform: 'translateY(-50%)' },
-    right: { right: '8px', top: '50%', transform: 'translateY(-50%)' },
-    center: { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }
+  // Get custom text position with drag support
+  const getCustomTextPosition = (): React.CSSProperties => {
+    const basePosition = customText?.position || 'top';
+    const dragPosition = customText?.dragPosition;
+
+    // If we have a drag position, use it
+    if (dragPosition) {
+      return {
+        position: 'absolute',
+        left: `${dragPosition.x}px`,
+        top: `${dragPosition.y}px`,
+        transform: 'none'
+      };
+    }
+
+    // Otherwise use the predefined position
+    const positions: Record<string, React.CSSProperties> = {
+      top: { top: '8px', left: '50%', transform: 'translateX(-50%)' },
+      bottom: { bottom: '8px', left: '50%', transform: 'translateX(-50%)' },
+      left: { left: '8px', top: '50%', transform: 'translateY(-50%)' },
+      right: { right: '8px', top: '50%', transform: 'translateY(-50%)' },
+      center: { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }
+    };
+
+    return {
+      position: 'absolute',
+      ...positions[basePosition]
+    };
   };
 
+  const handleTextMouseDown = (e: React.MouseEvent) => {
+    if (!customText?.enabled) return;
+    
+    e.preventDefault();
+    setIsDragging(true);
+    
+    const textElement = e.currentTarget as HTMLElement;
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const canvasRect = canvas.getBoundingClientRect();
+    const textRect = textElement.getBoundingClientRect();
+    
+    setDragOffset({
+      x: e.clientX - textRect.left,
+      y: e.clientY - textRect.top
+    });
+
+    const handleMouseMove = (moveEvent: MouseEvent) => {
+      if (!canvas) return;
+      
+      const canvasRect = canvas.getBoundingClientRect();
+      const newX = moveEvent.clientX - canvasRect.left - dragOffset.x;
+      const newY = moveEvent.clientY - canvasRect.top - dragOffset.y;
+      
+      // Update the campaign with the new position
+      const updatedCampaign = {
+        ...campaign,
+        design: {
+          ...campaign.design,
+          customText: {
+            ...customText,
+            dragPosition: { x: newX, y: newY }
+          }
+        }
+      };
+      
+      // We need to trigger a re-render with the new position
+      // This is a bit hacky but necessary for the preview
+      Object.assign(campaign, updatedCampaign);
+    };
+
+    const handleMouseUp = () => {
+      setIsDragging(false);
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+  };
 
   return (
     <div className="w-full h-full flex items-center justify-center bg-gray-100 p-4">
-      <div style={getCanvasStyle()} className="flex flex-col h-full w-full relative">
+      <div 
+        ref={canvasRef}
+        style={getCanvasStyle()} 
+        className="flex flex-col h-full w-full relative"
+      >
         {headerBanner?.enabled && (
           <div
             className="relative w-full"
@@ -168,13 +248,17 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
             key={`preview-${gameSize}-${gamePosition}-${campaign.buttonConfig?.color}-${JSON.stringify(campaign.gameConfig?.[campaign.type])}`}
             previewDevice={previewDevice}
           />
+          
+          {/* Draggable Custom Text */}
           {customText?.enabled && (
             <div
               style={{
-                position: 'absolute',
-                ...customTextPosition[customText.position || 'top'],
+                ...getCustomTextPosition(),
                 color: customText.color,
                 fontSize: sizeMap[customText.size] || '1rem',
+                cursor: isDragging ? 'grabbing' : 'grab',
+                userSelect: 'none',
+                zIndex: 20,
                 ...(customText.showFrame
                   ? {
                       backgroundColor: customText.frameColor,
@@ -184,6 +268,8 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
                     }
                   : {})
               }}
+              onMouseDown={handleTextMouseDown}
+              className={`${isDragging ? 'shadow-lg' : 'hover:shadow-md'} transition-shadow`}
             >
               {customText.text}
             </div>
