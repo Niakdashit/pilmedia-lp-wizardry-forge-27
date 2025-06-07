@@ -9,10 +9,10 @@ interface WheelGameConfigProps {
 }
 
 const POSITION_OPTIONS = [
+  { value: 'centre', label: 'Centre (tout visible)' },
   { value: 'gauche', label: 'Gauche (moitié droite visible)' },
   { value: 'droite', label: 'Droite (moitié gauche visible)' },
-  { value: 'bas', label: 'Bas (moitié haute visible)' },
-  { value: 'centre', label: 'Centre (tout visible)' }
+  { value: 'bas', label: 'Bas (moitié haute visible)' }
 ];
 
 const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
@@ -26,7 +26,7 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
   const borderOutlineColor = campaign.config?.roulette?.borderOutlineColor || '#FFD700';
   const segmentColor1 = campaign.config?.roulette?.segmentColor1 || '#FFB3BA';
   const segmentColor2 = campaign.config?.roulette?.segmentColor2 || '#BAFFC9';
-  // 🟢 Position ajoutée
+  // Position par défaut centrée
   const position = campaign.config?.roulette?.position || 'centre';
 
   // Initialize with 4 default segments
@@ -47,7 +47,8 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
             ...prev.config?.roulette,
             segments: defaultSegments,
             segmentColor1,
-            segmentColor2
+            segmentColor2,
+            position: 'centre' // Position par défaut centrée
           }
         }
       }));
@@ -208,7 +209,7 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
         gameType="wheel" 
       />
 
-      {/* 🟢 NOUVEAU - Sélection de la position */}
+      {/* Sélection de la position */}
       <div className="space-y-2">
         <label className="text-sm font-medium text-gray-700">Position de la roue</label>
         <select
@@ -221,7 +222,6 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
           ))}
         </select>
       </div>
-      {/* FIN AJOUT POSITION */}
 
       <div className="space-y-4">
         <h3 className="text-lg font-medium text-gray-900">Couleurs personnalisées</h3>
