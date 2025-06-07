@@ -1,5 +1,5 @@
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import GameCanvasPreview from '../CampaignEditor/GameCanvasPreview';
 
 interface ModernEditorCanvasProps {
@@ -17,6 +17,7 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [tempPosition, setTempPosition] = useState<{ x: number; y: number } | null>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
 
   const getCanvasStyle = () => {
@@ -113,15 +114,25 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
   const customText = campaign.design?.customText;
 
   const sizeMap: Record<string, string> = {
-    small: '0.875rem',
-    medium: '1rem',
-    large: '1.25rem'
+    xs: '10px',
+    sm: '12px',
+    base: '14px',
+    lg: '16px',
+    xl: '18px',
+    '2xl': '20px',
+    '3xl': '24px',
+    '4xl': '28px',
+    '5xl': '32px',
+    '6xl': '36px',
+    '7xl': '48px',
+    '8xl': '60px',
+    '9xl': '72px'
   };
 
-  // Get custom text position with drag support
+  // Get custom text position with improved drag support
   const getCustomTextPosition = (): React.CSSProperties => {
     const basePosition = customText?.position || 'top';
-    const dragPosition = customText?.dragPosition;
+    const dragPosition = tempPosition || customText?.dragPosition;
 
     // If we have a drag position, use it
     if (dragPosition) {
@@ -148,10 +159,27 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
     };
   };
 
+  const updateCampaignPosition = useCallback((newPosition: { x: number; y: number }) => {
+    const updatedCampaign = {
+      ...campaign,
+      design: {
+        ...campaign.design,
+        customText: {
+          ...customText,
+          dragPosition: newPosition
+        }
+      }
+    };
+    
+    // Update the campaign object directly for immediate preview
+    Object.assign(campaign, updatedCampaign);
+  }, [campaign, customText]);
+
   const handleTextMouseDown = (e: React.MouseEvent) => {
     if (!customText?.enabled) return;
     
     e.preventDefault();
+    e.stopPropagation();
     setIsDragging(true);
     
     const textElement = e.currentTarget as HTMLElement;
@@ -159,6 +187,7 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
     if (!canvas) return;
 
     const textRect = textElement.getBoundingClientRect();
+    const canvasRect = canvas.getBoundingClientRect();
     
     setDragOffset({
       x: e.clientX - textRect.left,
@@ -169,34 +198,55 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
       if (!canvas) return;
       
       const canvasRect = canvas.getBoundingClientRect();
-      const newX = moveEvent.clientX - canvasRect.left - dragOffset.x;
-      const newY = moveEvent.clientY - canvasRect.top - dragOffset.y;
+      const newX = Math.max(0, Math.min(
+        moveEvent.clientX - canvasRect.left - dragOffset.x,
+        canvasRect.width - textRect.width
+      ));
+      const newY = Math.max(0, Math.min(
+        moveEvent.clientY - canvasRect.top - dragOffset.y,
+        canvasRect.height - textRect.height
+      ));
       
-      // Update the campaign with the new position
-      const updatedCampaign = {
-        ...campaign,
-        design: {
-          ...campaign.design,
-          customText: {
-            ...customText,
-            dragPosition: { x: newX, y: newY }
-          }
-        }
-      };
-      
-      // We need to trigger a re-render with the new position
-      // This is a bit hacky but necessary for the preview
-      Object.assign(campaign, updatedCampaign);
+      setTempPosition({ x: newX, y: newY });
     };
 
     const handleMouseUp = () => {
       setIsDragging(false);
+      if (tempPosition) {
+        updateCampaignPosition(tempPosition);
+        setTempPosition(null);
+      }
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
 
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
+  };
+
+  const getTextStyles = (): React.CSSProperties => {
+    const styles: React.CSSProperties = {
+      color: customText?.color || '#000000',
+      fontSize: sizeMap[customText?.size || 'base'] || '14px',
+      cursor: isDragging ? 'grabbing' : 'grab',
+      userSelect: 'none',
+      zIndex: 20,
+      fontWeight: customText?.bold ? 'bold' : 'normal',
+      fontStyle: customText?.italic ? 'italic' : 'normal',
+      textDecoration: customText?.underline ? 'underline' : 'none',
+      fontFamily: customText?.fontFamily || 'Inter, sans-serif',
+      transition: isDragging ? 'none' : 'all 0.2s ease',
+      ...(customText?.showFrame
+        ? {
+            backgroundColor: customText.frameColor,
+            border: `1px solid ${customText.frameBorderColor}`,
+            padding: '4px 8px',
+            borderRadius: '4px'
+          }
+        : {})
+    };
+
+    return styles;
   };
 
   return (
@@ -249,27 +299,15 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
             previewDevice={previewDevice}
           />
           
-          {/* Draggable Custom Text */}
+          {/* Enhanced Draggable Custom Text */}
           {customText?.enabled && (
             <div
               style={{
                 ...getCustomTextPosition(),
-                color: customText.color,
-                fontSize: sizeMap[customText.size] || '1rem',
-                cursor: isDragging ? 'grabbing' : 'grab',
-                userSelect: 'none',
-                zIndex: 20,
-                ...(customText.showFrame
-                  ? {
-                      backgroundColor: customText.frameColor,
-                      border: `1px solid ${customText.frameBorderColor}`,
-                      padding: '4px 8px',
-                      borderRadius: '4px'
-                    }
-                  : {})
+                ...getTextStyles()
               }}
               onMouseDown={handleTextMouseDown}
-              className={`${isDragging ? 'shadow-lg' : 'hover:shadow-md'} transition-shadow`}
+              className={`${isDragging ? 'shadow-lg scale-105' : 'hover:shadow-md'} transition-all duration-200`}
             >
               {customText.text}
             </div>
