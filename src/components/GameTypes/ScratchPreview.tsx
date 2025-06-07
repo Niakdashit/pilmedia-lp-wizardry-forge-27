@@ -114,7 +114,7 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
 
   if (!gameStarted) {
     return (
-      <div className="flex flex-col items-center space-y-6 my-6">
+      <div className="flex flex-col items-center justify-center space-y-8 py-8 min-h-[400px]">
         <ScratchGameGrid
           cards={cards}
           gameSize={gameSize}
@@ -130,7 +130,7 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
         <button
           onClick={handleGameStart}
           disabled={disabled}
-          className="px-6 py-3 rounded-lg font-semibold text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90"
+          className="px-8 py-4 rounded-lg font-semibold text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90 shadow-lg"
           style={{ backgroundColor: disabled ? '#6b7280' : buttonColor }}
         >
           {disabled ? 'Remplissez le formulaire' : buttonLabel}
@@ -140,7 +140,7 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
   }
 
   return (
-    <div className="w-full flex flex-col items-center space-y-6">
+    <div className="w-full flex flex-col items-center space-y-8 py-6 min-h-[500px]">
       <ScratchGameGrid
         cards={cards}
         gameSize={gameSize}
@@ -154,19 +154,21 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
         onReplay={handleReplay}
       />
 
-      <div className="text-center">
-        <div className="text-sm text-gray-600">
+      <div className="text-center space-y-4 max-w-md mx-auto px-4">
+        <div className="text-base text-gray-600 font-medium">
           {!scratchStarted && selectedCard === null && "Choisissez une carte à gratter"}
           {!scratchStarted && selectedCard !== null && "Grattez votre carte sélectionnée"}
           {scratchStarted && `Cartes terminées: ${finishedCards.size}/${cards.length}`}
         </div>
         
         {scratchStarted && (
-          <div className="w-48 bg-gray-200 rounded-full h-2 mt-2">
-            <div 
-              className="bg-[#841b60] h-2 rounded-full transition-all duration-300" 
-              style={{ width: `${(finishedCards.size / cards.length) * 100}%` }} 
-            />
+          <div className="w-full max-w-xs mx-auto">
+            <div className="w-full bg-gray-200 rounded-full h-3 shadow-inner">
+              <div 
+                className="bg-[#841b60] h-3 rounded-full transition-all duration-300 shadow-sm" 
+                style={{ width: `${(finishedCards.size / cards.length) * 100}%` }} 
+              />
+            </div>
           </div>
         )}
       </div>

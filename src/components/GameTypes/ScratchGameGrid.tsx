@@ -27,58 +27,63 @@ const ScratchGameGrid: React.FC<ScratchGameGridProps> = ({
   config,
   onReplay
 }) => {
-  // Responsive grid: 2 cards on mobile, 3 on tablet/desktop
-  const columnClasses = cards.length === 1
-    ? 'grid-cols-1'
-    : 'grid-cols-2 md:grid-cols-3';
+  // Configuration responsive de la grille
+  const getGridConfig = () => {
+    if (cards.length === 1) {
+      return {
+        containerClass: 'flex justify-center',
+        gridClass: 'w-full max-w-sm',
+        spacing: 'space-y-6'
+      };
+    }
+    
+    if (cards.length === 2) {
+      return {
+        containerClass: 'grid grid-cols-1 sm:grid-cols-2 place-items-center',
+        gridClass: 'w-full',
+        spacing: 'gap-6 sm:gap-8'
+      };
+    }
+    
+    return {
+      containerClass: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 place-items-center',
+      gridClass: 'w-full',
+      spacing: 'gap-6 sm:gap-8'
+    };
+  };
 
-  // Center the grid when there is a single card
-  const gridClasses = `grid ${columnClasses} justify-center`;
-
-  // Consistent spacing between cards
-  const spacingClasses = cards.length === 1
-    ? 'gap-y-6'
-    : 'gap-4 md:gap-6';
+  const { containerClass, gridClass, spacing } = getGridConfig();
 
   return (
-    <div className="w-full max-w-6xl mx-auto px-4">
-      <div className={`${gridClasses} ${spacingClasses}`}>
+    <div className="w-full max-w-7xl mx-auto px-4 py-6">
+      <div className={`${containerClass} ${spacing} ${gridClass}`}>
         {cards.map((card: any, index: number) => {
           const isThisCardSelected = selectedCard === index;
           
-          // Card states logic:
-          // 1. If game hasn't started -> show preview only
-          // 2. If game started but no scratch started and no card selected -> all cards selectable
-          // 3. If a card is selected but scratch hasn't started -> only selected card can be scratched, others locked
-          // 4. If scratch has started -> only the scratched card is active, all others permanently locked
-          
           const isLocked = gameStarted && scratchStarted && !isThisCardSelected;
-          
-          // Cards are selectable only when game started, no scratch started, and no card is selected yet
           const isSelectable = gameStarted && !scratchStarted && selectedCard === null;
-          
-          // Only the selected card can be scratched (and only after selection)
           const canScratch = gameStarted && isThisCardSelected;
 
           console.log(`Card ${index}: selected=${isThisCardSelected}, locked=${isLocked}, selectable=${isSelectable}, canScratch=${canScratch}`);
 
           return (
-            <ScratchCard
-              key={card.id || index}
-              card={card}
-              index={index}
-              gameSize={gameSize}
-              gameStarted={gameStarted}
-              onCardFinish={(result) => onCardFinish(result, index)}
-              onCardSelect={() => onCardSelect(index)}
-              onScratchStart={() => onScratchStart(index)}
-              locked={isLocked}
-              selectable={isSelectable}
-              canScratch={canScratch}
-              isSelected={isThisCardSelected}
-              config={config}
-              onReplay={onReplay}
-            />
+            <div key={card.id || index} className="w-full max-w-sm mx-auto">
+              <ScratchCard
+                card={card}
+                index={index}
+                gameSize={gameSize}
+                gameStarted={gameStarted}
+                onCardFinish={(result) => onCardFinish(result, index)}
+                onCardSelect={() => onCardSelect(index)}
+                onScratchStart={() => onScratchStart(index)}
+                locked={isLocked}
+                selectable={isSelectable}
+                canScratch={canScratch}
+                isSelected={isThisCardSelected}
+                config={config}
+                onReplay={onReplay}
+              />
+            </div>
           );
         })}
       </div>
