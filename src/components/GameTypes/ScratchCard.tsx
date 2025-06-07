@@ -23,35 +23,21 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
   const [isRevealed, setIsRevealed] = useState(false);
   const [scratchPercentage, setScratchPercentage] = useState(0);
   const [result, setResult] = useState<'win' | 'lose' | null>(null);
+  const [hasNotifiedResult, setHasNotifiedResult] = useState(false);
 
   // Dimensions selon la taille
   const getDimensions = () => {
     switch (gameSize) {
       case 'small':
-        return {
-          width: 160,
-          height: 120
-        };
+        return { width: 160, height: 120 };
       case 'medium':
-        return {
-          width: 200,
-          height: 140
-        };
+        return { width: 200, height: 140 };
       case 'large':
-        return {
-          width: 240,
-          height: 180
-        };
+        return { width: 240, height: 180 };
       case 'xlarge':
-        return {
-          width: 280,
-          height: 200
-        };
+        return { width: 280, height: 200 };
       default:
-        return {
-          width: 200,
-          height: 140
-        };
+        return { width: 200, height: 140 };
     }
   };
   
@@ -59,7 +45,7 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
 
   useEffect(() => {
     if (gameStarted && !result) {
-      // Calculer le résultat pour cette carte
+      // Calculer le résultat pour cette carte (70% de chance de perdre, 30% de gagner)
       const gameResult = Math.random() > 0.7 ? 'win' : 'lose';
       setResult(gameResult);
     }
@@ -83,15 +69,20 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
         };
         img.src = surface;
       } else {
-        ctx.fillStyle = card.scratchColor || config?.scratchColor || '#C0C0C0';
+        // Surface métallique par défaut
+        const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+        gradient.addColorStop(0, '#E5E5E5');
+        gradient.addColorStop(0.5, '#C0C0C0');
+        gradient.addColorStop(1, '#A0A0A0');
+        ctx.fillStyle = gradient;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        // Texture métallique par défaut
+        // Texture
         ctx.fillStyle = '#999';
-        ctx.font = '12px Arial';
+        ctx.font = `${Math.max(12, width * 0.06)}px Arial`;
         ctx.textAlign = 'center';
         ctx.fillText('Grattez ici', canvas.width / 2, canvas.height / 2 - 5);
-        ctx.fillText('pour découvrir', canvas.width / 2, canvas.height / 2 + 8);
+        ctx.fillText('pour découvrir', canvas.width / 2, canvas.height / 2 + 10);
       }
       
       let isDrawing = false;
@@ -115,7 +106,7 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
         const { x, y } = getXY(e);
         ctx.globalCompositeOperation = 'destination-out';
         ctx.beginPath();
-        ctx.arc(x, y, 15, 0, Math.PI * 2);
+        ctx.arc(x, y, Math.max(10, width * 0.08), 0, Math.PI * 2);
         ctx.fill();
 
         // Calculer le pourcentage gratté
@@ -125,12 +116,13 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
         for (let i = 0; i < pixels.length; i += 4) {
           if (pixels[i + 3] === 0) transparentPixels++;
         }
-        const percentage = transparentPixels / (pixels.length / 4) * 100;
+        const percentage = (transparentPixels / (pixels.length / 4)) * 100;
         setScratchPercentage(Math.round(percentage));
         
         const requiredPercent = config?.scratchArea || 70;
-        if (percentage >= requiredPercent && !isRevealed) {
+        if (percentage >= requiredPercent && !isRevealed && !hasNotifiedResult) {
           setIsRevealed(true);
+          setHasNotifiedResult(true);
           if (onCardFinish && result) {
             setTimeout(() => onCardFinish(result), 500);
           }
@@ -162,11 +154,11 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
         canvas.removeEventListener('touchend', stopDrawing);
       };
     }
-  }, [config, isRevealed, gameStarted, result, width, height, onCardFinish, card]);
+  }, [config, isRevealed, gameStarted, result, width, height, onCardFinish, card, hasNotifiedResult]);
 
   const getResultContent = () => {
     const revealImage = card.revealImage || config?.revealImage;
-    const revealMessage = card.revealMessage || config?.revealMessage;
+    const revealMessage = card.revealMessage || config?.revealMessage || 'Félicitations !';
     
     if (revealImage) {
       return <img src={revealImage} alt="Contenu révélé" className="w-full h-full object-cover" />;
@@ -180,7 +172,7 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
           {result === 'win' ? '🎉' : '😔'}
         </div>
         <div className="text-sm font-bold text-gray-800 text-center px-2">
-          {result === 'win' ? revealMessage || 'Félicitations !' : 'Dommage !'}
+          {result === 'win' ? revealMessage : 'Dommage !'}
         </div>
       </div>
     );
