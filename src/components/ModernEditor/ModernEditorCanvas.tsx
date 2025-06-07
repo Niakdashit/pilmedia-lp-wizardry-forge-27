@@ -18,6 +18,7 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
   gamePosition
 }) => {
   const [selectedElement, setSelectedElement] = useState<{type: 'text' | 'image', id: number} | null>(null);
+  const [showGridLines, setShowGridLines] = useState(false);
   const canvasRef = useRef<HTMLDivElement>(null);
 
   const getCanvasStyle = () => {
@@ -32,7 +33,7 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
       overflow: 'hidden'
     };
 
-    // Déterminer quelle image de fond utiliser
+    // Determine background image based on device
     let backgroundImage;
     if (previewDevice === 'mobile' && campaign.design?.mobileBackgroundImage) {
       backgroundImage = `url(${campaign.design.mobileBackgroundImage})`;
@@ -175,14 +176,35 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
     setSelectedElement(null);
   }, [campaign, customImages]);
 
+  const handleCanvasClick = (e: React.MouseEvent) => {
+    // Only deselect if clicking directly on the canvas, not on child elements
+    if (e.target === e.currentTarget) {
+      setSelectedElement(null);
+    }
+  };
+
   return (
     <div className="w-full h-full flex items-center justify-center bg-gray-100 p-4">
       <div 
         ref={canvasRef}
         style={getCanvasStyle()} 
         className="flex flex-col h-full w-full relative"
-        onClick={() => setSelectedElement(null)}
+        onClick={handleCanvasClick}
       >
+        {/* Grid lines for alignment (optional visual aid) */}
+        {showGridLines && (
+          <div className="absolute inset-0 pointer-events-none z-10">
+            <svg width="100%" height="100%" className="opacity-20">
+              <defs>
+                <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
+                  <path d="M 20 0 L 0 0 0 20" fill="none" stroke="#3b82f6" strokeWidth="0.5"/>
+                </pattern>
+              </defs>
+              <rect width="100%" height="100%" fill="url(#grid)" />
+            </svg>
+          </div>
+        )}
+
         {headerBanner?.enabled && (
           <div
             className="relative w-full"
@@ -230,7 +252,7 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
           {customTexts.map((customText: any) => (
             customText?.enabled && (
               <TextElement
-                key={customText.id}
+                key={`text-${customText.id}`}
                 element={customText}
                 isSelected={selectedElement?.type === 'text' && selectedElement?.id === customText.id}
                 onSelect={() => setSelectedElement({ type: 'text', id: customText.id })}
@@ -245,7 +267,7 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
           {/* Custom Image Elements */}
           {customImages.map((customImage: any) => (
             <ImageElement
-              key={customImage.id}
+              key={`image-${customImage.id}`}
               element={customImage}
               isSelected={selectedElement?.type === 'image' && selectedElement?.id === customImage.id}
               onSelect={() => setSelectedElement({ type: 'image', id: customImage.id })}
@@ -290,6 +312,15 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
             )}
           </div>
         )}
+
+        {/* Grid toggle button (for development/alignment) */}
+        <button
+          onClick={() => setShowGridLines(!showGridLines)}
+          className="absolute top-2 right-2 p-2 bg-white/80 hover:bg-white rounded-lg shadow-sm text-xs z-40"
+          title="Afficher/masquer la grille d'alignement"
+        >
+          📐
+        </button>
       </div>
     </div>
   );

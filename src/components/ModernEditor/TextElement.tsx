@@ -1,6 +1,6 @@
 
 import React, { useState, useRef } from 'react';
-import { Trash2 } from 'lucide-react';
+import { Trash2, Target } from 'lucide-react';
 
 interface TextElementProps {
   element: any;
@@ -22,6 +22,7 @@ const TextElement: React.FC<TextElementProps> = ({
   sizeMap
 }) => {
   const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
   const elementRef = useRef<HTMLDivElement>(null);
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -32,28 +33,33 @@ const TextElement: React.FC<TextElementProps> = ({
     if (!containerRef.current || !elementRef.current) return;
     
     const elementRect = elementRef.current.getBoundingClientRect();
+    const containerRect = containerRef.current.getBoundingClientRect();
     
     const offsetX = e.clientX - elementRect.left;
     const offsetY = e.clientY - elementRect.top;
     
+    setDragStart({ x: offsetX, y: offsetY });
     setIsDragging(true);
 
     const handleMouseMove = (moveEvent: MouseEvent) => {
       if (!containerRef.current) return;
       
       const containerRect = containerRef.current.getBoundingClientRect();
+      const elementWidth = elementRef.current?.offsetWidth || 0;
+      const elementHeight = elementRef.current?.offsetHeight || 0;
       
-      // Calculate new position relative to container
-      const newX = Math.max(0, Math.min(
-        moveEvent.clientX - containerRect.left - offsetX,
-        containerRect.width - (elementRef.current?.offsetWidth || 0)
-      ));
-      const newY = Math.max(0, Math.min(
-        moveEvent.clientY - containerRect.top - offsetY,
-        containerRect.height - (elementRef.current?.offsetHeight || 0)
-      ));
+      // Calculate new position with smooth movement
+      let newX = moveEvent.clientX - containerRect.left - offsetX;
+      let newY = moveEvent.clientY - containerRect.top - offsetY;
       
-      onUpdate({ x: newX, y: newY });
+      // Constrain to container bounds with padding
+      newX = Math.max(0, Math.min(newX, containerRect.width - elementWidth));
+      newY = Math.max(0, Math.min(newY, containerRect.height - elementHeight));
+      
+      // Use requestAnimationFrame for smooth updates
+      requestAnimationFrame(() => {
+        onUpdate({ x: newX, y: newY });
+      });
     };
 
     const handleMouseUp = () => {
@@ -64,6 +70,19 @@ const TextElement: React.FC<TextElementProps> = ({
 
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
+  };
+
+  const handleCenterElement = () => {
+    if (!containerRef.current || !elementRef.current) return;
+    
+    const containerRect = containerRef.current.getBoundingClientRect();
+    const elementWidth = elementRef.current.offsetWidth;
+    const elementHeight = elementRef.current.offsetHeight;
+    
+    const centerX = (containerRect.width - elementWidth) / 2;
+    const centerY = (containerRect.height - elementHeight) / 2;
+    
+    onUpdate({ x: centerX, y: centerY });
   };
 
   const getTextStyles = (): React.CSSProperties => ({
@@ -77,6 +96,7 @@ const TextElement: React.FC<TextElementProps> = ({
     userSelect: 'none',
     transition: isDragging ? 'none' : 'all 0.1s ease-out',
     willChange: isDragging ? 'transform' : 'auto',
+    transform: isDragging ? 'scale(1.02)' : 'scale(1)',
     ...(element.showFrame
       ? {
           backgroundColor: element.frameColor || '#ffffff',
@@ -102,14 +122,22 @@ const TextElement: React.FC<TextElementProps> = ({
         isSelected 
           ? 'ring-2 ring-blue-500 shadow-lg' 
           : 'hover:ring-2 hover:ring-gray-300'
-      } transition-all duration-100 ${
-        isDragging ? 'scale-105' : ''
-      }`}
+      } transition-all duration-100`}
     >
       {element.text}
       
       {isSelected && (
-        <div className="absolute -top-8 left-0 flex space-x-1 bg-white rounded shadow-lg px-2 py-1">
+        <div className="absolute -top-10 left-0 flex space-x-1 bg-white rounded shadow-lg px-2 py-1 border">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleCenterElement();
+            }}
+            className="p-1 hover:bg-blue-100 text-blue-600 rounded"
+            title="Centrer l'élément"
+          >
+            <Target className="w-3 h-3" />
+          </button>
           <button
             onClick={(e) => {
               e.stopPropagation();
