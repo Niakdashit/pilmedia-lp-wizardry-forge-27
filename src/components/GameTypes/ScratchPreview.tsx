@@ -279,9 +279,9 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
 
   // Si le jeu n'a pas encore commencé, afficher le bouton
   if (!gameStarted) {
-    return <div className="flex flex-col items-center space-y-4">
+    return <div className="flex flex-col items-center space-y-4 my-[25px]">
         {/* Grille des cartes avant le jeu - responsive */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mx-0 py-0 my-0 px-[222px]">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mx-0 px-0 my-[17px] py-0">
           {cards.map((card: any, index: number) => <ScratchCard key={card.id || index} card={card} index={index} gameSize={gameSize} gameStarted={false} onCardFinish={() => {}} config={config} />)}
         </div>
 
