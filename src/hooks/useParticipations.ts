@@ -64,7 +64,6 @@ export const useParticipations = () => {
         return null;
       }
 
-      console.log('Participation créée avec succès:', participation);
       return participation;
     } catch (err) {
       console.error('Erreur inattendue:', err);

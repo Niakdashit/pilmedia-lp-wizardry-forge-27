@@ -14,7 +14,6 @@ const JackpotGameConfig: React.FC<JackpotGameConfigProps> = ({
   const jackpotConfig = campaign.gameConfig?.jackpot || {};
 
   const updateJackpotConfig = (updates: any) => {
-    console.log('Updating jackpot config with:', updates);
     setCampaign((prev: any) => {
       const updated = {
         ...prev,
@@ -26,13 +25,11 @@ const JackpotGameConfig: React.FC<JackpotGameConfigProps> = ({
           }
         }
       };
-      console.log('Updated campaign:', updated);
       return updated;
     });
   };
 
   const updateButtonConfig = (buttonUpdates: any) => {
-    console.log('Updating button config with:', buttonUpdates);
     setCampaign((prev: any) => {
       const updated = {
         ...prev,
@@ -49,7 +46,6 @@ const JackpotGameConfig: React.FC<JackpotGameConfigProps> = ({
           }
         }
       };
-      console.log('Updated campaign with button config:', updated);
       return updated;
     });
   };
