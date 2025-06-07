@@ -12,6 +12,8 @@ interface FreeTextZone {
     color: string;
     textAlign: 'left' | 'center' | 'right';
     fontFamily: string;
+    lineHeight: number;
+    letterSpacing: number;
   };
   // Device-specific positioning and sizing
   mobile: {
@@ -30,7 +32,7 @@ interface FreeTextZone {
 
 interface FreeTextManagerProps {
   containerBounds: { width: number; height: number };
-  previewMode: 'mobile' | 'tablet';
+  previewMode: 'mobile' | 'tablet' | 'desktop';
 }
 
 const FreeTextManager: React.FC<FreeTextManagerProps> = ({ 
@@ -64,7 +66,9 @@ const FreeTextManager: React.FC<FreeTextManagerProps> = ({
         fontWeight: 'normal',
         color: '#000000',
         textAlign: 'left',
-        fontFamily: 'Inter, sans-serif'
+        fontFamily: 'Inter, sans-serif',
+        lineHeight: 1.2,
+        letterSpacing: 0
       },
       mobile: {
         position: { ...defaultPosition },

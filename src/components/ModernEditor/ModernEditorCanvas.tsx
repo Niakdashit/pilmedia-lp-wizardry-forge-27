@@ -1,5 +1,6 @@
 import React from 'react';
 import GameCanvasPreview from '../CampaignEditor/GameCanvasPreview';
+import FreeTextManager from '../CampaignEditor/Mobile/FreeTextManager';
 
 interface ModernEditorCanvasProps {
   campaign: any;
@@ -61,7 +62,14 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
           overflow: 'hidden'
         };
       default:
-        return styleWithBackground;
+        return {
+          ...styleWithBackground,
+          maxWidth: '1080px',
+          maxHeight: '1920px',
+          margin: '0 auto',
+          overflow: 'hidden',
+          position: 'relative'
+        };
     }
   };
 
@@ -122,6 +130,14 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
     center: { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }
   };
 
+  const boundsMap: Record<string, { width: number; height: number }> = {
+    desktop: { width: 1080, height: 1920 },
+    tablet: { width: 768, height: 1024 },
+    mobile: { width: 375, height: 812 }
+  };
+
+  const containerBounds = boundsMap[previewDevice];
+
 
   return (
     <div className="w-full h-full flex items-center justify-center bg-gray-100 p-4">
@@ -168,6 +184,7 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
             key={`preview-${gameSize}-${gamePosition}-${campaign.buttonConfig?.color}-${JSON.stringify(campaign.gameConfig?.[campaign.type])}`}
             previewDevice={previewDevice}
           />
+          <FreeTextManager containerBounds={containerBounds} previewMode={previewDevice} />
           {customText?.enabled && (
             <div
               style={{
