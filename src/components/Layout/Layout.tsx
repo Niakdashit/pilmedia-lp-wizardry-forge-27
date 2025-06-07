@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Sidebar from '../Sidebar/Sidebar';
 import { useAppContext } from '../../context/AppContext';
 import { Menu } from 'lucide-react';
@@ -11,9 +11,21 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const { sidebarCollapsed, toggleSidebar } = useAppContext();
 
+  // Empêche le scroll du background quand la sidebar est ouverte sur mobile
+  useEffect(() => {
+    if (typeof document !== 'undefined') {
+      document.body.classList.toggle('overflow-hidden', !sidebarCollapsed);
+    }
+  }, [sidebarCollapsed]);
+
   return (
     <div className="flex min-h-screen bg-[#ebf4f7] overflow-hidden">
       <Sidebar />
+      {/* Overlay mobile/tablette pour cliquer et fermer la sidebar */}
+      <div
+        onClick={toggleSidebar}
+        className={`md:hidden fixed inset-0 bg-black/30 transition-opacity ${sidebarCollapsed ? 'pointer-events-none opacity-0' : 'opacity-100'}`}
+      />
       <div className="flex-1 flex flex-col">
         <header className="md:hidden flex items-center justify-between bg-white border-b border-gray-200 p-4">
           <button onClick={toggleSidebar} className="text-gray-500">
