@@ -22,7 +22,6 @@ const TextElement: React.FC<TextElementProps> = ({
   sizeMap
 }) => {
   const [isDragging, setIsDragging] = useState(false);
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const elementRef = useRef<HTMLDivElement>(null);
 
   const handleMouseDown = (e: React.MouseEvent) => {
@@ -32,13 +31,11 @@ const TextElement: React.FC<TextElementProps> = ({
     
     if (!containerRef.current || !elementRef.current) return;
     
-    const containerRect = containerRef.current.getBoundingClientRect();
     const elementRect = elementRef.current.getBoundingClientRect();
     
     const offsetX = e.clientX - elementRect.left;
     const offsetY = e.clientY - elementRect.top;
     
-    setDragOffset({ x: offsetX, y: offsetY });
     setIsDragging(true);
 
     const handleMouseMove = (moveEvent: MouseEvent) => {

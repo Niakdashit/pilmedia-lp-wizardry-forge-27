@@ -21,7 +21,6 @@ const ImageElement: React.FC<ImageElementProps> = ({
 }) => {
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
-  const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
   const elementRef = useRef<HTMLDivElement>(null);
 
   const handleMouseDown = (e: React.MouseEvent, action: 'drag' | 'resize') => {
@@ -36,7 +35,6 @@ const ImageElement: React.FC<ImageElementProps> = ({
       const offsetX = e.clientX - elementRect.left;
       const offsetY = e.clientY - elementRect.top;
       
-      setDragOffset({ x: offsetX, y: offsetY });
       setIsDragging(true);
 
       const handleMouseMove = (moveEvent: MouseEvent) => {

@@ -1,5 +1,6 @@
+
 import React from 'react';
-import { Bold, Italic, Underline, Plus, Trash2, Upload, Image } from 'lucide-react';
+import { Bold, Italic, Underline, Plus, Trash2, Image } from 'lucide-react';
 import ImageUpload from '../common/ImageUpload';
 
 interface ModernDesignTabProps {
