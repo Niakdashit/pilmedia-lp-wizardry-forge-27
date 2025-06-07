@@ -1,6 +1,7 @@
 
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useRef, useCallback } from 'react';
 import { Trash2, Target } from 'lucide-react';
+import { useTextElementDrag } from './hooks/useTextElementDrag';
 
 interface TextElementProps {
   element: any;
@@ -21,55 +22,14 @@ const TextElement: React.FC<TextElementProps> = ({
   containerRef,
   sizeMap
 }) => {
-  const [isDragging, setIsDragging] = useState(false);
-  const [tempPosition, setTempPosition] = useState<{x: number, y: number} | null>(null);
   const elementRef = useRef<HTMLDivElement>(null);
 
-  const handleMouseDown = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    onSelect();
-    
-    if (!containerRef.current || !elementRef.current) return;
-    
-    const elementRect = elementRef.current.getBoundingClientRect();
-    
-    const offsetX = e.clientX - elementRect.left;
-    const offsetY = e.clientY - elementRect.top;
-    
-    setIsDragging(true);
-
-    const handleMouseMove = (moveEvent: MouseEvent) => {
-      if (!containerRef.current) return;
-      
-      const containerRect = containerRef.current.getBoundingClientRect();
-      const elementWidth = elementRef.current?.offsetWidth || 0;
-      const elementHeight = elementRef.current?.offsetHeight || 0;
-      
-      let newX = moveEvent.clientX - containerRect.left - offsetX;
-      let newY = moveEvent.clientY - containerRect.top - offsetY;
-      
-      // Constrain to container bounds
-      newX = Math.max(0, Math.min(newX, containerRect.width - elementWidth));
-      newY = Math.max(0, Math.min(newY, containerRect.height - elementHeight));
-      
-      // Update temp position for immediate visual feedback
-      setTempPosition({ x: newX, y: newY });
-    };
-
-    const handleMouseUp = () => {
-      setIsDragging(false);
-      if (tempPosition) {
-        onUpdate(tempPosition);
-        setTempPosition(null);
-      }
-      document.removeEventListener('mousemove', handleMouseMove);
-      document.removeEventListener('mouseup', handleMouseUp);
-    };
-
-    document.addEventListener('mousemove', handleMouseMove);
-    document.addEventListener('mouseup', handleMouseUp);
-  }, [onSelect, onUpdate, containerRef, tempPosition]);
+  const { isDragging, handleDragStart } = useTextElementDrag(
+    elementRef,
+    containerRef,
+    element,
+    onUpdate
+  );
 
   const handleCenterElement = useCallback(() => {
     if (!containerRef.current || !elementRef.current) return;
@@ -94,6 +54,7 @@ const TextElement: React.FC<TextElementProps> = ({
     cursor: isDragging ? 'grabbing' : 'grab',
     userSelect: 'none',
     willChange: isDragging ? 'transform' : 'auto',
+    transition: isDragging ? 'none' : 'box-shadow 0.1s ease',
     ...(element.showFrame
       ? {
           backgroundColor: element.frameColor || '#ffffff',
@@ -104,15 +65,17 @@ const TextElement: React.FC<TextElementProps> = ({
       : {})
   }), [element, sizeMap, isDragging]);
 
-  // Use temp position for immediate feedback, fallback to element position
-  const currentPosition = tempPosition || { x: element.x, y: element.y };
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    onSelect();
+    handleDragStart(e);
+  }, [onSelect, handleDragStart]);
 
   return (
     <div
       ref={elementRef}
       style={{
         position: 'absolute',
-        transform: `translate3d(${currentPosition.x}px, ${currentPosition.y}px, 0)`,
+        transform: `translate3d(${element.x}px, ${element.y}px, 0)`,
         zIndex: isSelected ? 30 : 20,
         ...getTextStyles()
       }}
@@ -121,7 +84,7 @@ const TextElement: React.FC<TextElementProps> = ({
         isSelected 
           ? 'ring-2 ring-blue-500 shadow-lg' 
           : 'hover:ring-2 hover:ring-gray-300'
-      } transition-shadow duration-100`}
+      }`}
     >
       {element.text}
       

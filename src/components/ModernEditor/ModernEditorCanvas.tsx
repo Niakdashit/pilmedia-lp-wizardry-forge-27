@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import GameCanvasPreview from '../CampaignEditor/GameCanvasPreview';
 import TextElement from './TextElement';
@@ -10,6 +11,7 @@ import { useCanvasElements } from './hooks/useCanvasElements';
 
 interface ModernEditorCanvasProps {
   campaign: any;
+  setCampaign: (updater: (prev: any) => any) => void;
   previewDevice: 'desktop' | 'tablet' | 'mobile';
   gameSize: 'small' | 'medium' | 'large' | 'xlarge';
   gamePosition: 'top' | 'center' | 'bottom' | 'left' | 'right';
@@ -17,6 +19,7 @@ interface ModernEditorCanvasProps {
 
 const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
   campaign,
+  setCampaign,
   previewDevice,
   gameSize,
   gamePosition
@@ -33,7 +36,7 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
     updateImageElement,
     deleteTextElement,
     deleteImageElement
-  } = useCanvasElements(campaign);
+  } = useCanvasElements(campaign, setCampaign);
 
   // Enhanced campaign with proper settings propagation
   const enhancedCampaign = {

@@ -1,12 +1,7 @@
 
 import { useState, useCallback, useRef } from 'react';
 
-interface DragState {
-  x: number;
-  y: number;
-}
-
-export const useImageElementDrag = (
+export const useTextElementDrag = (
   elementRef: React.RefObject<HTMLDivElement>,
   containerRef: React.RefObject<HTMLDivElement>,
   element: any,
@@ -32,13 +27,15 @@ export const useImageElementDrag = (
       if (!containerRef.current || !dragStartRef.current) return;
       
       const containerRect = containerRef.current.getBoundingClientRect();
+      const elementWidth = elementRef.current?.offsetWidth || 0;
+      const elementHeight = elementRef.current?.offsetHeight || 0;
       
       let newX = moveEvent.clientX - containerRect.left - dragStartRef.current.offsetX;
       let newY = moveEvent.clientY - containerRect.top - dragStartRef.current.offsetY;
       
       // Constrain to container bounds
-      newX = Math.max(0, Math.min(newX, containerRect.width - element.width));
-      newY = Math.max(0, Math.min(newY, containerRect.height - element.height));
+      newX = Math.max(0, Math.min(newX, containerRect.width - elementWidth));
+      newY = Math.max(0, Math.min(newY, containerRect.height - elementHeight));
       
       // Update immediately for real-time feedback
       onUpdate({ x: newX, y: newY });

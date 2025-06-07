@@ -1,36 +1,34 @@
 
-import { useState, useCallback } from 'react';
-
-interface ResizeState {
-  width?: number;
-  height?: number;
-}
+import { useState, useCallback, useRef } from 'react';
 
 export const useImageElementResize = (
   containerRef: React.RefObject<HTMLDivElement>,
   element: any,
   onUpdate: (updates: any) => void,
-  aspectRatioLocked: boolean,
-  tempPosition: any
+  aspectRatioLocked: boolean
 ) => {
   const [isResizing, setIsResizing] = useState(false);
-  const [tempResize, setTempResize] = useState<ResizeState | null>(null);
+  const resizeStartRef = useRef<{startX: number, startY: number, startWidth: number, startHeight: number, aspectRatio: number} | null>(null);
 
   const handleResizeStart = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
 
-    setIsResizing(true);
     const startX = e.clientX;
     const startY = e.clientY;
-    const startWidth = tempResize?.width || element.width;
-    const startHeight = tempResize?.height || element.height;
+    const startWidth = element.width;
+    const startHeight = element.height;
     const aspectRatio = startWidth / startHeight;
 
+    resizeStartRef.current = { startX, startY, startWidth, startHeight, aspectRatio };
+    setIsResizing(true);
+
     const handleMouseMove = (moveEvent: MouseEvent) => {
-      if (!containerRef.current) return;
+      if (!containerRef.current || !resizeStartRef.current) return;
       
       const containerRect = containerRef.current.getBoundingClientRect();
+      const { startX, startY, startWidth, startHeight, aspectRatio } = resizeStartRef.current;
+      
       const deltaX = moveEvent.clientX - startX;
       const deltaY = moveEvent.clientY - startY;
       
@@ -44,9 +42,9 @@ export const useImageElementResize = (
         newHeight = newWidth / aspectRatio;
       }
       
-      // Constrain to container bounds (1080x1920 safe zone)
-      const maxWidth = Math.min(containerRect.width - (tempPosition?.x || element.x), 1080);
-      const maxHeight = Math.min(containerRect.height - (tempPosition?.y || element.y), 1920);
+      // Constrain to container bounds
+      const maxWidth = Math.min(containerRect.width - element.x, 1080);
+      const maxHeight = Math.min(containerRect.height - element.y, 1920);
       
       newWidth = Math.min(newWidth, maxWidth);
       newHeight = Math.min(newHeight, maxHeight);
@@ -60,29 +58,23 @@ export const useImageElementResize = (
         }
       }
       
-      setTempResize({ width: newWidth, height: newHeight });
+      // Update immediately for real-time feedback
+      onUpdate({ width: newWidth, height: newHeight });
     };
 
     const handleMouseUp = () => {
       setIsResizing(false);
-      if (tempResize && (tempResize.width !== undefined || tempResize.height !== undefined)) {
-        onUpdate({ 
-          width: tempResize.width ?? element.width, 
-          height: tempResize.height ?? element.height 
-        });
-      }
-      setTempResize(null);
+      resizeStartRef.current = null;
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
 
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
-  }, [containerRef, element, onUpdate, aspectRatioLocked, tempPosition, tempResize]);
+  }, [containerRef, element, onUpdate, aspectRatioLocked]);
 
   return {
     isResizing,
-    tempResize,
     handleResizeStart
   };
 };

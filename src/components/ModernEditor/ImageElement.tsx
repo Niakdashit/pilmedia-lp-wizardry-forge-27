@@ -25,33 +25,29 @@ const ImageElement: React.FC<ImageElementProps> = ({
   const [aspectRatioLocked, setAspectRatioLocked] = useState(true);
   const elementRef = useRef<HTMLDivElement>(null);
 
-  const { isDragging, tempPosition, handleDragStart } = useImageElementDrag(
+  const { isDragging, handleDragStart } = useImageElementDrag(
     elementRef,
     containerRef,
     element,
     onUpdate
   );
 
-  const { isResizing, tempResize, handleResizeStart } = useImageElementResize(
+  const { isResizing, handleResizeStart } = useImageElementResize(
     containerRef,
     element,
     onUpdate,
-    aspectRatioLocked,
-    tempPosition
+    aspectRatioLocked
   );
 
   const handleCenterElement = useCallback(() => {
     if (!containerRef.current) return;
     
     const containerRect = containerRef.current.getBoundingClientRect();
-    const currentWidth = tempResize?.width || element.width;
-    const currentHeight = tempResize?.height || element.height;
-    
-    const centerX = (containerRect.width - currentWidth) / 2;
-    const centerY = (containerRect.height - currentHeight) / 2;
+    const centerX = (containerRect.width - element.width) / 2;
+    const centerY = (containerRect.height - element.height) / 2;
     
     onUpdate({ x: centerX, y: centerY });
-  }, [onUpdate, containerRef, element, tempResize]);
+  }, [onUpdate, containerRef, element]);
 
   const toggleAspectRatio = useCallback(() => {
     setAspectRatioLocked(!aspectRatioLocked);
@@ -90,34 +86,28 @@ const ImageElement: React.FC<ImageElementProps> = ({
     );
   }
 
-  // Combine all transform states for immediate feedback
-  const currentTransform = {
-    x: tempPosition?.x ?? element.x,
-    y: tempPosition?.y ?? element.y,
-    width: tempResize?.width ?? element.width,
-    height: tempResize?.height ?? element.height
-  };
-
   return (
     <div
       ref={elementRef}
       style={{
         position: 'absolute',
-        transform: `translate3d(${currentTransform.x}px, ${currentTransform.y}px, 0) rotate(${element.rotation || 0}deg)`,
-        width: currentTransform.width,
-        height: currentTransform.height,
+        transform: `translate3d(${element.x}px, ${element.y}px, 0) rotate(${element.rotation || 0}deg)`,
+        width: element.width,
+        height: element.height,
         cursor: isDragging ? 'grabbing' : 'grab',
         zIndex: isSelected ? 30 : 20,
-        willChange: isDragging || isResizing ? 'transform' : 'auto'
+        willChange: isDragging || isResizing ? 'transform' : 'auto',
+        transition: isDragging || isResizing ? 'none' : 'box-shadow 0.1s ease'
       }}
       onMouseDown={handleMouseDown}
-      className={`${isSelected ? 'ring-2 ring-blue-500' : 'hover:ring-2 hover:ring-gray-300'} transition-shadow duration-100`}
+      className={`${isSelected ? 'ring-2 ring-blue-500' : 'hover:ring-2 hover:ring-gray-300'}`}
     >
       <img
         src={element.src}
         alt="Custom element"
         className="w-full h-full object-cover rounded"
         draggable={false}
+        style={{ pointerEvents: 'none' }}
       />
       
       {isSelected && (
