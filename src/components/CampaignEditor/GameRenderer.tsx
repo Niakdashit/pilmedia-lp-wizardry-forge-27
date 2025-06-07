@@ -1,3 +1,4 @@
+
 import React from 'react';
 import Jackpot from '../GameTypes/Jackpot';
 import { Quiz } from '../GameTypes';
