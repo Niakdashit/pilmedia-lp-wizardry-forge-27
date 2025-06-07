@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import ScratchGameGrid from './ScratchGameGrid';
 
@@ -11,7 +10,6 @@ interface ScratchPreviewProps {
   buttonColor?: string;
   gameSize?: 'small' | 'medium' | 'large' | 'xlarge';
   gamePosition?: 'top' | 'center' | 'bottom' | 'left' | 'right';
-  isPreview?: boolean;
 }
 
 const ScratchPreview: React.FC<ScratchPreviewProps> = ({
@@ -21,14 +19,12 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
   disabled = false,
   buttonLabel = 'Gratter',
   buttonColor = '#841b60',
-  gameSize = 'medium',
-  isPreview = false
+  gameSize = 'medium'
 }) => {
   const [gameStarted, setGameStarted] = useState(false);
   const [finishedCards, setFinishedCards] = useState<Set<number>>(new Set());
   const [hasWon, setHasWon] = useState(false);
 
-  // Gérer le démarrage du jeu
   const handleGameStart = () => {
     if (disabled) return;
     setGameStarted(true);
@@ -43,10 +39,8 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
       setHasWon(true);
     }
 
-    // Vérifier si toutes les cartes sont terminées
     const totalCards = config?.cards?.length || 1;
     if (newFinishedCards.size >= totalCards) {
-      // Délai pour permettre l'animation de la dernière carte
       setTimeout(() => {
         if (onFinish) {
           onFinish(hasWon || result === 'win' ? 'win' : 'lose');
@@ -55,16 +49,13 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
     }
   };
 
-  // S'assurer qu'il y a au moins une carte par défaut
   const cards = config?.cards && config.cards.length > 0 
     ? config.cards 
     : [{ id: 1, revealImage: '', revealMessage: 'Félicitations !', scratchColor: config?.scratchColor }];
 
-  // Si le jeu n'a pas encore commencé, afficher le bouton
   if (!gameStarted) {
     return (
       <div className="flex flex-col items-center space-y-6 my-6">
-        {/* Grille des cartes avant le jeu - responsive avec espacement */}
         <ScratchGameGrid
           cards={cards}
           gameSize={gameSize}
@@ -87,7 +78,6 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
 
   return (
     <div className="w-full flex flex-col items-center space-y-6">
-      {/* Grille responsive des cartes */}
       <ScratchGameGrid
         cards={cards}
         gameSize={gameSize}
@@ -96,13 +86,11 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
         config={config}
       />
 
-      {/* Indicateur de progression */}
       <div className="text-center">
         <div className="text-sm text-gray-600">
           Cartes terminées: {finishedCards.size}/{cards.length}
         </div>
         
-        {/* Barre de progression */}
         <div className="w-48 bg-gray-200 rounded-full h-2 mt-2">
           <div 
             className="bg-[#841b60] h-2 rounded-full transition-all duration-300" 
