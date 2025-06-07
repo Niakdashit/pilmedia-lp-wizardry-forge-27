@@ -1,5 +1,19 @@
 import React, { useState } from 'react';
-import { Type, Image, Layout, AlignCenter, MoreHorizontal, ChevronDown, ChevronUp, Plus, Trash2, Bold, Italic, Underline, Palette } from 'lucide-react';
+import {
+  Type,
+  Image,
+  Layout,
+  AlignCenter,
+  MoreHorizontal,
+  ChevronDown,
+  ChevronUp,
+  Plus,
+  Trash2,
+  Bold,
+  Italic,
+  Underline,
+  Palette
+} from 'lucide-react';
 import ImageUpload from '../common/ImageUpload';
 
 interface ModernDesignTabProps {
@@ -118,6 +132,21 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
         footerText: {
           ...prev.design.footerText,
           [field]: value
+        }
+      }
+    }));
+  };
+  const handleTextStyleChange = (element: string, field: string, value: any) => {
+    setCampaign((prev: any) => ({
+      ...prev,
+      design: {
+        ...prev.design,
+        textStyles: {
+          ...prev.design.textStyles,
+          [element]: {
+            ...prev.design.textStyles?.[element],
+            [field]: value
+          }
         }
       }
     }));
@@ -278,6 +307,83 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
       </div>
     </div>
   );
+  const renderTextStyleEditor = (key: string, style: any, title: string) => (
+    <div className="space-y-2 border rounded p-3">
+      <h4 className="text-sm font-medium text-gray-800 mb-1">{title}</h4>
+      <div className="grid grid-cols-2 gap-2 items-center">
+        <label className="text-sm text-gray-700">Police</label>
+        <select
+          value={style.fontFamily || 'Inter'}
+          onChange={(e) => handleTextStyleChange(key, 'fontFamily', e.target.value)}
+          className="px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#841b60] focus:border-transparent"
+        >
+          {fontOptions.map(opt => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
+      </div>
+      {renderColorInput(
+        style.color || '#000000',
+        (val) => handleTextStyleChange(key, 'color', val),
+        'Couleur'
+      )}
+      <details className="text-xs">
+        <summary className="cursor-pointer select-none text-gray-600">Options avancées</summary>
+        <div className="mt-2 space-y-2">
+          <div className="grid grid-cols-2 gap-2 items-center">
+            <label className="text-sm text-gray-700">Taille</label>
+            <input
+              type="text"
+              value={style.fontSize || ''}
+              onChange={(e) => handleTextStyleChange(key, 'fontSize', e.target.value)}
+              className="px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#841b60] focus:border-transparent"
+              placeholder="16px"
+            />
+          </div>
+          <div className="grid grid-cols-2 gap-2 items-center">
+            <label className="text-sm text-gray-700">Graisse</label>
+            <select
+              value={style.fontWeight || '400'}
+              onChange={(e) => handleTextStyleChange(key, 'fontWeight', e.target.value)}
+              className="px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#841b60] focus:border-transparent"
+            >
+              {weightOptions.map(opt => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="grid grid-cols-2 gap-2 items-center">
+            <label className="text-sm text-gray-700">Alignement</label>
+            <select
+              value={style.textAlign || 'left'}
+              onChange={(e) => handleTextStyleChange(key, 'textAlign', e.target.value)}
+              className="px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#841b60] focus:border-transparent"
+            >
+              {alignOptions.map(opt => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
+            </select>
+          </div>
+          <div className="grid grid-cols-2 gap-2 items-center">
+            <label className="text-sm text-gray-700">Interligne</label>
+            <input
+              type="text"
+              value={style.lineHeight || ''}
+              onChange={(e) => handleTextStyleChange(key, 'lineHeight', e.target.value)}
+              className="px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#841b60] focus:border-transparent"
+              placeholder="1.5"
+            />
+          </div>
+        </div>
+      </details>
+    </div>
+  );
   const fontOptions = [{
     value: 'Inter',
     label: 'Inter'
@@ -320,6 +426,21 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
     value: 'large',
     label: 'L'
   }];
+  const weightOptions = [{ value: '300', label: 'Light' }, { value: '400', label: 'Regular' }, { value: '700', label: 'Bold' }];
+  const alignOptions = [{ value: 'left', label: 'Gauche' }, { value: 'center', label: 'Centre' }, { value: 'right', label: 'Droite' }];
+  const textStyles = campaign.design?.textStyles || {
+    title: {},
+    description: {},
+    label: {},
+    button: {}
+  };
+  const [selectedTextElement, setSelectedTextElement] = useState<'title' | 'description' | 'label' | 'button'>('title');
+  const elementOptions = [
+    { value: 'title', label: 'Titres' },
+    { value: 'description', label: 'Descriptions' },
+    { value: 'label', label: 'Libellés' },
+    { value: 'button', label: 'Boutons' }
+  ];
   const customText = campaign.design?.customText || {
     enabled: false,
     text: 'Texte personnalisé',
@@ -550,22 +671,33 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
             <Palette className="w-4 h-4 mr-2" />
             Couleurs & Typographie
           </h4>
-          
-          {renderColorInput(campaign.design?.background || '#f8fafc', (val) => handleDesignChange('background', val), 'Fond')}
-          {renderColorInput(campaign.design?.titleColor || '#000000', (val) => handleDesignChange('titleColor', val), 'Texte')}
+
+          {renderColorInput(
+            campaign.design?.background || '#f8fafc',
+            (val) => handleDesignChange('background', val),
+            'Fond'
+          )}
 
           <div className="grid grid-cols-2 gap-2 items-center">
-            <label className="text-sm text-gray-700">Police</label>
+            <label className="text-sm text-gray-700">Élément</label>
             <select
-              value={campaign.design?.fontFamily || 'Inter'}
-              onChange={(e) => handleDesignChange('fontFamily', e.target.value)}
+              value={selectedTextElement}
+              onChange={(e) => setSelectedTextElement(e.target.value as any)}
               className="px-2 py-1 text-sm border border-gray-300 rounded focus:outline-none focus:ring-1 focus:ring-[#841b60] focus:border-transparent"
             >
-              {fontOptions.map(font => <option key={font.value} value={font.value}>
-                  {font.label}
-                </option>)}
+              {elementOptions.map(opt => (
+                <option key={opt.value} value={opt.value}>
+                  {opt.label}
+                </option>
+              ))}
             </select>
           </div>
+
+          {renderTextStyleEditor(
+            selectedTextElement,
+            (textStyles as any)[selectedTextElement] || {},
+            elementOptions.find((el) => el.value === selectedTextElement)?.label || ''
+          )}
         </div>
       </AccordionSection>
 

@@ -17,6 +17,10 @@ interface DynamicContactFormProps {
   submitLabel?: string;
   defaultValues?: Record<string, string>;
   className?: string;
+  textStyles?: {
+    label?: React.CSSProperties;
+    button?: React.CSSProperties;
+  };
 }
 
 const DynamicContactForm: React.FC<DynamicContactFormProps> = ({
@@ -24,7 +28,8 @@ const DynamicContactForm: React.FC<DynamicContactFormProps> = ({
   onSubmit,
   submitLabel = "Envoyer",
   defaultValues = {},
-  className = ""
+  className = "",
+  textStyles
 }) => {
   const [formData, setFormData] = useState<Record<string, string>>(defaultValues);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -148,7 +153,7 @@ const DynamicContactForm: React.FC<DynamicContactFormProps> = ({
       {fields.map(field => (
         <div key={field.id}>
           {field.type !== 'checkbox' && (
-            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor={field.id}>
+            <label className="block text-sm font-medium text-gray-700 mb-1" htmlFor={field.id} style={textStyles?.label}>
               {field.label}
               {field.required && <span className="text-red-500 ml-1">*</span>}
             </label>
@@ -165,6 +170,7 @@ const DynamicContactForm: React.FC<DynamicContactFormProps> = ({
       <button
         type="submit"
         className="w-full px-6 py-3 font-medium transition-colors duration-200 bg-[#841b60] text-white rounded-lg hover:bg-[#6d1550]"
+        style={textStyles?.button}
       >
         {submitLabel}
       </button>
