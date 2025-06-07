@@ -26,7 +26,6 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
 
   // At this point, previewDevice can only be 'desktop'
   const baseBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage || campaign.design?.backgroundImage;
-  const mobileBackgroundImage = campaign.design?.mobileBackgroundImage;
   // Since we're in desktop mode, we don't need to check for mobile background
   const gameBackgroundImage = baseBackgroundImage;
   const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel || campaign.buttonConfig?.text || 'Jouer';
@@ -36,8 +35,6 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   const gameSize: GameSize = campaign.gameSize && Object.keys(GAME_SIZES).includes(campaign.gameSize) ? campaign.gameSize as GameSize : 'medium';
   const gamePosition = campaign.gamePosition || 'center';
 
-  // Check if we should crop the wheel on mobile for left/right/bottom positions
-  const isWheelGame = campaign.type === 'wheel';
   // Since we're in desktop mode, we don't crop the wheel
   const shouldCropWheel = false;
   const {
