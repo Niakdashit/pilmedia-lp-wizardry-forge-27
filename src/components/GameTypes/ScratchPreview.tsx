@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 interface ScratchPreviewProps {
@@ -280,8 +281,8 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
   // Si le jeu n'a pas encore commencé, afficher le bouton
   if (!gameStarted) {
     return <div className="flex flex-col items-center space-y-4 my-[25px]">
-        {/* Grille des cartes avant le jeu - responsive */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mx-0 px-0 my-[17px] py-0">
+        {/* Grille des cartes avant le jeu - responsive avec espacement approprié */}
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 mx-auto px-4 my-[17px] py-0 max-w-fit">
           {cards.map((card: any, index: number) => <ScratchCard key={card.id || index} card={card} index={index} gameSize={gameSize} gameStarted={false} onCardFinish={() => {}} config={config} />)}
         </div>
 
@@ -293,8 +294,8 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
       </div>;
   }
   return <div className="w-full flex flex-col items-center space-y-4">
-      {/* Grille responsive des cartes - toutes affichées simultanément */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+      {/* Grille responsive des cartes - toutes affichées simultanément avec espacement approprié */}
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-4 max-w-fit mx-auto px-4">
         {cards.map((card: any, index: number) => <ScratchCard key={card.id || index} card={card} index={index} gameSize={gameSize} gameStarted={gameStarted} onCardFinish={result => handleCardFinish(result, index)} config={config} />)}
       </div>
 
