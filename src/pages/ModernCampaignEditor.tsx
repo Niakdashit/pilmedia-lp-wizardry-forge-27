@@ -69,6 +69,40 @@ const ModernCampaignEditor: React.FC = () => {
       buttonColor: '#841b60',
       fontFamily: 'Inter',
       borderRadius: '0.5rem',
+      textStyles: {
+        title: {
+          fontFamily: 'Inter',
+          fontSize: '24px',
+          fontWeight: 'bold',
+          textAlign: 'center' as const,
+          color: '#000000',
+          lineHeight: '1.2'
+        },
+        description: {
+          fontFamily: 'Inter',
+          fontSize: '16px',
+          fontWeight: 'normal',
+          textAlign: 'left' as const,
+          color: '#000000',
+          lineHeight: '1.5'
+        },
+        label: {
+          fontFamily: 'Inter',
+          fontSize: '14px',
+          fontWeight: 'normal',
+          textAlign: 'left' as const,
+          color: '#000000',
+          lineHeight: '1.4'
+        },
+        button: {
+          fontFamily: 'Inter',
+          fontSize: '16px',
+          fontWeight: 'bold',
+          textAlign: 'center' as const,
+          color: '#ffffff',
+          lineHeight: '1.2'
+        }
+      },
       // Custom text configuration
       customText: {
         enabled: false,

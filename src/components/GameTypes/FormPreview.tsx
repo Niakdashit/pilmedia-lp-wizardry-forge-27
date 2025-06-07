@@ -76,6 +76,10 @@ const FormPreview: React.FC<FormPreviewProps> = ({
         fields={fields}
         submitLabel={buttonLabel}
         onSubmit={handleFormSubmit}
+        textStyles={{
+          label: campaign.design.textStyles?.label,
+          button: campaign.design.textStyles?.button
+        }}
       />
     </div>
   );

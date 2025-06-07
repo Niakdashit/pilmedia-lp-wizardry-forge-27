@@ -11,7 +11,7 @@ const ModernMobileTab: React.FC<ModernMobileTabProps> = ({ campaign, setCampaign
     <CampaignMobile
       campaign={campaign}
       setCampaign={setCampaign}
-      hidePreview
+      hidePreview={true}
     />
   );
 };
