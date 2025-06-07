@@ -4,6 +4,7 @@ import MobileWheelPreview from '../../GameTypes/MobileWheelPreview';
 import MobileButton from './MobileButton';
 import MobileOverlays from './MobileOverlays';
 import TextZoneManager from './TextZoneManager';
+import FreeTextManager from './FreeTextManager';
 import { getDeviceStyle, getScreenStyle } from './styles';
 
 interface MobilePreviewProps {
@@ -105,6 +106,9 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
           gameArea={getGameArea()}
           containerBounds={containerBounds}
         />
+
+        {/* Free Text Manager - New layer for free text zones */}
+        <FreeTextManager containerBounds={containerBounds} />
 
         {/* Button Layer - only show if not hidden */}
         {!mobileConfig.hideLaunchButton && (
