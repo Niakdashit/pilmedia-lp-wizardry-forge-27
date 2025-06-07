@@ -1,83 +1,48 @@
 
-interface MobileConfig {
-  backgroundColor?: string;
-  backgroundImage?: string;
-  backgroundMode?: string;
-  fontFamily?: string;
-  verticalSpacing?: number;
-  horizontalPadding?: number;
-  buttonPlacement?: string;
-  gamePosition?: string;
-}
+import { PREVIEW_CONTAINER_SPECS, MOBILE_FORMAT_SPECS } from './constants';
 
 export const getDeviceStyle = (specs: any, deviceWidth: number) => ({
-  width: deviceWidth,
-  height: specs.height,
-  borderRadius: specs.borderRadius,
-  border: specs.border,
-  boxShadow: specs.boxShadow,
-  backgroundColor: '#000',
-  overflow: 'hidden',
+  width: PREVIEW_CONTAINER_SPECS.mobile.width,
+  height: PREVIEW_CONTAINER_SPECS.mobile.height,
+  backgroundColor: '#1f2937',
+  borderRadius: '24px',
+  padding: '8px',
+  boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
   position: 'relative' as const,
-  display: 'flex',
-  flexDirection: 'column' as const,
-  alignItems: 'stretch',
-  justifyContent: 'flex-start',
-  margin: '0 auto'
+  overflow: 'hidden'
 });
 
-export const getScreenStyle = (mobileConfig: MobileConfig, previewMode: string): React.CSSProperties => {
-  const screenStyle: React.CSSProperties = {
-    width: '100%',
-    height: '100%',
-    borderRadius: (previewMode === 'mobile' ? 16 : 16),
-    overflow: 'hidden',
-    position: 'relative',
-    backgroundColor: mobileConfig.backgroundColor || '#ebf4f7',
-    display: 'flex',
-    flexDirection: 'column',
-    fontFamily: mobileConfig.fontFamily || 'Inter'
-  };
-
-  if (mobileConfig.backgroundImage) {
-    screenStyle.backgroundImage = `url(${mobileConfig.backgroundImage})`;
-    screenStyle.backgroundSize = mobileConfig.backgroundMode === 'contain' ? 'contain' : 'cover';
-    screenStyle.backgroundPosition = 'center';
-    screenStyle.backgroundRepeat = 'no-repeat';
-  }
-
-  return screenStyle;
-};
-
-export const getContentLayoutStyle = (mobileConfig: MobileConfig) => {
-  const verticalSpacing = mobileConfig.verticalSpacing ?? 20;
-  const horizontalPadding = Math.max(12, mobileConfig.horizontalPadding ?? 16);
-  const gamePosition = mobileConfig.gamePosition || 'left';
-
-  return {
-    display: 'flex',
-    flexDirection: 'column' as const,
-    justifyContent: gamePosition === 'top' ? 'flex-end' : 
-                    gamePosition === 'bottom' ? 'flex-start' : 'center',
-    alignItems: 'center',
-    height: '100%',
-    width: '100%',
-    gap: verticalSpacing,
-    padding: `${verticalSpacing}px ${horizontalPadding}px`,
-    overflowY: 'auto' as const,
-    overflowX: 'hidden' as const,
-    position: 'relative' as const,
-    zIndex: 5,
-    paddingTop: mobileConfig.buttonPlacement === 'top' ? '80px' : `${verticalSpacing}px`,
-    paddingBottom: mobileConfig.buttonPlacement === 'bottom' ? '80px' : `${verticalSpacing}px`
-  };
-};
-
-export const getTextBlockStyle = () => ({
-  textAlign: 'center' as const,
+export const getScreenStyle = (mobileConfig: any, previewMode: string) => ({
   width: '100%',
-  maxWidth: '100%',
-  flexShrink: 0,
-  overflowWrap: 'break-word' as const,
-  wordBreak: 'break-word' as const
+  height: '100%',
+  backgroundColor: mobileConfig.backgroundColor || '#ebf4f7',
+  backgroundImage: mobileConfig.backgroundImage ? `url(${mobileConfig.backgroundImage})` : undefined,
+  backgroundSize: mobileConfig.backgroundMode === 'contain' ? 'contain' : 'cover',
+  backgroundPosition: 'center',
+  backgroundRepeat: 'no-repeat',
+  borderRadius: '16px',
+  position: 'relative' as const,
+  overflow: 'hidden',
+  // Ensure proper aspect ratio for 1080×1920px content
+  aspectRatio: `${MOBILE_FORMAT_SPECS.width} / ${MOBILE_FORMAT_SPECS.height}`
 });
+
+export const getContentLayoutStyle = (mobileConfig: any) => {
+  const position = mobileConfig.textPosition || 'top';
+  const spacing = mobileConfig.verticalSpacing || 20;
+  const padding = mobileConfig.horizontalPadding || 16;
+  
+  return {
+    position: 'absolute' as const,
+    left: padding,
+    right: padding,
+    zIndex: 5,
+    ...(position === 'top' && { top: spacing }),
+    ...(position === 'center' && { 
+      top: '50%', 
+      transform: 'translateY(-50%)' 
+    }),
+    ...(position === 'bottom' && { bottom: spacing }),
+    pointerEvents: 'none' as const
+  };
+};

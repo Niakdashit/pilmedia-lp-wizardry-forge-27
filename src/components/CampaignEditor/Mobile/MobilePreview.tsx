@@ -1,9 +1,10 @@
+
 import React from 'react';
 import MobileWheelPreview from '../../GameTypes/MobileWheelPreview';
 import MobileButton from './MobileButton';
 import MobileContent from './MobileContent';
 import MobileOverlays from './MobileOverlays';
-import { DEVICE_SPECS } from './constants';
+import { PREVIEW_CONTAINER_SPECS } from './constants';
 import { getDeviceStyle, getScreenStyle, getContentLayoutStyle } from './styles';
 
 interface MobilePreviewProps {
@@ -17,7 +18,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
 }) => {
   const fallbackMobile = campaign.config?.mobileConfig || {};
   const mobileConfig = { ...fallbackMobile, ...(campaign.mobileConfig || {}) };
-  const specs = DEVICE_SPECS[previewMode];
+  const specs = PREVIEW_CONTAINER_SPECS[previewMode];
   const gamePosition = mobileConfig.gamePosition || 'left';
   const verticalOffset = mobileConfig.gameVerticalOffset || 0;
   const horizontalOffset = mobileConfig.gameHorizontalOffset || 0;
@@ -64,8 +65,10 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
           />
         </div>
 
-        {/* Button Layer */}
-        <MobileButton mobileConfig={mobileConfig} campaign={campaign} />
+        {/* Button Layer - only show if not hidden */}
+        {!mobileConfig.hideLaunchButton && (
+          <MobileButton mobileConfig={mobileConfig} campaign={campaign} />
+        )}
       </div>
     </div>
   );

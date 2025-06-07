@@ -26,6 +26,7 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
   const theme = desktopRouletteConfig.theme || 'default';
   const borderColor = desktopRouletteConfig.borderColor || '#841b60';
   const pointerColor = desktopRouletteConfig.pointerColor || '#841b60';
+  const hideLaunchButton = campaign?.mobileConfig?.hideLaunchButton || false;
 
   const canvasSize =
     mobileRouletteConfig.size ||
@@ -118,6 +119,35 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
           offset={offset.left}
         />
       </div>
+
+      {/* Center Launch Button - only show if external button is hidden */}
+      {hideLaunchButton && (
+        <div
+          style={{
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            zIndex: 20,
+            pointerEvents: 'auto',
+            backgroundColor: '#841b60',
+            color: 'white',
+            border: 'none',
+            borderRadius: '50%',
+            width: '60px',
+            height: '60px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '12px',
+            fontWeight: 'bold',
+            cursor: 'pointer',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
+          }}
+        >
+          JOUER
+        </div>
+      )}
 
       <WheelPointer
         pointerColor={pointerColor}
