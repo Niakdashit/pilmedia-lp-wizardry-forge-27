@@ -126,15 +126,15 @@ const ModernCampaignEditor: React.FC = () => {
     },
     screens: {
       1: {
-        title: 'Bienvenue !',
-        description: 'Participez à notre jeu et tentez de gagner !',
-        buttonText: 'Participer',
+        title: '',
+        description: '',
+        buttonText: '',
         showTitle: true,
         showDescription: true
       },
       3: {
-        title: 'Félicitations !',
-        description: 'Merci pour votre participation !',
+        title: '',
+        description: '',
         showTitle: true,
         showDescription: true
       }

@@ -13,6 +13,8 @@ interface FreeTextZoneProps {
     color: string;
     textAlign: 'left' | 'center' | 'right';
     fontFamily: string;
+    lineHeight: number;
+    letterSpacing: number;
   };
   isEditing: boolean;
   onEdit: (id: string) => void;
@@ -101,12 +103,15 @@ const FreeTextZone: React.FC<FreeTextZoneProps> = ({
         top: `${position.y}px`,
         width: `${size.width}px`,
         height: `${size.height}px`,
-        zIndex: 150,
+        zIndex: 200,
         border: isEditing ? '2px dashed #841b60' : '1px solid transparent',
         backgroundColor: 'transparent',
         cursor: isDragging ? 'grabbing' : 'grab',
         userSelect: 'none',
         overflow: 'hidden'
+      }}
+      onMouseDown={(e) => {
+        if (isEditing) handleMouseDown(e, 'drag');
       }}
       onClick={(e) => {
         e.stopPropagation();
@@ -130,6 +135,8 @@ const FreeTextZone: React.FC<FreeTextZoneProps> = ({
             color: style.color,
             textAlign: style.textAlign,
             fontFamily: style.fontFamily,
+            lineHeight: style.lineHeight,
+            letterSpacing: `${style.letterSpacing}px`,
             padding: '2px'
           }}
           onClick={(e) => e.stopPropagation()}
@@ -144,6 +151,8 @@ const FreeTextZone: React.FC<FreeTextZoneProps> = ({
             color: style.color,
             textAlign: style.textAlign,
             fontFamily: style.fontFamily,
+            lineHeight: style.lineHeight,
+            letterSpacing: `${style.letterSpacing}px`,
             padding: '2px',
             overflow: 'hidden',
             wordWrap: 'break-word'
@@ -199,14 +208,18 @@ const FreeTextZone: React.FC<FreeTextZoneProps> = ({
           <div
             style={{
               position: 'absolute',
-              top: '-20px',
-              right: '0px',
+              bottom: '100%',
+              left: '0px',
+              transform: 'translateY(-4px)',
               background: 'rgba(255, 255, 255, 0.9)',
               padding: '4px',
               borderRadius: '4px',
               display: 'flex',
+              flexWrap: 'wrap',
               gap: '4px',
-              fontSize: '10px'
+              fontSize: '10px',
+              maxHeight: '140px',
+              overflowY: 'auto'
             }}
           >
             <input
@@ -222,6 +235,43 @@ const FreeTextZone: React.FC<FreeTextZoneProps> = ({
               style={{ width: '40px', padding: '2px', border: '1px solid #ccc', borderRadius: '2px' }}
               min="8"
               max="72"
+            />
+            <select
+              value={style.fontWeight}
+              onChange={(e) => onStyleChange(id, { fontWeight: e.target.value })}
+              style={{ padding: '2px', border: '1px solid #ccc', borderRadius: '2px' }}
+            >
+              <option value="normal">Normal</option>
+              <option value="bold">Bold</option>
+              <option value="lighter">Light</option>
+            </select>
+            <select
+              value={style.fontFamily}
+              onChange={(e) => onStyleChange(id, { fontFamily: e.target.value })}
+              style={{ padding: '2px', border: '1px solid #ccc', borderRadius: '2px' }}
+            >
+              <option value="Inter, sans-serif">Inter</option>
+              <option value="Arial, sans-serif">Arial</option>
+              <option value="Helvetica, sans-serif">Helvetica</option>
+              <option value="Georgia, serif">Georgia</option>
+              <option value="Times New Roman, serif">Times</option>
+            </select>
+            <input
+              type="number"
+              value={style.lineHeight}
+              step="0.1"
+              onChange={(e) => onStyleChange(id, { lineHeight: parseFloat(e.target.value) || 1 })}
+              style={{ width: '40px', padding: '2px', border: '1px solid #ccc', borderRadius: '2px' }}
+              min="0.5"
+              max="3"
+            />
+            <input
+              type="number"
+              value={style.letterSpacing}
+              onChange={(e) => onStyleChange(id, { letterSpacing: parseFloat(e.target.value) || 0 })}
+              style={{ width: '40px', padding: '2px', border: '1px solid #ccc', borderRadius: '2px' }}
+              min="-5"
+              max="20"
             />
             <select
               value={style.textAlign}

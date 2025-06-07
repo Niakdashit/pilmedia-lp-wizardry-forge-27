@@ -64,18 +64,18 @@ const CampaignEditor: React.FC = () => {
     type: campaignType,
     screens: {
       1: {
-        title: 'Bienvenue !',
-        description: 'Participez à notre jeu et tentez de gagner !',
-        buttonText: 'Participer',
+        title: '',
+        description: '',
+        buttonText: '',
         buttonLink: '',
         showTitle: true,
         showDescription: true
       },
       2: {},
       3: {
-        title: 'Félicitations !',
-        description: 'Merci pour votre participation !',
-        buttonText: 'Rejouer',
+        title: '',
+        description: '',
+        buttonText: '',
         buttonLink: '',
         showTitle: true,
         showDescription: true,

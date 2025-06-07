@@ -29,20 +29,27 @@ const TextZoneManager: React.FC<TextZoneManagerProps> = ({
   gameArea,
   containerBounds
 }) => {
-  const [textZones, setTextZones] = useState<TextZone[]>([
-    {
-      id: 'main-text',
-      position: { x: 20, y: 20 },
-      size: { width: 200, height: 80 },
-      content: {
-        title: campaign?.screens?.[1]?.title || 'Bienvenue !',
-        description: campaign?.screens?.[1]?.description || 'Participez à notre jeu et tentez de gagner !',
-        showTitle: mobileConfig.showTitle !== false,
-        showDescription: mobileConfig.showDescription !== false
-      }
+  const [textZones, setTextZones] = useState<TextZone[]>(() => {
+    const initialTitle = campaign?.screens?.[1]?.title || '';
+    const initialDescription = campaign?.screens?.[1]?.description || '';
+    if (initialTitle || initialDescription) {
+      return [
+        {
+          id: 'main-text',
+          position: { x: 20, y: 20 },
+          size: { width: 200, height: 80 },
+          content: {
+            title: initialTitle,
+            description: initialDescription,
+            showTitle: mobileConfig.showTitle !== false,
+            showDescription: mobileConfig.showDescription !== false,
+          },
+        },
+      ];
     }
-  ]);
-  const [selectedZone, setSelectedZone] = useState<string | null>('main-text');
+    return [];
+  });
+  const [selectedZone, setSelectedZone] = useState<string | null>(null);
 
   const handlePositionChange = (id: string, position: { x: number; y: number }) => {
     setTextZones(zones => 
@@ -66,8 +73,8 @@ const TextZoneManager: React.FC<TextZoneManagerProps> = ({
       position: { x: 50, y: 120 },
       size: { width: 180, height: 60 },
       content: {
-        title: 'Nouveau titre',
-        description: 'Nouvelle description',
+        title: '',
+        description: '',
         showTitle: true,
         showDescription: true
       }
@@ -77,9 +84,8 @@ const TextZoneManager: React.FC<TextZoneManagerProps> = ({
   };
 
   const removeTextZone = (id: string) => {
-    if (id === 'main-text') return; // Don't allow removing main text zone
     setTextZones(zones => zones.filter(zone => zone.id !== id));
-    setSelectedZone('main-text');
+    setSelectedZone(null);
   };
 
   const renderTextContent = (zone: TextZone) => {
