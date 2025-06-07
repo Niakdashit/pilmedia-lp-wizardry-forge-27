@@ -152,11 +152,17 @@ const CampaignDesign: React.FC<CampaignDesignProps> = ({ campaign, setCampaign }
             value={campaign.design.logoUrl}
             onChange={(value) => updateDesign('logoUrl', value)}
           />
-          
+
           <ImageUpload
             label="Image d'arrière-plan générale"
             value={campaign.design.backgroundImage}
             onChange={(value) => updateDesign('backgroundImage', value)}
+          />
+
+          <ImageUpload
+            label="Image d'arrière-plan mobile"
+            value={campaign.design.mobileBackgroundImage}
+            onChange={(value) => updateDesign('mobileBackgroundImage', value)}
           />
         </div>
       </div>
