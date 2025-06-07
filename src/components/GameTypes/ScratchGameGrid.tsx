@@ -17,16 +17,18 @@ const ScratchGameGrid: React.FC<ScratchGameGridProps> = ({
   onCardFinish,
   config
 }) => {
-  // Responsive grid: 2 cards max on mobile, 3 on tablet/desktop
-  const gridClasses = cards.length === 1
-    ? 'grid grid-cols-1 justify-items-center'
-    : 'grid grid-cols-2 md:grid-cols-3 justify-items-center';
+  // Responsive grid: 2 cards on mobile, 3 on tablet/desktop
+  const columnClasses = cards.length === 1
+    ? 'grid-cols-1'
+    : 'grid-cols-2 md:grid-cols-3';
 
-  // Spacing based on number of cards and screen size
-  // Ajout d'un espacement plus généreux entre les cartes
+  // Center the grid when there is a single card
+  const gridClasses = `grid ${columnClasses} justify-center`;
+
+  // Consistent spacing between cards
   const spacingClasses = cards.length === 1
-    ? 'gap-0'
-    : 'gap-6 md:gap-8';
+    ? 'gap-y-6'
+    : 'gap-4 md:gap-6';
 
   return (
     <div className="w-full max-w-6xl mx-auto px-4">

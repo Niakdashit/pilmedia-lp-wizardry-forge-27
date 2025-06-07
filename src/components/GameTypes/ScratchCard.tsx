@@ -181,9 +181,9 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
   if (!gameStarted) {
     return (
       <div className="flex flex-col items-center">
-        <div 
-          className="relative rounded-lg overflow-hidden border-2 border-gray-300 mb-2" 
-          style={{ width: `${width}px`, height: `${height}px` }}
+        <div
+          className="relative rounded-lg overflow-hidden border-2 border-gray-300 mb-2"
+          style={{ width: '100%', maxWidth: `${width}px`, height: `${height}px` }}
         >
           <div className="absolute inset-0 bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center">
             <div className="text-white text-center">
@@ -214,7 +214,7 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
 
       <div 
         className="relative rounded-lg overflow-hidden border-2 border-gray-300" 
-        style={{ width: `${width}px`, height: `${height}px` }}
+        style={{ width: '100%', maxWidth: `${width}px`, height: `${height}px` }}
       >
         {/* Contenu à révéler */}
         <div className="absolute inset-0">
