@@ -42,18 +42,26 @@ const ScratchGameGrid: React.FC<ScratchGameGridProps> = ({
     <div className="w-full max-w-6xl mx-auto px-4">
       <div className={`${gridClasses} ${spacingClasses}`}>
         {cards.map((card: any, index: number) => {
-          // Card states based on session rules:
-          // 1. If scratch hasn't started and no card is selected -> all cards are selectable
-          // 2. If scratch hasn't started but a card is selected -> only selected card can be scratched, others are locked
-          // 3. If scratch has started -> only the scratched card is active, all others are permanently locked
-          
           const isThisCardSelected = selectedCard === index;
+          
+          // Card states logic:
+          // 1. If game hasn't started -> show preview only
+          // 2. If game started but no scratch started and no card selected -> all cards selectable
+          // 3. If a card is selected but scratch hasn't started -> only selected card can be scratched, others locked
+          // 4. If scratch has started -> only the scratched card is active, all others permanently locked
+          
           const isLocked = gameStarted && (
             (scratchStarted && !isThisCardSelected) || // Once scratching starts, lock all non-selected cards
-            (!scratchStarted && selectedCard !== null && !isThisCardSelected) // If a card is selected but scratching hasn't started, lock others
+            (selectedCard !== null && !isThisCardSelected && !scratchStarted) // If a card is selected but scratching hasn't started, lock others
           );
+          
+          // Cards are selectable only when game started, no scratch started, and no card is selected yet
           const isSelectable = gameStarted && !scratchStarted && selectedCard === null;
-          const canScratch = gameStarted && isThisCardSelected && selectedCard !== null && !scratchStarted;
+          
+          // Only the selected card can be scratched (and only if scratching hasn't started yet)
+          const canScratch = gameStarted && isThisCardSelected && !scratchStarted;
+
+          console.log(`Card ${index}: selected=${isThisCardSelected}, locked=${isLocked}, selectable=${isSelectable}, canScratch=${canScratch}`);
 
           return (
             <ScratchCard

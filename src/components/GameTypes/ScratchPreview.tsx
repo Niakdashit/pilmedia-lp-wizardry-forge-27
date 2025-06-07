@@ -33,18 +33,26 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
   const [selectedCard, setSelectedCard] = useState<number | null>(null);
   const [scratchStarted, setScratchStarted] = useState(false);
 
-  // Load any previously selected card and scratch state from storage
+  // Load state only if scratching has actually started in a previous session
   useEffect(() => {
-    const storedCard = localStorage.getItem(STORAGE_KEY);
     const storedScratchStarted = localStorage.getItem(SCRATCH_STARTED_KEY);
     
     // Only restore state if scratching has actually started
-    if (storedScratchStarted === 'true' && storedCard !== null) {
-      const index = parseInt(storedCard, 10);
-      if (!Number.isNaN(index)) {
-        setSelectedCard(index);
-        setScratchStarted(true);
+    if (storedScratchStarted === 'true') {
+      const storedCard = localStorage.getItem(STORAGE_KEY);
+      if (storedCard !== null) {
+        const index = parseInt(storedCard, 10);
+        if (!Number.isNaN(index)) {
+          setSelectedCard(index);
+          setScratchStarted(true);
+          console.log(`Restored session: card ${index} was being scratched`);
+        }
       }
+    } else {
+      // Clear any leftover data from incomplete sessions
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(SCRATCH_STARTED_KEY);
+      console.log('Starting fresh session - no cards selected');
     }
   }, []);
 
@@ -66,7 +74,6 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
     // Only allow selection if no scratch has started and no card is selected
     if (!scratchStarted && selectedCard === null) {
       setSelectedCard(index);
-      // Don't save to localStorage until scratching actually starts
       console.log(`Card ${index} selected but not saved to storage yet`);
     }
   };
@@ -77,7 +84,7 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
       setScratchStarted(true);
       localStorage.setItem(STORAGE_KEY, index.toString());
       localStorage.setItem(SCRATCH_STARTED_KEY, 'true');
-      console.log(`Scratch started on card ${index}, all other cards are now locked`);
+      console.log(`Scratch started on card ${index}, all other cards are now permanently locked`);
     }
   };
 
