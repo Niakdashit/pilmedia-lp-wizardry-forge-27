@@ -1,7 +1,7 @@
-
 import React from 'react';
-import ContrastBackground from '../../common/ContrastBackground';
-import { getTextBlockStyle } from './styles';
+
+// This component has been replaced by TextZoneManager for better text positioning control
+// Keeping this file for backward compatibility but functionality moved to TextZoneManager
 
 interface MobileContentProps {
   mobileConfig: any;
@@ -9,22 +9,9 @@ interface MobileContentProps {
   previewMode: string;
 }
 
-const MobileContent: React.FC<MobileContentProps> = ({
-  mobileConfig
-}) => {
-  const renderContent = () => {
-    const contrastBg = mobileConfig.contrastBackground || {};
-    const textBlock = mobileConfig.showTitle !== false || mobileConfig.showDescription !== false ? <div style={getTextBlockStyle()}>
-        <ContrastBackground enabled={contrastBg.enabled} config={contrastBg} className="w-full">
-          {mobileConfig.showTitle !== false}
-          {mobileConfig.showDescription !== false}
-        </ContrastBackground>
-      </div> : null;
-    return [textBlock];
-  };
-  return <>
-      {renderContent().map((element, idx) => element ? <React.Fragment key={idx}>{element}</React.Fragment> : null)}
-    </>;
+const MobileContent: React.FC<MobileContentProps> = () => {
+  // Component functionality moved to TextZoneManager
+  return null;
 };
 
 export default MobileContent;

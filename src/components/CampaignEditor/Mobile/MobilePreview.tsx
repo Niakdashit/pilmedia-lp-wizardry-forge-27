@@ -2,9 +2,9 @@
 import React from 'react';
 import MobileWheelPreview from '../../GameTypes/MobileWheelPreview';
 import MobileButton from './MobileButton';
-import MobileContent from './MobileContent';
 import MobileOverlays from './MobileOverlays';
-import { getDeviceStyle, getScreenStyle, getContentLayoutStyle } from './styles';
+import TextZoneManager from './TextZoneManager';
+import { getDeviceStyle, getScreenStyle } from './styles';
 
 interface MobilePreviewProps {
   campaign: any;
@@ -23,7 +23,52 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
 
   const deviceStyle = getDeviceStyle();
   const screenStyle = getScreenStyle(mobileConfig);
-  const contentLayoutStyle = getContentLayoutStyle(mobileConfig);
+
+  // Calculate game area bounds for collision detection
+  const getGameArea = () => {
+    if (campaign.type !== 'wheel') return undefined;
+    
+    const canvasSize = 280; // Default wheel size
+    const containerWidth = deviceStyle.width - 16; // Account for device padding
+    const containerHeight = deviceStyle.height - 16;
+    
+    let gameArea = { x: 0, y: 0, width: canvasSize, height: canvasSize };
+    
+    switch (gamePosition) {
+      case 'left':
+        gameArea = {
+          x: horizontalOffset,
+          y: (containerHeight - canvasSize) / 2 + verticalOffset,
+          width: canvasSize,
+          height: canvasSize
+        };
+        break;
+      case 'right':
+        gameArea = {
+          x: containerWidth - canvasSize + horizontalOffset,
+          y: (containerHeight - canvasSize) / 2 + verticalOffset,
+          width: canvasSize,
+          height: canvasSize
+        };
+        break;
+      case 'center':
+      default:
+        gameArea = {
+          x: (containerWidth - canvasSize) / 2 + horizontalOffset,
+          y: (containerHeight - canvasSize) / 2 + verticalOffset,
+          width: canvasSize,
+          height: canvasSize
+        };
+        break;
+    }
+    
+    return gameArea;
+  };
+
+  const containerBounds = {
+    width: deviceStyle.width - 16,
+    height: deviceStyle.height - 16
+  };
 
   return (
     <div style={deviceStyle} key={`mobile-preview-${campaign.gameSize}-${JSON.stringify(mobileConfig)}`}>
@@ -53,14 +98,13 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
           </div>
         )}
 
-        {/* Content Layer */}
-        <div style={contentLayoutStyle}>
-          <MobileContent 
-            mobileConfig={mobileConfig} 
-            campaign={campaign} 
-            previewMode={previewMode} 
-          />
-        </div>
+        {/* Text Zone Manager - Replaces static content */}
+        <TextZoneManager
+          mobileConfig={mobileConfig}
+          campaign={campaign}
+          gameArea={getGameArea()}
+          containerBounds={containerBounds}
+        />
 
         {/* Button Layer - only show if not hidden */}
         {!mobileConfig.hideLaunchButton && (
