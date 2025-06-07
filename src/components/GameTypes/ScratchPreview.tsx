@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import ScratchGameGrid from './ScratchGameGrid';
 
@@ -91,19 +92,6 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
         }
       }, 1000);
     }
-  };
-
-  const handleReplay = () => {
-    // Reset all states to restart the game
-    setGameStarted(false);
-    setFinishedCards(new Set());
-    setHasWon(false);
-    setSelectedCard(null);
-    setScratchStarted(false);
-    setShowResult(false);
-    localStorage.removeItem(STORAGE_KEY);
-    localStorage.removeItem(SCRATCH_STARTED_KEY);
-    console.log('Game reset - ready to start over');
   };
 
   // Ensure we have at least one card with proper defaults
