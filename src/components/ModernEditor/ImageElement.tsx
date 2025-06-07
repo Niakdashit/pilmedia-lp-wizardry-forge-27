@@ -12,6 +12,7 @@ interface ImageElementProps {
   onUpdate: (updates: any) => void;
   onDelete: () => void;
   containerRef: React.RefObject<HTMLDivElement>;
+  getElementDeviceConfig: (element: any) => any;
 }
 
 const ImageElement: React.FC<ImageElementProps> = ({
@@ -20,21 +21,25 @@ const ImageElement: React.FC<ImageElementProps> = ({
   onSelect,
   onUpdate,
   onDelete,
-  containerRef
+  containerRef,
+  getElementDeviceConfig
 }) => {
   const [aspectRatioLocked, setAspectRatioLocked] = useState(true);
   const elementRef = useRef<HTMLDivElement>(null);
 
+  // Get current device-specific position and size
+  const deviceConfig = getElementDeviceConfig(element);
+
   const { isDragging, handleDragStart } = useImageElementDrag(
     elementRef,
     containerRef,
-    element,
+    deviceConfig,
     onUpdate
   );
 
   const { isResizing, handleResizeStart } = useImageElementResize(
     containerRef,
-    element,
+    deviceConfig,
     onUpdate,
     aspectRatioLocked
   );
@@ -43,11 +48,11 @@ const ImageElement: React.FC<ImageElementProps> = ({
     if (!containerRef.current) return;
     
     const containerRect = containerRef.current.getBoundingClientRect();
-    const centerX = (containerRect.width - element.width) / 2;
-    const centerY = (containerRect.height - element.height) / 2;
+    const centerX = (containerRect.width - deviceConfig.width) / 2;
+    const centerY = (containerRect.height - deviceConfig.height) / 2;
     
     onUpdate({ x: centerX, y: centerY });
-  }, [onUpdate, containerRef, element]);
+  }, [onUpdate, containerRef, deviceConfig]);
 
   const toggleAspectRatio = useCallback(() => {
     setAspectRatioLocked(!aspectRatioLocked);
@@ -67,9 +72,9 @@ const ImageElement: React.FC<ImageElementProps> = ({
       <div
         style={{
           position: 'absolute',
-          transform: `translate3d(${element.x}px, ${element.y}px, 0)`,
-          width: element.width,
-          height: element.height,
+          transform: `translate3d(${deviceConfig.x}px, ${deviceConfig.y}px, 0)`,
+          width: deviceConfig.width,
+          height: deviceConfig.height,
           border: '2px dashed #cbd5e1',
           display: 'flex',
           alignItems: 'center',
@@ -91,9 +96,9 @@ const ImageElement: React.FC<ImageElementProps> = ({
       ref={elementRef}
       style={{
         position: 'absolute',
-        transform: `translate3d(${element.x}px, ${element.y}px, 0) rotate(${element.rotation || 0}deg)`,
-        width: element.width,
-        height: element.height,
+        transform: `translate3d(${deviceConfig.x}px, ${deviceConfig.y}px, 0) rotate(${element.rotation || 0}deg)`,
+        width: deviceConfig.width,
+        height: deviceConfig.height,
         cursor: isDragging ? 'grabbing' : 'grab',
         zIndex: isSelected ? 30 : 20,
         willChange: isDragging || isResizing ? 'transform' : 'auto',

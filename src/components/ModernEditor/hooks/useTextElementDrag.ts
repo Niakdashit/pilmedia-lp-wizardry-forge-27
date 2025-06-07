@@ -4,7 +4,7 @@ import { useState, useCallback, useRef } from 'react';
 export const useTextElementDrag = (
   elementRef: React.RefObject<HTMLDivElement>,
   containerRef: React.RefObject<HTMLDivElement>,
-  element: any,
+  deviceConfig: any,
   onUpdate: (updates: any) => void
 ) => {
   const [isDragging, setIsDragging] = useState(false);
@@ -50,7 +50,7 @@ export const useTextElementDrag = (
 
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
-  }, [containerRef, element, onUpdate]);
+  }, [containerRef, deviceConfig, onUpdate]);
 
   return {
     isDragging,

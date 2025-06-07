@@ -35,8 +35,9 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
     updateTextElement,
     updateImageElement,
     deleteTextElement,
-    deleteImageElement
-  } = useCanvasElements(campaign, setCampaign);
+    deleteImageElement,
+    getElementDeviceConfig
+  } = useCanvasElements(campaign, setCampaign, previewDevice);
 
   // Enhanced campaign with proper settings propagation
   const enhancedCampaign = {
@@ -126,7 +127,7 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
           {customTexts.map((customText: any) => (
             customText?.enabled && (
               <TextElement
-                key={`text-${customText.id}`}
+                key={`text-${customText.id}-${previewDevice}`}
                 element={customText}
                 isSelected={selectedElement?.type === 'text' && selectedElement?.id === customText.id}
                 onSelect={() => setSelectedElement({ type: 'text', id: customText.id })}
@@ -134,6 +135,7 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
                 onDelete={() => deleteTextElement(customText.id)}
                 containerRef={canvasRef}
                 sizeMap={sizeMap}
+                getElementDeviceConfig={getElementDeviceConfig}
               />
             )
           ))}
@@ -141,13 +143,14 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
           {/* Custom Image Elements */}
           {customImages.map((customImage: any) => (
             <ImageElement
-              key={`image-${customImage.id}`}
+              key={`image-${customImage.id}-${previewDevice}`}
               element={customImage}
               isSelected={selectedElement?.type === 'image' && selectedElement?.id === customImage.id}
               onSelect={() => setSelectedElement({ type: 'image', id: customImage.id })}
               onUpdate={(updates) => updateImageElement(customImage.id, updates)}
               onDelete={() => deleteImageElement(customImage.id)}
               containerRef={canvasRef}
+              getElementDeviceConfig={getElementDeviceConfig}
             />
           ))}
         </div>

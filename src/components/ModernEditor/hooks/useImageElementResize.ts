@@ -3,62 +3,89 @@ import { useState, useCallback, useRef } from 'react';
 
 export const useImageElementResize = (
   containerRef: React.RefObject<HTMLDivElement>,
-  element: any,
+  deviceConfig: any,
   onUpdate: (updates: any) => void,
   aspectRatioLocked: boolean
 ) => {
   const [isResizing, setIsResizing] = useState(false);
-  const resizeStartRef = useRef<{startX: number, startY: number, startWidth: number, startHeight: number, aspectRatio: number} | null>(null);
+  const resizeStartRef = useRef<{
+    startX: number,
+    startY: number,
+    startWidth: number,
+    startHeight: number,
+    direction: string,
+    aspectRatio: number
+  } | null>(null);
 
-  const handleResizeStart = useCallback((e: React.MouseEvent) => {
+  const handleResizeStart = useCallback((e: React.MouseEvent, direction: string) => {
     e.preventDefault();
     e.stopPropagation();
 
-    const startX = e.clientX;
-    const startY = e.clientY;
-    const startWidth = element.width;
-    const startHeight = element.height;
-    const aspectRatio = startWidth / startHeight;
+    if (!containerRef.current) return;
 
-    resizeStartRef.current = { startX, startY, startWidth, startHeight, aspectRatio };
+    const aspectRatio = deviceConfig.width / deviceConfig.height;
+    
+    resizeStartRef.current = {
+      startX: e.clientX,
+      startY: e.clientY,
+      startWidth: deviceConfig.width,
+      startHeight: deviceConfig.height,
+      direction,
+      aspectRatio
+    };
+    
     setIsResizing(true);
 
     const handleMouseMove = (moveEvent: MouseEvent) => {
       if (!containerRef.current || !resizeStartRef.current) return;
-      
-      const containerRect = containerRef.current.getBoundingClientRect();
-      const { startX, startY, startWidth, startHeight, aspectRatio } = resizeStartRef.current;
-      
-      const deltaX = moveEvent.clientX - startX;
-      const deltaY = moveEvent.clientY - startY;
-      
-      let newWidth = Math.max(20, startWidth + deltaX);
-      let newHeight = Math.max(20, startHeight + deltaY);
-      
-      // Apply aspect ratio lock if enabled
-      if (aspectRatioLocked) {
-        const avgDelta = (deltaX + deltaY) / 2;
-        newWidth = Math.max(20, startWidth + avgDelta);
-        newHeight = newWidth / aspectRatio;
+
+      const deltaX = moveEvent.clientX - resizeStartRef.current.startX;
+      const deltaY = moveEvent.clientY - resizeStartRef.current.startY;
+
+      let newWidth = resizeStartRef.current.startWidth;
+      let newHeight = resizeStartRef.current.startHeight;
+
+      // Calculate new dimensions based on resize direction
+      switch (resizeStartRef.current.direction) {
+        case 'se': // bottom-right
+          newWidth = Math.max(20, resizeStartRef.current.startWidth + deltaX);
+          if (aspectRatioLocked) {
+            newHeight = newWidth / resizeStartRef.current.aspectRatio;
+          } else {
+            newHeight = Math.max(20, resizeStartRef.current.startHeight + deltaY);
+          }
+          break;
+        case 'sw': // bottom-left
+          newWidth = Math.max(20, resizeStartRef.current.startWidth - deltaX);
+          if (aspectRatioLocked) {
+            newHeight = newWidth / resizeStartRef.current.aspectRatio;
+          } else {
+            newHeight = Math.max(20, resizeStartRef.current.startHeight + deltaY);
+          }
+          break;
+        case 'ne': // top-right
+          newWidth = Math.max(20, resizeStartRef.current.startWidth + deltaX);
+          if (aspectRatioLocked) {
+            newHeight = newWidth / resizeStartRef.current.aspectRatio;
+          } else {
+            newHeight = Math.max(20, resizeStartRef.current.startHeight - deltaY);
+          }
+          break;
+        case 'nw': // top-left
+          newWidth = Math.max(20, resizeStartRef.current.startWidth - deltaX);
+          if (aspectRatioLocked) {
+            newHeight = newWidth / resizeStartRef.current.aspectRatio;
+          } else {
+            newHeight = Math.max(20, resizeStartRef.current.startHeight - deltaY);
+          }
+          break;
       }
-      
+
       // Constrain to container bounds
-      const maxWidth = Math.min(containerRect.width - element.x, 1080);
-      const maxHeight = Math.min(containerRect.height - element.y, 1920);
-      
-      newWidth = Math.min(newWidth, maxWidth);
-      newHeight = Math.min(newHeight, maxHeight);
-      
-      // Re-apply aspect ratio if constrained
-      if (aspectRatioLocked) {
-        if (newWidth / aspectRatio > newHeight) {
-          newWidth = newHeight * aspectRatio;
-        } else {
-          newHeight = newWidth / aspectRatio;
-        }
-      }
-      
-      // Update immediately for real-time feedback
+      const containerRect = containerRef.current.getBoundingClientRect();
+      newWidth = Math.min(newWidth, containerRect.width - deviceConfig.x);
+      newHeight = Math.min(newHeight, containerRect.height - deviceConfig.y);
+
       onUpdate({ width: newWidth, height: newHeight });
     };
 
@@ -71,7 +98,7 @@ export const useImageElementResize = (
 
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
-  }, [containerRef, element, onUpdate, aspectRatioLocked]);
+  }, [containerRef, deviceConfig, onUpdate, aspectRatioLocked]);
 
   return {
     isResizing,

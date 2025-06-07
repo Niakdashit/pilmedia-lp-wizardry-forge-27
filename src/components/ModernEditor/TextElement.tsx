@@ -11,6 +11,7 @@ interface TextElementProps {
   onDelete: () => void;
   containerRef: React.RefObject<HTMLDivElement>;
   sizeMap: Record<string, string>;
+  getElementDeviceConfig: (element: any) => any;
 }
 
 const TextElement: React.FC<TextElementProps> = ({
@@ -20,14 +21,18 @@ const TextElement: React.FC<TextElementProps> = ({
   onUpdate,
   onDelete,
   containerRef,
-  sizeMap
+  sizeMap,
+  getElementDeviceConfig
 }) => {
   const elementRef = useRef<HTMLDivElement>(null);
+
+  // Get current device-specific position and size
+  const deviceConfig = getElementDeviceConfig(element);
 
   const { isDragging, handleDragStart } = useTextElementDrag(
     elementRef,
     containerRef,
-    element,
+    deviceConfig,
     onUpdate
   );
 
@@ -75,7 +80,7 @@ const TextElement: React.FC<TextElementProps> = ({
       ref={elementRef}
       style={{
         position: 'absolute',
-        transform: `translate3d(${element.x}px, ${element.y}px, 0)`,
+        transform: `translate3d(${deviceConfig.x}px, ${deviceConfig.y}px, 0)`,
         zIndex: isSelected ? 30 : 20,
         ...getTextStyles()
       }}

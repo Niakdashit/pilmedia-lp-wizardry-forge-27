@@ -4,7 +4,7 @@ import { useState, useCallback, useRef } from 'react';
 export const useImageElementDrag = (
   elementRef: React.RefObject<HTMLDivElement>,
   containerRef: React.RefObject<HTMLDivElement>,
-  element: any,
+  deviceConfig: any,
   onUpdate: (updates: any) => void
 ) => {
   const [isDragging, setIsDragging] = useState(false);
@@ -32,8 +32,8 @@ export const useImageElementDrag = (
       let newY = moveEvent.clientY - containerRect.top - dragStartRef.current.offsetY;
       
       // Constrain to container bounds
-      newX = Math.max(0, Math.min(newX, containerRect.width - element.width));
-      newY = Math.max(0, Math.min(newY, containerRect.height - element.height));
+      newX = Math.max(0, Math.min(newX, containerRect.width - deviceConfig.width));
+      newY = Math.max(0, Math.min(newY, containerRect.height - deviceConfig.height));
       
       // Update immediately for real-time feedback
       onUpdate({ x: newX, y: newY });
@@ -48,7 +48,7 @@ export const useImageElementDrag = (
 
     document.addEventListener('mousemove', handleMouseMove);
     document.addEventListener('mouseup', handleMouseUp);
-  }, [containerRef, element, onUpdate]);
+  }, [containerRef, deviceConfig, onUpdate]);
 
   return {
     isDragging,
