@@ -62,7 +62,8 @@ const WheelCanvas: React.FC<WheelCanvasProps> = ({
       ctx.fillStyle = seg.color || themeColors[i % themeColors.length];
       ctx.fill();
 
-      if (seg.image) {
+      // Fixed: Check if seg.image is a valid File object before creating object URL
+      if (seg.image && seg.image instanceof File) {
         const img = new Image();
         img.onload = () => {
           const angle = startAngle + anglePerSlice / 2;
@@ -91,7 +92,8 @@ const WheelCanvas: React.FC<WheelCanvasProps> = ({
       ctx.restore();
     });
 
-    if (centerImage) {
+    // Fixed: Check if centerImage is a valid File object before creating object URL
+    if (centerImage && centerImage instanceof File) {
       const img = new Image();
       img.onload = () => {
         ctx.save();
