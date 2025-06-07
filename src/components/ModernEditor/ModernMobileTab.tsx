@@ -7,7 +7,13 @@ interface ModernMobileTabProps {
 }
 
 const ModernMobileTab: React.FC<ModernMobileTabProps> = ({ campaign, setCampaign }) => {
-  return <CampaignMobile campaign={campaign} setCampaign={setCampaign} />;
+  return (
+    <CampaignMobile
+      campaign={campaign}
+      setCampaign={setCampaign}
+      hidePreview={true}
+    />
+  );
 };
 
 export default ModernMobileTab;
