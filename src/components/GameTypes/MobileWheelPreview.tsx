@@ -6,22 +6,30 @@ import WheelPointer from './MobileWheel/WheelPointer';
 interface MobileWheelPreviewProps {
   campaign: any;
   gamePosition?: 'left' | 'right' | 'center' | 'top' | 'bottom';
+  verticalOffset?: number;
 }
 
 const CANVAS_SIZE = 280;
 
 const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
   campaign,
-  gamePosition = 'center'
+  gamePosition = 'center',
+  verticalOffset = 0
 }) => {
-  const mobileRouletteConfig = campaign?.mobileConfig?.roulette || campaign?.config?.roulette || {};
-  const segments = mobileRouletteConfig.segments || campaign?.config?.roulette?.segments || [];
-  const centerImage = mobileRouletteConfig.centerImage || campaign?.config?.roulette?.centerImage;
-  const theme = mobileRouletteConfig.theme || campaign?.config?.roulette?.theme || 'default';
-  const borderColor = mobileRouletteConfig.borderColor || campaign?.config?.roulette?.borderColor || '#841b60';
-  const pointerColor = mobileRouletteConfig.pointerColor || campaign?.config?.roulette?.pointerColor || '#841b60';
+  const mobileRouletteConfig = campaign?.mobileConfig?.roulette || {};
+  const desktopRouletteConfig = campaign?.config?.roulette || {};
+  const segments = desktopRouletteConfig.segments || [];
+  const centerImage = desktopRouletteConfig.centerImage;
+  const theme = desktopRouletteConfig.theme || 'default';
+  const borderColor = desktopRouletteConfig.borderColor || '#841b60';
+  const pointerColor = desktopRouletteConfig.pointerColor || '#841b60';
 
-  const canvasSize = mobileRouletteConfig.size || mobileRouletteConfig.width || campaign?.config?.roulette?.size || campaign?.config?.roulette?.width || CANVAS_SIZE;
+  const canvasSize =
+    mobileRouletteConfig.size ||
+    mobileRouletteConfig.width ||
+    desktopRouletteConfig.size ||
+    desktopRouletteConfig.width ||
+    CANVAS_SIZE;
 
   if (segments.length === 0) {
     return null;
@@ -58,7 +66,7 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
       case 'top':
         return {
           ...baseStyle,
-          top: '0px',
+          top: `${verticalOffset}%`,
           left: '50%',
           transform: 'translateX(-50%)',
           width: canvasSize,
@@ -68,7 +76,7 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
       case 'bottom':
         return {
           ...baseStyle,
-          bottom: '0px',
+          bottom: `${-verticalOffset}%`,
           left: '50%',
           transform: 'translateX(-50%)',
           width: canvasSize,
@@ -81,7 +89,7 @@ const MobileWheelPreview: React.FC<MobileWheelPreviewProps> = ({
           ...baseStyle,
           top: '50%',
           left: '50%',
-          transform: 'translate(-50%, -50%)',
+          transform: `translate(-50%, calc(-50% + ${verticalOffset}%))`,
           width: canvasSize,
           height: canvasSize
         };

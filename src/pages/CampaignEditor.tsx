@@ -154,6 +154,7 @@ const CampaignEditor: React.FC = () => {
       descriptionSize: 'text-base',
       descriptionAlignment: 'text-center',
       gameVerticalAlign: 'center',
+      gameVerticalOffset: 0,
       gameMaxWidth: 90,
       gameMaxHeight: 60,
       gamePaddingX: 16,
