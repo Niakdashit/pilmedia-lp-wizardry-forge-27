@@ -65,18 +65,19 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
   };
 
   const handleCardSelect = (index: number) => {
-    // Only allow selection if no card has been selected yet and scratch hasn't started
-    if (selectedCard === null && !scratchStarted) {
+    // Only allow selection if no scratch has started in this session
+    if (!scratchStarted && selectedCard === null) {
       setSelectedCard(index);
       localStorage.setItem(STORAGE_KEY, index.toString());
     }
   };
 
   const handleScratchStart = (index: number) => {
-    // Only allow scratch to start on the selected card
+    // Only allow scratch to start on the selected card and if no scratch has started yet
     if (selectedCard === index && !scratchStarted) {
       setScratchStarted(true);
       localStorage.setItem(SCRATCH_STARTED_KEY, 'true');
+      console.log(`Scratch started on card ${index}, all other cards are now locked`);
     }
   };
 
@@ -151,8 +152,8 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
 
       <div className="text-center">
         <div className="text-sm text-gray-600">
-          {!selectedCard && !scratchStarted && "Choisissez une carte"}
-          {selectedCard !== null && !scratchStarted && "Grattez votre carte sélectionnée"}
+          {!scratchStarted && selectedCard === null && "Choisissez une carte à gratter"}
+          {!scratchStarted && selectedCard !== null && "Grattez votre carte sélectionnée"}
           {scratchStarted && `Cartes terminées: ${finishedCards.size}/${cards.length}`}
         </div>
         

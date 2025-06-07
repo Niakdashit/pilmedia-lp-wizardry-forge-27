@@ -42,12 +42,18 @@ const ScratchGameGrid: React.FC<ScratchGameGridProps> = ({
     <div className="w-full max-w-6xl mx-auto px-4">
       <div className={`${gridClasses} ${spacingClasses}`}>
         {cards.map((card: any, index: number) => {
-          // Determine if this card should be locked
-          const isLocked = gameStarted && scratchStarted && selectedCard !== index;
-          // Determine if this card is selectable (can be clicked to select)
+          // Card states based on session rules:
+          // 1. If scratch hasn't started and no card is selected -> all cards are selectable
+          // 2. If scratch hasn't started but a card is selected -> only selected card can be scratched, others are locked
+          // 3. If scratch has started -> only the scratched card is active, all others are permanently locked
+          
+          const isThisCardSelected = selectedCard === index;
+          const isLocked = gameStarted && (
+            (scratchStarted && !isThisCardSelected) || // Once scratching starts, lock all non-selected cards
+            (!scratchStarted && selectedCard !== null && !isThisCardSelected) // If a card is selected but scratching hasn't started, lock others
+          );
           const isSelectable = gameStarted && !scratchStarted && selectedCard === null;
-          // Determine if this card can be scratched
-          const canScratch = gameStarted && selectedCard === index && !scratchStarted;
+          const canScratch = gameStarted && isThisCardSelected && selectedCard !== null && !scratchStarted;
 
           return (
             <ScratchCard
@@ -62,7 +68,7 @@ const ScratchGameGrid: React.FC<ScratchGameGridProps> = ({
               locked={isLocked}
               selectable={isSelectable}
               canScratch={canScratch}
-              isSelected={selectedCard === index}
+              isSelected={isThisCardSelected}
               config={config}
             />
           );
