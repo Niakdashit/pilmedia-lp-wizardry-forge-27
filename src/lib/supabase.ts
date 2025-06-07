@@ -1,5 +1,6 @@
 
 
+
 // Mock Supabase client for development
 export const supabase = {
   from: (_table: string) => ({
@@ -9,19 +10,24 @@ export const supabase = {
       })
     }),
     select: (_columns?: string) => {
-      // Create a promise that also has chaining methods
-      const promise = Promise.resolve({ data: [], error: null });
-      
-      // Add chaining methods
-      promise.eq = (_column: string, _value: any) => ({
+      // Create a chainable object that supports both direct awaiting and method chaining
+      const chainableQuery = {
+        eq: (_column: string, _value: any) => ({
+          order: (_orderColumn: string, _options?: { ascending?: boolean }) => 
+            Promise.resolve({ data: [], error: null })
+        }),
         order: (_orderColumn: string, _options?: { ascending?: boolean }) => 
-          Promise.resolve({ data: [], error: null })
-      });
+          Promise.resolve({ data: [], error: null }),
+        // Make it awaitable by implementing thenable interface
+        then: (resolve: any, reject?: any) => {
+          return Promise.resolve({ data: [], error: null }).then(resolve, reject);
+        },
+        catch: (reject: any) => {
+          return Promise.resolve({ data: [], error: null }).catch(reject);
+        }
+      };
       
-      promise.order = (_orderColumn: string, _options?: { ascending?: boolean }) => 
-        Promise.resolve({ data: [], error: null });
-      
-      return promise;
+      return chainableQuery;
     },
     update: (data: any) => ({
       eq: (_column: string, _value: any) => ({
@@ -38,4 +44,5 @@ export const supabase = {
     getUser: () => Promise.resolve({ data: { user: null }, error: null }),
   },
 };
+
 
