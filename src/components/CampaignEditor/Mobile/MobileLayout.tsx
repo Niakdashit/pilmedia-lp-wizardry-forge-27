@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Move, ArrowUp, ArrowDown, Layers } from 'lucide-react';
 
@@ -43,7 +44,7 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({ campaign, setCampaign }) =>
           Position du jeu
         </label>
         <div className="grid grid-cols-3 gap-3">
-          {['top', 'center', 'bottom', 'left', 'right'].map((position) => (
+          {['top', 'center', 'bottom'].map((position) => (
             <button
               key={position}
               onClick={() => updateMobileConfig('gamePosition', position)}
@@ -58,52 +59,50 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({ campaign, setCampaign }) =>
                 {position === 'top' && 'En haut'}
                 {position === 'center' && 'Centré'}
                 {position === 'bottom' && 'En bas'}
-                {position === 'left' && 'Gauche (50% coupé)'}
-                {position === 'right' && 'Droite (50% coupé)'}
               </div>
             </button>
           ))}
         </div>
-        {['top', 'center', 'bottom'].includes(mobileConfig.gamePosition) && (
-          <div className="mt-4">
-            <label className="block text-xs text-gray-600 mb-1">
-              Décalage vertical (%)
-            </label>
-            <input
-              type="range"
-              min="-50"
-              max="50"
-              value={mobileConfig.gameVerticalOffset || 0}
-              onChange={(e) =>
-                updateMobileConfig('gameVerticalOffset', Number(e.target.value))
-              }
-              className="w-full"
-            />
-            <div className="text-xs text-gray-500 mt-1">
-              {mobileConfig.gameVerticalOffset || 0}%
-            </div>
+        
+        {/* Décalage vertical - toujours affiché */}
+        <div className="mt-4">
+          <label className="block text-xs text-gray-600 mb-1">
+            Décalage vertical (%)
+          </label>
+          <input
+            type="range"
+            min="-50"
+            max="50"
+            value={mobileConfig.gameVerticalOffset || 0}
+            onChange={(e) =>
+              updateMobileConfig('gameVerticalOffset', Number(e.target.value))
+            }
+            className="w-full"
+          />
+          <div className="text-xs text-gray-500 mt-1">
+            {mobileConfig.gameVerticalOffset || 0}%
           </div>
-        )}
-        {['left', 'center', 'right'].includes(mobileConfig.gamePosition) && (
-          <div className="mt-4">
-            <label className="block text-xs text-gray-600 mb-1">
-              Décalage horizontal (%)
-            </label>
-            <input
-              type="range"
-              min="-50"
-              max="50"
-              value={mobileConfig.gameHorizontalOffset || 0}
-              onChange={(e) =>
-                updateMobileConfig('gameHorizontalOffset', Number(e.target.value))
-              }
-              className="w-full"
-            />
-            <div className="text-xs text-gray-500 mt-1">
-              {mobileConfig.gameHorizontalOffset || 0}%
-            </div>
+        </div>
+        
+        {/* Décalage horizontal - toujours affiché */}
+        <div className="mt-4">
+          <label className="block text-xs text-gray-600 mb-1">
+            Décalage horizontal (%)
+          </label>
+          <input
+            type="range"
+            min="-50"
+            max="50"
+            value={mobileConfig.gameHorizontalOffset || 0}
+            onChange={(e) =>
+              updateMobileConfig('gameHorizontalOffset', Number(e.target.value))
+            }
+            className="w-full"
+          />
+          <div className="text-xs text-gray-500 mt-1">
+            {mobileConfig.gameHorizontalOffset || 0}%
           </div>
-        )}
+        </div>
       </div>
 
       {/* Button Position */}
