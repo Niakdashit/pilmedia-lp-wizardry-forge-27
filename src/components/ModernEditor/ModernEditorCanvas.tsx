@@ -1,3 +1,4 @@
+
 import React from 'react';
 import CampaignPreview from '../CampaignEditor/CampaignPreview';
 
@@ -11,48 +12,8 @@ interface ModernEditorCanvasProps {
 
 const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
   campaign,
-  previewDevice,
-  gameSize,
-  gamePosition,
-  onFreeTextZonesChange
+  previewDevice
 }) => {
-  const aspectRatio = 16 / 9;
-
-  const calculateCanvasDimensions = () => {
-    let width = 0;
-    let height = 0;
-
-    switch (gameSize) {
-      case 'small':
-        width = 300;
-        break;
-      case 'medium':
-        width = 500;
-        break;
-      case 'large':
-        width = 700;
-        break;
-      case 'xlarge':
-        width = 900;
-        break;
-      default:
-        width = 500;
-        break;
-    }
-
-    height = width / aspectRatio;
-    return { width, height };
-  };
-
-  const { width: canvasWidth, height: canvasHeight } = calculateCanvasDimensions();
-
-  const canvasStyle = {
-    width: `${canvasWidth}px`,
-    height: `${canvasHeight}px`,
-    position: 'relative' as const,
-    overflow: 'hidden'
-  };
-
   const containerStyle: React.CSSProperties = previewDevice === 'mobile' 
     ? {
         maxWidth: '375px',
