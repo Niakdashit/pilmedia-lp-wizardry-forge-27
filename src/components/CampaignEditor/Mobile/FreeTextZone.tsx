@@ -97,6 +97,7 @@ const FreeTextZone: React.FC<FreeTextZoneProps> = ({
   return (
     <div
       ref={zoneRef}
+      data-free-text-zone-id={id}
       style={{
         position: 'absolute',
         left: `${position.x}px`,

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import FreeTextZone from './FreeTextZone';
 import { Plus, Type } from 'lucide-react';
 
@@ -45,6 +45,8 @@ const FreeTextManager: React.FC<FreeTextManagerProps> = ({
 
   const addFreeText = (event: React.MouseEvent) => {
     if (!isPlacementMode) return;
+
+    event.stopPropagation();
     
     const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
     const x = event.clientX - rect.left;
@@ -147,6 +149,23 @@ const FreeTextManager: React.FC<FreeTextManagerProps> = ({
     setFreeTextZones(prev => prev.filter(zone => zone.id !== id));
     setEditingZone('');
   };
+
+  useEffect(() => {
+    const handleCanvasClick = (event: MouseEvent) => {
+      if (isPlacementMode) return;
+      const target = event.target as HTMLElement;
+      if (!target.closest('[data-free-text-zone-id]')) {
+        setEditingZone('');
+      }
+    };
+
+    const canvas = document.getElementById('root');
+    canvas?.addEventListener('click', handleCanvasClick);
+
+    return () => {
+      canvas?.removeEventListener('click', handleCanvasClick);
+    };
+  }, [isPlacementMode]);
 
   return (
     <>
