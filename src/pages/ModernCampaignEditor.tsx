@@ -12,27 +12,39 @@ import ModernGameTab from '../components/ModernEditor/ModernGameTab';
 import ModernDesignTab from '../components/ModernEditor/ModernDesignTab';
 import ModernFormTab from '../components/ModernEditor/ModernFormTab';
 import ModernGameConfigTab from '../components/ModernEditor/ModernGameConfigTab';
-
-const defaultFormFields = [
-  { id: 'prenom', label: 'Prénom', type: 'text', required: true },
-  { id: 'nom', label: 'Nom', type: 'text', required: true },
-  { id: 'email', label: 'Email', type: 'email', required: true }
-];
-
+import ModernMobileTab from '../components/ModernEditor/ModernMobileTab';
+const defaultFormFields = [{
+  id: 'prenom',
+  label: 'Prénom',
+  type: 'text',
+  required: true
+}, {
+  id: 'nom',
+  label: 'Nom',
+  type: 'text',
+  required: true
+}, {
+  id: 'email',
+  label: 'Email',
+  type: 'email',
+  required: true
+}];
 const ModernCampaignEditor: React.FC = () => {
-  const { id } = useParams();
+  const {
+    id
+  } = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const isNewCampaign = id === 'new';
   const campaignType = searchParams.get('type') as CampaignType || 'wheel';
-  
   const [activeTab, setActiveTab] = useState('general');
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [previewDevice, setPreviewDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
   const [isLoading, setIsLoading] = useState(false);
-  
-  const { saveCampaign, getCampaign } = useCampaigns();
-  
+  const {
+    saveCampaign,
+    getCampaign
+  } = useCampaigns();
   const [campaign, setCampaign] = useState<any>({
     id: undefined,
     name: isNewCampaign ? 'Nouvelle Campagne' : 'Ma Campagne',
@@ -130,13 +142,11 @@ const ModernCampaignEditor: React.FC = () => {
       }
     }
   });
-
   useEffect(() => {
     if (!isNewCampaign && id) {
       loadCampaign(id);
     }
   }, [id, isNewCampaign]);
-
   const loadCampaign = async (campaignId: string) => {
     setIsLoading(true);
     try {
@@ -151,7 +161,6 @@ const ModernCampaignEditor: React.FC = () => {
       setIsLoading(false);
     }
   };
-
   const handleSave = async (continueEditing = false) => {
     setIsLoading(true);
     try {
@@ -160,38 +169,36 @@ const ModernCampaignEditor: React.FC = () => {
         form_fields: campaign.formFields
       };
       const savedCampaign = await saveCampaign(campaignData);
-      
       if (savedCampaign && !continueEditing) {
         navigate('/gamification');
       } else if (savedCampaign && isNewCampaign) {
-        setCampaign((prev: any) => ({ ...prev, id: savedCampaign.id }));
+        setCampaign((prev: any) => ({
+          ...prev,
+          id: savedCampaign.id
+        }));
       }
     } finally {
       setIsLoading(false);
     }
   };
-
   const handleGameSizeChange = (size: 'small' | 'medium' | 'large' | 'xlarge') => {
     setCampaign((prev: any) => ({
       ...prev,
       gameSize: size
     }));
   };
-
   const handleGamePositionChange = (position: 'top' | 'center' | 'bottom' | 'left' | 'right') => {
     setCampaign((prev: any) => ({
       ...prev,
       gamePosition: position
     }));
   };
-
   const handleButtonConfigChange = (config: any) => {
     setCampaign((prev: any) => ({
       ...prev,
       buttonConfig: config
     }));
   };
-
   const gameTypeLabels: Record<CampaignType, string> = {
     wheel: 'Roue de la Fortune',
     jackpot: 'Jackpot',
@@ -203,17 +210,12 @@ const ModernCampaignEditor: React.FC = () => {
     swiper: 'Swiper',
     form: 'Formulaire Dynamique'
   };
-
-  return (
-    <div className="h-screen flex bg-gray-50">
+  return <div className="h-screen flex bg-gray-50">
       {/* Header */}
       <div className="fixed top-0 left-0 right-0 z-30 bg-white border-b border-gray-200 px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <button
-              onClick={() => navigate('/gamification')}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-            >
+            <button onClick={() => navigate('/gamification')} className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
               <ArrowLeft className="w-5 h-5" />
             </button>
             <div>
@@ -228,37 +230,20 @@ const ModernCampaignEditor: React.FC = () => {
 
           <div className="flex items-center space-x-3">
             <div className="flex items-center bg-gray-100 rounded-lg p-1">
-              <button
-                onClick={() => setPreviewDevice('desktop')}
-                className={`p-2 rounded-md transition-colors ${
-                  previewDevice === 'desktop' ? 'bg-white shadow-sm' : 'hover:bg-gray-200'
-                }`}
-              >
+              <button onClick={() => setPreviewDevice('desktop')} className={`p-2 rounded-md transition-colors ${previewDevice === 'desktop' ? 'bg-white shadow-sm' : 'hover:bg-gray-200'}`}>
                 <Monitor className="w-4 h-4" />
               </button>
-              <button
-                onClick={() => setPreviewDevice('mobile')}
-                className={`p-2 rounded-md transition-colors ${
-                  previewDevice === 'mobile' ? 'bg-white shadow-sm' : 'hover:bg-gray-200'
-                }`}
-              >
+              <button onClick={() => setPreviewDevice('mobile')} className={`p-2 rounded-md transition-colors ${previewDevice === 'mobile' ? 'bg-white shadow-sm' : 'hover:bg-gray-200'}`}>
                 <Smartphone className="w-4 h-4" />
               </button>
             </div>
             
-            <button
-              onClick={() => setShowPreviewModal(true)}
-              className="flex items-center space-x-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
-            >
+            <button onClick={() => setShowPreviewModal(true)} className="flex items-center space-x-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
               <Eye className="w-4 h-4" />
               <span>Aperçu</span>
             </button>
             
-            <button
-              onClick={() => handleSave(true)}
-              disabled={isLoading}
-              className="flex items-center space-x-2 px-4 py-2 bg-[#841b60] hover:bg-[#6d164f] text-white rounded-lg transition-colors disabled:opacity-50"
-            >
+            <button onClick={() => handleSave(true)} disabled={isLoading} className="flex items-center space-x-2 px-4 py-2 bg-[#841b60] hover:bg-[#6d164f] text-white rounded-lg transition-colors disabled:opacity-50">
               <Save className="w-4 h-4" />
               <span>{isLoading ? 'Sauvegarde...' : 'Sauvegarder'}</span>
             </button>
@@ -269,85 +254,44 @@ const ModernCampaignEditor: React.FC = () => {
       {/* Main Content */}
       <div className="flex w-full pt-20">
         {/* Sidebar */}
-        <ModernEditorSidebar
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-          campaignType={campaignType}
-        />
+        <ModernEditorSidebar activeTab={activeTab} onTabChange={setActiveTab} campaignType={campaignType} />
 
         {/* Content Area */}
         <div className="flex-1 flex">
           {/* Configuration Panel */}
           <div className="w-96 bg-white border-r border-gray-200 overflow-y-auto">
             <AnimatePresence mode="wait">
-              <motion.div
-                key={activeTab}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 20 }}
-                transition={{ duration: 0.2 }}
-                className="p-6"
-              >
-                {activeTab === 'general' && (
-                  <ModernGeneralTab
-                    campaign={campaign}
-                    setCampaign={setCampaign}
-                  />
-                )}
-                {activeTab === 'game' && (
-                  <ModernGameTab
-                    campaign={campaign}
-                    setCampaign={setCampaign}
-                  />
-                )}
-                {activeTab === 'gameconfig' && (
-                  <ModernGameConfigTab
-                    gameSize={campaign.gameSize}
-                    gamePosition={campaign.gamePosition}
-                    onGameSizeChange={handleGameSizeChange}
-                    onGamePositionChange={handleGamePositionChange}
-                    buttonConfig={campaign.buttonConfig}
-                    onButtonConfigChange={handleButtonConfigChange}
-                  />
-                )}
-                {activeTab === 'design' && (
-                  <ModernDesignTab
-                    campaign={campaign}
-                    setCampaign={setCampaign}
-                  />
-                )}
-                {activeTab === 'form' && (
-                  <ModernFormTab
-                    campaign={campaign}
-                    setCampaign={setCampaign}
-                  />
-                )}
+              <motion.div key={activeTab} initial={{
+              opacity: 0,
+              x: -20
+            }} animate={{
+              opacity: 1,
+              x: 0
+            }} exit={{
+              opacity: 0,
+              x: 20
+            }} transition={{
+              duration: 0.2
+            }} className="p-6 px-0">
+                {activeTab === 'general' && <ModernGeneralTab campaign={campaign} setCampaign={setCampaign} />}
+                {activeTab === 'game' && <ModernGameTab campaign={campaign} setCampaign={setCampaign} />}
+                {activeTab === 'gameconfig' && <ModernGameConfigTab gameSize={campaign.gameSize} gamePosition={campaign.gamePosition} onGameSizeChange={handleGameSizeChange} onGamePositionChange={handleGamePositionChange} buttonConfig={campaign.buttonConfig} onButtonConfigChange={handleButtonConfigChange} />}
+                {activeTab === 'design' && <ModernDesignTab campaign={campaign} setCampaign={setCampaign} />}
+                {activeTab === 'form' && <ModernFormTab campaign={campaign} setCampaign={setCampaign} />}
+                {activeTab === 'mobile' && <ModernMobileTab campaign={campaign} setCampaign={setCampaign} />}
               </motion.div>
             </AnimatePresence>
           </div>
 
           {/* Canvas Preview */}
           <div className="flex-1 bg-gray-100">
-            <ModernEditorCanvas
-              campaign={campaign}
-              previewDevice={previewDevice}
-              gameSize={campaign.gameSize}
-              gamePosition={campaign.gamePosition}
-            />
+            <ModernEditorCanvas campaign={campaign} previewDevice={previewDevice} gameSize={campaign.gameSize} gamePosition={campaign.gamePosition} />
           </div>
         </div>
       </div>
 
       {/* Preview Modal */}
-      {showPreviewModal && (
-        <ModernPreviewModal
-          isOpen={showPreviewModal}
-          onClose={() => setShowPreviewModal(false)}
-          campaign={campaign}
-        />
-      )}
-    </div>
-  );
+      {showPreviewModal && <ModernPreviewModal isOpen={showPreviewModal} onClose={() => setShowPreviewModal(false)} campaign={campaign} />}
+    </div>;
 };
-
 export default ModernCampaignEditor;

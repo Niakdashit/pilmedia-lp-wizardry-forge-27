@@ -9,10 +9,16 @@ import MobilePreview from './Mobile/MobilePreview';
 interface CampaignMobileProps {
   campaign: any;
   setCampaign: React.Dispatch<React.SetStateAction<any>>;
+  /**
+   * Hide the built-in preview panel. Useful when an outer editor already
+   * renders its own preview component.
+   */
+  hidePreview?: boolean;
 }
 const CampaignMobile: React.FC<CampaignMobileProps> = ({
   campaign,
-  setCampaign
+  setCampaign,
+  hidePreview = false
 }) => {
   const [activeSubTab, setActiveSubTab] = useState('layout');
   const [previewMode, setPreviewMode] = useState<'mobile' | 'tablet'>('mobile');
@@ -67,6 +73,7 @@ const CampaignMobile: React.FC<CampaignMobileProps> = ({
       </div>
 
       {/* Right Panel - Preview */}
+      {!hidePreview && (
       <div className="w-96 border-l border-gray-200 bg-gray-50 flex flex-col">
         {/* Preview Mode Toggle */}
         <div className="p-4 border-b border-gray-200 py-0">
@@ -91,6 +98,7 @@ const CampaignMobile: React.FC<CampaignMobileProps> = ({
           </div>
         </div>
       </div>
+      )}
     </div>;
 };
 export default CampaignMobile;

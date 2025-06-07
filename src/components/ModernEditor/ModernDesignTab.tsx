@@ -384,50 +384,35 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
       </details>
     </div>
   );
-  const fontOptions = [{
-    value: 'Inter',
-    label: 'Inter'
-  }, {
-    value: 'Arial',
-    label: 'Arial'
-  }, {
-    value: 'Helvetica',
-    label: 'Helvetica'
-  }, {
-    value: 'Georgia',
-    label: 'Georgia'
-  }, {
-    value: 'Times New Roman',
-    label: 'Times New Roman'
-  }];
-  const positionOptions = [{
-    value: 'top',
-    label: 'Haut'
-  }, {
-    value: 'center',
-    label: 'Centre'
-  }, {
-    value: 'bottom',
-    label: 'Bas'
-  }, {
-    value: 'left',
-    label: 'Gauche'
-  }, {
-    value: 'right',
-    label: 'Droite'
-  }];
-  const sizeOptions = [{
-    value: 'small',
-    label: 'S'
-  }, {
-    value: 'medium',
-    label: 'M'
-  }, {
-    value: 'large',
-    label: 'L'
-  }];
-  const weightOptions = [{ value: '300', label: 'Light' }, { value: '400', label: 'Regular' }, { value: '700', label: 'Bold' }];
-  const alignOptions = [{ value: 'left', label: 'Gauche' }, { value: 'center', label: 'Centre' }, { value: 'right', label: 'Droite' }];
+  const fontOptions = [
+    { value: 'Inter', label: 'Inter' },
+    { value: 'Arial', label: 'Arial' },
+    { value: 'Helvetica', label: 'Helvetica' },
+    { value: 'Georgia', label: 'Georgia' },
+    { value: 'Times New Roman', label: 'Times New Roman' }
+  ];
+  const positionOptions = [
+    { value: 'top', label: 'Haut' },
+    { value: 'center', label: 'Centre' },
+    { value: 'bottom', label: 'Bas' },
+    { value: 'left', label: 'Gauche' },
+    { value: 'right', label: 'Droite' }
+  ];
+  const sizeOptions = [
+    { value: 'small', label: 'S' },
+    { value: 'medium', label: 'M' },
+    { value: 'large', label: 'L' }
+  ];
+  const weightOptions = [
+    { value: '300', label: 'Light' },
+    { value: '400', label: 'Regular' },
+    { value: '700', label: 'Bold' }
+  ];
+  const alignOptions = [
+    { value: 'left', label: 'Gauche' },
+    { value: 'center', label: 'Centre' },
+    { value: 'right', label: 'Droite' }
+  ];
   const textStyles = campaign.design?.textStyles || {
     title: {},
     description: {},

@@ -12,7 +12,11 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   className = "",
   previewDevice = 'desktop'
 }) => {
-  const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage || campaign.design?.backgroundImage;
+  const baseBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage || campaign.design?.backgroundImage;
+  const mobileBackgroundImage = campaign.design?.mobileBackgroundImage;
+  const gameBackgroundImage = previewDevice === 'mobile' && mobileBackgroundImage
+    ? mobileBackgroundImage
+    : baseBackgroundImage;
   const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel || campaign.buttonConfig?.text || 'Jouer';
   const buttonColor = campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor || '#841b60';
 
