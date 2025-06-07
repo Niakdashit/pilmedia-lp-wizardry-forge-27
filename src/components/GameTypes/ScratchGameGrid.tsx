@@ -39,11 +39,11 @@ const ScratchGameGrid: React.FC<ScratchGameGridProps> = ({
       };
     }
 
-    // Pour 2+ cartes : responsive grid avec maximum 2 cartes par ligne sur mobile
+    // Pour 2+ cartes : grille responsive avec maximum 2 cartes par ligne sur mobile, 3 sur desktop
     return {
       containerClass: 'w-full',
-      gridClass: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 place-items-center',
-      spacing: isModal ? 'gap-4 sm:gap-6 lg:gap-8' : 'gap-6 sm:gap-8 lg:gap-10 xl:gap-12'
+      gridClass: 'grid grid-cols-2 md:grid-cols-3 place-items-center',
+      spacing: isModal ? 'gap-3 md:gap-4 lg:gap-6' : 'gap-4 md:gap-6 lg:gap-8 xl:gap-10'
     };
   };
 
