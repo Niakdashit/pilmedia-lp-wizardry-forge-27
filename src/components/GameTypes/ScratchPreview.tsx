@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import ScratchGameGrid from './ScratchGameGrid';
 
@@ -169,7 +168,6 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
           selectedCard={selectedCard}
           scratchStarted={scratchStarted}
           config={config}
-          onReplay={handleReplay}
           isModal={isModal}
         />
       </div>
