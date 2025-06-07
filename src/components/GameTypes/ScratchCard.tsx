@@ -1,6 +1,4 @@
-
 import React from 'react';
-import { motion } from 'framer-motion';
 import { useScratchCard } from './useScratchCard';
 import ScratchCanvas from './ScratchCanvas';
 import ScratchCardContent from './ScratchCardContent';
@@ -36,7 +34,6 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
   canScratch,
   isSelected,
   config,
-  onReplay,
   isModal = false
 }) => {
   // Dimensions selon la taille avec adaptation pour modal
