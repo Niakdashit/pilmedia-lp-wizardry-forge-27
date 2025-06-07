@@ -1,5 +1,4 @@
-
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef } from 'react';
 import GameCanvasPreview from '../CampaignEditor/GameCanvasPreview';
 import TextElement from './TextElement';
 import ImageElement from './ImageElement';

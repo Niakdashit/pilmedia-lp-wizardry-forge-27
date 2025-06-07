@@ -6,7 +6,7 @@ interface GridToggleProps {
   onToggle: () => void;
 }
 
-const GridToggle: React.FC<GridToggleProps> = ({ showGridLines, onToggle }) => {
+const GridToggle: React.FC<GridToggleProps> = ({ onToggle }) => {
   return (
     <button
       onClick={onToggle}
