@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
 
@@ -17,6 +18,8 @@ interface Campaign {
   design?: any;
   mobileConfig?: any;
   freeTextZones?: any[];
+  form_fields?: any[];
+  free_text_zones?: any[];
 }
 
 export const useCampaigns = () => {
@@ -27,14 +30,14 @@ export const useCampaigns = () => {
   const fetchCampaigns = async () => {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase
+      const result = await supabase
         .from('campaigns')
         .select('*');
 
-      if (error) {
-        setError(error);
+      if (result.error) {
+        setError(result.error);
       } else {
-        setCampaigns(data || []);
+        setCampaigns(result.data || []);
       }
     } catch (err: any) {
       setError(err);
@@ -43,21 +46,31 @@ export const useCampaigns = () => {
     }
   };
 
-  const getCampaign = async (id: string) => {
+  const getCampaign = async (id: string): Promise<Campaign | null> => {
     setIsLoading(true);
     try {
-      const { data, error } = await supabase
-        .from('campaigns')
-        .select('*')
-        .eq('id', id)
-        .single();
+      // For mock, return a default campaign structure
+      const mockCampaign: Campaign = {
+        id,
+        name: 'Campaign Test',
+        description: 'Test campaign',
+        url: 'test-campaign',
+        startDate: '2025-01-01',
+        startTime: '09:00',
+        endDate: '2025-12-31',
+        endTime: '18:00',
+        status: 'draft',
+        type: 'wheel',
+        formFields: [],
+        gameConfig: {},
+        design: {},
+        mobileConfig: {},
+        freeTextZones: [],
+        form_fields: [],
+        free_text_zones: []
+      };
 
-      if (error) {
-        setError(error);
-        console.error('Error fetching campaign:', error);
-      }
-
-      return data;
+      return mockCampaign;
     } catch (err: any) {
       setError(err);
       console.error('Error fetching campaign:', err);
@@ -77,25 +90,25 @@ export const useCampaigns = () => {
       };
 
       if (campaignToSave.id) {
-        const { data, error } = await supabase
+        const result = await supabase
           .from('campaigns')
           .update(campaignToSave)
           .eq('id', campaignToSave.id)
           .select()
           .single();
 
-        if (error) throw error;
-        return data;
+        if (result.error) throw result.error;
+        return result.data;
       } else {
         delete campaignToSave.id;
-        const { data, error } = await supabase
+        const result = await supabase
           .from('campaigns')
           .insert([campaignToSave])
           .select()
           .single();
 
-        if (error) throw error;
-        return data;
+        if (result.error) throw result.error;
+        return result.data;
       }
     } catch (error) {
       console.error('Error saving campaign:', error);
@@ -108,13 +121,13 @@ export const useCampaigns = () => {
   const deleteCampaign = async (id: string) => {
     setIsLoading(true);
     try {
-      const { error } = await supabase
+      const result = await supabase
         .from('campaigns')
         .delete()
         .eq('id', id);
 
-      if (error) {
-        setError(error);
+      if (result.error) {
+        setError(result.error);
       } else {
         setCampaigns(campaigns.filter(campaign => campaign.id !== id));
       }

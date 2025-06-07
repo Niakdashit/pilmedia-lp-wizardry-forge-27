@@ -188,8 +188,8 @@ const CampaignEditor: React.FC = () => {
     if (existingCampaign) {
       setCampaign({
         ...existingCampaign,
-        formFields: existingCampaign.form_fields || defaultFormFields,
-        freeTextZones: existingCampaign.free_text_zones || []
+        formFields: existingCampaign.form_fields || existingCampaign.formFields || defaultFormFields,
+        freeTextZones: existingCampaign.free_text_zones || existingCampaign.freeTextZones || []
       });
     }
   };
