@@ -12,6 +12,7 @@ interface ScratchGameGridProps {
   selectedCard: number | null;
   scratchStarted: boolean;
   config: any;
+  onReplay?: () => void;
 }
 
 const ScratchGameGrid: React.FC<ScratchGameGridProps> = ({
@@ -23,7 +24,8 @@ const ScratchGameGrid: React.FC<ScratchGameGridProps> = ({
   onScratchStart,
   selectedCard,
   scratchStarted,
-  config
+  config,
+  onReplay
 }) => {
   // Responsive grid: 2 cards on mobile, 3 on tablet/desktop
   const columnClasses = cards.length === 1
@@ -75,6 +77,7 @@ const ScratchGameGrid: React.FC<ScratchGameGridProps> = ({
               canScratch={canScratch}
               isSelected={isThisCardSelected}
               config={config}
+              onReplay={onReplay}
             />
           );
         })}

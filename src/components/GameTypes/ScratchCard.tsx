@@ -1,4 +1,6 @@
+
 import React from 'react';
+import { motion } from 'framer-motion';
 import { useScratchCard } from './useScratchCard';
 import ScratchCanvas from './ScratchCanvas';
 import ScratchCardContent from './ScratchCardContent';
@@ -17,6 +19,7 @@ interface ScratchCardProps {
   canScratch: boolean;
   isSelected: boolean;
   config: any;
+  onReplay?: () => void;
 }
 
 const ScratchCard: React.FC<ScratchCardProps> = ({
@@ -31,7 +34,8 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
   selectable,
   canScratch,
   isSelected,
-  config
+  config,
+  onReplay
 }) => {
   // Dimensions selon la taille
   const getDimensions = () => {
@@ -153,6 +157,39 @@ const ScratchCard: React.FC<ScratchCardProps> = ({
           config={config}
         />
       </div>
+
+      {/* Écran de résultat en dessous de la carte */}
+      {isRevealed && result && (
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }} 
+          animate={{ opacity: 1, y: 0 }} 
+          className="mt-4 w-full max-w-sm"
+        >
+          <div className="bg-white p-4 rounded-lg shadow-lg border text-center">
+            <div className="text-3xl mb-2">
+              {result === 'win' ? '🎊' : '💫'}
+            </div>
+            <h3 className="text-lg font-bold mb-2">
+              {result === 'win' 
+                ? card.revealMessage || config?.revealMessage || 'Vous avez gagné !' 
+                : 'Dommage ! Réessayez !'}
+            </h3>
+            <p className="text-sm text-gray-600 mb-4">
+              {result === 'win' 
+                ? 'Félicitations pour votre victoire !' 
+                : 'Tentez votre chance une prochaine fois.'}
+            </p>
+            {onReplay && (
+              <button
+                onClick={onReplay}
+                className="px-6 py-2 bg-[#841b60] text-white font-medium rounded-lg hover:bg-[#6d164f] transition-colors"
+              >
+                Rejouer
+              </button>
+            )}
+          </div>
+        </motion.div>
+      )}
     </div>
   );
 };

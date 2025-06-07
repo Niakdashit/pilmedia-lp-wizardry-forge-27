@@ -90,6 +90,18 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
     }
   };
 
+  const handleReplay = () => {
+    // Reset all states to restart the game
+    setGameStarted(false);
+    setFinishedCards(new Set());
+    setHasWon(false);
+    setSelectedCard(null);
+    setScratchStarted(false);
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(SCRATCH_STARTED_KEY);
+    console.log('Game reset - ready to start over');
+  };
+
   // Ensure we have at least one card with proper defaults
   const cards = config?.cards && config.cards.length > 0 
     ? config.cards 
@@ -139,6 +151,7 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
         selectedCard={selectedCard}
         scratchStarted={scratchStarted}
         config={config}
+        onReplay={handleReplay}
       />
 
       <div className="text-center">
