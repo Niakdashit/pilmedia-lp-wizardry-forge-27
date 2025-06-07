@@ -223,6 +223,10 @@ const FormEditor: React.FC<FormEditorProps> = ({
                 fields={fields}
                 onSubmit={handlePreview}
                 submitLabel="Aperçu - Valider"
+                textStyles={{
+                  label: campaign.design.textStyles?.label,
+                  button: campaign.design.textStyles?.button
+                }}
               />
             </div>
           )}
