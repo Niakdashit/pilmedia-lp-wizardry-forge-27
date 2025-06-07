@@ -362,16 +362,6 @@ const ModernDesignTab: React.FC<ModernDesignTabProps> = ({
     height: '120px',
     overlay: false
   };
-  const headerText = campaign.design?.headerText || {
-    enabled: false,
-    text: 'Texte d\'en-tête',
-    size: 'medium',
-    color: '#000000',
-    showFrame: false,
-    frameColor: '#ffffff',
-    frameBorderColor: '#e5e7eb',
-    textContents: []
-  };
   const footerBanner = campaign.design?.footerBanner || {
     enabled: false,
     image: '',
