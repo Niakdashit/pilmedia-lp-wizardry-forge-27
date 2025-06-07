@@ -13,6 +13,7 @@ interface ScratchGameGridProps {
   scratchStarted: boolean;
   config: any;
   onReplay?: () => void;
+  isModal?: boolean;
 }
 
 const ScratchGameGrid: React.FC<ScratchGameGridProps> = ({
@@ -25,7 +26,8 @@ const ScratchGameGrid: React.FC<ScratchGameGridProps> = ({
   selectedCard,
   scratchStarted,
   config,
-  onReplay
+  onReplay,
+  isModal = false
 }) => {
   // Configuration responsive de la grille
   const getGridConfig = () => {
@@ -35,7 +37,7 @@ const ScratchGameGrid: React.FC<ScratchGameGridProps> = ({
       return {
         containerClass: 'flex justify-center',
         gridClass: 'grid grid-cols-1 place-items-center',
-        spacing: 'gap-6'
+        spacing: isModal ? 'gap-4' : 'gap-6'
       };
     }
     
@@ -43,7 +45,7 @@ const ScratchGameGrid: React.FC<ScratchGameGridProps> = ({
       return {
         containerClass: 'w-full',
         gridClass: 'grid grid-cols-1 sm:grid-cols-2 place-items-center',
-        spacing: 'gap-6 sm:gap-8'
+        spacing: isModal ? 'gap-4 sm:gap-6' : 'gap-6 sm:gap-8'
       };
     }
     
@@ -51,15 +53,15 @@ const ScratchGameGrid: React.FC<ScratchGameGridProps> = ({
     return {
       containerClass: 'w-full',
       gridClass: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 place-items-center',
-      spacing: 'gap-6 sm:gap-8 lg:gap-6'
+      spacing: isModal ? 'gap-4 sm:gap-5 lg:gap-4' : 'gap-6 sm:gap-8 lg:gap-6'
     };
   };
 
   const { containerClass, gridClass, spacing } = getGridConfig();
 
   return (
-    <div className="w-full max-w-6xl mx-auto px-4 py-6">
-      <div className={`${containerClass}`}>
+    <div className={`w-full mx-auto ${isModal ? 'max-w-4xl px-2 py-4' : 'max-w-6xl px-4 py-6'}`}>
+      <div className={containerClass}>
         <div className={`${gridClass} ${spacing} w-full`}>
           {cards.map((card: any, index: number) => {
             const isThisCardSelected = selectedCard === index;
@@ -86,6 +88,7 @@ const ScratchGameGrid: React.FC<ScratchGameGridProps> = ({
                   isSelected={isThisCardSelected}
                   config={config}
                   onReplay={onReplay}
+                  isModal={isModal}
                 />
               </div>
             );

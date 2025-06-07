@@ -122,9 +122,6 @@ const FunnelUnlockedGame: React.FC<FunnelUnlockedGameProps> = ({
   // Sinon, afficher le jeu
   return (
     <div className="w-full h-full flex flex-col items-center justify-center space-y-6 p-4">
-      {/* Titre et description */}
-      
-
       {/* Jeu */}
       <GameRenderer 
         campaign={campaign} 

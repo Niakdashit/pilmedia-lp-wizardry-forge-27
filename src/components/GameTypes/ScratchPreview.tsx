@@ -12,6 +12,7 @@ interface ScratchPreviewProps {
   gameSize?: 'small' | 'medium' | 'large' | 'xlarge';
   gamePosition?: 'top' | 'center' | 'bottom' | 'left' | 'right';
   autoStart?: boolean;
+  isModal?: boolean;
 }
 
 const STORAGE_KEY = 'scratch_session_card';
@@ -25,13 +26,15 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
   buttonLabel = 'Gratter',
   buttonColor = '#841b60',
   gameSize = 'medium',
-  autoStart = false
+  autoStart = false,
+  isModal = false
 }) => {
   const [gameStarted, setGameStarted] = useState(autoStart && !disabled);
   const [finishedCards, setFinishedCards] = useState<Set<number>>(new Set());
   const [hasWon, setHasWon] = useState(false);
   const [selectedCard, setSelectedCard] = useState<number | null>(null);
   const [scratchStarted, setScratchStarted] = useState(false);
+  const [showResult, setShowResult] = useState(false);
 
   // Clear any previous session data on component mount to ensure fresh start
   useEffect(() => {
@@ -82,6 +85,7 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
 
     const totalCards = config?.cards?.length || 1;
     if (newFinishedCards.size >= totalCards) {
+      setShowResult(true);
       setTimeout(() => {
         if (onFinish) {
           onFinish(hasWon || result === 'win' ? 'win' : 'lose');
@@ -97,6 +101,7 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
     setHasWon(false);
     setSelectedCard(null);
     setScratchStarted(false);
+    setShowResult(false);
     localStorage.removeItem(STORAGE_KEY);
     localStorage.removeItem(SCRATCH_STARTED_KEY);
     console.log('Game reset - ready to start over');
@@ -114,7 +119,7 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
 
   if (!gameStarted) {
     return (
-      <div className="flex flex-col items-center justify-center space-y-8 py-8 min-h-[400px] bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className={`flex flex-col items-center justify-center space-y-8 ${isModal ? 'py-4 min-h-[300px]' : 'py-8 min-h-[400px]'} bg-gradient-to-br from-gray-50 to-gray-100`}>
         <div className="w-full">
           <ScratchGameGrid
             cards={cards}
@@ -126,30 +131,33 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
             selectedCard={null}
             scratchStarted={false}
             config={config}
+            isModal={isModal}
           />
         </div>
 
-        <div className="text-center space-y-6">
-          <div className="space-y-2">
-            <h3 className="text-xl font-bold text-gray-800">Cartes à gratter</h3>
-            <p className="text-gray-600">Cliquez sur le bouton pour commencer à jouer</p>
+        {!isModal && (
+          <div className="text-center space-y-6">
+            <div className="space-y-2">
+              <h3 className="text-xl font-bold text-gray-800">Cartes à gratter</h3>
+              <p className="text-gray-600">Cliquez sur le bouton pour commencer à jouer</p>
+            </div>
+            
+            <button
+              onClick={handleGameStart}
+              disabled={disabled}
+              className="px-8 py-4 rounded-xl font-semibold text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 shadow-lg"
+              style={{ backgroundColor: disabled ? '#6b7280' : buttonColor }}
+            >
+              {disabled ? 'Remplissez le formulaire' : buttonLabel}
+            </button>
           </div>
-          
-          <button
-            onClick={handleGameStart}
-            disabled={disabled}
-            className="px-8 py-4 rounded-xl font-semibold text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 shadow-lg"
-            style={{ backgroundColor: disabled ? '#6b7280' : buttonColor }}
-          >
-            {disabled ? 'Remplissez le formulaire' : buttonLabel}
-          </button>
-        </div>
+        )}
       </div>
     );
   }
 
   return (
-    <div className="w-full flex flex-col items-center space-y-8 py-6 min-h-[500px] bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className={`w-full flex flex-col items-center ${isModal ? 'space-y-4 py-4 min-h-[400px]' : 'space-y-8 py-6 min-h-[500px]'} bg-gradient-to-br from-gray-50 to-gray-100`}>
       <ScratchGameGrid
         cards={cards}
         gameSize={gameSize}
@@ -161,28 +169,32 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
         scratchStarted={scratchStarted}
         config={config}
         onReplay={handleReplay}
+        isModal={isModal}
       />
 
-      <div className="text-center space-y-4 max-w-md mx-auto px-4">
-        <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 shadow-sm">
-          <div className="text-base text-gray-700 font-medium mb-2">
-            {!scratchStarted && selectedCard === null && "🎯 Choisissez une carte à gratter"}
-            {!scratchStarted && selectedCard !== null && "✨ Grattez votre carte sélectionnée"}
-            {scratchStarted && `🎮 Progression: ${finishedCards.size}/${cards.length} cartes`}
-          </div>
-          
-          {scratchStarted && (
-            <div className="w-full max-w-xs mx-auto">
-              <div className="w-full bg-gray-200 rounded-full h-3 shadow-inner">
-                <div 
-                  className="bg-gradient-to-r from-[#841b60] to-[#a91e6b] h-3 rounded-full transition-all duration-500 shadow-sm" 
-                  style={{ width: `${(finishedCards.size / cards.length) * 100}%` }} 
-                />
-              </div>
+      {/* Message d'instruction et progression - séparé des cartes */}
+      {!showResult && !isModal && (
+        <div className="text-center space-y-4 max-w-md mx-auto px-4">
+          <div className="bg-white/80 backdrop-blur-sm rounded-lg p-4 shadow-sm">
+            <div className="text-base text-gray-700 font-medium mb-2">
+              {!scratchStarted && selectedCard === null && "🎯 Choisissez une carte à gratter"}
+              {!scratchStarted && selectedCard !== null && "✨ Grattez votre carte sélectionnée"}
+              {scratchStarted && `🎮 Progression: ${finishedCards.size}/${cards.length} cartes`}
             </div>
-          )}
+            
+            {scratchStarted && (
+              <div className="w-full max-w-xs mx-auto">
+                <div className="w-full bg-gray-200 rounded-full h-3 shadow-inner">
+                  <div 
+                    className="bg-gradient-to-r from-[#841b60] to-[#a91e6b] h-3 rounded-full transition-all duration-500 shadow-sm" 
+                    style={{ width: `${(finishedCards.size / cards.length) * 100}%` }} 
+                  />
+                </div>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

@@ -39,6 +39,9 @@ const GameRenderer: React.FC<GameRendererProps> = ({
     : 'medium';
   const gamePosition = campaign.gamePosition || 'center';
 
+  // Détecter si on est dans une modal (pour ajuster l'affichage)
+  const isModal = previewMode !== 'desktop' || window.location.pathname.includes('preview');
+
   const getGameContainerStyle = (): React.CSSProperties => {
     const gameDimensions = GAME_SIZES[gameSize];
     let scaleFactor = 1;
@@ -102,6 +105,7 @@ const GameRenderer: React.FC<GameRendererProps> = ({
             disabled={!formValidated}
             onFinish={handleGameComplete}
             onStart={handleGameStartInternal}
+            isModal={isModal}
           />
         );
       
