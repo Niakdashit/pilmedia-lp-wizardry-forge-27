@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { X, Monitor, Smartphone, Tablet } from 'lucide-react';
 import CampaignPreview from '../CampaignEditor/CampaignPreview';
@@ -20,51 +19,37 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
   if (!isOpen) return null;
 
   const getDeviceStyles = () => {
-    switch (device) {
-      case 'mobile':
-        return {
-          width: `${PREVIEW_CONTAINER_SPECS.mobile.width}px`,
-          height: `${PREVIEW_CONTAINER_SPECS.mobile.height}px`,
-          backgroundColor: '#1f2937',
-          borderRadius: '24px',
-          padding: '8px',
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-          position: 'relative',
-          overflow: 'hidden'
-        } as React.CSSProperties;
-      case 'tablet':
-        return {
-          width: `${PREVIEW_CONTAINER_SPECS.tablet.width}px`,
-          height: `${PREVIEW_CONTAINER_SPECS.tablet.height}px`,
-          backgroundColor: '#1f2937',
-          borderRadius: '24px',
-          padding: '8px',
-          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-          position: 'relative',
-          overflow: 'hidden'
-        } as React.CSSProperties;
-      default:
-        return { width: '100%', height: '100%' };
+    if (device === 'mobile' || device === 'tablet') {
+      const specs = PREVIEW_CONTAINER_SPECS[device];
+      return {
+        width: `${specs.width}px`,
+        height: `${specs.height}px`,
+        backgroundColor: '#1f2937',
+        borderRadius: specs.borderRadius,
+        padding: '8px',
+        boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
+        position: 'relative',
+        overflow: 'hidden'
+      } as React.CSSProperties;
     }
+    // Desktop : occupe tout l’espace (modal fullscreen)
+    return { width: '100%', height: '100%', backgroundColor: '#fff' } as React.CSSProperties;
   };
 
-  const getContainerStyle = () => {
-    return {
-      width: '100%',
-      height: '100%',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: '#ffffff'
-    } as React.CSSProperties;
-  };
+  const getContainerStyle = () => ({
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#ffffff'
+  } as React.CSSProperties);
 
-  // Enhanced campaign with proper custom elements inclusion
+  // Enhanced campaign : on force le passage des custom elements + props design à l’aperçu
   const enhancedCampaign = {
     ...campaign,
     design: {
       ...campaign.design,
-      // Ensure custom elements are properly passed to preview
       customImages: campaign.design?.customImages || [],
       customTexts: campaign.design?.customTexts || [],
       buttonColor:

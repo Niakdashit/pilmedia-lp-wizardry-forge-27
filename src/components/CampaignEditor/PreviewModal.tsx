@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { X, Monitor, Tablet, Smartphone } from 'lucide-react';
 import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
@@ -46,8 +45,8 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
   };
 
   // Récupérer l'image de fond du jeu
-  const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage || 
-                              campaign.design?.backgroundImage;
+  const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage ||
+    campaign.design?.backgroundImage;
 
   const getBackgroundStyle = () => {
     const style: any = {
@@ -56,14 +55,12 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
       height: '100%',
       backgroundColor: campaign.design?.background || '#ebf4f7'
     };
-
     if (gameBackgroundImage) {
       style.backgroundImage = `url(${gameBackgroundImage})`;
       style.backgroundSize = 'cover';
       style.backgroundPosition = 'center';
       style.backgroundRepeat = 'no-repeat';
     }
-
     return style;
   };
 
@@ -74,6 +71,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
   );
 
   const renderMobilePreview = () => {
+    // Synchronisé avec PREVIEW_CONTAINER_SPECS
     const specs = selectedDevice === 'tablet'
       ? PREVIEW_CONTAINER_SPECS.tablet
       : PREVIEW_CONTAINER_SPECS.mobile;
@@ -82,7 +80,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
       width: specs.width,
       height: specs.height,
       backgroundColor: '#1f2937',
-      borderRadius: '24px',
+      borderRadius: specs.borderRadius,
       padding: '8px',
       boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
       position: 'relative',
@@ -112,7 +110,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
         <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-6 py-4 bg-white border-b border-gray-200 shadow-sm">
           <div className="flex items-center space-x-4">
             <h2 className="text-lg font-semibold text-gray-800">Aperçu de la campagne</h2>
-            
+
             {/* Device Selector */}
             <div className="flex items-center space-x-1 bg-gray-100 rounded-lg p-1">
               <button
