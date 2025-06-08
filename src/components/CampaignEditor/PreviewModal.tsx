@@ -83,7 +83,15 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
 
   const renderDesktopPreview = () => (
     <div style={getBackgroundStyle()}>
-      {getPreviewFunnel()}
+      <CampaignPreview
+        campaign={campaign}
+        previewDevice="desktop"
+        key={`desktop-${campaign.id}-${JSON.stringify({
+          gameConfig: campaign.gameConfig,
+          design: campaign.design,
+          screens: campaign.screens
+        })}`}
+      />
     </div>
   );
 
