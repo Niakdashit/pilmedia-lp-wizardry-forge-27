@@ -2,10 +2,11 @@ import React from 'react';
 import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
 import FunnelStandard from '../funnels/FunnelStandard';
 import MobilePreview from './Mobile/MobilePreview';
+import type { PreviewDevice } from '../../types/device';
 
 interface CampaignPreviewProps {
   campaign: any;
-  previewDevice?: 'desktop' | 'tablet' | 'mobile';
+  previewDevice?: PreviewDevice;
 }
 
 const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevice = 'desktop' }) => {
