@@ -2,13 +2,26 @@
 import React, { useState } from 'react';
 import { X, Monitor, Smartphone, Tablet } from 'lucide-react';
 import CampaignPreview from '../CampaignEditor/CampaignPreview';
-import { PREVIEW_CONTAINER_SPECS } from '../CampaignEditor/Mobile/constants';
 
 interface ModernPreviewModalProps {
   isOpen: boolean;
   onClose: () => void;
   campaign: any;
 }
+
+// Define container specs directly to avoid import issues
+const PREVIEW_CONTAINER_SPECS = {
+  mobile: {
+    width: 375,
+    height: 667,
+    scale: 1
+  },
+  tablet: {
+    width: 768,
+    height: 1024,
+    scale: 0.8
+  }
+};
 
 const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
   isOpen,
@@ -26,7 +39,7 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
         width: `${specs.width}px`,
         height: `${specs.height}px`,
         backgroundColor: '#1f2937',
-        borderRadius: specs.borderRadius,
+        borderRadius: '16px',
         padding: '8px',
         boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
         position: 'relative',

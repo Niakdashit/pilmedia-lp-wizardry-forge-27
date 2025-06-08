@@ -17,6 +17,11 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
     return <MobilePreview campaign={campaign} previewMode="mobile" />;
   }
 
+  // If tablet preview, use the dedicated MobilePreview component
+  if (previewDevice === 'tablet') {
+    return <MobilePreview campaign={campaign} previewMode="tablet" />;
+  }
+
   // Get background image depending on device
   const baseBackground = design?.backgroundImage || campaign.gameConfig?.[campaign.type]?.backgroundImage;
   const mobileBackground = design?.mobileBackgroundImage;
