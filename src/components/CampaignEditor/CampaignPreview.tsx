@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
 import FunnelStandard from '../funnels/FunnelStandard';
 import MobilePreview from './Mobile/MobilePreview';
@@ -27,12 +27,26 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
   const mobileBackground = design?.mobileBackgroundImage;
   const backgroundImage = previewDevice === 'mobile' && mobileBackground ? mobileBackground : baseBackground;
 
+  const [imageDims, setImageDims] = useState({ width: 1080, height: 1920 });
+
+  useEffect(() => {
+    if (!backgroundImage) {
+      setImageDims({ width: 1080, height: 1920 });
+      return;
+    }
+    const img = new Image();
+    img.onload = () => {
+      setImageDims({ width: img.naturalWidth, height: img.naturalHeight });
+    };
+    img.src = backgroundImage;
+  }, [backgroundImage]);
+
   // Use identical container styling as the editor canvas
   const containerStyle = {
-    width: '100%',
-    height: '100%',
+    width: `${imageDims.width}px`,
+    height: `${imageDims.height}px`,
     position: 'relative' as const,
-    overflow: 'hidden',
+    overflow: 'auto',
     backgroundColor: design?.background || '#f8fafc',
     // Ensure no default margins/padding that could affect positioning
     margin: 0,
@@ -46,7 +60,7 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
       backgroundImage: `url(${backgroundImage})`,
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat',
-      backgroundSize: 'cover',
+      backgroundSize: 'contain',
       zIndex: 0,
     } : {};
 

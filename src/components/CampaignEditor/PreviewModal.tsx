@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { X, Monitor, Tablet, Smartphone } from 'lucide-react';
 import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
 import FunnelStandard from '../funnels/FunnelStandard';
@@ -11,22 +11,25 @@ interface PreviewModalProps {
   campaign: any;
 }
 
-// Define container specs directly to avoid import issues
-const PREVIEW_CONTAINER_SPECS = {
-  mobile: {
-    width: 375,
-    height: 667,
-    scale: 1
-  },
-  tablet: {
-    width: 768,
-    height: 1024,
-    scale: 0.8
-  }
-};
-
 const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }) => {
   const [selectedDevice, setSelectedDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
+  const [imageDims, setImageDims] = useState({ width: 1080, height: 1920 });
+
+  useEffect(() => {
+    let imgSrc = campaign.design?.backgroundImage;
+    if (selectedDevice === 'mobile') {
+      imgSrc = campaign.design?.mobileBackgroundImage || imgSrc;
+    }
+    const img = new Image();
+    if (!imgSrc) {
+      setImageDims({ width: 1080, height: 1920 });
+      return;
+    }
+    img.onload = () => {
+      setImageDims({ width: img.naturalWidth, height: img.naturalHeight });
+    };
+    img.src = imgSrc;
+  }, [campaign.design?.backgroundImage, campaign.design?.mobileBackgroundImage, selectedDevice]);
 
   if (!isOpen) return null;
 
@@ -85,14 +88,9 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
   );
 
   const renderMobilePreview = () => {
-    // Synchronisé avec PREVIEW_CONTAINER_SPECS
-    const specs = selectedDevice === 'tablet'
-      ? PREVIEW_CONTAINER_SPECS.tablet
-      : PREVIEW_CONTAINER_SPECS.mobile;
-
     const deviceStyle: React.CSSProperties = {
-      width: specs.width,
-      height: specs.height,
+      width: imageDims.width,
+      height: imageDims.height,
       backgroundColor: '#1f2937',
       borderRadius: '16px',
       padding: '8px',

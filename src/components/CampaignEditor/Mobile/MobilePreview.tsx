@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import MobileWheelPreview from '../../GameTypes/MobileWheelPreview';
 import MobileButton from './MobileButton';
 import MobileContent from './MobileContent';
@@ -21,8 +21,24 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
   const verticalOffset = mobileConfig.gameVerticalOffset || 0;
   const horizontalOffset = mobileConfig.gameHorizontalOffset || 0;
 
-  const deviceStyle = getDeviceStyle();
-  const screenStyle = getScreenStyle(mobileConfig);
+  const bgImage =
+    mobileConfig.backgroundImage || campaign.design?.mobileBackgroundImage;
+  const [imageDims, setImageDims] = useState({ width: 1080, height: 1920 });
+
+  useEffect(() => {
+    if (!bgImage) {
+      setImageDims({ width: 1080, height: 1920 });
+      return;
+    }
+    const img = new Image();
+    img.onload = () => {
+      setImageDims({ width: img.naturalWidth, height: img.naturalHeight });
+    };
+    img.src = bgImage;
+  }, [bgImage]);
+
+  const deviceStyle = getDeviceStyle(imageDims);
+  const screenStyle = getScreenStyle(mobileConfig, imageDims);
   const contentLayoutStyle = getContentLayoutStyle(mobileConfig);
 
   // Get custom images and texts for mobile with proper fallback
