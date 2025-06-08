@@ -153,7 +153,7 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
         
         {/* Custom Images for desktop/tablet - render with exact same logic as editor */}
         {customImages.map((customImage: any, idx: number) => {
-          if (!customImage?.src) return null;
+          if (!customImage?.src || customImage.enabled === false) return null;
 
           const deviceConfig = getElementDeviceConfig(customImage);
 

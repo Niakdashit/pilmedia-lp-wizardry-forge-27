@@ -8,7 +8,8 @@ export const useImageElementDrag = (
   onUpdate: (updates: any) => void
 ) => {
   const [isDragging, setIsDragging] = useState(false);
-  const dragStartRef = useRef<{offsetX: number, offsetY: number} | null>(null);
+  const dragStartRef = useRef<{ offsetX: number; offsetY: number } | null>(null);
+  const frameRef = useRef<number | null>(null);
 
   const handleDragStart = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -25,18 +26,20 @@ export const useImageElementDrag = (
 
     const handleMouseMove = (moveEvent: MouseEvent) => {
       if (!containerRef.current || !dragStartRef.current) return;
-      
+
       const containerRect = containerRef.current.getBoundingClientRect();
-      
+
       let newX = moveEvent.clientX - containerRect.left - dragStartRef.current.offsetX;
       let newY = moveEvent.clientY - containerRect.top - dragStartRef.current.offsetY;
-      
+
       // Constrain to container bounds
       newX = Math.max(0, Math.min(newX, containerRect.width - deviceConfig.width));
       newY = Math.max(0, Math.min(newY, containerRect.height - deviceConfig.height));
-      
-      // Update immediately for real-time feedback
-      onUpdate({ x: newX, y: newY });
+
+      if (frameRef.current) cancelAnimationFrame(frameRef.current);
+      frameRef.current = requestAnimationFrame(() => {
+        onUpdate({ x: newX, y: newY });
+      });
     };
 
     const handleMouseUp = () => {
