@@ -74,7 +74,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
     };
     if (gameBackgroundImage) {
       style.backgroundImage = `url(${gameBackgroundImage})`;
-      style.backgroundSize = 'cover';
+      style.backgroundSize = 'contain';
       style.backgroundPosition = 'center';
       style.backgroundRepeat = 'no-repeat';
     }
@@ -118,7 +118,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
-      <div className="bg-white w-full h-full flex flex-col relative overflow-hidden">
+      <div className="bg-white w-full h-full flex flex-col relative overflow-auto">
         <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-6 py-4 bg-white border-b border-gray-200 shadow-sm">
           <div className="flex items-center space-x-4">
             <h2 className="text-lg font-semibold text-gray-800">Aperçu de la campagne</h2>

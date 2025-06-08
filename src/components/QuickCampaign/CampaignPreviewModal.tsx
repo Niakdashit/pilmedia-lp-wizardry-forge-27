@@ -35,7 +35,7 @@ const CampaignPreviewModal: React.FC<CampaignPreviewModalProps> = ({
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.9 }}
-        className="bg-white w-full h-full flex flex-col relative overflow-hidden rounded-3xl shadow-2xl max-w-7xl max-h-[90vh]"
+        className="bg-white w-full h-full flex flex-col relative overflow-auto rounded-3xl shadow-2xl max-w-7xl max-h-screen"
       >
         <PreviewHeader
           campaignName={campaignName}

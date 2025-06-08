@@ -20,12 +20,12 @@ export const getScreenStyle = (
   height: '100%',
   backgroundColor: mobileConfig.backgroundColor || '#ebf4f7',
   backgroundImage: mobileConfig.backgroundImage ? `url(${mobileConfig.backgroundImage})` : undefined,
-  backgroundSize: mobileConfig.backgroundMode === 'contain' ? 'contain' : 'cover',
+  backgroundSize: 'contain',
   backgroundPosition: 'center',
   backgroundRepeat: 'no-repeat',
   borderRadius: '16px',
   position: 'relative' as const,
-  overflow: 'hidden',
+  overflow: 'auto',
   aspectRatio: `${dims?.width || MOBILE_FORMAT_SPECS.width} / ${dims?.height ||
     MOBILE_FORMAT_SPECS.height}`
 });

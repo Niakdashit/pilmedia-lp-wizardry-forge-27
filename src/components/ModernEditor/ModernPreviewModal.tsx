@@ -45,7 +45,7 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
         padding: '8px',
         boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
         position: 'relative',
-        overflow: 'hidden',
+        overflow: 'auto',
         // Ensure consistent box model
         boxSizing: 'border-box',
         margin: 0
@@ -105,7 +105,7 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white w-full h-full flex flex-col relative overflow-hidden rounded-3xl shadow-2xl max-w-7xl max-h-[90vh]">
+      <div className="bg-white w-full h-full flex flex-col relative overflow-auto rounded-3xl shadow-2xl max-w-7xl max-h-screen">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b bg-white">
           <div className="flex items-center space-x-4">
@@ -146,10 +146,10 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
         </div>
 
         {/* Preview Content */}
-        <div className="flex-1 overflow-hidden bg-gray-100">
+        <div className="flex-1 overflow-auto bg-gray-100">
           <div className="w-full h-full flex items-center justify-center">
             <div
-              className="shadow-2xl overflow-hidden"
+              className="shadow-2xl overflow-auto"
               style={getDeviceStyles()}
             >
               <div style={getContainerStyle()}>
