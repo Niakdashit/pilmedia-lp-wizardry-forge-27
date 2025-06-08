@@ -21,11 +21,11 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
   const getDeviceStyles = () => {
     switch (device) {
       case 'mobile':
-        return { width: '375px', height: '667px' };
+        return { width: '375px', height: '812px', borderRadius: '20px', border: '1px solid #e5e7eb' };
       case 'tablet':
-        return { width: '768px', height: '1024px' };
+        return { width: '768px', height: '1024px', borderRadius: '12px', border: '1px solid #e5e7eb' };
       default:
-        return { width: '1200px', height: '800px' };
+        return { width: '100%', height: '100%' };
     }
   };
 
@@ -113,9 +113,9 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
 
         {/* Preview Content */}
         <div className="flex-1 overflow-hidden bg-gray-100">
-          <div className="w-full h-full flex items-center justify-center p-8">
-            <div 
-              className="shadow-2xl rounded-2xl overflow-hidden border border-gray-200"
+          <div className="w-full h-full flex items-center justify-center">
+            <div
+              className="shadow-2xl overflow-hidden"
               style={getDeviceStyles()}
             >
               <div style={getContainerStyle()}>
