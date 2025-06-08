@@ -2,14 +2,18 @@
 import { PREVIEW_CONTAINER_SPECS, MOBILE_FORMAT_SPECS } from './constants';
 
 export const getDeviceStyle = (dims?: { width: number; height: number }) => ({
-  width: dims?.width || PREVIEW_CONTAINER_SPECS.mobile.width,
-  height: dims?.height || PREVIEW_CONTAINER_SPECS.mobile.height,
+  width: '100%',
+  maxWidth: dims?.width || PREVIEW_CONTAINER_SPECS.mobile.width,
+  height: 'auto',
+  maxHeight: dims?.height || PREVIEW_CONTAINER_SPECS.mobile.height,
+  aspectRatio: `${dims?.width || PREVIEW_CONTAINER_SPECS.mobile.width} / ${
+    dims?.height || PREVIEW_CONTAINER_SPECS.mobile.height}`,
   backgroundColor: '#1f2937',
   borderRadius: '24px',
   padding: '8px',
   boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
   position: 'relative' as const,
-  overflow: 'hidden'
+  overflow: 'auto'
 });
 
 export const getScreenStyle = (

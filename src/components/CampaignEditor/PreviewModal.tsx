@@ -97,18 +97,21 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
 
   const renderMobilePreview = () => {
     const deviceStyle: React.CSSProperties = {
-      width: imageDims.width,
-      height: imageDims.height,
+      width: '100%',
+      maxWidth: imageDims.width,
+      height: 'auto',
+      maxHeight: imageDims.height,
+      aspectRatio: `${imageDims.width} / ${imageDims.height}`,
       backgroundColor: '#1f2937',
       borderRadius: '16px',
       padding: '8px',
       boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
       position: 'relative',
-      overflow: 'hidden'
+      overflow: 'auto'
     };
 
     return (
-      <div className="w-full h-full flex items-center justify-center">
+      <div className="w-full h-full flex items-center justify-center overflow-auto">
         <div style={deviceStyle}>
           <CampaignPreview
             campaign={campaign}
