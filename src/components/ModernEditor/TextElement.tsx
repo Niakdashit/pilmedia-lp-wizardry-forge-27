@@ -56,6 +56,7 @@ const TextElement: React.FC<TextElementProps> = ({
     fontStyle: element.italic ? 'italic' : 'normal',
     textDecoration: element.underline ? 'underline' : 'none',
     fontFamily: element.fontFamily || 'Inter, sans-serif',
+    lineHeight: 1,
     cursor: isDragging ? 'grabbing' : 'grab',
     userSelect: 'none',
     willChange: isDragging ? 'transform' : 'auto',

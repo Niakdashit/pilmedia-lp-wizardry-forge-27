@@ -86,7 +86,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
 
         {/* Custom Images Layer - render with exact same logic as desktop */}
         {customImages.map((customImage: any, idx: number) => {
-          if (!customImage?.src) return null;
+          if (!customImage?.src || customImage.enabled === false) return null;
           
           const mobileConfig = getElementMobileConfig(customImage);
           
