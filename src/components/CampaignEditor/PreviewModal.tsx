@@ -53,11 +53,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
       position: 'relative',
       width: '100%',
       height: '100%',
-      backgroundColor: campaign.design?.background || '#ebf4f7',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '20px'
+      backgroundColor: campaign.design?.background || '#ebf4f7'
     };
 
     if (gameBackgroundImage) {
@@ -78,11 +74,11 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
 
   const renderMobilePreview = () => {
     const specs = selectedDevice === 'tablet'
-      ? { width: 768, height: 1024, borderRadius: 20 }
-      : { width: 375, height: 667, borderRadius: 24 };
+      ? { width: 768, height: 1024, borderRadius: 12 }
+      : { width: 375, height: 812, borderRadius: 20 };
 
     return (
-      <div className="w-full h-full flex items-center justify-center p-4">
+      <div className="w-full h-full flex items-center justify-center">
         <div
           style={{
             width: specs.width,
