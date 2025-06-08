@@ -22,12 +22,17 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
   const mobileBackground = design?.mobileBackgroundImage;
   const backgroundImage = previewDevice === 'mobile' && mobileBackground ? mobileBackground : baseBackground;
 
+  // Use identical container styling as the editor canvas
   const containerStyle = {
     width: '100%',
     height: '100%',
     position: 'relative' as const,
     overflow: 'hidden',
     backgroundColor: design?.background || '#f8fafc',
+    // Ensure no default margins/padding that could affect positioning
+    margin: 0,
+    padding: 0,
+    boxSizing: 'border-box' as const
   };
 
   const backgroundStyle = backgroundImage ? {
@@ -46,6 +51,10 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
     width: '100%',
     height: '100%',
     display: 'flex',
+    // Ensure identical box model
+    margin: 0,
+    padding: 0,
+    boxSizing: 'border-box' as const
   };
 
   const customStyles = design?.customCSS ? (
@@ -60,6 +69,7 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
   const customImages = campaign.design?.customImages || [];
   const customTexts = campaign.design?.customTexts || [];
 
+  // Use identical size mapping as editor
   const sizeMap: Record<string, string> = {
     xs: '10px',
     sm: '12px',
@@ -76,7 +86,7 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
     '9xl': '72px'
   };
 
-  // Helper function to get device-specific config for elements
+  // Use identical device config logic as editor
   const getElementDeviceConfig = (element: any) => {
     const deviceKey = previewDevice === 'mobile' ? 'mobile' : 'desktop';
     const deviceConfig = element.deviceConfig?.[deviceKey];
@@ -151,7 +161,7 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
         {customHTML}
         {getFunnelComponent()}
         
-        {/* Custom Images for desktop/tablet - render with exact same logic as editor */}
+        {/* Custom Images - use identical rendering logic as editor */}
         {customImages.map((customImage: any, idx: number) => {
           if (!customImage?.src || customImage.enabled === false) return null;
 
@@ -166,7 +176,11 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
                 width: deviceConfig.width,
                 height: deviceConfig.height,
                 zIndex: customImage.zIndex ?? 20 + idx,
-                pointerEvents: 'none'
+                pointerEvents: 'none',
+                // Ensure consistent box model
+                margin: 0,
+                padding: 0,
+                boxSizing: 'border-box'
               }}
             >
               <img
@@ -176,7 +190,10 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
                   width: '100%',
                   height: '100%',
                   objectFit: 'cover',
-                  borderRadius: '4px'
+                  borderRadius: '4px',
+                  display: 'block',
+                  margin: 0,
+                  padding: 0
                 }}
                 draggable={false}
               />
@@ -184,7 +201,7 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
           );
         })}
 
-        {/* Custom Texts for desktop/tablet - render with exact same logic as editor */}
+        {/* Custom Texts - use identical rendering logic as editor */}
         {customTexts.map((customText: any, idx: number) => {
           if (!customText?.enabled) return null;
 
@@ -202,13 +219,19 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
                 fontWeight: customText.bold ? 'bold' : 'normal',
                 fontStyle: customText.italic ? 'italic' : 'normal',
                 textDecoration: customText.underline ? 'underline' : 'none',
+                lineHeight: 1,
                 zIndex: customText.zIndex ?? 20 + idx,
                 pointerEvents: 'none',
+                // Ensure identical text rendering
+                userSelect: 'none',
+                margin: 0,
+                padding: customText.showFrame ? '4px 8px' : 0,
+                boxSizing: 'border-box',
+                whiteSpace: 'nowrap',
                 ...(customText.showFrame
                   ? {
                       backgroundColor: customText.frameColor || '#ffffff',
                       border: `1px solid ${customText.frameBorderColor || '#e5e7eb'}`,
-                      padding: '4px 8px',
                       borderRadius: '4px'
                     }
                   : {})

@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { X, Monitor, Smartphone, Tablet } from 'lucide-react';
 import CampaignPreview from '../CampaignEditor/CampaignPreview';
@@ -29,11 +30,21 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
         padding: '8px',
         boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
         position: 'relative',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        // Ensure consistent box model
+        boxSizing: 'border-box',
+        margin: 0
       } as React.CSSProperties;
     }
-    // Desktop : occupe tout l’espace (modal fullscreen)
-    return { width: '100%', height: '100%', backgroundColor: '#fff' } as React.CSSProperties;
+    // Desktop: full space with no additional containers or constraints
+    return { 
+      width: '100%', 
+      height: '100%', 
+      backgroundColor: '#fff',
+      margin: 0,
+      padding: 0,
+      boxSizing: 'border-box'
+    } as React.CSSProperties;
   };
 
   const getContainerStyle = () => ({
@@ -42,10 +53,14 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#ffffff'
+    backgroundColor: '#ffffff',
+    // Remove any potential padding/margin that could affect positioning
+    margin: 0,
+    padding: 0,
+    boxSizing: 'border-box'
   } as React.CSSProperties);
 
-  // Enhanced campaign : on force le passage des custom elements + props design à l’aperçu
+  // Enhanced campaign with identical configuration as editor
   const enhancedCampaign = {
     ...campaign,
     design: {
