@@ -42,16 +42,19 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
   }, [backgroundImage]);
 
   // Use identical container styling as the editor canvas
-  const containerStyle = {
-    width: `${imageDims.width}px`,
-    height: `${imageDims.height}px`,
-    position: 'relative' as const,
+  const containerStyle: React.CSSProperties = {
+    width: '100%',
+    maxWidth: imageDims.width,
+    height: 'auto',
+    maxHeight: imageDims.height,
+    aspectRatio: `${imageDims.width} / ${imageDims.height}`,
+    position: 'relative',
     overflow: 'auto',
     backgroundColor: design?.background || '#f8fafc',
     // Ensure no default margins/padding that could affect positioning
     margin: 0,
     padding: 0,
-    boxSizing: 'border-box' as const
+    boxSizing: 'border-box'
   };
 
   const backgroundStyle = backgroundImage ? {
