@@ -59,8 +59,25 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
     <div dangerouslySetInnerHTML={{ __html: design.customHTML }} />
   ) : null;
 
-  // Get custom images for desktop/tablet
+  // Get custom images and texts for desktop/tablet
   const customImages = campaign.design?.customImages || [];
+  const customTexts = campaign.design?.customTexts || [];
+
+  const sizeMap: Record<string, string> = {
+    xs: '10px',
+    sm: '12px',
+    base: '14px',
+    lg: '16px',
+    xl: '18px',
+    '2xl': '20px',
+    '3xl': '24px',
+    '4xl': '28px',
+    '5xl': '32px',
+    '6xl': '36px',
+    '7xl': '48px',
+    '8xl': '60px',
+    '9xl': '72px'
+  };
 
   // Helper function to get device-specific config for elements
   const getElementDeviceConfig = (element: any) => {
@@ -133,11 +150,11 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
         {getFunnelComponent()}
         
         {/* Custom Images for desktop/tablet */}
-        {customImages.map((customImage: any) => {
+        {customImages.map((customImage: any, idx: number) => {
           if (!customImage?.src) return null;
-          
+
           const deviceConfig = getElementDeviceConfig(customImage);
-          
+
           return (
             <div
               key={`preview-image-${customImage.id}`}
@@ -146,7 +163,7 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
                 transform: `translate3d(${deviceConfig.x}px, ${deviceConfig.y}px, 0) rotate(${customImage.rotation || 0}deg)`,
                 width: deviceConfig.width,
                 height: deviceConfig.height,
-                zIndex: 20,
+                zIndex: customImage.zIndex ?? 20 + idx,
                 pointerEvents: 'none'
               }}
             >
@@ -161,6 +178,41 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
                 }}
                 draggable={false}
               />
+            </div>
+          );
+        })}
+
+        {/* Custom Texts for desktop/tablet */}
+        {customTexts.map((customText: any, idx: number) => {
+          if (!customText?.enabled) return null;
+
+          const deviceConfig = getElementDeviceConfig(customText);
+
+          return (
+            <div
+              key={`preview-text-${customText.id}`}
+              style={{
+                position: 'absolute',
+                transform: `translate3d(${deviceConfig.x}px, ${deviceConfig.y}px, 0)`,
+                color: customText.color || '#000000',
+                fontFamily: customText.fontFamily || 'Inter, sans-serif',
+                fontSize: sizeMap[customText.size || 'base'] || '14px',
+                fontWeight: customText.bold ? 'bold' : 'normal',
+                fontStyle: customText.italic ? 'italic' : 'normal',
+                textDecoration: customText.underline ? 'underline' : 'none',
+                zIndex: customText.zIndex ?? 20 + idx,
+                pointerEvents: 'none',
+                ...(customText.showFrame
+                  ? {
+                      backgroundColor: customText.frameColor || '#ffffff',
+                      border: `1px solid ${customText.frameBorderColor || '#e5e7eb'}`,
+                      padding: '4px 8px',
+                      borderRadius: '4px'
+                    }
+                  : {})
+              }}
+            >
+              {customText.text}
             </div>
           );
         })}

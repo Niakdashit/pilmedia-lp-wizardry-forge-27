@@ -25,8 +25,25 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
   const screenStyle = getScreenStyle(mobileConfig);
   const contentLayoutStyle = getContentLayoutStyle(mobileConfig);
 
-  // Get custom images for mobile
+  // Get custom images and texts for mobile
   const customImages = campaign.design?.customImages || [];
+  const customTexts = campaign.design?.customTexts || [];
+
+  const sizeMap: Record<string, string> = {
+    xs: '10px',
+    sm: '12px',
+    base: '14px',
+    lg: '16px',
+    xl: '18px',
+    '2xl': '20px',
+    '3xl': '24px',
+    '4xl': '28px',
+    '5xl': '32px',
+    '6xl': '36px',
+    '7xl': '48px',
+    '8xl': '60px',
+    '9xl': '72px'
+  };
 
   // Helper function to get mobile-specific config for elements
   const getElementMobileConfig = (element: any) => {
@@ -68,7 +85,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
         )}
 
         {/* Custom Images Layer */}
-        {customImages.map((customImage: any) => {
+        {customImages.map((customImage: any, idx: number) => {
           if (!customImage?.src) return null;
           
           const mobileConfig = getElementMobileConfig(customImage);
@@ -81,7 +98,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
                 transform: `translate3d(${mobileConfig.x}px, ${mobileConfig.y}px, 0) rotate(${customImage.rotation || 0}deg)`,
                 width: mobileConfig.width,
                 height: mobileConfig.height,
-                zIndex: 15,
+                zIndex: customImage.zIndex ?? 15 + idx,
                 pointerEvents: 'none'
               }}
             >
@@ -96,6 +113,41 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
                 }}
                 draggable={false}
               />
+            </div>
+          );
+        })}
+
+        {/* Custom Texts Layer */}
+        {customTexts.map((customText: any, idx: number) => {
+          if (!customText?.enabled) return null;
+
+          const mobileCfg = getElementMobileConfig(customText);
+
+          return (
+            <div
+              key={`mobile-text-${customText.id}`}
+              style={{
+                position: 'absolute',
+                transform: `translate3d(${mobileCfg.x}px, ${mobileCfg.y}px, 0)`,
+                color: customText.color || '#000000',
+                fontFamily: customText.fontFamily || 'Inter, sans-serif',
+                fontSize: sizeMap[customText.size || 'base'] || '14px',
+                fontWeight: customText.bold ? 'bold' : 'normal',
+                fontStyle: customText.italic ? 'italic' : 'normal',
+                textDecoration: customText.underline ? 'underline' : 'none',
+                zIndex: customText.zIndex ?? 15 + idx,
+                pointerEvents: 'none',
+                ...(customText.showFrame
+                  ? {
+                      backgroundColor: customText.frameColor || '#ffffff',
+                      border: `1px solid ${customText.frameBorderColor || '#e5e7eb'}`,
+                      padding: '4px 8px',
+                      borderRadius: '4px'
+                    }
+                  : {})
+              }}
+            >
+              {customText.text}
             </div>
           );
         })}
