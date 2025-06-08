@@ -39,7 +39,7 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
     getElementDeviceConfig
   } = useCanvasElements(campaign, setCampaign, previewDevice);
 
-  // Enhanced campaign with proper settings propagation
+  // Enhanced campaign with proper settings propagation and real-time updates
   const enhancedCampaign = {
     ...campaign,
     gameSize,
@@ -51,6 +51,9 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
     },
     design: {
       ...campaign.design,
+      // Ensure custom elements are properly included
+      customTexts: customTexts,
+      customImages: customImages,
       buttonColor: campaign.buttonConfig?.color || campaign.design?.buttonColor || '#841b60',
       titleColor: campaign.design?.titleColor || '#000000',
       background: campaign.design?.background || '#f8fafc'
@@ -119,7 +122,7 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
           <GameCanvasPreview
             campaign={enhancedCampaign}
             className="w-full h-full"
-            key={`preview-${gameSize}-${gamePosition}-${campaign.buttonConfig?.color}-${JSON.stringify(campaign.gameConfig?.[campaign.type])}`}
+            key={`preview-${gameSize}-${gamePosition}-${campaign.buttonConfig?.color}-${JSON.stringify(campaign.gameConfig?.[campaign.type])}-${JSON.stringify(customTexts)}-${JSON.stringify(customImages)}`}
             previewDevice={previewDevice}
           />
           

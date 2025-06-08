@@ -1,3 +1,4 @@
+
 import React from 'react';
 import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
 import FunnelStandard from '../funnels/FunnelStandard';
@@ -59,7 +60,7 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
     <div dangerouslySetInnerHTML={{ __html: design.customHTML }} />
   ) : null;
 
-  // Get custom images and texts for desktop/tablet
+  // Get custom images and texts for desktop/tablet with proper fallback
   const customImages = campaign.design?.customImages || [];
   const customTexts = campaign.design?.customTexts || [];
 
@@ -94,11 +95,14 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
   const getFunnelComponent = () => {
     const funnel = campaign.funnel || (['wheel', 'scratch', 'jackpot', 'dice'].includes(campaign.type) ? 'unlocked_game' : 'standard');
     
-    // Enhanced campaign with proper settings propagation
+    // Enhanced campaign with proper settings propagation and custom elements
     const enhancedCampaign = {
       ...campaign,
       design: {
         ...campaign.design,
+        // Ensure custom elements are included for funnel rendering
+        customImages: customImages,
+        customTexts: customTexts,
         // Ensure colors are properly set
         buttonColor: campaign.buttonConfig?.color || campaign.design?.buttonColor || '#841b60',
         titleColor: campaign.design?.titleColor || '#000000',
@@ -131,7 +135,9 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
           gameConfig: enhancedCampaign.gameConfig,
           design: enhancedCampaign.design,
           screens: enhancedCampaign.screens,
-          buttonConfig: enhancedCampaign.buttonConfig
+          buttonConfig: enhancedCampaign.buttonConfig,
+          customImages: customImages,
+          customTexts: customTexts
         })}`}
       />
     );
@@ -149,7 +155,7 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
         {customHTML}
         {getFunnelComponent()}
         
-        {/* Custom Images for desktop/tablet */}
+        {/* Custom Images for desktop/tablet - render with exact same logic as editor */}
         {customImages.map((customImage: any, idx: number) => {
           if (!customImage?.src) return null;
 
@@ -157,7 +163,7 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
 
           return (
             <div
-              key={`preview-image-${customImage.id}`}
+              key={`preview-image-${customImage.id}-${previewDevice}`}
               style={{
                 position: 'absolute',
                 transform: `translate3d(${deviceConfig.x}px, ${deviceConfig.y}px, 0) rotate(${customImage.rotation || 0}deg)`,
@@ -182,7 +188,7 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
           );
         })}
 
-        {/* Custom Texts for desktop/tablet */}
+        {/* Custom Texts for desktop/tablet - render with exact same logic as editor */}
         {customTexts.map((customText: any, idx: number) => {
           if (!customText?.enabled) return null;
 
@@ -190,7 +196,7 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
 
           return (
             <div
-              key={`preview-text-${customText.id}`}
+              key={`preview-text-${customText.id}-${previewDevice}`}
               style={{
                 position: 'absolute',
                 transform: `translate3d(${deviceConfig.x}px, ${deviceConfig.y}px, 0)`,

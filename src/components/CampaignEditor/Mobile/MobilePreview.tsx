@@ -1,3 +1,4 @@
+
 import React from 'react';
 import MobileWheelPreview from '../../GameTypes/MobileWheelPreview';
 import MobileButton from './MobileButton';
@@ -24,7 +25,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
   const screenStyle = getScreenStyle(mobileConfig);
   const contentLayoutStyle = getContentLayoutStyle(mobileConfig);
 
-  // Get custom images and texts for mobile
+  // Get custom images and texts for mobile with proper fallback
   const customImages = campaign.design?.customImages || [];
   const customTexts = campaign.design?.customTexts || [];
 
@@ -56,7 +57,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
   };
 
   return (
-    <div style={deviceStyle} key={`mobile-preview-${campaign.gameSize}-${JSON.stringify(mobileConfig)}`}>
+    <div style={deviceStyle} key={`mobile-preview-${campaign.gameSize}-${JSON.stringify(mobileConfig)}-${JSON.stringify(customTexts)}-${JSON.stringify(customImages)}`}>
       <div style={screenStyle}>
         <MobileOverlays mobileConfig={mobileConfig} previewMode={previewMode} />
 
@@ -83,7 +84,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
           </div>
         )}
 
-        {/* Custom Images Layer */}
+        {/* Custom Images Layer - render with exact same logic as desktop */}
         {customImages.map((customImage: any, idx: number) => {
           if (!customImage?.src) return null;
           
@@ -91,7 +92,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
           
           return (
             <div
-              key={`mobile-image-${customImage.id}`}
+              key={`mobile-image-${customImage.id}-${previewMode}`}
               style={{
                 position: 'absolute',
                 transform: `translate3d(${mobileConfig.x}px, ${mobileConfig.y}px, 0) rotate(${customImage.rotation || 0}deg)`,
@@ -116,7 +117,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
           );
         })}
 
-        {/* Custom Texts Layer */}
+        {/* Custom Texts Layer - render with exact same logic as desktop */}
         {customTexts.map((customText: any, idx: number) => {
           if (!customText?.enabled) return null;
 
@@ -124,7 +125,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
 
           return (
             <div
-              key={`mobile-text-${customText.id}`}
+              key={`mobile-text-${customText.id}-${previewMode}`}
               style={{
                 position: 'absolute',
                 transform: `translate3d(${mobileCfg.x}px, ${mobileCfg.y}px, 0)`,

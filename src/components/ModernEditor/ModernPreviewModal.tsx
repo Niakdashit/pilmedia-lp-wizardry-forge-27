@@ -40,10 +40,14 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
     } as React.CSSProperties;
   };
 
+  // Enhanced campaign with proper custom elements inclusion
   const enhancedCampaign = {
     ...campaign,
     design: {
       ...campaign.design,
+      // Ensure custom elements are properly passed to preview
+      customImages: campaign.design?.customImages || [],
+      customTexts: campaign.design?.customTexts || [],
       buttonColor:
         campaign.buttonConfig?.color || campaign.design?.buttonColor || '#841b60',
       titleColor: campaign.design?.titleColor || '#000000',
@@ -64,7 +68,6 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
       }
     }
   };
-
 
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
@@ -122,7 +125,9 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
                   key={`${device}-${campaign.id}-${JSON.stringify({
                     gameConfig: enhancedCampaign.gameConfig,
                     design: enhancedCampaign.design,
-                    screens: enhancedCampaign.screens
+                    screens: enhancedCampaign.screens,
+                    customImages: enhancedCampaign.design?.customImages,
+                    customTexts: enhancedCampaign.design?.customTexts
                   })}`}
                 />
               </div>
