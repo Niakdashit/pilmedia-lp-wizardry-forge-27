@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { X, Monitor, Smartphone, Tablet } from 'lucide-react';
 import CampaignPreview from '../CampaignEditor/CampaignPreview';
 
@@ -9,35 +9,37 @@ interface ModernPreviewModalProps {
   campaign: any;
 }
 
-// Define container specs directly to avoid import issues
-const PREVIEW_CONTAINER_SPECS = {
-  mobile: {
-    width: 375,
-    height: 667,
-    scale: 1
-  },
-  tablet: {
-    width: 768,
-    height: 1024,
-    scale: 0.8
-  }
-};
-
 const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
   isOpen,
   onClose,
   campaign
 }) => {
   const [device, setDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
+  const [imageDims, setImageDims] = useState({ width: 1080, height: 1920 });
+
+  useEffect(() => {
+    let imgSrc = campaign.design?.backgroundImage;
+    if (device === 'mobile') {
+      imgSrc = campaign.design?.mobileBackgroundImage || imgSrc;
+    }
+    const img = new Image();
+    if (!imgSrc) {
+      setImageDims({ width: 1080, height: 1920 });
+      return;
+    }
+    img.onload = () => {
+      setImageDims({ width: img.naturalWidth, height: img.naturalHeight });
+    };
+    img.src = imgSrc;
+  }, [campaign.design?.backgroundImage, campaign.design?.mobileBackgroundImage, device]);
 
   if (!isOpen) return null;
 
   const getDeviceStyles = () => {
     if (device === 'mobile' || device === 'tablet') {
-      const specs = PREVIEW_CONTAINER_SPECS[device];
       return {
-        width: `${specs.width}px`,
-        height: `${specs.height}px`,
+        width: `${imageDims.width}px`,
+        height: `${imageDims.height}px`,
         backgroundColor: '#1f2937',
         borderRadius: '16px',
         padding: '8px',

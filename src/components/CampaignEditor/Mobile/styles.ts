@@ -1,9 +1,9 @@
 
 import { PREVIEW_CONTAINER_SPECS, MOBILE_FORMAT_SPECS } from './constants';
 
-export const getDeviceStyle = () => ({
-  width: PREVIEW_CONTAINER_SPECS.mobile.width,
-  height: PREVIEW_CONTAINER_SPECS.mobile.height,
+export const getDeviceStyle = (dims?: { width: number; height: number }) => ({
+  width: dims?.width || PREVIEW_CONTAINER_SPECS.mobile.width,
+  height: dims?.height || PREVIEW_CONTAINER_SPECS.mobile.height,
   backgroundColor: '#1f2937',
   borderRadius: '24px',
   padding: '8px',
@@ -12,7 +12,10 @@ export const getDeviceStyle = () => ({
   overflow: 'hidden'
 });
 
-export const getScreenStyle = (mobileConfig: any) => ({
+export const getScreenStyle = (
+  mobileConfig: any,
+  dims?: { width: number; height: number }
+) => ({
   width: '100%',
   height: '100%',
   backgroundColor: mobileConfig.backgroundColor || '#ebf4f7',
@@ -23,8 +26,8 @@ export const getScreenStyle = (mobileConfig: any) => ({
   borderRadius: '16px',
   position: 'relative' as const,
   overflow: 'hidden',
-  // Ensure proper aspect ratio for 1080×1920px content
-  aspectRatio: `${MOBILE_FORMAT_SPECS.width} / ${MOBILE_FORMAT_SPECS.height}`
+  aspectRatio: `${dims?.width || MOBILE_FORMAT_SPECS.width} / ${dims?.height ||
+    MOBILE_FORMAT_SPECS.height}`
 });
 
 export const getContentLayoutStyle = (mobileConfig: any) => {
