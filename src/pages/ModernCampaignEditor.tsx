@@ -13,6 +13,7 @@ import ModernDesignTab from '../components/ModernEditor/ModernDesignTab';
 import ModernFormTab from '../components/ModernEditor/ModernFormTab';
 import ModernGameConfigTab from '../components/ModernEditor/ModernGameConfigTab';
 import ModernMobileTab from '../components/ModernEditor/ModernMobileTab';
+
 const defaultFormFields = [{
   id: 'prenom',
   label: 'Prénom',
@@ -29,10 +30,9 @@ const defaultFormFields = [{
   type: 'email',
   required: true
 }];
+
 const ModernCampaignEditor: React.FC = () => {
-  const {
-    id
-  } = useParams();
+  const { id } = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const isNewCampaign = id === 'new';
@@ -41,10 +41,7 @@ const ModernCampaignEditor: React.FC = () => {
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [previewDevice, setPreviewDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
   const [isLoading, setIsLoading] = useState(false);
-  const {
-    saveCampaign,
-    getCampaign
-  } = useCampaigns();
+  const { saveCampaign, getCampaign } = useCampaigns();
   const [campaign, setCampaign] = useState<any>({
     id: undefined,
     name: isNewCampaign ? 'Nouvelle Campagne' : 'Ma Campagne',
@@ -125,7 +122,8 @@ const ModernCampaignEditor: React.FC = () => {
         frameColor: '#ffffff',
         frameBorderColor: '#e5e7eb'
       },
-      customTexts: []
+      customTexts: [],
+      customImages: []
     },
     screens: {
       1: {
@@ -143,10 +141,12 @@ const ModernCampaignEditor: React.FC = () => {
       }
     }
   });
+
   useEffect(() => {
     if (!isNewCampaign && id) {
       loadCampaign(id);
     }
+    // eslint-disable-next-line
   }, [id, isNewCampaign]);
   const loadCampaign = async (campaignId: string) => {
     setIsLoading(true);
@@ -301,4 +301,5 @@ const ModernCampaignEditor: React.FC = () => {
       {showPreviewModal && <ModernPreviewModal isOpen={showPreviewModal} onClose={() => setShowPreviewModal(false)} campaign={campaign} />}
     </div>;
 };
+
 export default ModernCampaignEditor;

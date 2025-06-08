@@ -150,11 +150,11 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
         {getFunnelComponent()}
         
         {/* Custom Images for desktop/tablet */}
-        {customImages.map((customImage: any) => {
+        {customImages.map((customImage: any, idx: number) => {
           if (!customImage?.src) return null;
 
           const deviceConfig = getElementDeviceConfig(customImage);
-          
+
           return (
             <div
               key={`preview-image-${customImage.id}`}
@@ -163,7 +163,7 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
                 transform: `translate3d(${deviceConfig.x}px, ${deviceConfig.y}px, 0) rotate(${customImage.rotation || 0}deg)`,
                 width: deviceConfig.width,
                 height: deviceConfig.height,
-                zIndex: 20,
+                zIndex: customImage.zIndex ?? 20 + idx,
                 pointerEvents: 'none'
               }}
             >
@@ -183,7 +183,7 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
         })}
 
         {/* Custom Texts for desktop/tablet */}
-        {customTexts.map((customText: any) => {
+        {customTexts.map((customText: any, idx: number) => {
           if (!customText?.enabled) return null;
 
           const deviceConfig = getElementDeviceConfig(customText);
@@ -200,7 +200,7 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
                 fontWeight: customText.bold ? 'bold' : 'normal',
                 fontStyle: customText.italic ? 'italic' : 'normal',
                 textDecoration: customText.underline ? 'underline' : 'none',
-                zIndex: 20,
+                zIndex: customText.zIndex ?? 20 + idx,
                 pointerEvents: 'none',
                 ...(customText.showFrame
                   ? {

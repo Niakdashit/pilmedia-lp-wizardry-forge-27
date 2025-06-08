@@ -1,4 +1,3 @@
-
 import React from 'react';
 import MobileWheelPreview from '../../GameTypes/MobileWheelPreview';
 import MobileButton from './MobileButton';
@@ -85,7 +84,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
         )}
 
         {/* Custom Images Layer */}
-        {customImages.map((customImage: any) => {
+        {customImages.map((customImage: any, idx: number) => {
           if (!customImage?.src) return null;
           
           const mobileConfig = getElementMobileConfig(customImage);
@@ -98,7 +97,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
                 transform: `translate3d(${mobileConfig.x}px, ${mobileConfig.y}px, 0) rotate(${customImage.rotation || 0}deg)`,
                 width: mobileConfig.width,
                 height: mobileConfig.height,
-                zIndex: 15,
+                zIndex: customImage.zIndex ?? 15 + idx,
                 pointerEvents: 'none'
               }}
             >
@@ -118,7 +117,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
         })}
 
         {/* Custom Texts Layer */}
-        {customTexts.map((customText: any) => {
+        {customTexts.map((customText: any, idx: number) => {
           if (!customText?.enabled) return null;
 
           const mobileCfg = getElementMobileConfig(customText);
@@ -135,7 +134,7 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
                 fontWeight: customText.bold ? 'bold' : 'normal',
                 fontStyle: customText.italic ? 'italic' : 'normal',
                 textDecoration: customText.underline ? 'underline' : 'none',
-                zIndex: 15,
+                zIndex: customText.zIndex ?? 15 + idx,
                 pointerEvents: 'none',
                 ...(customText.showFrame
                   ? {
