@@ -72,32 +72,21 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
   };
 
   const getDeviceContainerStyle = () => {
+    const base = {
+      margin: '0 auto',
+      backgroundColor: '#ffffff',
+      overflow: 'auto' as const,
+      width: 'fit-content',
+      height: 'fit-content'
+    };
+
     switch (selectedDevice) {
       case 'tablet':
-        return {
-          maxWidth: '768px',
-          maxHeight: '1024px',
-          margin: '0 auto',
-          border: '1px solid #e5e7eb',
-          borderRadius: '12px',
-          overflow: 'hidden' as const,
-          backgroundColor: '#ffffff'
-        };
+        return { ...base, border: '1px solid #e5e7eb', borderRadius: '12px' };
       case 'mobile':
-        return {
-          maxWidth: '375px',
-          maxHeight: '812px',
-          margin: '0 auto',
-          border: '1px solid #e5e7eb',
-          borderRadius: '20px',
-          overflow: 'hidden' as const,
-          backgroundColor: '#ffffff'
-        };
+        return { ...base, border: '1px solid #e5e7eb', borderRadius: '20px' };
       default:
-        return {
-          width: '100%',
-          height: '100%'
-        };
+        return { ...base, width: '100%', height: '100%' };
     }
   };
 
