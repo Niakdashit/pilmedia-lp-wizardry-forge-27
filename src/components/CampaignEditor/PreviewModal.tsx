@@ -4,6 +4,7 @@ import { X, Monitor, Tablet, Smartphone } from 'lucide-react';
 import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
 import FunnelStandard from '../funnels/FunnelStandard';
 import CampaignPreview from './CampaignPreview';
+import { PREVIEW_CONTAINER_SPECS } from './Mobile/constants';
 
 interface PreviewModalProps {
   isOpen: boolean;
@@ -53,11 +54,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
       position: 'relative',
       width: '100%',
       height: '100%',
-      backgroundColor: campaign.design?.background || '#ebf4f7',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '20px'
+      backgroundColor: campaign.design?.background || '#ebf4f7'
     };
 
     if (gameBackgroundImage) {
@@ -78,21 +75,23 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
 
   const renderMobilePreview = () => {
     const specs = selectedDevice === 'tablet'
-      ? { width: 768, height: 1024, borderRadius: 20 }
-      : { width: 375, height: 667, borderRadius: 24 };
+      ? PREVIEW_CONTAINER_SPECS.tablet
+      : PREVIEW_CONTAINER_SPECS.mobile;
+
+    const deviceStyle: React.CSSProperties = {
+      width: specs.width,
+      height: specs.height,
+      backgroundColor: '#1f2937',
+      borderRadius: '24px',
+      padding: '8px',
+      boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+      position: 'relative',
+      overflow: 'hidden'
+    };
 
     return (
-      <div className="w-full h-full flex items-center justify-center p-4">
-        <div
-          style={{
-            width: specs.width,
-            height: specs.height,
-            border: '1px solid #e5e7eb',
-            borderRadius: specs.borderRadius,
-            overflow: 'hidden',
-            backgroundColor: '#ffffff'
-          }}
-        >
+      <div className="w-full h-full flex items-center justify-center">
+        <div style={deviceStyle}>
           <CampaignPreview
             campaign={campaign}
             previewDevice={selectedDevice}

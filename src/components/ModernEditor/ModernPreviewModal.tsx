@@ -2,6 +2,7 @@
 import React, { useState } from 'react';
 import { X, Monitor, Smartphone, Tablet } from 'lucide-react';
 import CampaignPreview from '../CampaignEditor/CampaignPreview';
+import { PREVIEW_CONTAINER_SPECS } from '../CampaignEditor/Mobile/constants';
 
 interface ModernPreviewModalProps {
   isOpen: boolean;
@@ -21,11 +22,29 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
   const getDeviceStyles = () => {
     switch (device) {
       case 'mobile':
-        return { width: '375px', height: '667px' };
+        return {
+          width: `${PREVIEW_CONTAINER_SPECS.mobile.width}px`,
+          height: `${PREVIEW_CONTAINER_SPECS.mobile.height}px`,
+          backgroundColor: '#1f2937',
+          borderRadius: '24px',
+          padding: '8px',
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+          position: 'relative',
+          overflow: 'hidden'
+        } as React.CSSProperties;
       case 'tablet':
-        return { width: '768px', height: '1024px' };
+        return {
+          width: `${PREVIEW_CONTAINER_SPECS.tablet.width}px`,
+          height: `${PREVIEW_CONTAINER_SPECS.tablet.height}px`,
+          backgroundColor: '#1f2937',
+          borderRadius: '24px',
+          padding: '8px',
+          boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
+          position: 'relative',
+          overflow: 'hidden'
+        } as React.CSSProperties;
       default:
-        return { width: '1200px', height: '800px' };
+        return { width: '100%', height: '100%' };
     }
   };
 
@@ -113,9 +132,9 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
 
         {/* Preview Content */}
         <div className="flex-1 overflow-hidden bg-gray-100">
-          <div className="w-full h-full flex items-center justify-center p-8">
-            <div 
-              className="shadow-2xl rounded-2xl overflow-hidden border border-gray-200"
+          <div className="w-full h-full flex items-center justify-center">
+            <div
+              className="shadow-2xl overflow-hidden"
               style={getDeviceStyles()}
             >
               <div style={getContainerStyle()}>
