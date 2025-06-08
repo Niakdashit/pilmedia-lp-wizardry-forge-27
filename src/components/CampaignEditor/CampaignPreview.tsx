@@ -31,15 +31,14 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
   };
 
   const backgroundStyle = backgroundImage ? {
-    position: 'absolute' as const,
-    inset: 0,
-    backgroundImage: `url(${backgroundImage})`,
-    backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat',
-    backgroundSize: 'cover',
-    opacity: 0.3,
-    zIndex: 0,
-  } : {};
+      position: 'absolute' as const,
+      inset: 0,
+      backgroundImage: `url(${backgroundImage})`,
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat',
+      backgroundSize: 'cover',
+      zIndex: 0,
+    } : {};
 
   const contentWrapperStyle = {
     position: 'relative' as const,
@@ -47,9 +46,6 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
     width: '100%',
     height: '100%',
     display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '20px',
   };
 
   const customStyles = design?.customCSS ? (
