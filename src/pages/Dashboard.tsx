@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Users, Target, BarChart, Calendar, ChevronRight, MoreVertical, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -93,7 +92,7 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className="-mx-6 -mt-6">
-      <div className="relative h-[100px] bg-[#841b60] overflow-hidden">
+      <div className="relative h-[200px] bg-gradient-to-b from-[#841b60] to-transparent overflow-hidden">
         <div className="absolute inset-10 opacity-[0.15]" style={{
         backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
         backgroundSize: '60px 60px'
@@ -107,25 +106,19 @@ const Dashboard: React.FC = () => {
             <option>Cette année</option>
           </select>
         </div>
-
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 116" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full" preserveAspectRatio="none" height="10">
-            <path d="M0 116L60 96.3C120 76.7 240 37.3 360 21.7C480 6 600 14 720 34.7C840 55.3 960 89.7 1080 96.3C1200 103 1320 82 1380 71.5L1440 61V116H1380C1320 116 1200 116 1080 116C960 116 840 116 720 116C600 116 480 116 360 116C240 116 120 116 60 116H0Z" fill="#ebf4f7" />
-          </svg>
-        </div>
       </div>
 
       <div className="px-6 space-y-6">
         {/* Section de création rapide avec icônes de jeux */}
         <div className="w-full mt-8">
           {/* Titre centré */}
-          <div className="text-center mb-6">
+          <div className="text-center mb-8">
             <h2 className="text-2xl font-bold text-gray-800 mb-2">Qu'allez-vous créer aujourd'hui ?</h2>
           </div>
 
           {/* Ligne d'icônes de jeux centrée */}
-          <div className="flex justify-center">
-            <div className="flex items-center justify-center space-x-6 max-w-4xl">
+          <div className="flex justify-center mb-8">
+            <div className="flex items-center justify-center space-x-8 max-w-5xl">
               {gameTypes.map((game, index) => {
                 const IconComponent = getCampaignTypeIcon(game.type);
                 return (
@@ -151,7 +144,7 @@ const Dashboard: React.FC = () => {
           </div>
 
           {/* Bouton de création rapide centré */}
-          <div className="flex justify-center mt-8">
+          <div className="flex justify-center">
             <Link
               to="/quick-campaign"
               className="inline-flex items-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
