@@ -132,9 +132,9 @@ const Dashboard: React.FC = () => {
       </div>
 
       <div className="px-6 space-y-6">
-        {/* Quick Action Section with Floating Bubbles */}
-        <div className="flex justify-center mt-6">
-          <div className="relative">
+        {/* Quick Action Section with Floating Bubbles - CENTERED */}
+        <div className="flex justify-center items-center mt-6 w-full">
+          <div className="relative flex justify-center">
             <Link
               to="/quick-campaign"
               className="inline-flex items-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
