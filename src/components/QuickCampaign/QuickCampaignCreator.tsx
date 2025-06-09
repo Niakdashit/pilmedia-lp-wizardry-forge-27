@@ -22,7 +22,7 @@ const QuickCampaignCreator: React.FC = () => {
   };
 
   return (
-    <div className="w-full min-h-screen bg-[#ebf4f7]">
+    <div className="w-full min-h-screen bg-[#ebf4f7] px-4 md:px-0">
       {renderCurrentStep()}
     </div>
   );
