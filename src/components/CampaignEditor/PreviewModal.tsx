@@ -1,8 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
 import { X, Monitor, Tablet, Smartphone } from 'lucide-react';
-import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
-import FunnelStandard from '../funnels/FunnelStandard';
 import CampaignPreview from './CampaignPreview';
 
 interface PreviewModalProps {
@@ -32,34 +30,6 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
   }, [campaign.design?.backgroundImage, campaign.design?.mobileBackgroundImage, selectedDevice]);
 
   if (!isOpen) return null;
-
-  const getPreviewFunnel = () => {
-    const funnel = campaign.funnel || (['wheel', 'scratch', 'jackpot', 'dice'].includes(campaign.type) ? 'unlocked_game' : 'standard');
-    if (funnel === 'unlocked_game') {
-      return (
-        <FunnelUnlockedGame
-          campaign={campaign}
-          previewMode={selectedDevice}
-          modalContained={true}
-          key={`${selectedDevice}-${campaign.id}-${JSON.stringify({
-            gameConfig: campaign.gameConfig,
-            design: campaign.design,
-            screens: campaign.screens
-          })}`} // Force re-render with comprehensive dependencies
-        />
-      );
-    }
-    return (
-      <FunnelStandard
-        campaign={campaign}
-        key={`${campaign.id}-${JSON.stringify({
-          gameConfig: campaign.gameConfig,
-          design: campaign.design,
-          screens: campaign.screens,
-        })}`}
-      />
-    );
-  };
 
   // Récupérer l'image de fond du jeu
   const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage ||
