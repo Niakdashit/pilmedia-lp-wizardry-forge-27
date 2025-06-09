@@ -35,7 +35,7 @@ const QuickCreationSection: React.FC = () => {
         
         <div className="relative z-10">
           <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">Qu'allez-vous créer aujourd'hui ?</h2>
+            <h2 className="text-2xl font-bold mb-2 text-[#841b60]">Qu'allez-vous créer aujourd'hui ?</h2>
           </div>
 
           <div className="flex justify-center mb-8">
