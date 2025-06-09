@@ -7,7 +7,6 @@ import CampaignPreviewModal from './CampaignPreviewModal';
 import ColorCustomizer from './ColorCustomizer';
 import JackpotPreview from './Preview/JackpotPreview';
 import GameRenderer from './Preview/GameRenderer';
-
 const Step3VisualStyle: React.FC = () => {
   const navigate = useNavigate();
   const {
@@ -214,7 +213,7 @@ const Step3VisualStyle: React.FC = () => {
         <CampaignPreviewModal isOpen={showPreview} onClose={() => setShowPreview(false)} />
       </div>;
   }
-  return <div className="min-h-screen bg-[#ebf4f7] px-6 py-12">
+  return <div className="min-h-screen bg-[#ebf4f7] py-12 px-0">
       <div className="max-w-6xl mx-auto">
         <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-8 md:p-12">
           {/* Header */}
@@ -231,26 +230,11 @@ const Step3VisualStyle: React.FC = () => {
             {/* Aperçu dynamique du jeu - Design unifié pour toutes les mécaniques */}
             <div className="flex justify-center">
               <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-3xl shadow-inner border border-gray-200/50 max-w-2xl w-full flex items-center justify-center min-h-[400px] p-8">
-                {selectedGameType === 'jackpot' ? (
-                  <JackpotPreview 
-                    customColors={customColors} 
-                    jackpotColors={jackpotColors}
-                  />
-                ) : (
-                  <div className="flex flex-col items-center justify-center w-full h-full">
+                {selectedGameType === 'jackpot' ? <JackpotPreview customColors={customColors} jackpotColors={jackpotColors} /> : <div className="flex flex-col items-center justify-center w-full h-full">
                     <div className="transform scale-90 origin-center">
-                      <GameRenderer 
-                        gameType={selectedGameType || 'wheel'} 
-                        mockCampaign={previewCampaign} 
-                        customColors={customColors} 
-                        jackpotColors={jackpotColors} 
-                        gameSize="medium" 
-                        gamePosition="center" 
-                        previewDevice="desktop" 
-                      />
+                      <GameRenderer gameType={selectedGameType || 'wheel'} mockCampaign={previewCampaign} customColors={customColors} jackpotColors={jackpotColors} gameSize="medium" gamePosition="center" previewDevice="desktop" />
                     </div>
-                  </div>
-                )}
+                  </div>}
               </div>
             </div>
 
@@ -295,8 +279,7 @@ const Step3VisualStyle: React.FC = () => {
               <span>Retour</span>
             </button>
 
-            <button onClick={handleFinish} className="px-8 py-4 rounded-2xl font-medium transition-all
-                         bg-[#841b60] text-white hover:bg-[#841b60]/90 shadow-lg">
+            <button onClick={handleFinish} className="px-8 py-4 rounded-2xl transition-all bg-[#841b60] text-white hover:bg-[#841b60]/90 shadow-lg font-medium">
               Finaliser
             </button>
           </div>
@@ -314,5 +297,4 @@ const Step3VisualStyle: React.FC = () => {
       </div>
     </div>;
 };
-
 export default Step3VisualStyle;
