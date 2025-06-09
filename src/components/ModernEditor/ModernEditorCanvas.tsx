@@ -1,11 +1,11 @@
 
 import React, { useState, useRef } from 'react';
+import { Plus } from 'lucide-react';
 import GameCanvasPreview from '../CampaignEditor/GameCanvasPreview';
 import TextElement from './TextElement';
 import ImageElement from './ImageElement';
 import CanvasHeader from './components/CanvasHeader';
 import CanvasFooter from './components/CanvasFooter';
-import CanvasBackground from './components/CanvasBackground';
 import GridToggle from './components/GridToggle';
 import { useCanvasElements } from './hooks/useCanvasElements';
 
@@ -25,6 +25,7 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
   gamePosition
 }) => {
   const [showGridLines, setShowGridLines] = useState(false);
+  const [showAddMenu, setShowAddMenu] = useState(false);
   const canvasRef = useRef<HTMLDivElement>(null);
 
   const {
@@ -36,7 +37,9 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
     updateImageElement,
     deleteTextElement,
     deleteImageElement,
-    getElementDeviceConfig
+    getElementDeviceConfig,
+    addTextElement,
+    addImageElement
   } = useCanvasElements(campaign, setCampaign, previewDevice);
 
   // Enhanced campaign with proper settings propagation
@@ -94,78 +97,136 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
   };
 
   const handleCanvasClick = (e: React.MouseEvent) => {
-    // Only deselect if clicking directly on the canvas, not on child elements
     if (e.target === e.currentTarget) {
       setSelectedElement(null);
+      setShowAddMenu(false);
     }
   };
 
-  return (
-    <div className="w-full h-full flex items-center justify-center bg-gray-100 p-4">
-      <CanvasBackground
-        campaign={campaign}
-        previewDevice={previewDevice}
-        showGridLines={showGridLines}
-        onCanvasClick={handleCanvasClick}
-        canvasRef={canvasRef}
-      >
-        <CanvasHeader
-          headerBanner={headerBanner}
-          headerText={headerText}
-          sizeMap={sizeMap}
-        />
+  const handleAddText = () => {
+    addTextElement();
+    setShowAddMenu(false);
+  };
 
-        <div className="flex-1 flex relative">
-          <GameCanvasPreview
-            campaign={enhancedCampaign}
-            className="w-full h-full"
-            key={`preview-${gameSize}-${gamePosition}-${campaign.buttonConfig?.color}-${JSON.stringify(campaign.gameConfig?.[campaign.type])}`}
-            previewDevice={previewDevice}
+  const handleAddImage = () => {
+    addImageElement();
+    setShowAddMenu(false);
+  };
+
+  return (
+    <div className="w-full h-full flex items-center justify-center p-6">
+      {/* Canvas container with Canva-like styling */}
+      <div className="relative w-full max-w-7xl h-full bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-200/50">
+        {/* Canvas background */}
+        <div
+          ref={canvasRef}
+          onClick={handleCanvasClick}
+          className="relative w-full h-full overflow-hidden"
+          style={{
+            background: `linear-gradient(135deg, ${campaign.design?.background || '#f8fafc'} 0%, ${campaign.design?.background || '#f8fafc'}88 100%)`,
+            backgroundImage: showGridLines ? 
+              'radial-gradient(circle, rgba(147, 197, 253, 0.2) 1px, transparent 1px)' : 'none',
+            backgroundSize: showGridLines ? '20px 20px' : 'auto'
+          }}
+        >
+          <CanvasHeader
+            headerBanner={headerBanner}
+            headerText={headerText}
+            sizeMap={sizeMap}
           />
-          
-          {/* Custom Text Elements */}
-          {customTexts.map((customText: any) => (
-            customText?.enabled && (
-              <TextElement
-                key={`text-${customText.id}-${previewDevice}`}
-                element={customText}
-                isSelected={selectedElement?.type === 'text' && selectedElement?.id === customText.id}
-                onSelect={() => setSelectedElement({ type: 'text', id: customText.id })}
-                onUpdate={(updates) => updateTextElement(customText.id, updates)}
-                onDelete={() => deleteTextElement(customText.id)}
+
+          <div className="flex-1 flex relative">
+            <GameCanvasPreview
+              campaign={enhancedCampaign}
+              className="w-full h-full"
+              key={`preview-${gameSize}-${gamePosition}-${campaign.buttonConfig?.color}-${JSON.stringify(campaign.gameConfig?.[campaign.type])}`}
+              previewDevice={previewDevice}
+            />
+            
+            {/* Custom Text Elements */}
+            {customTexts.map((customText: any) => (
+              customText?.enabled && (
+                <TextElement
+                  key={`text-${customText.id}-${previewDevice}`}
+                  element={customText}
+                  isSelected={selectedElement?.type === 'text' && selectedElement?.id === customText.id}
+                  onSelect={() => setSelectedElement({ type: 'text', id: customText.id })}
+                  onUpdate={(updates) => updateTextElement(customText.id, updates)}
+                  onDelete={() => deleteTextElement(customText.id)}
+                  containerRef={canvasRef}
+                  sizeMap={sizeMap}
+                  getElementDeviceConfig={getElementDeviceConfig}
+                />
+              )
+            ))}
+
+            {/* Custom Image Elements */}
+            {customImages.map((customImage: any) => (
+              <ImageElement
+                key={`image-${customImage.id}-${previewDevice}`}
+                element={customImage}
+                isSelected={selectedElement?.type === 'image' && selectedElement?.id === customImage.id}
+                onSelect={() => setSelectedElement({ type: 'image', id: customImage.id })}
+                onUpdate={(updates) => updateImageElement(customImage.id, updates)}
+                onDelete={() => deleteImageElement(customImage.id)}
                 containerRef={canvasRef}
-                sizeMap={sizeMap}
                 getElementDeviceConfig={getElementDeviceConfig}
               />
-            )
-          ))}
+            ))}
+          </div>
 
-          {/* Custom Image Elements */}
-          {customImages.map((customImage: any) => (
-            <ImageElement
-              key={`image-${customImage.id}-${previewDevice}`}
-              element={customImage}
-              isSelected={selectedElement?.type === 'image' && selectedElement?.id === customImage.id}
-              onSelect={() => setSelectedElement({ type: 'image', id: customImage.id })}
-              onUpdate={(updates) => updateImageElement(customImage.id, updates)}
-              onDelete={() => deleteImageElement(customImage.id)}
-              containerRef={canvasRef}
-              getElementDeviceConfig={getElementDeviceConfig}
-            />
-          ))}
+          <CanvasFooter
+            footerBanner={footerBanner}
+            footerText={footerText}
+            sizeMap={sizeMap}
+          />
         </div>
 
-        <CanvasFooter
-          footerBanner={footerBanner}
-          footerText={footerText}
-          sizeMap={sizeMap}
-        />
+        {/* Floating action button - Canva style */}
+        <div className="absolute bottom-8 right-8">
+          <div className="relative">
+            {/* Add menu */}
+            {showAddMenu && (
+              <div className="absolute bottom-16 right-0 bg-white rounded-2xl shadow-2xl border border-gray-200/50 p-2 min-w-48">
+                <button
+                  onClick={handleAddText}
+                  className="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-50 transition-colors text-left"
+                >
+                  <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <span className="text-blue-600 font-semibold text-sm">T</span>
+                  </div>
+                  <span className="font-medium text-gray-900">Ajouter du texte</span>
+                </button>
+                <button
+                  onClick={handleAddImage}
+                  className="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-50 transition-colors text-left"
+                >
+                  <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                    <span className="text-green-600 font-semibold text-sm">📷</span>
+                  </div>
+                  <span className="font-medium text-gray-900">Ajouter une image</span>
+                </button>
+              </div>
+            )}
 
-        <GridToggle
-          showGridLines={showGridLines}
-          onToggle={() => setShowGridLines(!showGridLines)}
-        />
-      </CanvasBackground>
+            {/* Main add button */}
+            <button
+              onClick={() => setShowAddMenu(!showAddMenu)}
+              className="w-14 h-14 bg-gradient-to-r from-[#841b60] to-[#6d164f] hover:from-[#6d164f] hover:to-[#841b60] text-white rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 flex items-center justify-center transform hover:scale-105"
+            >
+              <Plus className={`w-6 h-6 transition-transform duration-300 ${showAddMenu ? 'rotate-45' : ''}`} />
+            </button>
+          </div>
+        </div>
+
+        {/* Grid toggle */}
+        <div className="absolute top-6 right-6">
+          <GridToggle
+            showGridLines={showGridLines}
+            onToggle={() => setShowGridLines(!showGridLines)}
+          />
+        </div>
+      </div>
     </div>
   );
 };

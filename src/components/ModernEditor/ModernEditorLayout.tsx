@@ -1,0 +1,230 @@
+
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronLeft, ChevronRight, Eye, Save, Monitor, Tablet, Smartphone, Menu, X } from 'lucide-react';
+import ModernEditorSidebar from './ModernEditorSidebar';
+import ModernEditorCanvas from './ModernEditorCanvas';
+import ModernEditorPanel from './ModernEditorPanel';
+
+interface ModernEditorLayoutProps {
+  campaign: any;
+  setCampaign: (updater: (prev: any) => any) => void;
+  activeTab: string;
+  onTabChange: (tab: string) => void;
+  previewDevice: 'desktop' | 'tablet' | 'mobile';
+  onDeviceChange: (device: 'desktop' | 'tablet' | 'mobile') => void;
+  onSave: () => void;
+  onPreview: () => void;
+  isLoading: boolean;
+  campaignType: string;
+  isNewCampaign: boolean;
+  gameTypeLabels: Record<string, string>;
+}
+
+const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
+  campaign,
+  setCampaign,
+  activeTab,
+  onTabChange,
+  previewDevice,
+  onDeviceChange,
+  onSave,
+  onPreview,
+  isLoading,
+  campaignType,
+  isNewCampaign,
+  gameTypeLabels
+}) => {
+  const [isPanelOpen, setIsPanelOpen] = useState(true);
+  const [isMobilePanelOpen, setIsMobilePanelOpen] = useState(false);
+
+  const togglePanel = () => {
+    setIsPanelOpen(!isPanelOpen);
+  };
+
+  const toggleMobilePanel = () => {
+    setIsMobilePanelOpen(!isMobilePanelOpen);
+  };
+
+  return (
+    <div className="h-screen flex bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
+      {/* Header - Fixed top bar */}
+      <div className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200/50 shadow-sm">
+        <div className="flex items-center justify-between px-4 md:px-6 py-3">
+          {/* Left section */}
+          <div className="flex items-center space-x-4">
+            {/* Mobile panel toggle */}
+            <button
+              onClick={toggleMobilePanel}
+              className="md:hidden p-2 hover:bg-gray-100 rounded-xl transition-colors"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+            
+            {/* Desktop panel toggle */}
+            <button
+              onClick={togglePanel}
+              className="hidden md:flex p-2 hover:bg-gray-100 rounded-xl transition-colors"
+            >
+              {isPanelOpen ? <ChevronLeft className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
+            </button>
+
+            <div>
+              <h1 className="text-lg md:text-xl font-bold text-gray-900">
+                {isNewCampaign ? 'Nouvel Éditeur' : campaign.name}
+              </h1>
+              <p className="text-xs md:text-sm text-gray-500">
+                {gameTypeLabels[campaignType]} • {isNewCampaign ? 'Brouillon' : campaign.status}
+              </p>
+            </div>
+          </div>
+
+          {/* Center - Device selector */}
+          <div className="hidden md:flex items-center bg-gray-100 rounded-xl p-1">
+            <button
+              onClick={() => onDeviceChange('desktop')}
+              className={`p-2 rounded-lg transition-colors ${
+                previewDevice === 'desktop' ? 'bg-white shadow-sm text-[#841b60]' : 'hover:bg-gray-200'
+              }`}
+            >
+              <Monitor className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => onDeviceChange('tablet')}
+              className={`p-2 rounded-lg transition-colors ${
+                previewDevice === 'tablet' ? 'bg-white shadow-sm text-[#841b60]' : 'hover:bg-gray-200'
+              }`}
+            >
+              <Tablet className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => onDeviceChange('mobile')}
+              className={`p-2 rounded-lg transition-colors ${
+                previewDevice === 'mobile' ? 'bg-white shadow-sm text-[#841b60]' : 'hover:bg-gray-200'
+              }`}
+            >
+              <Smartphone className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Right section */}
+          <div className="flex items-center space-x-2 md:space-x-3">
+            <button
+              onClick={onPreview}
+              className="flex items-center space-x-2 px-3 md:px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors"
+            >
+              <Eye className="w-4 h-4" />
+              <span className="hidden md:inline">Aperçu</span>
+            </button>
+            
+            <button
+              onClick={onSave}
+              disabled={isLoading}
+              className="flex items-center space-x-2 px-3 md:px-4 py-2 bg-gradient-to-r from-[#841b60] to-[#6d164f] hover:from-[#6d164f] hover:to-[#841b60] text-white rounded-xl transition-all shadow-lg hover:shadow-xl disabled:opacity-50"
+            >
+              <Save className="w-4 h-4" />
+              <span className="hidden md:inline">{isLoading ? 'Sauvegarde...' : 'Sauvegarder'}</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile device selector */}
+        <div className="md:hidden flex justify-center py-2 border-t border-gray-100">
+          <div className="flex items-center bg-gray-100 rounded-xl p-1">
+            <button
+              onClick={() => onDeviceChange('desktop')}
+              className={`p-2 rounded-lg transition-colors ${
+                previewDevice === 'desktop' ? 'bg-white shadow-sm text-[#841b60]' : 'hover:bg-gray-200'
+              }`}
+            >
+              <Monitor className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => onDeviceChange('tablet')}
+              className={`p-2 rounded-lg transition-colors ${
+                previewDevice === 'tablet' ? 'bg-white shadow-sm text-[#841b60]' : 'hover:bg-gray-200'
+              }`}
+            >
+              <Tablet className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => onDeviceChange('mobile')}
+              className={`p-2 rounded-lg transition-colors ${
+                previewDevice === 'mobile' ? 'bg-white shadow-sm text-[#841b60]' : 'hover:bg-gray-200'
+              }`}
+            >
+              <Smartphone className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Main content area */}
+      <div className="flex w-full pt-16 md:pt-20">
+        {/* Mobile overlay */}
+        {isMobilePanelOpen && (
+          <div
+            className="md:hidden fixed inset-0 bg-black/30 z-40"
+            onClick={() => setIsMobilePanelOpen(false)}
+          />
+        )}
+
+        {/* Side panel */}
+        <AnimatePresence mode="wait">
+          {(isPanelOpen || isMobilePanelOpen) && (
+            <motion.div
+              initial={{ x: -400, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: -400, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+              className={`${
+                isMobilePanelOpen ? 'fixed' : 'hidden md:flex'
+              } w-80 lg:w-96 bg-white/95 backdrop-blur-md border-r border-gray-200/50 shadow-xl z-40 h-full overflow-hidden`}
+            >
+              {/* Mobile close button */}
+              <button
+                onClick={() => setIsMobilePanelOpen(false)}
+                className="md:hidden absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-xl z-50"
+              >
+                <X className="w-5 h-5" />
+              </button>
+
+              <div className="flex h-full">
+                {/* Sidebar tabs */}
+                <div className="w-20 border-r border-gray-200/50">
+                  <ModernEditorSidebar
+                    activeTab={activeTab}
+                    onTabChange={onTabChange}
+                    campaignType={campaignType}
+                  />
+                </div>
+
+                {/* Panel content */}
+                <div className="flex-1 overflow-y-auto">
+                  <ModernEditorPanel
+                    activeTab={activeTab}
+                    campaign={campaign}
+                    setCampaign={setCampaign}
+                  />
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Canvas area */}
+        <div className="flex-1 bg-gradient-to-br from-gray-50 to-white">
+          <ModernEditorCanvas
+            campaign={campaign}
+            setCampaign={setCampaign}
+            previewDevice={previewDevice}
+            gameSize={campaign.gameSize}
+            gamePosition={campaign.gamePosition}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ModernEditorLayout;
