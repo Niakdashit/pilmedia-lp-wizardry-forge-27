@@ -53,9 +53,9 @@ const QuickCreationSection: React.FC = () => {
               })}
             </div>
 
-            {/* Container pour mobile avec scroll horizontal */}
-            <div className="md:hidden w-full">
-              <div className="flex space-x-6 overflow-x-auto pb-4 px-2 scrollbar-hide" 
+            {/* Container pour mobile avec scroll horizontal - ajusté pour aller jusqu'aux bords */}
+            <div className="md:hidden w-full -mx-8 px-8">
+              <div className="flex space-x-6 overflow-x-auto pb-4 scrollbar-hide" 
                    style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                 {gameTypes.map((game, index) => {
                   const IconComponent = getCampaignTypeIcon(game.type);
