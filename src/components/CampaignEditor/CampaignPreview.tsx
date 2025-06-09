@@ -9,23 +9,25 @@ interface CampaignPreviewProps {
   previewDevice?: PreviewDevice;
 }
 
-const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevice = 'desktop' as PreviewDevice }) => {
+const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevice }) => {
+  // Ensure previewDevice has the correct type by providing a fallback
+  const deviceType: PreviewDevice = previewDevice || 'desktop';
   const { design } = campaign;
 
   // If mobile preview, use the dedicated MobilePreview component
-  if (previewDevice === 'mobile') {
+  if (deviceType === 'mobile') {
     return <MobilePreview campaign={campaign} previewMode="mobile" />;
   }
 
   // If tablet preview, use the dedicated MobilePreview component
-  if (previewDevice === 'tablet') {
+  if (deviceType === 'tablet') {
     return <MobilePreview campaign={campaign} previewMode="tablet" />;
   }
 
   // Get background image depending on device
   const baseBackground = design?.backgroundImage || campaign.gameConfig?.[campaign.type]?.backgroundImage;
   const mobileBackground = design?.mobileBackgroundImage;
-  const backgroundImage = (previewDevice === 'mobile' || previewDevice === 'tablet') && mobileBackground ? mobileBackground : baseBackground;
+  const backgroundImage = (deviceType === 'mobile' || deviceType === 'tablet') && mobileBackground ? mobileBackground : baseBackground;
 
   const [imageDims, setImageDims] = useState({ width: 1080, height: 1920 });
 
@@ -110,7 +112,7 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
 
   // Use identical device config logic as editor
   const getElementDeviceConfig = (element: any) => {
-    const deviceKey = (previewDevice === 'mobile' || previewDevice === 'tablet') ? 'mobile' : 'desktop';
+    const deviceKey = (deviceType === 'mobile' || deviceType === 'tablet') ? 'mobile' : 'desktop';
     const deviceConfig = element.deviceConfig?.[deviceKey];
     return {
       x: deviceConfig?.x ?? element.x ?? 0,
@@ -151,7 +153,7 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
       return (
         <FunnelUnlockedGame
           campaign={enhancedCampaign}
-          previewMode={previewDevice}
+          previewMode={deviceType}
           modalContained={false}
         />
       );
@@ -191,7 +193,7 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
 
           return (
             <div
-              key={`preview-image-${customImage.id}-${previewDevice}`}
+              key={`preview-image-${customImage.id}-${deviceType}`}
               style={{
                 position: 'absolute',
                 transform: `translate3d(${deviceConfig.x}px, ${deviceConfig.y}px, 0) rotate(${customImage.rotation || 0}deg)`,
@@ -231,7 +233,7 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
 
           return (
             <div
-              key={`preview-text-${customText.id}-${previewDevice}`}
+              key={`preview-text-${customText.id}-${deviceType}`}
               style={{
                 position: 'absolute',
                 transform: `translate3d(${deviceConfig.x}px, ${deviceConfig.y}px, 0)`,
