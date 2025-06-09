@@ -67,6 +67,7 @@ const Dashboard: React.FC = () => {
     image: 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg'
   }];
 
+  // Les bulles d'accès rapide façon Canva
   const quickGames = [
     { id: 'wheel', label: 'Roue', icon: Target },
     { id: 'scratch', label: 'Grattage', icon: Cookie },
@@ -75,6 +76,7 @@ const Dashboard: React.FC = () => {
     { id: 'puzzle', label: 'Puzzle', icon: Puzzle },
     { id: 'jackpot', label: 'Jackpot', icon: DollarSign }
   ];
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active':
@@ -110,7 +112,7 @@ const Dashboard: React.FC = () => {
               <input
                 type="text"
                 placeholder="Rechercher une campagne..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#a855f7]"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#841b60]"
               />
             </div>
           </div>
@@ -125,23 +127,24 @@ const Dashboard: React.FC = () => {
       </header>
 
       <div className="pt-20 px-6 space-y-6">
-        {/* Quick Game Shortcuts */}
-        <div className="mt-6">
-          <div className="flex gap-4 overflow-x-auto pb-2 justify-center md:grid md:grid-cols-3 lg:grid-cols-6">
-            {quickGames.map(game => {
-              const Icon = game.icon;
-              return (
-                <Link
-                  key={game.id}
-                  to={`/quick-campaign?type=${game.id}`}
-                  className="flex flex-col items-center justify-center w-20 h-20 shrink-0 rounded-full bg-gradient-to-br from-[#861c74] to-[#b23ab6] text-white hover:shadow-lg transition-transform duration-300 hover:scale-110"
-                >
-                  <Icon className="w-6 h-6 mb-1" />
-                  <span className="text-xs font-medium">{game.label}</span>
-                </Link>
-              );
-            })}
-          </div>
+        {/* Section bulles Canva */}
+        <div className="flex gap-6 mt-2 mb-4 justify-center flex-wrap">
+          {quickGames.map(game => {
+            const Icon = game.icon;
+            return (
+              <Link
+                key={game.id}
+                to={`/quick-campaign?type=${game.id}`}
+                className="flex flex-col items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-[#841b60] to-[#ecf4f7] text-[#fff] hover:text-[#841b60] shadow-lg hover:shadow-2xl transition-transform duration-200 hover:scale-110 border-4 border-white"
+                style={{
+                  boxShadow: "0 8px 24px 0 rgba(132,27,96,0.09)"
+                }}
+              >
+                <Icon className="w-7 h-7 mb-1" />
+                <span className="text-xs font-medium">{game.label}</span>
+              </Link>
+            );
+          })}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
