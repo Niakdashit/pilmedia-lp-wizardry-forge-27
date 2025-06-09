@@ -52,14 +52,14 @@ const Dashboard: React.FC = () => {
     image: 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg'
   }];
 
-  // Icônes de jeux pour les bulles flottantes - alignées horizontalement avec le bouton
+  // Icônes de jeux pour les bulles flottantes
   const gameIcons = [
-    { type: 'wheel', position: 'right-1', delay: '0s' },
-    { type: 'quiz', position: 'right-2', delay: '0.5s' },
-    { type: 'scratch', position: 'right-3', delay: '1s' },
-    { type: 'dice', position: 'right-4', delay: '1.5s' },
-    { type: 'jackpot', position: 'right-5', delay: '2s' },
-    { type: 'memory', position: 'right-6', delay: '2.5s' }
+    { type: 'wheel', position: 1, delay: '0s' },
+    { type: 'quiz', position: 2, delay: '0.5s' },
+    { type: 'scratch', position: 3, delay: '1s' },
+    { type: 'dice', position: 4, delay: '1.5s' },
+    { type: 'jackpot', position: 5, delay: '2s' },
+    { type: 'memory', position: 6, delay: '2.5s' }
   ];
 
   const getStatusColor = (status: string) => {
@@ -88,25 +88,6 @@ const Dashboard: React.FC = () => {
     }
   };
 
-  const getBubblePosition = (position: string) => {
-    switch (position) {
-      case 'right-1':
-        return 'absolute right-[-80px] top-1/2 -translate-y-1/2';
-      case 'right-2':
-        return 'absolute right-[-140px] top-1/2 -translate-y-1/2';
-      case 'right-3':
-        return 'absolute right-[-200px] top-1/2 -translate-y-1/2';
-      case 'right-4':
-        return 'absolute right-[-260px] top-1/2 -translate-y-1/2';
-      case 'right-5':
-        return 'absolute right-[-320px] top-1/2 -translate-y-1/2';
-      case 'right-6':
-        return 'absolute right-[-380px] top-1/2 -translate-y-1/2';
-      default:
-        return '';
-    }
-  };
-
   return (
     <div className="-mx-6 -mt-6">
       <div className="relative h-[100px] bg-[#841b60] overflow-hidden">
@@ -132,9 +113,35 @@ const Dashboard: React.FC = () => {
       </div>
 
       <div className="px-6 space-y-6">
-        {/* Quick Action Section with Floating Bubbles - CENTERED */}
+        {/* Quick Action Section with Floating Bubbles - PERFECTLY CENTERED */}
         <div className="flex justify-center items-center mt-6 w-full">
-          <div className="relative flex justify-center">
+          <div className="flex items-center justify-center space-x-16">
+            {/* Première série de bulles à gauche */}
+            <div className="flex items-center space-x-4">
+              {gameIcons.slice(0, 3).reverse().map((game) => {
+                const IconComponent = getCampaignTypeIcon(game.type);
+                return (
+                  <div
+                    key={game.type}
+                    className="w-12 h-12 md:w-16 md:h-16 bg-white rounded-full shadow-lg flex items-center justify-center opacity-0 animate-fade-in transform hover:scale-110 transition-all duration-300 cursor-pointer group"
+                    style={{
+                      animationDelay: game.delay,
+                      animationFillMode: 'forwards'
+                    }}
+                    title={getCampaignTypeText(game.type)}
+                  >
+                    <IconComponent className="w-6 h-6 md:w-8 md:h-8 text-[#841b60] group-hover:text-[#6d164f] transition-colors" />
+                    
+                    {/* Tooltip */}
+                    <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                      {getCampaignTypeText(game.type)}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Bouton central */}
             <Link
               to="/quick-campaign"
               className="inline-flex items-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
@@ -143,28 +150,30 @@ const Dashboard: React.FC = () => {
               Création rapide de campagne
             </Link>
 
-            {/* Bulles flottantes avec icônes de jeux - alignées horizontalement */}
-            {gameIcons.map((game) => {
-              const IconComponent = getCampaignTypeIcon(game.type);
-              return (
-                <div
-                  key={game.type}
-                  className={`${getBubblePosition(game.position)} w-12 h-12 md:w-16 md:h-16 bg-white rounded-full shadow-lg flex items-center justify-center opacity-0 animate-fade-in transform hover:scale-110 transition-all duration-300 cursor-pointer group`}
-                  style={{
-                    animationDelay: game.delay,
-                    animationFillMode: 'forwards'
-                  }}
-                  title={getCampaignTypeText(game.type)}
-                >
-                  <IconComponent className="w-6 h-6 md:w-8 md:h-8 text-[#841b60] group-hover:text-[#6d164f] transition-colors" />
-                  
-                  {/* Tooltip */}
-                  <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                    {getCampaignTypeText(game.type)}
+            {/* Deuxième série de bulles à droite */}
+            <div className="flex items-center space-x-4">
+              {gameIcons.slice(3, 6).map((game) => {
+                const IconComponent = getCampaignTypeIcon(game.type);
+                return (
+                  <div
+                    key={game.type}
+                    className="w-12 h-12 md:w-16 md:h-16 bg-white rounded-full shadow-lg flex items-center justify-center opacity-0 animate-fade-in transform hover:scale-110 transition-all duration-300 cursor-pointer group"
+                    style={{
+                      animationDelay: game.delay,
+                      animationFillMode: 'forwards'
+                    }}
+                    title={getCampaignTypeText(game.type)}
+                  >
+                    <IconComponent className="w-6 h-6 md:w-8 md:h-8 text-[#841b60] group-hover:text-[#6d164f] transition-colors" />
+                    
+                    {/* Tooltip */}
+                    <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                      {getCampaignTypeText(game.type)}
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
         </div>
 
