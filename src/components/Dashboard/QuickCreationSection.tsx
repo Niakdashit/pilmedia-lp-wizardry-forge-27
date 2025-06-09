@@ -28,7 +28,8 @@ const QuickCreationSection: React.FC = () => {
           </div>
 
           <div className="flex justify-center mb-8">
-            <div className="flex items-center justify-center space-x-8 max-w-5xl">
+            {/* Container pour desktop avec flex center */}
+            <div className="hidden md:flex items-center justify-center space-x-8 max-w-5xl">
               {gameTypes.map((game, index) => {
                 const IconComponent = getCampaignTypeIcon(game.type);
                 return (
@@ -50,6 +51,34 @@ const QuickCreationSection: React.FC = () => {
                   </Link>
                 );
               })}
+            </div>
+
+            {/* Container pour mobile avec scroll horizontal */}
+            <div className="md:hidden w-full">
+              <div className="flex space-x-6 overflow-x-auto pb-4 px-2 scrollbar-hide" 
+                   style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+                {gameTypes.map((game, index) => {
+                  const IconComponent = getCampaignTypeIcon(game.type);
+                  return (
+                    <Link 
+                      key={game.type} 
+                      to={`/quick-campaign?type=${game.type}`} 
+                      className="flex flex-col items-center group cursor-pointer opacity-0 animate-fade-in flex-shrink-0" 
+                      style={{
+                        animationDelay: `${index * 0.1}s`,
+                        animationFillMode: 'forwards'
+                      }}
+                    >
+                      <div className="w-16 h-16 bg-white rounded-full shadow-lg flex items-center justify-center group-hover:shadow-xl transform group-hover:scale-110 transition-all duration-300 border border-gray-100">
+                        <IconComponent className="w-8 h-8 text-[#841b60] group-hover:text-[#6d164f] transition-colors" />
+                      </div>
+                      <span className="mt-2 text-sm font-medium text-gray-700 group-hover:text-[#841b60] transition-colors text-center">
+                        {game.label}
+                      </span>
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
           </div>
 
@@ -76,6 +105,14 @@ const QuickCreationSection: React.FC = () => {
         
         .animate-fade-in {
           animation: fade-in 0.6s ease-out;
+        }
+
+        .scrollbar-hide {
+          -webkit-overflow-scrolling: touch;
+        }
+        
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
         }
       `}</style>
     </div>
