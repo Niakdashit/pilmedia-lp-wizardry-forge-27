@@ -11,7 +11,7 @@ interface CampaignPreviewProps {
 
 const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevice }) => {
   // Ensure previewDevice has the correct type by providing a fallback with explicit typing
-  const deviceType: PreviewDevice = previewDevice || ('desktop' as PreviewDevice);
+  const deviceType: PreviewDevice = previewDevice ?? ('desktop' as PreviewDevice);
   const { design } = campaign;
 
   // If mobile preview, use the dedicated MobilePreview component
