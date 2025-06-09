@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Users, Target, BarChart, Calendar, ChevronRight, MoreVertical, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -52,14 +53,16 @@ const Dashboard: React.FC = () => {
     image: 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg'
   }];
 
-  // Icônes de jeux pour les bulles flottantes
-  const gameIcons = [
-    { type: 'wheel', position: 1, delay: '0s' },
-    { type: 'quiz', position: 2, delay: '0.5s' },
-    { type: 'scratch', position: 3, delay: '1s' },
-    { type: 'dice', position: 4, delay: '1.5s' },
-    { type: 'jackpot', position: 5, delay: '2s' },
-    { type: 'memory', position: 6, delay: '2.5s' }
+  // Tous les types de jeux disponibles
+  const gameTypes = [
+    { type: 'wheel', label: 'Roue de la fortune' },
+    { type: 'quiz', label: 'Quiz' },
+    { type: 'scratch', label: 'Grattage' },
+    { type: 'dice', label: 'Dés' },
+    { type: 'jackpot', label: 'Jackpot' },
+    { type: 'memory', label: 'Memory' },
+    { type: 'puzzle', label: 'Puzzle' },
+    { type: 'form', label: 'Formulaire' }
   ];
 
   const getStatusColor = (status: string) => {
@@ -113,35 +116,42 @@ const Dashboard: React.FC = () => {
       </div>
 
       <div className="px-6 space-y-6">
-        {/* Quick Action Section with Floating Bubbles - PERFECTLY CENTERED */}
-        <div className="flex justify-center items-center mt-6 w-full">
-          <div className="flex items-center justify-center space-x-16">
-            {/* Première série de bulles à gauche */}
-            <div className="flex items-center space-x-4">
-              {gameIcons.slice(0, 3).reverse().map((game) => {
+        {/* Section de création rapide avec icônes de jeux */}
+        <div className="w-full mt-8">
+          {/* Titre centré */}
+          <div className="text-center mb-6">
+            <h2 className="text-2xl font-bold text-gray-800 mb-2">Qu'allez-vous créer aujourd'hui ?</h2>
+          </div>
+
+          {/* Ligne d'icônes de jeux centrée */}
+          <div className="flex justify-center">
+            <div className="flex items-center justify-center space-x-6 max-w-4xl">
+              {gameTypes.map((game, index) => {
                 const IconComponent = getCampaignTypeIcon(game.type);
                 return (
-                  <div
+                  <Link
                     key={game.type}
-                    className="w-12 h-12 md:w-16 md:h-16 bg-white rounded-full shadow-lg flex items-center justify-center opacity-0 animate-fade-in transform hover:scale-110 transition-all duration-300 cursor-pointer group"
+                    to={`/quick-campaign?type=${game.type}`}
+                    className="flex flex-col items-center group cursor-pointer opacity-0 animate-fade-in"
                     style={{
-                      animationDelay: game.delay,
+                      animationDelay: `${index * 0.1}s`,
                       animationFillMode: 'forwards'
                     }}
-                    title={getCampaignTypeText(game.type)}
                   >
-                    <IconComponent className="w-6 h-6 md:w-8 md:h-8 text-[#841b60] group-hover:text-[#6d164f] transition-colors" />
-                    
-                    {/* Tooltip */}
-                    <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                      {getCampaignTypeText(game.type)}
+                    <div className="w-16 h-16 bg-white rounded-full shadow-lg flex items-center justify-center group-hover:shadow-xl transform group-hover:scale-110 transition-all duration-300 border border-gray-100">
+                      <IconComponent className="w-8 h-8 text-[#841b60] group-hover:text-[#6d164f] transition-colors" />
                     </div>
-                  </div>
+                    <span className="mt-2 text-sm font-medium text-gray-700 group-hover:text-[#841b60] transition-colors text-center">
+                      {game.label}
+                    </span>
+                  </Link>
                 );
               })}
             </div>
+          </div>
 
-            {/* Bouton central */}
+          {/* Bouton de création rapide centré */}
+          <div className="flex justify-center mt-8">
             <Link
               to="/quick-campaign"
               className="inline-flex items-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
@@ -149,31 +159,6 @@ const Dashboard: React.FC = () => {
               <Zap className="w-6 h-6 mr-3" />
               Création rapide de campagne
             </Link>
-
-            {/* Deuxième série de bulles à droite */}
-            <div className="flex items-center space-x-4">
-              {gameIcons.slice(3, 6).map((game) => {
-                const IconComponent = getCampaignTypeIcon(game.type);
-                return (
-                  <div
-                    key={game.type}
-                    className="w-12 h-12 md:w-16 md:h-16 bg-white rounded-full shadow-lg flex items-center justify-center opacity-0 animate-fade-in transform hover:scale-110 transition-all duration-300 cursor-pointer group"
-                    style={{
-                      animationDelay: game.delay,
-                      animationFillMode: 'forwards'
-                    }}
-                    title={getCampaignTypeText(game.type)}
-                  >
-                    <IconComponent className="w-6 h-6 md:w-8 md:h-8 text-[#841b60] group-hover:text-[#6d164f] transition-colors" />
-                    
-                    {/* Tooltip */}
-                    <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                      {getCampaignTypeText(game.type)}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
           </div>
         </div>
 
