@@ -55,7 +55,7 @@ const Step2BasicSettings: React.FC = () => {
     }
   };
   const canProceed = campaignName.trim() && launchDate && marketingGoal;
-  return <div className="min-h-screen bg-[#ebf4f7] px-6 py-12">
+  return <div className="min-h-screen bg-[#ebf4f7] py-12 px-0">
       <div className="max-w-6xl mx-auto">
         <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-8 md:p-12">
           {/* Header */}
