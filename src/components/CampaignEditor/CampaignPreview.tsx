@@ -1,4 +1,5 @@
 
+
 import React, { useEffect, useState } from 'react';
 import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
 import FunnelStandard from '../funnels/FunnelStandard';
@@ -23,10 +24,10 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
     return <MobilePreview campaign={campaign} previewMode="tablet" />;
   }
 
-  // Get background image depending on device
+  // Get background image depending on device - fix the type comparison
   const baseBackground = design?.backgroundImage || campaign.gameConfig?.[campaign.type]?.backgroundImage;
   const mobileBackground = design?.mobileBackgroundImage;
-  const backgroundImage = previewDevice === 'mobile' && mobileBackground ? mobileBackground : baseBackground;
+  const backgroundImage = (previewDevice === 'mobile' || previewDevice === 'tablet') && mobileBackground ? mobileBackground : baseBackground;
 
   const [imageDims, setImageDims] = useState({ width: 1080, height: 1920 });
 
@@ -109,9 +110,9 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
     '9xl': '72px'
   };
 
-  // Use identical device config logic as editor
+  // Use identical device config logic as editor - fix the type comparison
   const getElementDeviceConfig = (element: any) => {
-    const deviceKey = previewDevice === 'mobile' ? 'mobile' : 'desktop';
+    const deviceKey = (previewDevice === 'mobile' || previewDevice === 'tablet') ? 'mobile' : 'desktop';
     const deviceConfig = element.deviceConfig?.[deviceKey];
     return {
       x: deviceConfig?.x ?? element.x ?? 0,
@@ -270,3 +271,4 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
 };
 
 export default CampaignPreview;
+
