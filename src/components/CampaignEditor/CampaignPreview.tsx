@@ -10,8 +10,8 @@ interface CampaignPreviewProps {
 }
 
 const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevice }) => {
-  // Fix type inference by using explicit casting for the fallback
-  const deviceType = (previewDevice ?? 'desktop') as PreviewDevice;
+  // Explicitly type deviceType to ensure proper union type handling
+  const deviceType: PreviewDevice = previewDevice || 'desktop';
   const { design } = campaign;
 
   // If mobile preview, use the dedicated MobilePreview component
@@ -112,7 +112,7 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
 
   // Use identical device config logic as editor
   const getElementDeviceConfig = (element: any) => {
-    const deviceKey = (deviceType === 'mobile' || deviceType === 'tablet') ? 'mobile' : 'desktop';
+    const deviceKey: 'mobile' | 'desktop' = (deviceType === 'mobile' || deviceType === 'tablet') ? 'mobile' : 'desktop';
     const deviceConfig = element.deviceConfig?.[deviceKey];
     return {
       x: deviceConfig?.x ?? element.x ?? 0,
