@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {
   Users,
@@ -12,7 +13,9 @@ import {
   Brain,
   HelpCircle,
   Puzzle,
-  DollarSign
+  DollarSign,
+  Sparkles,
+  TrendingUp
 } from 'lucide-react';
 import { useAppContext } from '../context/AppContext';
 import { Link } from 'react-router-dom';
@@ -20,27 +23,33 @@ import { getCampaignTypeIcon, getCampaignTypeText, CampaignType } from '../utils
 
 const Dashboard: React.FC = () => {
   const { toggleSidebar } = useAppContext();
+  
   const stats = [{
     name: 'Campagnes actives',
     value: '5',
     change: '+2 cette semaine',
-    icon: <Target className="w-6 h-6 text-[#841b60]" />
+    icon: <Target className="w-6 h-6 text-white" />,
+    gradient: 'from-purple-500 to-pink-500'
   }, { 
     name: 'Participations',
     value: '1254',
     change: '+18% ce mois',
-    icon: <Users className="w-6 h-6 text-[#841b60]" />
+    icon: <Users className="w-6 h-6 text-white" />,
+    gradient: 'from-blue-500 to-cyan-500'
   }, {
     name: 'Taux de conversion',
     value: '42%',
     change: '+5% ce mois',
-    icon: <BarChart className="w-6 h-6 text-[#841b60]" />
+    icon: <TrendingUp className="w-6 h-6 text-white" />,
+    gradient: 'from-green-500 to-emerald-500'
   }, {
     name: 'Prochaine campagne',
     value: '2j',
     change: '10 avril',
-    icon: <Calendar className="w-6 h-6 text-[#841b60]" />
+    icon: <Calendar className="w-6 h-6 text-white" />,
+    gradient: 'from-orange-500 to-red-500'
   }];
+
   const recentCampaigns = [{
     id: '1',
     name: 'Quiz Marketing Digital',
@@ -67,28 +76,28 @@ const Dashboard: React.FC = () => {
     image: 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg'
   }];
 
-  // Les bulles d'accès rapide façon Canva
   const quickGames = [
-    { id: 'wheel', label: 'Roue', icon: Target },
-    { id: 'scratch', label: 'Grattage', icon: Cookie },
-    { id: 'memory', label: 'Memory', icon: Brain },
-    { id: 'quiz', label: 'Quiz', icon: HelpCircle },
-    { id: 'puzzle', label: 'Puzzle', icon: Puzzle },
-    { id: 'jackpot', label: 'Jackpot', icon: DollarSign }
+    { id: 'wheel', label: 'Roue', icon: Target, color: 'bg-gradient-to-br from-purple-500 to-pink-500' },
+    { id: 'scratch', label: 'Grattage', icon: Cookie, color: 'bg-gradient-to-br from-orange-500 to-yellow-500' },
+    { id: 'memory', label: 'Memory', icon: Brain, color: 'bg-gradient-to-br from-blue-500 to-cyan-500' },
+    { id: 'quiz', label: 'Quiz', icon: HelpCircle, color: 'bg-gradient-to-br from-green-500 to-emerald-500' },
+    { id: 'puzzle', label: 'Puzzle', icon: Puzzle, color: 'bg-gradient-to-br from-indigo-500 to-purple-500' },
+    { id: 'jackpot', label: 'Jackpot', icon: DollarSign, color: 'bg-gradient-to-br from-yellow-500 to-orange-500' }
   ];
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active':
-        return 'text-green-600';
+        return 'text-green-600 bg-green-50';
       case 'draft':
-        return 'text-gray-500';
+        return 'text-gray-600 bg-gray-50';
       case 'ended':
-        return 'text-red-600';
+        return 'text-red-600 bg-red-50';
       default:
-        return 'text-gray-500';
+        return 'text-gray-600 bg-gray-50';
     }
   };
+
   const getStatusText = (status: string) => {
     switch (status) {
       case 'active':
@@ -101,112 +110,164 @@ const Dashboard: React.FC = () => {
         return status;
     }
   };
+
   return (
-    <div className="relative">
-      <header className="fixed top-0 left-0 right-0 bg-white shadow z-10">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <h1 className="text-xl font-semibold text-gray-800">Tableau de bord</h1>
-          <div className="flex-1 mx-6 hidden md:block">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-50">
+      {/* Header moderne */}
+      <header className="bg-white/80 backdrop-blur-md border-b border-gray-200/50 sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+              Tableau de bord
+            </h1>
+            <div className="hidden md:flex items-center px-3 py-1 bg-purple-50 text-purple-600 rounded-full text-sm font-medium">
+              <Sparkles className="w-4 h-4 mr-1" />
+              Pro
+            </div>
+          </div>
+          
+          <div className="flex-1 mx-8 hidden lg:block">
             <div className="relative max-w-md mx-auto">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
               <input
                 type="text"
                 placeholder="Rechercher une campagne..."
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#841b60]"
+                className="w-full pl-12 pr-4 py-3 bg-gray-50 border-0 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white transition-all duration-200"
               />
             </div>
           </div>
+          
           <div className="flex items-center space-x-4">
-            <Link to="/campaigns" className="hidden md:inline-flex btn-primary">
+            <Link 
+              to="/campaigns" 
+              className="hidden md:inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+            >
               <Plus className="w-4 h-4 mr-2" />
               Créer une campagne
             </Link>
-            <img src="https://i.pravatar.cc/40" alt="Avatar" className="w-10 h-10 rounded-full" />
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+              <img src="https://i.pravatar.cc/40" alt="Avatar" className="w-8 h-8 rounded-lg" />
+            </div>
           </div>
         </div>
       </header>
 
-      <div className="pt-20 px-6 space-y-6">
-        {/* Section bulles Canva */}
-        <div className="flex gap-6 mt-2 mb-4 justify-center flex-wrap">
+      <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
+        {/* Section d'accueil avec message */}
+        <div className="text-center py-8">
+          <h2 className="text-4xl font-bold text-gray-900 mb-4">
+            Qu'allez-vous créer aujourd'hui ?
+          </h2>
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            Choisissez un type de jeu pour commencer ou consultez vos campagnes existantes
+          </p>
+        </div>
+
+        {/* Bulles de jeux modernes */}
+        <div className="flex flex-wrap justify-center gap-6 py-8">
           {quickGames.map(game => {
             const Icon = game.icon;
             return (
               <Link
                 key={game.id}
                 to={`/quick-campaign?type=${game.id}`}
-                className="flex flex-col items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-[#841b60] to-[#ecf4f7] text-[#fff] hover:text-[#841b60] shadow-lg hover:shadow-2xl transition-transform duration-200 hover:scale-110 border-4 border-white"
-                style={{
-                  boxShadow: "0 8px 24px 0 rgba(132,27,96,0.09)"
-                }}
+                className="group relative"
               >
-                <Icon className="w-7 h-7 mb-1" />
-                <span className="text-xs font-medium">{game.label}</span>
+                <div className={`w-24 h-24 ${game.color} rounded-2xl flex flex-col items-center justify-center text-white shadow-lg hover:shadow-2xl transition-all duration-300 transform group-hover:scale-110 group-hover:-rotate-2`}>
+                  <Icon className="w-8 h-8 mb-1" />
+                  <span className="text-xs font-semibold">{game.label}</span>
+                </div>
+                <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl opacity-0 group-hover:opacity-20 transition-opacity duration-300 -z-10"></div>
               </Link>
             );
           })}
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
-          {stats.map((stat, index) => <div key={index} className="bg-white p-6 rounded-2xl shadow-md flex justify-between items-start">
-              <div>
-                <p className="text-gray-700 font-semibold">{stat.name}</p>
-                <div className="mt-2 flex items-baseline space-x-2">
-                  <h3 className="text-3xl font-bold text-gray-900">{stat.value}</h3>
-                  <p className="text-green-600 text-sm">{stat.change}</p>
+        {/* Statistiques modernes */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {stats.map((stat, index) => (
+            <div key={index} className="relative group">
+              <div className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 hover:border-gray-200">
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <p className="text-sm font-medium text-gray-600 mb-2">{stat.name}</p>
+                    <h3 className="text-3xl font-bold text-gray-900 mb-1">{stat.value}</h3>
+                    <p className="text-sm text-green-600 font-medium">{stat.change}</p>
+                  </div>
+                  <div className={`w-12 h-12 bg-gradient-to-br ${stat.gradient} rounded-xl flex items-center justify-center shadow-lg`}>
+                    {stat.icon}
+                  </div>
                 </div>
               </div>
-              <div className="bg-[#f8e9f0] rounded-full p-3 flex items-center justify-center">
-                {stat.icon}
-              </div>
-            </div>)}
+            </div>
+          ))}
         </div>
 
-        <div className="relative">
-          <div className="p-0">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-semibold text-gray-800">Campagnes récentes</h2>
-              <Link to="/campaigns" className="text-[#841b60] hover:text-[#6d164f] font-medium flex items-center">
-                Voir toutes
-                <ChevronRight className="w-4 h-4 ml-1" />
-              </Link>
-            </div>
+        {/* Section campagnes récentes */}
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold text-gray-900">Campagnes récentes</h2>
+            <Link 
+              to="/campaigns" 
+              className="inline-flex items-center text-purple-600 hover:text-purple-700 font-semibold transition-colors duration-200"
+            >
+              Voir toutes
+              <ChevronRight className="w-4 h-4 ml-1" />
+            </Link>
+          </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {recentCampaigns.map(campaign => {
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {recentCampaigns.map(campaign => {
               const IconComponent = getCampaignTypeIcon(campaign.type);
-              return <div key={campaign.id} className="bg-white rounded-xl shadow hover:shadow-lg transition-all duration-300 overflow-hidden transform hover:scale-[1.02]">
-                    {campaign.image && <div className="relative h-40 w-full overflow-hidden">
-                        <img src={campaign.image} alt={campaign.name} className="w-full h-full object-cover" />
-
-                        <div className="absolute top-3 left-3">
-                          <div className="inline-flex items-center rounded-full bg-[#ffffff] text-[#841b60] px-3 py-1 text-xs font-medium">
-                            <IconComponent className="w-4 h-4" />
-                            <span className="ml-2">{getCampaignTypeText(campaign.type)}</span>
+              return (
+                <div key={campaign.id} className="group relative">
+                  <div className="bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-gray-100 hover:border-gray-200 transform hover:scale-[1.02]">
+                    {campaign.image && (
+                      <div className="relative h-48 overflow-hidden">
+                        <img 
+                          src={campaign.image} 
+                          alt={campaign.name} 
+                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110" 
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent"></div>
+                        
+                        <div className="absolute top-4 left-4">
+                          <div className="inline-flex items-center rounded-xl bg-white/90 backdrop-blur-sm text-gray-700 px-3 py-1.5 text-xs font-semibold shadow-sm">
+                            <IconComponent className="w-4 h-4 mr-1.5" />
+                            {getCampaignTypeText(campaign.type)}
                           </div>
                         </div>
 
-                        <button className="absolute top-3 right-3 p-1.5 rounded-full bg-white/80 hover:bg-white transition" aria-label="Options">
+                        <button className="absolute top-4 right-4 p-2 rounded-xl bg-white/90 backdrop-blur-sm hover:bg-white transition-all duration-200 shadow-sm">
                           <MoreVertical className="w-4 h-4 text-gray-600" />
                         </button>
-                      </div>}
-                    <div className="p-4 space-y-2">
-                      <h3 className="text-base font-semibold text-gray-800 truncate">{campaign.name}</h3>
+                      </div>
+                    )}
+                    
+                    <div className="p-6 space-y-4">
+                      <h3 className="text-lg font-semibold text-gray-900 group-hover:text-purple-600 transition-colors duration-200">
+                        {campaign.name}
+                      </h3>
+                      
                       <div className="flex items-center text-sm text-gray-500">
-                        <Calendar className="w-4 h-4 mr-1" />
+                        <Calendar className="w-4 h-4 mr-2" />
                         <span>Créé le {campaign.createdAt}</span>
                       </div>
-                      <div className="flex justify-between items-center text-sm mt-1">
-                        <span className="text-gray-800 font-medium">{campaign.participants} participants</span>
-                        <span className={`flex items-center text-xs font-medium ${getStatusColor(campaign.status)}`}>
-                          <span className="mr-1.5 h-2 w-2 rounded-full bg-current" />
+                      
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-gray-700">
+                          {campaign.participants} participants
+                        </span>
+                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${getStatusColor(campaign.status)}`}>
+                          <span className="mr-1.5 h-1.5 w-1.5 rounded-full bg-current" />
                           {getStatusText(campaign.status)}
                         </span>
                       </div>
                     </div>
-                  </div>;
+                  </div>
+                </div>
+              );
             })}
-            </div>
           </div>
         </div>
       </div>
