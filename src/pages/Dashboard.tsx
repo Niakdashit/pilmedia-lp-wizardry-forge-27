@@ -3,7 +3,6 @@ import React from 'react';
 import {
   Users,
   Target,
-  BarChart,
   Calendar,
   ChevronRight,
   MoreVertical,
@@ -22,32 +21,30 @@ import { Link } from 'react-router-dom';
 import { getCampaignTypeIcon, getCampaignTypeText, CampaignType } from '../utils/campaignTypes';
 
 const Dashboard: React.FC = () => {
-  const { toggleSidebar } = useAppContext();
-  
   const stats = [{
     name: 'Campagnes actives',
     value: '5',
     change: '+2 cette semaine',
     icon: <Target className="w-6 h-6 text-white" />,
-    gradient: 'from-purple-500 to-pink-500'
+    gradient: 'from-[#841b60] to-[#a855f7]'
   }, { 
     name: 'Participations',
     value: '1254',
     change: '+18% ce mois',
     icon: <Users className="w-6 h-6 text-white" />,
-    gradient: 'from-blue-500 to-cyan-500'
+    gradient: 'from-[#841b60] to-[#c084fc]'
   }, {
     name: 'Taux de conversion',
     value: '42%',
     change: '+5% ce mois',
     icon: <TrendingUp className="w-6 h-6 text-white" />,
-    gradient: 'from-green-500 to-emerald-500'
+    gradient: 'from-[#9333ea] to-[#841b60]'
   }, {
     name: 'Prochaine campagne',
     value: '2j',
     change: '10 avril',
     icon: <Calendar className="w-6 h-6 text-white" />,
-    gradient: 'from-orange-500 to-red-500'
+    gradient: 'from-[#a855f7] to-[#841b60]'
   }];
 
   const recentCampaigns = [{
@@ -77,12 +74,12 @@ const Dashboard: React.FC = () => {
   }];
 
   const quickGames = [
-    { id: 'wheel', label: 'Roue', icon: Target, color: 'bg-gradient-to-br from-purple-500 to-pink-500' },
-    { id: 'scratch', label: 'Grattage', icon: Cookie, color: 'bg-gradient-to-br from-orange-500 to-yellow-500' },
-    { id: 'memory', label: 'Memory', icon: Brain, color: 'bg-gradient-to-br from-blue-500 to-cyan-500' },
-    { id: 'quiz', label: 'Quiz', icon: HelpCircle, color: 'bg-gradient-to-br from-green-500 to-emerald-500' },
-    { id: 'puzzle', label: 'Puzzle', icon: Puzzle, color: 'bg-gradient-to-br from-indigo-500 to-purple-500' },
-    { id: 'jackpot', label: 'Jackpot', icon: DollarSign, color: 'bg-gradient-to-br from-yellow-500 to-orange-500' }
+    { id: 'wheel', label: 'Roue', icon: Target, color: 'bg-gradient-to-br from-[#841b60] to-[#a855f7]' },
+    { id: 'scratch', label: 'Grattage', icon: Cookie, color: 'bg-gradient-to-br from-[#9333ea] to-[#841b60]' },
+    { id: 'memory', label: 'Memory', icon: Brain, color: 'bg-gradient-to-br from-[#a855f7] to-[#c084fc]' },
+    { id: 'quiz', label: 'Quiz', icon: HelpCircle, color: 'bg-gradient-to-br from-[#841b60] to-[#9333ea]' },
+    { id: 'puzzle', label: 'Puzzle', icon: Puzzle, color: 'bg-gradient-to-br from-[#c084fc] to-[#841b60]' },
+    { id: 'jackpot', label: 'Jackpot', icon: DollarSign, color: 'bg-gradient-to-br from-[#a855f7] to-[#9333ea]' }
   ];
 
   const getStatusColor = (status: string) => {
@@ -120,7 +117,7 @@ const Dashboard: React.FC = () => {
             <h1 className="text-2xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
               Tableau de bord
             </h1>
-            <div className="hidden md:flex items-center px-3 py-1 bg-purple-50 text-purple-600 rounded-full text-sm font-medium">
+            <div className="hidden md:flex items-center px-3 py-1 bg-[#f5eaf2] text-[#841b60] rounded-full text-sm font-medium">
               <Sparkles className="w-4 h-4 mr-1" />
               Pro
             </div>
@@ -132,7 +129,7 @@ const Dashboard: React.FC = () => {
               <input
                 type="text"
                 placeholder="Rechercher une campagne..."
-                className="w-full pl-12 pr-4 py-3 bg-gray-50 border-0 rounded-2xl focus:outline-none focus:ring-2 focus:ring-purple-500 focus:bg-white transition-all duration-200"
+                className="w-full pl-12 pr-4 py-3 bg-gray-50 border-0 rounded-2xl focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:bg-white transition-all duration-200"
               />
             </div>
           </div>
@@ -140,12 +137,12 @@ const Dashboard: React.FC = () => {
           <div className="flex items-center space-x-4">
             <Link 
               to="/campaigns" 
-              className="hidden md:inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-semibold rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
+              className="hidden md:inline-flex items-center px-6 py-3 bg-gradient-to-r from-[#841b60] to-[#a855f7] text-white font-semibold rounded-xl hover:from-[#6d1550] hover:to-[#9333ea] transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105"
             >
               <Plus className="w-4 h-4 mr-2" />
               Créer une campagne
             </Link>
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#841b60] to-[#a855f7] flex items-center justify-center">
               <img src="https://i.pravatar.cc/40" alt="Avatar" className="w-8 h-8 rounded-lg" />
             </div>
           </div>
@@ -177,7 +174,7 @@ const Dashboard: React.FC = () => {
                   <Icon className="w-8 h-8 mb-1" />
                   <span className="text-xs font-semibold">{game.label}</span>
                 </div>
-                <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-2xl opacity-0 group-hover:opacity-20 transition-opacity duration-300 -z-10"></div>
+                <div className="absolute -inset-1 bg-gradient-to-r from-[#841b60] to-[#a855f7] rounded-2xl opacity-0 group-hover:opacity-20 transition-opacity duration-300 -z-10"></div>
               </Link>
             );
           })}
@@ -209,7 +206,7 @@ const Dashboard: React.FC = () => {
             <h2 className="text-2xl font-bold text-gray-900">Campagnes récentes</h2>
             <Link 
               to="/campaigns" 
-              className="inline-flex items-center text-purple-600 hover:text-purple-700 font-semibold transition-colors duration-200"
+              className="inline-flex items-center text-[#841b60] hover:text-[#6d1550] font-semibold transition-colors duration-200"
             >
               Voir toutes
               <ChevronRight className="w-4 h-4 ml-1" />
@@ -245,7 +242,7 @@ const Dashboard: React.FC = () => {
                     )}
                     
                     <div className="p-6 space-y-4">
-                      <h3 className="text-lg font-semibold text-gray-900 group-hover:text-purple-600 transition-colors duration-200">
+                      <h3 className="text-lg font-semibold text-gray-900 group-hover:text-[#841b60] transition-colors duration-200">
                         {campaign.name}
                       </h3>
                       
