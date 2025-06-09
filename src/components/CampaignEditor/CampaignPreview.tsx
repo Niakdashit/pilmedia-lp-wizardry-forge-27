@@ -10,8 +10,8 @@ interface CampaignPreviewProps {
 }
 
 const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevice }) => {
-  // Explicitly type deviceType to ensure proper union type handling
-  const deviceType: PreviewDevice = previewDevice || 'desktop';
+  // Ensure deviceType maintains the proper union type by using a type guard
+  const deviceType: PreviewDevice = previewDevice ? previewDevice : 'desktop';
   const { design } = campaign;
 
   // If mobile preview, use the dedicated MobilePreview component
