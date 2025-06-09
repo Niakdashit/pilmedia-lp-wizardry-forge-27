@@ -1,9 +1,21 @@
 import React from 'react';
-import { Users, Target, BarChart, Calendar, ChevronRight, MoreVertical, Zap } from 'lucide-react';
+import {
+  Users,
+  Target,
+  BarChart,
+  Calendar,
+  ChevronRight,
+  MoreVertical,
+  Zap,
+  Search,
+  Plus
+} from 'lucide-react';
+import { useAppContext } from '../context/AppContext';
 import { Link } from 'react-router-dom';
 import { getCampaignTypeIcon, getCampaignTypeText, CampaignType } from '../utils/campaignTypes';
 
 const Dashboard: React.FC = () => {
+  const { toggleSidebar } = useAppContext();
   const stats = [{
     name: 'Campagnes actives',
     value: '5',
@@ -75,30 +87,31 @@ const Dashboard: React.FC = () => {
     }
   };
   return (
-    <div className="-mx-6 -mt-6">
-      <div className="relative h-[100px] bg-[#841b60] overflow-hidden">
-        <div className="absolute inset-10 opacity-[0.15]" style={{
-        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-        backgroundSize: '60px 60px'
-      }} />
-        <div className="relative h-full max-w-7xl mx-auto px-6 flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-white mb-3">Tableau de bord</h1>
-          <select className="bg-white/90 backdrop-blur-sm border-0 text-gray-700 py-2 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-white/20 mb-3">
-            <option>7 derniers jours</option>
-            <option>30 derniers jours</option>
-            <option>90 derniers jours</option>
-            <option>Cette année</option>
-          </select>
+    <div className="relative">
+      <header className="fixed top-0 left-0 right-0 bg-white shadow z-10">
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+          <h1 className="text-xl font-semibold text-gray-800">Tableau de bord</h1>
+          <div className="flex-1 mx-6 hidden md:block">
+            <div className="relative max-w-md mx-auto">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+              <input
+                type="text"
+                placeholder="Rechercher une campagne..."
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#a855f7]"
+              />
+            </div>
+          </div>
+          <div className="flex items-center space-x-4">
+            <Link to="/campaigns" className="hidden md:inline-flex btn-primary">
+              <Plus className="w-4 h-4 mr-2" />
+              Créer une campagne
+            </Link>
+            <img src="https://i.pravatar.cc/40" alt="Avatar" className="w-10 h-10 rounded-full" />
+          </div>
         </div>
+      </header>
 
-        <div className="absolute bottom-0 left-0 right-0">
-          <svg viewBox="0 0 1440 116" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full" preserveAspectRatio="none" height="10">
-            <path d="M0 116L60 96.3C120 76.7 240 37.3 360 21.7C480 6 600 14 720 34.7C840 55.3 960 89.7 1080 96.3C1200 103 1320 82 1380 71.5L1440 61V116H1380C1320 116 1200 116 1080 116C960 116 840 116 720 116C600 116 480 116 360 116C240 116 120 116 60 116H0Z" fill="#ebf4f7" />
-          </svg>
-        </div>
-      </div>
-
-      <div className="px-6 space-y-6">
+      <div className="pt-20 px-6 space-y-6">
         {/* Quick Action Section */}
         <div className="flex justify-center mt-6">
           <Link
@@ -138,7 +151,7 @@ const Dashboard: React.FC = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {recentCampaigns.map(campaign => {
               const IconComponent = getCampaignTypeIcon(campaign.type);
-              return <div key={campaign.id} className="bg-white rounded-xl shadow hover:shadow-md transition-all duration-300 overflow-hidden">
+              return <div key={campaign.id} className="bg-white rounded-xl shadow hover:shadow-lg transition-all duration-300 overflow-hidden transform hover:scale-[1.02]">
                     {campaign.image && <div className="relative h-40 w-full overflow-hidden">
                         <img src={campaign.image} alt={campaign.name} className="w-full h-full object-cover" />
 
