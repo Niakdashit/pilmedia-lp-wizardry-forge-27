@@ -56,20 +56,15 @@ const TextElement: React.FC<TextElementProps> = ({
     fontStyle: element.italic ? 'italic' : 'normal',
     textDecoration: element.underline ? 'underline' : 'none',
     fontFamily: element.fontFamily || 'Inter, sans-serif',
-    lineHeight: 1,
     cursor: isDragging ? 'grabbing' : 'grab',
     userSelect: 'none',
     willChange: isDragging ? 'transform' : 'auto',
     transition: isDragging ? 'none' : 'box-shadow 0.1s ease',
-    // Ensure consistent box model with preview
-    margin: 0,
-    padding: element.showFrame ? '4px 8px' : 0,
-    boxSizing: 'border-box',
-    whiteSpace: 'nowrap',
     ...(element.showFrame
       ? {
           backgroundColor: element.frameColor || '#ffffff',
           border: `1px solid ${element.frameBorderColor || '#e5e7eb'}`,
+          padding: '4px 8px',
           borderRadius: '4px'
         }
       : {})

@@ -1,6 +1,8 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { X, Monitor, Tablet, Smartphone } from 'lucide-react';
+import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
+import FunnelStandard from '../funnels/FunnelStandard';
 import CampaignPreview from './CampaignPreview';
 
 interface PreviewModalProps {
@@ -11,78 +13,86 @@ interface PreviewModalProps {
 
 const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }) => {
   const [selectedDevice, setSelectedDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
-  const [imageDims, setImageDims] = useState({ width: 1080, height: 1920 });
-
-  useEffect(() => {
-    let imgSrc = campaign.design?.backgroundImage;
-    if (selectedDevice === 'mobile') {
-      imgSrc = campaign.design?.mobileBackgroundImage || imgSrc;
-    }
-    const img = new Image();
-    if (!imgSrc) {
-      setImageDims({ width: 1080, height: 1920 });
-      return;
-    }
-    img.onload = () => {
-      setImageDims({ width: img.naturalWidth, height: img.naturalHeight });
-    };
-    img.src = imgSrc;
-  }, [campaign.design?.backgroundImage, campaign.design?.mobileBackgroundImage, selectedDevice]);
 
   if (!isOpen) return null;
 
+  const getPreviewFunnel = () => {
+    const funnel = campaign.funnel || (['wheel', 'scratch', 'jackpot', 'dice'].includes(campaign.type) ? 'unlocked_game' : 'standard');
+    if (funnel === 'unlocked_game') {
+      return (
+        <FunnelUnlockedGame
+          campaign={campaign}
+          previewMode={selectedDevice}
+          modalContained={true}
+          key={`${selectedDevice}-${campaign.id}-${JSON.stringify({
+            gameConfig: campaign.gameConfig,
+            design: campaign.design,
+            screens: campaign.screens
+          })}`} // Force re-render with comprehensive dependencies
+        />
+      );
+    }
+    return (
+      <FunnelStandard
+        campaign={campaign}
+        key={`${campaign.id}-${JSON.stringify({
+          gameConfig: campaign.gameConfig,
+          design: campaign.design,
+          screens: campaign.screens,
+        })}`}
+      />
+    );
+  };
+
   // Récupérer l'image de fond du jeu
-  const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage ||
-    campaign.design?.backgroundImage;
+  const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage || 
+                              campaign.design?.backgroundImage;
 
   const getBackgroundStyle = () => {
     const style: any = {
       position: 'relative',
       width: '100%',
       height: '100%',
-      backgroundColor: campaign.design?.background || '#ebf4f7'
+      backgroundColor: campaign.design?.background || '#ebf4f7',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: '20px'
     };
+
     if (gameBackgroundImage) {
       style.backgroundImage = `url(${gameBackgroundImage})`;
-      style.backgroundSize = 'contain';
+      style.backgroundSize = 'cover';
       style.backgroundPosition = 'center';
       style.backgroundRepeat = 'no-repeat';
     }
+
     return style;
   };
 
   const renderDesktopPreview = () => (
     <div style={getBackgroundStyle()}>
-      <CampaignPreview
-        campaign={campaign}
-        previewDevice="desktop"
-        key={`desktop-${campaign.id}-${JSON.stringify({
-          gameConfig: campaign.gameConfig,
-          design: campaign.design,
-          screens: campaign.screens
-        })}`}
-      />
+      {getPreviewFunnel()}
     </div>
   );
 
   const renderMobilePreview = () => {
-    const deviceStyle: React.CSSProperties = {
-      width: '100%',
-      maxWidth: imageDims.width,
-      height: 'auto',
-      maxHeight: imageDims.height,
-      aspectRatio: `${imageDims.width} / ${imageDims.height}`,
-      backgroundColor: '#1f2937',
-      borderRadius: '16px',
-      padding: '8px',
-      boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
-      position: 'relative',
-      overflow: 'auto'
-    };
+    const specs = selectedDevice === 'tablet'
+      ? { width: 768, height: 1024, borderRadius: 20 }
+      : { width: 375, height: 667, borderRadius: 24 };
 
     return (
-      <div className="w-full h-full flex items-center justify-center overflow-auto">
-        <div style={deviceStyle}>
+      <div className="w-full h-full flex items-center justify-center p-4">
+        <div
+          style={{
+            width: specs.width,
+            height: specs.height,
+            border: '1px solid #e5e7eb',
+            borderRadius: specs.borderRadius,
+            overflow: 'hidden',
+            backgroundColor: '#ffffff'
+          }}
+        >
           <CampaignPreview
             campaign={campaign}
             previewDevice={selectedDevice}
@@ -99,11 +109,11 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">
-      <div className="bg-white w-full h-full flex flex-col relative overflow-auto">
+      <div className="bg-white w-full h-full flex flex-col relative overflow-hidden">
         <div className="absolute top-0 left-0 right-0 z-20 flex items-center justify-between px-6 py-4 bg-white border-b border-gray-200 shadow-sm">
           <div className="flex items-center space-x-4">
             <h2 className="text-lg font-semibold text-gray-800">Aperçu de la campagne</h2>
-
+            
             {/* Device Selector */}
             <div className="flex items-center space-x-1 bg-gray-100 rounded-lg p-1">
               <button

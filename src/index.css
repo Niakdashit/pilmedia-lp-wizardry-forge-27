@@ -7,7 +7,6 @@
     color-scheme: light;
     --glass-border: rgba(255, 255, 255, 0.08);
     --glass-bg: rgba(255, 255, 255, 0.8);
-    --brand-gradient: linear-gradient(to bottom, #841b60, #ecf4f7);
   }
 
   html {
@@ -35,11 +34,11 @@
 
 @layer components {
   .btn-primary {
-    @apply px-6 py-3 bg-brand-gradient text-white font-semibold rounded-2xl 
-           hover:opacity-90 active:opacity-80
+    @apply px-6 py-3 bg-accent-600 text-white font-semibold rounded-2xl 
+           hover:bg-accent-700 active:bg-accent-800
            disabled:opacity-50 disabled:cursor-not-allowed
            transition-all duration-200 ease-out
-           focus:outline-none focus:ring-2 focus:ring-[#841b60]/50;
+           focus:outline-none focus:ring-2 focus:ring-accent-600/50;
     font-family: 'Inter', sans-serif;
   }
   
@@ -65,7 +64,7 @@
     @apply w-full px-6 py-3 bg-white
            border border-primary-200 rounded-2xl
            placeholder:text-primary-400
-           focus:outline-none focus:ring-2 focus:ring-[#841b60]/50
+           focus:outline-none focus:ring-2 focus:ring-accent-600/50
            disabled:opacity-50 disabled:cursor-not-allowed
            transition-all duration-200 ease-out;
     font-family: 'Inter', sans-serif;
@@ -87,27 +86,6 @@
 
   .nav-link.active {
     @apply text-primary-950 bg-primary-100;
-  }
-
-  .brand-gradient-bg {
-    background: var(--brand-gradient);
-  }
-
-  .brand-gradient-text {
-    background: var(--brand-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .brand-gradient-border {
-    background: var(--brand-gradient);
-    padding: 2px;
-    border-radius: inherit;
-  }
-
-  .brand-gradient-border > * {
-    @apply bg-white rounded-[inherit];
   }
 }
 

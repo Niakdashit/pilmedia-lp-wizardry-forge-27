@@ -1,76 +1,44 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
 import FunnelStandard from '../funnels/FunnelStandard';
 import MobilePreview from './Mobile/MobilePreview';
-import type { PreviewDevice } from '../../types/device';
 
 interface CampaignPreviewProps {
   campaign: any;
-  previewDevice?: PreviewDevice;
+  previewDevice?: 'desktop' | 'tablet' | 'mobile';
 }
 
-const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevice }) => {
-  // Explicitly handle the device type to prevent TypeScript narrowing issues
-  const deviceType: PreviewDevice = previewDevice || 'desktop';
-  
+const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevice = 'desktop' }) => {
   const { design } = campaign;
 
   // If mobile preview, use the dedicated MobilePreview component
-  if (deviceType === 'mobile') {
+  if (previewDevice === 'mobile') {
     return <MobilePreview campaign={campaign} previewMode="mobile" />;
-  }
-
-  // If tablet preview, use the dedicated MobilePreview component
-  if (deviceType === 'tablet') {
-    return <MobilePreview campaign={campaign} previewMode="tablet" />;
   }
 
   // Get background image depending on device
   const baseBackground = design?.backgroundImage || campaign.gameConfig?.[campaign.type]?.backgroundImage;
   const mobileBackground = design?.mobileBackgroundImage;
-  // Use explicit string literal types to avoid TypeScript inference issues
-  const isMobileOrTablet = deviceType === 'mobile' || deviceType === 'tablet';
-  const backgroundImage = isMobileOrTablet && mobileBackground ? mobileBackground : baseBackground;
+  const backgroundImage = previewDevice === 'mobile' && mobileBackground ? mobileBackground : baseBackground;
 
-  const [imageDims, setImageDims] = useState({ width: 1080, height: 1920 });
-
-  useEffect(() => {
-    if (!backgroundImage) {
-      setImageDims({ width: 1080, height: 1920 });
-      return;
-    }
-    const img = new Image();
-    img.onload = () => {
-      setImageDims({ width: img.naturalWidth, height: img.naturalHeight });
-    };
-    img.src = backgroundImage;
-  }, [backgroundImage]);
-
-  // Use identical container styling as the editor canvas
-  const containerStyle: React.CSSProperties = {
+  const containerStyle = {
     width: '100%',
-    maxWidth: imageDims.width,
-    height: 'auto',
-    maxHeight: imageDims.height,
-    aspectRatio: `${imageDims.width} / ${imageDims.height}`,
-    position: 'relative',
-    overflow: 'auto',
+    height: '100%',
+    position: 'relative' as const,
+    overflow: 'hidden',
     backgroundColor: design?.background || '#f8fafc',
-    // Ensure no default margins/padding that could affect positioning
-    margin: 0,
-    padding: 0,
-    boxSizing: 'border-box'
   };
 
   const backgroundStyle = backgroundImage ? {
-      position: 'absolute' as const,
-      inset: 0,
-      backgroundImage: `url(${backgroundImage})`,
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat',
-      backgroundSize: 'contain',
-      zIndex: 0,
-    } : {};
+    position: 'absolute' as const,
+    inset: 0,
+    backgroundImage: `url(${backgroundImage})`,
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    backgroundSize: 'cover',
+    opacity: 0.3,
+    zIndex: 0,
+  } : {};
 
   const contentWrapperStyle = {
     position: 'relative' as const,
@@ -78,10 +46,9 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
     width: '100%',
     height: '100%',
     display: 'flex',
-    // Ensure identical box model
-    margin: 0,
-    padding: 0,
-    boxSizing: 'border-box' as const
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '20px',
   };
 
   const customStyles = design?.customCSS ? (
@@ -92,31 +59,12 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
     <div dangerouslySetInnerHTML={{ __html: design.customHTML }} />
   ) : null;
 
-  // Get custom images and texts for desktop/tablet with proper fallback
+  // Get custom images for desktop/tablet
   const customImages = campaign.design?.customImages || [];
-  const customTexts = campaign.design?.customTexts || [];
 
-  // Use identical size mapping as editor
-  const sizeMap: Record<string, string> = {
-    xs: '10px',
-    sm: '12px',
-    base: '14px',
-    lg: '16px',
-    xl: '18px',
-    '2xl': '20px',
-    '3xl': '24px',
-    '4xl': '28px',
-    '5xl': '32px',
-    '6xl': '36px',
-    '7xl': '48px',
-    '8xl': '60px',
-    '9xl': '72px'
-  };
-
-  // Use identical device config logic as editor
+  // Helper function to get device-specific config for elements
   const getElementDeviceConfig = (element: any) => {
-    // Use the same isMobileOrTablet variable to avoid TypeScript inference issues
-    const deviceKey: 'mobile' | 'desktop' = isMobileOrTablet ? 'mobile' : 'desktop';
+    const deviceKey = previewDevice === 'mobile' ? 'mobile' : 'desktop';
     const deviceConfig = element.deviceConfig?.[deviceKey];
     return {
       x: deviceConfig?.x ?? element.x ?? 0,
@@ -129,14 +77,11 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
   const getFunnelComponent = () => {
     const funnel = campaign.funnel || (['wheel', 'scratch', 'jackpot', 'dice'].includes(campaign.type) ? 'unlocked_game' : 'standard');
     
-    // Enhanced campaign with proper settings propagation and custom elements
+    // Enhanced campaign with proper settings propagation
     const enhancedCampaign = {
       ...campaign,
       design: {
         ...campaign.design,
-        // Ensure custom elements are included for funnel rendering
-        customImages: customImages,
-        customTexts: customTexts,
         // Ensure colors are properly set
         buttonColor: campaign.buttonConfig?.color || campaign.design?.buttonColor || '#841b60',
         titleColor: campaign.design?.titleColor || '#000000',
@@ -157,7 +102,7 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
       return (
         <FunnelUnlockedGame
           campaign={enhancedCampaign}
-          previewMode={deviceType}
+          previewMode={previewDevice}
           modalContained={false}
         />
       );
@@ -169,9 +114,7 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
           gameConfig: enhancedCampaign.gameConfig,
           design: enhancedCampaign.design,
           screens: enhancedCampaign.screens,
-          buttonConfig: enhancedCampaign.buttonConfig,
-          customImages: customImages,
-          customTexts: customTexts
+          buttonConfig: enhancedCampaign.buttonConfig
         })}`}
       />
     );
@@ -189,26 +132,22 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
         {customHTML}
         {getFunnelComponent()}
         
-        {/* Custom Images - use identical rendering logic as editor */}
-        {customImages.map((customImage: any, idx: number) => {
-          if (!customImage?.src || customImage.enabled === false) return null;
-
+        {/* Custom Images for desktop/tablet */}
+        {customImages.map((customImage: any) => {
+          if (!customImage?.src) return null;
+          
           const deviceConfig = getElementDeviceConfig(customImage);
-
+          
           return (
             <div
-              key={`preview-image-${customImage.id}-${deviceType}`}
+              key={`preview-image-${customImage.id}`}
               style={{
                 position: 'absolute',
                 transform: `translate3d(${deviceConfig.x}px, ${deviceConfig.y}px, 0) rotate(${customImage.rotation || 0}deg)`,
                 width: deviceConfig.width,
                 height: deviceConfig.height,
-                zIndex: customImage.zIndex ?? 20 + idx,
-                pointerEvents: 'none',
-                // Ensure consistent box model
-                margin: 0,
-                padding: 0,
-                boxSizing: 'border-box'
+                zIndex: 20,
+                pointerEvents: 'none'
               }}
             >
               <img
@@ -218,54 +157,10 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
                   width: '100%',
                   height: '100%',
                   objectFit: 'cover',
-                  borderRadius: '4px',
-                  display: 'block',
-                  margin: 0,
-                  padding: 0
+                  borderRadius: '4px'
                 }}
                 draggable={false}
               />
-            </div>
-          );
-        })}
-
-        {/* Custom Texts - use identical rendering logic as editor */}
-        {customTexts.map((customText: any, idx: number) => {
-          if (!customText?.enabled) return null;
-
-          const deviceConfig = getElementDeviceConfig(customText);
-
-          return (
-            <div
-              key={`preview-text-${customText.id}-${deviceType}`}
-              style={{
-                position: 'absolute',
-                transform: `translate3d(${deviceConfig.x}px, ${deviceConfig.y}px, 0)`,
-                color: customText.color || '#000000',
-                fontFamily: customText.fontFamily || 'Inter, sans-serif',
-                fontSize: sizeMap[customText.size || 'base'] || '14px',
-                fontWeight: customText.bold ? 'bold' : 'normal',
-                fontStyle: customText.italic ? 'italic' : 'normal',
-                textDecoration: customText.underline ? 'underline' : 'none',
-                lineHeight: 1,
-                zIndex: customText.zIndex ?? 20 + idx,
-                pointerEvents: 'none',
-                // Ensure identical text rendering
-                userSelect: 'none',
-                margin: 0,
-                padding: customText.showFrame ? '4px 8px' : 0,
-                boxSizing: 'border-box',
-                whiteSpace: 'nowrap',
-                ...(customText.showFrame
-                  ? {
-                      backgroundColor: customText.frameColor || '#ffffff',
-                      border: `1px solid ${customText.frameBorderColor || '#e5e7eb'}`,
-                      borderRadius: '4px'
-                    }
-                  : {})
-              }}
-            >
-              {customText.text}
             </div>
           );
         })}

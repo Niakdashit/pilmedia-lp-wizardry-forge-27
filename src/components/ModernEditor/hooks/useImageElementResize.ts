@@ -17,8 +17,6 @@ export const useImageElementResize = (
     aspectRatio: number
   } | null>(null);
 
-  const frameRef = useRef<number | null>(null);
-
   const handleResizeStart = useCallback((e: React.MouseEvent, direction: string) => {
     e.preventDefault();
     e.stopPropagation();
@@ -88,10 +86,7 @@ export const useImageElementResize = (
       newWidth = Math.min(newWidth, containerRect.width - deviceConfig.x);
       newHeight = Math.min(newHeight, containerRect.height - deviceConfig.y);
 
-      if (frameRef.current) cancelAnimationFrame(frameRef.current);
-      frameRef.current = requestAnimationFrame(() => {
-        onUpdate({ width: newWidth, height: newHeight });
-      });
+      onUpdate({ width: newWidth, height: newHeight });
     };
 
     const handleMouseUp = () => {

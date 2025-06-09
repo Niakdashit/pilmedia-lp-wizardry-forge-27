@@ -1,37 +1,30 @@
 
 import { PREVIEW_CONTAINER_SPECS, MOBILE_FORMAT_SPECS } from './constants';
 
-export const getDeviceStyle = (dims?: { width: number; height: number }) => ({
-  width: '100%',
-  maxWidth: dims?.width || PREVIEW_CONTAINER_SPECS.mobile.width,
-  height: 'auto',
-  maxHeight: dims?.height || PREVIEW_CONTAINER_SPECS.mobile.height,
-  aspectRatio: `${dims?.width || PREVIEW_CONTAINER_SPECS.mobile.width} / ${
-    dims?.height || PREVIEW_CONTAINER_SPECS.mobile.height}`,
+export const getDeviceStyle = () => ({
+  width: PREVIEW_CONTAINER_SPECS.mobile.width,
+  height: PREVIEW_CONTAINER_SPECS.mobile.height,
   backgroundColor: '#1f2937',
   borderRadius: '24px',
   padding: '8px',
   boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
   position: 'relative' as const,
-  overflow: 'auto'
+  overflow: 'hidden'
 });
 
-export const getScreenStyle = (
-  mobileConfig: any,
-  dims?: { width: number; height: number }
-) => ({
+export const getScreenStyle = (mobileConfig: any) => ({
   width: '100%',
   height: '100%',
   backgroundColor: mobileConfig.backgroundColor || '#ebf4f7',
   backgroundImage: mobileConfig.backgroundImage ? `url(${mobileConfig.backgroundImage})` : undefined,
-  backgroundSize: 'contain',
+  backgroundSize: mobileConfig.backgroundMode === 'contain' ? 'contain' : 'cover',
   backgroundPosition: 'center',
   backgroundRepeat: 'no-repeat',
   borderRadius: '16px',
   position: 'relative' as const,
-  overflow: 'auto',
-  aspectRatio: `${dims?.width || MOBILE_FORMAT_SPECS.width} / ${dims?.height ||
-    MOBILE_FORMAT_SPECS.height}`
+  overflow: 'hidden',
+  // Ensure proper aspect ratio for 1080×1920px content
+  aspectRatio: `${MOBILE_FORMAT_SPECS.width} / ${MOBILE_FORMAT_SPECS.height}`
 });
 
 export const getContentLayoutStyle = (mobileConfig: any) => {

@@ -1,7 +1,8 @@
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { X, Monitor, Smartphone, Tablet } from 'lucide-react';
-import CampaignPreview from '../CampaignEditor/CampaignPreview';
+import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
+import FunnelStandard from '../funnels/FunnelStandard';
 
 interface ModernPreviewModalProps {
   isOpen: boolean;
@@ -15,73 +16,49 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
   campaign
 }) => {
   const [device, setDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
-  const [imageDims, setImageDims] = useState({ width: 1080, height: 1920 });
-
-  useEffect(() => {
-    let imgSrc = campaign.design?.backgroundImage;
-    if (device === 'mobile') {
-      imgSrc = campaign.design?.mobileBackgroundImage || imgSrc;
-    }
-    const img = new Image();
-    if (!imgSrc) {
-      setImageDims({ width: 1080, height: 1920 });
-      return;
-    }
-    img.onload = () => {
-      setImageDims({ width: img.naturalWidth, height: img.naturalHeight });
-    };
-    img.src = imgSrc;
-  }, [campaign.design?.backgroundImage, campaign.design?.mobileBackgroundImage, device]);
 
   if (!isOpen) return null;
 
   const getDeviceStyles = () => {
-    if (device === 'mobile' || device === 'tablet') {
-      return {
-        width: `${imageDims.width}px`,
-        height: `${imageDims.height}px`,
-        backgroundColor: '#1f2937',
-        borderRadius: '16px',
-        padding: '8px',
-        boxShadow: '0 25px 50px -12px rgba(0,0,0,0.25)',
-        position: 'relative',
-        overflow: 'auto',
-        // Ensure consistent box model
-        boxSizing: 'border-box',
-        margin: 0
-      } as React.CSSProperties;
+    switch (device) {
+      case 'mobile':
+        return { width: '375px', height: '667px' };
+      case 'tablet':
+        return { width: '768px', height: '1024px' };
+      default:
+        return { width: '1200px', height: '800px' };
     }
-    // Desktop: full space with no additional containers or constraints
-    return { 
-      width: '100%', 
-      height: '100%', 
-      backgroundColor: '#fff',
-      margin: 0,
-      padding: 0,
-      boxSizing: 'border-box'
-    } as React.CSSProperties;
   };
 
-  const getContainerStyle = () => ({
-    width: '100%',
-    height: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#ffffff',
-    // Remove any potential padding/margin that could affect positioning
-    margin: 0,
-    padding: 0,
-    boxSizing: 'border-box'
-  } as React.CSSProperties);
+  const getContainerStyle = () => {
+    const baseStyle = {
+      width: '100%',
+      height: '100%',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: campaign.design?.background || '#f9fafb',
+      position: 'relative' as const,
+      overflow: 'auto' as const,
+      padding: '20px'
+    } as React.CSSProperties;
 
-  // Enhanced campaign with identical configuration as editor
+    if (campaign.design?.backgroundImage) {
+      return {
+        ...baseStyle,
+        backgroundImage: `url(${campaign.design.backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      };
+    }
+    return baseStyle;
+  };
+
   const enhancedCampaign = {
     ...campaign,
     design: {
       ...campaign.design,
-      customImages: campaign.design?.customImages || [],
-      customTexts: campaign.design?.customTexts || [],
       buttonColor:
         campaign.buttonConfig?.color || campaign.design?.buttonColor || '#841b60',
       titleColor: campaign.design?.titleColor || '#000000',
@@ -103,9 +80,26 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
     }
   };
 
+  const getFunnelComponent = () => {
+    const unlockedTypes = ['wheel', 'scratch', 'jackpot', 'dice'];
+    const funnel =
+      enhancedCampaign.funnel ||
+      (unlockedTypes.includes(enhancedCampaign.type) ? 'unlocked_game' : 'standard');
+    if (funnel === 'unlocked_game') {
+      return (
+        <FunnelUnlockedGame
+          campaign={enhancedCampaign}
+          previewMode={device === 'desktop' ? 'desktop' : device}
+          modalContained={false}
+        />
+      );
+    }
+    return <FunnelStandard campaign={enhancedCampaign} />;
+  };
+
   return (
     <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white w-full h-full flex flex-col relative overflow-auto rounded-3xl shadow-2xl max-w-7xl max-h-screen">
+      <div className="bg-white w-full h-full flex flex-col relative overflow-hidden rounded-3xl shadow-2xl max-w-7xl max-h-[90vh]">
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b bg-white">
           <div className="flex items-center space-x-4">
@@ -146,24 +140,22 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
         </div>
 
         {/* Preview Content */}
-        <div className="flex-1 overflow-auto bg-gray-100">
-          <div className="w-full h-full flex items-center justify-center">
-            <div
-              className="shadow-2xl overflow-auto"
+        <div className="flex-1 overflow-hidden bg-gray-100">
+          <div className="w-full h-full flex items-center justify-center p-8">
+            <div 
+              className="shadow-2xl rounded-2xl overflow-hidden border border-gray-200"
               style={getDeviceStyles()}
             >
               <div style={getContainerStyle()}>
-                <CampaignPreview
-                  campaign={enhancedCampaign}
-                  previewDevice={device}
-                  key={`${device}-${campaign.id}-${JSON.stringify({
-                    gameConfig: enhancedCampaign.gameConfig,
-                    design: enhancedCampaign.design,
-                    screens: enhancedCampaign.screens,
-                    customImages: enhancedCampaign.design?.customImages,
-                    customTexts: enhancedCampaign.design?.customTexts
-                  })}`}
-                />
+                {campaign.design?.backgroundImage && (
+                  <div className="absolute inset-0 bg-black opacity-20" style={{ zIndex: 1 }} />
+                )}
+                <div
+                  className="relative z-10 w-full h-full"
+                  style={{ minHeight: device === 'desktop' ? '600px' : '100%' }}
+                >
+                  {getFunnelComponent()}
+                </div>
               </div>
             </div>
           </div>

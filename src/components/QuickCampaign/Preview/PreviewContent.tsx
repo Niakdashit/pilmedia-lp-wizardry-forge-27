@@ -1,6 +1,7 @@
 
 import React from 'react';
-import CampaignPreview from '../../CampaignEditor/CampaignPreview';
+import FunnelUnlockedGame from '../../funnels/FunnelUnlockedGame';
+import FunnelStandard from '../../funnels/FunnelStandard';
 
 interface PreviewContentProps {
   selectedDevice: 'desktop' | 'tablet' | 'mobile';
@@ -29,6 +30,8 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
   customColors,
   jackpotColors
 }) => {
+  const unlockedTypes = ['wheel', 'scratch', 'jackpot', 'dice'];
+
   // Enhanced campaign with custom colors and proper configuration
   const enhancedCampaign = {
     ...mockCampaign,
@@ -59,34 +62,87 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
     }
   };
 
+  const getFunnelComponent = () => {
+    const funnel = enhancedCampaign.funnel || (unlockedTypes.includes(selectedGameType) ? 'unlocked_game' : 'standard');
+    if (funnel === 'unlocked_game') {
+      return (
+        <FunnelUnlockedGame
+          campaign={enhancedCampaign}
+          previewMode={selectedDevice === 'desktop' ? 'desktop' : selectedDevice}
+          modalContained={false}
+        />
+      );
+    }
+    return (
+      <FunnelStandard
+        campaign={enhancedCampaign}
+        key={JSON.stringify({
+          gameConfig: enhancedCampaign.gameConfig,
+          design: enhancedCampaign.design,
+          screens: enhancedCampaign.screens,
+          customColors: customColors
+        })}
+      />
+    );
+  };
 
   const getContainerStyle = () => {
-    return {
+    const baseStyle = {
       width: '100%',
       height: '100%',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: '#ffffff'
-    } as React.CSSProperties;
+      backgroundColor: enhancedCampaign.design?.background || '#f9fafb',
+      position: 'relative' as const,
+      overflow: 'hidden' as const
+    };
+
+    const mobileBg = enhancedCampaign.design?.mobileBackgroundImage;
+    const bgImage = selectedDevice === 'mobile' && mobileBg
+      ? mobileBg
+      : enhancedCampaign.design?.backgroundImage;
+
+    if (bgImage) {
+      return {
+        ...baseStyle,
+        backgroundImage: `url(${bgImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      };
+    }
+
+    return baseStyle;
   };
 
   const getDeviceContainerStyle = () => {
-    const base = {
-      margin: '0 auto',
-      backgroundColor: '#ffffff',
-      overflow: 'auto' as const,
-      width: 'fit-content',
-      height: 'fit-content'
-    };
-
     switch (selectedDevice) {
       case 'tablet':
-        return { ...base, border: '1px solid #e5e7eb', borderRadius: '12px' };
+        return {
+          maxWidth: '768px',
+          maxHeight: '1024px',
+          margin: '0 auto',
+          border: '1px solid #e5e7eb',
+          borderRadius: '12px',
+          overflow: 'hidden' as const,
+          backgroundColor: '#ffffff'
+        };
       case 'mobile':
-        return { ...base, border: '1px solid #e5e7eb', borderRadius: '20px' };
+        return {
+          maxWidth: '375px',
+          maxHeight: '812px',
+          margin: '0 auto',
+          border: '1px solid #e5e7eb',
+          borderRadius: '20px',
+          overflow: 'hidden' as const,
+          backgroundColor: '#ffffff'
+        };
       default:
-        return { ...base, width: '100%', height: '100%' };
+        return {
+          width: '100%',
+          height: '100%'
+        };
     }
   };
 
@@ -95,15 +151,23 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
       <div className="w-full h-full flex items-center justify-center p-4">
         <div style={getDeviceContainerStyle()}>
           <div style={getContainerStyle()}>
-            <CampaignPreview
-              campaign={enhancedCampaign}
-              previewDevice={selectedDevice}
-              key={`${selectedDevice}-${JSON.stringify({
-                gameConfig: enhancedCampaign.gameConfig,
-                design: enhancedCampaign.design,
-                screens: enhancedCampaign.screens
-              })}`}
-            />
+            {/* Background overlay for better contrast if background image exists */}
+            {(selectedDevice === 'mobile'
+              ? enhancedCampaign.design?.mobileBackgroundImage
+              : enhancedCampaign.design?.backgroundImage) && (
+              <div
+                className="absolute inset-0 bg-black opacity-20"
+                style={{ zIndex: 1 }}
+              />
+            )}
+            
+            {/* Content container */}
+            <div 
+              className="relative z-10 w-full h-full flex items-center justify-center p-4"
+              style={{ minHeight: selectedDevice === 'desktop' ? '600px' : '100%' }}
+            >
+              {getFunnelComponent()}
+            </div>
           </div>
         </div>
       </div>
