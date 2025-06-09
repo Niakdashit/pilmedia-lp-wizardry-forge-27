@@ -10,8 +10,16 @@ interface CampaignPreviewProps {
 }
 
 const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevice }) => {
-  // Use type assertion to prevent TypeScript from narrowing the type incorrectly
-  const deviceType = (previewDevice || 'desktop') as PreviewDevice;
+  // Explicitly handle the device type to prevent TypeScript narrowing issues
+  let deviceType: PreviewDevice;
+  if (previewDevice === 'mobile') {
+    deviceType = 'mobile';
+  } else if (previewDevice === 'tablet') {
+    deviceType = 'tablet';
+  } else {
+    deviceType = 'desktop';
+  }
+  
   const { design } = campaign;
 
   // If mobile preview, use the dedicated MobilePreview component
