@@ -1,26 +1,18 @@
 
 import React from 'react';
-import { useModernCampaignStore } from '../../stores/modernCampaignStore';
-import { GameRenderer } from '../GameTypes';
+import GameRenderer from './GameRenderer';
 
 interface CampaignPreviewProps {
   campaign?: any;
+  previewDevice?: 'desktop' | 'tablet' | 'mobile';
 }
 
-const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
-  const { 
-    elements, 
-    gameConfig, 
-    selectedGameType, 
-    deviceType: storeDeviceType,
-    canvasSettings 
-  } = useModernCampaignStore();
-
-  // Use campaign deviceType if provided, otherwise fall back to store
-  const deviceType: 'desktop' | 'mobile' | 'tablet' = campaign?.deviceType || storeDeviceType || 'desktop';
-  const isMobile = deviceType === 'mobile';
-  const isTablet = deviceType === 'tablet';
-  const isDesktop = deviceType === 'desktop';
+const CampaignPreview: React.FC<CampaignPreviewProps> = ({ 
+  campaign, 
+  previewDevice = 'desktop' 
+}) => {
+  const isMobile = previewDevice === 'mobile';
+  const isTablet = previewDevice === 'tablet';
 
   // Calculate dimensions based on device type
   const getPreviewDimensions = () => {
@@ -34,9 +26,9 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
 
   const { width, height } = getPreviewDimensions();
 
-  // Get background settings
-  const backgroundColor = canvasSettings?.backgroundColor || '#ffffff';
-  const backgroundImage = canvasSettings?.backgroundImage;
+  // Get background settings from campaign design
+  const backgroundColor = campaign?.design?.background || '#ffffff';
+  const backgroundImage = campaign?.design?.backgroundImage;
 
   const backgroundStyle = backgroundImage
     ? {
@@ -63,52 +55,24 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
           ...backgroundStyle
         }}
       >
-        {/* Render canvas elements */}
-        {elements.map((element) => (
-          <div
-            key={element.id}
-            style={{
-              position: 'absolute',
-              left: `${element.x}px`,
-              top: `${element.y}px`,
-              width: `${element.width}px`,
-              height: `${element.height}px`,
-              zIndex: element.zIndex || 1
-            }}
-          >
-            {element.type === 'text' && (
-              <div
-                style={{
-                  fontSize: `${element.fontSize}px`,
-                  color: element.color,
-                  fontWeight: element.fontWeight,
-                  textAlign: element.textAlign as any
-                }}
-              >
-                {element.content}
-              </div>
-            )}
-            {element.type === 'image' && (
-              <img
-                src={element.src}
-                alt={element.alt || ''}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover'
-                }}
-              />
-            )}
-          </div>
-        ))}
-
         {/* Render game if configured */}
-        {selectedGameType && gameConfig && (
+        {campaign && (
           <div className="absolute inset-0 flex items-center justify-center">
             <GameRenderer
-              gameType={selectedGameType}
-              config={gameConfig}
-              isPreview={true}
+              campaign={campaign}
+              gameSize={campaign.gameSize || 'medium'}
+              gamePosition={campaign.gamePosition || 'center'}
+              previewDevice={previewDevice}
+              gameContainerStyle={{
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center'
+              }}
+              buttonLabel={campaign.buttonConfig?.text || 'Jouer'}
+              buttonColor={campaign.buttonConfig?.color || '#841b60'}
+              gameBackgroundImage={campaign.gameConfig?.[campaign.type]?.backgroundImage}
             />
           </div>
         )}
