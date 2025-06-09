@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
 import FunnelStandard from '../funnels/FunnelStandard';
@@ -12,7 +11,7 @@ interface CampaignPreviewProps {
 
 const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevice }) => {
   // Ensure previewDevice has the correct type by providing a fallback
-  const deviceType = (previewDevice || 'desktop') as PreviewDevice;
+  const deviceType: PreviewDevice = previewDevice ?? 'desktop';
   const { design } = campaign;
 
   // If mobile preview, use the dedicated MobilePreview component
