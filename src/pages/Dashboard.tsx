@@ -2,6 +2,7 @@ import React from 'react';
 import { Users, Target, BarChart, Calendar, ChevronRight, MoreVertical, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { getCampaignTypeIcon, getCampaignTypeText, CampaignType } from '../utils/campaignTypes';
+
 const Dashboard: React.FC = () => {
   const stats = [{
     name: 'Campagnes actives',
@@ -101,42 +102,56 @@ const Dashboard: React.FC = () => {
     }
   };
   return <div className="-mx-6 -mt-6">
-      
+      {/* Header avec dégradé */}
+      <div className="relative h-[120px] bg-gradient-to-b from-[#841b60] to-transparent overflow-hidden">
+        <div className="absolute inset-10 opacity-[0.15]" style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+        backgroundSize: '60px 60px'
+      }} />
+      </div>
 
       <div className="px-6 space-y-6">
-        {/* Section de création rapide avec icônes de jeux */}
+        {/* Section de création rapide avec cadre et dégradé */}
         <div className="w-full mt-8">
-          {/* Titre centré */}
-          <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">Qu'allez-vous créer aujourd'hui ?</h2>
-          </div>
+          {/* Container avec cadre et dégradé de fond */}
+          <div className="relative border-2 border-[#841b60] rounded-3xl p-8 bg-gradient-to-b from-[#841b60]/5 to-white overflow-hidden">
+            {/* Effet de dégradé subtil en arrière-plan */}
+            <div className="absolute inset-0 bg-gradient-to-br from-[#841b60]/3 via-transparent to-transparent pointer-events-none"></div>
+            
+            <div className="relative z-10">
+              {/* Titre centré */}
+              <div className="text-center mb-8">
+                <h2 className="text-2xl font-bold text-gray-800 mb-2">Qu'allez-vous créer aujourd'hui ?</h2>
+              </div>
 
-          {/* Ligne d'icônes de jeux centrée */}
-          <div className="flex justify-center mb-8">
-            <div className="flex items-center justify-center space-x-8 max-w-5xl">
-              {gameTypes.map((game, index) => {
-              const IconComponent = getCampaignTypeIcon(game.type);
-              return <Link key={game.type} to={`/quick-campaign?type=${game.type}`} className="flex flex-col items-center group cursor-pointer opacity-0 animate-fade-in" style={{
-                animationDelay: `${index * 0.1}s`,
-                animationFillMode: 'forwards'
-              }}>
-                    <div className="w-16 h-16 bg-white rounded-full shadow-lg flex items-center justify-center group-hover:shadow-xl transform group-hover:scale-110 transition-all duration-300 border border-gray-100">
-                      <IconComponent className="w-8 h-8 text-[#841b60] group-hover:text-[#6d164f] transition-colors" />
-                    </div>
-                    <span className="mt-2 text-sm font-medium text-gray-700 group-hover:text-[#841b60] transition-colors text-center">
-                      {game.label}
-                    </span>
-                  </Link>;
-            })}
+              {/* Ligne d'icônes de jeux centrée */}
+              <div className="flex justify-center mb-8">
+                <div className="flex items-center justify-center space-x-8 max-w-5xl">
+                  {gameTypes.map((game, index) => {
+                  const IconComponent = getCampaignTypeIcon(game.type);
+                  return <Link key={game.type} to={`/quick-campaign?type=${game.type}`} className="flex flex-col items-center group cursor-pointer opacity-0 animate-fade-in" style={{
+                    animationDelay: `${index * 0.1}s`,
+                    animationFillMode: 'forwards'
+                  }}>
+                        <div className="w-16 h-16 bg-white rounded-full shadow-lg flex items-center justify-center group-hover:shadow-xl transform group-hover:scale-110 transition-all duration-300 border border-gray-100">
+                          <IconComponent className="w-8 h-8 text-[#841b60] group-hover:text-[#6d164f] transition-colors" />
+                        </div>
+                        <span className="mt-2 text-sm font-medium text-gray-700 group-hover:text-[#841b60] transition-colors text-center">
+                          {game.label}
+                        </span>
+                      </Link>;
+                })}
+                </div>
+              </div>
+
+              {/* Bouton de création rapide centré */}
+              <div className="flex justify-center">
+                <Link to="/quick-campaign" className="inline-flex items-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                  <Zap className="w-6 h-6 mr-3" />
+                  Création rapide de campagne
+                </Link>
+              </div>
             </div>
-          </div>
-
-          {/* Bouton de création rapide centré */}
-          <div className="flex justify-center">
-            <Link to="/quick-campaign" className="inline-flex items-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
-              <Zap className="w-6 h-6 mr-3" />
-              Création rapide de campagne
-            </Link>
           </div>
         </div>
 
