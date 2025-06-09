@@ -1,169 +1,117 @@
+
 import React from 'react';
-import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
-import FunnelStandard from '../funnels/FunnelStandard';
-import MobilePreview from './Mobile/MobilePreview';
+import { useModernCampaignStore } from '../../stores/modernCampaignStore';
+import { GameRenderer } from '../GameTypes';
 
 interface CampaignPreviewProps {
-  campaign: any;
-  previewDevice?: 'desktop' | 'tablet' | 'mobile';
+  campaign?: any;
 }
 
-const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevice = 'desktop' }) => {
-  const { design } = campaign;
+const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
+  const { 
+    elements, 
+    gameConfig, 
+    selectedGameType, 
+    deviceType: storeDeviceType,
+    canvasSettings 
+  } = useModernCampaignStore();
 
-  // If mobile preview, use the dedicated MobilePreview component
-  if (previewDevice === 'mobile') {
-    return <MobilePreview campaign={campaign} previewMode="mobile" />;
-  }
+  // Use campaign deviceType if provided, otherwise fall back to store
+  const deviceType: 'desktop' | 'mobile' | 'tablet' = campaign?.deviceType || storeDeviceType || 'desktop';
+  const isMobile = deviceType === 'mobile';
+  const isTablet = deviceType === 'tablet';
+  const isDesktop = deviceType === 'desktop';
 
-  // Get background image depending on device
-  const baseBackground = design?.backgroundImage || campaign.gameConfig?.[campaign.type]?.backgroundImage;
-  const mobileBackground = design?.mobileBackgroundImage;
-  const backgroundImage = previewDevice === 'mobile' && mobileBackground ? mobileBackground : baseBackground;
-
-  const containerStyle = {
-    width: '100%',
-    height: '100%',
-    position: 'relative' as const,
-    overflow: 'hidden',
-    backgroundColor: design?.background || '#f8fafc',
-  };
-
-  const backgroundStyle = backgroundImage ? {
-    position: 'absolute' as const,
-    inset: 0,
-    backgroundImage: `url(${backgroundImage})`,
-    backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat',
-    backgroundSize: 'cover',
-    opacity: 0.3,
-    zIndex: 0,
-  } : {};
-
-  const contentWrapperStyle = {
-    position: 'relative' as const,
-    zIndex: 1,
-    width: '100%',
-    height: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '20px',
-  };
-
-  const customStyles = design?.customCSS ? (
-    <style dangerouslySetInnerHTML={{ __html: design.customCSS }} />
-  ) : null;
-
-  const customHTML = design?.customHTML ? (
-    <div dangerouslySetInnerHTML={{ __html: design.customHTML }} />
-  ) : null;
-
-  // Get custom images for desktop/tablet
-  const customImages = campaign.design?.customImages || [];
-
-  // Helper function to get device-specific config for elements
-  const getElementDeviceConfig = (element: any) => {
-    const deviceKey = previewDevice === 'mobile' ? 'mobile' : 'desktop';
-    const deviceConfig = element.deviceConfig?.[deviceKey];
-    return {
-      x: deviceConfig?.x ?? element.x ?? 0,
-      y: deviceConfig?.y ?? element.y ?? 0,
-      width: deviceConfig?.width ?? element.width ?? 100,
-      height: deviceConfig?.height ?? element.height ?? 100
-    };
-  };
-
-  const getFunnelComponent = () => {
-    const funnel = campaign.funnel || (['wheel', 'scratch', 'jackpot', 'dice'].includes(campaign.type) ? 'unlocked_game' : 'standard');
-    
-    // Enhanced campaign with proper settings propagation
-    const enhancedCampaign = {
-      ...campaign,
-      design: {
-        ...campaign.design,
-        // Ensure colors are properly set
-        buttonColor: campaign.buttonConfig?.color || campaign.design?.buttonColor || '#841b60',
-        titleColor: campaign.design?.titleColor || '#000000',
-        background: campaign.design?.background || '#f8fafc'
-      },
-      gameConfig: {
-        ...campaign.gameConfig,
-        [campaign.type]: {
-          ...campaign.gameConfig?.[campaign.type],
-          // Ensure button configuration is propagated
-          buttonLabel: campaign.buttonConfig?.text || campaign.gameConfig?.[campaign.type]?.buttonLabel || 'Jouer',
-          buttonColor: campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor || '#841b60'
-        }
-      }
-    };
-    
-    if (funnel === 'unlocked_game') {
-      return (
-        <FunnelUnlockedGame
-          campaign={enhancedCampaign}
-          previewMode={previewDevice}
-          modalContained={false}
-        />
-      );
+  // Calculate dimensions based on device type
+  const getPreviewDimensions = () => {
+    if (isMobile) {
+      return { width: 375, height: 667 };
+    } else if (isTablet) {
+      return { width: 768, height: 1024 };
     }
-    return (
-      <FunnelStandard
-        campaign={enhancedCampaign}
-        key={`${campaign.id}-${JSON.stringify({
-          gameConfig: enhancedCampaign.gameConfig,
-          design: enhancedCampaign.design,
-          screens: enhancedCampaign.screens,
-          buttonConfig: enhancedCampaign.buttonConfig
-        })}`}
-      />
-    );
+    return { width: 1200, height: 800 };
   };
+
+  const { width, height } = getPreviewDimensions();
+
+  // Get background settings
+  const backgroundColor = canvasSettings?.backgroundColor || '#ffffff';
+  const backgroundImage = canvasSettings?.backgroundImage;
+
+  const backgroundStyle = backgroundImage
+    ? {
+        backgroundImage: `url(${backgroundImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }
+    : {
+        backgroundColor
+      };
 
   return (
-    <div style={containerStyle}>
-      {customStyles}
-
-      {/* Background image with proper display */}
-      {backgroundImage && <div style={backgroundStyle} />}
-
-      {/* Content */}
-      <div style={contentWrapperStyle}>
-        {customHTML}
-        {getFunnelComponent()}
-        
-        {/* Custom Images for desktop/tablet */}
-        {customImages.map((customImage: any) => {
-          if (!customImage?.src) return null;
-          
-          const deviceConfig = getElementDeviceConfig(customImage);
-          
-          return (
-            <div
-              key={`preview-image-${customImage.id}`}
-              style={{
-                position: 'absolute',
-                transform: `translate3d(${deviceConfig.x}px, ${deviceConfig.y}px, 0) rotate(${customImage.rotation || 0}deg)`,
-                width: deviceConfig.width,
-                height: deviceConfig.height,
-                zIndex: 20,
-                pointerEvents: 'none'
-              }}
-            >
+    <div className="w-full h-full flex items-center justify-center bg-gray-100 p-4">
+      <div 
+        className="relative overflow-hidden shadow-2xl"
+        style={{
+          width: `${width}px`,
+          height: `${height}px`,
+          maxWidth: '100%',
+          maxHeight: '100%',
+          borderRadius: isMobile ? '20px' : '12px',
+          border: isMobile ? '2px solid #000' : '1px solid #ddd',
+          ...backgroundStyle
+        }}
+      >
+        {/* Render canvas elements */}
+        {elements.map((element) => (
+          <div
+            key={element.id}
+            style={{
+              position: 'absolute',
+              left: `${element.x}px`,
+              top: `${element.y}px`,
+              width: `${element.width}px`,
+              height: `${element.height}px`,
+              zIndex: element.zIndex || 1
+            }}
+          >
+            {element.type === 'text' && (
+              <div
+                style={{
+                  fontSize: `${element.fontSize}px`,
+                  color: element.color,
+                  fontWeight: element.fontWeight,
+                  textAlign: element.textAlign as any
+                }}
+              >
+                {element.content}
+              </div>
+            )}
+            {element.type === 'image' && (
               <img
-                src={customImage.src}
-                alt="Custom element"
+                src={element.src}
+                alt={element.alt || ''}
                 style={{
                   width: '100%',
                   height: '100%',
-                  objectFit: 'cover',
-                  borderRadius: '4px'
+                  objectFit: 'cover'
                 }}
-                draggable={false}
               />
-            </div>
-          );
-        })}
+            )}
+          </div>
+        ))}
+
+        {/* Render game if configured */}
+        {selectedGameType && gameConfig && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <GameRenderer
+              gameType={selectedGameType}
+              config={gameConfig}
+              isPreview={true}
+            />
+          </div>
+        )}
       </div>
     </div>
   );
