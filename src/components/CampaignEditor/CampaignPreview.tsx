@@ -1,8 +1,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { useModernCampaignStore } from '../../stores/modernCampaignStore';
-import { GameRenderer } from '../GameTypes';
+import GameRenderer from './GameRenderer';
 
 interface CampaignPreviewProps {
   campaign: any;
@@ -13,14 +12,6 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({
   campaign, 
   previewDevice = "desktop" 
 }) => {
-  const { 
-    selectedElements, 
-    canvasBackground, 
-    headerConfig, 
-    footerConfig,
-    gameConfig 
-  } = useModernCampaignStore();
-
   const isMobile = previewDevice === "mobile";
 
   const renderElement = (element: any) => {
@@ -76,7 +67,15 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({
                 Aperçu du jeu non disponible en mobile
               </div>
             ) : (
-              <GameRenderer gameType={campaign.gameType} config={gameConfig} />
+              <GameRenderer 
+                campaign={campaign}
+                gameSize={campaign.gameSize || 'medium'}
+                gamePosition={campaign.gamePosition || 'center'}
+                previewDevice={previewDevice}
+                gameContainerStyle={{}}
+                buttonLabel={campaign.buttonConfig?.text || 'Jouer'}
+                buttonColor={campaign.buttonConfig?.color || '#841b60'}
+              />
             )}
           </div>
         );
@@ -85,6 +84,9 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({
     }
   };
 
+  // Use campaign elements if they exist, otherwise empty array
+  const elements = campaign.elements || [];
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
@@ -92,30 +94,30 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({
       className={`relative bg-white shadow-lg rounded-lg overflow-hidden ${
         isMobile ? 'w-80 h-[600px]' : 'w-full h-full'
       }`}
-      style={{ backgroundColor: canvasBackground }}
+      style={{ backgroundColor: campaign.design?.background || '#ebf4f7' }}
     >
       {/* Header */}
-      {headerConfig.show && (
+      {campaign.screens?.[1]?.showTitle && (
         <div
           className="w-full p-4 text-center"
-          style={{ backgroundColor: headerConfig.backgroundColor }}
+          style={{ backgroundColor: campaign.design?.blockColor || '#ffffff' }}
         >
           <h1
             style={{
-              color: headerConfig.textColor,
-              fontSize: headerConfig.fontSize || '24px',
+              color: campaign.design?.titleColor || '#000000',
+              fontSize: '24px',
             }}
           >
-            {headerConfig.title}
+            {campaign.screens?.[1]?.title || campaign.name}
           </h1>
-          {headerConfig.subtitle && (
+          {campaign.screens?.[1]?.showDescription && campaign.screens?.[1]?.description && (
             <p
               style={{
-                color: headerConfig.textColor,
+                color: campaign.design?.titleColor || '#000000',
                 fontSize: '14px',
               }}
             >
-              {headerConfig.subtitle}
+              {campaign.screens[1].description}
             </p>
           )}
         </div>
@@ -123,22 +125,22 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({
 
       {/* Canvas Elements */}
       <div className="relative flex-1">
-        {selectedElements.map(renderElement)}
+        {elements.map(renderElement)}
       </div>
 
       {/* Footer */}
-      {footerConfig.show && (
+      {campaign.screens?.[3]?.showTitle && (
         <div
           className="w-full p-4 text-center"
-          style={{ backgroundColor: footerConfig.backgroundColor }}
+          style={{ backgroundColor: campaign.design?.blockColor || '#ffffff' }}
         >
           <p
             style={{
-              color: footerConfig.textColor,
-              fontSize: footerConfig.fontSize || '14px',
+              color: campaign.design?.titleColor || '#000000',
+              fontSize: '14px',
             }}
           >
-            {footerConfig.text}
+            {campaign.screens[3].title || 'Merci pour votre participation !'}
           </p>
         </div>
       )}
