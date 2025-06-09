@@ -53,14 +53,14 @@ const Dashboard: React.FC = () => {
     image: 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg'
   }];
 
-  // Icônes de jeux pour les bulles flottantes
+  // Icônes de jeux pour les bulles flottantes - positionnées à droite
   const gameIcons = [
-    { type: 'wheel', position: 'top-left', delay: '0s' },
-    { type: 'quiz', position: 'top-right', delay: '0.5s' },
-    { type: 'scratch', position: 'middle-left', delay: '1s' },
-    { type: 'dice', position: 'middle-right', delay: '1.5s' },
-    { type: 'jackpot', position: 'bottom-left', delay: '2s' },
-    { type: 'memory', position: 'bottom-right', delay: '2.5s' }
+    { type: 'wheel', position: 'right-1', delay: '0s' },
+    { type: 'quiz', position: 'right-2', delay: '0.5s' },
+    { type: 'scratch', position: 'right-3', delay: '1s' },
+    { type: 'dice', position: 'right-4', delay: '1.5s' },
+    { type: 'jackpot', position: 'right-5', delay: '2s' },
+    { type: 'memory', position: 'right-6', delay: '2.5s' }
   ];
 
   const getStatusColor = (status: string) => {
@@ -91,18 +91,18 @@ const Dashboard: React.FC = () => {
 
   const getBubblePosition = (position: string) => {
     switch (position) {
-      case 'top-left':
-        return 'absolute -top-8 -left-16 md:-top-12 md:-left-20';
-      case 'top-right':
-        return 'absolute -top-8 -right-16 md:-top-12 md:-right-20';
-      case 'middle-left':
-        return 'absolute top-1/2 -left-20 md:-left-24 transform -translate-y-1/2';
-      case 'middle-right':
-        return 'absolute top-1/2 -right-20 md:-right-24 transform -translate-y-1/2';
-      case 'bottom-left':
-        return 'absolute -bottom-8 -left-16 md:-bottom-12 md:-left-20';
-      case 'bottom-right':
-        return 'absolute -bottom-8 -right-16 md:-bottom-12 md:-right-20';
+      case 'right-1':
+        return 'absolute right-[-80px] top-[-20px]';
+      case 'right-2':
+        return 'absolute right-[-120px] top-[20px]';
+      case 'right-3':
+        return 'absolute right-[-140px] top-[60px]';
+      case 'right-4':
+        return 'absolute right-[-120px] top-[100px]';
+      case 'right-5':
+        return 'absolute right-[-80px] top-[120px]';
+      case 'right-6':
+        return 'absolute right-[-40px] top-[100px]';
       default:
         return '';
     }
@@ -134,7 +134,7 @@ const Dashboard: React.FC = () => {
 
       <div className="px-6 space-y-6">
         {/* Quick Action Section with Floating Bubbles */}
-        <div className="flex justify-center mt-6 relative">
+        <div className="flex justify-center mt-6">
           <div className="relative">
             <Link
               to="/quick-campaign"
@@ -144,8 +144,8 @@ const Dashboard: React.FC = () => {
               Création rapide de campagne
             </Link>
 
-            {/* Bulles flottantes avec icônes de jeux */}
-            {gameIcons.map((game, index) => {
+            {/* Bulles flottantes avec icônes de jeux - alignées à droite */}
+            {gameIcons.map((game) => {
               const IconComponent = getCampaignTypeIcon(game.type);
               return (
                 <div
@@ -170,7 +170,7 @@ const Dashboard: React.FC = () => {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
-          {stats.map((stat, index) => <div key={index} className="bg-white p-6 rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-300">
+          {stats.map((stat, statIndex) => <div key={statIndex} className="bg-white p-6 rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-300">
               <div className="flex justify-between items-start">
                 <div>
                   <p className="text-gray-700 font-semibold">{stat.name}</p>
@@ -235,7 +235,7 @@ const Dashboard: React.FC = () => {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         @keyframes fade-in {
           from {
             opacity: 0;
