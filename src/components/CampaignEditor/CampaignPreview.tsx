@@ -11,14 +11,7 @@ interface CampaignPreviewProps {
 
 const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevice }) => {
   // Explicitly handle the device type to prevent TypeScript narrowing issues
-  let deviceType: PreviewDevice;
-  if (previewDevice === 'mobile') {
-    deviceType = 'mobile';
-  } else if (previewDevice === 'tablet') {
-    deviceType = 'tablet';
-  } else {
-    deviceType = 'desktop';
-  }
+  const deviceType: PreviewDevice = previewDevice || 'desktop';
   
   const { design } = campaign;
 
@@ -35,7 +28,9 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
   // Get background image depending on device
   const baseBackground = design?.backgroundImage || campaign.gameConfig?.[campaign.type]?.backgroundImage;
   const mobileBackground = design?.mobileBackgroundImage;
-  const backgroundImage = (deviceType === 'mobile' || deviceType === 'tablet') && mobileBackground ? mobileBackground : baseBackground;
+  // Use explicit string literal types to avoid TypeScript inference issues
+  const isMobileOrTablet = deviceType === 'mobile' || deviceType === 'tablet';
+  const backgroundImage = isMobileOrTablet && mobileBackground ? mobileBackground : baseBackground;
 
   const [imageDims, setImageDims] = useState({ width: 1080, height: 1920 });
 
@@ -120,7 +115,8 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
 
   // Use identical device config logic as editor
   const getElementDeviceConfig = (element: any) => {
-    const deviceKey: 'mobile' | 'desktop' = (deviceType === 'mobile' || deviceType === 'tablet') ? 'mobile' : 'desktop';
+    // Use the same isMobileOrTablet variable to avoid TypeScript inference issues
+    const deviceKey: 'mobile' | 'desktop' = isMobileOrTablet ? 'mobile' : 'desktop';
     const deviceConfig = element.deviceConfig?.[deviceKey];
     return {
       x: deviceConfig?.x ?? element.x ?? 0,
