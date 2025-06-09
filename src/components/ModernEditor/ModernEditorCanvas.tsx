@@ -114,9 +114,9 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
   };
 
   return (
-    <div className="w-full h-full flex items-center justify-center p-6">
-      {/* Canvas container with Canva-like styling */}
-      <div className="relative w-full max-w-7xl h-full bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-200/50">
+    <div className="w-full h-full flex items-center justify-center p-2 sm:p-4 lg:p-6">
+      {/* Canvas container with responsive sizing */}
+      <div className="relative w-full max-w-7xl h-full bg-white rounded-2xl sm:rounded-3xl shadow-xl sm:shadow-2xl overflow-hidden border border-gray-200/50">
         {/* Canvas background */}
         <div
           ref={canvasRef}
@@ -182,45 +182,45 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
           />
         </div>
 
-        {/* Floating action button - Canva style */}
-        <div className="absolute bottom-8 right-8">
+        {/* Floating action button - responsive positioning */}
+        <div className="absolute bottom-4 sm:bottom-6 lg:bottom-8 right-4 sm:right-6 lg:right-8">
           <div className="relative">
             {/* Add menu */}
             {showAddMenu && (
-              <div className="absolute bottom-16 right-0 bg-white rounded-2xl shadow-2xl border border-gray-200/50 p-2 min-w-48">
+              <div className="absolute bottom-12 sm:bottom-16 right-0 bg-white rounded-xl sm:rounded-2xl shadow-2xl border border-gray-200/50 p-2 min-w-40 sm:min-w-48">
                 <button
                   onClick={handleAddText}
-                  className="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-50 transition-colors text-left"
+                  className="w-full flex items-center space-x-2 sm:space-x-3 p-2 sm:p-3 rounded-lg sm:rounded-xl hover:bg-gray-50 transition-colors text-left"
                 >
-                  <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <span className="text-blue-600 font-semibold text-sm">T</span>
+                  <div className="w-6 h-6 sm:w-8 sm:h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                    <span className="text-blue-600 font-semibold text-xs sm:text-sm">T</span>
                   </div>
-                  <span className="font-medium text-gray-900">Ajouter du texte</span>
+                  <span className="font-medium text-gray-900 text-sm sm:text-base">Ajouter du texte</span>
                 </button>
                 <button
                   onClick={handleAddImage}
-                  className="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-50 transition-colors text-left"
+                  className="w-full flex items-center space-x-2 sm:space-x-3 p-2 sm:p-3 rounded-lg sm:rounded-xl hover:bg-gray-50 transition-colors text-left"
                 >
-                  <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                    <span className="text-green-600 font-semibold text-sm">📷</span>
+                  <div className="w-6 h-6 sm:w-8 sm:h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                    <span className="text-green-600 font-semibold text-xs sm:text-sm">📷</span>
                   </div>
-                  <span className="font-medium text-gray-900">Ajouter une image</span>
+                  <span className="font-medium text-gray-900 text-sm sm:text-base">Ajouter une image</span>
                 </button>
               </div>
             )}
 
-            {/* Main add button */}
+            {/* Main add button - responsive sizing */}
             <button
               onClick={() => setShowAddMenu(!showAddMenu)}
-              className="w-14 h-14 bg-gradient-to-r from-[#841b60] to-[#6d164f] hover:from-[#6d164f] hover:to-[#841b60] text-white rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 flex items-center justify-center transform hover:scale-105"
+              className="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-r from-[#841b60] to-[#6d164f] hover:from-[#6d164f] hover:to-[#841b60] text-white rounded-xl sm:rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 flex items-center justify-center transform hover:scale-105"
             >
-              <Plus className={`w-6 h-6 transition-transform duration-300 ${showAddMenu ? 'rotate-45' : ''}`} />
+              <Plus className={`w-5 h-5 sm:w-6 sm:h-6 transition-transform duration-300 ${showAddMenu ? 'rotate-45' : ''}`} />
             </button>
           </div>
         </div>
 
-        {/* Grid toggle */}
-        <div className="absolute top-6 right-6">
+        {/* Grid toggle - responsive positioning */}
+        <div className="absolute top-4 sm:top-6 right-4 sm:right-6">
           <GridToggle
             showGridLines={showGridLines}
             onToggle={() => setShowGridLines(!showGridLines)}

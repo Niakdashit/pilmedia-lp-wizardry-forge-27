@@ -51,7 +51,7 @@ const ModernEditorPanel: React.FC<ModernEditorPanelProps> = ({
           transition={{ duration: 0.2 }}
           className="h-full overflow-y-auto"
         >
-          <div className="p-6">
+          <div className="p-3 sm:p-4 lg:p-6">
             {activeTab === 'general' && (
               <ModernGeneralTab campaign={campaign} setCampaign={setCampaign} />
             )}

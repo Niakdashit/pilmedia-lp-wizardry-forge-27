@@ -31,8 +31,8 @@ const ModernEditorSidebar: React.FC<ModernEditorSidebarProps> = ({
   ];
 
   return (
-    <div className="w-full h-full bg-gradient-to-b from-white to-gray-50/50 flex flex-col py-4">
-      <div className="flex-1 space-y-2 px-2">
+    <div className="w-full h-full bg-gradient-to-b from-white to-gray-50/50 flex flex-col py-2 sm:py-4">
+      <div className="flex-1 space-y-1 sm:space-y-2 px-1 sm:px-2">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -41,27 +41,27 @@ const ModernEditorSidebar: React.FC<ModernEditorSidebarProps> = ({
             <div key={tab.id} className="relative group">
               <button
                 onClick={() => onTabChange(tab.id)}
-                className={`relative w-full flex flex-col items-center p-3 rounded-2xl transition-all duration-300 group ${
+                className={`relative w-full flex flex-col items-center p-2 sm:p-3 rounded-xl sm:rounded-2xl transition-all duration-300 group ${
                   isActive 
                     ? 'bg-gradient-to-br from-[#841b60] to-[#6d164f] text-white shadow-lg transform scale-105' 
                     : 'text-gray-600 hover:bg-white hover:text-gray-900 hover:shadow-md'
                 }`}
               >
-                <Icon className={`w-5 h-5 mb-2 transition-transform duration-300 ${isActive ? 'scale-110' : 'group-hover:scale-105'}`} />
+                <Icon className={`w-4 h-4 sm:w-5 sm:h-5 mb-1 sm:mb-2 transition-transform duration-300 ${isActive ? 'scale-110' : 'group-hover:scale-105'}`} />
                 <span className="text-xs font-medium text-center leading-tight">{tab.label}</span>
                 
                 {/* Active indicator */}
                 {isActive && (
                   <motion.div
                     layoutId="activeIndicator"
-                    className="absolute -left-1 top-1/2 transform -translate-y-1/2 w-1 h-8 bg-white rounded-r-full"
+                    className="absolute -left-1 top-1/2 transform -translate-y-1/2 w-1 h-6 sm:h-8 bg-white rounded-r-full"
                     transition={{ type: "spring", stiffness: 500, damping: 30 }}
                   />
                 )}
               </button>
               
-              {/* Enhanced tooltip */}
-              <div className="absolute left-full top-1/2 transform -translate-y-1/2 ml-3 px-4 py-3 bg-gray-900/95 backdrop-blur-sm text-white text-sm rounded-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-10 shadow-xl">
+              {/* Enhanced tooltip - only on larger screens */}
+              <div className="hidden lg:block absolute left-full top-1/2 transform -translate-y-1/2 ml-3 px-4 py-3 bg-gray-900/95 backdrop-blur-sm text-white text-sm rounded-xl opacity-0 pointer-events-none group-hover:opacity-100 transition-all duration-200 whitespace-nowrap z-10 shadow-xl">
                 <div className="font-semibold">{tab.label}</div>
                 {tab.description && (
                   <div className="text-xs text-gray-300 mt-1">{tab.description}</div>
@@ -74,7 +74,7 @@ const ModernEditorSidebar: React.FC<ModernEditorSidebarProps> = ({
       </div>
       
       {/* Bottom gradient */}
-      <div className="px-3 pb-2">
+      <div className="px-2 sm:px-3 pb-1 sm:pb-2">
         <div className="w-full h-px bg-gradient-to-r from-transparent via-[#841b60]/30 to-transparent"></div>
       </div>
     </div>
