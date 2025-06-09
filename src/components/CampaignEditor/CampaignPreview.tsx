@@ -9,7 +9,7 @@ interface CampaignPreviewProps {
   previewDevice?: PreviewDevice;
 }
 
-const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevice = 'desktop' }) => {
+const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevice = 'desktop' as PreviewDevice }) => {
   const { design } = campaign;
 
   // If mobile preview, use the dedicated MobilePreview component
