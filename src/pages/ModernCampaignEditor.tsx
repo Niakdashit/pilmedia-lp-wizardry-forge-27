@@ -1,7 +1,5 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
 import { CampaignType, getDefaultGameConfig } from '../utils/campaignTypes';
 import { useCampaigns } from '../hooks/useCampaigns';
 import ModernEditorLayout from '../components/ModernEditor/ModernEditorLayout';
@@ -193,14 +191,6 @@ const ModernCampaignEditor: React.FC = () => {
 
   return (
     <div className="relative">
-      {/* Back button - floating */}
-      <button
-        onClick={() => navigate('/gamification')}
-        className="fixed top-4 left-4 z-50 p-2 bg-white/90 backdrop-blur-md hover:bg-white rounded-xl shadow-lg hover:shadow-xl transition-all border border-gray-200/50"
-      >
-        <ArrowLeft className="w-5 h-5" />
-      </button>
-
       <ModernEditorLayout
         campaign={campaign}
         setCampaign={setCampaign}

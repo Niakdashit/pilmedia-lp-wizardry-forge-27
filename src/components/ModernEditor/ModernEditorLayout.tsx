@@ -1,7 +1,9 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, Eye, Save, Monitor, Tablet, Smartphone, Menu, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Eye, Save, Monitor, Tablet, Smartphone, Menu, X, ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { CampaignType } from '../../utils/campaignTypes';
 import ModernEditorSidebar from './ModernEditorSidebar';
 import ModernEditorCanvas from './ModernEditorCanvas';
 import ModernEditorPanel from './ModernEditorPanel';
@@ -16,7 +18,7 @@ interface ModernEditorLayoutProps {
   onSave: () => void;
   onPreview: () => void;
   isLoading: boolean;
-  campaignType: string;
+  campaignType: CampaignType;
   isNewCampaign: boolean;
   gameTypeLabels: Record<string, string>;
 }
@@ -37,6 +39,7 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
 }) => {
   const [isPanelOpen, setIsPanelOpen] = useState(true);
   const [isMobilePanelOpen, setIsMobilePanelOpen] = useState(false);
+  const navigate = useNavigate();
 
   const togglePanel = () => {
     setIsPanelOpen(!isPanelOpen);
@@ -46,6 +49,10 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
     setIsMobilePanelOpen(!isMobilePanelOpen);
   };
 
+  const handleExit = () => {
+    navigate('/gamification');
+  };
+
   return (
     <div className="h-screen flex bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
       {/* Header - Fixed top bar */}
@@ -53,20 +60,20 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
         <div className="flex items-center justify-between px-4 md:px-6 py-3">
           {/* Left section */}
           <div className="flex items-center space-x-4">
+            {/* Exit button */}
+            <button
+              onClick={handleExit}
+              className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
+            >
+              <ArrowLeft className="w-5 h-5" />
+            </button>
+            
             {/* Mobile panel toggle */}
             <button
               onClick={toggleMobilePanel}
               className="md:hidden p-2 hover:bg-gray-100 rounded-xl transition-colors"
             >
               <Menu className="w-5 h-5" />
-            </button>
-            
-            {/* Desktop panel toggle */}
-            <button
-              onClick={togglePanel}
-              className="hidden md:flex p-2 hover:bg-gray-100 rounded-xl transition-colors"
-            >
-              {isPanelOpen ? <ChevronLeft className="w-5 h-5" /> : <ChevronRight className="w-5 h-5" />}
             </button>
 
             <div>
@@ -179,8 +186,16 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
               className={`${
                 isMobilePanelOpen ? 'fixed' : 'hidden md:flex'
-              } w-80 lg:w-96 bg-white/95 backdrop-blur-md border-r border-gray-200/50 shadow-xl z-40 h-full overflow-hidden`}
+              } w-80 lg:w-96 bg-white/95 backdrop-blur-md border-r border-gray-200/50 shadow-xl z-40 h-full overflow-hidden relative`}
             >
+              {/* Panel collapse button - desktop only */}
+              <button
+                onClick={togglePanel}
+                className="hidden md:flex absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-xl transition-colors z-50"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+
               {/* Mobile close button */}
               <button
                 onClick={() => setIsMobilePanelOpen(false)}
@@ -211,6 +226,18 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
             </motion.div>
           )}
         </AnimatePresence>
+
+        {/* Panel toggle button when panel is closed */}
+        {!isPanelOpen && !isMobilePanelOpen && (
+          <div className="hidden md:flex fixed left-4 top-1/2 transform -translate-y-1/2 z-40">
+            <button
+              onClick={togglePanel}
+              className="p-3 bg-white/95 backdrop-blur-md hover:bg-white rounded-xl shadow-lg hover:shadow-xl transition-all border border-gray-200/50"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
+        )}
 
         {/* Canvas area */}
         <div className="flex-1 bg-gradient-to-br from-gray-50 to-white">
