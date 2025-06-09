@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Users, Target, BarChart, Calendar, ChevronRight, MoreVertical, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -25,6 +26,7 @@ const Dashboard: React.FC = () => {
     change: '10 avril',
     icon: <Calendar className="w-6 h-6 text-[#841b60]" />
   }];
+
   const recentCampaigns = [{
     id: '1',
     name: 'Quiz Marketing Digital',
@@ -50,6 +52,17 @@ const Dashboard: React.FC = () => {
     createdAt: '15 mai 2025',
     image: 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg'
   }];
+
+  // Icônes de jeux pour les bulles flottantes
+  const gameIcons = [
+    { type: 'wheel', position: 'top-left', delay: '0s' },
+    { type: 'quiz', position: 'top-right', delay: '0.5s' },
+    { type: 'scratch', position: 'middle-left', delay: '1s' },
+    { type: 'dice', position: 'middle-right', delay: '1.5s' },
+    { type: 'jackpot', position: 'bottom-left', delay: '2s' },
+    { type: 'memory', position: 'bottom-right', delay: '2.5s' }
+  ];
+
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active':
@@ -62,6 +75,7 @@ const Dashboard: React.FC = () => {
         return 'text-gray-500';
     }
   };
+
   const getStatusText = (status: string) => {
     switch (status) {
       case 'active':
@@ -74,6 +88,26 @@ const Dashboard: React.FC = () => {
         return status;
     }
   };
+
+  const getBubblePosition = (position: string) => {
+    switch (position) {
+      case 'top-left':
+        return 'absolute -top-8 -left-16 md:-top-12 md:-left-20';
+      case 'top-right':
+        return 'absolute -top-8 -right-16 md:-top-12 md:-right-20';
+      case 'middle-left':
+        return 'absolute top-1/2 -left-20 md:-left-24 transform -translate-y-1/2';
+      case 'middle-right':
+        return 'absolute top-1/2 -right-20 md:-right-24 transform -translate-y-1/2';
+      case 'bottom-left':
+        return 'absolute -bottom-8 -left-16 md:-bottom-12 md:-left-20';
+      case 'bottom-right':
+        return 'absolute -bottom-8 -right-16 md:-bottom-12 md:-right-20';
+      default:
+        return '';
+    }
+  };
+
   return (
     <div className="-mx-6 -mt-6">
       <div className="relative h-[100px] bg-[#841b60] overflow-hidden">
@@ -99,28 +133,55 @@ const Dashboard: React.FC = () => {
       </div>
 
       <div className="px-6 space-y-6">
-        {/* Quick Action Section */}
-        <div className="flex justify-center mt-6">
-          <Link
-            to="/quick-campaign"
-            className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-[#841b60] to-[#a855f7] text-white font-semibold rounded-2xl hover:from-[#6d164f] hover:to-[#9333ea] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-          >
-            <Zap className="w-6 h-6 mr-3" />
-            Création rapide de campagne
-          </Link>
+        {/* Quick Action Section with Floating Bubbles */}
+        <div className="flex justify-center mt-6 relative">
+          <div className="relative">
+            <Link
+              to="/quick-campaign"
+              className="inline-flex items-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+            >
+              <Zap className="w-6 h-6 mr-3" />
+              Création rapide de campagne
+            </Link>
+
+            {/* Bulles flottantes avec icônes de jeux */}
+            {gameIcons.map((game, index) => {
+              const IconComponent = getCampaignTypeIcon(game.type);
+              return (
+                <div
+                  key={game.type}
+                  className={`${getBubblePosition(game.position)} w-12 h-12 md:w-16 md:h-16 bg-white rounded-full shadow-lg flex items-center justify-center opacity-0 animate-fade-in transform hover:scale-110 transition-all duration-300 cursor-pointer group`}
+                  style={{
+                    animationDelay: game.delay,
+                    animationFillMode: 'forwards'
+                  }}
+                  title={getCampaignTypeText(game.type)}
+                >
+                  <IconComponent className="w-6 h-6 md:w-8 md:h-8 text-[#841b60] group-hover:text-[#6d164f] transition-colors" />
+                  
+                  {/* Tooltip */}
+                  <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                    {getCampaignTypeText(game.type)}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
-          {stats.map((stat, index) => <div key={index} className="bg-white p-6 rounded-2xl shadow-md flex justify-between items-start">
-              <div>
-                <p className="text-gray-700 font-semibold">{stat.name}</p>
-                <div className="mt-2 flex items-baseline space-x-2">
-                  <h3 className="text-3xl font-bold text-gray-900">{stat.value}</h3>
-                  <p className="text-green-600 text-sm">{stat.change}</p>
+          {stats.map((stat, index) => <div key={index} className="bg-white p-6 rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-300">
+              <div className="flex justify-between items-start">
+                <div>
+                  <p className="text-gray-700 font-semibold">{stat.name}</p>
+                  <div className="mt-2 flex items-baseline space-x-2">
+                    <h3 className="text-3xl font-bold text-gray-900">{stat.value}</h3>
+                    <p className="text-green-600 text-sm">{stat.change}</p>
+                  </div>
                 </div>
-              </div>
-              <div className="bg-[#f8e9f0] rounded-full p-3 flex items-center justify-center">
-                {stat.icon}
+                <div className="bg-[#f8e9f0] rounded-full p-3">
+                  {stat.icon}
+                </div>
               </div>
             </div>)}
         </div>
@@ -129,7 +190,7 @@ const Dashboard: React.FC = () => {
           <div className="p-0">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-semibold text-gray-800">Campagnes récentes</h2>
-              <Link to="/campaigns" className="text-[#841b60] hover:text-[#6d164f] font-medium flex items-center">
+              <Link to="/campaigns" className="text-[#841b60] hover:text-[#6d164f] font-medium flex items-center transition-colors">
                 Voir toutes
                 <ChevronRight className="w-4 h-4 ml-1" />
               </Link>
@@ -143,7 +204,7 @@ const Dashboard: React.FC = () => {
                         <img src={campaign.image} alt={campaign.name} className="w-full h-full object-cover" />
 
                         <div className="absolute top-3 left-3">
-                          <div className="inline-flex items-center rounded-full bg-[#ffffff] text-[#841b60] px-3 py-1 text-xs font-medium">
+                          <div className="inline-flex items-center rounded-full bg-white text-[#841b60] px-3 py-1 text-xs font-medium">
                             <IconComponent className="w-4 h-4" />
                             <span className="ml-2">{getCampaignTypeText(campaign.type)}</span>
                           </div>
@@ -173,6 +234,23 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <style jsx>{`
+        @keyframes fade-in {
+          from {
+            opacity: 0;
+            transform: translateY(10px) scale(0.8);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+        
+        .animate-fade-in {
+          animation: fade-in 0.6s ease-out;
+        }
+      `}</style>
     </div>
   );
 };
