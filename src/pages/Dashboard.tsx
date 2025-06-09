@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Users, Target, BarChart, Calendar, ChevronRight, MoreVertical, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -53,7 +52,7 @@ const Dashboard: React.FC = () => {
     image: 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg'
   }];
 
-  // Icônes de jeux pour les bulles flottantes - positionnées à droite
+  // Icônes de jeux pour les bulles flottantes - alignées horizontalement avec le bouton
   const gameIcons = [
     { type: 'wheel', position: 'right-1', delay: '0s' },
     { type: 'quiz', position: 'right-2', delay: '0.5s' },
@@ -92,17 +91,17 @@ const Dashboard: React.FC = () => {
   const getBubblePosition = (position: string) => {
     switch (position) {
       case 'right-1':
-        return 'absolute right-[-80px] top-[-20px]';
+        return 'absolute right-[-80px] top-1/2 -translate-y-1/2';
       case 'right-2':
-        return 'absolute right-[-120px] top-[20px]';
+        return 'absolute right-[-140px] top-1/2 -translate-y-1/2';
       case 'right-3':
-        return 'absolute right-[-140px] top-[60px]';
+        return 'absolute right-[-200px] top-1/2 -translate-y-1/2';
       case 'right-4':
-        return 'absolute right-[-120px] top-[100px]';
+        return 'absolute right-[-260px] top-1/2 -translate-y-1/2';
       case 'right-5':
-        return 'absolute right-[-80px] top-[120px]';
+        return 'absolute right-[-320px] top-1/2 -translate-y-1/2';
       case 'right-6':
-        return 'absolute right-[-40px] top-[100px]';
+        return 'absolute right-[-380px] top-1/2 -translate-y-1/2';
       default:
         return '';
     }
@@ -144,7 +143,7 @@ const Dashboard: React.FC = () => {
               Création rapide de campagne
             </Link>
 
-            {/* Bulles flottantes avec icônes de jeux - alignées à droite */}
+            {/* Bulles flottantes avec icônes de jeux - alignées horizontalement */}
             {gameIcons.map((game) => {
               const IconComponent = getCampaignTypeIcon(game.type);
               return (
