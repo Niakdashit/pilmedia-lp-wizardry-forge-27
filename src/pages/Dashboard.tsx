@@ -2,14 +2,13 @@ import React from 'react';
 import { Users, Target, BarChart, Calendar, ChevronRight, MoreVertical, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { getCampaignTypeIcon, getCampaignTypeText, CampaignType } from '../utils/campaignTypes';
-
 const Dashboard: React.FC = () => {
   const stats = [{
     name: 'Campagnes actives',
     value: '5',
     change: '+2 cette semaine',
     icon: <Target className="w-6 h-6 text-[#841b60]" />
-  }, { 
+  }, {
     name: 'Participations',
     value: '1254',
     change: '+18% ce mois',
@@ -25,7 +24,6 @@ const Dashboard: React.FC = () => {
     change: '10 avril',
     icon: <Calendar className="w-6 h-6 text-[#841b60]" />
   }];
-
   const recentCampaigns = [{
     id: '1',
     name: 'Quiz Marketing Digital',
@@ -53,17 +51,31 @@ const Dashboard: React.FC = () => {
   }];
 
   // Tous les types de jeux disponibles
-  const gameTypes = [
-    { type: 'wheel', label: 'Roue de la fortune' },
-    { type: 'quiz', label: 'Quiz' },
-    { type: 'scratch', label: 'Grattage' },
-    { type: 'dice', label: 'Dés' },
-    { type: 'jackpot', label: 'Jackpot' },
-    { type: 'memory', label: 'Memory' },
-    { type: 'puzzle', label: 'Puzzle' },
-    { type: 'form', label: 'Formulaire' }
-  ];
-
+  const gameTypes = [{
+    type: 'wheel',
+    label: 'Roue de la fortune'
+  }, {
+    type: 'quiz',
+    label: 'Quiz'
+  }, {
+    type: 'scratch',
+    label: 'Grattage'
+  }, {
+    type: 'dice',
+    label: 'Dés'
+  }, {
+    type: 'jackpot',
+    label: 'Jackpot'
+  }, {
+    type: 'memory',
+    label: 'Memory'
+  }, {
+    type: 'puzzle',
+    label: 'Puzzle'
+  }, {
+    type: 'form',
+    label: 'Formulaire'
+  }];
   const getStatusColor = (status: string) => {
     switch (status) {
       case 'active':
@@ -76,7 +88,6 @@ const Dashboard: React.FC = () => {
         return 'text-gray-500';
     }
   };
-
   const getStatusText = (status: string) => {
     switch (status) {
       case 'active':
@@ -89,24 +100,8 @@ const Dashboard: React.FC = () => {
         return status;
     }
   };
-
-  return (
-    <div className="-mx-6 -mt-6">
-      <div className="relative h-[200px] bg-gradient-to-b from-[#841b60] to-transparent overflow-hidden">
-        <div className="absolute inset-10 opacity-[0.15]" style={{
-        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-        backgroundSize: '60px 60px'
-      }} />
-        <div className="relative h-full max-w-7xl mx-auto px-6 flex items-center justify-between">
-          <h1 className="text-3xl font-bold text-white mb-3">Tableau de bord</h1>
-          <select className="bg-white/90 backdrop-blur-sm border-0 text-gray-700 py-2 px-4 rounded-xl focus:outline-none focus:ring-2 focus:ring-white/20 mb-3">
-            <option>7 derniers jours</option>
-            <option>30 derniers jours</option>
-            <option>90 derniers jours</option>
-            <option>Cette année</option>
-          </select>
-        </div>
-      </div>
+  return <div className="-mx-6 -mt-6">
+      
 
       <div className="px-6 space-y-6">
         {/* Section de création rapide avec icônes de jeux */}
@@ -120,35 +115,25 @@ const Dashboard: React.FC = () => {
           <div className="flex justify-center mb-8">
             <div className="flex items-center justify-center space-x-8 max-w-5xl">
               {gameTypes.map((game, index) => {
-                const IconComponent = getCampaignTypeIcon(game.type);
-                return (
-                  <Link
-                    key={game.type}
-                    to={`/quick-campaign?type=${game.type}`}
-                    className="flex flex-col items-center group cursor-pointer opacity-0 animate-fade-in"
-                    style={{
-                      animationDelay: `${index * 0.1}s`,
-                      animationFillMode: 'forwards'
-                    }}
-                  >
+              const IconComponent = getCampaignTypeIcon(game.type);
+              return <Link key={game.type} to={`/quick-campaign?type=${game.type}`} className="flex flex-col items-center group cursor-pointer opacity-0 animate-fade-in" style={{
+                animationDelay: `${index * 0.1}s`,
+                animationFillMode: 'forwards'
+              }}>
                     <div className="w-16 h-16 bg-white rounded-full shadow-lg flex items-center justify-center group-hover:shadow-xl transform group-hover:scale-110 transition-all duration-300 border border-gray-100">
                       <IconComponent className="w-8 h-8 text-[#841b60] group-hover:text-[#6d164f] transition-colors" />
                     </div>
                     <span className="mt-2 text-sm font-medium text-gray-700 group-hover:text-[#841b60] transition-colors text-center">
                       {game.label}
                     </span>
-                  </Link>
-                );
-              })}
+                  </Link>;
+            })}
             </div>
           </div>
 
           {/* Bouton de création rapide centré */}
           <div className="flex justify-center">
-            <Link
-              to="/quick-campaign"
-              className="inline-flex items-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-            >
+            <Link to="/quick-campaign" className="inline-flex items-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
               <Zap className="w-6 h-6 mr-3" />
               Création rapide de campagne
             </Link>
@@ -237,8 +222,6 @@ const Dashboard: React.FC = () => {
           animation: fade-in 0.6s ease-out;
         }
       `}</style>
-    </div>
-  );
+    </div>;
 };
-
 export default Dashboard;
