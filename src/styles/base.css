@@ -6,48 +6,30 @@
 @layer base {
   :root {
     color-scheme: light;
-    --glass-border: rgba(159, 122, 234, 0.1);
-    --glass-bg: rgba(250, 247, 255, 0.8);
-  }
-
-  .dark {
-    color-scheme: dark;
-    --glass-border: rgba(159, 122, 234, 0.2);
-    --glass-bg: rgba(55, 20, 116, 0.3);
+    --glass-border: rgba(47, 8, 117, 0.08);
+    --glass-bg: rgba(217, 206, 255, 0.8);
   }
 
   html {
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
     -webkit-tap-highlight-color: transparent;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-    font-optical-sizing: auto;
+    font-family: 'Inter', sans-serif;
   }
   
   body {
-    @apply bg-gradient-to-br from-surface-50 via-primary-50/30 to-accent-50/20 
-           dark:from-surface-950 dark:via-primary-950/50 dark:to-surface-900
-           text-surface-900 dark:text-surface-50
-           antialiased min-h-screen;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    @apply bg-gradient-to-br from-primary-50 via-accent-50 to-brand-100 text-primary-950 antialiased min-h-screen;
+    font-family: 'Inter', sans-serif;
     font-weight: 400;
-    line-height: 1.6;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-semibold tracking-tight text-surface-900 dark:text-surface-50;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-    font-optical-sizing: auto;
+    @apply font-bold tracking-tight text-primary-950;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
   }
 
-  h1 { @apply text-3xl md:text-4xl lg:text-5xl; }
-  h2 { @apply text-2xl md:text-3xl lg:text-4xl; }
-  h3 { @apply text-xl md:text-2xl lg:text-3xl; }
-  h4 { @apply text-lg md:text-xl lg:text-2xl; }
-  h5 { @apply text-base md:text-lg lg:text-xl; }
-  h6 { @apply text-sm md:text-base lg:text-lg; }
-
   ::selection {
-    @apply bg-primary-200 text-primary-950 dark:bg-primary-800 dark:text-primary-50;
+    @apply bg-primary-200 text-primary-950;
   }
 }
 
@@ -61,12 +43,7 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-surface-300 dark:bg-surface-600 rounded-full
-         hover:bg-surface-400 dark:hover:bg-surface-500
+  @apply bg-primary-200 rounded-full
+         hover:bg-primary-300
          transition-colors duration-200;
-}
-
-/* Smooth transitions for theme switching */
-* {
-  transition: background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, color 0.2s ease-in-out;
 }

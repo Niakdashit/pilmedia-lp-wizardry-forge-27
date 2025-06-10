@@ -1,7 +1,6 @@
 
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { AppProvider } from './context/AppContext';
-import { ThemeProvider } from './components/ThemeProvider';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Layout from './components/Layout/Layout';
@@ -21,30 +20,28 @@ import ModernCampaignEditor from './pages/ModernCampaignEditor';
 
 function App() {
   return (
-    <ThemeProvider>
-      <AppProvider>
-        <Router>
-          <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-            <Routes>
-              <Route path="/" element={<Layout><Dashboard /></Layout>} />
-              <Route path="/campaigns" element={<Layout><Campaigns /></Layout>} />
-              <Route path="/campaign/:id" element={<Layout><CampaignEditor /></Layout>} />
-              <Route path="/modern-campaign/:id" element={<ModernCampaignEditor />} />
-              <Route path="/quick-campaign" element={<Layout><QuickCampaign /></Layout>} />
-              <Route path="/newsletter" element={<Layout><Newsletter /></Layout>} />
-              <Route path="/gamification" element={<Layout><Gamification /></Layout>} />
-              <Route path="/contacts" element={<Layout><Contacts /></Layout>} />
-              <Route path="/social" element={<Layout><Social /></Layout>} />
-              <Route path="/data" element={<Layout><Data /></Layout>} />
-              <Route path="/statistics" element={<Layout><Statistics /></Layout>} />
-              <Route path="/studies" element={<Layout><Studies /></Layout>} />
-              <Route path="/account" element={<Layout><Account /></Layout>} />
-            </Routes>
-            <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
-          </div>
-        </Router>
-      </AppProvider>
-    </ThemeProvider>
+    <AppProvider>
+      <Router>
+        <div className="min-h-screen bg-gray-50">
+          <Routes>
+            <Route path="/" element={<Layout><Dashboard /></Layout>} />
+            <Route path="/campaigns" element={<Layout><Campaigns /></Layout>} />
+            <Route path="/campaign/:id" element={<Layout><CampaignEditor /></Layout>} />
+            <Route path="/modern-campaign/:id" element={<ModernCampaignEditor />} />
+            <Route path="/quick-campaign" element={<Layout><QuickCampaign /></Layout>} />
+            <Route path="/newsletter" element={<Layout><Newsletter /></Layout>} />
+            <Route path="/gamification" element={<Layout><Gamification /></Layout>} />
+            <Route path="/contacts" element={<Layout><Contacts /></Layout>} />
+            <Route path="/social" element={<Layout><Social /></Layout>} />
+            <Route path="/data" element={<Layout><Data /></Layout>} />
+            <Route path="/statistics" element={<Layout><Statistics /></Layout>} />
+            <Route path="/studies" element={<Layout><Studies /></Layout>} />
+          <Route path="/account" element={<Layout><Account /></Layout>} />
+        </Routes>
+        <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
+        </div>
+      </Router>
+    </AppProvider>
   );
 }
 

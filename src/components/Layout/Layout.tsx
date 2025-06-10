@@ -1,7 +1,6 @@
 
 import React, { useEffect } from 'react';
 import Sidebar from '../Sidebar/Sidebar';
-import { ThemeToggle } from '../ThemeToggle';
 import { useAppContext } from '../../context/AppContext';
 import { Menu } from 'lucide-react';
 import logo from '@/assets/logo.png';
@@ -36,7 +35,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   }, [sidebarCollapsed]);
 
   return (
-    <div className="flex min-h-screen bg-[#ebf4f7] dark:bg-gray-900 overflow-hidden">
+    <div className="flex min-h-screen bg-[#ebf4f7] overflow-hidden">
       <Sidebar />
       {/* Overlay mobile/tablette pour cliquer et fermer la sidebar */}
       <div
@@ -44,18 +43,14 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         className={`md:hidden fixed inset-0 bg-black/30 transition-opacity z-30 ${sidebarCollapsed ? 'pointer-events-none opacity-0' : 'opacity-100'}`}
       />
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="md:hidden flex items-center justify-between bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-4">
-          <button onClick={toggleSidebar} className="text-gray-500 dark:text-gray-400">
+        <header className="md:hidden flex items-center justify-between bg-white border-b border-gray-200 p-4">
+          <button onClick={toggleSidebar} className="text-gray-500">
             <Menu className="w-6 h-6" />
           </button>
           <img src={logo} alt="Leadya Logo" className="h-8 w-auto" />
-          <ThemeToggle />
         </header>
         <main className="flex-1 overflow-y-auto w-full">
           <div className="p-8 w-full">
-            <div className="hidden md:flex justify-end mb-4">
-              <ThemeToggle />
-            </div>
             {children}
           </div>
         </main>

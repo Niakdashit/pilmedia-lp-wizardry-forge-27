@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Users, Target, BarChart, Calendar, TrendingUp, TrendingDown } from 'lucide-react';
+import { Users, Target, BarChart, Calendar } from 'lucide-react';
 import { DashboardStat } from './types';
 
 const StatsGrid: React.FC = () => {
@@ -9,76 +9,42 @@ const StatsGrid: React.FC = () => {
       name: 'Campagnes actives',
       value: '5',
       change: '+2 cette semaine',
-      icon: <Target className="w-6 h-6 text-primary-600 dark:text-primary-400" />,
-      trend: 'up'
+      icon: <Target className="w-6 h-6 text-[#841b60]" />
     },
     {
       name: 'Participations',
-      value: '1,254',
+      value: '1254',
       change: '+18% ce mois',
-      icon: <Users className="w-6 h-6 text-accent-600 dark:text-accent-400" />,
-      trend: 'up'
+      icon: <Users className="w-6 h-6 text-[#841b60]" />
     },
     {
       name: 'Taux de conversion',
       value: '42%',
       change: '+5% ce mois',
-      icon: <BarChart className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />,
-      trend: 'up'
+      icon: <BarChart className="w-6 h-6 text-[#841b60]" />
     },
     {
       name: 'Prochaine campagne',
       value: '2j',
       change: '10 avril',
-      icon: <Calendar className="w-6 h-6 text-orange-600 dark:text-orange-400" />,
-      trend: 'neutral'
+      icon: <Calendar className="w-6 h-6 text-[#841b60]" />
     }
   ];
 
-  const getTrendIcon = (trend: string = 'neutral') => {
-    switch (trend) {
-      case 'up':
-        return <TrendingUp className="w-4 h-4 text-emerald-500" />;
-      case 'down':
-        return <TrendingDown className="w-4 h-4 text-red-500" />;
-      default:
-        return null;
-    }
-  };
-
-  const getTrendColor = (trend: string = 'neutral') => {
-    switch (trend) {
-      case 'up':
-        return 'text-emerald-600 dark:text-emerald-400';
-      case 'down':
-        return 'text-red-600 dark:text-red-400';
-      default:
-        return 'text-surface-600 dark:text-surface-400';
-    }
-  };
-
   return (
-    <div className="stats-grid">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-6">
       {stats.map((stat, statIndex) => (
-        <div key={statIndex} className="stat-card group">
-          <div className="flex items-start justify-between mb-4">
-            <div className="p-3 rounded-2xl bg-surface-50 dark:bg-surface-700/50 group-hover:scale-110 transition-transform duration-200">
-              {stat.icon}
+        <div key={statIndex} className="bg-white p-6 rounded-2xl shadow-md hover:shadow-lg transition-shadow duration-300">
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="text-gray-700 font-semibold">{stat.name}</p>
+              <div className="mt-2 flex items-baseline space-x-2">
+                <h3 className="text-3xl font-bold text-gray-900">{stat.value}</h3>
+                <p className="text-green-600 text-sm">{stat.change}</p>
+              </div>
             </div>
-            {getTrendIcon(stat.trend)}
-          </div>
-          
-          <div className="space-y-2">
-            <p className="text-sm font-medium text-surface-600 dark:text-surface-400">
-              {stat.name}
-            </p>
-            <div className="flex items-baseline gap-2">
-              <h3 className="text-2xl font-semibold text-surface-900 dark:text-surface-50">
-                {stat.value}
-              </h3>
-              <p className={`text-sm font-medium ${getTrendColor(stat.trend)}`}>
-                {stat.change}
-              </p>
+            <div className="bg-[#f8e9f0] rounded-full p-3">
+              {stat.icon}
             </div>
           </div>
         </div>

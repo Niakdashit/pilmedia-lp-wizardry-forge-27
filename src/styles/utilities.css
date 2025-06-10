@@ -1,110 +1,67 @@
 
 /* Status badges */
 .status-badge {
-  @apply px-3 py-1.5 rounded-full text-sm font-medium
-         bg-white/80 dark:bg-surface-800/80 backdrop-blur-sm 
-         border border-surface-200 dark:border-surface-700
-         shadow-card;
+  @apply px-4 py-1.5 rounded-full text-sm font-semibold
+         bg-white/80 backdrop-blur-sm border border-primary-200;
   font-family: 'Inter', sans-serif;
 }
 
-.status-badge.active {
-  @apply bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300
-         border-emerald-200 dark:border-emerald-800;
+/* Section headers */
+.section-title {
+  @apply text-4xl font-bold tracking-tight mb-8 bg-brand-gradient bg-clip-text text-transparent;
+  font-family: 'Inter', sans-serif;
 }
 
-.status-badge.inactive {
-  @apply bg-surface-100 dark:bg-surface-800 text-surface-600 dark:text-surface-400
-         border-surface-200 dark:border-surface-700;
+.section-subtitle {
+  @apply text-xl text-primary-600 mb-12;
+  font-family: 'Inter', sans-serif;
+  font-weight: 600;
 }
 
-.status-badge.draft {
-  @apply bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-300
-         border-orange-200 dark:border-orange-800;
-}
-
-/* Card layouts with better spacing */
+/* Card layouts */
 .card-grid {
   @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6;
 }
 
-/* Enhanced slider styles */
+/* Styles pour le slider de segments */
 .slider {
   -webkit-appearance: none;
   appearance: none;
-  background: linear-gradient(135deg, #f4edff 0%, #a975ff 50%, #9146ff 100%);
+  background: linear-gradient(135deg, #d9ceff 0%, #a078ff 50%, #7c2dff 100%);
   outline: none;
-  border-radius: 12px;
-  height: 8px;
-}
-
-.dark .slider {
-  background: linear-gradient(135deg, #371474 0%, #6628d4 50%, #9146ff 100%);
+  border-radius: 8px;
 }
 
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #9146ff 0%, #a975ff 100%);
+  background: linear-gradient(135deg, #2f0875 0%, #5d15d0 100%);
   cursor: pointer;
-  box-shadow: 0 4px 8px rgba(145, 70, 255, 0.3);
-  border: 2px solid white;
-}
-
-.dark .slider::-webkit-slider-thumb {
-  background: linear-gradient(135deg, #a975ff 0%, #c4a1ff 100%);
-  box-shadow: 0 4px 8px rgba(169, 117, 255, 0.4);
+  box-shadow: 0 2px 4px rgba(47, 8, 117, 0.3);
 }
 
 .slider::-moz-range-thumb {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #9146ff 0%, #a975ff 100%);
+  background: linear-gradient(135deg, #2f0875 0%, #5d15d0 100%);
   cursor: pointer;
-  border: 2px solid white;
-  box-shadow: 0 4px 8px rgba(145, 70, 255, 0.3);
+  border: none;
+  box-shadow: 0 2px 4px rgba(47, 8, 117, 0.3);
 }
 
-.dark .slider::-moz-range-thumb {
-  background: linear-gradient(135deg, #a975ff 0%, #c4a1ff 100%);
-  box-shadow: 0 4px 8px rgba(169, 117, 255, 0.4);
+.slider::-webkit-slider-track {
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(135deg, #d9ceff 0%, #a078ff 50%, #7c2dff 100%);
 }
 
-/* Improved focus styles */
-.focus-ring {
-  @apply focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-surface-900;
-}
-
-/* Loading animations */
-@keyframes pulse-soft {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.7;
-  }
-}
-
-.animate-pulse-soft {
-  animation: pulse-soft 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-}
-
-/* Backdrop blur utilities */
-.backdrop-blur-light {
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-}
-
-.backdrop-blur-medium {
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-}
-
-.backdrop-blur-heavy {
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+.slider::-moz-range-track {
+  height: 8px;
+  border-radius: 4px;
+  background: linear-gradient(135deg, #d9ceff 0%, #a078ff 50%, #7c2dff 100%);
+  border: none;
 }
