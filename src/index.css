@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -5,8 +6,8 @@
 @layer base {
   :root {
     color-scheme: light;
-    --glass-border: rgba(255, 255, 255, 0.08);
-    --glass-bg: rgba(255, 255, 255, 0.8);
+    --glass-border: rgba(236, 72, 153, 0.08);
+    --glass-bg: rgba(253, 242, 248, 0.8);
   }
 
   html {
@@ -28,17 +29,17 @@
   }
 
   ::selection {
-    @apply bg-accent-100 text-accent-950;
+    @apply bg-primary-200 text-primary-950;
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply px-6 py-3 bg-accent-600 text-white font-semibold rounded-2xl 
-           hover:bg-accent-700 active:bg-accent-800
+    @apply px-6 py-3 bg-primary-600 text-white font-semibold rounded-2xl 
+           hover:bg-primary-700 active:bg-primary-800
            disabled:opacity-50 disabled:cursor-not-allowed
            transition-all duration-200 ease-out
-           focus:outline-none focus:ring-2 focus:ring-accent-600/50;
+           focus:outline-none focus:ring-2 focus:ring-primary-600/50;
     font-family: 'Inter', sans-serif;
   }
   
@@ -64,7 +65,7 @@
     @apply w-full px-6 py-3 bg-white
            border border-primary-200 rounded-2xl
            placeholder:text-primary-400
-           focus:outline-none focus:ring-2 focus:ring-accent-600/50
+           focus:outline-none focus:ring-2 focus:ring-primary-600/50
            disabled:opacity-50 disabled:cursor-not-allowed
            transition-all duration-200 ease-out;
     font-family: 'Inter', sans-serif;
@@ -145,7 +146,7 @@ textarea {
   @apply px-6 py-3 bg-white
          border border-primary-200 rounded-2xl
          placeholder:text-primary-400
-         focus:outline-none focus:ring-2 focus:ring-accent-600/50
+         focus:outline-none focus:ring-2 focus:ring-primary-600/50
          disabled:opacity-50 disabled:cursor-not-allowed
          transition-all duration-200 ease-out;
   font-family: 'Inter', sans-serif;
@@ -180,7 +181,7 @@ textarea {
 .slider {
   -webkit-appearance: none;
   appearance: none;
-  background: #e5e7eb;
+  background: #fbcfe8;
   outline: none;
   border-radius: 8px;
 }
@@ -191,7 +192,7 @@ textarea {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: #841b60;
+  background: #be185d;
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
@@ -200,7 +201,7 @@ textarea {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: #841b60;
+  background: #be185d;
   cursor: pointer;
   border: none;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -209,12 +210,12 @@ textarea {
 .slider::-webkit-slider-track {
   height: 8px;
   border-radius: 4px;
-  background: #e5e7eb;
+  background: #fbcfe8;
 }
 
 .slider::-moz-range-track {
   height: 8px;
   border-radius: 4px;
-  background: #e5e7eb;
+  background: #fbcfe8;
   border: none;
 }
