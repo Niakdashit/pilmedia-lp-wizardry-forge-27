@@ -6,8 +6,8 @@
 @layer base {
   :root {
     color-scheme: light;
-    --glass-border: rgba(139, 69, 19, 0.08);
-    --glass-bg: rgba(245, 222, 179, 0.8);
+    --glass-border: rgba(47, 8, 117, 0.08);
+    --glass-bg: rgba(217, 206, 255, 0.8);
   }
 
   html {
@@ -17,7 +17,7 @@
   }
   
   body {
-    @apply bg-primary-50 text-primary-950 antialiased;
+    @apply bg-gradient-to-br from-primary-50 via-accent-50 to-brand-100 text-primary-950 antialiased min-h-screen;
     font-family: 'Inter', sans-serif;
     font-weight: 400;
   }
