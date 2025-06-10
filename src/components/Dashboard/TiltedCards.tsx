@@ -10,11 +10,11 @@ const TiltedCards: React.FC = () => {
         {/* Carte Mes campagnes - inclinée à gauche */}
         <Link 
           to="/campaigns" 
-          className="group relative w-full transform -rotate-2 hover:-rotate-1 transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+          className="group relative w-full h-40 transform -rotate-2 hover:-rotate-1 transition-all duration-300 hover:scale-105 hover:shadow-2xl"
         >
-          <div className="w-full bg-gradient-to-br from-pink-50 to-rose-100 rounded-3xl p-8 shadow-lg border border-pink-100/50 group-hover:shadow-pink-200/50 group-hover:border-pink-200/70 transition-all duration-300">
+          <div className="w-full h-full bg-gradient-to-br from-pink-50 to-rose-100 rounded-2xl p-6 shadow-lg border border-pink-100/50 group-hover:shadow-pink-200/50 group-hover:border-pink-200/70 transition-all duration-300">
             {/* Glow effect au hover */}
-            <div className="absolute inset-0 bg-gradient-to-br from-pink-200/20 to-rose-200/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-pink-200/20 to-rose-200/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             
             <div className="relative z-10 h-full flex flex-col justify-between">
               <div className="flex items-start justify-between">
@@ -24,8 +24,8 @@ const TiltedCards: React.FC = () => {
                 <div className="text-xs text-pink-600/70 font-medium">Accès rapide</div>
               </div>
               
-              <div className="mt-6">
-                <h3 className="text-2xl font-bold text-gray-800 mb-2 group-hover:text-[#841b60] transition-colors duration-300">
+              <div className="mt-4">
+                <h3 className="text-xl font-bold text-gray-800 mb-2 group-hover:text-[#841b60] transition-colors duration-300">
                   Mes campagnes
                 </h3>
                 <p className="text-sm text-gray-600">
@@ -39,11 +39,11 @@ const TiltedCards: React.FC = () => {
         {/* Carte Modèles - inclinée à droite */}
         <Link 
           to="/templates" 
-          className="group relative w-full transform rotate-2 hover:rotate-1 transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+          className="group relative w-full h-40 transform rotate-2 hover:rotate-1 transition-all duration-300 hover:scale-105 hover:shadow-2xl"
         >
-          <div className="w-full bg-gradient-to-br from-blue-50 to-cyan-100 rounded-3xl p-8 shadow-lg border border-blue-100/50 group-hover:shadow-blue-200/50 group-hover:border-blue-200/70 transition-all duration-300">
+          <div className="w-full h-full bg-gradient-to-br from-blue-50 to-cyan-100 rounded-2xl p-6 shadow-lg border border-blue-100/50 group-hover:shadow-blue-200/50 group-hover:border-blue-200/70 transition-all duration-300">
             {/* Glow effect au hover */}
-            <div className="absolute inset-0 bg-gradient-to-br from-blue-200/20 to-cyan-200/20 rounded-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-200/20 to-cyan-200/20 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
             
             <div className="relative z-10 h-full flex flex-col justify-between">
               <div className="flex items-start justify-between">
@@ -53,8 +53,8 @@ const TiltedCards: React.FC = () => {
                 <div className="text-xs text-blue-600/70 font-medium">Inspiration</div>
               </div>
               
-              <div className="mt-6">
-                <h3 className="text-2xl font-bold text-gray-800 mb-2 group-hover:text-[#841b60] transition-colors duration-300">
+              <div className="mt-4">
+                <h3 className="text-xl font-bold text-gray-800 mb-2 group-hover:text-[#841b60] transition-colors duration-300">
                   Modèles
                 </h3>
                 <p className="text-sm text-gray-600">
