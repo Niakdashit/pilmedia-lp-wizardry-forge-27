@@ -12,8 +12,19 @@ const Dashboard: React.FC = () => {
       <DashboardHeader />
 
       <div className="px-6 space-y-6">
-        <QuickCreationSection />
-        <TiltedCards />
+        {/* Zone de superposition avec le rectangle de création rapide au-dessus des cartes inclinées */}
+        <div className="relative">
+          {/* Cartes inclinées en arrière-plan */}
+          <div className="pt-20">
+            <TiltedCards />
+          </div>
+          
+          {/* Rectangle de création rapide superposé */}
+          <div className="absolute top-0 left-0 right-0 z-10">
+            <QuickCreationSection />
+          </div>
+        </div>
+        
         <StatsGrid />
         <RecentCampaigns />
       </div>
