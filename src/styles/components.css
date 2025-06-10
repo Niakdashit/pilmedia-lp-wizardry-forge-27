@@ -1,62 +1,126 @@
 
 @layer components {
   .btn-primary {
-    @apply px-6 py-3 bg-brand-gradient text-white font-semibold rounded-2xl 
-           hover:bg-brand-gradient-reverse active:scale-95
+    @apply px-6 py-3 bg-brand-gradient text-white font-medium rounded-2xl 
+           hover:shadow-card-hover active:scale-[0.98]
            disabled:opacity-50 disabled:cursor-not-allowed
            transition-all duration-200 ease-out
-           focus:outline-none focus:ring-2 focus:ring-primary-600/50
-           shadow-lg hover:shadow-xl;
+           focus:outline-none focus:ring-2 focus:ring-primary-500/50
+           shadow-card border-0;
     font-family: 'Inter', sans-serif;
   }
   
   .btn-secondary {
-    @apply px-6 py-3 bg-white dark:bg-gray-800 text-primary-950 dark:text-white 
-           font-semibold rounded-2xl
-           border border-primary-200 dark:border-gray-600 shadow-glass-sm
-           hover:bg-primary-50 dark:hover:bg-gray-700 
-           hover:border-primary-300 dark:hover:border-gray-500 hover:shadow-glass
-           active:bg-primary-100 dark:active:bg-gray-600
+    @apply px-6 py-3 bg-white dark:bg-surface-800 text-surface-900 dark:text-surface-50
+           font-medium rounded-2xl
+           border border-surface-200 dark:border-surface-700 shadow-card
+           hover:bg-surface-50 dark:hover:bg-surface-700 
+           hover:border-surface-300 dark:hover:border-surface-600 hover:shadow-card-hover
+           active:bg-surface-100 dark:active:bg-surface-600 active:scale-[0.98]
            disabled:opacity-50 disabled:cursor-not-allowed
            transition-all duration-200 ease-out
-           focus:outline-none focus:ring-2 focus:ring-primary-950/10 dark:focus:ring-white/10;
+           focus:outline-none focus:ring-2 focus:ring-surface-500/20;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .btn-ghost {
+    @apply px-4 py-2 text-surface-700 dark:text-surface-300 font-medium rounded-xl
+           hover:bg-surface-100 dark:hover:bg-surface-800
+           hover:text-surface-900 dark:hover:text-surface-50
+           active:scale-[0.98] transition-all duration-200 ease-out
+           focus:outline-none focus:ring-2 focus:ring-surface-500/20;
     font-family: 'Inter', sans-serif;
   }
 
   .card {
-    @apply bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-3xl
-           border border-primary-200/50 dark:border-gray-600/50
-           shadow-glass hover:shadow-glass-hover
+    @apply bg-white/90 dark:bg-surface-800/90 backdrop-blur-sm rounded-3xl
+           border border-surface-200/50 dark:border-surface-700/50
+           shadow-card hover:shadow-card-hover
            transition-all duration-300 ease-out;
   }
 
+  .card-interactive {
+    @apply card cursor-pointer
+           hover:scale-[1.02] hover:-translate-y-1
+           active:scale-[0.99] active:translate-y-0;
+  }
+
   .input-field {
-    @apply w-full px-6 py-3 bg-white dark:bg-gray-800
-           border border-primary-200 dark:border-gray-600 rounded-2xl
-           placeholder:text-primary-400 dark:placeholder:text-gray-400
-           text-primary-950 dark:text-white
-           focus:outline-none focus:ring-2 focus:ring-primary-600/50
+    @apply w-full px-4 py-3 bg-white dark:bg-surface-800
+           border border-surface-200 dark:border-surface-700 rounded-xl
+           placeholder:text-surface-400 dark:placeholder:text-surface-500
+           text-surface-900 dark:text-surface-50
+           focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500
            disabled:opacity-50 disabled:cursor-not-allowed
            transition-all duration-200 ease-out;
     font-family: 'Inter', sans-serif;
   }
 
   .glass-panel {
-    @apply bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm
-           border border-primary-200/50 dark:border-gray-600/50 rounded-3xl
+    @apply bg-white/80 dark:bg-surface-800/80 backdrop-blur-lg
+           border border-surface-200/50 dark:border-surface-700/50 rounded-3xl
            shadow-glass;
   }
 
   .nav-link {
-    @apply px-6 py-3 rounded-2xl text-primary-600 dark:text-gray-300
-           hover:text-primary-950 dark:hover:text-white 
-           hover:bg-primary-100/50 dark:hover:bg-gray-700/50
+    @apply px-4 py-2.5 rounded-xl text-surface-600 dark:text-surface-400 font-medium
+           hover:text-surface-900 dark:hover:text-surface-50 
+           hover:bg-surface-100/50 dark:hover:bg-surface-700/50
            transition-all duration-200 ease-out;
     font-family: 'Inter', sans-serif;
-    font-weight: 600;
   }
 
   .nav-link.active {
-    @apply text-white bg-brand-gradient;
+    @apply text-white bg-brand-gradient shadow-glass;
+  }
+
+  .section-header {
+    @apply mb-8;
+  }
+
+  .section-title {
+    @apply text-3xl font-semibold tracking-tight mb-3 
+           bg-brand-gradient bg-clip-text text-transparent;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .section-subtitle {
+    @apply text-lg text-surface-600 dark:text-surface-400 leading-relaxed;
+    font-family: 'Inter', sans-serif;
+  }
+
+  .stats-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6;
+  }
+
+  .stat-card {
+    @apply card p-6;
+  }
+
+  .game-type-grid {
+    @apply grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-4;
+  }
+
+  .game-type-item {
+    @apply flex flex-col items-center p-4 rounded-2xl
+           bg-white/60 dark:bg-surface-800/60 backdrop-blur-sm
+           border border-surface-200/50 dark:border-surface-700/50
+           hover:bg-white dark:hover:bg-surface-800
+           hover:shadow-card-hover hover:scale-105
+           transition-all duration-300 ease-out cursor-pointer
+           group;
+  }
+
+  .game-type-icon {
+    @apply w-12 h-12 rounded-full bg-primary-100 dark:bg-primary-900/50
+           flex items-center justify-center mb-3
+           group-hover:bg-primary-200 dark:group-hover:bg-primary-800
+           transition-colors duration-200;
+  }
+
+  .game-type-label {
+    @apply text-sm font-medium text-surface-700 dark:text-surface-300 text-center
+           group-hover:text-surface-900 dark:group-hover:text-surface-50
+           transition-colors duration-200;
   }
 }
