@@ -10,6 +10,12 @@
     --glass-bg: rgba(217, 206, 255, 0.8);
   }
 
+  .dark {
+    color-scheme: dark;
+    --glass-border: rgba(164, 120, 255, 0.2);
+    --glass-bg: rgba(47, 8, 117, 0.3);
+  }
+
   html {
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
     -webkit-tap-highlight-color: transparent;
@@ -17,19 +23,21 @@
   }
   
   body {
-    @apply bg-gradient-to-br from-primary-50 via-accent-50 to-brand-100 text-primary-950 antialiased min-h-screen;
+    @apply bg-gradient-to-br from-primary-50 via-accent-50 to-brand-100 text-primary-950 
+           dark:from-gray-900 dark:via-gray-800 dark:to-primary-950 dark:text-white 
+           antialiased min-h-screen;
     font-family: 'Inter', sans-serif;
     font-weight: 400;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-bold tracking-tight text-primary-950;
+    @apply font-bold tracking-tight text-primary-950 dark:text-white;
     font-family: 'Inter', sans-serif;
     font-weight: 700;
   }
 
   ::selection {
-    @apply bg-primary-200 text-primary-950;
+    @apply bg-primary-200 text-primary-950 dark:bg-primary-800 dark:text-white;
   }
 }
 
@@ -43,7 +51,7 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-primary-200 rounded-full
-         hover:bg-primary-300
+  @apply bg-primary-200 dark:bg-gray-600 rounded-full
+         hover:bg-primary-300 dark:hover:bg-gray-500
          transition-colors duration-200;
 }

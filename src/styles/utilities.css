@@ -2,7 +2,8 @@
 /* Status badges */
 .status-badge {
   @apply px-4 py-1.5 rounded-full text-sm font-semibold
-         bg-white/80 backdrop-blur-sm border border-primary-200;
+         bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm 
+         border border-primary-200 dark:border-gray-600;
   font-family: 'Inter', sans-serif;
 }
 
@@ -13,7 +14,7 @@
 }
 
 .section-subtitle {
-  @apply text-xl text-primary-600 mb-12;
+  @apply text-xl text-primary-600 dark:text-gray-300 mb-12;
   font-family: 'Inter', sans-serif;
   font-weight: 600;
 }
@@ -32,6 +33,10 @@
   border-radius: 8px;
 }
 
+.dark .slider {
+  background: linear-gradient(135deg, #2f0875 0%, #5d15d0 50%, #7c2dff 100%);
+}
+
 .slider::-webkit-slider-thumb {
   -webkit-appearance: none;
   appearance: none;
@@ -41,6 +46,11 @@
   background: linear-gradient(135deg, #2f0875 0%, #5d15d0 100%);
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(47, 8, 117, 0.3);
+}
+
+.dark .slider::-webkit-slider-thumb {
+  background: linear-gradient(135deg, #a078ff 0%, #d9ceff 100%);
+  box-shadow: 0 2px 4px rgba(160, 120, 255, 0.3);
 }
 
 .slider::-moz-range-thumb {
@@ -53,10 +63,19 @@
   box-shadow: 0 2px 4px rgba(47, 8, 117, 0.3);
 }
 
+.dark .slider::-moz-range-thumb {
+  background: linear-gradient(135deg, #a078ff 0%, #d9ceff 100%);
+  box-shadow: 0 2px 4px rgba(160, 120, 255, 0.3);
+}
+
 .slider::-webkit-slider-track {
   height: 8px;
   border-radius: 4px;
   background: linear-gradient(135deg, #d9ceff 0%, #a078ff 50%, #7c2dff 100%);
+}
+
+.dark .slider::-webkit-slider-track {
+  background: linear-gradient(135deg, #2f0875 0%, #5d15d0 50%, #7c2dff 100%);
 }
 
 .slider::-moz-range-track {
@@ -64,4 +83,8 @@
   border-radius: 4px;
   background: linear-gradient(135deg, #d9ceff 0%, #a078ff 50%, #7c2dff 100%);
   border: none;
+}
+
+.dark .slider::-moz-range-track {
+  background: linear-gradient(135deg, #2f0875 0%, #5d15d0 50%, #7c2dff 100%);
 }
