@@ -35,7 +35,7 @@ const StatsGrid: React.FC = () => {
     }
   ];
 
-  const getTrendIcon = (trend: string) => {
+  const getTrendIcon = (trend: string = 'neutral') => {
     switch (trend) {
       case 'up':
         return <TrendingUp className="w-4 h-4 text-emerald-500" />;
@@ -46,7 +46,7 @@ const StatsGrid: React.FC = () => {
     }
   };
 
-  const getTrendColor = (trend: string) => {
+  const getTrendColor = (trend: string = 'neutral') => {
     switch (trend) {
       case 'up':
         return 'text-emerald-600 dark:text-emerald-400';
