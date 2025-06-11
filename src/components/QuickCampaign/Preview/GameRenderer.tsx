@@ -4,6 +4,7 @@ import { Jackpot } from '../../GameTypes';
 import ScratchPreview from '../../GameTypes/ScratchPreview';
 import DicePreview from '../../GameTypes/DicePreview';
 import FormPreview from '../../GameTypes/FormPreview';
+import { applyBrandStyleToWheel, BrandColors } from '../../../utils/BrandStyleAnalyzer';
 
 interface GameRendererProps {
   gameType: string;
@@ -40,6 +41,7 @@ const GameRenderer: React.FC<GameRendererProps> = ({
   gamePosition = 'center',
   previewDevice = 'desktop'
 }) => {
+  // Charge dynamiquement la police de marque si présente
   React.useEffect(() => {
     if (fontUrl) {
       const link = document.createElement('link');
@@ -52,36 +54,14 @@ const GameRenderer: React.FC<GameRendererProps> = ({
     }
   }, [fontUrl]);
 
-  // Synchroniser les couleurs de la roue avec les couleurs personnalisées
-  const synchronizedCampaign = {
-    ...mockCampaign,
-    config: {
-      ...mockCampaign.config,
-      roulette: {
-        ...mockCampaign.config?.roulette,
-        borderColor: customColors.primary,
-        borderOutlineColor: customColors.accent || customColors.secondary,
-        segmentColor1: customColors.primary,
-        segmentColor2: customColors.secondary,
-        segments: mockCampaign.config?.roulette?.segments?.map((segment: any, index: number) => ({
-          ...segment,
-          color: index % 2 === 0 ? customColors.primary : customColors.secondary
-        })) || []
-      }
-    },
-    design: {
-      ...mockCampaign.design,
-      customColors: customColors,
-      centerLogo: logoUrl || mockCampaign.design?.centerLogo
-    },
-    buttonConfig: {
-      ...mockCampaign.buttonConfig,
-      color: customColors.primary,
-      borderColor: customColors.primary
-    }
+  // Applique la charte de marque à la config de la roue
+  const synchronizedCampaign = applyBrandStyleToWheel(mockCampaign, customColors as BrandColors);
+  synchronizedCampaign.design = {
+    ...synchronizedCampaign.design,
+    centerLogo: logoUrl || synchronizedCampaign.design?.centerLogo,
   };
 
-  // Style universel pour tout centrer verticalement et horizontalement
+  // Centrage universel de la mécanique de jeu
   const centeredContainerStyle: React.CSSProperties = {
     display: 'flex',
     alignItems: 'center',

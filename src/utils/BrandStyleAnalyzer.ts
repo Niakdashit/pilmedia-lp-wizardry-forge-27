@@ -33,3 +33,43 @@ export async function analyzeBrandStyle(siteUrl: string): Promise<BrandStyle> {
     darkColor: palette?.darkVibrant?.background,
   };
 }
+
+export interface BrandColors {
+  primary: string;
+  secondary: string;
+  accent?: string;
+}
+
+// Central helper to apply a brand color scheme to a wheel configuration
+export function applyBrandStyleToWheel(campaign: any, colors: BrandColors) {
+  const updatedSegments = (campaign?.config?.roulette?.segments || []).map(
+    (segment: any, index: number) => ({
+      ...segment,
+      color: segment.color || (index % 2 === 0 ? colors.primary : colors.secondary)
+    })
+  );
+
+  return {
+    ...campaign,
+    config: {
+      ...campaign.config,
+      roulette: {
+        ...(campaign.config?.roulette || {}),
+        borderColor: colors.primary,
+        borderOutlineColor: colors.accent || colors.secondary || colors.primary,
+        segmentColor1: colors.primary,
+        segmentColor2: colors.secondary,
+        segments: updatedSegments
+      }
+    },
+    design: {
+      ...(campaign.design || {}),
+      customColors: colors
+    },
+    buttonConfig: {
+      ...(campaign.buttonConfig || {}),
+      color: colors.accent || colors.primary,
+      borderColor: colors.primary
+    }
+  };
+}
