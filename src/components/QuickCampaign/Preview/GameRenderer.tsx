@@ -1,3 +1,4 @@
+
 import React from 'react';
 import WheelPreview from '../../GameTypes/WheelPreview';
 import { Jackpot } from '../../GameTypes';
@@ -296,5 +297,3 @@ const GameRenderer: React.FC<GameRendererProps> = ({
 };
 
 export default GameRenderer;
-
-</edits_to_apply>
