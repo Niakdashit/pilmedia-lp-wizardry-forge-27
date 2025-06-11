@@ -1,3 +1,4 @@
+
 import React from 'react';
 import GameRenderer from './GameRenderer';
 import { useGamePositionCalculator } from './GamePositionCalculator';
@@ -41,7 +42,16 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
     gamePosition,
     shouldCropWheel
   });
-  const gameContainerStyle = getPositionStyles();
+  
+  // Override positioning for universal centering
+  const centeredGameContainerStyle = {
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative' as const
+  };
   
   return (
     <div 
@@ -59,14 +69,14 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
         />
       )}
 
-      {/* Conteneur pour le jeu avec positionnement dynamique */}
-      <div className="relative z-20 w-full h-full flex items-center justify-center my-0 py-0">
+      {/* Conteneur pour le jeu avec centrage universel */}
+      <div className="relative z-20 w-full h-full">
         <GameRenderer 
           campaign={campaign} 
           gameSize={gameSize} 
           gamePosition={gamePosition} 
           previewDevice={previewDevice} 
-          gameContainerStyle={gameContainerStyle} 
+          gameContainerStyle={centeredGameContainerStyle} 
           buttonLabel={buttonLabel} 
           buttonColor={buttonColor} 
           gameBackgroundImage={gameBackgroundImage} 
