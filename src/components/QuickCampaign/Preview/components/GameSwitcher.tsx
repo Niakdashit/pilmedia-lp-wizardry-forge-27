@@ -24,9 +24,9 @@ interface GameSwitcherProps {
     slotBorderWidth: number;
     slotBackgroundColor: string;
   };
-  gameSize: string;
-  gamePosition: string;
-  previewDevice: string;
+  gameSize: 'small' | 'medium' | 'large' | 'xlarge';
+  gamePosition: 'top' | 'center' | 'bottom' | 'left' | 'right';
+  previewDevice: 'desktop' | 'tablet' | 'mobile';
   containerStyle: React.CSSProperties;
   wrapperStyle: React.CSSProperties;
   getPositionStyles: () => React.CSSProperties;

@@ -1,6 +1,7 @@
 
 import React from 'react';
 import { analyzeBrandStyle, extractColorsFromLogo, generateBrandThemeFromColors } from '../../../../utils/BrandStyleAnalyzer';
+import { getExactBrandColors } from '../utils/exactColorExtractor';
 
 interface CustomColors {
   primary: string;
@@ -67,9 +68,19 @@ export const useBrandColorExtraction = (
     extractLogoColors();
   }, [logoUrl]);
 
-  // Calculer les couleurs finales avec priorité stricte aux couleurs du site
+  // Calculer les couleurs finales avec priorité absolue aux couleurs exactes
   React.useEffect(() => {
-    // Priorité absolue: Couleurs extraites du site web
+    // Priorité ABSOLUE: Couleurs exactes prédéfinies pour les marques connues
+    if (siteUrl) {
+      const exactColors = getExactBrandColors(siteUrl);
+      if (exactColors) {
+        console.log('Application des couleurs exactes prédéfinies:', exactColors);
+        setFinalColors(exactColors);
+        return;
+      }
+    }
+
+    // Priorité 2: Couleurs extraites du site web
     if (siteColors.length >= 1 && brandStyleExtracted) {
       console.log('Application stricte des couleurs du site:', siteColors);
       
@@ -85,14 +96,14 @@ export const useBrandColorExtraction = (
       return;
     }
 
-    // Priorité 2: Couleurs personnalisées non-génériques
+    // Priorité 3: Couleurs personnalisées non-génériques
     if (customColors.primary && !isGenericColor(customColors.primary)) {
       console.log('Utilisation des couleurs personnalisées:', customColors);
       setFinalColors(customColors);
       return;
     }
 
-    // Priorité 3: Couleurs du logo
+    // Priorité 4: Couleurs du logo
     if (logoColors.length >= 2) {
       console.log('Génération du thème à partir des couleurs du logo:', logoColors);
       const palette = generateBrandThemeFromColors(logoColors);
@@ -109,7 +120,7 @@ export const useBrandColorExtraction = (
     // Fallback final
     console.log('Utilisation des couleurs par défaut:', customColors);
     setFinalColors(customColors);
-  }, [customColors, siteColors, logoColors, brandStyleExtracted]);
+  }, [customColors, siteColors, logoColors, brandStyleExtracted, siteUrl]);
 
   return {
     finalColors,
