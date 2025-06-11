@@ -1,5 +1,5 @@
-import React, { useState, useRef } from 'react';
-import { ArrowLeft, Upload, Eye, Settings, CheckCircle } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { ArrowLeft, Upload, Eye, Settings, CheckCircle, AlertCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
 import { useCampaigns } from '../../hooks/useCampaigns';
@@ -7,6 +7,8 @@ import CampaignPreviewModal from './CampaignPreviewModal';
 import ColorCustomizer from './ColorCustomizer';
 import JackpotPreview from './Preview/JackpotPreview';
 import GameRenderer from './Preview/GameRenderer';
+import { analyzeBrandStyle } from '../../utils/BrandStyleAnalyzer';
+
 const Step3VisualStyle: React.FC = () => {
   const navigate = useNavigate();
   const {
@@ -31,12 +33,46 @@ const Step3VisualStyle: React.FC = () => {
     setCurrentStep,
     reset
   } = useQuickCampaignStore();
+  
   const [showFinalStep, setShowFinalStep] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [creationSuccess, setCreationSuccess] = useState(false);
+  const [siteAnalysisStatus, setSiteAnalysisStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [siteAnalysisError, setSiteAnalysisError] = useState<string>('');
+  
   const previewCampaign = generatePreviewCampaign();
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Test de l'analyse du site au chargement du composant
+  useEffect(() => {
+    const testSiteAnalysis = async () => {
+      if (brandSiteUrl && brandSiteUrl.trim() !== '') {
+        setSiteAnalysisStatus('loading');
+        setSiteAnalysisError('');
+        
+        try {
+          console.log('Test d\'analyse du site:', brandSiteUrl);
+          const brandStyle = await analyzeBrandStyle(brandSiteUrl);
+          console.log('Résultat de l\'analyse:', brandStyle);
+          
+          if (brandStyle.primaryColor) {
+            setSiteAnalysisStatus('success');
+          } else {
+            setSiteAnalysisStatus('error');
+            setSiteAnalysisError('Aucune couleur trouvée sur ce site');
+          }
+        } catch (error) {
+          console.error('Erreur lors de l\'analyse du site:', error);
+          setSiteAnalysisStatus('error');
+          setSiteAnalysisError('Impossible d\'analyser ce site. Vérifiez l\'URL ou réessayez plus tard.');
+        }
+      }
+    };
+
+    testSiteAnalysis();
+  }, [brandSiteUrl]);
+
   const handleFileUpload = (files: FileList | null) => {
     if (files && files[0]) {
       setBackgroundImage(files[0]);
@@ -171,6 +207,7 @@ const Step3VisualStyle: React.FC = () => {
       setIsCreating(false);
     }
   };
+
   if (showFinalStep) {
     return <div className="min-h-screen bg-[#ebf4f7] flex items-center justify-center px-6 py-12">
         <div className="max-w-lg w-full text-center">
@@ -216,6 +253,7 @@ const Step3VisualStyle: React.FC = () => {
         <CampaignPreviewModal isOpen={showPreview} onClose={() => setShowPreview(false)} />
       </div>;
   }
+
   return <div className="min-h-screen bg-[#ebf4f7] py-12 px-0">
       <div className="max-w-6xl mx-auto">
         <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-8 md:p-12">
@@ -230,6 +268,36 @@ const Step3VisualStyle: React.FC = () => {
           </div>
 
           <div className="space-y-16">
+            {/* Statut de l'analyse du site */}
+            {brandSiteUrl && (
+              <div className="mb-8">
+                {siteAnalysisStatus === 'loading' && (
+                  <div className="flex items-center space-x-2 text-blue-600 bg-blue-50 p-4 rounded-lg">
+                    <div className="w-4 h-4 border-2 border-blue-600/30 border-t-blue-600 rounded-full animate-spin"></div>
+                    <span>Analyse des couleurs du site en cours...</span>
+                  </div>
+                )}
+                
+                {siteAnalysisStatus === 'success' && (
+                  <div className="flex items-center space-x-2 text-green-600 bg-green-50 p-4 rounded-lg">
+                    <CheckCircle className="w-5 h-5" />
+                    <span>Couleurs du site analysées avec succès ! Elles seront appliquées automatiquement.</span>
+                  </div>
+                )}
+                
+                {siteAnalysisStatus === 'error' && (
+                  <div className="flex items-start space-x-2 text-red-600 bg-red-50 p-4 rounded-lg">
+                    <AlertCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
+                    <div>
+                      <p className="font-medium">Impossible d'analyser le site</p>
+                      <p className="text-sm text-red-500 mt-1">{siteAnalysisError}</p>
+                      <p className="text-sm text-red-500 mt-1">Les couleurs par défaut ou du logo seront utilisées à la place.</p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
             {/* Aperçu dynamique du jeu - Design unifié pour toutes les mécaniques */}
             <div className="flex justify-center">
               <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-3xl shadow-inner border border-gray-200/50 max-w-2xl w-full flex items-center justify-center min-h-[400px] p-8 py-0">
@@ -343,4 +411,5 @@ const Step3VisualStyle: React.FC = () => {
       </div>
     </div>;
 };
+
 export default Step3VisualStyle;
