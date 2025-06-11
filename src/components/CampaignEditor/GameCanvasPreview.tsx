@@ -1,4 +1,3 @@
-
 import React from 'react';
 import GameRenderer from './GameRenderer';
 import { GameSize } from '../configurators/GameSizeSelector';
@@ -36,7 +35,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
     backgroundColor: campaign.design?.background || '#f8fafc'
   };
 
-  // Appliquer l'image de fond sur le conteneur principal si elle existe
+  // Appliquer l'image de fond si elle existe
   if (resolvedBackground) {
     mainContainerStyles.backgroundImage = `url(${resolvedBackground})`;
     mainContainerStyles.backgroundSize = 'cover';
