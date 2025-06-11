@@ -1,7 +1,6 @@
 import React from 'react';
 import { useGamePositionCalculator } from '../../CampaignEditor/GamePositionCalculator';
 import useCenteredStyles from '../../../hooks/useCenteredStyles';
-import { useBrandColorExtraction } from './hooks/useBrandColorExtraction';
 import { synchronizeCampaignWithColors } from './utils/campaignSynchronizer';
 import GameSwitcher from './components/GameSwitcher';
 
@@ -24,7 +23,6 @@ interface GameRendererProps {
   };
   logoUrl?: string;
   fontUrl?: string;
-  siteUrl?: string;
   gameSize?: 'small' | 'medium' | 'large' | 'xlarge';
   gamePosition?: 'top' | 'center' | 'bottom' | 'left' | 'right';
   previewDevice?: 'desktop' | 'tablet' | 'mobile';
@@ -37,13 +35,12 @@ const GameRenderer: React.FC<GameRendererProps> = ({
   jackpotColors,
   logoUrl,
   fontUrl,
-  siteUrl,
   gameSize = 'large',
   gamePosition = 'center',
   previewDevice = 'desktop'
 }) => {
-  // Extraction des couleurs de marque
-  const { finalColors } = useBrandColorExtraction(customColors, siteUrl);
+  // Couleurs directement issues du logo
+  const finalColors = customColors;
 
   // Chargement dynamique de la police
   React.useEffect(() => {
