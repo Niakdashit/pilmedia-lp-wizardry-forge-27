@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useGamePositionCalculator } from '../../CampaignEditor/GamePositionCalculator';
 import useCenteredStyles from '../../../hooks/useCenteredStyles';
@@ -44,7 +43,7 @@ const GameRenderer: React.FC<GameRendererProps> = ({
   previewDevice = 'desktop'
 }) => {
   // Extraction des couleurs de marque
-  const { finalColors } = useBrandColorExtraction(customColors, logoUrl, siteUrl);
+  const { finalColors } = useBrandColorExtraction(customColors, siteUrl);
 
   // Chargement dynamique de la police
   React.useEffect(() => {
