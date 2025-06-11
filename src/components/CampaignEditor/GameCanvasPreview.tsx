@@ -15,7 +15,6 @@ interface GameCanvasPreviewProps {
 const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   campaign,
   gameSize,
-  gamePosition,
   gameBackgroundImage,
   className = '',
   previewDevice = 'desktop'

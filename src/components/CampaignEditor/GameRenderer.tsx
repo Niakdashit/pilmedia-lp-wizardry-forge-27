@@ -23,7 +23,6 @@ interface GameRendererProps {
 const GameRenderer: React.FC<GameRendererProps> = ({
   campaign,
   gameSize,
-  gamePosition,
   previewDevice,
   buttonLabel,
   buttonColor,
