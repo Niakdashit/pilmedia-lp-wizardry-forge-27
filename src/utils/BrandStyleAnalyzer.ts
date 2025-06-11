@@ -9,6 +9,7 @@ export interface BrandStyle {
 }
 
 export async function analyzeBrandStyle(siteUrl: string): Promise<BrandStyle> {
+  // On prend screenshot=false pour éviter de surcharger, palette et meta suffisent
   const apiUrl = `https://api.microlink.io/?url=${encodeURIComponent(siteUrl)}&palette=true&meta=true&screenshot=false`;
   const res = await fetch(apiUrl);
   if (!res.ok) {
@@ -17,20 +18,42 @@ export async function analyzeBrandStyle(siteUrl: string): Promise<BrandStyle> {
   const json = await res.json();
   const data = json.data || {};
   const palette = data.palette || {};
+
+  // Extraction logique de la palette (ordre de priorité optimisé)
   const primaryColor =
     palette?.vibrant?.background ||
     palette?.lightVibrant?.background ||
     palette?.darkVibrant?.background ||
     '#841b60';
 
+  // Idem pour secondary, light et dark
+  const secondaryColor =
+    palette?.lightMuted?.background ||
+    palette?.muted?.background ||
+    palette?.darkMuted?.background ||
+    palette?.darkVibrant?.background ||
+    palette?.lightVibrant?.background ||
+    '#E3F2FD';
+
+  const lightColor =
+    palette?.lightVibrant?.background ||
+    palette?.vibrant?.background ||
+    '#ffffff';
+
+  const darkColor =
+    palette?.darkVibrant?.background ||
+    palette?.darkMuted?.background ||
+    palette?.muted?.background ||
+    primaryColor;
+
   return {
     primaryColor,
     logoUrl: data.logo?.url,
     fontUrl: data.font?.url,
     faviconUrl: data.favicon?.url,
-    secondaryColor: palette?.lightMuted?.background,
-    lightColor: palette?.lightVibrant?.background,
-    darkColor: palette?.darkVibrant?.background,
+    secondaryColor,
+    lightColor,
+    darkColor,
   };
 }
 
