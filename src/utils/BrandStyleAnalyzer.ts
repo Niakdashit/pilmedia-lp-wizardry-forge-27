@@ -13,6 +13,7 @@ export interface BrandPalette {
   primaryColor: string;
   secondaryColor: string;
   accentColor: string;
+  backgroundColor: string;
   textColor: string;
 }
 
@@ -83,37 +84,38 @@ export function getAccessibleTextColor(backgroundColor: string): string {
 export function generateBrandThemeFromMicrolinkPalette(palette: any): BrandPalette {
   console.log('🎨 Palette Microlink reçue:', palette);
 
-  // Extraction des couleurs dans l'ordre de priorité
-  const primaryColor = 
+  const primaryColor =
     palette?.vibrant?.background ||
     palette?.lightVibrant?.background ||
     palette?.darkVibrant?.background ||
-    '#3B82F6'; // Fallback bleu
+    '#841b60';
 
-  const secondaryColor = 
+  const secondaryColor =
     palette?.darkVibrant?.background ||
     palette?.muted?.background ||
-    palette?.darkMuted?.background ||
-    '#1E40AF'; // Fallback bleu foncé
+    primaryColor;
 
-  const accentColor = 
+  const accentColor =
     palette?.lightVibrant?.background ||
     palette?.lightMuted?.background ||
-    palette?.vibrant?.background ||
-    '#60A5FA'; // Fallback bleu clair
+    primaryColor;
 
-  // Génération automatique de la couleur de texte accessible
+  const backgroundColor =
+    palette?.lightMuted?.background ||
+    palette?.muted?.background ||
+    '#ffffff';
+
   const textColor = getAccessibleTextColor(accentColor);
 
   const brandPalette: BrandPalette = {
     primaryColor,
     secondaryColor,
     accentColor,
+    backgroundColor,
     textColor
   };
 
   console.log('🎯 Palette de marque générée:', brandPalette);
-  
   return brandPalette;
 }
 

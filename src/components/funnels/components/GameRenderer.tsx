@@ -7,6 +7,9 @@ import { Jackpot } from '../../GameTypes';
 import ScratchPreview from '../../GameTypes/ScratchPreview';
 import DicePreview from '../../GameTypes/DicePreview';
 import { GAME_SIZES, GameSize } from '../../configurators/GameSizeSelector';
+import { useGamePositionCalculator } from '../../CampaignEditor/GamePositionCalculator';
+import useCenteredStyles from '../../../hooks/useCenteredStyles';
+import { getCampaignBackgroundImage } from '../../../utils/background';
 
 interface GameRendererProps {
   campaign: any;
@@ -29,7 +32,7 @@ const GameRenderer: React.FC<GameRendererProps> = ({
   onGameStart,
   onGameButtonClick
 }) => {
-  const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage;
+  const gameBackgroundImage = getCampaignBackgroundImage(campaign, previewMode);
   const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel || campaign.buttonConfig?.text;
   const buttonColor = campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor || '#841b60';
   const contrastBg = mobileConfig?.contrastBackground || campaign.screens?.[2]?.contrastBackground;
@@ -42,31 +45,12 @@ const GameRenderer: React.FC<GameRendererProps> = ({
   // Détecter si on est dans une modal (pour ajuster l'affichage)
   const isModal = previewMode !== 'desktop' || window.location.pathname.includes('preview');
 
-  // Universal centering container that works in all contexts
-  const getGameContainerStyle = (): React.CSSProperties => {
-    return {
-      width: '100%',
-      height: '100%',
-      minHeight: '400px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      position: 'relative',
-      padding: '20px',
-      boxSizing: 'border-box'
-    };
-  };
-
-  // Game wrapper with consistent styling
-  const gameWrapperStyle: React.CSSProperties = {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'column',
-    gap: '16px',
-    maxWidth: '100%',
-    maxHeight: '100%'
-  };
+  const { containerStyle, wrapperStyle } = useCenteredStyles();
+  const { getPositionStyles } = useGamePositionCalculator({
+    gameSize,
+    gamePosition,
+    shouldCropWheel: false
+  });
 
   const handleGameComplete = (result: 'win' | 'lose') => {
     onGameFinish(result);
@@ -142,8 +126,8 @@ const GameRenderer: React.FC<GameRendererProps> = ({
   };
 
   return (
-    <div style={getGameContainerStyle()} className="rounded-lg overflow-visible relative">
-      <div style={gameWrapperStyle}>
+    <div style={{ ...containerStyle, minHeight: '400px', padding: '20px', boxSizing: 'border-box' }} className="rounded-lg overflow-visible relative">
+      <div style={{ ...wrapperStyle, ...getPositionStyles() }}>
         <ContrastBackground
           enabled={contrastBg?.enabled && contrastBg?.applyToGame}
           config={contrastBg}
