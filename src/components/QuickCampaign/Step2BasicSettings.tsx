@@ -1,8 +1,9 @@
+
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Upload, Calendar, Target } from 'lucide-react';
 import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
-import { generateBrandThemeFromMicrolinkPalette } from '../../utils/BrandStyleAnalyzer';
+import { extractCompletePaletteFromMicrolink } from '../../utils/BrandStyleAnalyzer';
 
 const Step2BasicSettings: React.FC = () => {
   const {
@@ -19,6 +20,7 @@ const Step2BasicSettings: React.FC = () => {
     setLogoUrl,
     setFontUrl,
     setCustomColors,
+    setJackpotColors,
     setCurrentStep
   } = useQuickCampaignStore();
 
@@ -54,9 +56,9 @@ const Step2BasicSettings: React.FC = () => {
     if (!brandSiteUrl) return;
     setIsAnalyzing(true);
     try {
-      console.log('🔍 Analyse du site:', brandSiteUrl);
+      console.log('🔍 Analyse intelligente du site:', brandSiteUrl);
       
-      // Utilisation de l'API Microlink directement pour récupérer la palette complète
+      // Utilisation de l'API Microlink pour récupérer la palette complète
       const apiUrl = `https://api.microlink.io/?url=${encodeURIComponent(brandSiteUrl)}&palette=true&meta=true&screenshot=false`;
       const response = await fetch(apiUrl);
       
@@ -70,18 +72,29 @@ const Step2BasicSettings: React.FC = () => {
       const palette = data.data?.palette;
       
       if (palette) {
-        // Génération de la palette de marque intelligente
-        const brandPalette = generateBrandThemeFromMicrolinkPalette(palette);
+        // Extraction intelligente de la palette complète
+        const completePalette = extractCompletePaletteFromMicrolink(palette);
         
-        // Application des couleurs au store
+        // Application des couleurs au store avec tous les paramètres
         setCustomColors({
-          primary: brandPalette.primaryColor,
-          secondary: brandPalette.secondaryColor,
-          accent: brandPalette.accentColor,
-          textColor: brandPalette.textColor
+          primary: completePalette.primaryColor,
+          secondary: completePalette.secondaryColor,
+          accent: completePalette.accentColor,
+          textColor: completePalette.textColor
+        });
+
+        // Mise à jour intelligente des couleurs jackpot basées sur la palette de marque
+        setJackpotColors({
+          containerBackgroundColor: completePalette.backgroundColor,
+          backgroundColor: completePalette.accentColor + '30', // Transparence pour l'arrière-plan
+          borderColor: completePalette.primaryColor,
+          borderWidth: 3,
+          slotBorderColor: completePalette.secondaryColor,
+          slotBorderWidth: 2,
+          slotBackgroundColor: completePalette.backgroundColor
         });
         
-        console.log('✅ Couleurs appliquées avec succès:', brandPalette);
+        console.log('✅ Palette complète appliquée avec succès:', completePalette);
       }
       
       // Récupération des métadonnées (logo, police)
@@ -139,7 +152,7 @@ const Step2BasicSettings: React.FC = () => {
               <label className="block text-lg font-medium text-gray-900 mb-4">
                 Site de la marque
                 <span className="text-sm font-normal text-gray-500 ml-2">
-                  (analyse automatique de la charte graphique)
+                  (analyse intelligente de la charte graphique complète)
                 </span>
               </label>
               <div className="flex space-x-4">
@@ -147,7 +160,7 @@ const Step2BasicSettings: React.FC = () => {
                   type="url"
                   value={brandSiteUrl}
                   onChange={(e) => setBrandSiteUrl(e.target.value)}
-                  placeholder="https://www.homair.com"
+                  placeholder="https://www.sfr.fr"
                   className="flex-1 px-6 py-4 border-2 border-gray-200 rounded-2xl focus:border-[#841b60] focus:outline-none transition-all text-lg bg-gray-50"
                 />
                 <button
@@ -167,7 +180,7 @@ const Step2BasicSettings: React.FC = () => {
                 </button>
               </div>
               <p className="text-sm text-gray-600 mt-2">
-                💡 L'analyse extraira automatiquement les couleurs, le logo et les polices de votre site
+                💡 L'analyse extraira automatiquement les 3-4 couleurs dominantes, le logo et les polices de votre site pour créer une palette cohérente
               </p>
             </motion.div>
 

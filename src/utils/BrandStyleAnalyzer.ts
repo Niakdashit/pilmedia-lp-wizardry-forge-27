@@ -80,31 +80,42 @@ export function getAccessibleTextColor(backgroundColor: string): string {
   return luminance > 0.5 ? '#000000' : '#ffffff';
 }
 
-// Helper pour générer une palette de marque cohérente à partir de la palette Microlink
-export function generateBrandThemeFromMicrolinkPalette(palette: any): BrandPalette {
-  console.log('🎨 Palette Microlink reçue:', palette);
+// Nouvelle fonction pour extraire une palette complète intelligente
+export function extractCompletePaletteFromMicrolink(palette: any): BrandPalette {
+  console.log('🎨 Palette Microlink complète reçue:', palette);
+  
+  // Définir les priorités de couleurs selon le type
+  const primaryCandidates = [
+    palette?.vibrant?.background,
+    palette?.darkVibrant?.background,
+    palette?.muted?.background
+  ].filter(Boolean);
 
-  const primaryColor =
-    palette?.vibrant?.background ||
-    palette?.lightVibrant?.background ||
-    palette?.darkVibrant?.background ||
-    '#841b60';
+  const secondaryCandidates = [
+    palette?.darkVibrant?.background,
+    palette?.darkMuted?.background,
+    palette?.vibrant?.background
+  ].filter(Boolean);
 
-  const secondaryColor =
-    palette?.darkVibrant?.background ||
-    palette?.muted?.background ||
-    primaryColor;
+  const accentCandidates = [
+    palette?.lightVibrant?.background,
+    palette?.lightMuted?.background,
+    palette?.vibrant?.background
+  ].filter(Boolean);
 
-  const accentColor =
-    palette?.lightVibrant?.background ||
-    palette?.lightMuted?.background ||
-    primaryColor;
+  const backgroundCandidates = [
+    palette?.lightMuted?.background,
+    palette?.muted?.background,
+    '#ffffff'
+  ].filter(Boolean);
 
-  const backgroundColor =
-    palette?.lightMuted?.background ||
-    palette?.muted?.background ||
-    '#ffffff';
-
+  // Sélectionner les couleurs en évitant les doublons
+  const primaryColor = primaryCandidates[0] || '#841b60';
+  const secondaryColor = secondaryCandidates.find(color => color !== primaryColor) || secondaryCandidates[0] || '#666666';
+  const accentColor = accentCandidates.find(color => color !== primaryColor && color !== secondaryColor) || accentCandidates[0] || primaryColor;
+  const backgroundColor = backgroundCandidates.find(color => color !== primaryColor && color !== secondaryColor) || '#ffffff';
+  
+  // Calculer la couleur de texte optimale pour l'accent
   const textColor = getAccessibleTextColor(accentColor);
 
   const brandPalette: BrandPalette = {
@@ -115,8 +126,13 @@ export function generateBrandThemeFromMicrolinkPalette(palette: any): BrandPalet
     textColor
   };
 
-  console.log('🎯 Palette de marque générée:', brandPalette);
+  console.log('🎯 Palette de marque intelligente générée:', brandPalette);
   return brandPalette;
+}
+
+// Helper pour générer une palette de marque cohérente à partir de la palette Microlink (ancienne fonction conservée pour compatibilité)
+export function generateBrandThemeFromMicrolinkPalette(palette: any): BrandPalette {
+  return extractCompletePaletteFromMicrolink(palette);
 }
 
 export interface BrandColors {
