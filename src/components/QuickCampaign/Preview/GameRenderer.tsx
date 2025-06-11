@@ -1,3 +1,4 @@
+
 import React from 'react';
 import WheelPreview from '../../GameTypes/WheelPreview';
 import { Jackpot } from '../../GameTypes';
@@ -58,9 +59,35 @@ const GameRenderer: React.FC<GameRendererProps> = ({
 
   // Application de la charte de marque sur la roue et le design général
   const synchronizedCampaign = applyBrandStyleToWheel(mockCampaign, customColors as BrandColors);
+  
+  // Appliquer les couleurs personnalisées à la configuration de la roue
+  if (synchronizedCampaign.config?.roulette) {
+    synchronizedCampaign.config.roulette = {
+      ...synchronizedCampaign.config.roulette,
+      borderColor: customColors.primary,
+      borderOutlineColor: customColors.accent || customColors.secondary,
+      segmentColor1: customColors.primary,
+      segmentColor2: customColors.secondary,
+      // Mettre à jour les segments existants avec les nouvelles couleurs
+      segments: synchronizedCampaign.config.roulette.segments?.map((segment: any, index: number) => ({
+        ...segment,
+        color: index % 2 === 0 ? customColors.primary : customColors.secondary
+      })) || []
+    };
+  }
+
   synchronizedCampaign.design = {
     ...synchronizedCampaign.design,
     centerLogo: logoUrl || synchronizedCampaign.design?.centerLogo,
+    customColors: customColors
+  };
+
+  // Mettre à jour la configuration du bouton avec les couleurs personnalisées
+  synchronizedCampaign.buttonConfig = {
+    ...synchronizedCampaign.buttonConfig,
+    color: customColors.accent || customColors.primary,
+    borderColor: customColors.primary,
+    textColor: customColors.accent ? '#ffffff' : '#ffffff'
   };
 
   const { containerStyle, wrapperStyle } = useCenteredStyles();
