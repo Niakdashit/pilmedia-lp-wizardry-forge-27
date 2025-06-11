@@ -1,4 +1,3 @@
-
 import React from 'react';
 import GameRenderer from './GameRenderer';
 import { GAME_SIZES, GameSize } from '../configurators/GameSizeSelector';
@@ -34,7 +33,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   const gameSize: GameSize = campaign.gameSize && Object.keys(GAME_SIZES).includes(campaign.gameSize) ? campaign.gameSize as GameSize : 'medium';
   const gamePosition = campaign.gamePosition || 'center';
 
-  // Override positioning for universal centering
+  // Centrage universel (flexbox)
   const centeredGameContainerStyle = {
     width: '100%',
     height: '100%',
@@ -60,8 +59,8 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
         />
       )}
 
-      {/* Conteneur pour le jeu avec centrage universel */}
-      <div className="relative z-20 w-full h-full">
+      {/* Conteneur pour le jeu centré partout */}
+      <div className="relative z-20 w-full h-full flex items-center justify-center">
         <GameRenderer 
           campaign={campaign} 
           gameSize={gameSize} 

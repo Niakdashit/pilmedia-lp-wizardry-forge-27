@@ -1,4 +1,3 @@
-
 import React from 'react';
 import WheelPreview from '../../GameTypes/WheelPreview';
 import { Jackpot } from '../../GameTypes';
@@ -37,7 +36,6 @@ const GameRenderer: React.FC<GameRendererProps> = ({
   gamePosition = 'center',
   previewDevice = 'desktop'
 }) => {
-
   // Synchroniser les couleurs de la roue avec les couleurs personnalisées
   const synchronizedCampaign = {
     ...mockCampaign,
@@ -66,7 +64,7 @@ const GameRenderer: React.FC<GameRendererProps> = ({
     }
   };
 
-  // Universal centering container
+  // Style universel pour tout centrer verticalement et horizontalement
   const centeredContainerStyle: React.CSSProperties = {
     display: 'flex',
     alignItems: 'center',
@@ -107,7 +105,6 @@ const GameRenderer: React.FC<GameRendererProps> = ({
           </div>
         </div>
       );
-
     case 'jackpot':
       return (
         <div style={centeredContainerStyle}>
@@ -134,7 +131,6 @@ const GameRenderer: React.FC<GameRendererProps> = ({
           </div>
         </div>
       );
-
     case 'scratch':
       return (
         <div style={centeredContainerStyle}>
@@ -146,18 +142,16 @@ const GameRenderer: React.FC<GameRendererProps> = ({
           </div>
         </div>
       );
-
     case 'dice':
       return (
         <div style={centeredContainerStyle}>
           <div style={gameWrapperStyle}>
-            <DicePreview 
+            <DicePreview
               config={mockCampaign.gameConfig?.dice || {}}
             />
           </div>
         </div>
       );
-
     case 'form':
       return (
         <div style={centeredContainerStyle}>
@@ -169,7 +163,6 @@ const GameRenderer: React.FC<GameRendererProps> = ({
           </div>
         </div>
       );
-
     default:
       return (
         <div style={centeredContainerStyle}>
