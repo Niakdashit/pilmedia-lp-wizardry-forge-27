@@ -5,6 +5,8 @@ import ScratchPreview from '../../GameTypes/ScratchPreview';
 import DicePreview from '../../GameTypes/DicePreview';
 import FormPreview from '../../GameTypes/FormPreview';
 import { applyBrandStyleToWheel, BrandColors } from '../../../utils/BrandStyleAnalyzer';
+import { useGamePositionCalculator } from '../../CampaignEditor/GamePositionCalculator';
+import useCenteredStyles from '../../../hooks/useCenteredStyles';
 
 interface GameRendererProps {
   gameType: string;
@@ -61,32 +63,18 @@ const GameRenderer: React.FC<GameRendererProps> = ({
     centerLogo: logoUrl || synchronizedCampaign.design?.centerLogo,
   };
 
-  // Style universel pour centrer la mécanique
-  const centeredContainerStyle: React.CSSProperties = {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '100%',
-    height: '100%',
-    minHeight: '400px',
-    position: 'relative',
-    padding: '20px',
-    boxSizing: 'border-box'
-  };
-
-  const gameWrapperStyle: React.CSSProperties = {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'column',
-    gap: '20px'
-  };
+  const { containerStyle, wrapperStyle } = useCenteredStyles();
+  const { getPositionStyles } = useGamePositionCalculator({
+    gameSize,
+    gamePosition,
+    shouldCropWheel: false
+  });
 
   switch (gameType) {
     case 'wheel':
       return (
-        <div style={centeredContainerStyle}>
-          <div style={gameWrapperStyle}>
+        <div style={{ ...containerStyle, minHeight: '400px', padding: '20px', boxSizing: 'border-box' }}>
+          <div style={{ ...wrapperStyle, ...getPositionStyles() }}>
             <WheelPreview
               campaign={synchronizedCampaign}
               config={mockCampaign.gameConfig?.wheel || {
@@ -104,8 +92,8 @@ const GameRenderer: React.FC<GameRendererProps> = ({
       );
     case 'jackpot':
       return (
-        <div style={centeredContainerStyle}>
-          <div style={gameWrapperStyle}>
+        <div style={{ ...containerStyle, minHeight: '400px', padding: '20px', boxSizing: 'border-box' }}>
+          <div style={{ ...wrapperStyle, ...getPositionStyles() }}>
             <Jackpot
               isPreview={true}
               instantWinConfig={mockCampaign.gameConfig?.jackpot?.instantWin || {
@@ -130,8 +118,8 @@ const GameRenderer: React.FC<GameRendererProps> = ({
       );
     case 'scratch':
       return (
-        <div style={centeredContainerStyle}>
-          <div style={gameWrapperStyle}>
+        <div style={{ ...containerStyle, minHeight: '400px', padding: '20px', boxSizing: 'border-box' }}>
+          <div style={{ ...wrapperStyle, ...getPositionStyles() }}>
             <ScratchPreview
               config={mockCampaign.gameConfig?.scratch || {}}
               autoStart
@@ -141,8 +129,8 @@ const GameRenderer: React.FC<GameRendererProps> = ({
       );
     case 'dice':
       return (
-        <div style={centeredContainerStyle}>
-          <div style={gameWrapperStyle}>
+        <div style={{ ...containerStyle, minHeight: '400px', padding: '20px', boxSizing: 'border-box' }}>
+          <div style={{ ...wrapperStyle, ...getPositionStyles() }}>
             <DicePreview
               config={mockCampaign.gameConfig?.dice || {}}
             />
@@ -151,8 +139,8 @@ const GameRenderer: React.FC<GameRendererProps> = ({
       );
     case 'form':
       return (
-        <div style={centeredContainerStyle}>
-          <div style={gameWrapperStyle}>
+        <div style={{ ...containerStyle, minHeight: '400px', padding: '20px', boxSizing: 'border-box' }}>
+          <div style={{ ...wrapperStyle, ...getPositionStyles() }}>
             <FormPreview
               campaign={synchronizedCampaign}
               gameSize={gameSize}
@@ -162,8 +150,8 @@ const GameRenderer: React.FC<GameRendererProps> = ({
       );
     default:
       return (
-        <div style={centeredContainerStyle}>
-          <div style={gameWrapperStyle}>
+        <div style={{ ...containerStyle, minHeight: '400px', padding: '20px', boxSizing: 'border-box' }}>
+          <div style={{ ...wrapperStyle, ...getPositionStyles() }}>
             <div className="text-center text-gray-500">
               <p>Type de jeu non supporté: {gameType}</p>
             </div>

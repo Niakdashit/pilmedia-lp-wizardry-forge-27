@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Upload, Calendar, Target } from 'lucide-react';
 import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
-import { generateBrandThemeFromMicrolinkPalette } from '../../utils/BrandStyleAnalyzer';
+import { extractBrandPaletteFromMicrolink, extractBrandPaletteFromLogo } from '../../utils/BrandStyleAnalyzer';
 
 const Step2BasicSettings: React.FC = () => {
   const {
@@ -56,8 +56,8 @@ const Step2BasicSettings: React.FC = () => {
     try {
       console.log('🔍 Analyse du site:', brandSiteUrl);
       
-      // Utilisation de l'API Microlink directement pour récupérer la palette complète
-      const apiUrl = `https://api.microlink.io/?url=${encodeURIComponent(brandSiteUrl)}&palette=true&meta=true&screenshot=false`;
+      // Appel Microlink complet avec palette et screenshot pour fiabilité accrue
+      const apiUrl = `https://api.microlink.io/?url=${encodeURIComponent(brandSiteUrl)}&palette=true&screenshot=true&meta=true&color=true`;
       const response = await fetch(apiUrl);
       
       if (!response.ok) {
@@ -67,11 +67,18 @@ const Step2BasicSettings: React.FC = () => {
       const data = await response.json();
       console.log('📊 Données Microlink complètes:', data);
       
-      const palette = data.data?.palette;
-      
-      if (palette) {
-        // Génération de la palette de marque intelligente
-        const brandPalette = generateBrandThemeFromMicrolinkPalette(palette);
+      let brandPalette = await extractBrandPaletteFromMicrolink(data.data);
+
+      if (data.data?.logo?.url) {
+        try {
+          const logoPalette = await extractBrandPaletteFromLogo(data.data.logo.url);
+          brandPalette = logoPalette;
+        } catch (e) {
+          console.warn('Logo palette extraction failed', e);
+        }
+      }
+
+      if (brandPalette) {
         
         // Application des couleurs au store
         setCustomColors({
