@@ -18,11 +18,11 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   className = '',
   previewDevice = 'desktop'
 }) => {
-  // Déterminer l'image de fond à appliquer
+  // Résoudre l’image de fond à afficher
   const resolvedBackground =
     gameBackgroundImage || getCampaignBackgroundImage(campaign, previewDevice);
 
-  // Style du conteneur principal - FULLSCREEN avec image de fond
+  // Styles du container principal (plein écran + image de fond)
   const mainContainerStyles: React.CSSProperties = {
     width: '100%',
     height: '100%',
@@ -35,7 +35,6 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
     backgroundColor: campaign.design?.background || '#f8fafc'
   };
 
-  // Appliquer l'image de fond si elle existe
   if (resolvedBackground) {
     mainContainerStyles.backgroundImage = `url(${resolvedBackground})`;
     mainContainerStyles.backgroundSize = 'cover';
@@ -45,9 +44,8 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
 
   return (
     <div className={`bg-white rounded-lg border-2 border-gray-200 overflow-hidden ${className}`}>
-      {/* Conteneur principal FULLSCREEN avec fond */}
       <div style={mainContainerStyles}>
-        {/* Overlay pour améliorer la lisibilité si image de fond */}
+        {/* Overlay de lisibilité */}
         {resolvedBackground && (
           <div 
             className="absolute inset-0 bg-black/10" 
@@ -55,7 +53,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
           />
         )}
 
-        {/* Conteneur du jeu - centré au milieu de l'aperçu */}
+        {/* Jeu centré */}
         <div 
           className="relative z-10"
           style={{

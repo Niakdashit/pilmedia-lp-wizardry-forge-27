@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Upload, Calendar, Target } from 'lucide-react';
@@ -56,26 +55,18 @@ const Step2BasicSettings: React.FC = () => {
     if (!brandSiteUrl) return;
     setIsAnalyzing(true);
     try {
-      console.log('🔍 Analyse intelligente du site:', brandSiteUrl);
-      
-      // Utilisation de l'API Microlink pour récupérer la palette complète
+      // Appel Microlink palette + logo + font
       const apiUrl = `https://api.microlink.io/?url=${encodeURIComponent(brandSiteUrl)}&palette=true&meta=true&screenshot=false`;
       const response = await fetch(apiUrl);
-      
-      if (!response.ok) {
-        throw new Error('Erreur lors de l\'analyse du site');
-      }
-      
+
+      if (!response.ok) throw new Error('Erreur lors de l\'analyse du site');
       const data = await response.json();
-      console.log('📊 Données Microlink complètes:', data);
-      
       const palette = data.data?.palette;
-      
+
       if (palette) {
-        // Extraction intelligente de la palette complète
+        // Extraction complète palette+accents+contraste
         const completePalette = extractCompletePaletteFromMicrolink(palette);
-        
-        // Application des couleurs au store avec tous les paramètres
+
         setCustomColors({
           primary: completePalette.primaryColor,
           secondary: completePalette.secondaryColor,
@@ -83,24 +74,21 @@ const Step2BasicSettings: React.FC = () => {
           textColor: completePalette.textColor
         });
 
-        // Mise à jour intelligente des couleurs jackpot basées sur la palette de marque
         setJackpotColors({
           containerBackgroundColor: completePalette.backgroundColor,
-          backgroundColor: completePalette.accentColor + '30', // Transparence pour l'arrière-plan
+          backgroundColor: completePalette.accentColor + '30',
           borderColor: completePalette.primaryColor,
           borderWidth: 3,
           slotBorderColor: completePalette.secondaryColor,
           slotBorderWidth: 2,
           slotBackgroundColor: completePalette.backgroundColor
         });
-        
-        console.log('✅ Palette complète appliquée avec succès:', completePalette);
       }
-      
-      // Récupération des métadonnées (logo, police)
+
+      // Logo et police
       setLogoUrl(data.data?.logo?.url || null);
       setFontUrl(data.data?.font?.url || null);
-      
+
     } catch (err) {
       console.error('❌ Erreur lors de l\'analyse:', err);
       alert('Impossible d\'analyser ce site. Vérifiez l\'URL ou réessayez plus tard.');
@@ -117,19 +105,10 @@ const Step2BasicSettings: React.FC = () => {
         <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-8 md:p-12">
           {/* Header */}
           <div className="text-center mb-16">
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-4xl mb-4 text-[#841b60] font-semibold"
-            >
+            <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-4xl mb-4 text-[#841b60] font-semibold">
               Paramètres essentiels
             </motion.h1>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="text-xl font-light text-[#991c6e]/[0.78]"
-            >
+            <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-xl font-light text-[#991c6e]/[0.78]">
               Configurons les bases de votre campagne
             </motion.p>
           </div>
@@ -159,7 +138,7 @@ const Step2BasicSettings: React.FC = () => {
                 <input
                   type="url"
                   value={brandSiteUrl}
-                  onChange={(e) => setBrandSiteUrl(e.target.value)}
+                  onChange={e => setBrandSiteUrl(e.target.value)}
                   placeholder="https://www.sfr.fr"
                   className="flex-1 px-6 py-4 border-2 border-gray-200 rounded-2xl focus:border-[#841b60] focus:outline-none transition-all text-lg bg-gray-50"
                 />
@@ -180,7 +159,7 @@ const Step2BasicSettings: React.FC = () => {
                 </button>
               </div>
               <p className="text-sm text-gray-600 mt-2">
-                💡 L'analyse extraira automatiquement les 3-4 couleurs dominantes, le logo et les polices de votre site pour créer une palette cohérente
+                💡 L'analyse extraira automatiquement les couleurs dominantes, le logo et la police de votre site pour une personnalisation sans effort.
               </p>
             </motion.div>
 

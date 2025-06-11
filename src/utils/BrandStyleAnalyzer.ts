@@ -1,4 +1,3 @@
-
 export interface BrandStyle {
   primaryColor: string;
   logoUrl?: string;
@@ -17,74 +16,43 @@ export interface BrandPalette {
   textColor: string;
 }
 
+import ColorThief from 'colorthief';
+
+// --- MAIN: Analyse la charte à partir de l’API et retourne la structure pour l’app ---
 export async function analyzeBrandStyle(siteUrl: string): Promise<BrandStyle> {
-  // On prend screenshot=false pour éviter de surcharger, palette et meta suffisent
-  const apiUrl = `https://api.microlink.io/?url=${encodeURIComponent(siteUrl)}&palette=true&meta=true&screenshot=false`;
+  const apiUrl =
+    `https://api.microlink.io/?url=${encodeURIComponent(siteUrl)}` +
+    `&palette=true&screenshot=true&meta=true&color=true`;
   const res = await fetch(apiUrl);
-  if (!res.ok) {
-    throw new Error('Microlink request failed');
-  }
+  if (!res.ok) throw new Error('Microlink request failed');
   const json = await res.json();
   const data = json.data || {};
-  const palette = data.palette || {};
-
-  // Extraction logique de la palette (ordre de priorité optimisé)
-  const primaryColor =
-    palette?.vibrant?.background ||
-    palette?.lightVibrant?.background ||
-    palette?.darkVibrant?.background ||
-    '#841b60';
-
-  const secondaryColor =
-    palette?.lightMuted?.background ||
-    palette?.muted?.background ||
-    palette?.darkMuted?.background ||
-    palette?.darkVibrant?.background ||
-    palette?.lightVibrant?.background ||
-    '#E3F2FD';
-
-  const lightColor =
-    palette?.lightVibrant?.background ||
-    palette?.vibrant?.background ||
-    '#ffffff';
-
-  const darkColor =
-    palette?.darkVibrant?.background ||
-    palette?.darkMuted?.background ||
-    palette?.muted?.background ||
-    primaryColor;
+  const brandPalette = await extractBrandPaletteFromMicrolink(data);
 
   return {
-    primaryColor,
+    primaryColor: brandPalette.primaryColor,
     logoUrl: data.logo?.url,
     fontUrl: data.font?.url,
     faviconUrl: data.favicon?.url,
-    secondaryColor,
-    lightColor,
-    darkColor,
+    secondaryColor: brandPalette.secondaryColor,
+    lightColor: brandPalette.accentColor,
+    darkColor: brandPalette.backgroundColor,
   };
 }
 
-// Nouvelle fonction pour calculer le contraste et retourner la couleur de texte accessible
+// -- Génère une couleur de texte accessible sur le fond donné (contraste auto) --
 export function getAccessibleTextColor(backgroundColor: string): string {
-  // Convertir la couleur hex en RGB
   const hex = backgroundColor.replace('#', '');
   const r = parseInt(hex.substr(0, 2), 16);
   const g = parseInt(hex.substr(2, 2), 16);
   const b = parseInt(hex.substr(4, 2), 16);
-
-  // Calculer la luminance relative (WCAG)
   const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-
-  // Retourner blanc ou noir selon le meilleur contraste
   return luminance > 0.5 ? '#000000' : '#ffffff';
 }
 
-// Nouvelle fonction pour extraire une palette complète intelligente
+// ---- EXTRACTION DE LA PALETTE COHÉRENTE, PRIORITÉ MARQUE, ACCENT ET BG ----
 export function extractCompletePaletteFromMicrolink(palette: any): BrandPalette {
-  console.log('🎨 Palette Microlink complète reçue:', palette);
-  
-  // Définir les priorités de couleurs selon le type
+  // Sélectionne des candidats selon le type, évite les doublons
   const primaryCandidates = [
     palette?.vibrant?.background,
     palette?.darkVibrant?.background,
@@ -109,39 +77,80 @@ export function extractCompletePaletteFromMicrolink(palette: any): BrandPalette 
     '#ffffff'
   ].filter(Boolean);
 
-  // Sélectionner les couleurs en évitant les doublons
   const primaryColor = primaryCandidates[0] || '#841b60';
-  const secondaryColor = secondaryCandidates.find(color => color !== primaryColor) || secondaryCandidates[0] || '#666666';
-  const accentColor = accentCandidates.find(color => color !== primaryColor && color !== secondaryColor) || accentCandidates[0] || primaryColor;
-  const backgroundColor = backgroundCandidates.find(color => color !== primaryColor && color !== secondaryColor) || '#ffffff';
-  
-  // Calculer la couleur de texte optimale pour l'accent
+  const secondaryColor = secondaryCandidates.find(c => c !== primaryColor) || secondaryCandidates[0] || '#666666';
+  const accentColor = accentCandidates.find(c => c !== primaryColor && c !== secondaryColor) || accentCandidates[0] || primaryColor;
+  const backgroundColor = backgroundCandidates.find(c => c !== primaryColor && c !== secondaryColor) || '#ffffff';
   const textColor = getAccessibleTextColor(accentColor);
 
-  const brandPalette: BrandPalette = {
-    primaryColor,
-    secondaryColor,
-    accentColor,
-    backgroundColor,
-    textColor
-  };
-
-  console.log('🎯 Palette de marque intelligente générée:', brandPalette);
-  return brandPalette;
+  return { primaryColor, secondaryColor, accentColor, backgroundColor, textColor };
 }
 
-// Helper pour générer une palette de marque cohérente à partir de la palette Microlink (ancienne fonction conservée pour compatibilité)
+// -- Ancienne signature compatible, mais appelle la nouvelle logique --
 export function generateBrandThemeFromMicrolinkPalette(palette: any): BrandPalette {
   return extractCompletePaletteFromMicrolink(palette);
 }
 
+// -- Si la palette Microlink est trop neutre, on tente ColorThief sur le logo/screenshot (fallback) --
+export async function extractBrandPaletteFromMicrolink(data: any): Promise<BrandPalette> {
+  const palette = data?.palette;
+  if (palette && palette?.vibrant?.background) {
+    return extractCompletePaletteFromMicrolink(palette);
+  }
+  const imageUrl = data?.logo?.url || data?.screenshot?.url;
+  if (imageUrl && typeof window !== 'undefined') {
+    try {
+      const rawColors = await ColorThief.getPalette(imageUrl, 4);
+      const colors = rawColors.map(([r, g, b]: number[]) => rgbToHex(r, g, b));
+      return generateBrandThemeFromColors(colors);
+    } catch (e) {
+      console.error('ColorThief error', e);
+    }
+  }
+  // Fallback final
+  return generateBrandThemeFromColors(['#841b60', '#1e3a8a', '#dc2626', '#ffffff']);
+}
+
+// Utilitaires pour le fallback ColorThief
+function hexToRgb(hex: string): [number, number, number] {
+  const clean = hex.replace('#', '');
+  const r = parseInt(clean.substring(0, 2), 16);
+  const g = parseInt(clean.substring(2, 4), 16);
+  const b = parseInt(clean.substring(4, 6), 16);
+  return [r, g, b];
+}
+
+function rgbToHex(r: number, g: number, b: number): string {
+  return (
+    '#' +
+    [r, g, b]
+      .map(x => {
+        const h = x.toString(16);
+        return h.length === 1 ? '0' + h : h;
+      })
+      .join('')
+  );
+}
+
+// Fallback : génère une palette simple à partir d’un tableau de couleurs extraites
+export function generateBrandThemeFromColors(colors: string[]): BrandPalette {
+  const [primary = '#841b60', secondary, accent, background] = colors;
+  return {
+    primaryColor: primary,
+    secondaryColor: secondary || primary,
+    accentColor: accent || primary,
+    backgroundColor: background || '#ffffff',
+    textColor: getAccessibleTextColor(accent || primary)
+  };
+}
+
+// --- Utilisé dans l’application pour mapper la palette sur la roue / bouton etc ---
 export interface BrandColors {
   primary: string;
   secondary: string;
   accent?: string;
 }
 
-// Central helper to apply a brand color scheme to a wheel configuration
 export function applyBrandStyleToWheel(campaign: any, colors: BrandColors) {
   const updatedSegments = (campaign?.config?.roulette?.segments || []).map(
     (segment: any, index: number) => ({
