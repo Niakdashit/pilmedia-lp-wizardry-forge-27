@@ -29,17 +29,51 @@ export interface BrandTheme {
 
 import ColorThief from 'colorthief';
 
+// Fetch brand info from Brandfetch API
+async function fetchBrandfetchData(domain: string): Promise<any> {
+  const res = await fetch(`https://api.brandfetch.io/v2/brands/${domain}`, {
+    headers: { Authorization: `Bearer ${import.meta.env.VITE_BRANDFETCH_KEY}` }
+  });
+  if (!res.ok) throw new Error('Brandfetch request failed');
+  return res.json();
+}
+
 // Helper principal : Génération d'un thème complet à partir d'une URL
 export async function generateBrandThemeFromUrl(url: string): Promise<BrandTheme> {
   try {
     console.log('🎯 Génération du thème de marque pour:', url);
-    
-    // 1. Récupération des données Microlink
-    const microlinkData = await fetchMicrolinkData(url);
-    const logoUrl = microlinkData?.logo?.url;
-    
+
+    const domain = new URL(url).hostname;
+    let brandData: any = null;
+    let logoUrl: string | undefined;
+
+    try {
+      brandData = await fetchBrandfetchData(domain);
+      logoUrl = brandData?.logos?.[0]?.formats?.[0]?.src;
+    } catch (err) {
+      console.warn('⚠️ Brandfetch error:', err);
+    }
+
     console.log('📷 Logo trouvé:', logoUrl);
-    
+
+    // 1. Couleurs directes Brandfetch
+    if (brandData?.colors?.length) {
+      const colors = brandData.colors.map((c: any) => c.hex || c);
+      const primary = colors[0];
+      const secondary = colors[1] || primary;
+      const accent = colors[2] || '#ffffff';
+
+      return {
+        customColors: {
+          primary,
+          secondary,
+          accent,
+          text: getAccessibleTextColor(accent)
+        },
+        logoUrl
+      };
+    }
+
     // 2. Extraction des couleurs du logo avec ColorThief (priorité absolue)
     if (logoUrl && typeof window !== 'undefined') {
       try {
@@ -63,23 +97,7 @@ export async function generateBrandThemeFromUrl(url: string): Promise<BrandTheme
       }
     }
     
-    // 3. Fallback : Palette Microlink si disponible
-    if (microlinkData?.palette) {
-      console.log('🔄 Fallback vers palette Microlink');
-      const palette = extractCompletePaletteFromMicrolink(microlinkData.palette);
-      
-      return {
-        customColors: {
-          primary: palette.primaryColor,
-          secondary: palette.secondaryColor,
-          accent: palette.accentColor,
-          text: palette.textColor
-        },
-        logoUrl
-      };
-    }
-    
-    // 4. Fallback final : Palette par défaut
+    // 3. Fallback final : Palette par défaut
     console.log('🔄 Fallback vers palette par défaut');
     return {
       customColors: {
@@ -106,25 +124,22 @@ export async function generateBrandThemeFromUrl(url: string): Promise<BrandTheme
   }
 }
 
-// Récupération des données Microlink
-async function fetchMicrolinkData(siteUrl: string): Promise<any> {
-  const apiUrl = `https://api.microlink.io/?url=${encodeURIComponent(siteUrl)}&palette=true&meta=true&color=true`;
-  const res = await fetch(apiUrl);
-  if (!res.ok) throw new Error('Microlink request failed');
-  const json = await res.json();
-  return json.data || {};
+// Récupération des données Brandfetch
+async function fetchBrandData(siteUrl: string): Promise<any> {
+  const domain = new URL(siteUrl).hostname;
+  return fetchBrandfetchData(domain);
 }
 
 // Analyse la charte graphique depuis l'API et retourne la palette prête pour l'app
 export async function analyzeBrandStyle(siteUrl: string): Promise<BrandStyle> {
-  const data = await fetchMicrolinkData(siteUrl);
-  const brandPalette = await extractBrandPaletteFromMicrolink(data);
+  const data = await fetchBrandData(siteUrl);
+  const brandPalette = await extractBrandPaletteFromBrandfetch(data);
 
   return {
     primaryColor: brandPalette.primaryColor,
-    logoUrl: data.logo?.url,
-    fontUrl: data.font?.url,
-    faviconUrl: data.favicon?.url,
+    logoUrl: data.logos?.[0]?.formats?.[0]?.src,
+    fontUrl: data.fonts?.[0]?.files?.regular,
+    faviconUrl: data.icon,
     secondaryColor: brandPalette.secondaryColor,
     lightColor: brandPalette.accentColor,
     darkColor: brandPalette.backgroundColor,
@@ -140,6 +155,9 @@ export function getAccessibleTextColor(backgroundColor: string): string {
   const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
   return luminance > 0.5 ? '#000000' : '#ffffff';
 }
+
+// Alias plus explicite
+export const getReadableTextColor = getAccessibleTextColor;
 
 // ColorThief utilitaires
 function hexToRgb(hex: string): [number, number, number] {
@@ -292,14 +310,14 @@ function isPaletteNeutral(palette: any): boolean {
   return genericColors.length >= colors.length * 0.7;
 }
 
-// Palette complète à partir de Microlink, ou fallback logo
-export async function extractBrandPaletteFromMicrolink(data: any): Promise<BrandPalette> {
-  const palette = data?.palette;
-  const logoUrl = data?.logo?.url;
+// Palette complète à partir de Brandfetch, ou fallback logo
+export async function extractBrandPaletteFromBrandfetch(data: any): Promise<BrandPalette> {
+  const palette = data?.colors;
+  const logoUrl = data?.logos?.[0]?.formats?.[0]?.src;
 
-  // Palette Microlink prioritaire si elle est riche
-  if (palette && !isPaletteNeutral(palette)) {
-    return extractCompletePaletteFromMicrolink(palette);
+  // Palette Brandfetch prioritaire si elle est riche
+  if (palette && palette.length >= 2) {
+    return extractCompletePaletteFromBrandfetch(palette);
   }
 
   // Sinon : fallback analyse du logo si possible (navigateur uniquement)
@@ -313,12 +331,12 @@ export async function extractBrandPaletteFromMicrolink(data: any): Promise<Brand
   }
 
   // Sinon : fallback palette même si "neutre"
-  if (palette && palette?.vibrant?.background) {
-    return extractCompletePaletteFromMicrolink(palette);
+  if (palette && palette.length >= 2) {
+    return extractCompletePaletteFromBrandfetch(palette);
   }
 
   // Sinon : fallback screenshot
-  const screenshotUrl = data?.screenshot?.url;
+  const screenshotUrl = undefined;
   if (screenshotUrl && typeof window !== 'undefined') {
     try {
       const screenshotColors = await extractColorsFromLogo(screenshotUrl);
@@ -337,36 +355,13 @@ export function generateBrandThemeFromColors(colors: string[]): BrandPalette {
   return generateAdvancedPaletteFromColors(colors);
 }
 
-// Génération palette complète cohérente depuis Microlink
-export function extractCompletePaletteFromMicrolink(palette: any): BrandPalette {
-  const primaryCandidates = [
-    palette?.vibrant?.background,
-    palette?.darkVibrant?.background,
-    palette?.muted?.background
-  ].filter(Boolean);
-
-  const secondaryCandidates = [
-    palette?.darkVibrant?.background,
-    palette?.darkMuted?.background,
-    palette?.vibrant?.background
-  ].filter(Boolean);
-
-  const accentCandidates = [
-    palette?.lightVibrant?.background,
-    palette?.lightMuted?.background,
-    palette?.vibrant?.background
-  ].filter(Boolean);
-
-  const backgroundCandidates = [
-    palette?.lightMuted?.background,
-    palette?.muted?.background,
-    '#ffffff'
-  ].filter(Boolean);
-
-  const primaryColor = primaryCandidates[0] || '#841b60';
-  const secondaryColor = secondaryCandidates.find(c => c !== primaryColor) || secondaryCandidates[0] || '#666666';
-  const accentColor = accentCandidates.find(c => c !== primaryColor && c !== secondaryColor) || accentCandidates[0] || primaryColor;
-  const backgroundColor = backgroundCandidates.find(c => c !== primaryColor && c !== secondaryColor) || '#ffffff';
+// Génération palette complète cohérente depuis Brandfetch
+export function extractCompletePaletteFromBrandfetch(palette: any[]): BrandPalette {
+  const colors = palette.map(c => c.hex || c).filter(Boolean);
+  const primaryColor = colors[0] || '#841b60';
+  const secondaryColor = colors[1] || primaryColor;
+  const accentColor = colors[2] || '#10b981';
+  const backgroundColor = '#ffffff';
   const textColor = getAccessibleTextColor(accentColor);
 
   return { primaryColor, secondaryColor, accentColor, backgroundColor, textColor };
@@ -374,7 +369,7 @@ export function extractCompletePaletteFromMicrolink(palette: any): BrandPalette 
 
 // Pour compatibilité avec l'ancien nom
 export function generateBrandThemeFromMicrolinkPalette(palette: any): BrandPalette {
-  return extractCompletePaletteFromMicrolink(palette);
+  return extractCompletePaletteFromBrandfetch(palette);
 }
 
 function getLuminance(hex: string): number {
