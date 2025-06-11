@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { GameRenderer } from '../GameTypes';
+import GameRenderer from './GameRenderer';
 import { GameSize } from '../configurators/GameSizeSelector';
 import { useGamePositionCalculator } from './GamePositionCalculator';
 
@@ -27,27 +27,39 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
     shouldCropWheel: false
   });
 
-  const centeredContainerStyle: React.CSSProperties = {
+  // Style du conteneur principal avec image de fond
+  const containerStyle: React.CSSProperties = {
     width: '100%',
     height: '400px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
-    backgroundImage: gameBackgroundImage ? `url(${gameBackgroundImage})` : undefined,
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat'
+    overflow: 'hidden'
   };
+
+  // Appliquer l'image de fond si elle existe
+  if (gameBackgroundImage) {
+    containerStyle.backgroundImage = `url(${gameBackgroundImage})`;
+    containerStyle.backgroundSize = 'cover';
+    containerStyle.backgroundPosition = 'center';
+    containerStyle.backgroundRepeat = 'no-repeat';
+  }
 
   return (
     <div className={`bg-white rounded-lg border-2 border-gray-200 overflow-hidden ${className}`}>
-      <div style={centeredContainerStyle}>
-        <div style={getPositionStyles()}>
+      <div style={containerStyle}>
+        {/* Overlay pour améliorer la lisibilité si image de fond */}
+        {gameBackgroundImage && (
+          <div className="absolute inset-0 bg-black/10" />
+        )}
+        
+        {/* Conteneur du jeu - toujours centré par défaut */}
+        <div className="relative z-10 flex items-center justify-center w-full h-full">
           <GameRenderer
             campaign={campaign}
             gameSize={gameSize}
-            gamePosition={gamePosition}
+            gamePosition="center" // Toujours centré dans le preview
             previewDevice={previewDevice}
             buttonLabel={campaign.buttonConfig?.text || 'Jouer'}
             buttonColor={campaign.buttonConfig?.color || '#841b60'}

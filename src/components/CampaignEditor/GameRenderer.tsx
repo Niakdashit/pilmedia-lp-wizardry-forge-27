@@ -34,7 +34,7 @@ const GameRenderer: React.FC<GameRendererProps> = ({
     ? gamePosition 
     : 'center') as 'top' | 'center' | 'bottom' | 'left' | 'right';
 
-  // Universal centering container style that overrides any positioning
+  // Style de conteneur centré universel qui fonctionne dans tous les contextes
   const centeredContainerStyle: React.CSSProperties = {
     display: 'flex',
     alignItems: 'center',
@@ -47,7 +47,7 @@ const GameRenderer: React.FC<GameRendererProps> = ({
     boxSizing: 'border-box'
   };
 
-  // Game wrapper with consistent centering
+  // Wrapper du jeu avec style cohérent
   const gameWrapperStyle: React.CSSProperties = {
     display: 'flex',
     alignItems: 'center',
@@ -85,6 +85,7 @@ const GameRenderer: React.FC<GameRendererProps> = ({
           </div>
         </div>
       );
+
     case 'quiz':
       return (
         <div style={centeredContainerStyle}>
@@ -93,6 +94,7 @@ const GameRenderer: React.FC<GameRendererProps> = ({
           </div>
         </div>
       );
+
     case 'wheel':
       return (
         <div style={centeredContainerStyle}>
@@ -107,13 +109,14 @@ const GameRenderer: React.FC<GameRendererProps> = ({
               }}
               onFinish={() => {}}
               gameSize={gameSize}
-              gamePosition={validGamePosition}
+              gamePosition="center" // Toujours centré par défaut
               previewDevice={previewDevice}
-              key={`${gameSize}-${gamePosition}-${previewDevice}-${JSON.stringify(campaign.gameConfig?.wheel)}`}
+              key={`${gameSize}-center-${previewDevice}-${JSON.stringify(campaign.gameConfig?.wheel)}`}
             />
           </div>
         </div>
       );
+
     case 'scratch':
       return (
         <div style={centeredContainerStyle}>
@@ -128,6 +131,7 @@ const GameRenderer: React.FC<GameRendererProps> = ({
           </div>
         </div>
       );
+
     case 'memory':
       return (
         <div style={centeredContainerStyle}>
@@ -136,6 +140,7 @@ const GameRenderer: React.FC<GameRendererProps> = ({
           </div>
         </div>
       );
+
     case 'puzzle':
       return (
         <div style={centeredContainerStyle}>
@@ -144,6 +149,7 @@ const GameRenderer: React.FC<GameRendererProps> = ({
           </div>
         </div>
       );
+
     case 'dice':
       return (
         <div style={centeredContainerStyle}>
@@ -152,6 +158,7 @@ const GameRenderer: React.FC<GameRendererProps> = ({
           </div>
         </div>
       );
+
     case 'form':
       return (
         <div style={centeredContainerStyle}>
@@ -163,6 +170,7 @@ const GameRenderer: React.FC<GameRendererProps> = ({
           </div>
         </div>
       );
+
     default:
       return (
         <div style={centeredContainerStyle}>
