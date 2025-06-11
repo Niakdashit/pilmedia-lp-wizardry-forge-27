@@ -17,17 +17,107 @@ export interface BrandPalette {
   textColor: string;
 }
 
+export interface BrandTheme {
+  customColors: {
+    primary: string;
+    secondary: string;
+    accent: string;
+    text: string;
+  };
+  logoUrl?: string;
+}
+
 import ColorThief from 'colorthief';
 
-// Analyse la charte graphique depuis l'API et retourne la palette prête pour l'app
-export async function analyzeBrandStyle(siteUrl: string): Promise<BrandStyle> {
-  const apiUrl =
-    `https://api.microlink.io/?url=${encodeURIComponent(siteUrl)}` +
-    `&palette=true&screenshot=true&meta=true&color=true`;
+// Helper principal : Génération d'un thème complet à partir d'une URL
+export async function generateBrandThemeFromUrl(url: string): Promise<BrandTheme> {
+  try {
+    console.log('🎯 Génération du thème de marque pour:', url);
+    
+    // 1. Récupération des données Microlink
+    const microlinkData = await fetchMicrolinkData(url);
+    const logoUrl = microlinkData?.logo?.url;
+    
+    console.log('📷 Logo trouvé:', logoUrl);
+    
+    // 2. Extraction des couleurs du logo avec ColorThief (priorité absolue)
+    if (logoUrl && typeof window !== 'undefined') {
+      try {
+        const logoColors = await extractColorsFromLogo(logoUrl);
+        if (logoColors.length >= 2) {
+          console.log('🎨 Couleurs extraites du logo:', logoColors);
+          const palette = generateAdvancedPaletteFromColors(logoColors);
+          
+          return {
+            customColors: {
+              primary: palette.primaryColor,
+              secondary: palette.secondaryColor,
+              accent: palette.accentColor,
+              text: palette.textColor
+            },
+            logoUrl
+          };
+        }
+      } catch (error) {
+        console.warn('⚠️ Échec extraction logo ColorThief:', error);
+      }
+    }
+    
+    // 3. Fallback : Palette Microlink si disponible
+    if (microlinkData?.palette) {
+      console.log('🔄 Fallback vers palette Microlink');
+      const palette = extractCompletePaletteFromMicrolink(microlinkData.palette);
+      
+      return {
+        customColors: {
+          primary: palette.primaryColor,
+          secondary: palette.secondaryColor,
+          accent: palette.accentColor,
+          text: palette.textColor
+        },
+        logoUrl
+      };
+    }
+    
+    // 4. Fallback final : Palette par défaut
+    console.log('🔄 Fallback vers palette par défaut');
+    return {
+      customColors: {
+        primary: '#841b60',
+        secondary: '#dc2626',
+        accent: '#10b981',
+        text: '#ffffff'
+      },
+      logoUrl
+    };
+    
+  } catch (error) {
+    console.error('❌ Erreur génération thème:', error);
+    
+    // Palette d'urgence
+    return {
+      customColors: {
+        primary: '#841b60',
+        secondary: '#dc2626',
+        accent: '#10b981',
+        text: '#ffffff'
+      }
+    };
+  }
+}
+
+// Récupération des données Microlink
+async function fetchMicrolinkData(siteUrl: string): Promise<any> {
+  const apiUrl = `https://api.microlink.io/?url=${encodeURIComponent(siteUrl)}&palette=true&meta=true&color=true`;
   const res = await fetch(apiUrl);
   if (!res.ok) throw new Error('Microlink request failed');
   const json = await res.json();
-  const data = json.data || {};
+  return json.data || {};
+}
+
+// Analyse la charte graphique depuis l'API et retourne la palette prête pour l'app
+export async function analyzeBrandStyle(siteUrl: string): Promise<BrandStyle> {
+  const data = await fetchMicrolinkData(siteUrl);
   const brandPalette = await extractBrandPaletteFromMicrolink(data);
 
   return {
@@ -72,28 +162,116 @@ function rgbToHex(r: number, g: number, b: number): string {
   );
 }
 
-// Extraction ColorThief via <img>
+// Extraction ColorThief via <img> - VERSION AMÉLIORÉE
 export async function extractColorsFromLogo(logoUrl: string): Promise<string[]> {
   try {
+    console.log('🔍 Extraction ColorThief du logo:', logoUrl);
+    
     const img = new Image();
     img.crossOrigin = 'Anonymous';
+    
     return new Promise((resolve, reject) => {
       img.onload = () => {
         try {
           const colorThief = new ColorThief();
-          const rawColors = colorThief.getPalette(img, 5);
-          const colors = rawColors.map(([r, g, b]: number[]) => rgbToHex(r, g, b));
-          resolve(colors);
+          
+          // Extraction de la couleur dominante + palette
+          const dominantColor = colorThief.getColor(img, 10);
+          const palette = colorThief.getPalette(img, 6, 10);
+          
+          // Conversion en hex
+          const dominantHex = rgbToHex(dominantColor[0], dominantColor[1], dominantColor[2]);
+          const paletteHex = palette.map(([r, g, b]: number[]) => rgbToHex(r, g, b));
+          
+          // Fusion intelligente : dominante + palette
+          const allColors = [dominantHex, ...paletteHex.filter(c => c !== dominantHex)];
+          
+          console.log('✅ Couleurs extraites:', allColors);
+          resolve(allColors.slice(0, 5)); // Limiter à 5 couleurs max
+          
         } catch (error) {
+          console.error('❌ Erreur ColorThief:', error);
           reject(error);
         }
       };
-      img.onerror = () => reject(new Error('Logo load failed'));
+      
+      img.onerror = () => {
+        console.error('❌ Impossible de charger le logo:', logoUrl);
+        reject(new Error('Logo load failed'));
+      };
+      
       img.src = logoUrl;
     });
+    
   } catch (error) {
+    console.error('❌ Erreur générale extraction logo:', error);
     return [];
   }
+}
+
+// Génération palette avancée depuis couleurs ColorThief
+export function generateAdvancedPaletteFromColors(colors: string[]): BrandPalette {
+  console.log('🎨 Génération palette avancée depuis:', colors);
+  
+  // Tri par luminance pour organiser les couleurs
+  const sortedColors = colors.sort((a, b) => getLuminance(b) - getLuminance(a));
+  
+  // Sélection intelligente des couleurs
+  const primaryColor = sortedColors[0] || '#841b60'; // Plus saturée
+  
+  // Recherche d'une couleur contrastée pour le secondaire
+  const secondaryColor = findContrastingColor(sortedColors, primaryColor) || sortedColors[1] || '#dc2626';
+  
+  // Couleur d'accent (plus claire ou différente)
+  const accentColor = findAccentColor(sortedColors, primaryColor, secondaryColor) || '#10b981';
+  
+  // Couleur de texte optimale
+  const textColor = getAccessibleTextColor(accentColor);
+  
+  const result = {
+    primaryColor,
+    secondaryColor,
+    accentColor,
+    backgroundColor: '#ffffff',
+    textColor
+  };
+  
+  console.log('✅ Palette générée:', result);
+  return result;
+}
+
+// Recherche d'une couleur contrastée
+function findContrastingColor(colors: string[], excludeColor: string): string | null {
+  const excludeLuminance = getLuminance(excludeColor);
+  
+  for (const color of colors) {
+    if (color === excludeColor) continue;
+    
+    const luminance = getLuminance(color);
+    const contrast = Math.abs(luminance - excludeLuminance);
+    
+    // Contraste minimum requis
+    if (contrast > 0.3) {
+      return color;
+    }
+  }
+  
+  return null;
+}
+
+// Recherche d'une couleur d'accent
+function findAccentColor(colors: string[], primaryColor: string, secondaryColor: string): string | null {
+  for (const color of colors) {
+    if (color === primaryColor || color === secondaryColor) continue;
+    
+    // Préférer les couleurs avec une bonne saturation
+    const luminance = getLuminance(color);
+    if (luminance > 0.2 && luminance < 0.8) {
+      return color;
+    }
+  }
+  
+  return null;
 }
 
 // Détection palette trop générique (bleu/gris/terne)
@@ -129,7 +307,7 @@ export async function extractBrandPaletteFromMicrolink(data: any): Promise<Brand
     try {
       const logoColors = await extractColorsFromLogo(logoUrl);
       if (logoColors.length >= 2) {
-        return generateBrandThemeFromColors(logoColors);
+        return generateAdvancedPaletteFromColors(logoColors);
       }
     } catch { }
   }
@@ -145,24 +323,18 @@ export async function extractBrandPaletteFromMicrolink(data: any): Promise<Brand
     try {
       const screenshotColors = await extractColorsFromLogo(screenshotUrl);
       if (screenshotColors.length >= 2) {
-        return generateBrandThemeFromColors(screenshotColors);
+        return generateAdvancedPaletteFromColors(screenshotColors);
       }
     } catch { }
   }
 
   // Sinon : couleur défaut
-  return generateBrandThemeFromColors(['#841b60', '#dc2626', '#ffffff', '#f8fafc']);
+  return generateAdvancedPaletteFromColors(['#841b60', '#dc2626', '#ffffff', '#f8fafc']);
 }
 
 // Génération palette intelligente depuis couleurs (logo, screenshot, etc)
 export function generateBrandThemeFromColors(colors: string[]): BrandPalette {
-  const sortedColors = colors.sort((a, b) => getLuminance(b) - getLuminance(a));
-  const primaryColor = sortedColors[0] || '#841b60';
-  const secondaryColor = sortedColors[1] || primaryColor;
-  const accentColor = sortedColors[2] || primaryColor;
-  const backgroundColor = sortedColors.find(c => getLuminance(c) > 0.8) || '#ffffff';
-  const textColor = getAccessibleTextColor(accentColor);
-  return { primaryColor, secondaryColor, accentColor, backgroundColor, textColor };
+  return generateAdvancedPaletteFromColors(colors);
 }
 
 // Génération palette complète cohérente depuis Microlink
