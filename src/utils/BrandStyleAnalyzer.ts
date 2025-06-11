@@ -30,9 +30,22 @@ export interface BrandTheme {
 import ColorThief from 'colorthief';
 
 // Fetch brand info from Brandfetch API
+// If the API key is missing, we warn and skip the request entirely.
 async function fetchBrandfetchData(domain: string): Promise<any> {
+  const apiKey = import.meta.env.VITE_BRANDFETCH_KEY;
+
+  // When no Brandfetch key is provided we cannot perform the request.
+  // Instead of throwing an error we log a warning and return null so
+  // callers can gracefully fallback to default values.
+  if (!apiKey) {
+    console.warn(
+      '[BrandStyleAnalyzer] VITE_BRANDFETCH_KEY is undefined. Skipping Brandfetch request.'
+    );
+    return null;
+  }
+
   const res = await fetch(`https://api.brandfetch.io/v2/brands/${domain}`, {
-    headers: { Authorization: `Bearer ${import.meta.env.VITE_BRANDFETCH_KEY}` }
+    headers: { Authorization: `Bearer ${apiKey}` }
   });
   if (!res.ok) throw new Error('Brandfetch request failed');
   return res.json();
@@ -127,7 +140,8 @@ export async function generateBrandThemeFromUrl(url: string): Promise<BrandTheme
 // Récupération des données Brandfetch
 async function fetchBrandData(siteUrl: string): Promise<any> {
   const domain = new URL(siteUrl).hostname;
-  return fetchBrandfetchData(domain);
+  const data = await fetchBrandfetchData(domain);
+  return data || {};
 }
 
 // Analyse la charte graphique depuis l'API et retourne la palette prête pour l'app
