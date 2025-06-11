@@ -4,6 +4,7 @@ import { X, Monitor, Tablet, Smartphone } from 'lucide-react';
 import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
 import FunnelStandard from '../funnels/FunnelStandard';
 import CampaignPreview from './CampaignPreview';
+import { getCampaignBackgroundImage } from '../../utils/background';
 
 interface PreviewModalProps {
   isOpen: boolean;
@@ -45,8 +46,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
   };
 
   // Récupérer l'image de fond du jeu
-  const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage || 
-                              campaign.design?.backgroundImage;
+  const gameBackgroundImage = getCampaignBackgroundImage(campaign, selectedDevice);
 
   const getBackgroundStyle = () => {
     const style: any = {
