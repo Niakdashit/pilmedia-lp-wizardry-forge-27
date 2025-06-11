@@ -77,7 +77,7 @@ const GameRenderer: React.FC<GameRendererProps> = ({
               brandStyle.secondaryColor,
               brandStyle.lightColor,
               brandStyle.darkColor
-            ].filter(Boolean);
+            ].filter((color): color is string => color !== undefined && color !== null);
             console.log('Couleurs du site extraites:', colors);
             setSiteColors(colors);
           }

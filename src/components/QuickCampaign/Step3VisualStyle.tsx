@@ -20,7 +20,7 @@ const Step3VisualStyle: React.FC = () => {
     logoFile,
     logoUrl,
     fontUrl,
-    siteUrl,
+    brandSiteUrl,
     selectedTheme,
     backgroundImage,
     customColors,
@@ -248,7 +248,7 @@ const Step3VisualStyle: React.FC = () => {
                         jackpotColors={jackpotColors}
                         logoUrl={logoUrl || undefined}
                         fontUrl={fontUrl || undefined}
-                        siteUrl={siteUrl || undefined}
+                        siteUrl={brandSiteUrl || undefined}
                         gameSize="medium"
                         gamePosition="center"
                         previewDevice="desktop"
