@@ -9,35 +9,42 @@ export interface BrandStyle {
 }
 
 export async function analyzeBrandStyle(siteUrl: string): Promise<BrandStyle> {
-  const apiUrl = `https://api.microlink.io/?url=${encodeURIComponent(siteUrl)}&palette=true&meta=true&screenshot=true`;
+  // On prend screenshot=false pour éviter de surcharger, palette et meta suffisent
+  const apiUrl = `https://api.microlink.io/?url=${encodeURIComponent(siteUrl)}&palette=true&meta=true&screenshot=false`;
   const res = await fetch(apiUrl);
   if (!res.ok) {
     throw new Error('Microlink request failed');
   }
   const json = await res.json();
   const data = json.data || {};
-  const screenshot = data.screenshot || {};
-  const palette = screenshot.palette || [];
+  const palette = data.palette || {};
+
+  // Extraction logique de la palette (ordre de priorité optimisé)
   const primaryColor =
-    data?.palette?.vibrant?.background ||
-    data?.palette?.lightVibrant?.background ||
-    data?.palette?.darkVibrant?.background ||
-    screenshot.background_color ||
-    palette[0] ||
+    palette?.vibrant?.background ||
+    palette?.lightVibrant?.background ||
+    palette?.darkVibrant?.background ||
     '#841b60';
 
+  // Idem pour secondary, light et dark
   const secondaryColor =
-    data?.palette?.darkVibrant?.background ||
-    palette[1] ||
-    screenshot.color;
+    palette?.lightMuted?.background ||
+    palette?.muted?.background ||
+    palette?.darkMuted?.background ||
+    palette?.darkVibrant?.background ||
+    palette?.lightVibrant?.background ||
+    '#E3F2FD';
+
   const lightColor =
-    data?.palette?.lightVibrant?.background ||
-    palette[3] ||
-    screenshot.alternative_color;
+    palette?.lightVibrant?.background ||
+    palette?.vibrant?.background ||
+    '#ffffff';
+
   const darkColor =
-    data?.palette?.darkVibrant?.background ||
-    palette[0] ||
-    screenshot.background_color;
+    palette?.darkVibrant?.background ||
+    palette?.darkMuted?.background ||
+    palette?.muted?.background ||
+    primaryColor;
 
   return {
     primaryColor,
