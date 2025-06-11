@@ -15,7 +15,6 @@ import useCenteredStyles from '../../hooks/useCenteredStyles';
 interface GameRendererProps {
   campaign: any;
   gameSize: GameSize;
-  gamePosition: string;
   previewDevice: 'desktop' | 'tablet' | 'mobile';
   buttonLabel: string;
   buttonColor: string;

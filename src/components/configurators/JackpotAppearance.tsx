@@ -32,7 +32,6 @@ const JackpotAppearance: React.FC<JackpotAppearanceProps> = ({
       <GameCanvasPreview 
         campaign={campaign}
         gameSize={campaign.gameSize || 'large'}
-        gamePosition={campaign.gamePosition || 'center'}
       />
 
       {/* Configurateur d'apparence */}
