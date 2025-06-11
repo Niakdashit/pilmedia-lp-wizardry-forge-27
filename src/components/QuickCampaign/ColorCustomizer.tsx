@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { getAccessibleTextColor } from '../../utils/BrandStyleAnalyzer';
 import { Palette, RotateCcw, RefreshCw } from 'lucide-react';
 import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
 import JackpotBorderCustomizer from './JackpotBorderCustomizer';
@@ -157,7 +158,8 @@ const ColorCustomizer: React.FC = () => {
     setCustomColors({
       primary: palette.colors.primary,
       secondary: palette.colors.secondary,
-      accent: palette.colors.accent
+      accent: palette.colors.accent,
+      textColor: getAccessibleTextColor(palette.colors.accent)
     });
 
     // Mettre à jour les couleurs du jackpot si on est en mode jackpot
@@ -176,7 +178,8 @@ const ColorCustomizer: React.FC = () => {
     setCustomColors({
       primary: '#8b5cf6',
       secondary: '#a78bfa',
-      accent: '#c4b5fd'
+      accent: '#c4b5fd',
+      textColor: getAccessibleTextColor('#c4b5fd')
     });
   };
   const refreshPalettes = () => {

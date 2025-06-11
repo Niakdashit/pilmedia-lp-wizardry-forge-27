@@ -1,13 +1,12 @@
-
 export const getWheelPreviewConfig = (campaign: any) => {
   const position = campaign?.config?.roulette?.position || 'centre';
   const centerImage = campaign?.config?.roulette?.centerImage;
   const centerLogo = campaign?.design?.centerLogo || campaign?.config?.roulette?.centerImage;
   const theme = campaign?.config?.roulette?.theme || 'default';
-  
+
   const borderColor = campaign?.config?.roulette?.borderColor || '#841b60';
   const borderOutlineColor = campaign?.config?.roulette?.borderOutlineColor || '#FFD700';
-  
+
   const customColors = campaign?.design?.customColors;
 
   const buttonConfig = campaign?.buttonConfig || {

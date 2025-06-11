@@ -54,7 +54,7 @@ const GameRenderer: React.FC<GameRendererProps> = ({
     }
   }, [fontUrl]);
 
-  // Applique la charte de marque sur la roue et le design général
+  // Application de la charte de marque sur la roue et le design général
   const synchronizedCampaign = applyBrandStyleToWheel(mockCampaign, customColors as BrandColors);
   synchronizedCampaign.design = {
     ...synchronizedCampaign.design,

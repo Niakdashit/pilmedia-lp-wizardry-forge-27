@@ -16,7 +16,7 @@ export interface QuickCampaignState {
   customColors: {
     primary: string;
     secondary: string;
-    accent?: string;
+    accent: string;
   };
   jackpotColors: {
     containerBackgroundColor: string;
@@ -39,7 +39,7 @@ export interface QuickCampaignState {
   setSelectedTheme: (theme: string) => void;
   setBackgroundImage: (file: File | null) => void;
   setSegmentCount: (count: number) => void;
-  setCustomColors: (colors: { primary: string; secondary: string; accent?: string }) => void;
+  setCustomColors: (colors: { primary: string; secondary: string; accent: string }) => void;
   setJackpotColors: (colors: any) => void;
   generatePreviewCampaign: () => any;
   reset: () => void;
@@ -58,11 +58,10 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
   selectedTheme: 'default',
   backgroundImage: null,
   segmentCount: 4,
-  // Couleurs harmonieuses par défaut
   customColors: {
-    primary: '#3B82F6', // Bleu corporate moderne
-    secondary: '#E3F2FD', // Bleu très clair
-    accent: '#1E40AF' // Bleu foncé
+    primary: '#3B82F6',   // Bleu principal
+    secondary: '#E3F2FD', // Bleu clair
+    accent: '#1E40AF',    // Bleu foncé
   },
   jackpotColors: {
     containerBackgroundColor: '#1f2937',
@@ -118,7 +117,7 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
       mobileConfig: {}
     };
 
-    // Configuration spécifique pour la roue
+    // Roue
     if (state.selectedGameType === 'wheel') {
       baseConfig.config.roulette = {
         segments: Array.from({ length: state.segmentCount }).map((_, i) => ({
@@ -126,8 +125,8 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
           color: i % 2 === 0 ? state.customColors.primary : state.customColors.secondary,
           image: null
         })),
-        borderColor: state.customColors.primary,
-        borderOutlineColor: state.customColors.accent || state.customColors.primary,
+        borderColor: state.customColors.secondary,
+        borderOutlineColor: state.customColors.accent,
         segmentColor1: state.customColors.primary,
         segmentColor2: state.customColors.secondary,
         theme: state.selectedTheme
@@ -143,7 +142,7 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
       };
     }
 
-    // Configuration spécifique pour le jackpot
+    // Jackpot
     if (state.selectedGameType === 'jackpot') {
       baseConfig.gameConfig = {
         jackpot: {
@@ -186,7 +185,7 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
     customColors: {
       primary: '#3B82F6',
       secondary: '#E3F2FD',
-      accent: '#1E40AF'
+      accent: '#1E40AF',
     },
     jackpotColors: {
       containerBackgroundColor: '#1f2937',
