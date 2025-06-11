@@ -103,6 +103,7 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
       },
       buttonConfig: {
         color: state.customColors.primary,
+        textColor: state.customColors.accent || '#ffffff',
         borderColor: state.customColors.primary,
         borderWidth: 2,
         borderRadius: 8,
@@ -161,7 +162,7 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
     baseConfig.mobileConfig = {
       roulette: baseConfig.config.roulette,
       buttonColor: state.customColors.primary,
-      buttonTextColor: '#ffffff',
+      buttonTextColor: state.customColors.accent || '#ffffff',
       buttonPlacement: 'bottom',
       gamePosition: 'center'
     };

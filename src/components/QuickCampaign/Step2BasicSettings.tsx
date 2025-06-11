@@ -21,6 +21,7 @@ const Step2BasicSettings: React.FC = () => {
     setCustomColors,
     setCurrentStep
   } = useQuickCampaignStore();
+
   const [dragActive, setDragActive] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
@@ -34,12 +35,14 @@ const Step2BasicSettings: React.FC = () => {
   const handleFileUpload = (files: FileList | null) => {
     if (files && files[0]) setLogoFile(files[0]);
   };
+
   const handleDrag = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (e.type === 'dragenter' || e.type === 'dragover') setDragActive(true);
     else if (e.type === 'dragleave') setDragActive(false);
   };
+
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
@@ -54,7 +57,6 @@ const Step2BasicSettings: React.FC = () => {
       const styles = await analyzeBrandStyle(brandSiteUrl);
       setCustomColors({
         primary: styles.primaryColor,
-        // 👉 On choisit la secondary ET accent selon la palette réelle de la marque !
         secondary: styles.secondaryColor || styles.darkColor || '#E3F2FD',
         accent: styles.lightColor || '#ffffff',
       });
@@ -241,4 +243,5 @@ const Step2BasicSettings: React.FC = () => {
     </div>
   );
 };
+
 export default Step2BasicSettings;

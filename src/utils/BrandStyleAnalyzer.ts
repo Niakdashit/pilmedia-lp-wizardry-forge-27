@@ -26,7 +26,6 @@ export async function analyzeBrandStyle(siteUrl: string): Promise<BrandStyle> {
     palette?.darkVibrant?.background ||
     '#841b60';
 
-  // Idem pour secondary, light et dark
   const secondaryColor =
     palette?.lightMuted?.background ||
     palette?.muted?.background ||
