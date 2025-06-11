@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Upload, Calendar, Target } from 'lucide-react';
 import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
-import { analyzeBrandStyle } from '../../utils/BrandStyleAnalyzer';
+import { analyzeBrandStyle, generateBrandThemeFromMicrolinkPalette, getAccessibleTextColor } from '../../utils/BrandStyleAnalyzer';
 
 const Step2BasicSettings: React.FC = () => {
   const {
@@ -54,17 +54,43 @@ const Step2BasicSettings: React.FC = () => {
     if (!brandSiteUrl) return;
     setIsAnalyzing(true);
     try {
-      const styles = await analyzeBrandStyle(brandSiteUrl);
-      setCustomColors({
-        primary: styles.primaryColor,
-        secondary: styles.secondaryColor || styles.darkColor || '#E3F2FD',
-        accent: styles.lightColor || '#ffffff',
-      });
-      setLogoUrl(styles.logoUrl || null);
-      setFontUrl(styles.fontUrl || null);
+      console.log('🔍 Analyse du site:', brandSiteUrl);
+      
+      // Utilisation de l'API Microlink directement pour récupérer la palette complète
+      const apiUrl = `https://api.microlink.io/?url=${encodeURIComponent(brandSiteUrl)}&palette=true&meta=true&screenshot=false`;
+      const response = await fetch(apiUrl);
+      
+      if (!response.ok) {
+        throw new Error('Erreur lors de l\'analyse du site');
+      }
+      
+      const data = await response.json();
+      console.log('📊 Données Microlink complètes:', data);
+      
+      const palette = data.data?.palette;
+      
+      if (palette) {
+        // Génération de la palette de marque intelligente
+        const brandPalette = generateBrandThemeFromMicrolinkPalette(palette);
+        
+        // Application des couleurs au store
+        setCustomColors({
+          primary: brandPalette.primaryColor,
+          secondary: brandPalette.secondaryColor,
+          accent: brandPalette.accentColor,
+          textColor: brandPalette.textColor
+        });
+        
+        console.log('✅ Couleurs appliquées avec succès:', brandPalette);
+      }
+      
+      // Récupération des métadonnées (logo, police)
+      setLogoUrl(data.data?.logo?.url || null);
+      setFontUrl(data.data?.font?.url || null);
+      
     } catch (err) {
-      console.error(err);
-      alert('Analyse impossible');
+      console.error('❌ Erreur lors de l\'analyse:', err);
+      alert('Impossible d\'analyser ce site. Vérifiez l\'URL ou réessayez plus tard.');
     } finally {
       setIsAnalyzing(false);
     }
@@ -110,27 +136,39 @@ const Step2BasicSettings: React.FC = () => {
 
             {/* Brand Website */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
-              <label className="block text-lg font-medium text-gray-900 mb-4">Site de la marque</label>
+              <label className="block text-lg font-medium text-gray-900 mb-4">
+                Site de la marque
+                <span className="text-sm font-normal text-gray-500 ml-2">
+                  (analyse automatique de la charte graphique)
+                </span>
+              </label>
               <div className="flex space-x-4">
                 <input
                   type="url"
                   value={brandSiteUrl}
                   onChange={(e) => setBrandSiteUrl(e.target.value)}
-                  placeholder="https://example.com"
+                  placeholder="https://www.homair.com"
                   className="flex-1 px-6 py-4 border-2 border-gray-200 rounded-2xl focus:border-[#841b60] focus:outline-none transition-all text-lg bg-gray-50"
                 />
                 <button
                   type="button"
                   onClick={handleAnalyze}
-                  className="px-4 py-3 rounded-2xl bg-[#841b60] text-white hover:bg-[#841b60]/90 transition-colors flex items-center justify-center"
+                  disabled={!brandSiteUrl || isAnalyzing}
+                  className="px-6 py-4 rounded-2xl bg-[#841b60] text-white hover:bg-[#841b60]/90 transition-colors flex items-center justify-center font-medium disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isAnalyzing ? (
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <div className="flex items-center space-x-2">
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                      <span>Analyse...</span>
+                    </div>
                   ) : (
-                    <span>Analyser</span>
+                    <span>🎨 Analyser</span>
                   )}
                 </button>
               </div>
+              <p className="text-sm text-gray-600 mt-2">
+                💡 L'analyse extraira automatiquement les couleurs, le logo et les polices de votre site
+              </p>
             </motion.div>
 
             {/* Launch Date */}

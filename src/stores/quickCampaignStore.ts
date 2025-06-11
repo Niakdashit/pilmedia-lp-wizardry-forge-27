@@ -1,3 +1,4 @@
+
 import { create } from 'zustand';
 
 export interface QuickCampaignState {
@@ -17,6 +18,7 @@ export interface QuickCampaignState {
     primary: string;
     secondary: string;
     accent: string;
+    textColor?: string; // Nouvelle propriété pour la couleur de texte automatique
   };
   jackpotColors: {
     containerBackgroundColor: string;
@@ -39,7 +41,7 @@ export interface QuickCampaignState {
   setSelectedTheme: (theme: string) => void;
   setBackgroundImage: (file: File | null) => void;
   setSegmentCount: (count: number) => void;
-  setCustomColors: (colors: { primary: string; secondary: string; accent: string }) => void;
+  setCustomColors: (colors: { primary: string; secondary: string; accent: string; textColor?: string }) => void;
   setJackpotColors: (colors: any) => void;
   generatePreviewCampaign: () => any;
   reset: () => void;
@@ -62,6 +64,7 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
     primary: '#3B82F6',   // Bleu principal
     secondary: '#E3F2FD', // Bleu clair
     accent: '#1E40AF',    // Bleu foncé
+    textColor: '#ffffff'  // Texte blanc par défaut
   },
   jackpotColors: {
     containerBackgroundColor: '#1f2937',
@@ -101,8 +104,8 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
         mobileBackgroundImage: null
       },
       buttonConfig: {
-        color: state.customColors.primary,
-        textColor: state.customColors.accent || '#ffffff',
+        color: state.customColors.accent,
+        textColor: state.customColors.textColor || '#ffffff',
         borderColor: state.customColors.primary,
         borderWidth: 2,
         borderRadius: 8,
@@ -160,8 +163,8 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
 
     baseConfig.mobileConfig = {
       roulette: baseConfig.config.roulette,
-      buttonColor: state.customColors.primary,
-      buttonTextColor: state.customColors.accent || '#ffffff',
+      buttonColor: state.customColors.accent,
+      buttonTextColor: state.customColors.textColor || '#ffffff',
       buttonPlacement: 'bottom',
       gamePosition: 'center'
     };
@@ -186,6 +189,7 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
       primary: '#3B82F6',
       secondary: '#E3F2FD',
       accent: '#1E40AF',
+      textColor: '#ffffff'
     },
     jackpotColors: {
       containerBackgroundColor: '#1f2937',

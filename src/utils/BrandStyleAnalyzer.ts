@@ -1,3 +1,4 @@
+
 export interface BrandStyle {
   primaryColor: string;
   logoUrl?: string;
@@ -6,6 +7,13 @@ export interface BrandStyle {
   secondaryColor?: string;
   lightColor?: string;
   darkColor?: string;
+}
+
+export interface BrandPalette {
+  primaryColor: string;
+  secondaryColor: string;
+  accentColor: string;
+  textColor: string;
 }
 
 export async function analyzeBrandStyle(siteUrl: string): Promise<BrandStyle> {
@@ -56,6 +64,59 @@ export async function analyzeBrandStyle(siteUrl: string): Promise<BrandStyle> {
   };
 }
 
+// Nouvelle fonction pour calculer le contraste et retourner la couleur de texte accessible
+export function getAccessibleTextColor(backgroundColor: string): string {
+  // Convertir la couleur hex en RGB
+  const hex = backgroundColor.replace('#', '');
+  const r = parseInt(hex.substr(0, 2), 16);
+  const g = parseInt(hex.substr(2, 2), 16);
+  const b = parseInt(hex.substr(4, 2), 16);
+
+  // Calculer la luminance relative (WCAG)
+  const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+
+  // Retourner blanc ou noir selon le meilleur contraste
+  return luminance > 0.5 ? '#000000' : '#ffffff';
+}
+
+// Helper pour générer une palette de marque cohérente à partir de la palette Microlink
+export function generateBrandThemeFromMicrolinkPalette(palette: any): BrandPalette {
+  console.log('🎨 Palette Microlink reçue:', palette);
+
+  // Extraction des couleurs dans l'ordre de priorité
+  const primaryColor = 
+    palette?.vibrant?.background ||
+    palette?.lightVibrant?.background ||
+    palette?.darkVibrant?.background ||
+    '#3B82F6'; // Fallback bleu
+
+  const secondaryColor = 
+    palette?.darkVibrant?.background ||
+    palette?.muted?.background ||
+    palette?.darkMuted?.background ||
+    '#1E40AF'; // Fallback bleu foncé
+
+  const accentColor = 
+    palette?.lightVibrant?.background ||
+    palette?.lightMuted?.background ||
+    palette?.vibrant?.background ||
+    '#60A5FA'; // Fallback bleu clair
+
+  // Génération automatique de la couleur de texte accessible
+  const textColor = getAccessibleTextColor(accentColor);
+
+  const brandPalette: BrandPalette = {
+    primaryColor,
+    secondaryColor,
+    accentColor,
+    textColor
+  };
+
+  console.log('🎯 Palette de marque générée:', brandPalette);
+  
+  return brandPalette;
+}
+
 export interface BrandColors {
   primary: string;
   secondary: string;
@@ -91,7 +152,8 @@ export function applyBrandStyleToWheel(campaign: any, colors: BrandColors) {
     buttonConfig: {
       ...(campaign.buttonConfig || {}),
       color: colors.accent || colors.primary,
-      borderColor: colors.primary
+      borderColor: colors.primary,
+      textColor: getAccessibleTextColor(colors.accent || colors.primary)
     }
   };
 }
