@@ -1,5 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, Upload, Eye, Settings, CheckCircle, AlertCircle } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { ArrowLeft, Upload, Eye, Settings, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
 import { useCampaigns } from '../../hooks/useCampaigns';
@@ -21,7 +21,6 @@ const Step3VisualStyle: React.FC = () => {
     logoFile,
     logoUrl,
     fontUrl,
-    brandSiteUrl,
     selectedTheme,
     backgroundImage,
     customColors,
@@ -37,30 +36,10 @@ const Step3VisualStyle: React.FC = () => {
   const [isCreating, setIsCreating] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [creationSuccess, setCreationSuccess] = useState(false);
-  const [extractionStatus, setExtractionStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
-  const [extractionMessage, setExtractionMessage] = useState<string>('');
   
   const previewCampaign = generatePreviewCampaign();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Surveillance de l'extraction automatique des couleurs
-  useEffect(() => {
-    if (brandSiteUrl && brandSiteUrl.trim() !== '') {
-      setExtractionStatus('loading');
-      setExtractionMessage('Analyse de la marque et extraction des couleurs du logo...');
-      
-      // Simulation du processus d'extraction (sera géré par le hook)
-      const timer = setTimeout(() => {
-        setExtractionStatus('success');
-        setExtractionMessage('Couleurs de marque extraites avec succès !');
-      }, 3000);
-      
-      return () => clearTimeout(timer);
-    } else {
-      setExtractionStatus('idle');
-      setExtractionMessage('');
-    }
-  }, [brandSiteUrl]);
 
   const handleFileUpload = (files: FileList | null) => {
     if (files && files[0]) {
@@ -257,40 +236,6 @@ const Step3VisualStyle: React.FC = () => {
           </div>
 
           <div className="space-y-16">
-            {/* Statut de l'extraction des couleurs de marque */}
-            {brandSiteUrl && (
-              <div className="mb-8">
-                {extractionStatus === 'loading' && (
-                  <div className="flex items-center space-x-3 text-blue-600 bg-blue-50 p-4 rounded-lg">
-                    <div className="w-5 h-5 border-2 border-blue-600/30 border-t-blue-600 rounded-full animate-spin"></div>
-                    <div>
-                      <p className="font-medium">Extraction automatique des couleurs de marque</p>
-                      <p className="text-sm text-blue-500 mt-1">{extractionMessage}</p>
-                    </div>
-                  </div>
-                )}
-                
-                {extractionStatus === 'success' && (
-                  <div className="flex items-center space-x-3 text-green-600 bg-green-50 p-4 rounded-lg">
-                    <CheckCircle className="w-5 h-5" />
-                    <div>
-                      <p className="font-medium">🎨 Couleurs de marque appliquées automatiquement</p>
-                      <p className="text-sm text-green-500 mt-1">Les couleurs ont été extraites du logo et appliquées à votre campagne</p>
-                    </div>
-                  </div>
-                )}
-                
-                {extractionStatus === 'error' && (
-                  <div className="flex items-start space-x-3 text-amber-600 bg-amber-50 p-4 rounded-lg">
-                    <AlertCircle className="w-5 h-5 mt-0.5 flex-shrink-0" />
-                    <div>
-                      <p className="font-medium">Extraction partielle des couleurs</p>
-                      <p className="text-sm text-amber-500 mt-1">Certaines couleurs ont pu être extraites. Vous pouvez les ajuster manuellement si nécessaire.</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
 
             {/* Aperçu dynamique du jeu - Design unifié pour toutes les mécaniques */}
             <div className="flex justify-center">
@@ -310,7 +255,6 @@ const Step3VisualStyle: React.FC = () => {
                         jackpotColors={jackpotColors}
                         logoUrl={logoUrl || undefined}
                         fontUrl={fontUrl || undefined}
-                        siteUrl={brandSiteUrl || undefined}
                         gameSize="medium"
                         gamePosition="center"
                         previewDevice="desktop"
