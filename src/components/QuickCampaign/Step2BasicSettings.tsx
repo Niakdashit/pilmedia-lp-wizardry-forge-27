@@ -1,30 +1,19 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, ArrowRight, Upload, Calendar, Target } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Calendar, Target } from 'lucide-react';
 import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
-import { generateBrandThemeFromUrl } from '../../utils/BrandStyleAnalyzer';
+import LogoUploader from '../LogoUploader';
 
 const Step2BasicSettings: React.FC = () => {
   const {
     campaignName,
     launchDate,
     marketingGoal,
-    logoFile,
-    brandSiteUrl,
     setCampaignName,
     setLaunchDate,
     setMarketingGoal,
-    setLogoFile,
-    setBrandSiteUrl,
-    setLogoUrl,
-    setFontUrl,
-    setCustomColors,
-    setJackpotColors,
     setCurrentStep
   } = useQuickCampaignStore();
-
-  const [dragActive, setDragActive] = useState(false);
-  const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   const marketingGoals = [
     { id: 'leads', label: 'Générer des leads', description: 'Collecter des contacts qualifiés' },
@@ -33,57 +22,7 @@ const Step2BasicSettings: React.FC = () => {
     { id: 'sales', label: 'Augmenter les ventes', description: 'Convertir plus de prospects' }
   ];
 
-  const handleFileUpload = (files: FileList | null) => {
-    if (files && files[0]) setLogoFile(files[0]);
-  };
-
-  const handleDrag = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') setDragActive(true);
-    else if (e.type === 'dragleave') setDragActive(false);
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setDragActive(false);
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) setLogoFile(e.dataTransfer.files[0]);
-  };
-
-  const handleAnalyze = async () => {
-    if (!brandSiteUrl) return;
-    setIsAnalyzing(true);
-    try {
-      const theme = await generateBrandThemeFromUrl(brandSiteUrl);
-
-      setCustomColors({
-        primary: theme.customColors.primary,
-        secondary: theme.customColors.secondary,
-        accent: theme.customColors.accent,
-        textColor: theme.customColors.text
-      });
-
-      setJackpotColors({
-        containerBackgroundColor: theme.customColors.accent + '30',
-        backgroundColor: theme.customColors.accent + '30',
-        borderColor: theme.customColors.primary,
-        borderWidth: 3,
-        slotBorderColor: theme.customColors.secondary,
-        slotBorderWidth: 2,
-        slotBackgroundColor: '#ffffff'
-      });
-
-      setLogoUrl(theme.logoUrl || null);
-      setFontUrl(null);
-
-    } catch (err) {
-      console.error('❌ Erreur lors de l\'analyse:', err);
-      alert('Impossible d\'analyser ce site. Vérifiez l\'URL ou réessayez plus tard.');
-    } finally {
-      setIsAnalyzing(false);
-    }
-  };
+  // Les couleurs seront extraites automatiquement via le composant LogoUploader
 
   const canProceed = campaignName.trim() && launchDate && marketingGoal;
 
@@ -114,42 +53,6 @@ const Step2BasicSettings: React.FC = () => {
               />
             </motion.div>
 
-            {/* Brand Website */}
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.25 }}>
-              <label className="block text-lg font-medium text-gray-900 mb-4">
-                Site de la marque
-                <span className="text-sm font-normal text-gray-500 ml-2">
-                  (analyse intelligente de la charte graphique complète)
-                </span>
-              </label>
-              <div className="flex space-x-4">
-                <input
-                  type="url"
-                  value={brandSiteUrl}
-                  onChange={e => setBrandSiteUrl(e.target.value)}
-                  placeholder="https://www.sfr.fr"
-                  className="flex-1 px-6 py-4 border-2 border-gray-200 rounded-2xl focus:border-[#841b60] focus:outline-none transition-all text-lg bg-gray-50"
-                />
-                <button
-                  type="button"
-                  onClick={handleAnalyze}
-                  disabled={!brandSiteUrl || isAnalyzing}
-                  className="px-6 py-4 rounded-2xl bg-[#841b60] text-white hover:bg-[#841b60]/90 transition-colors flex items-center justify-center font-medium disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isAnalyzing ? (
-                    <div className="flex items-center space-x-2">
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      <span>Analyse...</span>
-                    </div>
-                  ) : (
-                    <span>🎨 Analyser</span>
-                  )}
-                </button>
-              </div>
-              <p className="text-sm text-gray-600 mt-2">
-                💡 L'analyse extraira automatiquement les couleurs dominantes, le logo et la police de votre site pour une personnalisation sans effort.
-              </p>
-            </motion.div>
 
             {/* Launch Date */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
@@ -193,38 +96,7 @@ const Step2BasicSettings: React.FC = () => {
               <label className="block text-lg font-medium text-gray-900 mb-4">
                 Logo <span className="text-gray-500 font-normal">(optionnel)</span>
               </label>
-              <div
-                className={`
-                  relative border-2 border-dashed rounded-2xl p-8 text-center transition-all bg-gray-50
-                  ${dragActive ? 'border-[#841b60] bg-[#841b60]/5' : 'border-gray-300'}
-                  ${logoFile ? 'border-green-400 bg-green-50' : ''}
-                `}
-                onDragEnter={handleDrag}
-                onDragLeave={handleDrag}
-                onDragOver={handleDrag}
-                onDrop={handleDrop}
-              >
-                <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                {logoFile ? (
-                  <div>
-                    <p className="text-gray-900 font-medium mb-2">{logoFile.name}</p>
-                    <button onClick={() => setLogoFile(null)} className="text-red-500 hover:text-red-600 transition-colors">
-                      Supprimer
-                    </button>
-                  </div>
-                ) : (
-                  <>
-                    <p className="text-gray-600 mb-2">
-                      <label className="text-[#841b60] cursor-pointer hover:text-[#841b60]/80 transition-colors">
-                        Cliquez pour télécharger
-                        <input type="file" accept="image/*" onChange={e => handleFileUpload(e.target.files)} className="hidden" />
-                      </label>
-                      {' '}ou glissez-déposez votre logo
-                    </p>
-                    <p className="text-gray-400 text-sm">PNG, JPG jusqu'à 10MB</p>
-                  </>
-                )}
-              </div>
+              <LogoUploader />
             </motion.div>
           </div>
 

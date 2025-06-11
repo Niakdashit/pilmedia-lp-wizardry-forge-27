@@ -30,7 +30,9 @@ import ColorThief from 'colorthief';
 
 // --- APPEL API Brandfetch AVEC SÉCURITÉ CLÉ ---
 async function fetchBrandfetchData(domain: string): Promise<any> {
-  const apiKey = import.meta.env.VITE_BRANDFETCH_KEY;
+  const apiKey =
+    (typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_BRANDFETCH_KEY) ||
+    process.env.VITE_BRANDFETCH_KEY;
   if (!apiKey) {
     console.warn(
       '[BrandStyleAnalyzer] VITE_BRANDFETCH_KEY is undefined. Skipping Brandfetch request.'
@@ -114,6 +116,37 @@ export async function generateBrandThemeFromUrl(url: string): Promise<BrandTheme
       }
     };
   }
+}
+
+// Génération d'un thème de marque à partir d'un fichier logo local
+export async function generateBrandThemeFromFile(file: File): Promise<BrandTheme> {
+  const logoUrl = URL.createObjectURL(file);
+  try {
+    const logoColors = await extractColorsFromLogo(logoUrl);
+    if (logoColors.length >= 2) {
+      const palette = generateAdvancedPaletteFromColors(logoColors);
+      return {
+        customColors: {
+          primary: palette.primaryColor,
+          secondary: palette.secondaryColor,
+          accent: palette.accentColor,
+          text: palette.textColor
+        },
+        logoUrl
+      };
+    }
+  } catch (error) {
+    console.warn('⚠️ Échec extraction logo local:', error);
+  }
+  return {
+    customColors: {
+      primary: '#841b60',
+      secondary: '#dc2626',
+      accent: '#10b981',
+      text: '#ffffff'
+    },
+    logoUrl
+  };
 }
 
 // Récupération des données Brandfetch
