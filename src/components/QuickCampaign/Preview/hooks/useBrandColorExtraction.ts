@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { generateBrandThemeFromUrl } from '../../../../utils/BrandStyleAnalyzer';
 import { getExactBrandColors } from '../utils/exactColorExtractor';
@@ -11,7 +10,6 @@ interface CustomColors {
 
 export const useBrandColorExtraction = (
   customColors: CustomColors,
-  logoUrl?: string,
   siteUrl?: string
 ) => {
   const [siteColors, setSiteColors] = React.useState<string[]>([]);
