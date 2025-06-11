@@ -138,7 +138,6 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
             <GameCanvasPreview
               campaign={enhancedCampaign}
               gameSize={gameSize}
-              gamePosition={gamePosition}
               className="w-full h-full"
               key={`preview-${gameSize}-${gamePosition}-${campaign.buttonConfig?.color}-${JSON.stringify(campaign.gameConfig?.[campaign.type])}`}
               previewDevice={previewDevice}
