@@ -1,7 +1,6 @@
 
 import React from 'react';
 import GameRenderer from './GameRenderer';
-import { useGamePositionCalculator } from './GamePositionCalculator';
 import { GAME_SIZES, GameSize } from '../configurators/GameSizeSelector';
 import MobilePreview from './Mobile/MobilePreview';
 
@@ -35,14 +34,6 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   const gameSize: GameSize = campaign.gameSize && Object.keys(GAME_SIZES).includes(campaign.gameSize) ? campaign.gameSize as GameSize : 'medium';
   const gamePosition = campaign.gamePosition || 'center';
 
-  // Desktop : pas de crop
-  const shouldCropWheel = false;
-  const { getPositionStyles } = useGamePositionCalculator({
-    gameSize,
-    gamePosition,
-    shouldCropWheel
-  });
-  
   // Override positioning for universal centering
   const centeredGameContainerStyle = {
     width: '100%',

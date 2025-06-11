@@ -15,7 +15,6 @@ interface GameRendererProps {
   gameSize: GameSize;
   gamePosition: string;
   previewDevice: 'desktop' | 'tablet' | 'mobile';
-  gameContainerStyle: any;
   buttonLabel: string;
   buttonColor: string;
   gameBackgroundImage?: string;
@@ -26,7 +25,6 @@ const GameRenderer: React.FC<GameRendererProps> = ({
   gameSize,
   gamePosition,
   previewDevice,
-  gameContainerStyle,
   buttonLabel,
   buttonColor,
   gameBackgroundImage
