@@ -2,7 +2,6 @@
 import React from 'react';
 import GameRenderer from './GameRenderer';
 import { GameSize } from '../configurators/GameSizeSelector';
-import useCenteredStyles from '../../hooks/useCenteredStyles';
 import { getCampaignBackgroundImage } from '../../utils/background';
 
 interface GameCanvasPreviewProps {
@@ -20,8 +19,6 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   className = '',
   previewDevice = 'desktop'
 }) => {
-  const { containerStyle, wrapperStyle } = useCenteredStyles();
-
   // Déterminer l'image de fond à appliquer
   const resolvedBackground =
     gameBackgroundImage || getCampaignBackgroundImage(campaign, previewDevice);
