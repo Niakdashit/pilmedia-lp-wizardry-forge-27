@@ -7,7 +7,6 @@ import CampaignPreviewModal from './CampaignPreviewModal';
 import ColorCustomizer from './ColorCustomizer';
 import JackpotPreview from './Preview/JackpotPreview';
 import GameRenderer from './Preview/GameRenderer';
-import { analyzeBrandStyle } from '../../utils/BrandStyleAnalyzer';
 
 const Step3VisualStyle: React.FC = () => {
   const navigate = useNavigate();

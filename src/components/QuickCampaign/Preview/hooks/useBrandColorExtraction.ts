@@ -15,7 +15,6 @@ export const useBrandColorExtraction = (
   siteUrl?: string
 ) => {
   const [siteColors, setSiteColors] = React.useState<string[]>([]);
-  const [logoColors, setLogoColors] = React.useState<string[]>([]);
   const [finalColors, setFinalColors] = React.useState(customColors);
   const [brandStyleExtracted, setBrandStyleExtracted] = React.useState(false);
   const [isExtracting, setIsExtracting] = React.useState(false);
@@ -96,7 +95,6 @@ export const useBrandColorExtraction = (
   return {
     finalColors,
     siteColors,
-    logoColors,
     brandStyleExtracted,
     isExtracting
   };
