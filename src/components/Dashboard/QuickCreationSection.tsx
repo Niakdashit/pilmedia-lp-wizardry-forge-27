@@ -30,7 +30,7 @@ const QuickCreationSection: React.FC = () => {
     label: 'Formulaire'
   }];
   return <div className="w-full mt-8">
-      <div className="relative border-2 border-[#ffffff] rounded-3xl p-8 bg-gradient-to-b from-[#841b60]/5 to-white overflow-hidden bg-[#ffeef6]">
+      <div className="relative border-2 border-[#ffffff] rounded-3xl p-8 bg-gradient-to-b from-[#841b60]/5 to-white overflow-hidden bg-[#ffeef6]/0">
         <div className="absolute inset-0 bg-gradient-to-br from-[#841b60]/3 via-transparent to-transparent pointer-events-none"></div>
         
         <div className="relative z-10">
