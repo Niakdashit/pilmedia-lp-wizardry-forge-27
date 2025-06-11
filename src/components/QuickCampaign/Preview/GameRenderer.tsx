@@ -4,7 +4,7 @@ import { Jackpot } from '../../GameTypes';
 import ScratchPreview from '../../GameTypes/ScratchPreview';
 import DicePreview from '../../GameTypes/DicePreview';
 import FormPreview from '../../GameTypes/FormPreview';
-import { applyBrandColorsToVisualStyle, BrandColors } from '../../../utils/BrandStyleAnalyzer';
+import { applyBrandStyleToWheel, BrandColors } from '../../../utils/BrandStyleAnalyzer';
 
 interface GameRendererProps {
   gameType: string;
@@ -12,8 +12,7 @@ interface GameRendererProps {
   customColors: {
     primary: string;
     secondary: string;
-    accent: string;
-    textColor: string;
+    accent?: string;
   };
   jackpotColors: {
     containerBackgroundColor: string;
@@ -42,6 +41,7 @@ const GameRenderer: React.FC<GameRendererProps> = ({
   gamePosition = 'center',
   previewDevice = 'desktop'
 }) => {
+  // Charge dynamiquement la police de marque si fournie
   React.useEffect(() => {
     if (fontUrl) {
       const link = document.createElement('link');
@@ -54,14 +54,14 @@ const GameRenderer: React.FC<GameRendererProps> = ({
     }
   }, [fontUrl]);
 
-  // Appliquer la charte de marque à la configuration de la roue et du bouton
-  const synchronizedCampaign = applyBrandColorsToVisualStyle(mockCampaign, customColors as BrandColors);
+  // Application de la charte de marque sur la roue et le design général
+  const synchronizedCampaign = applyBrandStyleToWheel(mockCampaign, customColors as BrandColors);
   synchronizedCampaign.design = {
     ...synchronizedCampaign.design,
     centerLogo: logoUrl || synchronizedCampaign.design?.centerLogo,
   };
 
-  // Style universel pour tout centrer verticalement et horizontalement
+  // Style universel pour centrer la mécanique
   const centeredContainerStyle: React.CSSProperties = {
     display: 'flex',
     alignItems: 'center',
