@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Upload } from 'lucide-react';
 import { useQuickCampaignStore } from '../stores/quickCampaignStore';
@@ -14,8 +15,7 @@ const LogoUploader: React.FC<LogoUploaderProps> = ({ className }) => {
     setCustomColors,
     setJackpotColors,
     jackpotColors,
-    selectedGameType,
-    customColors
+    selectedGameType
   } = useQuickCampaignStore();
 
   const [dragActive, setDragActive] = useState(false);
