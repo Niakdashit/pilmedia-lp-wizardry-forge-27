@@ -1,3 +1,4 @@
+
 export interface BrandStyle {
   primaryColor: string;
   logoUrl?: string;
