@@ -2,13 +2,13 @@
 /* Status badges */
 .status-badge {
   @apply px-4 py-1.5 rounded-full text-sm font-semibold
-         bg-white/80 backdrop-blur-sm border border-primary-200;
+         bg-white/80 backdrop-blur-sm;
   font-family: 'Inter', sans-serif;
 }
 
 /* Section headers */
 .section-title {
-  @apply text-4xl font-bold tracking-tight mb-8 bg-brand-gradient bg-clip-text text-transparent;
+  @apply text-4xl font-bold tracking-tight mb-8;
   font-family: 'Inter', sans-serif;
 }
 
@@ -27,7 +27,7 @@
 .slider {
   -webkit-appearance: none;
   appearance: none;
-  background: linear-gradient(135deg, #d9ceff 0%, #a078ff 50%, #7c2dff 100%);
+  background: #deb887;
   outline: none;
   border-radius: 8px;
 }
@@ -38,30 +38,30 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #2f0875 0%, #5d15d0 100%);
+  background: #8b4513;
   cursor: pointer;
-  box-shadow: 0 2px 4px rgba(47, 8, 117, 0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .slider::-moz-range-thumb {
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  background: linear-gradient(135deg, #2f0875 0%, #5d15d0 100%);
+  background: #8b4513;
   cursor: pointer;
   border: none;
-  box-shadow: 0 2px 4px rgba(47, 8, 117, 0.3);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .slider::-webkit-slider-track {
   height: 8px;
   border-radius: 4px;
-  background: linear-gradient(135deg, #d9ceff 0%, #a078ff 50%, #7c2dff 100%);
+  background: #deb887;
 }
 
 .slider::-moz-range-track {
   height: 8px;
   border-radius: 4px;
-  background: linear-gradient(135deg, #d9ceff 0%, #a078ff 50%, #7c2dff 100%);
+  background: #deb887;
   border: none;
 }
