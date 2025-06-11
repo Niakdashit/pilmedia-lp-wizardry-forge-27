@@ -1,4 +1,3 @@
-
 export interface BrandStyle {
   primaryColor: string;
   logoUrl?: string;
@@ -19,15 +18,13 @@ export interface BrandPalette {
 
 import ColorThief from 'colorthief';
 
+// Analyse la charte graphique depuis l'API et retourne la palette prête pour l'app
 export async function analyzeBrandStyle(siteUrl: string): Promise<BrandStyle> {
-  // Inclure screenshot et color pour une extraction plus fiable
   const apiUrl =
     `https://api.microlink.io/?url=${encodeURIComponent(siteUrl)}` +
     `&palette=true&screenshot=true&meta=true&color=true`;
   const res = await fetch(apiUrl);
-  if (!res.ok) {
-    throw new Error('Microlink request failed');
-  }
+  if (!res.ok) throw new Error('Microlink request failed');
   const json = await res.json();
   const data = json.data || {};
   const brandPalette = await extractBrandPaletteFromMicrolink(data);
@@ -43,21 +40,17 @@ export async function analyzeBrandStyle(siteUrl: string): Promise<BrandStyle> {
   };
 }
 
-// Nouvelle fonction pour calculer le contraste et retourner la couleur de texte accessible
+// Calcul automatique du texte contrasté
 export function getAccessibleTextColor(backgroundColor: string): string {
-  // Convertir la couleur hex en RGB
   const hex = backgroundColor.replace('#', '');
   const r = parseInt(hex.substr(0, 2), 16);
   const g = parseInt(hex.substr(2, 2), 16);
   const b = parseInt(hex.substr(4, 2), 16);
-
-  // Calculer la luminance relative (WCAG)
   const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-
-  // Retourner blanc ou noir selon le meilleur contraste
   return luminance > 0.5 ? '#000000' : '#ffffff';
 }
 
+// ColorThief utilitaires
 function hexToRgb(hex: string): [number, number, number] {
   const clean = hex.replace('#', '');
   const r = parseInt(clean.substring(0, 2), 16);
@@ -78,111 +71,151 @@ function rgbToHex(r: number, g: number, b: number): string {
   );
 }
 
-function isNeutralColor(hex: string | undefined): boolean {
-  if (!hex) return true;
-  const [r, g, b] = hexToRgb(hex.toLowerCase());
-  // Couleurs très proches de gris ou bleu générique
-  const close = Math.abs(r - g) < 10 && Math.abs(g - b) < 10;
-  const genericBlues = ['#007bff'];
-  return close || genericBlues.includes(hex.toLowerCase());
+// Extraction ColorThief via <img>
+export async function extractColorsFromLogo(logoUrl: string): Promise<string[]> {
+  try {
+    const img = new Image();
+    img.crossOrigin = 'Anonymous';
+    return new Promise((resolve, reject) => {
+      img.onload = () => {
+        try {
+          const colorThief = new ColorThief();
+          const rawColors = colorThief.getPalette(img, 5);
+          const colors = rawColors.map(([r, g, b]: number[]) => rgbToHex(r, g, b));
+          resolve(colors);
+        } catch (error) {
+          reject(error);
+        }
+      };
+      img.onerror = () => reject(new Error('Logo load failed'));
+      img.src = logoUrl;
+    });
+  } catch (error) {
+    return [];
+  }
 }
 
-function paletteHasMeaningfulColors(palette: any): boolean {
-  const vib = palette?.vibrant?.background as string | undefined;
-  if (!vib) return false;
-  return !isNeutralColor(vib);
+// Détection palette trop générique (bleu/gris/terne)
+function isPaletteNeutral(palette: any): boolean {
+  if (!palette?.vibrant?.background && !palette?.darkVibrant?.background) return true;
+  const colors = [
+    palette?.vibrant?.background,
+    palette?.darkVibrant?.background,
+    palette?.lightVibrant?.background
+  ].filter(Boolean);
+  if (colors.length === 0) return true;
+  const genericColors = colors.filter(color => {
+    const hex = color.toLowerCase();
+    if (hex.includes('3b82') || hex.includes('2563') || hex.includes('1d4ed8')) return true;
+    if (hex.includes('6b7280') || hex.includes('374151') || hex.includes('9ca3af')) return true;
+    return false;
+  });
+  return genericColors.length >= colors.length * 0.7;
 }
 
-export function generateBrandThemeFromColors(colors: string[]): BrandPalette {
-  const [primary = '#841b60', secondary, accent, background] = colors;
-  const palette: BrandPalette = {
-    primaryColor: primary,
-    secondaryColor: secondary || primary,
-    accentColor: accent || primary,
-    backgroundColor: background || '#ffffff',
-    textColor: getAccessibleTextColor(accent || primary)
-  };
-  return palette;
-}
-
+// Palette complète à partir de Microlink, ou fallback logo
 export async function extractBrandPaletteFromMicrolink(data: any): Promise<BrandPalette> {
   const palette = data?.palette;
-  if (palette && paletteHasMeaningfulColors(palette)) {
-    return generateBrandThemeFromMicrolinkPalette(palette);
+  const logoUrl = data?.logo?.url;
+
+  // Palette Microlink prioritaire si elle est riche
+  if (palette && !isPaletteNeutral(palette)) {
+    return extractCompletePaletteFromMicrolink(palette);
   }
 
-  const imageUrl = data?.logo?.url || data?.screenshot?.url;
-  if (imageUrl) {
+  // Sinon : fallback analyse du logo si possible (navigateur uniquement)
+  if (logoUrl && typeof window !== 'undefined') {
     try {
-      const rawColors = await ColorThief.getPalette(imageUrl, 4);
-      const colors = rawColors.map(([r, g, b]) => rgbToHex(r, g, b));
-      return generateBrandThemeFromColors(colors);
-    } catch (e) {
-      console.error('ColorThief error', e);
-    }
+      const logoColors = await extractColorsFromLogo(logoUrl);
+      if (logoColors.length >= 2) {
+        return generateBrandThemeFromColors(logoColors);
+      }
+    } catch { }
   }
 
-  return generateBrandThemeFromColors(['#841b60', '#1e3a8a', '#dc2626', '#ffffff']);
-}
-
-// Extraire directement une palette de couleurs à partir d'un logo
-export async function extractBrandPaletteFromLogo(logoUrl: string): Promise<BrandPalette> {
-  try {
-    const rawColors = await ColorThief.getPalette(logoUrl, 4);
-    const colors = rawColors.map(([r, g, b]) => rgbToHex(r, g, b));
-    return generateBrandThemeFromColors(colors);
-  } catch (error) {
-    console.error('Logo color extraction failed', error);
-    return generateBrandThemeFromColors(['#841b60', '#1e3a8a', '#dc2626', '#ffffff']);
+  // Sinon : fallback palette même si "neutre"
+  if (palette && palette?.vibrant?.background) {
+    return extractCompletePaletteFromMicrolink(palette);
   }
+
+  // Sinon : fallback screenshot
+  const screenshotUrl = data?.screenshot?.url;
+  if (screenshotUrl && typeof window !== 'undefined') {
+    try {
+      const screenshotColors = await extractColorsFromLogo(screenshotUrl);
+      if (screenshotColors.length >= 2) {
+        return generateBrandThemeFromColors(screenshotColors);
+      }
+    } catch { }
+  }
+
+  // Sinon : couleur défaut
+  return generateBrandThemeFromColors(['#841b60', '#dc2626', '#ffffff', '#f8fafc']);
 }
 
-// Helper pour générer une palette de marque cohérente à partir de la palette Microlink
-export function generateBrandThemeFromMicrolinkPalette(palette: any): BrandPalette {
-  console.log('🎨 Palette Microlink reçue:', palette);
+// Génération palette intelligente depuis couleurs (logo, screenshot, etc)
+export function generateBrandThemeFromColors(colors: string[]): BrandPalette {
+  const sortedColors = colors.sort((a, b) => getLuminance(b) - getLuminance(a));
+  const primaryColor = sortedColors[0] || '#841b60';
+  const secondaryColor = sortedColors[1] || primaryColor;
+  const accentColor = sortedColors[2] || primaryColor;
+  const backgroundColor = sortedColors.find(c => getLuminance(c) > 0.8) || '#ffffff';
+  const textColor = getAccessibleTextColor(accentColor);
+  return { primaryColor, secondaryColor, accentColor, backgroundColor, textColor };
+}
 
-  const primaryColor =
-    palette?.vibrant?.background ||
-    palette?.lightVibrant?.background ||
-    palette?.darkVibrant?.background ||
-    '#841b60';
+// Génération palette complète cohérente depuis Microlink
+export function extractCompletePaletteFromMicrolink(palette: any): BrandPalette {
+  const primaryCandidates = [
+    palette?.vibrant?.background,
+    palette?.darkVibrant?.background,
+    palette?.muted?.background
+  ].filter(Boolean);
 
-  const secondaryColor =
-    palette?.darkVibrant?.background ||
-    palette?.muted?.background ||
-    primaryColor;
+  const secondaryCandidates = [
+    palette?.darkVibrant?.background,
+    palette?.darkMuted?.background,
+    palette?.vibrant?.background
+  ].filter(Boolean);
 
-  const accentColor =
-    palette?.lightVibrant?.background ||
-    palette?.lightMuted?.background ||
-    primaryColor;
+  const accentCandidates = [
+    palette?.lightVibrant?.background,
+    palette?.lightMuted?.background,
+    palette?.vibrant?.background
+  ].filter(Boolean);
 
-  const backgroundColor =
-    palette?.lightMuted?.background ||
-    palette?.muted?.background ||
-    '#ffffff';
+  const backgroundCandidates = [
+    palette?.lightMuted?.background,
+    palette?.muted?.background,
+    '#ffffff'
+  ].filter(Boolean);
 
+  const primaryColor = primaryCandidates[0] || '#841b60';
+  const secondaryColor = secondaryCandidates.find(c => c !== primaryColor) || secondaryCandidates[0] || '#666666';
+  const accentColor = accentCandidates.find(c => c !== primaryColor && c !== secondaryColor) || accentCandidates[0] || primaryColor;
+  const backgroundColor = backgroundCandidates.find(c => c !== primaryColor && c !== secondaryColor) || '#ffffff';
   const textColor = getAccessibleTextColor(accentColor);
 
-  const brandPalette: BrandPalette = {
-    primaryColor,
-    secondaryColor,
-    accentColor,
-    backgroundColor,
-    textColor
-  };
-
-  console.log('🎯 Palette de marque générée:', brandPalette);
-  return brandPalette;
+  return { primaryColor, secondaryColor, accentColor, backgroundColor, textColor };
 }
 
+// Pour compatibilité avec l'ancien nom
+export function generateBrandThemeFromMicrolinkPalette(palette: any): BrandPalette {
+  return extractCompletePaletteFromMicrolink(palette);
+}
+
+function getLuminance(hex: string): number {
+  const rgb = hexToRgb(hex);
+  return (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]) / 255;
+}
+
+// Application de la charte sur la roue
 export interface BrandColors {
   primary: string;
   secondary: string;
   accent?: string;
 }
 
-// Central helper to apply a brand color scheme to a wheel configuration
 export function applyBrandStyleToWheel(campaign: any, colors: BrandColors) {
   const updatedSegments = (campaign?.config?.roulette?.segments || []).map(
     (segment: any, index: number) => ({

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Quiz, Scratch, Memory, Puzzle, Dice } from '../GameTypes';
 import TabRoulette from '@/components/configurators/TabRoulette';
@@ -124,7 +123,6 @@ const CampaignContent: React.FC<CampaignContentProps> = ({
             <GameCanvasPreview 
               campaign={campaign} 
               gameSize={campaign.gameSize || 'large'}
-              gamePosition={campaign.gamePosition || 'center'}
             />
           </div>
 
@@ -147,7 +145,6 @@ const CampaignContent: React.FC<CampaignContentProps> = ({
               <GameCanvasPreview 
                 campaign={campaign} 
                 gameSize={campaign.gameSize || 'large'}
-                gamePosition={campaign.gamePosition || 'center'}
               />
 
               <div>

@@ -1,3 +1,4 @@
+
 import React, { useState, useRef } from 'react';
 import { Plus } from 'lucide-react';
 import GameCanvasPreview from '../CampaignEditor/GameCanvasPreview';
@@ -113,9 +114,9 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
   };
 
   return (
-    <div className="w-full h-full flex items-center justify-center p-6">
-      {/* Canvas container with Canva-like styling */}
-      <div className="relative w-full max-w-7xl h-full bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-200/50">
+    <div className="w-full h-full flex items-center justify-center p-4 md:p-6">
+      {/* Canvas container with Canva-like styling - uses full available space */}
+      <div className="relative w-full h-full bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-200/50">
         {/* Canvas background */}
         <div
           ref={canvasRef}
@@ -134,11 +135,10 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
             sizeMap={sizeMap}
           />
 
-          <div className="flex-1 flex relative">
+          <div className="flex-1 flex relative h-full">
             <GameCanvasPreview
               campaign={enhancedCampaign}
               gameSize={gameSize}
-              gamePosition={gamePosition}
               className="w-full h-full"
               key={`preview-${gameSize}-${gamePosition}-${campaign.buttonConfig?.color}-${JSON.stringify(campaign.gameConfig?.[campaign.type])}`}
               previewDevice={previewDevice}

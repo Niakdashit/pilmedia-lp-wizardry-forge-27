@@ -92,33 +92,36 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
       gameDimensions={gameDimensions}
       previewDevice={previewDevice}
     >
-      <WheelPreviewContent
-        segments={segments}
-        rotation={rotation}
-        centerImage={centerImage}
-        centerLogo={centerLogo}
-        theme={theme}
-        customColors={customColors}
-        borderColor={borderColor}
-        borderOutlineColor={borderOutlineColor}
-        canvasSize={canvasSize}
-        containerWidth={containerWidth}
-        containerHeight={containerHeight}
-        pointerSize={pointerSize}
-        shouldCropWheel={shouldCropWheel}
-        gamePosition={gamePosition}
-        formValidated={formValidated}
-        showValidationMessage={showValidationMessage}
-        onWheelClick={handleWheelClick}
-      />
+      {/* Wheel content */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
+        <WheelPreviewContent
+          segments={segments}
+          rotation={rotation}
+          centerImage={centerImage}
+          centerLogo={centerLogo}
+          theme={theme}
+          customColors={customColors}
+          borderColor={borderColor}
+          borderOutlineColor={borderOutlineColor}
+          canvasSize={canvasSize}
+          containerWidth={containerWidth}
+          containerHeight={containerHeight}
+          pointerSize={pointerSize}
+          shouldCropWheel={shouldCropWheel}
+          gamePosition={gamePosition}
+          formValidated={formValidated}
+          showValidationMessage={showValidationMessage}
+          onWheelClick={handleWheelClick}
+        />
 
-      <WheelButton
-        buttonConfig={buttonConfig}
-        spinning={spinning}
-        disabled={disabled}
-        formValidated={formValidated}
-        onClick={handleWheelClick}
-      />
+        <WheelButton
+          buttonConfig={buttonConfig}
+          spinning={spinning}
+          disabled={disabled}
+          formValidated={formValidated}
+          onClick={handleWheelClick}
+        />
+      </div>
 
       <WheelFormModal
         showFormModal={showFormModal}
