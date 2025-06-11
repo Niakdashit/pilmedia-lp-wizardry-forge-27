@@ -1,6 +1,5 @@
 import React from 'react';
 import GameRenderer from './GameRenderer';
-import { useGamePositionCalculator } from './GamePositionCalculator';
 import { GAME_SIZES, GameSize } from '../configurators/GameSizeSelector';
 import MobilePreview from './Mobile/MobilePreview';
 
@@ -34,14 +33,15 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   const gameSize: GameSize = campaign.gameSize && Object.keys(GAME_SIZES).includes(campaign.gameSize) ? campaign.gameSize as GameSize : 'medium';
   const gamePosition = campaign.gamePosition || 'center';
 
-  // Desktop : pas de crop
-  const shouldCropWheel = false;
-  const { getPositionStyles } = useGamePositionCalculator({
-    gameSize,
-    gamePosition,
-    shouldCropWheel
-  });
-  const gameContainerStyle = getPositionStyles();
+  // Centrage universel (flexbox)
+  const centeredGameContainerStyle = {
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative' as const
+  };
   
   return (
     <div 
@@ -59,14 +59,14 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
         />
       )}
 
-      {/* Conteneur pour le jeu avec positionnement dynamique */}
-      <div className="relative z-20 w-full h-full flex items-center justify-center my-0 py-0">
+      {/* Conteneur pour le jeu centré partout */}
+      <div className="relative z-20 w-full h-full flex items-center justify-center">
         <GameRenderer 
           campaign={campaign} 
           gameSize={gameSize} 
           gamePosition={gamePosition} 
           previewDevice={previewDevice} 
-          gameContainerStyle={gameContainerStyle} 
+          gameContainerStyle={centeredGameContainerStyle} 
           buttonLabel={buttonLabel} 
           buttonColor={buttonColor} 
           gameBackgroundImage={gameBackgroundImage} 

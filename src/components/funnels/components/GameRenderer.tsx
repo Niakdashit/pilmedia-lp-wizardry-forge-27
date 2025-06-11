@@ -42,28 +42,30 @@ const GameRenderer: React.FC<GameRendererProps> = ({
   // Détecter si on est dans une modal (pour ajuster l'affichage)
   const isModal = previewMode !== 'desktop' || window.location.pathname.includes('preview');
 
+  // Universal centering container that works in all contexts
   const getGameContainerStyle = (): React.CSSProperties => {
-    const gameDimensions = GAME_SIZES[gameSize];
-    let scaleFactor = 1;
-    
-    if (previewMode === 'mobile') {
-      scaleFactor = 0.8;
-    } else if (previewMode === 'tablet') {
-      scaleFactor = 0.9;
-    }
-
     return {
-      width: `${gameDimensions.width * scaleFactor}px`,
-      height: `${gameDimensions.height * scaleFactor}px`,
-      maxWidth: `${gameDimensions.width * scaleFactor}px`,
-      maxHeight: `${gameDimensions.height * scaleFactor}px`,
+      width: '100%',
+      height: '100%',
+      minHeight: '400px',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: '10px',
-      margin: '0 auto',
-      position: 'relative'
+      position: 'relative',
+      padding: '20px',
+      boxSizing: 'border-box'
     };
+  };
+
+  // Game wrapper with consistent styling
+  const gameWrapperStyle: React.CSSProperties = {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    gap: '16px',
+    maxWidth: '100%',
+    maxHeight: '100%'
   };
 
   const handleGameComplete = (result: 'win' | 'lose') => {
@@ -141,11 +143,11 @@ const GameRenderer: React.FC<GameRendererProps> = ({
 
   return (
     <div style={getGameContainerStyle()} className="rounded-lg overflow-visible relative">
-      <div className="relative z-20 w-full h-full flex items-center justify-center">
+      <div style={gameWrapperStyle}>
         <ContrastBackground
           enabled={contrastBg?.enabled && contrastBg?.applyToGame}
           config={contrastBg}
-          className="h-full w-full flex items-center justify-center"
+          className="flex items-center justify-center"
         >
           {renderGameComponent()}
         </ContrastBackground>
