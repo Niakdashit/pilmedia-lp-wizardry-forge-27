@@ -212,11 +212,12 @@ export async function extractColorsFromLogo(logoUrl: string): Promise<string[]> 
         try {
           const colorThief = new ColorThief();
           const dominantColor = colorThief.getColor(img, 10);
-          const palette = colorThief.getPalette(img, 6, 10);
+          const palette = colorThief.getPalette(img, 10, 10);
           const dominantHex = rgbToHex(dominantColor[0], dominantColor[1], dominantColor[2]);
           const paletteHex = palette.map(([r, g, b]: number[]) => rgbToHex(r, g, b));
-          const allColors = [dominantHex, ...paletteHex.filter(c => c !== dominantHex)];
-          resolve(allColors.slice(0, 5));
+          const allColors = [dominantHex, ...paletteHex];
+          const unique = deduplicateColors(allColors).filter(Boolean);
+          resolve(unique.slice(0, 5));
         } catch (error) {
           reject(error);
         }
@@ -227,6 +228,21 @@ export async function extractColorsFromLogo(logoUrl: string): Promise<string[]> 
   } catch (error) {
     return [];
   }
+}
+
+function deduplicateColors(colors: string[], threshold = 30): string[] {
+  const unique: string[] = [];
+  const distance = (c1: string, c2: string) => {
+    const [r1, g1, b1] = hexToRgb(c1);
+    const [r2, g2, b2] = hexToRgb(c2);
+    return Math.sqrt((r1 - r2) ** 2 + (g1 - g2) ** 2 + (b1 - b2) ** 2);
+  };
+  colors.forEach(color => {
+    if (!unique.some(u => distance(u, color) < threshold)) {
+      unique.push(color);
+    }
+  });
+  return unique;
 }
 
 // Génération palette avancée depuis couleurs ColorThief
