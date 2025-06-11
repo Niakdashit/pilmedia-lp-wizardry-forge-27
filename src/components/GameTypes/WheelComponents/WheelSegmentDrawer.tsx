@@ -37,21 +37,27 @@ export const drawWheelSegments = ({
   const total = segments.length;
   const anglePerSlice = (2 * Math.PI) / total;
   
-  // Use custom colors or fallback to theme colors
-  const themeColors = customColors ? 
-    [customColors.primary, customColors.secondary, customColors.accent || '#10b981'] :
+  // Priorité absolue aux couleurs personnalisées si définies
+  const themeColors = customColors && customColors.primary ? 
+    [customColors.primary, customColors.secondary, customColors.accent || customColors.secondary] :
     getThemeColors(theme);
+
+  console.log('WheelSegmentDrawer - Couleurs utilisées:', themeColors);
+  console.log('WheelSegmentDrawer - CustomColors reçues:', customColors);
 
   segments.forEach((seg: Segment, i: number) => {
     const startAngle = i * anglePerSlice + rotation;
     const endAngle = startAngle + anglePerSlice;
 
-    // Draw segment
+    // Draw segment - toujours utiliser la couleur du segment si définie, sinon les couleurs du thème
     ctx.beginPath();
     ctx.moveTo(center, center);
     ctx.arc(center, center, radius + 15, startAngle, endAngle);
     ctx.closePath();
-    ctx.fillStyle = seg.color || themeColors[i % themeColors.length];
+    
+    // Forcer l'utilisation des couleurs personnalisées
+    const segmentColor = seg.color || themeColors[i % themeColors.length];
+    ctx.fillStyle = segmentColor;
     ctx.fill();
 
     // Draw golden separator lines

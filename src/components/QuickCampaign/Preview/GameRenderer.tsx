@@ -48,6 +48,7 @@ const GameRenderer: React.FC<GameRendererProps> = ({
   const [siteColors, setSiteColors] = React.useState<string[]>([]);
   const [logoColors, setLogoColors] = React.useState<string[]>([]);
   const [finalColors, setFinalColors] = React.useState(customColors);
+  const [brandStyleExtracted, setBrandStyleExtracted] = React.useState(false);
 
   // Charger dynamiquement la police de marque si fournie
   React.useEffect(() => {
@@ -80,9 +81,11 @@ const GameRenderer: React.FC<GameRendererProps> = ({
             ].filter((color): color is string => color !== undefined && color !== null);
             console.log('Couleurs du site extraites:', colors);
             setSiteColors(colors);
+            setBrandStyleExtracted(true);
           }
         } catch (error) {
           console.log('Impossible d\'analyser les couleurs du site:', error);
+          setBrandStyleExtracted(false);
         }
       }
     };
@@ -108,17 +111,10 @@ const GameRenderer: React.FC<GameRendererProps> = ({
     extractLogoColors();
   }, [logoUrl]);
 
-  // Calculer les couleurs finales à utiliser
+  // Calculer les couleurs finales à utiliser - avec priorité absolue aux couleurs du site
   React.useEffect(() => {
-    // Si les couleurs personnalisées sont définies et non-génériques, les utiliser
-    if (customColors.primary && customColors.primary !== '#841b60' && customColors.primary !== '#3B82F6') {
-      console.log('Utilisation des couleurs personnalisées:', customColors);
-      setFinalColors(customColors);
-      return;
-    }
-
-    // Priorité 1: Couleurs extraites du site web
-    if (siteColors.length >= 2) {
+    // Priorité 1: Couleurs extraites du site web (même si les couleurs custom ne sont pas génériques)
+    if (siteColors.length >= 2 && brandStyleExtracted) {
       console.log('Génération du thème à partir des couleurs du site:', siteColors);
       const palette = generateBrandThemeFromColors(siteColors);
       const newColors = {
@@ -131,7 +127,14 @@ const GameRenderer: React.FC<GameRendererProps> = ({
       return;
     }
 
-    // Fallback: Couleurs extraites du logo
+    // Priorité 2: Si les couleurs personnalisées sont définies et non-génériques, les utiliser
+    if (customColors.primary && customColors.primary !== '#841b60' && customColors.primary !== '#3B82F6' && customColors.primary !== '#8b5cf6') {
+      console.log('Utilisation des couleurs personnalisées:', customColors);
+      setFinalColors(customColors);
+      return;
+    }
+
+    // Priorité 3: Couleurs extraites du logo
     if (logoColors.length >= 2) {
       console.log('Génération du thème à partir des couleurs du logo:', logoColors);
       const palette = generateBrandThemeFromColors(logoColors);
@@ -148,7 +151,7 @@ const GameRenderer: React.FC<GameRendererProps> = ({
     // Fallback final sur les couleurs par défaut
     console.log('Utilisation des couleurs par défaut:', customColors);
     setFinalColors(customColors);
-  }, [customColors, siteColors, logoColors]);
+  }, [customColors, siteColors, logoColors, brandStyleExtracted]);
 
   // Application de la charte de marque sur la roue et le design général
   const synchronizedCampaign = React.useMemo(() => {
@@ -197,6 +200,9 @@ const GameRenderer: React.FC<GameRendererProps> = ({
     shouldCropWheel: false
   });
 
+  // Force re-render when colors change by using a key that includes the actual color values
+  const renderKey = `${gameType}-${JSON.stringify(finalColors)}-${Date.now()}`;
+
   switch (gameType) {
     case 'wheel':
       return (
@@ -213,7 +219,7 @@ const GameRenderer: React.FC<GameRendererProps> = ({
               gameSize={gameSize}
               gamePosition={gamePosition}
               previewDevice={previewDevice}
-              key={`wheel-${JSON.stringify(finalColors)}-${Date.now()}`}
+              key={renderKey}
             />
           </div>
         </div>
@@ -290,3 +296,5 @@ const GameRenderer: React.FC<GameRendererProps> = ({
 };
 
 export default GameRenderer;
+
+</edits_to_apply>
