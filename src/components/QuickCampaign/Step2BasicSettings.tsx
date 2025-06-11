@@ -64,7 +64,6 @@ const Step2BasicSettings: React.FC = () => {
       const palette = data.data?.palette;
 
       if (palette) {
-        // Extraction complète palette+accents+contraste
         const completePalette = extractCompletePaletteFromMicrolink(palette);
 
         setCustomColors({
@@ -76,7 +75,7 @@ const Step2BasicSettings: React.FC = () => {
 
         setJackpotColors({
           containerBackgroundColor: completePalette.backgroundColor,
-          backgroundColor: completePalette.accentColor + '30',
+          backgroundColor: completePalette.accentColor + '30', // Opacité d'accent pour l'arrière-plan
           borderColor: completePalette.primaryColor,
           borderWidth: 3,
           slotBorderColor: completePalette.secondaryColor,
@@ -85,7 +84,6 @@ const Step2BasicSettings: React.FC = () => {
         });
       }
 
-      // Logo et police
       setLogoUrl(data.data?.logo?.url || null);
       setFontUrl(data.data?.font?.url || null);
 
