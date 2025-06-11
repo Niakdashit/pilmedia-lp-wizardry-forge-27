@@ -7,13 +7,17 @@ export interface QuickCampaignState {
   launchDate: string;
   marketingGoal: string;
   logoFile: File | null;
+  brandSiteUrl: string;
+  logoUrl: string | null;
+  fontUrl: string | null;
   selectedTheme: string;
   backgroundImage: File | null;
   segmentCount: number;
   customColors: {
     primary: string;
     secondary: string;
-    accent?: string;
+    accent: string;
+    textColor: string;
   };
   jackpotColors: {
     containerBackgroundColor: string;
@@ -30,10 +34,13 @@ export interface QuickCampaignState {
   setLaunchDate: (date: string) => void;
   setMarketingGoal: (goal: string) => void;
   setLogoFile: (file: File | null) => void;
+  setBrandSiteUrl: (url: string) => void;
+  setLogoUrl: (url: string | null) => void;
+  setFontUrl: (url: string | null) => void;
   setSelectedTheme: (theme: string) => void;
   setBackgroundImage: (file: File | null) => void;
   setSegmentCount: (count: number) => void;
-  setCustomColors: (colors: { primary: string; secondary: string; accent?: string }) => void;
+  setCustomColors: (colors: { primary: string; secondary: string; accent: string; textColor: string }) => void;
   setJackpotColors: (colors: any) => void;
   generatePreviewCampaign: () => any;
   reset: () => void;
@@ -46,6 +53,9 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
   launchDate: '',
   marketingGoal: '',
   logoFile: null,
+  brandSiteUrl: '',
+  logoUrl: null,
+  fontUrl: null,
   selectedTheme: 'default',
   backgroundImage: null,
   segmentCount: 4,
@@ -53,7 +63,8 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
   customColors: {
     primary: '#3B82F6', // Bleu corporate moderne
     secondary: '#E3F2FD', // Bleu très clair
-    accent: '#1E40AF' // Bleu foncé
+    accent: '#1E40AF', // Bleu foncé
+    textColor: '#ffffff'
   },
   jackpotColors: {
     containerBackgroundColor: '#1f2937',
@@ -71,6 +82,9 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
   setLaunchDate: (date) => set({ launchDate: date }),
   setMarketingGoal: (goal) => set({ marketingGoal: goal }),
   setLogoFile: (file) => set({ logoFile: file }),
+  setBrandSiteUrl: (url) => set({ brandSiteUrl: url }),
+  setLogoUrl: (url) => set({ logoUrl: url }),
+  setFontUrl: (url) => set({ fontUrl: url }),
   setSelectedTheme: (theme) => set({ selectedTheme: theme }),
   setBackgroundImage: (file) => set({ backgroundImage: file }),
   setSegmentCount: (count) => set({ segmentCount: count }),
@@ -86,12 +100,13 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
       type: state.selectedGameType || 'wheel',
       design: {
         customColors: state.customColors,
-        centerLogo: null,
+        centerLogo: state.logoUrl || null,
         mobileBackgroundImage: null
       },
       buttonConfig: {
-        color: state.customColors.primary,
-        borderColor: state.customColors.primary,
+        color: state.customColors.accent,
+        textColor: state.customColors.textColor,
+        borderColor: state.customColors.secondary,
         borderWidth: 2,
         borderRadius: 8,
         size: 'medium',
@@ -113,8 +128,8 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
           color: i % 2 === 0 ? state.customColors.primary : state.customColors.secondary,
           image: null
         })),
-        borderColor: state.customColors.primary,
-        borderOutlineColor: state.customColors.accent || state.customColors.primary,
+        borderColor: state.customColors.secondary,
+        borderOutlineColor: state.customColors.accent,
         segmentColor1: state.customColors.primary,
         segmentColor2: state.customColors.secondary,
         theme: state.selectedTheme
@@ -148,8 +163,8 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
 
     baseConfig.mobileConfig = {
       roulette: baseConfig.config.roulette,
-      buttonColor: state.customColors.primary,
-      buttonTextColor: '#ffffff',
+      buttonColor: state.customColors.accent,
+      buttonTextColor: state.customColors.textColor,
       buttonPlacement: 'bottom',
       gamePosition: 'center'
     };
@@ -164,13 +179,17 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
     launchDate: '',
     marketingGoal: '',
     logoFile: null,
+    brandSiteUrl: '',
+    logoUrl: null,
+    fontUrl: null,
     selectedTheme: 'default',
     backgroundImage: null,
     segmentCount: 4,
     customColors: {
       primary: '#3B82F6',
       secondary: '#E3F2FD',
-      accent: '#1E40AF'
+      accent: '#1E40AF',
+      textColor: '#ffffff'
     },
     jackpotColors: {
       containerBackgroundColor: '#1f2937',
