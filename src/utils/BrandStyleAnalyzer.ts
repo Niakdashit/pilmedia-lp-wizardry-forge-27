@@ -1,4 +1,3 @@
-
 export interface BrandStyle {
   primaryColor: string;
   logoUrl?: string;
@@ -101,11 +100,6 @@ function isPaletteNeutral(palette: any): boolean {
   if (colors.length === 0) return true;
   
   // Détection de palettes trop génériques (bleus, gris)
-  const neutralPatterns = [
-    /^#[0-4][0-9a-f]{5}$/i, // Couleurs sombres génériques
-    /^#[a-f0-9]{2}[a-f0-9]{2}[a-f0-9]{2}$/i // Pattern pour détecter les gris/bleus génériques
-  ];
-  
   const genericColors = colors.filter(color => {
     const hex = color.toLowerCase();
     // Vérifier si c'est du bleu générique (#3b82f6, #2563eb, etc.)
