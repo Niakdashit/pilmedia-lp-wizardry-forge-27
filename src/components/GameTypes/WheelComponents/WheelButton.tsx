@@ -7,6 +7,7 @@ interface ButtonConfig {
   size: 'small' | 'medium' | 'large';
   text: string;
   visible: boolean;
+  textColor?: string;
 }
 interface WheelButtonProps {
   buttonConfig: ButtonConfig;
@@ -39,8 +40,9 @@ const WheelButton: React.FC<WheelButtonProps> = ({
     borderWidth: `${buttonConfig.borderWidth}px`,
     borderRadius: `${buttonConfig.borderRadius}px`,
     borderStyle: 'solid',
-    boxShadow: `0 4px 15px ${buttonConfig.borderColor}30, inset 0 1px 0 rgba(255, 255, 255, 0.2)`
-  }} className={`${getButtonSizeClasses()} text-white font-bold disabled:opacity-50 hover:opacity-90 transition-all duration-200 relative overflow-hidden`}>
+    boxShadow: `0 4px 15px ${buttonConfig.borderColor}30, inset 0 1px 0 rgba(255, 255, 255, 0.2)`,
+    color: buttonConfig.textColor || '#ffffff'
+  }} className={`${getButtonSizeClasses()} font-bold disabled:opacity-50 hover:opacity-90 transition-all duration-200 relative overflow-hidden`}>
       <span className="relative z-10">
         {spinning ? 'Tourne...' : formValidated ? 'Lancer la roue' : buttonConfig.text || 'Remplir le formulaire'}
       </span>

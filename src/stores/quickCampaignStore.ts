@@ -7,6 +7,9 @@ export interface QuickCampaignState {
   launchDate: string;
   marketingGoal: string;
   logoFile: File | null;
+  brandSiteUrl: string;
+  logoUrl: string | null;
+  fontUrl: string | null;
   selectedTheme: string;
   backgroundImage: File | null;
   segmentCount: number;
@@ -30,6 +33,9 @@ export interface QuickCampaignState {
   setLaunchDate: (date: string) => void;
   setMarketingGoal: (goal: string) => void;
   setLogoFile: (file: File | null) => void;
+  setBrandSiteUrl: (url: string) => void;
+  setLogoUrl: (url: string | null) => void;
+  setFontUrl: (url: string | null) => void;
   setSelectedTheme: (theme: string) => void;
   setBackgroundImage: (file: File | null) => void;
   setSegmentCount: (count: number) => void;
@@ -46,6 +52,9 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
   launchDate: '',
   marketingGoal: '',
   logoFile: null,
+  brandSiteUrl: '',
+  logoUrl: null,
+  fontUrl: null,
   selectedTheme: 'default',
   backgroundImage: null,
   segmentCount: 4,
@@ -71,6 +80,9 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
   setLaunchDate: (date) => set({ launchDate: date }),
   setMarketingGoal: (goal) => set({ marketingGoal: goal }),
   setLogoFile: (file) => set({ logoFile: file }),
+  setBrandSiteUrl: (url) => set({ brandSiteUrl: url }),
+  setLogoUrl: (url) => set({ logoUrl: url }),
+  setFontUrl: (url) => set({ fontUrl: url }),
   setSelectedTheme: (theme) => set({ selectedTheme: theme }),
   setBackgroundImage: (file) => set({ backgroundImage: file }),
   setSegmentCount: (count) => set({ segmentCount: count }),
@@ -86,11 +98,12 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
       type: state.selectedGameType || 'wheel',
       design: {
         customColors: state.customColors,
-        centerLogo: null,
+        centerLogo: state.logoUrl || null,
         mobileBackgroundImage: null
       },
       buttonConfig: {
         color: state.customColors.primary,
+        textColor: state.customColors.accent || '#ffffff',
         borderColor: state.customColors.primary,
         borderWidth: 2,
         borderRadius: 8,
@@ -149,7 +162,7 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
     baseConfig.mobileConfig = {
       roulette: baseConfig.config.roulette,
       buttonColor: state.customColors.primary,
-      buttonTextColor: '#ffffff',
+      buttonTextColor: state.customColors.accent || '#ffffff',
       buttonPlacement: 'bottom',
       gamePosition: 'center'
     };
@@ -164,6 +177,9 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
     launchDate: '',
     marketingGoal: '',
     logoFile: null,
+    brandSiteUrl: '',
+    logoUrl: null,
+    fontUrl: null,
     selectedTheme: 'default',
     backgroundImage: null,
     segmentCount: 4,
