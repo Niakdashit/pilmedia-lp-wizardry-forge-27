@@ -43,6 +43,10 @@ export async function generateBrandThemeFromUrl(url: string): Promise<BrandTheme
   try {
     console.log('🎯 Génération du thème de marque pour:', url);
 
+    if (!/^https?:/.test(url)) {
+      url = `https://${url}`;
+    }
+
     const domain = new URL(url).hostname;
     let brandData: any = null;
     let logoUrl: string | undefined;
