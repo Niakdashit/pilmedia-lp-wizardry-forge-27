@@ -4,7 +4,7 @@ import { Jackpot } from '../../GameTypes';
 import ScratchPreview from '../../GameTypes/ScratchPreview';
 import DicePreview from '../../GameTypes/DicePreview';
 import FormPreview from '../../GameTypes/FormPreview';
-import { applyBrandStyleToWheel, BrandColors, extractColorsFromLogo, generateBrandThemeFromColors } from '../../../utils/BrandStyleAnalyzer';
+import { applyBrandStyleToWheel, BrandColors, extractColorsFromLogo, generateBrandThemeFromColors, analyzeBrandStyle } from '../../../utils/BrandStyleAnalyzer';
 import { useGamePositionCalculator } from '../../CampaignEditor/GamePositionCalculator';
 import useCenteredStyles from '../../../hooks/useCenteredStyles';
 
@@ -27,6 +27,7 @@ interface GameRendererProps {
   };
   logoUrl?: string;
   fontUrl?: string;
+  siteUrl?: string;
   gameSize?: 'small' | 'medium' | 'large' | 'xlarge';
   gamePosition?: 'top' | 'center' | 'bottom' | 'left' | 'right';
   previewDevice?: 'desktop' | 'tablet' | 'mobile';
@@ -39,10 +40,12 @@ const GameRenderer: React.FC<GameRendererProps> = ({
   jackpotColors,
   logoUrl,
   fontUrl,
+  siteUrl,
   gameSize = 'large',
   gamePosition = 'center',
   previewDevice = 'desktop'
 }) => {
+  const [siteColors, setSiteColors] = React.useState<string[]>([]);
   const [logoColors, setLogoColors] = React.useState<string[]>([]);
   const [finalColors, setFinalColors] = React.useState(customColors);
 
@@ -59,7 +62,35 @@ const GameRenderer: React.FC<GameRendererProps> = ({
     }
   }, [fontUrl]);
 
-  // Extraire les couleurs du logo
+  // Extraire les couleurs du site web
+  React.useEffect(() => {
+    const extractSiteColors = async () => {
+      if (siteUrl && typeof window !== 'undefined') {
+        try {
+          console.log('Analyse des couleurs du site:', siteUrl);
+          const brandStyle = await analyzeBrandStyle(siteUrl);
+          console.log('Style de marque extrait:', brandStyle);
+          
+          if (brandStyle.primaryColor && brandStyle.secondaryColor) {
+            const colors = [
+              brandStyle.primaryColor,
+              brandStyle.secondaryColor,
+              brandStyle.lightColor,
+              brandStyle.darkColor
+            ].filter(Boolean);
+            console.log('Couleurs du site extraites:', colors);
+            setSiteColors(colors);
+          }
+        } catch (error) {
+          console.log('Impossible d\'analyser les couleurs du site:', error);
+        }
+      }
+    };
+
+    extractSiteColors();
+  }, [siteUrl]);
+
+  // Extraire les couleurs du logo (fallback)
   React.useEffect(() => {
     const extractLogoColors = async () => {
       if (logoUrl && typeof window !== 'undefined') {
@@ -86,7 +117,21 @@ const GameRenderer: React.FC<GameRendererProps> = ({
       return;
     }
 
-    // Sinon, utiliser les couleurs extraites du logo
+    // Priorité 1: Couleurs extraites du site web
+    if (siteColors.length >= 2) {
+      console.log('Génération du thème à partir des couleurs du site:', siteColors);
+      const palette = generateBrandThemeFromColors(siteColors);
+      const newColors = {
+        primary: palette.primaryColor,
+        secondary: palette.secondaryColor,
+        accent: palette.accentColor
+      };
+      console.log('Nouvelles couleurs générées depuis le site:', newColors);
+      setFinalColors(newColors);
+      return;
+    }
+
+    // Fallback: Couleurs extraites du logo
     if (logoColors.length >= 2) {
       console.log('Génération du thème à partir des couleurs du logo:', logoColors);
       const palette = generateBrandThemeFromColors(logoColors);
@@ -95,15 +140,15 @@ const GameRenderer: React.FC<GameRendererProps> = ({
         secondary: palette.secondaryColor,
         accent: palette.accentColor
       };
-      console.log('Nouvelles couleurs générées:', newColors);
+      console.log('Nouvelles couleurs générées depuis le logo:', newColors);
       setFinalColors(newColors);
       return;
     }
 
-    // Fallback sur les couleurs par défaut
+    // Fallback final sur les couleurs par défaut
     console.log('Utilisation des couleurs par défaut:', customColors);
     setFinalColors(customColors);
-  }, [customColors, logoColors]);
+  }, [customColors, siteColors, logoColors]);
 
   // Application de la charte de marque sur la roue et le design général
   const synchronizedCampaign = React.useMemo(() => {
@@ -245,3 +290,5 @@ const GameRenderer: React.FC<GameRendererProps> = ({
 };
 
 export default GameRenderer;
+
+}
