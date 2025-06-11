@@ -202,7 +202,30 @@ function rgbToHex(r: number, g: number, b: number): string {
   );
 }
 
-// Extraction ColorThief via <img>
+// Fonction améliorée pour filtrer les couleurs de faible saturation
+function isGrayish(hex: string): boolean {
+  const [r, g, b] = hexToRgb(hex);
+  // Calculer la saturation pour détecter les couleurs grises/marrons parasites
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const saturation = max === 0 ? 0 : (max - min) / max;
+  
+  // Éliminer les couleurs avec une saturation trop faible (< 0.2)
+  return saturation < 0.2;
+}
+
+// Fonction pour déterminer si une couleur est trop sombre (presque noire)
+function isTooLight(hex: string): boolean {
+  const luminance = getLuminance(hex);
+  return luminance > 0.95; // Éliminer les couleurs presque blanches
+}
+
+function isTooApproach(hex: string): boolean {
+  const luminance = getLuminance(hex);
+  return luminance < 0.05; // Éliminer les couleurs presque noires
+}
+
+// Extraction ColorThief via <img> avec filtrage amélioré
 export async function extractColorsFromLogo(logoUrl: string): Promise<string[]> {
   try {
     const img = new window.Image();
@@ -211,13 +234,31 @@ export async function extractColorsFromLogo(logoUrl: string): Promise<string[]> 
       img.onload = () => {
         try {
           const colorThief = new ColorThief();
-          const dominantColor = colorThief.getColor(img, 10);
-          const palette = colorThief.getPalette(img, 10, 10);
+          // Augmenter la qualité pour une meilleure précision
+          const dominantColor = colorThief.getColor(img, 5); 
+          const palette = colorThief.getPalette(img, 8, 5); // Plus de couleurs avec meilleure qualité
+          
           const dominantHex = rgbToHex(dominantColor[0], dominantColor[1], dominantColor[2]);
           const paletteHex = palette.map(([r, g, b]: number[]) => rgbToHex(r, g, b));
+          
           const allColors = [dominantHex, ...paletteHex];
-          const unique = deduplicateColors(allColors).filter(Boolean);
-          resolve(unique.slice(0, 5));
+          
+          // Filtrage amélioré pour éliminer les couleurs parasites
+          const filteredColors = allColors.filter(color => {
+            return !isGrayish(color) && !isTooLight(color) && !isTooApproach(color);
+          });
+          
+          console.log('🎨 Couleurs extraites brutes:', allColors);
+          console.log('🎨 Couleurs après filtrage:', filteredColors);
+          
+          // Déduplication avec un seuil plus strict
+          const unique = deduplicateColors(filteredColors, 40).filter(Boolean);
+          
+          // S'assurer d'avoir au moins 2 couleurs valides
+          const finalColors = unique.length >= 2 ? unique.slice(0, 5) : allColors.slice(0, 3);
+          
+          console.log('🎨 Couleurs finales sélectionnées:', finalColors);
+          resolve(finalColors);
         } catch (error) {
           reject(error);
         }
@@ -230,7 +271,7 @@ export async function extractColorsFromLogo(logoUrl: string): Promise<string[]> 
   }
 }
 
-function deduplicateColors(colors: string[], threshold = 30): string[] {
+function deduplicateColors(colors: string[], threshold = 40): string[] {
   const unique: string[] = [];
   const distance = (c1: string, c2: string) => {
     const [r1, g1, b1] = hexToRgb(c1);
@@ -247,12 +288,27 @@ function deduplicateColors(colors: string[], threshold = 30): string[] {
 
 // Génération palette avancée depuis couleurs ColorThief
 export function generateAdvancedPaletteFromColors(colors: string[]): BrandPalette {
-  // Tri par luminance
-  const sortedColors = colors.sort((a, b) => getLuminance(b) - getLuminance(a));
+  // Tri par saturation et luminance pour privilégier les couleurs vives
+  const sortedColors = colors.sort((a, b) => {
+    const satA = getColorSaturation(a);
+    const satB = getColorSaturation(b);
+    const lumA = getLuminance(a);
+    const lumB = getLuminance(b);
+    
+    // Privilégier d'abord la saturation, puis la luminance
+    if (Math.abs(satA - satB) > 0.1) {
+      return satB - satA; // Plus saturé en premier
+    }
+    return Math.abs(lumB - 0.5) - Math.abs(lumA - 0.5); // Plus proche de 50% de luminance
+  });
+  
+  console.log('🎨 Couleurs triées par qualité:', sortedColors);
+  
   const primaryColor = sortedColors[0] || '#841b60';
   const secondaryColor = findContrastingColor(sortedColors, primaryColor) || sortedColors[1] || '#dc2626';
   const accentColor = findAccentColor(sortedColors, primaryColor, secondaryColor) || '#10b981';
   const textColor = getAccessibleTextColor(accentColor);
+  
   return {
     primaryColor,
     secondaryColor,
@@ -260,6 +316,14 @@ export function generateAdvancedPaletteFromColors(colors: string[]): BrandPalett
     backgroundColor: '#ffffff',
     textColor
   };
+}
+
+// Nouvelle fonction pour calculer la saturation d'une couleur
+function getColorSaturation(hex: string): number {
+  const [r, g, b] = hexToRgb(hex);
+  const max = Math.max(r, g, b) / 255;
+  const min = Math.min(r, g, b) / 255;
+  return max === 0 ? 0 : (max - min) / max;
 }
 
 function findContrastingColor(colors: string[], excludeColor: string): string | null {
@@ -339,4 +403,10 @@ export function applyBrandStyleToWheel(campaign: any, colors: BrandColors) {
       textColor: getAccessibleTextColor(colors.accent || colors.primary)
     }
   };
+}
+
+// ... keep existing code (extractBrandPaletteFromBrandfetch function)
+export async function extractBrandPaletteFromBrandfetch(data: any): Promise<BrandPalette> {
+  const colors = data?.colors || [];
+  return extractCompletePaletteFromBrandfetch(colors);
 }
