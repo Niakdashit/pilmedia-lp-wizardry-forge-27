@@ -22,6 +22,8 @@ interface GameRendererProps {
     slotBorderWidth: number;
     slotBackgroundColor: string;
   };
+  logoUrl?: string;
+  fontUrl?: string;
   gameSize?: 'small' | 'medium' | 'large' | 'xlarge';
   gamePosition?: 'top' | 'center' | 'bottom' | 'left' | 'right';
   previewDevice?: 'desktop' | 'tablet' | 'mobile';
@@ -32,10 +34,24 @@ const GameRenderer: React.FC<GameRendererProps> = ({
   mockCampaign,
   customColors,
   jackpotColors,
+  logoUrl,
+  fontUrl,
   gameSize = 'large',
   gamePosition = 'center',
   previewDevice = 'desktop'
 }) => {
+  React.useEffect(() => {
+    if (fontUrl) {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = fontUrl;
+      document.head.appendChild(link);
+      return () => {
+        document.head.removeChild(link);
+      };
+    }
+  }, [fontUrl]);
+
   // Synchroniser les couleurs de la roue avec les couleurs personnalisées
   const synchronizedCampaign = {
     ...mockCampaign,
@@ -55,7 +71,8 @@ const GameRenderer: React.FC<GameRendererProps> = ({
     },
     design: {
       ...mockCampaign.design,
-      customColors: customColors
+      customColors: customColors,
+      centerLogo: logoUrl || mockCampaign.design?.centerLogo
     },
     buttonConfig: {
       ...mockCampaign.buttonConfig,
