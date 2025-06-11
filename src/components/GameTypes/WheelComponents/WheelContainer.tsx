@@ -20,13 +20,14 @@ const WheelContainer: React.FC<WheelContainerProps> = ({
   const isCroppablePosition = ['left', 'right', 'bottom'].includes(gamePosition);
   const shouldCropWheel = isMobile && isCroppablePosition;
 
-  // Universal centering container style - always center regardless of position
+  // Container style - always center by default, no matter the position setting
   const getContainerStyles = (): React.CSSProperties => {
     const baseStyle: React.CSSProperties = {
       display: 'flex',
+      flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
-      gap: '16px',
+      gap: '20px',
       position: 'relative',
       width: '100%',
       height: '100%',
@@ -42,7 +43,6 @@ const WheelContainer: React.FC<WheelContainerProps> = ({
         case 'left':
           return {
             ...baseStyle,
-            flexDirection: 'row-reverse',
             width: `${gameDimensions.width / 2}px`,
             clipPath: 'inset(0 0 0 50%)',
             justifyContent: 'flex-start'
@@ -50,7 +50,6 @@ const WheelContainer: React.FC<WheelContainerProps> = ({
         case 'right':
           return {
             ...baseStyle,
-            flexDirection: 'row',
             width: `${gameDimensions.width / 2}px`,
             clipPath: 'inset(0 50% 0 0)',
             justifyContent: 'flex-end'
@@ -58,7 +57,6 @@ const WheelContainer: React.FC<WheelContainerProps> = ({
         case 'bottom':
           return {
             ...baseStyle,
-            flexDirection: 'column',
             height: `${gameDimensions.height / 2}px`,
             clipPath: 'inset(0 0 50% 0)',
             alignItems: 'flex-end'
@@ -66,11 +64,7 @@ const WheelContainer: React.FC<WheelContainerProps> = ({
       }
     }
 
-    // Always center by default - ignore position preferences for universal centering
-    return {
-      ...baseStyle,
-      flexDirection: 'column'
-    };
+    return baseStyle;
   };
 
   return (

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Upload, Calendar, Target } from 'lucide-react';
 import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
-import { extractBrandPaletteFromMicrolink } from '../../utils/BrandStyleAnalyzer';
+import { extractCompletePaletteFromMicrolink } from '../../utils/BrandStyleAnalyzer';
 
 const Step2BasicSettings: React.FC = () => {
   const {
@@ -19,6 +19,7 @@ const Step2BasicSettings: React.FC = () => {
     setLogoUrl,
     setFontUrl,
     setCustomColors,
+    setJackpotColors,
     setCurrentStep
   } = useQuickCampaignStore();
 
@@ -54,38 +55,40 @@ const Step2BasicSettings: React.FC = () => {
     if (!brandSiteUrl) return;
     setIsAnalyzing(true);
     try {
-      console.log('🔍 Analyse du site:', brandSiteUrl);
-      
-      // Appel Microlink complet avec palette et screenshot pour fiabilité accrue
-      const apiUrl = `https://api.microlink.io/?url=${encodeURIComponent(brandSiteUrl)}&palette=true&screenshot=true&meta=true&color=true`;
+      // Appel Microlink palette + logo + font
+      const apiUrl = `https://api.microlink.io/?url=${encodeURIComponent(brandSiteUrl)}&palette=true&meta=true&screenshot=false`;
       const response = await fetch(apiUrl);
-      
-      if (!response.ok) {
-        throw new Error('Erreur lors de l\'analyse du site');
-      }
-      
-      const data = await response.json();
-      console.log('📊 Données Microlink complètes:', data);
-      
-      const brandPalette = await extractBrandPaletteFromMicrolink(data.data);
 
-      if (brandPalette) {
-        
-        // Application des couleurs au store
+      if (!response.ok) throw new Error('Erreur lors de l\'analyse du site');
+      const data = await response.json();
+      const palette = data.data?.palette;
+
+      if (palette) {
+        // Extraction complète palette+accents+contraste
+        const completePalette = extractCompletePaletteFromMicrolink(palette);
+
         setCustomColors({
-          primary: brandPalette.primaryColor,
-          secondary: brandPalette.secondaryColor,
-          accent: brandPalette.accentColor,
-          textColor: brandPalette.textColor
+          primary: completePalette.primaryColor,
+          secondary: completePalette.secondaryColor,
+          accent: completePalette.accentColor,
+          textColor: completePalette.textColor
         });
-        
-        console.log('✅ Couleurs appliquées avec succès:', brandPalette);
+
+        setJackpotColors({
+          containerBackgroundColor: completePalette.backgroundColor,
+          backgroundColor: completePalette.accentColor + '30',
+          borderColor: completePalette.primaryColor,
+          borderWidth: 3,
+          slotBorderColor: completePalette.secondaryColor,
+          slotBorderWidth: 2,
+          slotBackgroundColor: completePalette.backgroundColor
+        });
       }
-      
-      // Récupération des métadonnées (logo, police)
+
+      // Logo et police
       setLogoUrl(data.data?.logo?.url || null);
       setFontUrl(data.data?.font?.url || null);
-      
+
     } catch (err) {
       console.error('❌ Erreur lors de l\'analyse:', err);
       alert('Impossible d\'analyser ce site. Vérifiez l\'URL ou réessayez plus tard.');
@@ -102,19 +105,10 @@ const Step2BasicSettings: React.FC = () => {
         <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-8 md:p-12">
           {/* Header */}
           <div className="text-center mb-16">
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-4xl mb-4 text-[#841b60] font-semibold"
-            >
+            <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-4xl mb-4 text-[#841b60] font-semibold">
               Paramètres essentiels
             </motion.h1>
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="text-xl font-light text-[#991c6e]/[0.78]"
-            >
+            <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-xl font-light text-[#991c6e]/[0.78]">
               Configurons les bases de votre campagne
             </motion.p>
           </div>
@@ -137,15 +131,15 @@ const Step2BasicSettings: React.FC = () => {
               <label className="block text-lg font-medium text-gray-900 mb-4">
                 Site de la marque
                 <span className="text-sm font-normal text-gray-500 ml-2">
-                  (analyse automatique de la charte graphique)
+                  (analyse intelligente de la charte graphique complète)
                 </span>
               </label>
               <div className="flex space-x-4">
                 <input
                   type="url"
                   value={brandSiteUrl}
-                  onChange={(e) => setBrandSiteUrl(e.target.value)}
-                  placeholder="https://www.homair.com"
+                  onChange={e => setBrandSiteUrl(e.target.value)}
+                  placeholder="https://www.sfr.fr"
                   className="flex-1 px-6 py-4 border-2 border-gray-200 rounded-2xl focus:border-[#841b60] focus:outline-none transition-all text-lg bg-gray-50"
                 />
                 <button
@@ -165,7 +159,7 @@ const Step2BasicSettings: React.FC = () => {
                 </button>
               </div>
               <p className="text-sm text-gray-600 mt-2">
-                💡 L'analyse extraira automatiquement les couleurs, le logo et les polices de votre site
+                💡 L'analyse extraira automatiquement les couleurs dominantes, le logo et la police de votre site pour une personnalisation sans effort.
               </p>
             </motion.div>
 

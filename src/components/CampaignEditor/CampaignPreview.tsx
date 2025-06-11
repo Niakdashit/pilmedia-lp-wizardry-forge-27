@@ -1,5 +1,4 @@
 
-
 import React, { useState } from 'react';
 import GameRenderer from './GameRenderer';
 
@@ -44,7 +43,6 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevi
             <GameRenderer
               campaign={campaign}
               gameSize={campaign.gameSize || 'large'}
-              gamePosition={campaign.gamePosition || 'center'}
               previewDevice={previewDevice}
               buttonLabel={campaign.buttonConfig?.text || 'Jouer'}
               buttonColor={campaign.buttonConfig?.color || '#841b60'}
