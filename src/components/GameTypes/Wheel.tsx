@@ -132,48 +132,24 @@ const Wheel: React.FC<WheelProps> = ({
         style={{
           width: wheelSize,
           height: wheelSize,
+          // CLIPPING dynamique selon la position
           clipPath: getClipPath(position),
-          WebkitClipPath: getClipPath(position),
-          overflow: 'hidden',
+          WebkitClipPath: getClipPath(position), // pour Safari
+          overflow: 'hidden', // sécurité
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center'
         }}
       >
-        {/* Ombre 3D externe */}
-        <div
-          className="absolute rounded-full"
-          style={{
-            width: wheelSize + 30,
-            height: wheelSize + 30,
-            top: -15,
-            left: -15,
-            background: 'radial-gradient(circle, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0.15) 50%, rgba(0,0,0,0) 70%)',
-            filter: 'blur(8px)',
-            zIndex: -1
-          }}
-        />
-
-        {/* Roue avec bordure 3D améliorée */}
+        {/* Roue */}
         <div
           ref={wheelRef}
-          className="relative rounded-full overflow-hidden"
+          className="relative rounded-full border-4 border-gray-800 overflow-hidden"
           style={{ 
             width: wheelSize, 
             height: wheelSize,
             transition: 'transform 3s ease-out',
-            border: '8px solid transparent',
-            background: `
-              linear-gradient(145deg, #e2e8f0 0%, #94a3b8 50%, #475569 100%) border-box,
-              linear-gradient(white, white) padding-box
-            `,
-            boxShadow: `
-              0 0 0 3px #841b60,
-              0 0 0 6px rgba(132, 27, 96, 0.3),
-              inset 0 2px 4px rgba(255, 255, 255, 0.5),
-              inset 0 -2px 4px rgba(0, 0, 0, 0.2),
-              0 8px 32px rgba(0,0,0,0.3)
-            `
+            boxShadow: '0 8px 32px rgba(0,0,0,0.3)'
           }}
         >
           {segments.map((segment: any, index: number) => {
@@ -205,15 +181,14 @@ const Wheel: React.FC<WheelProps> = ({
           })}
         </div>
         
-        {/* Pointeur central avec ombre 3D */}
+        {/* Pointeur central */}
         <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-10">
           <div 
             className="border-l-4 border-r-4 border-b-8 border-transparent border-b-gray-800"
             style={{
               borderBottomWidth: wheelSize < 250 ? '6px' : '8px',
               borderLeftWidth: wheelSize < 250 ? '3px' : '4px',
-              borderRightWidth: wheelSize < 250 ? '3px' : '4px',
-              filter: 'drop-shadow(0 2px 4px rgba(0,0,0,0.3))'
+              borderRightWidth: wheelSize < 250 ? '3px' : '4px'
             }}
           ></div>
         </div>
