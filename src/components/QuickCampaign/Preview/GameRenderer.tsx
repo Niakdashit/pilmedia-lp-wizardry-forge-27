@@ -5,7 +5,7 @@ import { Jackpot } from '../../GameTypes';
 import ScratchPreview from '../../GameTypes/ScratchPreview';
 import DicePreview from '../../GameTypes/DicePreview';
 import FormPreview from '../../GameTypes/FormPreview';
-import { applyBrandStyleToWheel, BrandColors } from '../../../utils/BrandStyleAnalyzer';
+import { applyBrandStyleToWheel, BrandColors, extractColorsFromLogo, generateBrandThemeFromColors } from '../../../utils/BrandStyleAnalyzer';
 import { useGamePositionCalculator } from '../../CampaignEditor/GamePositionCalculator';
 import useCenteredStyles from '../../../hooks/useCenteredStyles';
 
@@ -44,7 +44,9 @@ const GameRenderer: React.FC<GameRendererProps> = ({
   gamePosition = 'center',
   previewDevice = 'desktop'
 }) => {
-  // Charge dynamiquement la police de marque si fournie
+  const [logoColors, setLogoColors] = React.useState<string[]>([]);
+
+  // Charger dynamiquement la police de marque si fournie
   React.useEffect(() => {
     if (fontUrl) {
       const link = document.createElement('link');
@@ -57,37 +59,75 @@ const GameRenderer: React.FC<GameRendererProps> = ({
     }
   }, [fontUrl]);
 
+  // Extraire les couleurs du logo comme fallback
+  React.useEffect(() => {
+    const extractLogoColors = async () => {
+      if (logoUrl && typeof window !== 'undefined') {
+        try {
+          const colors = await extractColorsFromLogo(logoUrl);
+          setLogoColors(colors);
+        } catch (error) {
+          console.log('Impossible d\'extraire les couleurs du logo:', error);
+        }
+      }
+    };
+
+    extractLogoColors();
+  }, [logoUrl]);
+
+  // Utiliser les couleurs personnalisées ou fallback sur les couleurs du logo
+  const finalColors = React.useMemo(() => {
+    // Si les couleurs personnalisées sont définies et non-génériques, les utiliser
+    if (customColors.primary && customColors.primary !== '#841b60') {
+      return customColors;
+    }
+
+    // Sinon, utiliser les couleurs extraites du logo
+    if (logoColors.length >= 2) {
+      const palette = generateBrandThemeFromColors(logoColors);
+      return {
+        primary: palette.primaryColor,
+        secondary: palette.secondaryColor,
+        accent: palette.accentColor
+      };
+    }
+
+    // Fallback sur les couleurs par défaut
+    return customColors;
+  }, [customColors, logoColors]);
+
   // Application de la charte de marque sur la roue et le design général
-  const synchronizedCampaign = applyBrandStyleToWheel(mockCampaign, customColors as BrandColors);
+  const synchronizedCampaign = applyBrandStyleToWheel(mockCampaign, finalColors as BrandColors);
   
-  // Appliquer les couleurs personnalisées à la configuration de la roue
+  // Forcer l'application des couleurs finales à la configuration de la roue
   if (synchronizedCampaign.config?.roulette) {
     synchronizedCampaign.config.roulette = {
       ...synchronizedCampaign.config.roulette,
-      borderColor: customColors.primary,
-      borderOutlineColor: customColors.accent || customColors.secondary,
-      segmentColor1: customColors.primary,
-      segmentColor2: customColors.secondary,
+      borderColor: finalColors.primary,
+      borderOutlineColor: finalColors.accent || finalColors.secondary,
+      segmentColor1: finalColors.primary,
+      segmentColor2: finalColors.secondary,
       // Mettre à jour les segments existants avec les nouvelles couleurs
       segments: synchronizedCampaign.config.roulette.segments?.map((segment: any, index: number) => ({
         ...segment,
-        color: index % 2 === 0 ? customColors.primary : customColors.secondary
+        color: index % 2 === 0 ? finalColors.primary : finalColors.secondary
       })) || []
     };
   }
 
+  // Forcer l'application des couleurs au design
   synchronizedCampaign.design = {
     ...synchronizedCampaign.design,
     centerLogo: logoUrl || synchronizedCampaign.design?.centerLogo,
-    customColors: customColors
+    customColors: finalColors
   };
 
-  // Mettre à jour la configuration du bouton avec les couleurs personnalisées
+  // Mettre à jour la configuration du bouton avec les couleurs finales
   synchronizedCampaign.buttonConfig = {
     ...synchronizedCampaign.buttonConfig,
-    color: customColors.accent || customColors.primary,
-    borderColor: customColors.primary,
-    textColor: customColors.accent ? '#ffffff' : '#ffffff'
+    color: finalColors.accent || finalColors.primary,
+    borderColor: finalColors.primary,
+    textColor: '#ffffff'
   };
 
   const { containerStyle, wrapperStyle } = useCenteredStyles();
@@ -113,6 +153,7 @@ const GameRenderer: React.FC<GameRendererProps> = ({
               gameSize={gameSize}
               gamePosition={gamePosition}
               previewDevice={previewDevice}
+              key={`wheel-${JSON.stringify(finalColors)}-${Date.now()}`}
             />
           </div>
         </div>
@@ -130,7 +171,7 @@ const GameRenderer: React.FC<GameRendererProps> = ({
                 winnersCount: 0
               }}
               buttonLabel={mockCampaign.gameConfig?.jackpot?.buttonLabel || mockCampaign.buttonConfig?.text || 'Lancer le Jackpot'}
-              buttonColor={customColors.primary}
+              buttonColor={finalColors.primary}
               backgroundImage={mockCampaign.gameConfig?.jackpot?.backgroundImage}
               containerBackgroundColor={jackpotColors.containerBackgroundColor}
               backgroundColor={jackpotColors.backgroundColor}
