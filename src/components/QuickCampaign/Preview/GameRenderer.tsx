@@ -290,5 +290,3 @@ const GameRenderer: React.FC<GameRendererProps> = ({
 };
 
 export default GameRenderer;
-
-}
