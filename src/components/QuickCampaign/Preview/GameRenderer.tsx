@@ -41,6 +41,7 @@ const GameRenderer: React.FC<GameRendererProps> = ({
   gamePosition = 'center',
   previewDevice = 'desktop'
 }) => {
+  // Charge dynamiquement la police de marque si présente
   React.useEffect(() => {
     if (fontUrl) {
       const link = document.createElement('link');
@@ -53,14 +54,14 @@ const GameRenderer: React.FC<GameRendererProps> = ({
     }
   }, [fontUrl]);
 
-  // Appliquer la charte de marque à la configuration de la roue
+  // Applique la charte de marque à la config de la roue
   const synchronizedCampaign = applyBrandStyleToWheel(mockCampaign, customColors as BrandColors);
   synchronizedCampaign.design = {
     ...synchronizedCampaign.design,
     centerLogo: logoUrl || synchronizedCampaign.design?.centerLogo,
   };
 
-  // Style universel pour tout centrer verticalement et horizontalement
+  // Centrage universel de la mécanique de jeu
   const centeredContainerStyle: React.CSSProperties = {
     display: 'flex',
     alignItems: 'center',
