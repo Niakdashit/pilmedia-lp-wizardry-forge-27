@@ -29,7 +29,8 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   // Style du conteneur principal avec image de fond - couvre tout l'aperçu
   const previewContainerStyles: React.CSSProperties = {
     width: '100%',
-    height: '400px',
+    height: '100%',
+    minHeight: '400px',
     position: 'relative',
     overflow: 'hidden',
     backgroundColor: campaign.design?.background || '#f8fafc'
