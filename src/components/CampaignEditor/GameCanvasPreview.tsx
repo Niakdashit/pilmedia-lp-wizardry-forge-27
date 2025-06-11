@@ -1,76 +1,54 @@
 import React from 'react';
-import GameRenderer from './GameRenderer';
-import { GAME_SIZES, GameSize } from '../configurators/GameSizeSelector';
-import MobilePreview from './Mobile/MobilePreview';
+import { GameRenderer } from '../GameTypes';
+import { GameSize, GAME_SIZES } from '../configurators/GameSizeSelector';
+import { useGamePositionCalculator } from './GamePositionCalculator';
 
 interface GameCanvasPreviewProps {
   campaign: any;
-  className?: string;
-  previewDevice?: 'desktop' | 'tablet' | 'mobile';
+  gameSize: GameSize;
+  gamePosition: string;
+  gameBackgroundImage?: string;
 }
 
 const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   campaign,
-  className = "",
-  previewDevice = 'desktop'
+  gameSize,
+  gamePosition,
+  gameBackgroundImage
 }) => {
-  // Affichage Mobile & Tablette = composant device simulé
-  if (previewDevice === 'mobile' || previewDevice === 'tablet') {
-    return (
-      <div className={`w-full h-full ${className}`}>
-        <MobilePreview campaign={campaign} previewMode={previewDevice} />
-      </div>
-    );
-  }
+  const { getPositionStyles } = useGamePositionCalculator({
+    gameSize,
+    gamePosition,
+    shouldCropWheel: false
+  });
 
-  // Desktop : rendu standard
-  const baseBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage || campaign.design?.backgroundImage;
-  const gameBackgroundImage = baseBackgroundImage;
-  const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel || campaign.buttonConfig?.text || 'Jouer';
-  const buttonColor = campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor || '#841b60';
-
-  // Récup taille et position du jeu
-  const gameSize: GameSize = campaign.gameSize && Object.keys(GAME_SIZES).includes(campaign.gameSize) ? campaign.gameSize as GameSize : 'medium';
-  const gamePosition = campaign.gamePosition || 'center';
-
-  // Centrage universel (flexbox)
-  const centeredGameContainerStyle = {
+  const centeredContainerStyle: React.CSSProperties = {
     width: '100%',
-    height: '100%',
+    height: '400px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    position: 'relative' as const
+    position: 'relative',
+    backgroundImage: gameBackgroundImage ? `url(${gameBackgroundImage})` : undefined,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat'
   };
-  
-  return (
-    <div 
-      className={`relative w-full h-full overflow-hidden ${className}`} 
-      style={{ minHeight: '600px' }} 
-      key={`game-preview-${gameSize}-${gamePosition}-${previewDevice}-${buttonColor}-${JSON.stringify(campaign.gameConfig?.[campaign.type])}`}
-    >
-      {/* Image de fond plein écran */}
-      {gameBackgroundImage && (
-        <img 
-          src={gameBackgroundImage} 
-          alt="Background" 
-          className="absolute inset-0 w-full h-full object-cover z-0" 
-          style={{ pointerEvents: 'none' }} 
-        />
-      )}
 
-      {/* Conteneur pour le jeu centré partout */}
-      <div className="relative z-20 w-full h-full flex items-center justify-center">
-        <GameRenderer 
-          campaign={campaign} 
-          gameSize={gameSize} 
-          gamePosition={gamePosition} 
-          previewDevice={previewDevice} 
-          gameContainerStyle={centeredGameContainerStyle} 
-          buttonLabel={buttonLabel} 
-          buttonColor={buttonColor} 
-          gameBackgroundImage={gameBackgroundImage} 
-        />
+  return (
+    <div className="bg-white rounded-lg border-2 border-gray-200 overflow-hidden">
+      <div style={centeredContainerStyle}>
+        <div style={getPositionStyles()}>
+          <GameRenderer
+            campaign={campaign}
+            gameSize={gameSize}
+            gamePosition={gamePosition}
+            previewDevice="desktop"
+            buttonLabel={campaign.buttonConfig?.text || 'Jouer'}
+            buttonColor={campaign.buttonConfig?.color || '#841b60'}
+            gameBackgroundImage={gameBackgroundImage}
+          />
+        </div>
       </div>
     </div>
   );

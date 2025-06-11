@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Upload, Calendar, Target } from 'lucide-react';
 import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
-import { analyzeBrandStyle, generateBrandThemeFromMicrolinkPalette, getAccessibleTextColor } from '../../utils/BrandStyleAnalyzer';
+import { generateBrandThemeFromMicrolinkPalette } from '../../utils/BrandStyleAnalyzer';
 
 const Step2BasicSettings: React.FC = () => {
   const {

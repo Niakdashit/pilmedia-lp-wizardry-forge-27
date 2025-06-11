@@ -1,150 +1,55 @@
-
-import React from 'react';
-import { motion } from 'framer-motion';
-import GameRenderer from './GameRenderer';
+import React, { useState } from 'react';
+import GameRenderer from '../GameTypes/GameRenderer';
 
 interface CampaignPreviewProps {
   campaign: any;
-  previewDevice?: "desktop" | "mobile" | "tablet";
+  setCampaign: React.Dispatch<React.SetStateAction<any>>;
 }
 
-const CampaignPreview: React.FC<CampaignPreviewProps> = ({ 
-  campaign, 
-  previewDevice = "desktop" 
-}) => {
-  const isMobile = previewDevice === "mobile";
-
-  const renderElement = (element: any) => {
-    switch (element.type) {
-      case 'text':
-        return (
-          <div
-            key={element.id}
-            style={{
-              position: 'absolute',
-              left: element.x,
-              top: element.y,
-              width: element.width,
-              height: element.height,
-              fontSize: element.fontSize || '16px',
-              color: element.color || '#000',
-              fontWeight: element.fontWeight || 'normal',
-            }}
-          >
-            {element.content}
-          </div>
-        );
-      case 'image':
-        return (
-          <img
-            key={element.id}
-            src={element.src}
-            alt=""
-            style={{
-              position: 'absolute',
-              left: element.x,
-              top: element.y,
-              width: element.width,
-              height: element.height,
-              objectFit: 'cover',
-            }}
-          />
-        );
-      case 'game':
-        return (
-          <div
-            key={element.id}
-            style={{
-              position: 'absolute',
-              left: element.x,
-              top: element.y,
-              width: element.width,
-              height: element.height,
-            }}
-          >
-            {isMobile ? (
-              <div className="text-center text-gray-500 text-sm">
-                Aperçu du jeu non disponible en mobile
-              </div>
-            ) : (
-              <GameRenderer 
-                campaign={campaign}
-                gameSize={campaign.gameSize || 'medium'}
-                gamePosition={campaign.gamePosition || 'center'}
-                previewDevice={previewDevice}
-                gameContainerStyle={{}}
-                buttonLabel={campaign.buttonConfig?.text || 'Jouer'}
-                buttonColor={campaign.buttonConfig?.color || '#841b60'}
-              />
-            )}
-          </div>
-        );
-      default:
-        return null;
-    }
-  };
-
-  // Use campaign elements if they exist, otherwise empty array
-  const elements = campaign.elements || [];
+const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, setCampaign }) => {
+  const [previewDevice, setPreviewDevice] = useState<'desktop' | 'tablet'>('desktop');
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className={`relative bg-white shadow-lg rounded-lg overflow-hidden ${
-        isMobile ? 'w-80 h-[600px]' : 'w-full h-full'
-      }`}
-      style={{ backgroundColor: campaign.design?.background || '#ebf4f7' }}
-    >
-      {/* Header */}
-      {campaign.screens?.[1]?.showTitle && (
-        <div
-          className="w-full p-4 text-center"
-          style={{ backgroundColor: campaign.design?.blockColor || '#ffffff' }}
-        >
-          <h1
-            style={{
-              color: campaign.design?.titleColor || '#000000',
-              fontSize: '24px',
-            }}
-          >
-            {campaign.screens?.[1]?.title || campaign.name}
-          </h1>
-          {campaign.screens?.[1]?.showDescription && campaign.screens?.[1]?.description && (
-            <p
-              style={{
-                color: campaign.design?.titleColor || '#000000',
-                fontSize: '14px',
-              }}
+    <div className="w-full h-full bg-white border-l border-gray-200 overflow-hidden">
+      {/* Preview Header */}
+      <div className="bg-gray-50 border-b border-gray-200 p-4">
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-medium text-gray-900">Aperçu en temps réel</h3>
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={() => setPreviewDevice('desktop')}
+              className={`px-3 py-1 text-sm rounded ${previewDevice === 'desktop' ? 'bg-[#841b60] text-white' : 'bg-white text-gray-600 border'}`}
             >
-              {campaign.screens[1].description}
-            </p>
-          )}
+              Desktop
+            </button>
+            <button
+              onClick={() => setPreviewDevice('tablet')}
+              className={`px-3 py-1 text-sm rounded ${previewDevice === 'tablet' ? 'bg-[#841b60] text-white' : 'bg-white text-gray-600 border'}`}
+            >
+              Tablet
+            </button>
+          </div>
         </div>
-      )}
-
-      {/* Canvas Elements */}
-      <div className="relative flex-1">
-        {elements.map(renderElement)}
       </div>
 
-      {/* Footer */}
-      {campaign.screens?.[3]?.showTitle && (
-        <div
-          className="w-full p-4 text-center"
-          style={{ backgroundColor: campaign.design?.blockColor || '#ffffff' }}
-        >
-          <p
-            style={{
-              color: campaign.design?.titleColor || '#000000',
-              fontSize: '14px',
-            }}
-          >
-            {campaign.screens[3].title || 'Merci pour votre participation !'}
-          </p>
+      {/* Preview Content */}
+      <div className="h-full overflow-auto bg-gray-100">
+        <div className="p-4">
+          <div className={`mx-auto bg-white rounded-lg shadow-lg overflow-hidden ${
+            previewDevice === 'tablet' ? 'max-w-md' : 'max-w-4xl'
+          }`}>
+            <GameRenderer
+              campaign={campaign}
+              gameSize={campaign.gameSize || 'large'}
+              gamePosition={campaign.gamePosition || 'center'}
+              previewDevice={previewDevice}
+              buttonLabel={campaign.buttonConfig?.text || 'Jouer'}
+              buttonColor={campaign.buttonConfig?.color || '#841b60'}
+            />
+          </div>
         </div>
-      )}
-    </motion.div>
+      </div>
+    </div>
   );
 };
 
