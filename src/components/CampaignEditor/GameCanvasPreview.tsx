@@ -8,7 +8,6 @@ import { getCampaignBackgroundImage } from '../../utils/background';
 interface GameCanvasPreviewProps {
   campaign: any;
   gameSize: GameSize;
-  gamePosition: string;
   gameBackgroundImage?: string;
   className?: string;
   previewDevice?: 'desktop' | 'tablet' | 'mobile';
@@ -27,41 +26,51 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   const resolvedBackground =
     gameBackgroundImage || getCampaignBackgroundImage(campaign, previewDevice);
 
-  // Style du conteneur principal avec image de fond
-  const containerStyles: React.CSSProperties = {
-    ...containerStyle,
+  // Style du conteneur principal avec image de fond - couvre tout l'aperçu
+  const previewContainerStyles: React.CSSProperties = {
+    width: '100%',
     height: '400px',
     position: 'relative',
-    overflow: 'hidden'
+    overflow: 'hidden',
+    backgroundColor: campaign.design?.background || '#f8fafc'
   };
 
   // Appliquer l'image de fond si elle existe
   if (resolvedBackground) {
-    containerStyles.backgroundImage = `url(${resolvedBackground})`;
-    containerStyles.backgroundSize = 'cover';
-    containerStyles.backgroundPosition = 'center';
-    containerStyles.backgroundRepeat = 'no-repeat';
+    previewContainerStyles.backgroundImage = `url(${resolvedBackground})`;
+    previewContainerStyles.backgroundSize = 'cover';
+    previewContainerStyles.backgroundPosition = 'center';
+    previewContainerStyles.backgroundRepeat = 'no-repeat';
   }
+
+  // Style du conteneur du jeu - transparent pour laisser voir l'image de fond
+  const gameContainerStyles: React.CSSProperties = {
+    ...containerStyle,
+    height: '100%',
+    position: 'relative',
+    backgroundColor: 'transparent'
+  };
 
   return (
     <div className={`bg-white rounded-lg border-2 border-gray-200 overflow-hidden ${className}`}>
-      <div style={containerStyles}>
+      <div style={previewContainerStyles}>
         {/* Overlay pour améliorer la lisibilité si image de fond */}
         {resolvedBackground && (
           <div className="absolute inset-0 bg-black/10" />
         )}
 
         {/* Conteneur du jeu - toujours centré par défaut */}
-        <div className="relative z-10" style={wrapperStyle}>
-          <GameRenderer
-            campaign={campaign}
-            gameSize={gameSize}
-            gamePosition="center" // Toujours centré dans le preview
-            previewDevice={previewDevice}
-            buttonLabel={campaign.buttonConfig?.text || 'Jouer'}
-            buttonColor={campaign.buttonConfig?.color || '#841b60'}
-            gameBackgroundImage={resolvedBackground}
-          />
+        <div className="relative z-10" style={gameContainerStyles}>
+          <div style={wrapperStyle}>
+            <GameRenderer
+              campaign={campaign}
+              gameSize={gameSize}
+              previewDevice={previewDevice}
+              buttonLabel={campaign.buttonConfig?.text || 'Jouer'}
+              buttonColor={campaign.buttonConfig?.color || '#841b60'}
+              gameBackgroundImage={resolvedBackground}
+            />
+          </div>
         </div>
       </div>
     </div>
