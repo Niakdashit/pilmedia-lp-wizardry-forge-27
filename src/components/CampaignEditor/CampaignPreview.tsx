@@ -1,12 +1,13 @@
+
 import React, { useState } from 'react';
-import GameRenderer from '../GameTypes/GameRenderer';
+import GameRenderer from './GameRenderer';
 
 interface CampaignPreviewProps {
   campaign: any;
   setCampaign: React.Dispatch<React.SetStateAction<any>>;
 }
 
-const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, setCampaign }) => {
+const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
   const [previewDevice, setPreviewDevice] = useState<'desktop' | 'tablet'>('desktop');
 
   return (
