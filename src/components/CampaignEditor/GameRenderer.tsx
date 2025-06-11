@@ -29,11 +29,6 @@ const GameRenderer: React.FC<GameRendererProps> = ({
   buttonColor,
   gameBackgroundImage
 }) => {
-  // Ensure gamePosition is properly typed for WheelPreview
-  const validGamePosition = (['top', 'center', 'bottom', 'left', 'right'].includes(gamePosition) 
-    ? gamePosition 
-    : 'center') as 'top' | 'center' | 'bottom' | 'left' | 'right';
-
   // Style de conteneur centré universel qui fonctionne dans tous les contextes
   const centeredContainerStyle: React.CSSProperties = {
     display: 'flex',

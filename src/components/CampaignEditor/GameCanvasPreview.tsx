@@ -2,7 +2,6 @@
 import React from 'react';
 import GameRenderer from './GameRenderer';
 import { GameSize } from '../configurators/GameSizeSelector';
-import { useGamePositionCalculator } from './GamePositionCalculator';
 
 interface GameCanvasPreviewProps {
   campaign: any;
@@ -21,12 +20,6 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   className = '',
   previewDevice = 'desktop'
 }) => {
-  const { getPositionStyles } = useGamePositionCalculator({
-    gameSize,
-    gamePosition,
-    shouldCropWheel: false
-  });
-
   // Style du conteneur principal avec image de fond
   const containerStyle: React.CSSProperties = {
     width: '100%',
