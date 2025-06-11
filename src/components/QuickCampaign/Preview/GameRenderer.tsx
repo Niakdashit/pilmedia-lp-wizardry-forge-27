@@ -1,4 +1,3 @@
-
 import React from 'react';
 import WheelPreview from '../../GameTypes/WheelPreview';
 import { Jackpot } from '../../GameTypes';
@@ -45,6 +44,7 @@ const GameRenderer: React.FC<GameRendererProps> = ({
   previewDevice = 'desktop'
 }) => {
   const [logoColors, setLogoColors] = React.useState<string[]>([]);
+  const [finalColors, setFinalColors] = React.useState(customColors);
 
   // Charger dynamiquement la police de marque si fournie
   React.useEffect(() => {
@@ -59,12 +59,14 @@ const GameRenderer: React.FC<GameRendererProps> = ({
     }
   }, [fontUrl]);
 
-  // Extraire les couleurs du logo comme fallback
+  // Extraire les couleurs du logo
   React.useEffect(() => {
     const extractLogoColors = async () => {
       if (logoUrl && typeof window !== 'undefined') {
         try {
+          console.log('Extraction des couleurs du logo:', logoUrl);
           const colors = await extractColorsFromLogo(logoUrl);
+          console.log('Couleurs extraites du logo:', colors);
           setLogoColors(colors);
         } catch (error) {
           console.log('Impossible d\'extraire les couleurs du logo:', error);
@@ -75,60 +77,73 @@ const GameRenderer: React.FC<GameRendererProps> = ({
     extractLogoColors();
   }, [logoUrl]);
 
-  // Utiliser les couleurs personnalisées ou fallback sur les couleurs du logo
-  const finalColors = React.useMemo(() => {
+  // Calculer les couleurs finales à utiliser
+  React.useEffect(() => {
     // Si les couleurs personnalisées sont définies et non-génériques, les utiliser
-    if (customColors.primary && customColors.primary !== '#841b60') {
-      return customColors;
+    if (customColors.primary && customColors.primary !== '#841b60' && customColors.primary !== '#3B82F6') {
+      console.log('Utilisation des couleurs personnalisées:', customColors);
+      setFinalColors(customColors);
+      return;
     }
 
     // Sinon, utiliser les couleurs extraites du logo
     if (logoColors.length >= 2) {
+      console.log('Génération du thème à partir des couleurs du logo:', logoColors);
       const palette = generateBrandThemeFromColors(logoColors);
-      return {
+      const newColors = {
         primary: palette.primaryColor,
         secondary: palette.secondaryColor,
         accent: palette.accentColor
       };
+      console.log('Nouvelles couleurs générées:', newColors);
+      setFinalColors(newColors);
+      return;
     }
 
     // Fallback sur les couleurs par défaut
-    return customColors;
+    console.log('Utilisation des couleurs par défaut:', customColors);
+    setFinalColors(customColors);
   }, [customColors, logoColors]);
 
   // Application de la charte de marque sur la roue et le design général
-  const synchronizedCampaign = applyBrandStyleToWheel(mockCampaign, finalColors as BrandColors);
-  
-  // Forcer l'application des couleurs finales à la configuration de la roue
-  if (synchronizedCampaign.config?.roulette) {
-    synchronizedCampaign.config.roulette = {
-      ...synchronizedCampaign.config.roulette,
-      borderColor: finalColors.primary,
-      borderOutlineColor: finalColors.accent || finalColors.secondary,
-      segmentColor1: finalColors.primary,
-      segmentColor2: finalColors.secondary,
-      // Mettre à jour les segments existants avec les nouvelles couleurs
-      segments: synchronizedCampaign.config.roulette.segments?.map((segment: any, index: number) => ({
-        ...segment,
-        color: index % 2 === 0 ? finalColors.primary : finalColors.secondary
-      })) || []
+  const synchronizedCampaign = React.useMemo(() => {
+    console.log('Application des couleurs finales à la campagne:', finalColors);
+    const campaign = applyBrandStyleToWheel(mockCampaign, finalColors as BrandColors);
+    
+    // Forcer l'application des couleurs finales à la configuration de la roue
+    if (campaign.config?.roulette) {
+      campaign.config.roulette = {
+        ...campaign.config.roulette,
+        borderColor: finalColors.primary,
+        borderOutlineColor: finalColors.accent || finalColors.secondary,
+        segmentColor1: finalColors.primary,
+        segmentColor2: finalColors.secondary,
+        // Mettre à jour les segments existants avec les nouvelles couleurs
+        segments: campaign.config.roulette.segments?.map((segment: any, index: number) => ({
+          ...segment,
+          color: index % 2 === 0 ? finalColors.primary : finalColors.secondary
+        })) || []
+      };
+    }
+
+    // Forcer l'application des couleurs au design
+    campaign.design = {
+      ...campaign.design,
+      centerLogo: logoUrl || campaign.design?.centerLogo,
+      customColors: finalColors
     };
-  }
 
-  // Forcer l'application des couleurs au design
-  synchronizedCampaign.design = {
-    ...synchronizedCampaign.design,
-    centerLogo: logoUrl || synchronizedCampaign.design?.centerLogo,
-    customColors: finalColors
-  };
+    // Mettre à jour la configuration du bouton avec les couleurs finales
+    campaign.buttonConfig = {
+      ...campaign.buttonConfig,
+      color: finalColors.accent || finalColors.primary,
+      borderColor: finalColors.primary,
+      textColor: '#ffffff'
+    };
 
-  // Mettre à jour la configuration du bouton avec les couleurs finales
-  synchronizedCampaign.buttonConfig = {
-    ...synchronizedCampaign.buttonConfig,
-    color: finalColors.accent || finalColors.primary,
-    borderColor: finalColors.primary,
-    textColor: '#ffffff'
-  };
+    console.log('Campagne synchronisée:', campaign);
+    return campaign;
+  }, [mockCampaign, finalColors, logoUrl]);
 
   const { containerStyle, wrapperStyle } = useCenteredStyles();
   const { getPositionStyles } = useGamePositionCalculator({
