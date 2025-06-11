@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { Plus } from 'lucide-react';
 import GameCanvasPreview from '../CampaignEditor/GameCanvasPreview';
@@ -138,6 +137,8 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
           <div className="flex-1 flex relative">
             <GameCanvasPreview
               campaign={enhancedCampaign}
+              gameSize={gameSize}
+              gamePosition={gamePosition}
               className="w-full h-full"
               key={`preview-${gameSize}-${gamePosition}-${campaign.buttonConfig?.color}-${JSON.stringify(campaign.gameConfig?.[campaign.type])}`}
               previewDevice={previewDevice}

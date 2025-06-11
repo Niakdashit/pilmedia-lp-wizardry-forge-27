@@ -1,14 +1,16 @@
 
+
 import React, { useState } from 'react';
 import GameRenderer from './GameRenderer';
 
 interface CampaignPreviewProps {
   campaign: any;
-  setCampaign: React.Dispatch<React.SetStateAction<any>>;
+  setCampaign?: React.Dispatch<React.SetStateAction<any>>;
+  previewDevice?: 'desktop' | 'tablet' | 'mobile';
 }
 
-const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
-  const [previewDevice, setPreviewDevice] = useState<'desktop' | 'tablet'>('desktop');
+const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign, previewDevice: initialDevice = 'desktop' }) => {
+  const [previewDevice, setPreviewDevice] = useState<'desktop' | 'tablet'>(initialDevice === 'mobile' ? 'tablet' : initialDevice);
 
   return (
     <div className="w-full h-full bg-white border-l border-gray-200 overflow-hidden">
