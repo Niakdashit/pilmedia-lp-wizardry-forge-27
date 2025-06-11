@@ -14,74 +14,6 @@ export const useCanvasElements = (
   const customTexts = campaign.design?.customTexts || [];
   const customImages = campaign.design?.customImages || [];
 
-  const addTextElement = useCallback(() => {
-    const newText = {
-      id: Date.now(),
-      text: 'Nouveau texte',
-      enabled: true,
-      x: 100,
-      y: 100,
-      color: '#000000',
-      size: 'base',
-      bold: false,
-      italic: false,
-      underline: false,
-      fontFamily: 'Inter',
-      showFrame: false,
-      frameColor: '#ffffff',
-      frameBorderColor: '#e5e7eb',
-      deviceConfig: {
-        [deviceKey]: {
-          x: 100,
-          y: 100,
-          width: undefined,
-          height: undefined
-        }
-      }
-    };
-
-    setCampaign((prev: any) => ({
-      ...prev,
-      design: {
-        ...prev.design,
-        customTexts: [...customTexts, newText]
-      }
-    }));
-
-    setSelectedElement({ type: 'text', id: newText.id });
-  }, [setCampaign, customTexts, deviceKey]);
-
-  const addImageElement = useCallback(() => {
-    const newImage = {
-      id: Date.now(),
-      src: '',
-      enabled: true,
-      x: 100,
-      y: 100,
-      width: 100,
-      height: 100,
-      rotation: 0,
-      deviceConfig: {
-        [deviceKey]: {
-          x: 100,
-          y: 100,
-          width: 100,
-          height: 100
-        }
-      }
-    };
-
-    setCampaign((prev: any) => ({
-      ...prev,
-      design: {
-        ...prev.design,
-        customImages: [...customImages, newImage]
-      }
-    }));
-
-    setSelectedElement({ type: 'image', id: newImage.id });
-  }, [setCampaign, customImages, deviceKey]);
-
   const updateTextElement = useCallback((id: number, updates: any) => {
     setCampaign((prevCampaign: any) => ({
       ...prevCampaign,
@@ -201,8 +133,6 @@ export const useCanvasElements = (
     deleteTextElement,
     deleteImageElement,
     getElementDeviceConfig,
-    addTextElement,
-    addImageElement,
     deviceKey
   };
 };
