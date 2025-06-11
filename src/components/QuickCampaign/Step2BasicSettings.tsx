@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Upload, Calendar, Target } from 'lucide-react';
 import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
-import { extractCompletePaletteFromMicrolink } from '../../utils/BrandStyleAnalyzer';
+import { generateBrandThemeFromUrl } from '../../utils/BrandStyleAnalyzer';
 
 const Step2BasicSettings: React.FC = () => {
   const {
@@ -55,37 +55,27 @@ const Step2BasicSettings: React.FC = () => {
     if (!brandSiteUrl) return;
     setIsAnalyzing(true);
     try {
-      // Appel Microlink palette + logo + font
-      const apiUrl = `https://api.microlink.io/?url=${encodeURIComponent(brandSiteUrl)}&palette=true&meta=true&screenshot=false`;
-      const response = await fetch(apiUrl);
+      const theme = await generateBrandThemeFromUrl(brandSiteUrl);
 
-      if (!response.ok) throw new Error('Erreur lors de l\'analyse du site');
-      const data = await response.json();
-      const palette = data.data?.palette;
+      setCustomColors({
+        primary: theme.customColors.primary,
+        secondary: theme.customColors.secondary,
+        accent: theme.customColors.accent,
+        textColor: theme.customColors.text
+      });
 
-      if (palette) {
-        const completePalette = extractCompletePaletteFromMicrolink(palette);
+      setJackpotColors({
+        containerBackgroundColor: theme.customColors.accent + '30',
+        backgroundColor: theme.customColors.accent + '30',
+        borderColor: theme.customColors.primary,
+        borderWidth: 3,
+        slotBorderColor: theme.customColors.secondary,
+        slotBorderWidth: 2,
+        slotBackgroundColor: '#ffffff'
+      });
 
-        setCustomColors({
-          primary: completePalette.primaryColor,
-          secondary: completePalette.secondaryColor,
-          accent: completePalette.accentColor,
-          textColor: completePalette.textColor
-        });
-
-        setJackpotColors({
-          containerBackgroundColor: completePalette.backgroundColor,
-          backgroundColor: completePalette.accentColor + '30', // Opacité d'accent pour l'arrière-plan
-          borderColor: completePalette.primaryColor,
-          borderWidth: 3,
-          slotBorderColor: completePalette.secondaryColor,
-          slotBorderWidth: 2,
-          slotBackgroundColor: completePalette.backgroundColor
-        });
-      }
-
-      setLogoUrl(data.data?.logo?.url || null);
-      setFontUrl(data.data?.font?.url || null);
+      setLogoUrl(theme.logoUrl || null);
+      setFontUrl(null);
 
     } catch (err) {
       console.error('❌ Erreur lors de l\'analyse:', err);
