@@ -60,7 +60,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
       )}
 
       {/* Conteneur pour le jeu avec positionnement dynamique */}
-      <div className="relative z-20 w-full h-full flex my-0 py-0">
+      <div className="relative z-20 w-full h-full flex items-center justify-center my-0 py-0">
         <GameRenderer 
           campaign={campaign} 
           gameSize={gameSize} 

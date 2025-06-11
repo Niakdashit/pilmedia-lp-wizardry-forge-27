@@ -20,6 +20,9 @@ export const useGamePositionCalculator = ({
       height: `${gameDimensions.height}px`,
       maxWidth: `${gameDimensions.width}px`,
       maxHeight: `${gameDimensions.height}px`,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
     };
 
     // For wheel games with mobile cropping, let WheelContainer handle positioning completely

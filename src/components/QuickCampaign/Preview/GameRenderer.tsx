@@ -65,76 +65,84 @@ const GameRenderer: React.FC<GameRendererProps> = ({
     }
   };
 
-  switch (gameType) {
-    case 'wheel':
-      return (
-        <WheelPreview
-          campaign={synchronizedCampaign}
-          config={mockCampaign.gameConfig?.wheel || {
-            mode: "instant_winner" as const,
-            winProbability: 0.1,
-            maxWinners: 10,
-            winnersCount: 0
-          }}
-          gameSize={gameSize}
-          gamePosition={gamePosition}
-          previewDevice={previewDevice}
-        />
-      );
+  const renderGame = () => {
+    switch (gameType) {
+      case 'wheel':
+        return (
+          <WheelPreview
+            campaign={synchronizedCampaign}
+            config={mockCampaign.gameConfig?.wheel || {
+              mode: "instant_winner" as const,
+              winProbability: 0.1,
+              maxWinners: 10,
+              winnersCount: 0
+            }}
+            gameSize={gameSize}
+            gamePosition={gamePosition}
+            previewDevice={previewDevice}
+          />
+        );
 
-    case 'jackpot':
-      return (
-        <Jackpot
-          isPreview={true}
-          instantWinConfig={mockCampaign.gameConfig?.jackpot?.instantWin || {
-            mode: "instant_winner" as const,
-            winProbability: 0.1,
-            maxWinners: 10,
-            winnersCount: 0
-          }}
-          buttonLabel={mockCampaign.gameConfig?.jackpot?.buttonLabel || mockCampaign.buttonConfig?.text || 'Lancer le Jackpot'}
-          buttonColor={customColors.primary}
-          backgroundImage={mockCampaign.gameConfig?.jackpot?.backgroundImage}
-          containerBackgroundColor={jackpotColors.containerBackgroundColor}
-          backgroundColor={jackpotColors.backgroundColor}
-          borderColor={jackpotColors.borderColor}
-          borderWidth={jackpotColors.borderWidth}
-          slotBorderColor={jackpotColors.slotBorderColor}
-          slotBorderWidth={jackpotColors.slotBorderWidth}
-          slotBackgroundColor={jackpotColors.slotBackgroundColor}
-        />
-      );
+      case 'jackpot':
+        return (
+          <Jackpot
+            isPreview={true}
+            instantWinConfig={mockCampaign.gameConfig?.jackpot?.instantWin || {
+              mode: "instant_winner" as const,
+              winProbability: 0.1,
+              maxWinners: 10,
+              winnersCount: 0
+            }}
+            buttonLabel={mockCampaign.gameConfig?.jackpot?.buttonLabel || mockCampaign.buttonConfig?.text || 'Lancer le Jackpot'}
+            buttonColor={customColors.primary}
+            backgroundImage={mockCampaign.gameConfig?.jackpot?.backgroundImage}
+            containerBackgroundColor={jackpotColors.containerBackgroundColor}
+            backgroundColor={jackpotColors.backgroundColor}
+            borderColor={jackpotColors.borderColor}
+            borderWidth={jackpotColors.borderWidth}
+            slotBorderColor={jackpotColors.slotBorderColor}
+            slotBorderWidth={jackpotColors.slotBorderWidth}
+            slotBackgroundColor={jackpotColors.slotBackgroundColor}
+          />
+        );
 
-    case 'scratch':
-      return (
-        <ScratchPreview
-          config={mockCampaign.gameConfig?.scratch || {}}
-          autoStart
-        />
-      );
+      case 'scratch':
+        return (
+          <ScratchPreview
+            config={mockCampaign.gameConfig?.scratch || {}}
+            autoStart
+          />
+        );
 
-    case 'dice':
-      return (
-        <DicePreview 
-          config={mockCampaign.gameConfig?.dice || {}}
-        />
-      );
+      case 'dice':
+        return (
+          <DicePreview
+            config={mockCampaign.gameConfig?.dice || {}}
+          />
+        );
 
-    case 'form':
-      return (
-        <FormPreview
-          campaign={synchronizedCampaign}
-          gameSize={gameSize}
-        />
-      );
+      case 'form':
+        return (
+          <FormPreview
+            campaign={synchronizedCampaign}
+            gameSize={gameSize}
+          />
+        );
 
-    default:
-      return (
-        <div className="text-center text-gray-500">
-          <p>Type de jeu non supporté: {gameType}</p>
-        </div>
-      );
-  }
+      default:
+        return (
+          <div className="text-center text-gray-500">
+            <p>Type de jeu non supporté: {gameType}</p>
+          </div>
+        );
+    }
+  };
+
+  return (
+    <div className="w-full h-full flex items-center justify-center">
+      {renderGame()}
+    </div>
+  );
 };
 
 export default GameRenderer;
