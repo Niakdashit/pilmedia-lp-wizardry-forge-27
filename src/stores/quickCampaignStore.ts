@@ -13,6 +13,7 @@ export interface QuickCampaignState {
   fontUrl: string | null;
   selectedTheme: string;
   backgroundImage: File | null;
+  backgroundImageUrl: string | null;
   segmentCount: number;
   customColors: {
     primary: string;
@@ -40,6 +41,7 @@ export interface QuickCampaignState {
   setFontUrl: (url: string | null) => void;
   setSelectedTheme: (theme: string) => void;
   setBackgroundImage: (file: File | null) => void;
+  setBackgroundImageUrl: (url: string | null) => void;
   setSegmentCount: (count: number) => void;
   setCustomColors: (colors: { primary: string; secondary: string; accent: string; textColor?: string }) => void;
   setJackpotColors: (colors: any) => void;
@@ -59,6 +61,7 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
   fontUrl: null,
   selectedTheme: 'default',
   backgroundImage: null,
+  backgroundImageUrl: null,
   segmentCount: 4,
   customColors: {
     primary: '#ffffff',   // Blanc par défaut
@@ -87,6 +90,7 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
   setFontUrl: (url) => set({ fontUrl: url }),
   setSelectedTheme: (theme) => set({ selectedTheme: theme }),
   setBackgroundImage: (file) => set({ backgroundImage: file }),
+  setBackgroundImageUrl: (url) => set({ backgroundImageUrl: url }),
   setSegmentCount: (count) => set({ segmentCount: count }),
   setCustomColors: (colors) => set({ customColors: colors }),
   setJackpotColors: (colors) => set({ jackpotColors: colors }),
@@ -101,7 +105,8 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
       design: {
         customColors: state.customColors,
         centerLogo: state.logoUrl || null,
-        mobileBackgroundImage: null
+        backgroundImage: state.backgroundImageUrl || null,
+        mobileBackgroundImage: state.backgroundImageUrl || null
       },
       buttonConfig: {
         color: state.customColors.accent,
@@ -184,6 +189,7 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
     fontUrl: null,
     selectedTheme: 'default',
     backgroundImage: null,
+    backgroundImageUrl: null,
     segmentCount: 4,
     customColors: {
       primary: '#ffffff',

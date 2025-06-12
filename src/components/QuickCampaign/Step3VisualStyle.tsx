@@ -23,11 +23,13 @@ const Step3VisualStyle: React.FC = () => {
     fontUrl,
     selectedTheme,
     backgroundImage,
+    backgroundImageUrl,
     customColors,
     jackpotColors,
     segmentCount,
     generatePreviewCampaign,
     setBackgroundImage,
+    setBackgroundImageUrl,
     setCurrentStep,
     reset
   } = useQuickCampaignStore();
@@ -40,10 +42,21 @@ const Step3VisualStyle: React.FC = () => {
   const previewCampaign = generatePreviewCampaign();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  React.useEffect(() => {
+    return () => {
+      if (backgroundImageUrl) {
+        URL.revokeObjectURL(backgroundImageUrl);
+      }
+    };
+  }, [backgroundImageUrl]);
+
 
   const handleFileUpload = (files: FileList | null) => {
     if (files && files[0]) {
-      setBackgroundImage(files[0]);
+      const file = files[0];
+      setBackgroundImage(file);
+      const url = URL.createObjectURL(file);
+      setBackgroundImageUrl(url);
     }
   };
   const handleFinish = () => {
@@ -239,7 +252,15 @@ const Step3VisualStyle: React.FC = () => {
 
             {/* Aperçu dynamique du jeu - Design unifié pour toutes les mécaniques */}
             <div className="flex justify-center">
-              <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-3xl shadow-inner border border-gray-200/50 max-w-2xl w-full flex items-center justify-center min-h-[400px] p-8 py-0">
+              <div
+                className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-3xl shadow-inner border border-gray-200/50 max-w-2xl w-full flex items-center justify-center min-h-[400px] p-8 py-0"
+                style={backgroundImageUrl ? {
+                  backgroundImage: `url(${backgroundImageUrl})`,
+                  backgroundSize: 'cover',
+                  backgroundPosition: 'center',
+                  backgroundRepeat: 'no-repeat'
+                } : undefined}
+              >
                 {selectedGameType === 'jackpot' ? (
                   <JackpotPreview 
                     customColors={customColors} 
@@ -290,6 +311,7 @@ const Step3VisualStyle: React.FC = () => {
                       onClick={(e) => {
                         e.stopPropagation();
                         setBackgroundImage(null);
+                        setBackgroundImageUrl(null);
                       }}
                       className="text-red-500 hover:text-red-600 transition-colors"
                     >
