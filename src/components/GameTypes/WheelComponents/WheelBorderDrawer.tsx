@@ -1,9 +1,7 @@
-
 interface WheelBorderDrawerProps {
   ctx: CanvasRenderingContext2D;
   center: number;
   radius: number;
-  size: number;
   borderColor: string;
   borderOutlineColor: string;
 }
@@ -12,7 +10,6 @@ export const drawWheelBorders = ({
   ctx,
   center,
   radius,
-  size,
   borderColor,
   borderOutlineColor
 }: WheelBorderDrawerProps) => {

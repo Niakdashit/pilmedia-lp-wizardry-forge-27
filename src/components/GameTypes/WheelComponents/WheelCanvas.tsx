@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect } from 'react';
 import { drawWheelSegments } from './WheelSegmentDrawer';
 import { drawWheelBorders } from './WheelBorderDrawer';
@@ -59,11 +58,7 @@ const WheelCanvas: React.FC<WheelCanvasProps> = ({
       segments,
       rotation,
       center,
-      radius,
-      size,
-      theme,
-      customColors,
-      borderOutlineColor
+      radius
     });
 
     // Draw borders
@@ -71,7 +66,6 @@ const WheelCanvas: React.FC<WheelCanvasProps> = ({
       ctx,
       center,
       radius,
-      size,
       borderColor,
       borderOutlineColor
     });

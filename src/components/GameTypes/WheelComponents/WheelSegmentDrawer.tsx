@@ -1,11 +1,9 @@
-
 interface WheelSegmentDrawerProps {
   ctx: CanvasRenderingContext2D;
   segments: any[];
   center: number;
   radius: number;
   rotation: number;
-  customColors?: any;
 }
 
 export const drawWheelSegments = ({
@@ -13,8 +11,7 @@ export const drawWheelSegments = ({
   segments,
   center,
   radius,
-  rotation,
-  customColors
+  rotation
 }: WheelSegmentDrawerProps) => {
   if (segments.length === 0) return;
 
