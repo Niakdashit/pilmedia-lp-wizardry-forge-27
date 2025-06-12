@@ -15,7 +15,7 @@ export const getWheelSegments = (campaign: any) => {
   const originalSegments = campaign?.config?.roulette?.segments || [];
   return originalSegments.map((segment: any, index: number) => ({
     ...segment,
-    color: index % 2 === 0 ? segmentColor1 : segmentColor2
+    color: segment.color || (index % 2 === 0 ? segmentColor1 : segmentColor2)
   }));
 };
 
