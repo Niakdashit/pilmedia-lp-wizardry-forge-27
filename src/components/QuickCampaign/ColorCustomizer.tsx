@@ -1,12 +1,13 @@
 import React from "react";
 import { Palette, RotateCcw } from "lucide-react";
 import { useQuickCampaignStore } from "../../stores/quickCampaignStore";
+import { getAccessibleTextColor } from "../../utils/BrandStyleAnalyzer";
 import JackpotBorderCustomizer from "./JackpotBorderCustomizer";
 
 const DEFAULT_COLORS = {
-  primary: "#ffffff",
+  primary: "#8b5cf6",
   secondary: "#a78bfa",
-  accent: "#ffffff",
+  accent: "#c4b5fd",
 };
 
 const ColorCustomizer: React.FC = () => {
@@ -26,8 +27,9 @@ const ColorCustomizer: React.FC = () => {
       ...customColors,
       [field]: value,
     } as typeof customColors;
-    if (field === "primary") {
-      newColors.textColor = value;
+    // On ne recalcule le textColor que si c'est l'accent qui change (pour garantir la meilleure lisibilité)
+    if (field === "accent") {
+      newColors.textColor = getAccessibleTextColor(value);
     }
     setCustomColors(newColors);
 
@@ -47,7 +49,7 @@ const ColorCustomizer: React.FC = () => {
       primary: DEFAULT_COLORS.primary,
       secondary: DEFAULT_COLORS.secondary,
       accent: DEFAULT_COLORS.accent,
-      textColor: DEFAULT_COLORS.primary,
+      textColor: getAccessibleTextColor(DEFAULT_COLORS.accent),
     });
   };
 
