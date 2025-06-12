@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, Upload } from 'lucide-react';
 import ImageUpload from '../../common/ImageUpload';
-import ColorPaletteSelector from './ColorPaletteSelector';
 
 interface WheelGameConfigProps {
   campaign: any;
@@ -19,8 +18,6 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
   campaign,
   setCampaign
 }) => {
-  const [selectedPalette, setSelectedPalette] = useState<any>(undefined);
-  
   const segments = campaign.config?.roulette?.segments || [];
   const borderColor = campaign.config?.roulette?.borderColor || '#841b60';
   const borderOutlineColor = campaign.config?.roulette?.borderOutlineColor || '#FFD700';
@@ -53,34 +50,6 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
       }));
     }
   }, []);
-
-  const handlePaletteSelect = (palette: any) => {
-    setSelectedPalette(palette);
-
-    setCampaign((prev: any) => {
-      const newConfig = {
-        ...prev,
-        config: {
-          ...prev.config,
-          roulette: {
-            ...prev.config?.roulette,
-            borderColor: palette.colors.primary,
-            borderOutlineColor: palette.colors.accent || palette.colors.secondary,
-            segmentColor1: palette.colors.primary,
-            segmentColor2: palette.colors.secondary
-          }
-        }
-      };
-
-      if (newConfig.config.roulette.segments) {
-        newConfig.config.roulette.segments = newConfig.config.roulette.segments.map((segment: any, index: number) => ({
-          ...segment,
-          color: index % 2 === 0 ? palette.colors.primary : palette.colors.secondary
-        }));
-      }
-      return newConfig;
-    });
-  };
 
   const handlePositionChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newPosition = e.target.value;
@@ -201,12 +170,6 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* PALETTE */}
-      <ColorPaletteSelector 
-        selectedPalette={selectedPalette} 
-        onPaletteSelect={handlePaletteSelect} 
-        gameType="wheel" 
-      />
 
       {/* 🟢 NOUVEAU - Sélection de la position */}
       <div className="space-y-2">
@@ -326,14 +289,32 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
               </div>
               
               <div className="space-y-2">
-                <input 
-                  type="text" 
-                  value={segment.label || ''} 
-                  onChange={e => updateSegment(index, 'label', e.target.value)} 
-                  placeholder="Texte du segment" 
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-[#841b60] focus:border-transparent" 
+                <input
+                  type="text"
+                  value={segment.label || ''}
+                  onChange={e => updateSegment(index, 'label', e.target.value)}
+                  placeholder="Texte du segment"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-[#841b60] focus:border-transparent"
                 />
-                
+
+                <div className="space-y-2">
+                  <label className="text-xs font-medium text-gray-600">Couleur du segment</label>
+                  <div className="flex items-center space-x-2">
+                    <input
+                      type="color"
+                      value={segment.color || (index % 2 === 0 ? segmentColor1 : segmentColor2)}
+                      onChange={e => updateSegment(index, 'color', e.target.value)}
+                      className="w-10 h-10 rounded border border-gray-300"
+                    />
+                    <input
+                      type="text"
+                      value={segment.color || (index % 2 === 0 ? segmentColor1 : segmentColor2)}
+                      onChange={e => updateSegment(index, 'color', e.target.value)}
+                      className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-[#841b60] focus:border-transparent"
+                    />
+                  </div>
+                </div>
+
                 <div className="space-y-1">
                   <label className="flex items-center text-xs font-medium text-gray-600">
                     <Upload className="w-3 h-3 mr-1" />

@@ -13,6 +13,16 @@ npm ci
 This step installs Vite and all other dependencies. It must be run at least once
 before building the project.
 
+## Testing
+
+To run the unit tests you must first install the development dependencies so the
+`tsx` runner is available. Then execute the test script:
+
+```bash
+npm install
+npm test
+```
+
 ## Brandfetch API key
 
 Some parts of the application rely on the [Brandfetch](https://brandfetch.com/)
