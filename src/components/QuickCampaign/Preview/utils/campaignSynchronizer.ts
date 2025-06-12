@@ -44,7 +44,7 @@ export const synchronizeCampaignWithColors = (
     ...campaign.buttonConfig,
     color: finalColors.accent || finalColors.primary,
     borderColor: finalColors.primary,
-    textColor: '#ffffff'
+    textColor: finalColors.primary
   };
 
   console.log('Campagne synchronisée avec couleurs exactes:', campaign);

@@ -11,7 +11,7 @@ export const getWheelPreviewConfig = (campaign: any) => {
 
   const buttonConfig = campaign?.buttonConfig || {
     color: customColors?.primary || '#841b60',
-    textColor: customColors?.accent || '#ffffff',
+    textColor: customColors?.primary || '#ffffff',
     borderColor: customColors?.primary || '#841b60',
     borderWidth: 1,
     borderRadius: 8,

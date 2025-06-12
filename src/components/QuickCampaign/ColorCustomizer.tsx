@@ -27,6 +27,7 @@ const ColorCustomizer: React.FC = () => {
       ...customColors,
       [field]: value,
     } as typeof customColors;
+    // On ne recalcule le textColor que si c'est l'accent qui change (pour garantir la meilleure lisibilité)
     if (field === "accent") {
       newColors.textColor = getAccessibleTextColor(value);
     }
