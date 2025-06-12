@@ -25,59 +25,65 @@ export const drawWheelSegments = ({
     const endAngle = startAngle + anglePerSegment;
     const midAngle = startAngle + anglePerSegment / 2;
 
-    // Dessiner le segment principal avec des dégradés sophistiqués
+    // Dessiner le segment principal avec des dégradés très sophistiqués
     ctx.beginPath();
     ctx.moveTo(center, center);
     ctx.arc(center, center, radius, startAngle, endAngle);
     ctx.closePath();
 
-    // Créer un dégradé radial complexe pour chaque segment
+    // Créer un dégradé radial complexe multi-étapes pour chaque segment
     const segmentGradient = ctx.createRadialGradient(
-      center + radius * 0.2 * Math.cos(midAngle),
-      center + radius * 0.2 * Math.sin(midAngle),
+      center + radius * 0.1 * Math.cos(midAngle - anglePerSegment * 0.3),
+      center + radius * 0.1 * Math.sin(midAngle - anglePerSegment * 0.3),
       0,
       center,
       center,
       radius
     );
     
-    const baseColor = segment.color || '#B8860B';
-    const lighterColor = lightenColor(baseColor, 0.4);
-    const darkerColor = darkenColor(baseColor, 0.3);
+    const baseColor = segment.color || '#8B4A8B';
+    const lighterColor = lightenColor(baseColor, 0.6);
+    const darkerColor = darkenColor(baseColor, 0.4);
+    const veryDarkColor = darkenColor(baseColor, 0.7);
     
     segmentGradient.addColorStop(0, lighterColor);
-    segmentGradient.addColorStop(0.2, lightenColor(baseColor, 0.2));
+    segmentGradient.addColorStop(0.1, lightenColor(baseColor, 0.4));
+    segmentGradient.addColorStop(0.25, lightenColor(baseColor, 0.2));
     segmentGradient.addColorStop(0.4, baseColor);
-    segmentGradient.addColorStop(0.7, darkerColor);
-    segmentGradient.addColorStop(1, darkenColor(baseColor, 0.5));
+    segmentGradient.addColorStop(0.6, darkenColor(baseColor, 0.1));
+    segmentGradient.addColorStop(0.8, darkerColor);
+    segmentGradient.addColorStop(0.95, veryDarkColor);
+    segmentGradient.addColorStop(1, darkenColor(baseColor, 0.8));
     
     ctx.fillStyle = segmentGradient;
     ctx.fill();
 
-    // Séparations dorées entre les segments
+    // Séparations dorées très marquées entre les segments
     ctx.beginPath();
     ctx.moveTo(center, center);
     ctx.lineTo(
       center + radius * Math.cos(startAngle),
       center + radius * Math.sin(startAngle)
     );
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 4;
     
     const separatorGradient = ctx.createLinearGradient(
       center, center,
       center + radius * Math.cos(startAngle),
       center + radius * Math.sin(startAngle)
     );
-    separatorGradient.addColorStop(0, 'rgba(255,215,0,0.8)');
-    separatorGradient.addColorStop(0.3, '#FFD700');
-    separatorGradient.addColorStop(0.7, '#FFA500');
-    separatorGradient.addColorStop(1, '#DAA520');
+    separatorGradient.addColorStop(0, 'rgba(255,215,0,0.9)');
+    separatorGradient.addColorStop(0.2, '#FFD700');
+    separatorGradient.addColorStop(0.4, '#FFA500');
+    separatorGradient.addColorStop(0.7, '#FF8C00');
+    separatorGradient.addColorStop(0.9, '#DAA520');
+    separatorGradient.addColorStop(1, '#B8860B');
     
     ctx.strokeStyle = separatorGradient;
-    ctx.shadowColor = 'rgba(0,0,0,0.3)';
-    ctx.shadowBlur = 3;
-    ctx.shadowOffsetX = 1;
-    ctx.shadowOffsetY = 2;
+    ctx.shadowColor = 'rgba(0,0,0,0.5)';
+    ctx.shadowBlur = 4;
+    ctx.shadowOffsetX = 2;
+    ctx.shadowOffsetY = 3;
     ctx.stroke();
 
     // Réinitialiser les ombres
@@ -86,59 +92,92 @@ export const drawWheelSegments = ({
     ctx.shadowOffsetX = 0;
     ctx.shadowOffsetY = 0;
 
-    // Effet de brillance sur chaque segment
+    // Effet de brillance très marqué sur chaque segment
     ctx.beginPath();
     ctx.moveTo(center, center);
-    ctx.arc(center, center, radius * 0.8, startAngle + anglePerSegment * 0.1, endAngle - anglePerSegment * 0.1);
+    ctx.arc(center, center, radius * 0.85, startAngle + anglePerSegment * 0.05, endAngle - anglePerSegment * 0.05);
     ctx.closePath();
     
     const shineGradient = ctx.createRadialGradient(
-      center + radius * 0.4 * Math.cos(midAngle - anglePerSegment * 0.2),
-      center + radius * 0.4 * Math.sin(midAngle - anglePerSegment * 0.2),
+      center + radius * 0.3 * Math.cos(midAngle - anglePerSegment * 0.3),
+      center + radius * 0.3 * Math.sin(midAngle - anglePerSegment * 0.3),
       0,
-      center + radius * 0.4 * Math.cos(midAngle),
-      center + radius * 0.4 * Math.sin(midAngle),
-      radius * 0.5
+      center + radius * 0.3 * Math.cos(midAngle),
+      center + radius * 0.3 * Math.sin(midAngle),
+      radius * 0.6
     );
-    shineGradient.addColorStop(0, 'rgba(255,255,255,0.4)');
-    shineGradient.addColorStop(0.5, 'rgba(255,255,255,0.2)');
+    shineGradient.addColorStop(0, 'rgba(255,255,255,0.6)');
+    shineGradient.addColorStop(0.3, 'rgba(255,255,255,0.4)');
+    shineGradient.addColorStop(0.6, 'rgba(255,255,255,0.2)');
     shineGradient.addColorStop(1, 'rgba(255,255,255,0)');
     
     ctx.fillStyle = shineGradient;
     ctx.fill();
 
-    // Reflets métalliques sur les bords
-    ctx.beginPath();
-    ctx.arc(center, center, radius * 0.95, startAngle + anglePerSegment * 0.05, startAngle + anglePerSegment * 0.25);
-    ctx.lineWidth = 2;
-    ctx.strokeStyle = 'rgba(255,255,255,0.6)';
-    ctx.stroke();
+    // Reflets métalliques sur les bords - multiples
+    for (let i = 0; i < 3; i++) {
+      ctx.beginPath();
+      ctx.arc(center, center, radius * (0.98 - i * 0.05), startAngle + anglePerSegment * 0.02, startAngle + anglePerSegment * (0.3 - i * 0.05));
+      ctx.lineWidth = 2 - i * 0.5;
+      ctx.strokeStyle = `rgba(255,255,255,${0.7 - i * 0.2})`;
+      ctx.stroke();
+    }
 
-    // Dessiner le texte avec des effets d'ombrage sophistiqués
+    // Ombrage interne pour la profondeur
+    ctx.beginPath();
+    ctx.moveTo(center, center);
+    ctx.arc(center, center, radius * 0.3, startAngle, endAngle);
+    ctx.closePath();
+    
+    const innerShadowGradient = ctx.createRadialGradient(
+      center, center, 0,
+      center, center, radius * 0.3
+    );
+    innerShadowGradient.addColorStop(0, 'rgba(0,0,0,0)');
+    innerShadowGradient.addColorStop(0.7, 'rgba(0,0,0,0.1)');
+    innerShadowGradient.addColorStop(1, 'rgba(0,0,0,0.3)');
+    
+    ctx.fillStyle = innerShadowGradient;
+    ctx.fill();
+
+    // Dessiner le texte avec des effets d'ombrage très sophistiqués
     if (segment.label) {
       ctx.save();
       ctx.translate(center, center);
       ctx.rotate(midAngle);
       
-      const fontSize = Math.max(14, radius / 10);
+      const fontSize = Math.max(16, radius / 8);
       ctx.font = `bold ${fontSize}px Arial, sans-serif`;
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       
       const textX = radius * 0.65;
       
-      // Ombre portée du texte
-      ctx.fillStyle = 'rgba(0,0,0,0.8)';
-      ctx.fillText(segment.label, textX + 2, 2);
+      // Ombre portée du texte très marquée
+      ctx.fillStyle = 'rgba(0,0,0,0.9)';
+      ctx.fillText(segment.label, textX + 3, 3);
       
-      // Contour doré du texte
+      // Deuxième ombre plus douce
+      ctx.fillStyle = 'rgba(0,0,0,0.6)';
+      ctx.fillText(segment.label, textX + 1, 1);
+      
+      // Contour doré épais du texte
       ctx.strokeStyle = '#FFD700';
-      ctx.lineWidth = 3;
+      ctx.lineWidth = 4;
       ctx.strokeText(segment.label, textX, 0);
       
-      // Texte principal blanc
+      // Contour doré fin
+      ctx.strokeStyle = '#FFA500';
+      ctx.lineWidth = 2;
+      ctx.strokeText(segment.label, textX, 0);
+      
+      // Texte principal blanc avec léger reflet
       ctx.fillStyle = '#FFFFFF';
       ctx.fillText(segment.label, textX, 0);
+      
+      // Reflet sur le texte
+      ctx.fillStyle = 'rgba(255,255,255,0.8)';
+      ctx.fillText(segment.label, textX - 0.5, -0.5);
       
       ctx.restore();
     }

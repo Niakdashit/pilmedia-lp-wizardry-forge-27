@@ -33,8 +33,6 @@ const WheelCanvas: React.FC<WheelCanvasProps> = ({
   centerLogo,
   theme,
   customColors,
-  borderColor = '#841b60',
-  borderOutlineColor = '#FFD700',
   canvasSize,
   offset
 }) => {
@@ -65,25 +63,21 @@ const WheelCanvas: React.FC<WheelCanvasProps> = ({
     drawWheelBorders({
       ctx,
       center,
-      radius,
-      borderColor,
-      borderOutlineColor
+      radius
     });
 
     // Draw center
     drawWheelCenter({
       ctx,
       center,
-      size,
       centerImage,
-      centerLogo,
-      borderOutlineColor
+      centerLogo
     });
   };
 
   useEffect(() => {
     drawWheel();
-  }, [segments, rotation, centerImage, centerLogo, theme, customColors, borderColor, borderOutlineColor, canvasSize]);
+  }, [segments, rotation, centerImage, centerLogo, theme, customColors, canvasSize]);
 
   return (
     <canvas
