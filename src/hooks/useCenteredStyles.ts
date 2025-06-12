@@ -1,3 +1,4 @@
+
 import { CSSProperties, useMemo } from 'react';
 
 export interface CenteredStyles {
@@ -12,7 +13,8 @@ export const useCenteredStyles = (): CenteredStyles => {
       alignItems: 'center',
       justifyContent: 'center',
       width: '100%',
-      height: '100%'
+      height: '100%',
+      minHeight: '400px'
     }),
     []
   );
