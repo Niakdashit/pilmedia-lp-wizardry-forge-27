@@ -30,19 +30,19 @@ const LogoUploader: React.FC<LogoUploaderProps> = ({ className }) => {
       setPalette([
         theme.customColors.primary,
         theme.customColors.secondary,
-        theme.customColors.accent
+        '#ffffff'
       ]);
       setCustomColors({
         primary: theme.customColors.primary,
         secondary: theme.customColors.secondary,
-        accent: theme.customColors.accent,
+        accent: '#ffffff',
         textColor: theme.customColors.text
       });
       if (selectedGameType === 'jackpot') {
         setJackpotColors({
           ...jackpotColors,
-          containerBackgroundColor: theme.customColors.accent + '30',
-          backgroundColor: theme.customColors.accent + '30',
+          containerBackgroundColor: '#ffffff30',
+          backgroundColor: '#ffffff30',
           borderColor: theme.customColors.primary,
           slotBorderColor: theme.customColors.secondary,
           slotBackgroundColor: '#ffffff'

@@ -61,9 +61,9 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
   backgroundImage: null,
   segmentCount: 4,
   customColors: {
-    primary: '#3B82F6',   // Bleu principal
+    primary: '#ffffff',   // Blanc par défaut
     secondary: '#E3F2FD', // Bleu clair
-    accent: '#1E40AF',    // Bleu foncé
+    accent: '#ffffff',    // Accent forcé blanc
     textColor: '#ffffff'  // Texte blanc par défaut
   },
   jackpotColors: {
@@ -105,7 +105,7 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
       },
       buttonConfig: {
         color: state.customColors.accent,
-        textColor: state.customColors.textColor || '#ffffff',
+        textColor: state.customColors.primary,
         borderColor: state.customColors.primary,
         borderWidth: 2,
         borderRadius: 8,
@@ -164,7 +164,7 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
     baseConfig.mobileConfig = {
       roulette: baseConfig.config.roulette,
       buttonColor: state.customColors.accent,
-      buttonTextColor: state.customColors.textColor || '#ffffff',
+      buttonTextColor: state.customColors.primary,
       buttonPlacement: 'bottom',
       gamePosition: 'center'
     };
@@ -186,9 +186,9 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
     backgroundImage: null,
     segmentCount: 4,
     customColors: {
-      primary: '#3B82F6',
+      primary: '#ffffff',
       secondary: '#E3F2FD',
-      accent: '#1E40AF',
+      accent: '#ffffff',
       textColor: '#ffffff'
     },
     jackpotColors: {
