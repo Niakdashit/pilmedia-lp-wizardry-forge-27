@@ -3,7 +3,6 @@ interface WheelBorderDrawerProps {
   ctx: CanvasRenderingContext2D;
   center: number;
   radius: number;
-  size: number;
   borderColor: string;
   borderOutlineColor: string;
 }
@@ -12,28 +11,41 @@ export const drawWheelBorders = ({
   ctx,
   center,
   radius,
-  size,
   borderColor,
   borderOutlineColor
 }: WheelBorderDrawerProps) => {
-  // Draw outer border with a simple 3D effect
+  // Première bordure extérieure (la plus épaisse)
   ctx.beginPath();
-  ctx.arc(center, center, radius + 15, 0, 2 * Math.PI);
-  ctx.lineWidth = 8;
-  const gradient = ctx.createLinearGradient(0, 0, size, size);
-  gradient.addColorStop(0, '#ffffffaa');
-  gradient.addColorStop(0.5, borderOutlineColor);
-  gradient.addColorStop(1, '#00000055');
-  ctx.strokeStyle = gradient;
-  ctx.shadowColor = 'rgba(0,0,0,0.3)';
-  ctx.shadowBlur = 6;
+  ctx.arc(center, center, radius + 20, 0, 2 * Math.PI);
+  ctx.lineWidth = 12;
+  ctx.strokeStyle = '#d4af37'; // Or solide
+  ctx.shadowColor = 'rgba(0,0,0,0.4)';
+  ctx.shadowBlur = 8;
+  ctx.shadowOffsetX = 2;
+  ctx.shadowOffsetY = 2;
   ctx.stroke();
   ctx.shadowBlur = 0;
+  ctx.shadowOffsetX = 0;
+  ctx.shadowOffsetY = 0;
 
-  // Draw inner border
+  // Deuxième bordure (moyenne)
+  ctx.beginPath();
+  ctx.arc(center, center, radius + 14, 0, 2 * Math.PI);
+  ctx.lineWidth = 6;
+  ctx.strokeStyle = borderOutlineColor;
+  ctx.stroke();
+
+  // Bordure intérieure
   ctx.beginPath();
   ctx.arc(center, center, radius + 8, 0, 2 * Math.PI);
-  ctx.lineWidth = 2;
+  ctx.lineWidth = 3;
   ctx.strokeStyle = borderColor;
+  ctx.stroke();
+
+  // Bordure finale (la plus fine)
+  ctx.beginPath();
+  ctx.arc(center, center, radius + 2, 0, 2 * Math.PI);
+  ctx.lineWidth = 1;
+  ctx.strokeStyle = '#ffffff';
   ctx.stroke();
 };
