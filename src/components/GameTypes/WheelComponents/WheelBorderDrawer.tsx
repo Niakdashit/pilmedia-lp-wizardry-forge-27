@@ -1,3 +1,4 @@
+
 interface WheelBorderDrawerProps {
   ctx: CanvasRenderingContext2D;
   center: number;
@@ -13,102 +14,125 @@ export const drawWheelBorders = ({
   borderColor,
   borderOutlineColor
 }: WheelBorderDrawerProps) => {
-  // Sauvegarder l'état du contexte
   ctx.save();
 
-  // Créer un effet de perspective subtile (légère inclinaison)
-  ctx.transform(1, 0, -0.05, 0.95, center * 0.05, center * 0.05);
-
-  // Effet d'ombre portée principale (plus douce et réaliste)
+  // Ombre portée très marquée et réaliste
   ctx.beginPath();
-  ctx.arc(center + 8, center + 12, radius + 25, 0, 2 * Math.PI);
+  ctx.arc(center + 12, center + 18, radius + 35, 0, 2 * Math.PI);
   const shadowGradient = ctx.createRadialGradient(
-    center, center, radius * 0.3,
-    center, center, radius + 25
+    center + 5, center + 8, 0,
+    center + 12, center + 18, radius + 35
   );
-  shadowGradient.addColorStop(0, 'rgba(0,0,0,0)');
-  shadowGradient.addColorStop(0.7, 'rgba(0,0,0,0.15)');
-  shadowGradient.addColorStop(1, 'rgba(0,0,0,0.25)');
+  shadowGradient.addColorStop(0, 'rgba(0,0,0,0.4)');
+  shadowGradient.addColorStop(0.3, 'rgba(0,0,0,0.3)');
+  shadowGradient.addColorStop(0.7, 'rgba(0,0,0,0.2)');
+  shadowGradient.addColorStop(1, 'rgba(0,0,0,0)');
   ctx.fillStyle = shadowGradient;
   ctx.fill();
 
-  // Bordure externe avec effet de volume sophistiqué
+  // Bordure externe principale - effet doré complexe
   ctx.beginPath();
-  ctx.arc(center, center, radius + 20, 0, 2 * Math.PI);
-  ctx.lineWidth = 12;
+  ctx.arc(center, center, radius + 28, 0, 2 * Math.PI);
+  ctx.lineWidth = 16;
   
-  // Gradient complexe pour l'effet 3D de la bordure externe
-  const outerBorderGradient = ctx.createLinearGradient(
-    center - radius - 20, center - radius - 20,
-    center + radius + 20, center + radius + 20
+  const outerGoldGradient = ctx.createLinearGradient(
+    center - radius - 28, center - radius - 28,
+    center + radius + 28, center + radius + 28
   );
-  outerBorderGradient.addColorStop(0, '#ffffff66');
-  outerBorderGradient.addColorStop(0.15, borderOutlineColor + 'dd');
-  outerBorderGradient.addColorStop(0.35, borderOutlineColor);
-  outerBorderGradient.addColorStop(0.65, borderOutlineColor + 'cc');
-  outerBorderGradient.addColorStop(0.85, '#00000044');
-  outerBorderGradient.addColorStop(1, '#00000066');
+  outerGoldGradient.addColorStop(0, '#FFF8DC');
+  outerGoldGradient.addColorStop(0.1, '#FFD700');
+  outerGoldGradient.addColorStop(0.2, '#FFA500');
+  outerGoldGradient.addColorStop(0.4, '#FF8C00');
+  outerGoldGradient.addColorStop(0.6, '#DAA520');
+  outerGoldGradient.addColorStop(0.8, '#B8860B');
+  outerGoldGradient.addColorStop(1, '#8B4513');
   
-  ctx.strokeStyle = outerBorderGradient;
-  ctx.shadowColor = 'rgba(0,0,0,0.3)';
-  ctx.shadowBlur = 8;
-  ctx.shadowOffsetX = 3;
-  ctx.shadowOffsetY = 5;
+  ctx.strokeStyle = outerGoldGradient;
+  ctx.shadowColor = 'rgba(0,0,0,0.5)';
+  ctx.shadowBlur = 15;
+  ctx.shadowOffsetX = 8;
+  ctx.shadowOffsetY = 12;
   ctx.stroke();
 
-  // Réinitialiser les ombres
+  // Deuxième bordure dorée
   ctx.shadowColor = 'transparent';
   ctx.shadowBlur = 0;
   ctx.shadowOffsetX = 0;
   ctx.shadowOffsetY = 0;
-
-  // Bordure intermédiaire pour plus de profondeur
+  
   ctx.beginPath();
-  ctx.arc(center, center, radius + 15, 0, 2 * Math.PI);
-  ctx.lineWidth = 6;
+  ctx.arc(center, center, radius + 22, 0, 2 * Math.PI);
+  ctx.lineWidth = 8;
   
-  const midBorderGradient = ctx.createLinearGradient(
-    center - radius - 15, center - radius - 15,
-    center + radius + 15, center + radius + 15
+  const midGoldGradient = ctx.createLinearGradient(
+    center - radius - 22, center - radius - 22,
+    center + radius + 22, center + radius + 22
   );
-  midBorderGradient.addColorStop(0, '#ffffff88');
-  midBorderGradient.addColorStop(0.3, borderColor + 'ee');
-  midBorderGradient.addColorStop(0.7, borderColor);
-  midBorderGradient.addColorStop(1, '#00000055');
+  midGoldGradient.addColorStop(0, '#FFFACD');
+  midGoldGradient.addColorStop(0.3, '#FFD700');
+  midGoldGradient.addColorStop(0.5, '#FFA500');
+  midGoldGradient.addColorStop(0.7, '#DAA520');
+  midGoldGradient.addColorStop(1, '#B8860B');
   
-  ctx.strokeStyle = midBorderGradient;
+  ctx.strokeStyle = midGoldGradient;
   ctx.stroke();
 
-  // Bordure interne avec finition raffinée
+  // Troisième bordure dorée fine
   ctx.beginPath();
-  ctx.arc(center, center, radius + 8, 0, 2 * Math.PI);
+  ctx.arc(center, center, radius + 18, 0, 2 * Math.PI);
+  ctx.lineWidth = 4;
+  
+  const innerGoldGradient = ctx.createLinearGradient(
+    center - radius - 18, center - radius - 18,
+    center + radius + 18, center + radius + 18
+  );
+  innerGoldGradient.addColorStop(0, '#FFF8DC');
+  innerGoldGradient.addColorStop(0.5, '#FFD700');
+  innerGoldGradient.addColorStop(1, '#DAA520');
+  
+  ctx.strokeStyle = innerGoldGradient;
+  ctx.stroke();
+
+  // Bordure intérieure finale
+  ctx.beginPath();
+  ctx.arc(center, center, radius + 12, 0, 2 * Math.PI);
   ctx.lineWidth = 3;
   
-  const innerBorderGradient = ctx.createLinearGradient(
-    center - radius - 8, center - radius - 8,
-    center + radius + 8, center + radius + 8
+  const finalBorderGradient = ctx.createLinearGradient(
+    center - radius - 12, center - radius - 12,
+    center + radius + 12, center + radius + 12
   );
-  innerBorderGradient.addColorStop(0, '#ffffff99');
-  innerBorderGradient.addColorStop(0.5, borderColor);
-  innerBorderGradient.addColorStop(1, '#000000aa');
+  finalBorderGradient.addColorStop(0, '#FFFACD');
+  finalBorderGradient.addColorStop(0.3, '#FFD700');
+  finalBorderGradient.addColorStop(0.7, '#FFA500');
+  finalBorderGradient.addColorStop(1, '#B8860B');
   
-  ctx.strokeStyle = innerBorderGradient;
+  ctx.strokeStyle = finalBorderGradient;
   ctx.stroke();
 
-  // Effet de brillance subtile sur le dessus
+  // Effet de brillance sur le dessus
   ctx.beginPath();
-  ctx.arc(center, center - radius * 0.3, radius + 18, 0, Math.PI, true);
-  ctx.lineWidth = 4;
-  const shineGradient = ctx.createLinearGradient(
-    center, center - radius - 18,
-    center, center - radius * 0.3
+  ctx.arc(center, center - radius * 0.4, radius + 25, 0, Math.PI, true);
+  ctx.lineWidth = 6;
+  const topShineGradient = ctx.createLinearGradient(
+    center, center - radius - 25,
+    center, center - radius * 0.2
   );
-  shineGradient.addColorStop(0, '#ffffff44');
-  shineGradient.addColorStop(0.5, '#ffffff22');
-  shineGradient.addColorStop(1, '#ffffff00');
-  ctx.strokeStyle = shineGradient;
+  topShineGradient.addColorStop(0, 'rgba(255,255,255,0.8)');
+  topShineGradient.addColorStop(0.5, 'rgba(255,255,255,0.4)');
+  topShineGradient.addColorStop(1, 'rgba(255,255,255,0)');
+  ctx.strokeStyle = topShineGradient;
   ctx.stroke();
 
-  // Restaurer l'état du contexte
+  // Reflets métalliques
+  for (let i = 0; i < 3; i++) {
+    ctx.beginPath();
+    const reflectRadius = radius + 26 - i * 4;
+    ctx.arc(center - radius * 0.3, center - radius * 0.3, reflectRadius, Math.PI * 0.8, Math.PI * 1.2);
+    ctx.lineWidth = 2 - i * 0.5;
+    ctx.strokeStyle = `rgba(255,255,255,${0.6 - i * 0.2})`;
+    ctx.stroke();
+  }
+
   ctx.restore();
 };
