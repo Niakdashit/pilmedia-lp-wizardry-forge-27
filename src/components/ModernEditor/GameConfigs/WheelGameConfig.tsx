@@ -1,5 +1,4 @@
-
-import React, { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, Upload } from 'lucide-react';
 import ImageUpload from '../../common/ImageUpload';
 
