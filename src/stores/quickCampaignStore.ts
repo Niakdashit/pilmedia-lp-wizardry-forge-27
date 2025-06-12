@@ -63,7 +63,7 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
   customColors: {
     primary: '#ffffff',   // Blanc par défaut
     secondary: '#E3F2FD', // Bleu clair
-    accent: '#1E40AF',    // Bleu foncé
+    accent: '#ffffff',    // Accent forcé blanc
     textColor: '#ffffff'  // Texte blanc par défaut
   },
   jackpotColors: {
@@ -188,7 +188,7 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
     customColors: {
       primary: '#ffffff',
       secondary: '#E3F2FD',
-      accent: '#1E40AF',
+      accent: '#ffffff',
       textColor: '#ffffff'
     },
     jackpotColors: {

@@ -64,7 +64,7 @@ export async function generateBrandThemeFromUrl(url: string): Promise<BrandTheme
       const colors = brandData.colors.map((c: any) => c.hex || c);
       const primary = colors[0];
       const secondary = colors[1] || primary;
-      const accent = colors[2] || '#ffffff';
+      const accent = '#ffffff';
       return {
         customColors: {
           primary,
@@ -81,12 +81,13 @@ export async function generateBrandThemeFromUrl(url: string): Promise<BrandTheme
         const logoColors = await extractColorsFromLogo(logoUrl);
         if (logoColors.length >= 2) {
           const palette = generateAdvancedPaletteFromColors(logoColors);
+          const accent = '#ffffff';
           return {
             customColors: {
               primary: palette.primaryColor,
               secondary: palette.secondaryColor,
-              accent: palette.accentColor,
-              text: palette.textColor
+              accent,
+              text: getAccessibleTextColor(accent)
             },
             logoUrl
           };
@@ -100,7 +101,7 @@ export async function generateBrandThemeFromUrl(url: string): Promise<BrandTheme
       customColors: {
         primary: '#841b60',
         secondary: '#dc2626',
-        accent: '#10b981',
+        accent: '#ffffff',
         text: '#ffffff'
       },
       logoUrl
@@ -111,7 +112,7 @@ export async function generateBrandThemeFromUrl(url: string): Promise<BrandTheme
       customColors: {
         primary: '#841b60',
         secondary: '#dc2626',
-        accent: '#10b981',
+        accent: '#ffffff',
         text: '#ffffff'
       }
     };
@@ -125,15 +126,16 @@ export async function generateBrandThemeFromFile(file: File): Promise<BrandTheme
     const logoColors = await extractColorsFromLogo(logoUrl);
     if (logoColors.length >= 2) {
       const palette = generateAdvancedPaletteFromColors(logoColors);
-      return {
-        customColors: {
-          primary: palette.primaryColor,
-          secondary: palette.secondaryColor,
-          accent: palette.accentColor,
-          text: palette.textColor
-        },
-        logoUrl
-      };
+          const accent = '#ffffff';
+          return {
+            customColors: {
+              primary: palette.primaryColor,
+              secondary: palette.secondaryColor,
+              accent,
+              text: getAccessibleTextColor(accent)
+            },
+            logoUrl
+          };
     }
   } catch (error) {
     console.warn('⚠️ Échec extraction logo local:', error);
@@ -142,7 +144,7 @@ export async function generateBrandThemeFromFile(file: File): Promise<BrandTheme
     customColors: {
       primary: '#841b60',
       secondary: '#dc2626',
-      accent: '#10b981',
+      accent: '#ffffff',
       text: '#ffffff'
     },
     logoUrl
@@ -306,7 +308,7 @@ export function generateAdvancedPaletteFromColors(colors: string[]): BrandPalett
   
   const primaryColor = sortedColors[0] || '#841b60';
   const secondaryColor = findContrastingColor(sortedColors, primaryColor) || sortedColors[1] || '#dc2626';
-  const accentColor = findAccentColor(sortedColors, primaryColor, secondaryColor) || '#10b981';
+  const accentColor = findAccentColor(sortedColors, primaryColor, secondaryColor) || '#ffffff';
   const textColor = getAccessibleTextColor(accentColor);
   
   return {
@@ -350,7 +352,7 @@ export function extractCompletePaletteFromBrandfetch(palette: any[]): BrandPalet
   const colors = palette.map(c => c.hex || c).filter(Boolean);
   const primaryColor = colors[0] || '#841b60';
   const secondaryColor = colors[1] || primaryColor;
-  const accentColor = colors[2] || '#10b981';
+  const accentColor = colors[2] || '#ffffff';
   const backgroundColor = '#ffffff';
   const textColor = getAccessibleTextColor(accentColor);
   return { primaryColor, secondaryColor, accentColor, backgroundColor, textColor };
