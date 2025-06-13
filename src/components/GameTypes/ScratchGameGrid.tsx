@@ -31,15 +31,15 @@ const ScratchGameGrid: React.FC<ScratchGameGridProps> = ({
   const getGridConfig = () => {
     const cardCount = cards.length;
 
-    // Configuration commune pour l'espacement
-    const baseSpacing = isModal ? 'gap-6' : 'gap-8';
+    // Configuration commune pour l'espacement - augmentation significative
+    const baseSpacing = isModal ? 'gap-8' : 'gap-10';
     const responsiveSpacing = isModal 
-      ? 'gap-4 sm:gap-6 md:gap-8' 
-      : 'gap-6 sm:gap-8 md:gap-10 lg:gap-12';
+      ? 'gap-6 sm:gap-8 md:gap-10' 
+      : 'gap-8 sm:gap-10 md:gap-12 lg:gap-16';
 
     if (cardCount === 1) {
       return {
-        containerClass: 'w-full h-full flex items-center justify-center',
+        containerClass: 'w-full h-full flex items-center justify-center p-4',
         gridClass: 'flex justify-center items-center',
         spacing: baseSpacing
       };
@@ -47,7 +47,7 @@ const ScratchGameGrid: React.FC<ScratchGameGridProps> = ({
 
     if (cardCount === 2) {
       return {
-        containerClass: 'w-full h-full flex items-center justify-center',
+        containerClass: 'w-full h-full flex items-center justify-center p-4',
         gridClass: 'flex flex-row justify-center items-center flex-wrap',
         spacing: responsiveSpacing
       };
@@ -55,24 +55,24 @@ const ScratchGameGrid: React.FC<ScratchGameGridProps> = ({
 
     if (cardCount <= 4) {
       return {
-        containerClass: 'w-full h-full flex items-center justify-center',
-        gridClass: 'grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 place-items-center justify-center',
+        containerClass: 'w-full h-full flex items-center justify-center p-4',
+        gridClass: 'grid grid-cols-2 md:grid-cols-4 place-items-center justify-items-center',
         spacing: responsiveSpacing
       };
     }
 
     if (cardCount <= 6) {
       return {
-        containerClass: 'w-full h-full flex items-center justify-center',
-        gridClass: 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 place-items-center justify-center',
+        containerClass: 'w-full h-full flex items-center justify-center p-4',
+        gridClass: 'grid grid-cols-2 sm:grid-cols-3 place-items-center justify-items-center',
         spacing: responsiveSpacing
       };
     }
 
     // Pour plus de 6 cartes : grille avec 4 colonnes maximum
     return {
-      containerClass: 'w-full h-full flex items-center justify-center',
-      gridClass: 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 place-items-center justify-center',
+      containerClass: 'w-full h-full flex items-center justify-center p-4',
+      gridClass: 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 place-items-center justify-items-center',
       spacing: responsiveSpacing
     };
   };
@@ -80,9 +80,9 @@ const ScratchGameGrid: React.FC<ScratchGameGridProps> = ({
   const { containerClass, gridClass, spacing } = getGridConfig();
 
   return (
-    <div className={`${isModal ? 'max-w-5xl px-4 py-6' : 'max-w-7xl px-6 py-8'} mx-auto h-full`}>
+    <div className="w-full h-full flex items-center justify-center">
       <div className={containerClass}>
-        <div className={`${gridClass} ${spacing} w-full max-w-fit mx-auto`}>
+        <div className={`${gridClass} ${spacing} w-full max-w-none`}>
           {cards.map((card: any, index: number) => {
             const isThisCardSelected = selectedCard === index;
             
