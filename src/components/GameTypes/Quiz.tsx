@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, Image as ImageIcon, Type, Clock } from 'lucide-react';
 import QuizPreview from './QuizPreview';
@@ -23,14 +22,14 @@ const Quiz: React.FC<QuizProps> = ({
   const setActiveQuestion = onActiveQuestionChange ?? setInternalActive;
 
   // Ensure config has a default structure
-const safeConfig = config || { questions: [] };
-const questions = safeConfig.questions || [];
+  const safeConfig = config || { questions: [] };
+  const questions = safeConfig.questions || [];
 
-useEffect(() => {
-  if (onQuestionChange) {
-    onQuestionChange(questions[activeQuestion]);
-  }
-}, [activeQuestion, questions, onQuestionChange]);
+  useEffect(() => {
+    if (onQuestionChange) {
+      onQuestionChange(questions[activeQuestion]);
+    }
+  }, [activeQuestion, questions, onQuestionChange]);
 
   const addQuestion = () => {
     const newConfig = {
@@ -189,57 +188,57 @@ useEffect(() => {
                     </div>
                   </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Image (optionnelle)
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                    <ImageIcon className="w-5 h-5 text-gray-400" />
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Image (optionnelle)
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <ImageIcon className="w-5 h-5 text-gray-400" />
+                      </div>
+                      <input
+                        type="text"
+                        value={questions[activeQuestion].image}
+                        onChange={(e) => updateQuestion(activeQuestion, 'image', e.target.value)}
+                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
+                        placeholder="URL de l'image"
+                      />
+                    </div>
                   </div>
-                  <input
-                    type="text"
-                    value={questions[activeQuestion].image}
-                    onChange={(e) => updateQuestion(activeQuestion, 'image', e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
-                    placeholder="URL de l'image"
-                  />
-                </div>
-              </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Type de réponse
-                </label>
-                <select
-                  value={questions[activeQuestion].type}
-                  onChange={(e) => updateQuestion(activeQuestion, 'type', e.target.value)}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
-                >
-                  <option value="multiple">Choix multiple</option>
-                  <option value="single">Choix unique</option>
-                  <option value="true-false">Vrai/Faux</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Limite de temps (en secondes, 0 = pas de limite)
-                </label>
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                    <Clock className="w-5 h-5 text-gray-400" />
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Type de réponse
+                    </label>
+                    <select
+                      value={questions[activeQuestion].type}
+                      onChange={(e) => updateQuestion(activeQuestion, 'type', e.target.value)}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
+                    >
+                      <option value="multiple">Choix multiple</option>
+                      <option value="single">Choix unique</option>
+                      <option value="true-false">Vrai/Faux</option>
+                    </select>
                   </div>
-                  <input
-                    type="number"
-                    min="0"
-                    value={questions[activeQuestion].timeLimit}
-                    onChange={(e) => updateQuestion(activeQuestion, 'timeLimit', parseInt(e.target.value))}
-                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
-                  />
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Limite de temps (en secondes, 0 = pas de limite)
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                        <Clock className="w-5 h-5 text-gray-400" />
+                      </div>
+                      <input
+                        type="number"
+                        min="0"
+                        value={questions[activeQuestion].timeLimit}
+                        onChange={(e) => updateQuestion(activeQuestion, 'timeLimit', parseInt(e.target.value))}
+                        className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
 
                 <button
                   onClick={() => removeQuestion(activeQuestion)}
