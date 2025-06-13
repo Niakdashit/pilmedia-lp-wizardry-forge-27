@@ -54,7 +54,7 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
   };
 
   return (
-    <div className="h-screen flex bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
+    <div className="min-h-screen flex bg-gradient-to-br from-gray-50 to-gray-100 overflow-x-hidden">
       {/* Header - Fixed top bar */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200/50 shadow-sm">
         <div className="flex items-center justify-between px-4 md:px-6 py-3">
@@ -185,8 +185,8 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
               exit={{ x: -400, opacity: 0 }}
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
               className={`${
-                isMobilePanelOpen ? 'fixed' : 'hidden md:flex'
-              } w-80 lg:w-96 bg-white/95 backdrop-blur-md border-r border-gray-200/50 shadow-xl z-40 h-full overflow-hidden relative`}
+                isMobilePanelOpen ? 'fixed inset-0 w-full max-w-full sm:max-w-sm' : 'hidden md:flex'
+              } md:w-72 lg:w-80 xl:w-96 bg-white/95 backdrop-blur-md border-r border-gray-200/50 shadow-xl z-40 h-full overflow-y-auto relative`}
             >
               {/* Panel collapse button - desktop only */}
               <button
@@ -204,9 +204,9 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
                 <X className="w-5 h-5" />
               </button>
 
-              <div className="flex h-full">
+              <div className="flex h-full min-w-0">
                 {/* Sidebar tabs */}
-                <div className="w-20 border-r border-gray-200/50">
+                <div className="w-20 flex-shrink-0 border-r border-gray-200/50">
                   <ModernEditorSidebar
                     activeTab={activeTab}
                     onTabChange={onTabChange}
@@ -215,7 +215,7 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
                 </div>
 
                 {/* Panel content */}
-                <div className="flex-1 overflow-y-auto">
+                <div className="flex-1 overflow-y-auto min-w-0">
                   <ModernEditorPanel
                     activeTab={activeTab}
                     campaign={campaign}
