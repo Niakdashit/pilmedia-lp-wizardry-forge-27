@@ -74,7 +74,7 @@ const ColorCustomizer: React.FC = () => {
           <label className="text-sm font-medium text-gray-700">
             Couleur primaire
           </label>
-          <div className="flex items-center space-x-3">
+          <div className="flex flex-wrap items-center gap-3">
             <input
               type="color"
               value={customColors.primary}
@@ -85,7 +85,7 @@ const ColorCustomizer: React.FC = () => {
               type="text"
               value={customColors.primary}
               onChange={(e) => handleColorChange("primary", e.target.value)}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#841b60] focus:border-transparent text-sm"
+              className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#841b60] focus:border-transparent text-sm"
             />
           </div>
         </div>
@@ -94,7 +94,7 @@ const ColorCustomizer: React.FC = () => {
           <label className="text-sm font-medium text-gray-700">
             Couleur secondaire
           </label>
-          <div className="flex items-center space-x-3">
+          <div className="flex flex-wrap items-center gap-3">
             <input
               type="color"
               value={customColors.secondary}
@@ -105,7 +105,7 @@ const ColorCustomizer: React.FC = () => {
               type="text"
               value={customColors.secondary}
               onChange={(e) => handleColorChange("secondary", e.target.value)}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#841b60] focus:border-transparent text-sm"
+              className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#841b60] focus:border-transparent text-sm"
             />
           </div>
         </div>
@@ -114,7 +114,7 @@ const ColorCustomizer: React.FC = () => {
           <label className="text-sm font-medium text-gray-700">
             Couleur d'accent
           </label>
-          <div className="flex items-center space-x-3">
+          <div className="flex flex-wrap items-center gap-3">
             <input
               type="color"
               value={customColors.accent}
@@ -125,7 +125,7 @@ const ColorCustomizer: React.FC = () => {
               type="text"
               value={customColors.accent}
               onChange={(e) => handleColorChange("accent", e.target.value)}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#841b60] focus:border-transparent text-sm"
+              className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#841b60] focus:border-transparent text-sm"
             />
           </div>
         </div>
