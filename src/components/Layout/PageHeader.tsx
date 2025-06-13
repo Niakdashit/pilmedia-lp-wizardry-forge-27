@@ -12,7 +12,7 @@ const PageHeader: React.FC<PageHeaderProps> = ({ title, actions, children }) => 
       <div className="absolute inset-0 bg-gradient-to-br from-[#841b60]/3 via-transparent to-transparent pointer-events-none"></div>
       <div className="relative z-10">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold mb-2 text-[#841b60]">{title}</h1>
+          <h1 className="text-3xl font-bold mb-2 text-[#841b60]">{title}</h1>
         </div>
         {children && <div className="mb-8 flex justify-center">{children}</div>}
         {actions && <div className="flex justify-center">{actions}</div>}

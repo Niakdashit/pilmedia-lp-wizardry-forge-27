@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Search, Download, Upload, Plus, ChevronDown, ChevronUp, UserCircle, X } from 'lucide-react';
 import PageHeader from '../components/Layout/PageHeader';
+
 interface Contact {
   id: string;
   name: string;
@@ -10,6 +11,7 @@ interface Contact {
   topics: string[];
   channels: string[];
 }
+
 const mockContacts: Contact[] = [{
   id: '1',
   name: 'Jean Dupont',
@@ -35,6 +37,7 @@ const mockContacts: Contact[] = [{
   topics: ['E-commerce', 'PPC'],
   channels: ['WhatsApp']
 }];
+
 const Contacts: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'all' | 'subscribed' | 'unsubscribed' | 'clients'>('all');
   const [searchTerm, setSearchTerm] = useState('');
@@ -48,6 +51,7 @@ const Contacts: React.FC = () => {
     topics: [],
     channels: []
   });
+
   const tabs = [{
     id: 'all',
     label: 'Tous les contacts'
@@ -61,12 +65,14 @@ const Contacts: React.FC = () => {
     id: 'clients',
     label: 'Tous les clients'
   }];
+
   const statusColors = {
     'Nouveau': 'bg-blue-100 text-blue-800',
     'Qualifié': 'bg-yellow-100 text-yellow-800',
     'Client': 'bg-green-100 text-green-800',
     'Perdu': 'bg-red-100 text-red-800'
   };
+
   const handleSort = (field: keyof Contact) => {
     if (sortField === field) {
       setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
@@ -75,6 +81,7 @@ const Contacts: React.FC = () => {
       setSortDirection('asc');
     }
   };
+
   const filteredContacts = mockContacts.filter(contact => {
     const matchesSearch = contact.name.toLowerCase().includes(searchTerm.toLowerCase()) || contact.email.toLowerCase().includes(searchTerm.toLowerCase()) || contact.phone.includes(searchTerm);
     switch (activeTab) {
@@ -93,24 +100,34 @@ const Contacts: React.FC = () => {
     }
     return a[sortField] < b[sortField] ? 1 : -1;
   });
+
   const handleCreateContact = () => {
     // Implement contact creation logic
     setShowCreateModal(false);
   };
+
   const handleImportContacts = () => {
     // Implement contact import logic
     setShowImportModal(false);
   };
-  return <div className="-mx-6 -mt-6">
+
+  return (
+    <div className="-mx-6 -mt-6">
       <PageHeader
         title="Contacts"
         actions={
           <>
-            <button onClick={() => setShowImportModal(true)} className="inline-flex items-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+            <button
+              onClick={() => setShowImportModal(true)}
+              className="inline-flex items-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+            >
               <Upload className="w-5 h-5 mr-2" />
               Importer
             </button>
-            <button onClick={() => setShowCreateModal(true)} className="inline-flex items-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+            <button
+              onClick={() => setShowCreateModal(true)}
+              className="inline-flex items-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+            >
               <Plus className="w-5 h-5 mr-2" />
               Créer contact
             </button>
@@ -123,9 +140,15 @@ const Contacts: React.FC = () => {
           {/* Tabs */}
           <div className="border-b border-gray-200">
             <nav className="flex space-x-8 px-6" aria-label="Tabs">
-              {tabs.map(tab => <button key={tab.id} onClick={() => setActiveTab(tab.id as typeof activeTab)} className={`py-4 px-1 font-medium text-sm border-b-2 transition-colors duration-200 ${activeTab === tab.id ? 'border-[#841b60] text-[#841b60]' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`}>
+              {tabs.map(tab => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveTab(tab.id as typeof activeTab)}
+                  className={`py-4 px-1 font-medium text-sm border-b-2 transition-colors duration-200 ${activeTab === tab.id ? 'border-[#841b60] text-[#841b60]' : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'}`}
+                >
                   {tab.label}
-                </button>)}
+                </button>
+              ))}
             </nav>
           </div>
 
@@ -134,11 +157,20 @@ const Contacts: React.FC = () => {
             <div className="flex space-x-4">
               <div className="flex-1">
                 <div className="relative">
-                  <input type="text" placeholder="Rechercher un contact..." value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]" />
+                  <input
+                    type="text"
+                    placeholder="Rechercher un contact..."
+                    value={searchTerm}
+                    onChange={e => setSearchTerm(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
+                  />
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
                 </div>
               </div>
-              <button onClick={() => {/* Implement export logic */}} className="px-4 py-2 text-gray-700 font-medium rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors duration-200 flex items-center">
+              <button
+                onClick={() => {/* Implement export logic */}}
+                className="px-4 py-2 text-gray-700 font-medium rounded-lg border border-gray-300 hover:bg-gray-50 transition-colors duration-200 flex items-center"
+              >
                 <Download className="w-5 h-5 mr-2" />
                 Exporter
               </button>
@@ -151,13 +183,18 @@ const Contacts: React.FC = () => {
               <thead>
                 <tr className="bg-gray-50">
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-8">
-                    <input type="checkbox" checked={selectedContacts.length === filteredContacts.length} onChange={e => {
-                    if (e.target.checked) {
-                      setSelectedContacts(filteredContacts.map(c => c.id));
-                    } else {
-                      setSelectedContacts([]);
-                    }
-                  }} className="rounded border-gray-300 text-[#841b60] focus:ring-[#841b60]" />
+                    <input
+                      type="checkbox"
+                      checked={selectedContacts.length === filteredContacts.length}
+                      onChange={e => {
+                        if (e.target.checked) {
+                          setSelectedContacts(filteredContacts.map(c => c.id));
+                        } else {
+                          setSelectedContacts([]);
+                        }
+                      }}
+                      className="rounded border-gray-300 text-[#841b60] focus:ring-[#841b60]"
+                    />
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     <button className="flex items-center space-x-1" onClick={() => handleSort('name')}>
@@ -186,15 +223,21 @@ const Contacts: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {filteredContacts.map(contact => <tr key={contact.id} className="hover:bg-gray-50">
+                {filteredContacts.map(contact => (
+                  <tr key={contact.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <input type="checkbox" checked={selectedContacts.includes(contact.id)} onChange={e => {
-                    if (e.target.checked) {
-                      setSelectedContacts([...selectedContacts, contact.id]);
-                    } else {
-                      setSelectedContacts(selectedContacts.filter(id => id !== contact.id));
-                    }
-                  }} className="rounded border-gray-300 text-[#841b60] focus:ring-[#841b60]" />
+                      <input
+                        type="checkbox"
+                        checked={selectedContacts.includes(contact.id)}
+                        onChange={e => {
+                          if (e.target.checked) {
+                            setSelectedContacts([...selectedContacts, contact.id]);
+                          } else {
+                            setSelectedContacts(selectedContacts.filter(id => id !== contact.id));
+                          }
+                        }}
+                        className="rounded border-gray-300 text-[#841b60] focus:ring-[#841b60]"
+                      />
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex items-center">
@@ -215,7 +258,11 @@ const Contacts: React.FC = () => {
                       <div className="text-sm text-gray-900">{contact.phone}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <select value={contact.status} onChange={() => {/* Implement status update logic */}} className={`text-sm font-medium rounded-full px-2.5 py-0.5 ${statusColors[contact.status]}`}>
+                      <select
+                        value={contact.status}
+                        onChange={() => {/* Implement status update logic */}}
+                        className={`text-sm font-medium rounded-full px-2.5 py-0.5 ${statusColors[contact.status]}`}
+                      >
                         <option value="Nouveau">Nouveau</option>
                         <option value="Qualifié">Qualifié</option>
                         <option value="Client">Client</option>
@@ -224,19 +271,24 @@ const Contacts: React.FC = () => {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex flex-wrap gap-2">
-                        {contact.topics.map((topic, index) => <span key={index} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#f8f0f5] text-[#841b60]">
+                        {contact.topics.map((topic, index) => (
+                          <span key={index} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-[#f8f0f5] text-[#841b60]">
                             {topic}
-                          </span>)}
+                          </span>
+                        ))}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex flex-wrap gap-2">
-                        {contact.channels.map((channel, index) => <span key={index} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                        {contact.channels.map((channel, index) => (
+                          <span key={index} className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
                             {channel}
-                          </span>)}
+                          </span>
+                        ))}
                       </div>
                     </td>
-                  </tr>)}
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
@@ -284,7 +336,8 @@ const Contacts: React.FC = () => {
       </div>
 
       {/* Create Contact Modal */}
-      {showCreateModal && <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      {showCreateModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl p-6 max-w-2xl w-full mx-4">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-lg font-bold text-gray-800">Créer un contact</h3>
@@ -299,19 +352,29 @@ const Contacts: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Nom
                   </label>
-                  <input type="text" value={newContact.name || ''} onChange={e => setNewContact({
-                ...newContact,
-                name: e.target.value
-              })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]" />
+                  <input
+                    type="text"
+                    value={newContact.name || ''}
+                    onChange={e => setNewContact({
+                      ...newContact,
+                      name: e.target.value
+                    })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Email
                   </label>
-                  <input type="email" value={newContact.email || ''} onChange={e => setNewContact({
-                ...newContact,
-                email: e.target.value
-              })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]" />
+                  <input
+                    type="email"
+                    value={newContact.email || ''}
+                    onChange={e => setNewContact({
+                      ...newContact,
+                      email: e.target.value
+                    })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
+                  />
                 </div>
               </div>
 
@@ -320,19 +383,28 @@ const Contacts: React.FC = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Téléphone
                   </label>
-                  <input type="tel" value={newContact.phone || ''} onChange={e => setNewContact({
-                ...newContact,
-                phone: e.target.value
-              })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]" />
+                  <input
+                    type="tel"
+                    value={newContact.phone || ''}
+                    onChange={e => setNewContact({
+                      ...newContact,
+                      phone: e.target.value
+                    })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
+                  />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Statut
                   </label>
-                  <select value={newContact.status} onChange={e => setNewContact({
-                ...newContact,
-                status: e.target.value as Contact['status']
-              })} className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]">
+                  <select
+                    value={newContact.status}
+                    onChange={e => setNewContact({
+                      ...newContact,
+                      status: e.target.value as Contact['status']
+                    })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
+                  >
                     <option value="Nouveau">Nouveau</option>
                     <option value="Qualifié">Qualifié</option>
                     <option value="Client">Client</option>
@@ -345,10 +417,15 @@ const Contacts: React.FC = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Sujets favoris
                 </label>
-                <input type="text" placeholder="Séparez les sujets par des virgules" className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]" onChange={e => setNewContact({
-              ...newContact,
-              topics: e.target.value.split(',').map(t => t.trim())
-            })} />
+                <input
+                  type="text"
+                  placeholder="Séparez les sujets par des virgules"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
+                  onChange={e => setNewContact({
+                    ...newContact,
+                    topics: e.target.value.split(',').map(t => t.trim())
+                  })}
+                />
               </div>
 
               <div>
@@ -356,40 +433,55 @@ const Contacts: React.FC = () => {
                   Canaux préférés
                 </label>
                 <div className="space-y-2">
-                  {['Email', 'SMS', 'WhatsApp'].map(channel => <label key={channel} className="flex items-center">
-                      <input type="checkbox" checked={newContact.channels?.includes(channel)} onChange={e => {
-                  const channels = newContact.channels || [];
-                  if (e.target.checked) {
-                    setNewContact({
-                      ...newContact,
-                      channels: [...channels, channel]
-                    });
-                  } else {
-                    setNewContact({
-                      ...newContact,
-                      channels: channels.filter(c => c !== channel)
-                    });
-                  }
-                }} className="rounded border-gray-300 text-[#841b60] focus:ring-[#841b60]" />
+                  {['Email', 'SMS', 'WhatsApp'].map(channel => (
+                    <label key={channel} className="flex items-center">
+                      <input
+                        type="checkbox"
+                        checked={newContact.channels?.includes(channel)}
+                        onChange={e => {
+                          const channels = newContact.channels || [];
+                          if (e.target.checked) {
+                            setNewContact({
+                              ...newContact,
+                              channels: [...channels, channel]
+                            });
+                          } else {
+                            setNewContact({
+                              ...newContact,
+                              channels: channels.filter(c => c !== channel)
+                            });
+                          }
+                        }}
+                        className="rounded border-gray-300 text-[#841b60] focus:ring-[#841b60]"
+                      />
                       <span className="ml-2 text-sm text-gray-700">{channel}</span>
-                    </label>)}
+                    </label>
+                  ))}
                 </div>
               </div>
             </div>
 
             <div className="mt-6 flex justify-end space-x-3">
-              <button onClick={() => setShowCreateModal(false)} className="px-4 py-2 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors duration-200">
+              <button
+                onClick={() => setShowCreateModal(false)}
+                className="px-4 py-2 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors duration-200"
+              >
                 Annuler
               </button>
-              <button onClick={handleCreateContact} className="px-4 py-2 bg-[#841b60] text-white font-medium rounded-lg hover:bg-[#6d164f] transition-colors duration-200">
+              <button
+                onClick={handleCreateContact}
+                className="px-4 py-2 bg-[#841b60] text-white font-medium rounded-lg hover:bg-[#6d164f] transition-colors duration-200"
+              >
                 Créer le contact
               </button>
             </div>
           </div>
-        </div>}
+        </div>
+      )}
 
       {/* Import Modal */}
-      {showImportModal && <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      {showImportModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-xl p-6 max-w-lg w-full mx-4">
             <div className="flex justify-between items-center mb-6">
               <h3 className="text-lg font-bold text-gray-800">Importer des contacts</h3>
@@ -424,15 +516,24 @@ const Contacts: React.FC = () => {
             </div>
 
             <div className="mt-6 flex justify-end space-x-3">
-              <button onClick={() => setShowImportModal(false)} className="px-4 py-2 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors duration-200">
+              <button
+                onClick={() => setShowImportModal(false)}
+                className="px-4 py-2 border border-gray-300 text-gray-700 font-medium rounded-lg hover:bg-gray-50 transition-colors duration-200"
+              >
                 Annuler
               </button>
-              <button onClick={handleImportContacts} className="px-4 py-2 bg-[#841b60] text-white font-medium rounded-lg hover:bg-[#6d164f] transition-colors duration-200">
+              <button
+                onClick={handleImportContacts}
+                className="px-4 py-2 bg-[#841b60] text-white font-medium rounded-lg hover:bg-[#6d164f] transition-colors duration-200"
+              >
                 Importer
               </button>
             </div>
           </div>
-        </div>}
-    </div>;
+        </div>
+      )}
+    </div>
+  );
 };
+
 export default Contacts;

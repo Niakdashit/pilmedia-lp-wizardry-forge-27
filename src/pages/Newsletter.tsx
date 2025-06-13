@@ -8,6 +8,7 @@ import PageHeader from '../components/Layout/PageHeader';
 import { useNewsletterStore } from '../stores/newsletterStore';
 import NewsletterPreviewModal from '../components/Newsletter/NewsletterPreviewModal';
 import { SettingsTab } from '@/components/Newsletter/properties/Tab/SettingsTab';
+
 const Newsletter: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'edit' | 'settings' | 'send' | 'automate'>('edit');
   const [showPreviewModal, setShowPreviewModal] = useState(false);
@@ -39,20 +40,29 @@ const Newsletter: React.FC = () => {
       primaryColor: '#841b60'
     }
   };
-  return <div className="-mx-6 -mt-6">
+
+  return (
+    <div className="-mx-6 -mt-6">
       <PageHeader
         title="Éditeur de Newsletter"
         actions={
           <>
-            <button onClick={() => setShowPreviewModal(true)} className="inline-flex items-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+            <button
+              onClick={() => setShowPreviewModal(true)}
+              className="inline-flex items-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+            >
               <Eye className="w-5 h-5 mr-2" />
               Aperçu
             </button>
-            <button className="inline-flex items-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+            <button
+              className="inline-flex items-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+            >
               <Save className="w-5 h-5 mr-2" />
               Enregistrer
             </button>
-            <button className="inline-flex items-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+            <button
+              className="inline-flex items-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+            >
               <Send className="w-5 h-5 mr-2" />
               Envoyer
             </button>
@@ -101,6 +111,8 @@ const Newsletter: React.FC = () => {
       </div>
 
       <NewsletterPreviewModal isOpen={showPreviewModal} onClose={() => setShowPreviewModal(false)} campaign={mockCampaign} />
-    </div>;
+    </div>
+  );
 };
+
 export default Newsletter;

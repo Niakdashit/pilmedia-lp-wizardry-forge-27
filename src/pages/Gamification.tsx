@@ -3,6 +3,7 @@ import { Gamepad2, Dices, Cookie, Sparkles, Plus, FormInput, Grid3X3, FlipHorizo
 import { Link } from 'react-router-dom';
 import PageHeader from '../components/Layout/PageHeader';
 import { CampaignType } from '../utils/campaignTypes';
+
 const Gamification: React.FC = () => {
   const gamificationTypes = [
     {
@@ -62,6 +63,7 @@ const Gamification: React.FC = () => {
       type: 'jackpot' as CampaignType
     }
   ];
+
   return (
     <div className="-mx-6 -mt-6">
       <PageHeader
@@ -198,4 +200,5 @@ const Gamification: React.FC = () => {
     </div>
   );
 };
+
 export default Gamification;
