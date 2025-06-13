@@ -26,7 +26,6 @@ export interface BrandTheme {
   logoUrl?: string;
 }
 
-import ColorThief from 'colorthief';
 
 // --- APPEL API Brandfetch AVEC SÉCURITÉ CLÉ ---
 async function fetchBrandfetchData(domain: string): Promise<any> {
@@ -233,8 +232,9 @@ export async function extractColorsFromLogo(logoUrl: string): Promise<string[]> 
     const img = new window.Image();
     img.crossOrigin = 'Anonymous';
     return new Promise((resolve, reject) => {
-      img.onload = () => {
+      img.onload = async () => {
         try {
+          const { default: ColorThief } = await import('colorthief');
           const colorThief = new ColorThief();
           // Augmenter la qualité pour une meilleure précision
           const dominantColor = colorThief.getColor(img, 5); 
