@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Color from 'color';
 import confetti from 'canvas-confetti';
-import { Quiz, Wheel, Scratch, Memory, Puzzle, Dice } from '../GameTypes';
+import { QuizGame, Wheel, Scratch, Memory, Puzzle, Dice } from '../GameTypes';
 import FormPreview from '../GameTypes/FormPreview';
 
 interface PreviewContentProps {
@@ -67,9 +67,10 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
     switch (campaign.type) {
       case 'quiz':
         return (
-          <Quiz 
-            config={campaign.gameConfig.quiz} 
-            onConfigChange={() => {}}
+          <QuizGame
+            campaignId={campaign.id}
+            config={campaign.gameConfig.quiz}
+            design={campaign.design}
           />
         );
 
