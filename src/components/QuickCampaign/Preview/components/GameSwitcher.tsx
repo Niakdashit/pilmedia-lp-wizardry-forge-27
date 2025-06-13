@@ -1,7 +1,7 @@
 
 import React from 'react';
 import WheelPreview from '../../../GameTypes/WheelPreview';
-import { Jackpot } from '../../../GameTypes';
+import { Jackpot, QuizGame } from '../../../GameTypes';
 import ScratchPreview from '../../../GameTypes/ScratchPreview';
 import DicePreview from '../../../GameTypes/DicePreview';
 import FormPreview from '../../../GameTypes/FormPreview';
@@ -120,12 +120,25 @@ const GameSwitcher: React.FC<GameSwitcherProps> = ({
         </div>
       );
 
+
     case 'dice':
       return (
         <div style={baseContainerStyle}>
           <div style={baseWrapperStyle}>
             <DicePreview
               config={mockCampaign.gameConfig?.dice || {}}
+            />
+          </div>
+        </div>
+      );
+
+    case 'quiz':
+      return (
+        <div style={baseContainerStyle}>
+          <div style={baseWrapperStyle}>
+            <QuizGame
+              campaignId={synchronizedCampaign.id}
+              config={mockCampaign.gameConfig?.quiz || {}}
             />
           </div>
         </div>
