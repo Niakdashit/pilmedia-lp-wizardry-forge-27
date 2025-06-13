@@ -184,11 +184,14 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
         </div>
 
         {/* Floating action button - Canva style */}
-        <div className="absolute bottom-8 right-8">
+        <div className="absolute bottom-8 right-8" style={{ zIndex: 20 }}>
           <div className="relative">
             {/* Add menu */}
             {showAddMenu && (
-              <div className="absolute bottom-16 right-0 bg-white rounded-2xl shadow-2xl border border-gray-200/50 p-2 min-w-48">
+              <div
+                className="absolute bottom-16 right-0 bg-white rounded-2xl shadow-2xl border border-gray-200/50 p-2 min-w-48"
+                style={{ zIndex: 30 }}
+              >
                 <button
                   onClick={handleAddText}
                   className="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-50 transition-colors text-left"
@@ -221,7 +224,7 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
         </div>
 
         {/* Grid toggle */}
-        <div className="absolute top-6 right-6">
+        <div className="absolute top-6 right-6" style={{ zIndex: 20 }}>
           <GridToggle
             showGridLines={showGridLines}
             onToggle={() => setShowGridLines(!showGridLines)}
