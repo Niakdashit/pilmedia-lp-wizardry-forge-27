@@ -27,20 +27,55 @@ const ScratchGameGrid: React.FC<ScratchGameGridProps> = ({
   config,
   isModal = false
 }) => {
-  // Style constant pour une grille responsive qui remplit tout l'espace
-  const gridStyle: React.CSSProperties = {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-    gap: '24px',
-    width: '100%',
-    height: '100%',
-    alignItems: 'center',
-    justifyItems: 'center'
+  // Configuration pour une grille responsive qui s'adapte au nombre de cartes
+  const getGridContainerClasses = () => {
+    const cardCount = cards.length;
+    
+    // Container principal : prend 100% de l'espace disponible
+    const containerBase = "w-full h-full flex items-center justify-center p-6";
+    
+    // Grille responsive avec auto-fit pour s'adapter au nombre de cartes
+    let gridClasses = "";
+    
+    if (cardCount === 1) {
+      // Une seule carte : centrée
+      gridClasses = "flex justify-center items-center";
+    } else if (cardCount === 2) {
+      // Deux cartes : côte à côte, centrées
+      gridClasses = "grid grid-cols-1 sm:grid-cols-2 gap-8 place-items-center justify-items-center w-full";
+    } else if (cardCount <= 4) {
+      // 3-4 cartes : max 2 par ligne sur petit écran, 4 sur grand écran
+      gridClasses = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 place-items-center justify-items-center w-full";
+    } else if (cardCount <= 6) {
+      // 5-6 cartes : max 3 par ligne
+      gridClasses = "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 place-items-center justify-items-center w-full";
+    } else {
+      // Plus de 6 cartes : grille auto-fit avec minimum 200px par carte
+      gridClasses = "grid gap-8 place-items-center justify-items-center w-full";
+      // Style inline pour auto-fit
+    }
+    
+    return { containerBase, gridClasses, cardCount };
   };
 
+  const { containerBase, gridClasses, cardCount } = getGridContainerClasses();
+
+  // Style inline pour les grilles avec beaucoup de cartes (auto-fit)
+  const gridStyle = cardCount > 6 ? {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+    gap: '32px',
+    width: '100%',
+    placeItems: 'center',
+    justifyItems: 'center'
+  } : {};
+
   return (
-    <div className="w-full h-full">
-      <div style={gridStyle}>
+    <div className={containerBase}>
+      <div 
+        className={gridClasses}
+        style={cardCount > 6 ? gridStyle : {}}
+      >
         {cards.map((card: any, index: number) => {
           const isThisCardSelected = selectedCard === index;
           
