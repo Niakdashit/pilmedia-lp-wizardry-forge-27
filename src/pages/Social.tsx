@@ -1,12 +1,14 @@
 import React from 'react';
 import { BarChart2, AlertCircle, Plus } from 'lucide-react';
 import PageHeader from '../components/Layout/PageHeader';
+
 const Social: React.FC = () => {
-  return <div className="-mx-6 -mt-6">
+  return (
+    <div className="-mx-6 -mt-6">
       <PageHeader
         title="Réseaux sociaux"
         actions={
-          <button className="btn-secondary rounded-full flex items-center">
+          <button className="inline-flex items-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
             <Plus className="w-5 h-5 mr-2" />
             Nouvelle Publication
           </button>
@@ -19,14 +21,15 @@ const Social: React.FC = () => {
             <div className="bg-white rounded-xl shadow-sm p-6">
               <h2 className="text-lg font-bold text-gray-800 mb-4">Publications</h2>
               <div className="space-y-4">
-                {[1, 2, 3].map(post => <div key={post} className="border border-gray-200 rounded-lg p-4">
+                {[1, 2, 3].map(post => (
+                  <div key={post} className="border border-gray-200 rounded-lg p-4">
                     <div className="flex items-start space-x-4">
                       <div className="w-24 h-24 bg-gray-100 rounded flex items-center justify-center">
                         <span className="text-gray-400">Image</span>
                       </div>
                       <div className="flex-1">
                         <p className="text-gray-600 mb-2">
-                          Lorem ipsum dolor sit amet, consectetur adipiscing elit. 
+                          Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                           Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                         </p>
                         <div className="flex space-x-4 text-sm text-gray-500">
@@ -36,7 +39,8 @@ const Social: React.FC = () => {
                         </div>
                       </div>
                     </div>
-                  </div>)}
+                  </div>
+                ))}
               </div>
             </div>
 
@@ -101,6 +105,8 @@ const Social: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default Social;

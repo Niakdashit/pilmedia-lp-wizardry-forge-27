@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { BarChart3, LineChart, PieChart, Users, Target, ArrowUpRight, Calendar, Download } from 'lucide-react';
 import PageHeader from '../components/Layout/PageHeader';
+
 const Statistics: React.FC = () => {
   const [period, setPeriod] = useState('30');
-  return <div className="-mx-6 -mt-6">
+  return (
+    <div className="-mx-6 -mt-6">
       <PageHeader
         title="Statistiques"
         actions={
@@ -18,7 +20,7 @@ const Statistics: React.FC = () => {
               <option value="90">90 derniers jours</option>
               <option value="365">Cette année</option>
             </select>
-            <button className="btn-secondary rounded-full flex items-center">
+            <button className="inline-flex items-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
               <Download className="w-5 h-5 mr-2" />
               Exporter
             </button>
@@ -159,7 +161,8 @@ const Statistics: React.FC = () => {
               type: 'survey',
               participants: 643,
               conversion: '38%'
-            }].map((campaign, index) => <div key={index} className="flex items-center p-3 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors duration-200">
+            }].map((campaign, index) => (
+                <div key={index} className="flex items-center p-3 border border-gray-100 rounded-lg hover:bg-gray-50 transition-colors duration-200">
                   <div className="w-10 h-10 rounded-lg bg-[#f8f0f5] flex items-center justify-center mr-4">
                     <Target className="w-5 h-5 text-[#841b60]" />
                   </div>
@@ -173,7 +176,8 @@ const Statistics: React.FC = () => {
                       <p className="text-xs text-green-500">{campaign.conversion}</p>
                     </div>
                   </div>
-                </div>)}
+                </div>
+              ))}
             </div>
           </div>
           
@@ -217,6 +221,8 @@ const Statistics: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default Statistics;
