@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect } from 'react';
 import { drawWheelSegments } from './WheelSegmentDrawer';
 import { drawWheelBorders } from './WheelBorderDrawer';
@@ -53,7 +52,7 @@ const WheelCanvas: React.FC<WheelCanvasProps> = ({
 
     ctx.clearRect(0, 0, size, size);
 
-    // Draw segments
+    // Segments (fond de roue)
     drawWheelSegments({
       ctx,
       segments,
@@ -66,7 +65,7 @@ const WheelCanvas: React.FC<WheelCanvasProps> = ({
       borderOutlineColor
     });
 
-    // Draw borders
+    // Bordures principales
     drawWheelBorders({
       ctx,
       center,
@@ -75,7 +74,7 @@ const WheelCanvas: React.FC<WheelCanvasProps> = ({
       borderOutlineColor
     });
 
-    // Draw center
+    // Centre de la roue (image/logo)
     drawWheelCenter({
       ctx,
       center,
@@ -88,6 +87,7 @@ const WheelCanvas: React.FC<WheelCanvasProps> = ({
 
   useEffect(() => {
     drawWheel();
+    // Ajout de canvasSize pour re-render si la taille change
   }, [segments, rotation, centerImage, centerLogo, theme, customColors, borderColor, borderOutlineColor, canvasSize]);
 
   return (
