@@ -104,13 +104,21 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
   };
 
   const handleAddText = () => {
+    console.log('Ajout de texte déclenché');
     addTextElement();
     setShowAddMenu(false);
   };
 
   const handleAddImage = () => {
+    console.log('Ajout d\'image déclenché');
     addImageElement();
     setShowAddMenu(false);
+  };
+
+  const toggleAddMenu = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    console.log('Toggle menu:', !showAddMenu);
+    setShowAddMenu(!showAddMenu);
   };
 
   return (
@@ -137,7 +145,37 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
 
           <div className="flex-1 flex relative h-full">
             <GameCanvasPreview
-              campaign={enhancedCampaign}
+              campaign={{
+                ...campaign,
+                gameSize,
+                gamePosition,
+                buttonConfig: {
+                  ...campaign.buttonConfig,
+                  text: campaign.buttonConfig?.text || campaign.gameConfig?.[campaign.type]?.buttonLabel || 'Jouer',
+                  color: campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor || '#841b60'
+                },
+                design: {
+                  ...campaign.design,
+                  buttonColor: campaign.buttonConfig?.color || campaign.design?.buttonColor || '#841b60',
+                  titleColor: campaign.design?.titleColor || '#000000',
+                  background: campaign.design?.background || '#f8fafc'
+                },
+                gameConfig: {
+                  ...campaign.gameConfig,
+                  [campaign.type]: {
+                    ...campaign.gameConfig?.[campaign.type],
+                    buttonLabel: campaign.buttonConfig?.text || campaign.gameConfig?.[campaign.type]?.buttonLabel || 'Jouer',
+                    buttonColor: campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor || '#841b60',
+                    containerBackgroundColor: campaign.gameConfig?.[campaign.type]?.containerBackgroundColor,
+                    backgroundColor: campaign.gameConfig?.[campaign.type]?.backgroundColor,
+                    borderColor: campaign.gameConfig?.[campaign.type]?.borderColor,
+                    borderWidth: campaign.gameConfig?.[campaign.type]?.borderWidth,
+                    slotBorderColor: campaign.gameConfig?.[campaign.type]?.slotBorderColor,
+                    slotBorderWidth: campaign.gameConfig?.[campaign.type]?.slotBorderWidth,
+                    slotBackgroundColor: campaign.gameConfig?.[campaign.type]?.slotBackgroundColor,
+                  }
+                }
+              }}
               gameSize={gameSize}
               className="w-full h-full"
               key={`preview-${gameSize}-${gamePosition}-${campaign.buttonConfig?.color}-${JSON.stringify(campaign.gameConfig?.[campaign.type])}`}
@@ -184,13 +222,14 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
         </div>
 
         {/* Floating action button - Canva style */}
-        <div className="absolute bottom-8 right-8" style={{ zIndex: 20 }}>
+        <div className="absolute bottom-8 right-8" style={{ zIndex: 50 }}>
           <div className="relative">
             {/* Add menu */}
             {showAddMenu && (
               <div
                 className="absolute bottom-16 right-0 bg-white rounded-2xl shadow-2xl border border-gray-200/50 p-2 min-w-48"
-                style={{ zIndex: 30 }}
+                style={{ zIndex: 60 }}
+                onClick={(e) => e.stopPropagation()}
               >
                 <button
                   onClick={handleAddText}
@@ -215,8 +254,9 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
 
             {/* Main add button */}
             <button
-              onClick={() => setShowAddMenu(!showAddMenu)}
+              onClick={toggleAddMenu}
               className="w-14 h-14 bg-gradient-to-r from-[#841b60] to-[#6d164f] hover:from-[#6d164f] hover:to-[#841b60] text-white rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 flex items-center justify-center transform hover:scale-105"
+              type="button"
             >
               <Plus className={`w-6 h-6 transition-transform duration-300 ${showAddMenu ? 'rotate-45' : ''}`} />
             </button>
