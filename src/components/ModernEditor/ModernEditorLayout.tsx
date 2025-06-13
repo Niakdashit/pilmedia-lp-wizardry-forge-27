@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Eye, Save, Monitor, Tablet, Smartphone, Menu, X, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -37,7 +37,9 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
   isNewCampaign,
   gameTypeLabels
 }) => {
-  const [isPanelOpen, setIsPanelOpen] = useState(true);
+  const [isPanelOpen, setIsPanelOpen] = useState(
+    typeof window !== 'undefined' && window.innerWidth >= 768
+  );
   const [isMobilePanelOpen, setIsMobilePanelOpen] = useState(false);
   const navigate = useNavigate();
 
@@ -48,6 +50,20 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
   const toggleMobilePanel = () => {
     setIsMobilePanelOpen(!isMobilePanelOpen);
   };
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        setIsPanelOpen(false);
+      } else {
+        setIsPanelOpen(true);
+        setIsMobilePanelOpen(false);
+      }
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleExit = () => {
     navigate('/gamification');
