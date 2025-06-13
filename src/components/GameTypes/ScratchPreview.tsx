@@ -101,8 +101,9 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
 
   if (!gameStarted) {
     return (
-      <div className={`w-full h-full flex flex-col items-center justify-center ${isModal ? 'py-6 min-h-[500px]' : 'py-12 min-h-[600px]'} bg-gradient-to-br from-gray-50 to-gray-100`}>
-        <div className="w-full h-full flex-1 flex items-center justify-center mb-8">
+      <div className="w-full h-full flex flex-col bg-gradient-to-br from-gray-50 to-gray-100">
+        {/* Zone d'aperçu des cartes - prend tout l'espace disponible */}
+        <div className="flex-1 w-full h-full">
           <ScratchGameGrid
             cards={cards}
             gameSize={gameSize}
@@ -117,23 +118,26 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
           />
         </div>
 
+        {/* Bouton de démarrage - uniquement si pas en modal */}
         {!isModal && (
-          <div className="text-center space-y-6 flex-shrink-0">
-            <div className="space-y-2">
-              <h3 className="text-xl font-bold text-gray-800">Cartes à gratter</h3>
-              <p className="text-gray-600">Cliquez sur le bouton pour commencer à jouer</p>
+          <div className="flex-shrink-0 text-center py-8 px-4">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <h3 className="text-xl font-bold text-gray-800">Cartes à gratter</h3>
+                <p className="text-gray-600">Cliquez sur le bouton pour commencer à jouer</p>
+              </div>
+              
+              <button
+                onClick={handleGameStart}
+                disabled={disabled}
+                className="px-8 py-4 rounded-xl font-semibold text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 shadow-lg"
+                style={{
+                  backgroundColor: disabled ? '#6b7280' : buttonColor
+                }}
+              >
+                {disabled ? 'Remplissez le formulaire' : buttonLabel}
+              </button>
             </div>
-            
-            <button
-              onClick={handleGameStart}
-              disabled={disabled}
-              className="px-8 py-4 rounded-xl font-semibold text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 shadow-lg"
-              style={{
-                backgroundColor: disabled ? '#6b7280' : buttonColor
-              }}
-            >
-              {disabled ? 'Remplissez le formulaire' : buttonLabel}
-            </button>
           </div>
         )}
       </div>
@@ -141,8 +145,9 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
   }
 
   return (
-    <div className={`w-full h-full flex flex-col items-center justify-center ${isModal ? 'py-6 min-h-[600px]' : 'py-8 min-h-[700px]'} bg-gradient-to-br from-gray-50 to-gray-100`}>
-      <div className="w-full h-full flex-1 flex items-center justify-center">
+    <div className="w-full h-full flex flex-col bg-gradient-to-br from-gray-50 to-gray-100">
+      {/* Zone de jeu - prend tout l'espace disponible */}
+      <div className="flex-1 w-full h-full">
         <ScratchGameGrid
           cards={cards}
           gameSize={gameSize}
@@ -157,9 +162,9 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
         />
       </div>
 
-      {/* Message d'instruction et progression - en bas, séparé des cartes */}
+      {/* Messages et instructions - en bas si nécessaire */}
       {!showResult && !isModal && (
-        <div className="flex-shrink-0 mt-6">
+        <div className="flex-shrink-0 py-4">
           {/* Contenu d'instruction si nécessaire */}
         </div>
       )}
