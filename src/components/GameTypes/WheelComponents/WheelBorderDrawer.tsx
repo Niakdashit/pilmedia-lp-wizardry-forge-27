@@ -16,19 +16,14 @@ export const drawWheelBorders = ({
   borderColor,
   borderOutlineColor
 }: WheelBorderDrawerProps) => {
-  // Draw outer border with a simple 3D effect
+  // Draw outer border in a single, solid arc
   ctx.beginPath();
   ctx.arc(center, center, radius + 15, 0, 2 * Math.PI);
+  ctx.closePath();
   ctx.lineWidth = 8;
-  const gradient = ctx.createLinearGradient(0, 0, size, size);
-  gradient.addColorStop(0, '#ffffffaa');
-  gradient.addColorStop(0.5, borderOutlineColor);
-  gradient.addColorStop(1, '#00000055');
-  ctx.strokeStyle = gradient;
-  ctx.shadowColor = 'rgba(0,0,0,0.3)';
-  ctx.shadowBlur = 6;
+  ctx.strokeStyle = borderOutlineColor;
+  ctx.lineJoin = 'round';
   ctx.stroke();
-  ctx.shadowBlur = 0;
 
   // Draw inner border
   ctx.beginPath();
