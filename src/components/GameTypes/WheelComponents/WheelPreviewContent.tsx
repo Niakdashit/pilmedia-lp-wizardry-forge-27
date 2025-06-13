@@ -52,7 +52,7 @@ const WheelPreviewContent: React.FC<WheelPreviewContentProps> = ({
       height: containerHeight,
       overflow: shouldCropWheel ? 'hidden' : 'visible'
     }}>
-      {/* Ombre réduite */}
+      {/* Ombre placée sous la roue avec z-index négatif */}
       <div 
         style={{
           position: 'absolute',
@@ -66,7 +66,7 @@ const WheelPreviewContent: React.FC<WheelPreviewContentProps> = ({
           borderRadius: '50%',
           background: 'radial-gradient(circle, rgba(255,215,0,0.2) 0%, rgba(255,215,0,0.05) 50%, rgba(0,0,0,0.1) 100%)',
           filter: 'blur(10px)',
-          zIndex: 0
+          zIndex: -1
         }}
       />
       
