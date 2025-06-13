@@ -27,41 +27,62 @@ const ScratchGameGrid: React.FC<ScratchGameGridProps> = ({
   config,
   isModal = false
 }) => {
-  // Configuration responsive de la grille améliorée
+  // Configuration responsive de la grille avec alignement et espacement optimaux
   const getGridConfig = () => {
     const cardCount = cards.length;
 
+    // Configuration commune pour l'espacement
+    const baseSpacing = isModal ? 'gap-6' : 'gap-8';
+    const responsiveSpacing = isModal 
+      ? 'gap-4 sm:gap-6 md:gap-8' 
+      : 'gap-6 sm:gap-8 md:gap-10 lg:gap-12';
+
     if (cardCount === 1) {
       return {
-        containerClass: 'w-full flex justify-center items-center',
+        containerClass: 'w-full h-full flex items-center justify-center',
         gridClass: 'flex justify-center items-center',
-        spacing: isModal ? 'gap-6' : 'gap-8'
+        spacing: baseSpacing
       };
     }
 
-    // Pour 2+ cartes : grille responsive optimisée avec espacement garanti
     if (cardCount === 2) {
       return {
-        containerClass: 'w-full flex justify-center items-center',
+        containerClass: 'w-full h-full flex items-center justify-center',
         gridClass: 'flex flex-row justify-center items-center flex-wrap',
-        spacing: isModal ? 'gap-4 md:gap-6' : 'gap-6 md:gap-8 lg:gap-10'
+        spacing: responsiveSpacing
       };
     }
 
-    // Pour 3+ cartes : grille avec colonnes adaptatives
+    if (cardCount <= 4) {
+      return {
+        containerClass: 'w-full h-full flex items-center justify-center',
+        gridClass: 'grid grid-cols-2 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 place-items-center justify-center',
+        spacing: responsiveSpacing
+      };
+    }
+
+    if (cardCount <= 6) {
+      return {
+        containerClass: 'w-full h-full flex items-center justify-center',
+        gridClass: 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-3 place-items-center justify-center',
+        spacing: responsiveSpacing
+      };
+    }
+
+    // Pour plus de 6 cartes : grille avec 4 colonnes maximum
     return {
-      containerClass: 'w-full flex justify-center items-center',
-      gridClass: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 place-items-center justify-center w-full',
-      spacing: isModal ? 'gap-4 md:gap-6' : 'gap-6 md:gap-8 lg:gap-10'
+      containerClass: 'w-full h-full flex items-center justify-center',
+      gridClass: 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 place-items-center justify-center',
+      spacing: responsiveSpacing
     };
   };
 
   const { containerClass, gridClass, spacing } = getGridConfig();
 
   return (
-    <div className={`h-full ${isModal ? 'max-w-6xl px-4 py-6' : 'max-w-7xl px-6 py-8'} mx-auto flex items-center justify-center`}>
+    <div className={`${isModal ? 'max-w-5xl px-4 py-6' : 'max-w-7xl px-6 py-8'} mx-auto h-full`}>
       <div className={containerClass}>
-        <div className={`${gridClass} ${spacing} w-full`}>
+        <div className={`${gridClass} ${spacing} w-full max-w-fit mx-auto`}>
           {cards.map((card: any, index: number) => {
             const isThisCardSelected = selectedCard === index;
             
