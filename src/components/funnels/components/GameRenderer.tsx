@@ -119,6 +119,7 @@ const GameRenderer: React.FC<GameRendererProps> = ({
           <QuizGame
             campaignId={campaign.id}
             config={campaign.gameConfig?.quiz || {}}
+            design={campaign.design}
           />
         );
       case 'dice':
