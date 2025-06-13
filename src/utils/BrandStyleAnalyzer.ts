@@ -26,14 +26,7 @@ export interface BrandTheme {
   logoUrl?: string;
 }
 
-import ColorThief from "colorthief";
-
-const DEBUG_BRAND_STYLE_ANALYZER =
-  ((typeof import.meta !== "undefined" &&
-    (import.meta as any).env?.VITE_DEBUG_BRAND_STYLE_ANALYZER) ||
-    process.env.VITE_DEBUG_BRAND_STYLE_ANALYZER) === "true";
-
-// --- APPEL API Brandfetch AVEC SÉCURITÉ CLÉ ---
+// --- APPEL API Brandfetch AVEC CLÉ ---
 async function fetchBrandfetchData(domain: string): Promise<any> {
   const apiKey =
     (typeof import.meta !== "undefined" &&
@@ -72,7 +65,7 @@ export async function generateBrandThemeFromUrl(
       const colors = brandData.colors.map((c: any) => c.hex || c);
       const primary = colors[0];
       const secondary = colors[1] || primary;
-      const accent = "#ffffff";
+      const accent = colors[2] || "#ffffff";
       return {
         customColors: {
           primary,
@@ -89,13 +82,12 @@ export async function generateBrandThemeFromUrl(
         const logoColors = await extractColorsFromLogo(logoUrl);
         if (logoColors.length >= 2) {
           const palette = generateAdvancedPaletteFromColors(logoColors);
-          const accent = "#ffffff";
           return {
             customColors: {
               primary: palette.primaryColor,
               secondary: palette.secondaryColor,
-              accent,
-              text: getAccessibleTextColor(accent),
+              accent: palette.accentColor,
+              text: palette.textColor,
             },
             logoUrl,
           };
@@ -136,13 +128,12 @@ export async function generateBrandThemeFromFile(
     const logoColors = await extractColorsFromLogo(logoUrl);
     if (logoColors.length >= 2) {
       const palette = generateAdvancedPaletteFromColors(logoColors);
-      const accent = "#ffffff";
       return {
         customColors: {
           primary: palette.primaryColor,
           secondary: palette.secondaryColor,
-          accent,
-          text: getAccessibleTextColor(accent),
+          accent: palette.accentColor,
+          text: palette.textColor,
         },
         logoUrl,
       };
@@ -214,29 +205,6 @@ function rgbToHex(r: number, g: number, b: number): string {
   );
 }
 
-// Fonction améliorée pour filtrer les couleurs de faible saturation
-function isGrayish(hex: string): boolean {
-  const [r, g, b] = hexToRgb(hex);
-  // Calculer la saturation pour détecter les couleurs grises/marrons parasites
-  const max = Math.max(r, g, b);
-  const min = Math.min(r, g, b);
-  const saturation = max === 0 ? 0 : (max - min) / max;
-
-  // Éliminer les couleurs avec une saturation trop faible (< 0.2)
-  return saturation < 0.2;
-}
-
-// Fonction pour déterminer si une couleur est trop sombre (presque noire)
-function isTooLight(hex: string): boolean {
-  const luminance = getLuminance(hex);
-  return luminance > 0.95; // Éliminer les couleurs presque blanches
-}
-
-function isTooApproach(hex: string): boolean {
-  const luminance = getLuminance(hex);
-  return luminance < 0.05; // Éliminer les couleurs presque noires
-}
-
 // Extraction ColorThief via <img> avec filtrage amélioré
 export async function extractColorsFromLogo(
   logoUrl: string,
@@ -245,13 +213,12 @@ export async function extractColorsFromLogo(
     const img = new window.Image();
     img.crossOrigin = "Anonymous";
     return new Promise((resolve, reject) => {
-      img.onload = () => {
+      img.onload = async () => {
         try {
+          const { default: ColorThief } = await import('colorthief');
           const colorThief = new ColorThief();
-          // Augmenter la qualité pour une meilleure précision
           const dominantColor = colorThief.getColor(img, 5);
-          const palette = colorThief.getPalette(img, 8, 5); // Plus de couleurs avec meilleure qualité
-
+          const palette = colorThief.getPalette(img, 8, 5);
           const dominantHex = rgbToHex(
             dominantColor[0],
             dominantColor[1],
@@ -260,30 +227,16 @@ export async function extractColorsFromLogo(
           const paletteHex = palette.map(([r, g, b]: number[]) =>
             rgbToHex(r, g, b),
           );
-
           const allColors = [dominantHex, ...paletteHex];
-
-          // Filtrage amélioré pour éliminer les couleurs parasites
+          // Filtrage : ni gris, ni trop clair, ni trop foncé
           const filteredColors = allColors.filter((color) => {
             return (
-              !isGrayish(color) && !isTooLight(color) && !isTooApproach(color)
+              !isGrayish(color) && !isTooLight(color) && !isTooDark(color)
             );
           });
-
-          if (DEBUG_BRAND_STYLE_ANALYZER)
-            console.log("🎨 Couleurs extraites brutes:", allColors);
-          if (DEBUG_BRAND_STYLE_ANALYZER)
-            console.log("🎨 Couleurs après filtrage:", filteredColors);
-
-          // Déduplication avec un seuil plus strict
           const unique = deduplicateColors(filteredColors, 40).filter(Boolean);
-
-          // S'assurer d'avoir au moins 2 couleurs valides
           const finalColors =
             unique.length >= 2 ? unique.slice(0, 5) : allColors.slice(0, 3);
-
-          if (DEBUG_BRAND_STYLE_ANALYZER)
-            console.log("🎨 Couleurs finales sélectionnées:", finalColors);
           resolve(finalColors);
         } catch (error) {
           reject(error);
@@ -297,6 +250,20 @@ export async function extractColorsFromLogo(
   }
 }
 
+// Utilitaires couleurs : filtrage et déduplication
+function isGrayish(hex: string): boolean {
+  const [r, g, b] = hexToRgb(hex);
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  const saturation = max === 0 ? 0 : (max - min) / max;
+  return saturation < 0.2;
+}
+function isTooLight(hex: string): boolean {
+  return getLuminance(hex) > 0.95;
+}
+function isTooDark(hex: string): boolean {
+  return getLuminance(hex) < 0.05;
+}
 function deduplicateColors(colors: string[], threshold = 40): string[] {
   const unique: string[] = [];
   const distance = (c1: string, c2: string) => {
@@ -316,23 +283,17 @@ function deduplicateColors(colors: string[], threshold = 40): string[] {
 export function generateAdvancedPaletteFromColors(
   colors: string[],
 ): BrandPalette {
-  // Tri par saturation et luminance pour privilégier les couleurs vives
+  // Tri par saturation puis par luminance (plus saturée/vive en premier)
   const sortedColors = colors.sort((a, b) => {
     const satA = getColorSaturation(a);
     const satB = getColorSaturation(b);
     const lumA = getLuminance(a);
     const lumB = getLuminance(b);
-
-    // Privilégier d'abord la saturation, puis la luminance
     if (Math.abs(satA - satB) > 0.1) {
-      return satB - satA; // Plus saturé en premier
+      return satB - satA;
     }
-    return Math.abs(lumB - 0.5) - Math.abs(lumA - 0.5); // Plus proche de 50% de luminance
+    return Math.abs(lumB - 0.5) - Math.abs(lumA - 0.5);
   });
-
-  if (DEBUG_BRAND_STYLE_ANALYZER)
-    console.log("🎨 Couleurs triées par qualité:", sortedColors);
-
   const primaryColor = sortedColors[0] || "#841b60";
   const secondaryColor =
     findContrastingColor(sortedColors, primaryColor) ||
@@ -341,7 +302,6 @@ export function generateAdvancedPaletteFromColors(
   const accentColor =
     findAccentColor(sortedColors, primaryColor, secondaryColor) || "#ffffff";
   const textColor = getAccessibleTextColor(accentColor);
-
   return {
     primaryColor,
     secondaryColor,
@@ -350,15 +310,12 @@ export function generateAdvancedPaletteFromColors(
     textColor,
   };
 }
-
-// Nouvelle fonction pour calculer la saturation d'une couleur
 function getColorSaturation(hex: string): number {
   const [r, g, b] = hexToRgb(hex);
   const max = Math.max(r, g, b) / 255;
   const min = Math.min(r, g, b) / 255;
   return max === 0 ? 0 : (max - min) / max;
 }
-
 function findContrastingColor(
   colors: string[],
   excludeColor: string,
@@ -404,13 +361,12 @@ export function extractCompletePaletteFromBrandfetch(
   };
 }
 
-// Pour compatibilité
+// Pour compatibilité avec anciens noms
 export function generateBrandThemeFromMicrolinkPalette(
   palette: any,
 ): BrandPalette {
   return extractCompletePaletteFromBrandfetch(palette);
 }
-
 function getLuminance(hex: string): number {
   const rgb = hexToRgb(hex);
   return (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]) / 255;
@@ -456,7 +412,7 @@ export function applyBrandStyleToWheel(campaign: any, colors: BrandColors) {
   };
 }
 
-// ... keep existing code (extractBrandPaletteFromBrandfetch function)
+// Palette Brandfetch ou logo
 export async function extractBrandPaletteFromBrandfetch(
   data: any,
 ): Promise<BrandPalette> {
