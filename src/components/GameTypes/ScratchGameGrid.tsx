@@ -27,20 +27,9 @@ const ScratchGameGrid: React.FC<ScratchGameGridProps> = ({
   config,
   isModal = false
 }) => {
-  // Style constant pour une grille responsive qui remplit tout l'espace
-  const gridStyle: React.CSSProperties = {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-    gap: '24px',
-    width: '100%',
-    height: '100%',
-    alignItems: 'center',
-    justifyItems: 'center'
-  };
-
   return (
-    <div className="w-full h-full">
-      <div style={gridStyle}>
+    <div className="w-full h-full p-4">
+      <div className="w-full h-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 place-items-center place-content-center">
         {cards.map((card: any, index: number) => {
           const isThisCardSelected = selectedCard === index;
           
@@ -49,7 +38,7 @@ const ScratchGameGrid: React.FC<ScratchGameGridProps> = ({
           const canScratch = gameStarted && isThisCardSelected;
 
           return (
-            <div key={card.id || index} className="flex justify-center items-center">
+            <div key={card.id || index} className="w-full flex justify-center">
               <ScratchCard
                 card={card}
                 index={index}
