@@ -15,11 +15,10 @@ before building the project.
 
 ## Testing
 
-To run the unit tests you must first install the development dependencies so the
-`tsx` runner is available. Then execute the test script:
+Install dependencies and execute the test suite:
 
 ```bash
-npm install
+npm ci
 npm test
 ```
 
