@@ -191,7 +191,7 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
         
         <div className="space-y-2">
           <label className="text-sm font-medium text-gray-700">Couleur de la bordure</label>
-          <div className="flex items-center space-x-2">
+          <div className="flex flex-wrap items-center gap-2">
             <input
               type="color"
               value={borderColor}
@@ -202,14 +202,14 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
               type="text"
               value={borderColor}
               onChange={(e) => updateBorderColor(e.target.value)}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
+              className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
             />
           </div>
         </div>
 
         <div className="space-y-2">
           <label className="text-sm font-medium text-gray-700">Couleur du contour de bordure</label>
-          <div className="flex items-center space-x-2">
+          <div className="flex flex-wrap items-center gap-2">
             <input
               type="color"
               value={borderOutlineColor}
@@ -220,7 +220,7 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
               type="text"
               value={borderOutlineColor}
               onChange={(e) => updateBorderOutlineColor(e.target.value)}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
+              className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
             />
           </div>
         </div>
@@ -228,7 +228,7 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700">Couleur segment 1</label>
-            <div className="flex items-center space-x-2">
+            <div className="flex flex-wrap items-center gap-2">
               <input
                 type="color"
                 value={segmentColor1}
@@ -239,14 +239,14 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
                 type="text"
                 value={segmentColor1}
                 onChange={(e) => updateSegmentColor(1, e.target.value)}
-                className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-[#841b60] focus:border-transparent"
+                className="flex-1 min-w-0 px-3 py-2 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-[#841b60] focus:border-transparent"
               />
             </div>
           </div>
           
           <div className="space-y-2">
             <label className="text-sm font-medium text-gray-700">Couleur segment 2</label>
-            <div className="flex items-center space-x-2">
+            <div className="flex flex-wrap items-center gap-2">
               <input
                 type="color"
                 value={segmentColor2}
@@ -257,7 +257,7 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
                 type="text"
                 value={segmentColor2}
                 onChange={(e) => updateSegmentColor(2, e.target.value)}
-                className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-[#841b60] focus:border-transparent"
+                className="flex-1 min-w-0 px-3 py-2 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-[#841b60] focus:border-transparent"
               />
             </div>
           </div>
@@ -299,7 +299,7 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
 
                 <div className="space-y-2">
                   <label className="text-xs font-medium text-gray-600">Couleur du segment</label>
-                  <div className="flex items-center space-x-2">
+                  <div className="flex flex-wrap items-center gap-2">
                     <input
                       type="color"
                       value={segment.color || (index % 2 === 0 ? segmentColor1 : segmentColor2)}
@@ -310,7 +310,7 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
                       type="text"
                       value={segment.color || (index % 2 === 0 ? segmentColor1 : segmentColor2)}
                       onChange={e => updateSegment(index, 'color', e.target.value)}
-                      className="flex-1 px-3 py-2 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-[#841b60] focus:border-transparent"
+                      className="flex-1 min-w-0 px-3 py-2 text-sm border border-gray-300 rounded focus:ring-1 focus:ring-[#841b60] focus:border-transparent"
                     />
                   </div>
                 </div>

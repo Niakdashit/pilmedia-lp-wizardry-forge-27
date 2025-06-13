@@ -242,7 +242,7 @@ const MobileTabRoulette: React.FC<MobileTabRouletteProps> = ({
         </button>
       </div>
 
-      {segments.map((seg, index) => <div key={index} className="flex flex-col md:flex-row items-start md:items-center gap-3 border p-4 rounded-lg bg-white shadow-sm">
+      {segments.map((seg, index) => <div key={index} className="flex flex-col md:flex-row flex-wrap items-start md:items-center gap-3 border p-4 rounded-lg bg-white shadow-sm">
           <input type="text" placeholder="Nom du segment" value={seg.label} onChange={e => handleSegmentChange(index, 'label', e.target.value)} className="border p-2 rounded w-full md:w-1/4" />
           <input type="number" placeholder="Chance (%)" value={seg.chance} onChange={e => handleSegmentChange(index, 'chance', Number(e.target.value))} className="border p-2 rounded w-full md:w-1/6" />
           <input type="color" value={seg.color || '#841b60'} onChange={e => handleSegmentChange(index, 'color', e.target.value)} className="w-10 h-10 border rounded" />

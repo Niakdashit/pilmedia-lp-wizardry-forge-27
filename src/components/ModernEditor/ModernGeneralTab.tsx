@@ -77,7 +77,7 @@ const ModernGeneralTab: React.FC<ModernGeneralTabProps> = ({
       </div>
 
       {/* Dates */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
           <label className="flex items-center text-sm font-medium text-gray-700">
             <Calendar className="w-4 h-4 mr-2" />
@@ -105,7 +105,7 @@ const ModernGeneralTab: React.FC<ModernGeneralTabProps> = ({
       </div>
 
       {/* Heures */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="space-y-2">
           <label className="flex items-center text-sm font-medium text-gray-700">
             <Clock className="w-4 h-4 mr-2" />
