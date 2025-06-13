@@ -41,7 +41,7 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
   const getGameComponent = () => {
     if (isComplete) {
       return (
-          <div className="flex flex-col items-center justify-center text-center h-full w-full max-w-2xl mx-auto px-4">
+        <div className="flex flex-col items-center justify-center text-center h-full w-full max-w-2xl mx-auto px-4">
           <h2
             className="text-3xl font-bold mb-6"
             style={{
@@ -50,7 +50,6 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
           >
             {campaign.screens[3].title || 'Félicitations !'}
           </h2>
-          
           <p
             className="text-xl"
             style={{

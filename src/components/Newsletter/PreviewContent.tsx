@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Color from 'color';
 import confetti from 'canvas-confetti';
-import { Wheel, Scratch, Jackpot } from '../GameTypes';
+import { Wheel, Scratch, Jackpot, QuizGame } from '../GameTypes';
 import MemoryPreview from '../GameTypes/MemoryPreview';
 import PuzzlePreview from '../GameTypes/PuzzlePreview';
 import DicePreview from '../GameTypes/DicePreview';
@@ -59,6 +59,13 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
     }
 
     switch (campaign.type) {
+      case 'quiz':
+        return (
+          <QuizGame
+            campaignId={campaign.id}
+            config={campaign.gameConfig.quiz}
+          />
+        );
       case 'memory':
         return (
           <MemoryPreview
