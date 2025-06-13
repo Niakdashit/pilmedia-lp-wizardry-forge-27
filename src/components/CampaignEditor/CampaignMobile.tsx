@@ -60,12 +60,12 @@ const CampaignMobile: React.FC<CampaignMobileProps> = ({
       <div className="flex-1 flex flex-col">
         {/* Sub-tabs */}
         <div className="border-b border-gray-200 bg-gray-50">
-          <nav className="flex space-x-1 px-4 py-2">
+          <nav className="flex overflow-x-auto space-x-1 px-2 py-1 md:px-4 md:py-2">
             {subTabs.map((tab) => (
               <button
                 key={tab.id}
                 onClick={() => setActiveSubTab(tab.id)}
-                className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
+                className={`px-2 py-1 text-xs md:px-3 md:py-2 md:text-sm font-medium rounded-lg transition-colors ${
                   activeSubTab === tab.id
                     ? 'bg-white text-[#841b60] shadow-sm'
                     : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'
@@ -85,13 +85,13 @@ const CampaignMobile: React.FC<CampaignMobileProps> = ({
 
       {/* Right Panel - Preview */}
       {!hidePreview && (
-        <div className="w-[500px] border-l border-gray-200 bg-gray-50 flex flex-col">
+        <div className="w-full md:w-[500px] border-l border-gray-200 bg-gray-50 flex flex-col">
           {/* Preview Mode Toggle */}
           <div className="p-4 border-b border-gray-200">
             <div className="flex items-center justify-center space-x-2 bg-white rounded-lg p-1">
               <button
                 onClick={() => setPreviewMode('mobile')}
-                className={`flex items-center space-x-2 px-4 py-3 rounded-md text-sm font-medium transition-colors ${
+                className={`flex items-center space-x-2 px-2 py-2 text-xs md:px-4 md:py-3 md:text-sm rounded-md font-medium transition-colors ${
                   previewMode === 'mobile'
                     ? 'bg-[#841b60] text-white'
                     : 'text-gray-600 hover:text-gray-900'
@@ -102,7 +102,7 @@ const CampaignMobile: React.FC<CampaignMobileProps> = ({
               </button>
               <button
                 onClick={() => setPreviewMode('tablet')}
-                className={`flex items-center space-x-2 px-4 py-3 rounded-md text-sm font-medium transition-colors ${
+                className={`flex items-center space-x-2 px-2 py-2 text-xs md:px-4 md:py-3 md:text-sm rounded-md font-medium transition-colors ${
                   previewMode === 'tablet'
                     ? 'bg-[#841b60] text-white'
                     : 'text-gray-600 hover:text-gray-900'
