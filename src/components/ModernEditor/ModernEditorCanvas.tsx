@@ -42,39 +42,6 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
     addImageElement
   } = useCanvasElements(campaign, setCampaign, previewDevice);
 
-  // Enhanced campaign with proper settings propagation
-  const enhancedCampaign = {
-    ...campaign,
-    gameSize,
-    gamePosition,
-    buttonConfig: {
-      ...campaign.buttonConfig,
-      text: campaign.buttonConfig?.text || campaign.gameConfig?.[campaign.type]?.buttonLabel || 'Jouer',
-      color: campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor || '#841b60'
-    },
-    design: {
-      ...campaign.design,
-      buttonColor: campaign.buttonConfig?.color || campaign.design?.buttonColor || '#841b60',
-      titleColor: campaign.design?.titleColor || '#000000',
-      background: campaign.design?.background || '#f8fafc'
-    },
-    gameConfig: {
-      ...campaign.gameConfig,
-      [campaign.type]: {
-        ...campaign.gameConfig?.[campaign.type],
-        buttonLabel: campaign.buttonConfig?.text || campaign.gameConfig?.[campaign.type]?.buttonLabel || 'Jouer',
-        buttonColor: campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor || '#841b60',
-        containerBackgroundColor: campaign.gameConfig?.[campaign.type]?.containerBackgroundColor,
-        backgroundColor: campaign.gameConfig?.[campaign.type]?.backgroundColor,
-        borderColor: campaign.gameConfig?.[campaign.type]?.borderColor,
-        borderWidth: campaign.gameConfig?.[campaign.type]?.borderWidth,
-        slotBorderColor: campaign.gameConfig?.[campaign.type]?.slotBorderColor,
-        slotBorderWidth: campaign.gameConfig?.[campaign.type]?.slotBorderWidth,
-        slotBackgroundColor: campaign.gameConfig?.[campaign.type]?.slotBackgroundColor,
-      }
-    }
-  };
-
   const headerBanner = campaign.design?.headerBanner;
   const footerBanner = campaign.design?.footerBanner;
   const headerText = campaign.design?.headerText;
