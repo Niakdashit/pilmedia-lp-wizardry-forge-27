@@ -71,7 +71,6 @@ const WheelCanvas: React.FC<WheelCanvasProps> = ({
       ctx,
       center,
       radius,
-      size,
       borderColor,
       borderOutlineColor
     });
