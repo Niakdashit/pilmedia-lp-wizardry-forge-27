@@ -18,6 +18,12 @@ const QuizGame: React.FC<QuizGameProps> = ({ campaignId, config = {}, design = {
 
   const colors = design.customColors || { primary: '#841b60', text: '#ffffff' };
   const textStyles = design.textStyles || {};
+  const containerStyles = {
+    backgroundColor: design.blockColor || '#ffffff',
+    border: `1px solid ${design.borderColor || '#e5e7eb'}`,
+    borderRadius: design.borderRadius || '0.5rem',
+    padding: '1rem'
+  };
 
   const handleAnswer = async (index: number) => {
     const newAnswers = [...answers, index];
@@ -47,7 +53,7 @@ const QuizGame: React.FC<QuizGameProps> = ({ campaignId, config = {}, design = {
 
   if (!started) {
     return (
-      <div className="text-center space-y-4 p-4">
+      <div className="text-center space-y-4" style={containerStyles}>
         <h3 className="text-lg font-medium" style={textStyles.title}>
           {config.introScreen?.title || 'Bienvenue au quiz'}
         </h3>
@@ -57,7 +63,12 @@ const QuizGame: React.FC<QuizGameProps> = ({ campaignId, config = {}, design = {
         <button
           onClick={() => setStarted(true)}
           className="px-4 py-2 rounded-lg"
-          style={{ backgroundColor: colors.primary, color: colors.text, ...textStyles.button }}
+          style={{
+            backgroundColor: design.buttonColor || colors.primary,
+            color: design.buttonTextColor || colors.text,
+            borderRadius: design.borderRadius,
+            ...textStyles.button
+          }}
         >
           {config.introScreen?.buttonText || 'Commencer'}
         </button>
@@ -67,7 +78,7 @@ const QuizGame: React.FC<QuizGameProps> = ({ campaignId, config = {}, design = {
 
   if (completed) {
     return (
-      <div className="text-center p-4 space-y-2">
+      <div className="text-center space-y-2" style={containerStyles}>
         <h3 className="text-lg font-semibold" style={textStyles.title}>
           {config.endMessage || 'Félicitations !'}
         </h3>
@@ -84,7 +95,7 @@ const QuizGame: React.FC<QuizGameProps> = ({ campaignId, config = {}, design = {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" style={containerStyles}>
       <p className="text-sm" style={textStyles.label}>
         Question {current + 1} sur {questions.length}
       </p>
@@ -94,7 +105,12 @@ const QuizGame: React.FC<QuizGameProps> = ({ campaignId, config = {}, design = {
           key={option.id}
           onClick={() => handleAnswer(idx)}
           className="block w-full px-4 py-2 rounded-lg transition-colors"
-          style={{ backgroundColor: colors.primary, color: colors.text, ...textStyles.button }}
+          style={{
+            backgroundColor: design.buttonColor || colors.primary,
+            color: design.buttonTextColor || colors.text,
+            borderRadius: design.borderRadius,
+            ...textStyles.button
+          }}
         >
           {option.text}
         </button>
