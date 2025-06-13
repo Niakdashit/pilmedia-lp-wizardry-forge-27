@@ -1,4 +1,3 @@
-
 interface WheelBorderDrawerProps {
   ctx: CanvasRenderingContext2D;
   center: number;
@@ -14,7 +13,7 @@ export const drawWheelBorders = ({
   borderColor,
   borderOutlineColor
 }: WheelBorderDrawerProps) => {
-  // Draw outer border in a single, solid arc
+  // Outer outline (épaisse, couleur accent)
   ctx.beginPath();
   ctx.arc(center, center, radius + 15, 0, 2 * Math.PI);
   ctx.closePath();
@@ -23,9 +22,10 @@ export const drawWheelBorders = ({
   ctx.lineJoin = 'round';
   ctx.stroke();
 
-  // Draw inner border
+  // Inner border (finesse, couleur principale)
   ctx.beginPath();
   ctx.arc(center, center, radius + 8, 0, 2 * Math.PI);
+  ctx.closePath();
   ctx.lineWidth = 2;
   ctx.strokeStyle = borderColor;
   ctx.stroke();
