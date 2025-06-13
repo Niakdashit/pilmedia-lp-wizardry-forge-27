@@ -30,6 +30,10 @@
   ::selection {
     @apply bg-accent-100 text-accent-950;
   }
+
+  img {
+    @apply max-w-full h-auto;
+  }
 }
 
 @layer components {

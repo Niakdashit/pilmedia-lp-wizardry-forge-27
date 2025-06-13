@@ -85,7 +85,7 @@ const CampaignMobile: React.FC<CampaignMobileProps> = ({
 
       {/* Right Panel - Preview */}
       {!hidePreview && (
-        <div className="w-[500px] border-l border-gray-200 bg-gray-50 flex flex-col">
+        <div className="w-full md:w-[500px] border-l border-gray-200 bg-gray-50 flex flex-col">
           {/* Preview Mode Toggle */}
           <div className="p-4 border-b border-gray-200">
             <div className="flex items-center justify-center space-x-2 bg-white rounded-lg p-1">
