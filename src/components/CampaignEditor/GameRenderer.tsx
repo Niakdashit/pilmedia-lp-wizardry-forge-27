@@ -1,4 +1,3 @@
-
 import React from 'react';
 import Jackpot from '../GameTypes/Jackpot';
 import { QuizPreview } from '../GameTypes';
@@ -69,7 +68,12 @@ const GameRenderer: React.FC<GameRendererProps> = ({
       return (
         <div style={{ ...containerStyle, minHeight: '400px', padding: '20px', boxSizing: 'border-box' }}>
           <div style={{ ...wrapperStyle, ...getPositionStyles() }}>
-            <QuizPreview question={campaign.gameConfig?.quiz?.questions?.[campaign.activeQuizQuestion ?? 0]} />
+            <QuizPreview
+              question={
+                campaign.previewQuestion ||
+                campaign.gameConfig?.quiz?.questions?.[campaign.activeQuizQuestion ?? 0]
+              }
+            />
           </div>
         </div>
       );
