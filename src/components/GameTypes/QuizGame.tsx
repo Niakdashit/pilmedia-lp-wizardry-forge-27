@@ -30,17 +30,9 @@ const QuizGame: React.FC<QuizGameProps> = ({
 
   useEffect(() => {
     if (currentQuestion?.timeLimit && currentQuestion.timeLimit > 0) {
-      setTimeLeft(currentQuestion.timeLimit);
       const timer = setInterval(() => {
-        setTimeLeft((prev) => {
-          if (prev && prev <= 1) {
-            clearInterval(timer);
-            handleNextQuestion();
-            return null;
-          }
-          return prev ? prev - 1 : null;
-        });
-      }, 1000);
+        handleNextQuestion();
+      }, currentQuestion.timeLimit * 1000);
 
       return () => clearInterval(timer);
     }
