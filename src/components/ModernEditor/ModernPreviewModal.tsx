@@ -40,7 +40,6 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
       backgroundColor: campaign.design?.background || '#f9fafb',
       position: 'relative' as const,
       overflow: 'auto' as const,
-      // Padding uniforme pour tous les types de jeux, mais adapté pour les quizzes
       padding: campaign.type === 'quiz' ? '40px 20px' : '20px'
     } as React.CSSProperties;
 
@@ -56,7 +55,6 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
     return baseStyle;
   };
 
-  // Configuration améliorée pour assurer la cohérence avec l'éditeur
   const enhancedCampaign = {
     ...campaign,
     design: {
@@ -64,21 +62,7 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
       buttonColor:
         campaign.buttonConfig?.color || campaign.design?.buttonColor || '#841b60',
       titleColor: campaign.design?.titleColor || '#000000',
-      background: campaign.design?.background || '#f8fafc',
-      // Styles spécifiques pour les quizzes - identiques à l'éditeur
-      containerBackgroundColor: campaign.design?.blockColor || '#ffffff',
-      primaryColor: campaign.design?.buttonColor || '#841b60',
-      secondaryColor: campaign.design?.secondaryColor || '#1e40af',
-      textColor: campaign.design?.titleColor || '#1f2937',
-      secondaryTextColor: campaign.design?.secondaryTextColor || '#6b7280',
-      fontFamily: campaign.design?.fontFamily || 'Inter, sans-serif',
-      questionFontSize: '1.5rem',
-      questionFontWeight: '600',
-      optionBackgroundColor: campaign.design?.blockColor || '#ffffff',
-      optionBorderColor: campaign.design?.borderColor || '#e5e7eb',
-      enableShadow: true,
-      enableGradient: true,
-      progressBackgroundColor: '#f3f4f6'
+      background: campaign.design?.background || '#f8fafc'
     },
     gameConfig: {
       ...campaign.gameConfig,
@@ -102,15 +86,12 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
       enhancedCampaign.funnel ||
       (unlockedTypes.includes(enhancedCampaign.type) ? 'unlocked_game' : 'standard');
     
-    // Container spécial pour les quizzes avec les mêmes dimensions que l'éditeur
     const componentStyle = campaign.type === 'quiz' ? {
       width: '100%',
       height: '100%',
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'center',
-      maxWidth: '800px',
-      margin: '0 auto'
+      justifyContent: 'center'
     } : {};
     
     if (funnel === 'unlocked_game') {
