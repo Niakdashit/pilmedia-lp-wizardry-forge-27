@@ -4,6 +4,8 @@ export interface DashboardStat {
   value: string;
   change: string;
   icon: React.ReactNode;
+  category: string;
+  trend: 'up' | 'down' | 'neutral';
 }
 
 export interface RecentCampaign {
