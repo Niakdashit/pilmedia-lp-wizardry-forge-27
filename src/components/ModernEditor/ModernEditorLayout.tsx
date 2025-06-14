@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Eye, Save, Monitor, Tablet, Smartphone, Menu, X, ArrowLeft } from 'lucide-react';
@@ -70,7 +69,7 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
   };
 
   return (
-    <div className="min-h-screen flex bg-gradient-to-br from-gray-50 to-gray-100 overflow-x-hidden">
+    <div className="min-h-screen flex bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
       {/* Header - Fixed top bar */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200/50 shadow-sm">
         <div className="flex items-center justify-between px-4 md:px-6 py-3">
@@ -183,7 +182,7 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
       </div>
 
       {/* Main content area */}
-      <div className="flex w-full pt-16 md:pt-20">
+      <div className="flex w-full pt-16 md:pt-20 h-screen">
         {/* Mobile overlay */}
         {isMobilePanelOpen && (
           <div
@@ -255,8 +254,8 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
           </div>
         )}
 
-        {/* Canvas area */}
-        <div className="flex-1 bg-gradient-to-br from-gray-50 to-white">
+        {/* Canvas area - Fixed container to prevent layout shifts */}
+        <div className="flex-1 h-full overflow-hidden bg-gradient-to-br from-gray-50 to-white">
           <ModernEditorCanvas
             campaign={campaign}
             setCampaign={setCampaign}
