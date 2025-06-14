@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Zap, FolderOpen, Layers } from 'lucide-react';
@@ -90,12 +89,12 @@ const QuickCreationSection: React.FC = () => {
               Création rapide de campagne
             </Link>
             
-            <Link to="/campaigns" className="inline-flex items-center px-6 py-4 bg-white text-[#841b60] font-semibold rounded-2xl hover:bg-gray-50 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 border border-[#841b60]/20">
+            <Link to="/campaigns" className="inline-flex items-center px-6 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
               <FolderOpen className="w-5 h-5 mr-2" />
               Mes campagnes
             </Link>
             
-            <button className="inline-flex items-center px-6 py-4 bg-white text-[#841b60] font-semibold rounded-2xl hover:bg-gray-50 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 border border-[#841b60]/20">
+            <button className="inline-flex items-center px-6 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
               <Layers className="w-5 h-5 mr-2" />
               Modèles
             </button>
