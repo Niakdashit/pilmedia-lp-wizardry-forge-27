@@ -1,27 +1,25 @@
-
 import React, { useState } from 'react';
 import { Image, Upload, Palette, Check, Sparkles } from 'lucide-react';
 
 interface BackgroundGalleryProps {
   selectedBackground: string;
-  backgroundType: string;
-  onBackgroundChange: (background: string) => void;
-  onTypeChange: (type: string) => void;
+  onSelect: (background: string) => void;
   brandColors: {
     primary: string;
     secondary: string;
     accent: string;
   };
+  gameType: string;
 }
 
 const BackgroundGallery: React.FC<BackgroundGalleryProps> = ({
   selectedBackground,
-  backgroundType,
-  onBackgroundChange,
-  onTypeChange,
-  brandColors
+  onSelect,
+  brandColors,
+  gameType
 }) => {
   const [activeTab, setActiveTab] = useState<'gradients' | 'images' | 'custom'>('gradients');
+  const [backgroundType, setBackgroundType] = useState<string>('gradient');
 
   const gradients = [
     {
@@ -98,8 +96,8 @@ const BackgroundGallery: React.FC<BackgroundGalleryProps> = ({
     if (file) {
       const reader = new FileReader();
       reader.onload = () => {
-        onBackgroundChange(reader.result as string);
-        onTypeChange('custom');
+        onSelect(reader.result as string);
+        setBackgroundType('custom');
       };
       reader.readAsDataURL(file);
     }
@@ -153,8 +151,8 @@ const BackgroundGallery: React.FC<BackgroundGalleryProps> = ({
             </div>
             <button
               onClick={() => {
-                onBackgroundChange(generateBrandGradient());
-                onTypeChange('brand-gradient');
+                onSelect(generateBrandGradient());
+                setBackgroundType('brand-gradient');
               }}
               className={`relative w-full h-32 rounded-xl border-4 transition-all duration-300 overflow-hidden ${
                 backgroundType === 'brand-gradient'
@@ -182,8 +180,8 @@ const BackgroundGallery: React.FC<BackgroundGalleryProps> = ({
                 <button
                   key={gradient.id}
                   onClick={() => {
-                    onBackgroundChange(gradient.style);
-                    onTypeChange('gradient');
+                    onSelect(gradient.style);
+                    setBackgroundType('gradient');
                   }}
                   className={`relative h-24 rounded-lg border-2 transition-all duration-300 ${
                     selectedBackground === gradient.style
@@ -216,8 +214,8 @@ const BackgroundGallery: React.FC<BackgroundGalleryProps> = ({
               <button
                 key={bg.id}
                 onClick={() => {
-                  onBackgroundChange(bg.url);
-                  onTypeChange('image');
+                  onSelect(bg.url);
+                  setBackgroundType('image');
                 }}
                 className={`relative h-32 rounded-lg border-2 transition-all duration-300 overflow-hidden ${
                   selectedBackground === bg.url
