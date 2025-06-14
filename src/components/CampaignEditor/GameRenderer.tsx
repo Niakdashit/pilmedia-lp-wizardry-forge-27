@@ -11,6 +11,7 @@ import FormPreview from '../GameTypes/FormPreview';
 import { GameSize } from '../configurators/GameSizeSelector';
 import { useGamePositionCalculator } from './GamePositionCalculator';
 import useCenteredStyles from '../../hooks/useCenteredStyles';
+import { createSynchronizedQuizCampaign } from '../../utils/quizConfigSync';
 
 interface GameRendererProps {
   campaign: any;
@@ -58,6 +59,11 @@ const GameRenderer: React.FC<GameRendererProps> = ({
     height: '100%'
   };
 
+  // Utiliser le système de synchronisation pour le quiz
+  const enhancedCampaign = campaign.type === 'quiz' 
+    ? createSynchronizedQuizCampaign(campaign)
+    : campaign;
+
   switch (campaign.type) {
     case 'jackpot':
       return (
@@ -99,8 +105,8 @@ const GameRenderer: React.FC<GameRendererProps> = ({
               justifyContent: 'center'
             }}>
               <QuizPreview
-                config={campaign.gameConfig?.quiz || {}}
-                design={campaign.design}
+                config={enhancedCampaign.gameConfig?.quiz || {}}
+                design={enhancedCampaign.design}
               />
             </div>
           </div>

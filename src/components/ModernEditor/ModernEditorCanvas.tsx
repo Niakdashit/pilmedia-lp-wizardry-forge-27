@@ -8,6 +8,7 @@ import CanvasHeader from './components/CanvasHeader';
 import CanvasFooter from './components/CanvasFooter';
 import GridToggle from './components/GridToggle';
 import { useCanvasElements } from './hooks/useCanvasElements';
+import { createSynchronizedQuizCampaign } from '../../utils/quizConfigSync';
 
 interface ModernEditorCanvasProps {
   campaign: any;
@@ -91,8 +92,8 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
   // Hauteur fixe, largeur responsive
   const FIXED_CANVAS_HEIGHT = 700;
 
-  // Préparer la configuration complète du quiz avec les styles de design
-  const enhancedCampaign = {
+  // Utiliser le système de synchronisation centralisé
+  const enhancedCampaign = createSynchronizedQuizCampaign({
     ...campaign,
     gameSize,
     gamePosition,
@@ -100,43 +101,8 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
       ...campaign.buttonConfig,
       text: campaign.buttonConfig?.text || campaign.gameConfig?.[campaign.type]?.buttonLabel || 'Jouer',
       color: campaign.design?.buttonColor || campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor || '#841b60'
-    },
-    design: {
-      ...campaign.design,
-      buttonColor: campaign.design?.buttonColor || campaign.buttonConfig?.color || '#841b60',
-      titleColor: campaign.design?.titleColor || '#000000',
-      background: campaign.design?.background || '#f8fafc',
-      blockColor: campaign.design?.blockColor || '#ffffff',
-      borderColor: campaign.design?.borderColor || '#e5e7eb',
-      borderRadius: campaign.design?.borderRadius || '8px',
-      buttonTextColor: campaign.design?.buttonTextColor || '#ffffff',
-      // Synchroniser les styles spécifiques au quiz
-      progressBackgroundColor: campaign.design?.progressBackgroundColor || '#f3f4f6',
-      primaryColor: campaign.design?.primaryColor || campaign.design?.buttonColor || '#841b60',
-      textColor: campaign.design?.textColor || campaign.design?.titleColor || '#374151',
-      questionFontSize: campaign.design?.questionFontSize || '1.5rem',
-      questionFontWeight: campaign.design?.questionFontWeight || '600',
-      fontFamily: campaign.design?.fontFamily || 'Inter, sans-serif'
-    },
-    gameConfig: {
-      ...campaign.gameConfig,
-      [campaign.type]: {
-        ...campaign.gameConfig?.[campaign.type],
-        buttonLabel: campaign.buttonConfig?.text || campaign.gameConfig?.[campaign.type]?.buttonLabel || 'Jouer',
-        buttonColor: campaign.design?.buttonColor || campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor || '#841b60',
-        containerBackgroundColor: campaign.design?.blockColor || campaign.gameConfig?.[campaign.type]?.containerBackgroundColor || '#ffffff',
-        backgroundColor: campaign.design?.blockColor || campaign.gameConfig?.[campaign.type]?.backgroundColor || '#ffffff',
-        borderColor: campaign.design?.borderColor || campaign.gameConfig?.[campaign.type]?.borderColor || '#e5e7eb',
-        borderRadius: campaign.design?.borderRadius || campaign.gameConfig?.[campaign.type]?.borderRadius || '8px',
-        textColor: campaign.design?.titleColor || '#000000',
-        questionBackgroundColor: campaign.design?.blockColor || '#ffffff',
-        optionBackgroundColor: campaign.design?.blockColor || '#ffffff',
-        optionBorderColor: campaign.design?.borderColor || '#e5e7eb',
-        correctOptionColor: campaign.design?.buttonColor || '#841b60',
-        incorrectOptionColor: '#ef4444'
-      }
     }
-  };
+  });
 
   return (
     <div className="w-full h-full flex items-center justify-center p-4 md:p-6 bg-gradient-to-br from-gray-50 to-white overflow-hidden">
@@ -172,7 +138,7 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
               campaign={enhancedCampaign}
               gameSize={gameSize}
               className="w-full h-full"
-              key={`preview-${gameSize}-${gamePosition}-${campaign.design?.buttonColor}-${campaign.design?.blockColor}-${campaign.design?.borderColor}-${JSON.stringify(campaign.gameConfig?.[campaign.type])}-${JSON.stringify(campaign.design)}`}
+              key={`preview-${gameSize}-${gamePosition}-${JSON.stringify(enhancedCampaign.design)}-${JSON.stringify(enhancedCampaign.gameConfig)}`}
               previewDevice={previewDevice}
             />
             

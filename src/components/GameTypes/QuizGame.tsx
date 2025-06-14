@@ -5,6 +5,7 @@ import QuizProgress from './Quiz/QuizProgress';
 import QuizQuestion from './Quiz/QuizQuestion';
 import QuizOption from './Quiz/QuizOption';
 import QuizResults from './Quiz/QuizResults';
+import { createEnhancedQuizDesign } from '../../utils/quizConfigSync';
 
 interface QuizGameProps {
   config: any;
@@ -26,27 +27,8 @@ const QuizGame: React.FC<QuizGameProps> = ({
   const questions = config?.questions || [];
   const currentQuestion = questions[currentQuestionIndex];
 
-  // Enhanced design with better defaults
-  const enhancedDesign = {
-    containerBackgroundColor: design.containerBackgroundColor || '#ffffff',
-    background: design.background || '#f8fafc',
-    borderColor: design.borderColor || '#e5e7eb',
-    borderRadius: design.borderRadius || '16px',
-    primaryColor: design.primaryColor || '#841b60',
-    secondaryColor: design.secondaryColor || '#1e40af',
-    textColor: design.textColor || design.titleColor || '#1f2937',
-    secondaryTextColor: design.secondaryTextColor || '#6b7280',
-    fontFamily: design.fontFamily || 'Inter, sans-serif',
-    questionFontSize: design.questionFontSize || '1.5rem',
-    questionFontWeight: design.questionFontWeight || '600',
-    optionBackgroundColor: design.optionBackgroundColor || '#ffffff',
-    optionBorderColor: design.optionBorderColor || '#e5e7eb',
-    buttonTextColor: design.buttonTextColor || '#ffffff',
-    enableShadow: design.enableShadow !== false,
-    enableGradient: design.enableGradient !== false,
-    progressBackgroundColor: design.progressBackgroundColor || '#f3f4f6',
-    ...design
-  };
+  // Utiliser le nouveau système de synchronisation
+  const enhancedDesign = createEnhancedQuizDesign({ design });
 
   useEffect(() => {
     if (currentQuestion?.timeLimit && currentQuestion.timeLimit > 0) {
@@ -155,9 +137,7 @@ const QuizGame: React.FC<QuizGameProps> = ({
       <QuizProgress
         currentQuestion={currentQuestionIndex}
         totalQuestions={questions.length}
-        timeLeft={timeLeft}
         design={enhancedDesign}
-        score={score}
       />
 
       <QuizQuestion question={currentQuestion} design={enhancedDesign} />

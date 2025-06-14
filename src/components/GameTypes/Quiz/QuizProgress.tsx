@@ -5,9 +5,7 @@ import { motion } from 'framer-motion';
 interface QuizProgressProps {
   currentQuestion: number;
   totalQuestions: number;
-  timeLeft?: number | null;
   design?: any;
-  score?: number;
 }
 
 const QuizProgress: React.FC<QuizProgressProps> = ({
@@ -27,11 +25,16 @@ const QuizProgress: React.FC<QuizProgressProps> = ({
   };
 
   return (
-    <div className="mb-8 space-y-4">
-      {/* Header with question number and score */}
+    <div className="mb-8">
+      <div className="flex items-center justify-between mb-4">
+        <span className="text-sm font-medium" style={{ color: design.textColor || '#374151' }}>
+          Question {currentQuestion + 1} sur {totalQuestions}
+        </span>
+        <span className="text-sm" style={{ color: design.secondaryTextColor || '#6b7280' }}>
+          {Math.round(progress)}%
+        </span>
+      </div>
       
-
-      {/* Progress bar */}
       <div className="relative">
         <div className="h-2 rounded-full overflow-hidden" style={progressStyle}>
           <motion.div 
@@ -42,9 +45,6 @@ const QuizProgress: React.FC<QuizProgressProps> = ({
             transition={{ duration: 0.5, ease: "easeOut" }}
           />
         </div>
-        
-        {/* Progress percentage */}
-        
       </div>
     </div>
   );

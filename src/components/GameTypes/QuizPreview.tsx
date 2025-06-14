@@ -1,6 +1,7 @@
 
 import React from 'react';
 import QuizGame from './QuizGame';
+import { createSynchronizedQuizCampaign } from '../../utils/quizConfigSync';
 
 interface QuizPreviewProps {
   question?: any;
@@ -9,6 +10,14 @@ interface QuizPreviewProps {
 }
 
 const QuizPreview: React.FC<QuizPreviewProps> = ({ question, config, design }) => {
+  // Créer une campagne temporaire pour utiliser le système de synchronisation
+  const tempCampaign = {
+    design: design || {},
+    gameConfig: { quiz: config || {} }
+  };
+
+  const synchronizedCampaign = createSynchronizedQuizCampaign(tempCampaign);
+
   // Si on a une question spécifique, on crée une config temporaire
   if (question) {
     const tempConfig = {
@@ -19,7 +28,7 @@ const QuizPreview: React.FC<QuizPreviewProps> = ({ question, config, design }) =
     return (
       <QuizGame
         config={tempConfig}
-        design={design}
+        design={synchronizedCampaign.design}
         onGameComplete={() => {}}
       />
     );
@@ -30,7 +39,7 @@ const QuizPreview: React.FC<QuizPreviewProps> = ({ question, config, design }) =
     return (
       <QuizGame
         config={config}
-        design={design}
+        design={synchronizedCampaign.design}
         onGameComplete={() => {}}
       />
     );

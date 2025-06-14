@@ -8,14 +8,20 @@ interface QuizContainerProps {
   className?: string;
 }
 
-const QuizContainer: React.FC<QuizContainerProps> = ({ children, design = {}, className = '' }) => {
+const QuizContainer: React.FC<QuizContainerProps> = ({ 
+  children, 
+  design = {}, 
+  className = '' 
+}) => {
   const containerStyle = {
-    backgroundColor: design.containerBackgroundColor || design.background || '#ffffff',
+    backgroundColor: design.containerBackgroundColor || '#ffffff',
     borderColor: design.borderColor || '#e5e7eb',
     borderRadius: design.borderRadius || '16px',
-    color: design.textColor || design.titleColor || '#1f2937',
+    color: design.textColor || '#1f2937',
     fontFamily: design.fontFamily || 'Inter, sans-serif',
-    boxShadow: design.enableShadow !== false ? '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)' : 'none'
+    boxShadow: design.enableShadow !== false 
+      ? '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)' 
+      : 'none'
   };
 
   return (
@@ -26,18 +32,7 @@ const QuizContainer: React.FC<QuizContainerProps> = ({ children, design = {}, cl
       className={`relative overflow-hidden border-2 ${className}`}
       style={containerStyle}
     >
-      {/* Gradient overlay for modern look */}
-      {design.enableGradient !== false && (
-        <div 
-          className="absolute inset-0 opacity-5"
-          style={{
-            background: `linear-gradient(135deg, ${design.primaryColor || '#841b60'}, ${design.secondaryColor || '#1e40af'})`
-          }}
-        />
-      )}
-      <div className="relative z-10">
-        {children}
-      </div>
+      {children}
     </motion.div>
   );
 };
