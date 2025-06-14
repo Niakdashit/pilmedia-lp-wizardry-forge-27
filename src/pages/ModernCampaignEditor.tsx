@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -334,7 +333,6 @@ const ModernCampaignEditor: React.FC = () => {
         onPreview={() => setShowPreviewModal(true)}
         isLoading={isLoading}
         campaignType={campaignType}
-        isNewCampaign={isNewCampaign}
         gameTypeLabels={gameTypeLabels}
         aiGenerated={aiGenerated}
         onBackToAI={aiGenerated ? handleBackToAI : undefined}

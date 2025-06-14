@@ -31,7 +31,6 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
   activeTab,
   onTabChange,
   previewDevice,
-  onDeviceChange,
   onSave,
   onPreview,
   isLoading,
@@ -90,7 +89,6 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
               onSave={onSave}
               onPreview={onPreview}
               isLoading={isLoading}
-              onTogglePanel={() => setIsPanelOpen(!isPanelOpen)}
             />
           </div>
         </div>
@@ -126,7 +124,6 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
             campaign={campaign}
             setCampaign={setCampaign}
             previewDevice={previewDevice}
-            gameTypeLabel={gameTypeLabels[campaignType]}
           />
         </div>
       </div>
