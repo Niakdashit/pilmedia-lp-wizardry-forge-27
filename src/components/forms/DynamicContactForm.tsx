@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 
 export type FieldConfig = {
@@ -87,9 +86,6 @@ const DynamicContactForm: React.FC<DynamicContactFormProps> = ({
     borderRadius: "0.5rem",
     outline: "none"
   });
-
-  const getInputClass = () =>
-    `w-full px-4 py-2 border rounded-lg focus:ring-2 transition-all focus:ring-[${inputFocusColor}]`;
 
   const getFocusClass = () =>
     inputFocusColor 
@@ -191,4 +187,3 @@ const DynamicContactForm: React.FC<DynamicContactFormProps> = ({
 };
 
 export default DynamicContactForm;
-
