@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
@@ -13,7 +14,8 @@ import {
   UserCircle,
   LogOut,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Sparkles
 } from 'lucide-react';
 import { useAppContext } from '../../context/AppContext';
 import logo from '@/assets/logo.png';
@@ -25,6 +27,7 @@ const Sidebar: React.FC = () => {
 
   const navItems = [
     { name: 'Tableau de bord', path: '/', icon: <LayoutDashboard className="w-5 h-5" /> },
+    { name: 'Studio Créatif', path: '/creative-studio', icon: <Sparkles className="w-5 h-5" /> },
     { name: 'Campagnes', path: '/campaigns', icon: <Target className="w-5 h-5" /> },
     { name: 'Gamification', path: '/gamification', icon: <Gamepad2 className="w-5 h-5" /> },
     { name: 'Newsletter', path: '/newsletter', icon: <Mail className="w-5 h-5" /> },
