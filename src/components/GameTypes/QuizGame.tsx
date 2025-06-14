@@ -152,7 +152,7 @@ const QuizGame: React.FC<QuizGameProps> = ({
         disabled={currentAnswers.length === 0}
         className="w-full py-4 px-6 font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg enabled:hover:scale-[1.02]"
         style={{
-          backgroundColor: enhancedDesign.primaryColor,
+          backgroundColor: enhancedDesign.buttonColor,
           color: enhancedDesign.buttonTextColor,
           borderRadius: enhancedDesign.borderRadius,
           opacity: currentAnswers.length === 0 ? 0.5 : 1
