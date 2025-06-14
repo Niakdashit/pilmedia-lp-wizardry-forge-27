@@ -37,7 +37,7 @@ const ModernCampaignEditor: React.FC = () => {
   
   const [activeTab, setActiveTab] = useState('general');
   const [showPreviewModal, setShowPreviewModal] = useState(false);
-  const [previewDevice, setPreviewDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
+  const [previewDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
   const [isLoading, setIsLoading] = useState(false);
   const [isLoadingAIData, setIsLoadingAIData] = useState(false);
   const [aiGenerated, setAiGenerated] = useState(false);
@@ -332,6 +332,7 @@ const ModernCampaignEditor: React.FC = () => {
         onPreview={() => setShowPreviewModal(true)}
         isLoading={isLoading}
         campaignType={campaignType}
+        gameTypeLabels={gameTypeLabels}
         aiGenerated={aiGenerated}
         onBackToAI={aiGenerated ? handleBackToAI : undefined}
       />
