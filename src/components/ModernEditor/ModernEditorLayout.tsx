@@ -1,49 +1,51 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Eye, Save, Wand2, Upload, Palette, Type, Layout, Settings } from 'lucide-react';
+import { Sparkles, Eye, Save, Wand2, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import ModernEditorSidebar from './ModernEditorSidebar';
 import ModernEditorPanel from './ModernEditorPanel';
 import AIAssistantSidebar from './AIAssistantSidebar';
 
 interface ModernEditorLayoutProps {
-  campaignId?: string;
-  isNew?: boolean;
+  campaign: any;
+  setCampaign: (updater: (prev: any) => any) => void;
+  activeTab: string;
+  onTabChange: (tab: string) => void;
+  previewDevice: 'desktop' | 'tablet' | 'mobile';
+  onDeviceChange: (device: 'desktop' | 'tablet' | 'mobile') => void;
+  onSave: () => void;
+  onPreview: () => void;
+  isLoading: boolean;
+  campaignType: string;
+  isNewCampaign: boolean;
+  gameTypeLabels: Record<string, string>;
 }
 
 const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({ 
-  isNew = false 
+  campaign,
+  setCampaign,
+  activeTab,
+  onTabChange,
+  onSave,
+  onPreview,
+  isLoading,
+  isNewCampaign
 }) => {
   const navigate = useNavigate();
-  const [activeStep, setActiveStep] = useState('setup');
-  const [campaign, setCampaign] = useState({
-    name: '',
-    description: '',
-    type: 'wheel',
-    brandAssets: {
-      logo: null,
-      primaryColor: '#841b60',
-      secondaryColor: '#ffffff',
-      fontFamily: 'Inter'
-    },
-    content: {},
-    settings: {}
-  });
   const [showAIAssistant, setShowAIAssistant] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
 
   const steps = [
     { id: 'setup', label: 'Configuration', icon: Settings },
-    { id: 'content', label: 'Contenu', icon: Type },
-    { id: 'game', label: 'Jeu', icon: Layout },
+    { id: 'content', label: 'Contenu', icon: Wand2 },
+    { id: 'game', label: 'Jeu', icon: Settings },
     { id: 'wording', label: 'Textes', icon: Wand2 },
     { id: 'preview', label: 'Aperçu', icon: Eye },
     { id: 'publish', label: 'Publication', icon: Sparkles }
   ];
 
   const handleStepChange = (stepId: string) => {
-    setActiveStep(stepId);
+    onTabChange(stepId);
   };
 
   const handleAIGenerate = async () => {
@@ -68,7 +70,7 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
               </button>
               <div>
                 <h1 className="text-xl font-bold text-gray-900">
-                  {isNew ? 'Nouvelle Campagne' : campaign.name || 'Campagne'}
+                  {isNewCampaign ? 'Nouvelle Campagne' : campaign.name || 'Campagne'}
                 </h1>
                 <p className="text-sm text-gray-500">Créez une expérience unique pour vos utilisateurs</p>
               </div>
@@ -83,14 +85,21 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
                 <span>Assistant IA</span>
               </button>
               
-              <button className="flex items-center space-x-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-full transition-all">
+              <button 
+                onClick={onPreview}
+                className="flex items-center space-x-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-full transition-all"
+              >
                 <Eye className="w-4 h-4" />
                 <span>Aperçu</span>
               </button>
               
-              <button className="flex items-center space-x-2 px-6 py-2 bg-[#841b60] hover:bg-[#6d164f] text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300">
+              <button 
+                onClick={onSave}
+                disabled={isLoading}
+                className="flex items-center space-x-2 px-6 py-2 bg-[#841b60] hover:bg-[#6d164f] text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50"
+              >
                 <Save className="w-4 h-4" />
-                <span>Sauvegarder</span>
+                <span>{isLoading ? 'Sauvegarde...' : 'Sauvegarder'}</span>
               </button>
             </div>
           </div>
@@ -99,8 +108,8 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
           <div className="flex items-center space-x-2 mt-6 overflow-x-auto pb-2">
             {steps.map((step, index) => {
               const Icon = step.icon;
-              const isActive = activeStep === step.id;
-              const isCompleted = steps.findIndex(s => s.id === activeStep) > index;
+              const isActive = activeTab === step.id;
+              const isCompleted = steps.findIndex(s => s.id === activeTab) > index;
               
               return (
                 <motion.button
@@ -144,14 +153,14 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
           <div className="flex-1">
             <AnimatePresence mode="wait">
               <motion.div
-                key={activeStep}
+                key={activeTab}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
                 transition={{ duration: 0.3 }}
               >
                 <ModernEditorPanel
-                  activeStep={activeStep}
+                  activeStep={activeTab}
                   campaign={campaign}
                   setCampaign={setCampaign}
                 />

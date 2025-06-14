@@ -56,7 +56,7 @@ const EditorDesktopPanel: React.FC<EditorDesktopPanelProps> = ({
             {/* Panel content */}
             <div className="flex-1 overflow-y-auto min-w-0">
               <ModernEditorPanel
-                activeTab={activeTab}
+                activeStep={activeTab}
                 campaign={campaign}
                 setCampaign={setCampaign}
               />
