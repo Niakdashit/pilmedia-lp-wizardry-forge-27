@@ -64,14 +64,14 @@ const GameConfiguration: React.FC<GameConfigurationProps> = ({
     }
   };
 
-  const isStepComplete = (stepId: string) => {
+  const isStepComplete = (stepId: string): boolean => {
     switch (stepId) {
       case 'brand':
-        return config.brand.mainColor && config.brand.companyName;
+        return !!(config.brand.mainColor && config.brand.companyName);
       case 'game':
         return Object.keys(config.game).length > 0;
       case 'goals':
-        return config.goals.campaignGoal && config.goals.targetAudience;
+        return !!(config.goals.campaignGoal && config.goals.targetAudience);
       default:
         return false;
     }

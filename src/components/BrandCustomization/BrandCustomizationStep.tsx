@@ -102,7 +102,7 @@ const BrandCustomizationStep: React.FC<BrandCustomizationStepProps> = ({
         {activeTab === 'fonts' && (
           <FontSelector
             selectedFont={brandData.selectedFont}
-            onChange={(font) => updateBrandData('selectedFont', font)}
+            onChange={(font: string) => updateBrandData('selectedFont', font)}
             gameType={gameType}
           />
         )}
@@ -110,7 +110,7 @@ const BrandCustomizationStep: React.FC<BrandCustomizationStepProps> = ({
         {activeTab === 'backgrounds' && (
           <BackgroundGallery
             selectedBackground={brandData.selectedBackground}
-            onChange={(background) => updateBrandData('selectedBackground', background)}
+            onSelect={(background: string) => updateBrandData('selectedBackground', background)}
             brandColors={brandData.extractedColors}
             gameType={gameType}
           />
