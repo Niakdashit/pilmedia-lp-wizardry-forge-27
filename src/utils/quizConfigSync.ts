@@ -20,6 +20,7 @@ interface QuizDesignConfig {
   optionBackgroundColor?: string;
   optionBorderColor?: string;
   buttonTextColor?: string;
+  buttonColor?: string;
   progressBackgroundColor?: string;
   enableShadow?: boolean;
   enableGradient?: boolean;
@@ -59,6 +60,7 @@ export const createEnhancedQuizDesign = (campaign: any): QuizDesignConfig => {
     optionBackgroundColor: design.optionBackgroundColor || design.blockColor || '#ffffff',
     optionBorderColor: design.optionBorderColor || design.borderColor || '#e5e7eb',
     buttonTextColor: design.buttonTextColor || '#ffffff',
+    buttonColor: design.buttonColor || design.primaryColor || '#841b60',
     progressBackgroundColor: design.progressBackgroundColor || '#f3f4f6',
     enableShadow: design.enableShadow !== false,
     enableGradient: design.enableGradient !== false

@@ -20,8 +20,9 @@ const QuizProgress: React.FC<QuizProgressProps> = ({
     color: design.textColor || '#374151'
   };
   
+  // Utiliser la couleur des boutons pour la barre de progression
   const progressBarStyle = {
-    backgroundColor: design.primaryColor || '#841b60'
+    backgroundColor: design.buttonColor || design.primaryColor || '#841b60'
   };
 
   return (
