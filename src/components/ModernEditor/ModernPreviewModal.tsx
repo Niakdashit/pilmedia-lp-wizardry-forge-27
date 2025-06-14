@@ -4,7 +4,6 @@ import { X, Monitor, Smartphone, Tablet } from 'lucide-react';
 import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
 import FunnelStandard from '../funnels/FunnelStandard';
 import FormPreview from '../GameTypes/FormPreview';
-import QuizPreview from '../GameTypes/QuizPreview';
 import { createSynchronizedQuizCampaign } from '../../utils/quizConfigSync';
 
 interface ModernPreviewModalProps {
@@ -43,7 +42,7 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
       backgroundColor: campaign.design?.background || '#f9fafb',
       position: 'relative' as const,
       overflow: 'auto' as const,
-      padding: (campaign.type === 'quiz' || campaign.type === 'form') ? '40px 20px' : '20px'
+      padding: campaign.type === 'form' ? '40px 20px' : '20px'
     } as React.CSSProperties;
 
     if (campaign.design?.backgroundImage) {
@@ -72,28 +71,12 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
       );
     }
 
-    // Gestion spéciale pour le type 'quiz'
-    if (campaign.type === 'quiz') {
-      return (
-        <QuizPreview
-          config={enhancedCampaign.gameConfig?.quiz || {}}
-          design={enhancedCampaign.design}
-        />
-      );
-    }
-
     const unlockedTypes = ['wheel', 'scratch', 'jackpot', 'dice'];
     const funnel =
       enhancedCampaign.funnel ||
       (unlockedTypes.includes(enhancedCampaign.type) ? 'unlocked_game' : 'standard');
     
-    const componentStyle = campaign.type === 'quiz' ? {
-      width: '100%',
-      height: '100%',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center'
-    } : {};
+    const componentStyle = {};
     
     if (funnel === 'unlocked_game') {
       return (
