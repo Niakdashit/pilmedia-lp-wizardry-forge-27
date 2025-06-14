@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles, Eye, Save, Wand2, Upload, Palette, Type, Layout, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -10,7 +10,6 @@ interface ModernCampaignEditorProps {
 }
 
 const ModernCampaignEditor: React.FC<ModernCampaignEditorProps> = ({ 
-  campaignId, 
   isNew = false 
 }) => {
   const navigate = useNavigate();
@@ -44,7 +43,7 @@ const ModernCampaignEditor: React.FC<ModernCampaignEditorProps> = ({
     setActiveStep(stepId);
   };
 
-  const handleAIGenerate = async (prompt: string) => {
+  const handleAIGenerate = async () => {
     setIsGenerating(true);
     // Simulate AI generation
     await new Promise(resolve => setTimeout(resolve, 2000));
@@ -152,19 +151,19 @@ const ModernCampaignEditor: React.FC<ModernCampaignEditorProps> = ({
                   <SetupStep campaign={campaign} setCampaign={setCampaign} />
                 )}
                 {activeStep === 'content' && (
-                  <ContentStep campaign={campaign} setCampaign={setCampaign} />
+                  <ContentStep />
                 )}
                 {activeStep === 'game' && (
-                  <GameStep campaign={campaign} setCampaign={setCampaign} />
+                  <GameStep />
                 )}
                 {activeStep === 'wording' && (
-                  <WordingStep campaign={campaign} setCampaign={setCampaign} />
+                  <WordingStep />
                 )}
                 {activeStep === 'preview' && (
-                  <PreviewStep campaign={campaign} />
+                  <PreviewStep />
                 )}
                 {activeStep === 'publish' && (
-                  <PublishStep campaign={campaign} />
+                  <PublishStep />
                 )}
               </motion.div>
             </AnimatePresence>
@@ -196,7 +195,7 @@ const ModernCampaignEditor: React.FC<ModernCampaignEditorProps> = ({
 };
 
 // Step Components
-const SetupStep: React.FC<any> = ({ campaign, setCampaign }) => {
+const SetupStep: React.FC<{ campaign: any; setCampaign: (updater: (prev: any) => any) => void }> = ({ campaign, setCampaign }) => {
   return (
     <div className="space-y-8">
       <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-100 p-8">
@@ -213,7 +212,7 @@ const SetupStep: React.FC<any> = ({ campaign, setCampaign }) => {
               <input
                 type="text"
                 value={campaign.name}
-                onChange={(e) => setCampaign(prev => ({ ...prev, name: e.target.value }))}
+                onChange={(e) => setCampaign((prev: any) => ({ ...prev, name: e.target.value }))}
                 className="w-full px-4 py-3 bg-gray-50/50 border-0 rounded-xl focus:ring-2 focus:ring-[#841b60] focus:bg-white transition-all"
                 placeholder="Ma super campagne..."
               />
@@ -225,7 +224,7 @@ const SetupStep: React.FC<any> = ({ campaign, setCampaign }) => {
               </label>
               <textarea
                 value={campaign.description}
-                onChange={(e) => setCampaign(prev => ({ ...prev, description: e.target.value }))}
+                onChange={(e) => setCampaign((prev: any) => ({ ...prev, description: e.target.value }))}
                 rows={4}
                 className="w-full px-4 py-3 bg-gray-50/50 border-0 rounded-xl focus:ring-2 focus:ring-[#841b60] focus:bg-white transition-all resize-none"
                 placeholder="Décrivez l'objectif de votre campagne..."
@@ -240,7 +239,7 @@ const SetupStep: React.FC<any> = ({ campaign, setCampaign }) => {
   );
 };
 
-const ContentStep: React.FC<any> = ({ campaign, setCampaign }) => {
+const ContentStep: React.FC = () => {
   return (
     <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-100 p-8">
       <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2 border-[#841b60]/20 pb-2">
@@ -251,7 +250,7 @@ const ContentStep: React.FC<any> = ({ campaign, setCampaign }) => {
   );
 };
 
-const GameStep: React.FC<any> = ({ campaign, setCampaign }) => {
+const GameStep: React.FC = () => {
   return (
     <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-100 p-8">
       <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2 border-[#841b60]/20 pb-2">
@@ -262,7 +261,7 @@ const GameStep: React.FC<any> = ({ campaign, setCampaign }) => {
   );
 };
 
-const WordingStep: React.FC<any> = ({ campaign, setCampaign }) => {
+const WordingStep: React.FC = () => {
   return (
     <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-100 p-8">
       <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2 border-[#841b60]/20 pb-2">
@@ -273,7 +272,7 @@ const WordingStep: React.FC<any> = ({ campaign, setCampaign }) => {
   );
 };
 
-const PreviewStep: React.FC<any> = ({ campaign }) => {
+const PreviewStep: React.FC = () => {
   return (
     <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-100 p-8">
       <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2 border-[#841b60]/20 pb-2">
@@ -284,7 +283,7 @@ const PreviewStep: React.FC<any> = ({ campaign }) => {
   );
 };
 
-const PublishStep: React.FC<any> = ({ campaign }) => {
+const PublishStep: React.FC = () => {
   return (
     <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-100 p-8">
       <h2 className="text-2xl font-bold text-gray-900 mb-6 border-b-2 border-[#841b60]/20 pb-2">
@@ -295,7 +294,7 @@ const PublishStep: React.FC<any> = ({ campaign }) => {
   );
 };
 
-const BrandAssetsCard: React.FC<any> = ({ campaign, setCampaign }) => {
+const BrandAssetsCard: React.FC<{ campaign: any; setCampaign: (updater: (prev: any) => any) => void }> = ({ campaign, setCampaign }) => {
   return (
     <div className="bg-gradient-to-br from-[#841b60]/5 to-[#6d164f]/5 rounded-xl p-6 border border-[#841b60]/10">
       <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
@@ -319,7 +318,7 @@ const BrandAssetsCard: React.FC<any> = ({ campaign, setCampaign }) => {
               <input
                 type="color"
                 value={campaign.brandAssets.primaryColor}
-                onChange={(e) => setCampaign(prev => ({
+                onChange={(e) => setCampaign((prev: any) => ({
                   ...prev,
                   brandAssets: { ...prev.brandAssets, primaryColor: e.target.value }
                 }))}
@@ -328,7 +327,7 @@ const BrandAssetsCard: React.FC<any> = ({ campaign, setCampaign }) => {
               <input
                 type="text"
                 value={campaign.brandAssets.primaryColor}
-                onChange={(e) => setCampaign(prev => ({
+                onChange={(e) => setCampaign((prev: any) => ({
                   ...prev,
                   brandAssets: { ...prev.brandAssets, primaryColor: e.target.value }
                 }))}
@@ -343,7 +342,7 @@ const BrandAssetsCard: React.FC<any> = ({ campaign, setCampaign }) => {
               <input
                 type="color"
                 value={campaign.brandAssets.secondaryColor}
-                onChange={(e) => setCampaign(prev => ({
+                onChange={(e) => setCampaign((prev: any) => ({
                   ...prev,
                   brandAssets: { ...prev.brandAssets, secondaryColor: e.target.value }
                 }))}
@@ -352,7 +351,7 @@ const BrandAssetsCard: React.FC<any> = ({ campaign, setCampaign }) => {
               <input
                 type="text"
                 value={campaign.brandAssets.secondaryColor}
-                onChange={(e) => setCampaign(prev => ({
+                onChange={(e) => setCampaign((prev: any) => ({
                   ...prev,
                   brandAssets: { ...prev.brandAssets, secondaryColor: e.target.value }
                 }))}
@@ -366,7 +365,12 @@ const BrandAssetsCard: React.FC<any> = ({ campaign, setCampaign }) => {
   );
 };
 
-const AIAssistant: React.FC<any> = ({ campaign, setCampaign, isGenerating, onGenerate }) => {
+const AIAssistant: React.FC<{ 
+  campaign: any; 
+  setCampaign: (updater: (prev: any) => any) => void;
+  isGenerating: boolean;
+  onGenerate: () => void;
+}> = ({ isGenerating, onGenerate }) => {
   const [prompt, setPrompt] = useState('');
 
   return (
@@ -386,7 +390,7 @@ const AIAssistant: React.FC<any> = ({ campaign, setCampaign, isGenerating, onGen
         />
         
         <button
-          onClick={() => onGenerate(prompt)}
+          onClick={onGenerate}
           disabled={!prompt.trim() || isGenerating}
           className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-gradient-to-r from-[#841b60] to-[#6d164f] text-white rounded-xl hover:shadow-lg transition-all duration-300 disabled:opacity-50"
         >
