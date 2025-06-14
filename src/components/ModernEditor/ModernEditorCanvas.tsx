@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { Plus } from 'lucide-react';
 import GameCanvasPreview from '../CampaignEditor/GameCanvasPreview';
@@ -88,9 +87,9 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
     setShowAddMenu(!showAddMenu);
   };
 
-  // Fixed dimensions for consistent preview size across all tabs - increased width
-  const FIXED_CANVAS_WIDTH = 1200;
-  const FIXED_CANVAS_HEIGHT = 800;
+  // Fixed dimensions for consistent preview size across all tabs
+  const FIXED_CANVAS_WIDTH = 900;
+  const FIXED_CANVAS_HEIGHT = 700;
 
   return (
     <div className="w-full h-full flex items-center justify-center p-4 md:p-6 bg-gradient-to-br from-gray-50 to-white overflow-hidden">
