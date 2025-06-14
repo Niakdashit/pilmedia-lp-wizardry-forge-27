@@ -25,7 +25,6 @@ const Sidebar: React.FC = () => {
 
   const navItems = [
     { name: 'Tableau de bord', path: '/', icon: <LayoutDashboard className="w-5 h-5" /> },
-    { name: 'Studio Moderne', path: '/modern', icon: <Target className="w-5 h-5" /> },
     { name: 'Campagnes', path: '/campaigns', icon: <Target className="w-5 h-5" /> },
     { name: 'Gamification', path: '/gamification', icon: <Gamepad2 className="w-5 h-5" /> },
     { name: 'Newsletter', path: '/newsletter', icon: <Mail className="w-5 h-5" /> },

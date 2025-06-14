@@ -1,3 +1,4 @@
+
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import { AppProvider } from './context/AppContext';
 import { ToastContainer } from 'react-toastify';
@@ -16,7 +17,6 @@ import Statistics from './pages/Statistics';
 import Studies from './pages/Studies';
 import Account from './pages/Account';
 import ModernCampaignEditor from './pages/ModernCampaignEditor';
-import ModernDashboard from './pages/ModernDashboard';
 
 function App() {
   return (
@@ -25,7 +25,6 @@ function App() {
         <div className="min-h-screen bg-gray-50">
           <Routes>
             <Route path="/" element={<Layout><Dashboard /></Layout>} />
-            <Route path="/modern" element={<ModernDashboard />} />
             <Route path="/campaigns" element={<Layout><Campaigns /></Layout>} />
             <Route path="/campaign/:id" element={<Layout><CampaignEditor /></Layout>} />
             <Route path="/modern-campaign/:id" element={<ModernCampaignEditor />} />
@@ -37,9 +36,9 @@ function App() {
             <Route path="/data" element={<Layout><Data /></Layout>} />
             <Route path="/statistics" element={<Layout><Statistics /></Layout>} />
             <Route path="/studies" element={<Layout><Studies /></Layout>} />
-            <Route path="/account" element={<Layout><Account /></Layout>} />
-          </Routes>
-          <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
+          <Route path="/account" element={<Layout><Account /></Layout>} />
+        </Routes>
+        <ToastContainer position="top-right" autoClose={3000} hideProgressBar />
         </div>
       </Router>
     </AppProvider>
