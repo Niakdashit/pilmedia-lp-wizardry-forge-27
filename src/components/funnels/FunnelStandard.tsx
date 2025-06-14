@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import Color from 'color';
 import DynamicContactForm from '../forms/DynamicContactForm';
@@ -62,7 +63,6 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
       case 'quiz':
         return (
           <QuizGame
-            campaignId={campaign.id}
             config={campaign.gameConfig.quiz}
             design={campaign.design}
           />
