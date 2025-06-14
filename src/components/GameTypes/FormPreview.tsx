@@ -25,6 +25,8 @@ const FormPreview: React.FC<FormPreviewProps> = ({
   const buttonTextColor = design.buttonTextColor || "#fff";
   const borderColor = design.borderColor || "#E5E7EB";
   const focusColor = buttonColor;
+  const containerBackground = design.blockColor || "#ffffff";
+  const containerBorderRadius = design.borderRadius || "16px";
 
   const buttonLabel = campaign.buttonConfig?.text || campaign.gameConfig?.form?.buttonLabel || 'Valider le formulaire';
 
@@ -36,7 +38,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({
   const getSizeStyles = () => {
     switch (gameSize) {
       case 'small':
-        return { maxWidth: '300px', padding: '16px' };
+        return { maxWidth: '300px', padding: '24px' };
       case 'large':
         return { maxWidth: '600px', padding: '32px' };
       case 'xlarge':
@@ -46,11 +48,23 @@ const FormPreview: React.FC<FormPreviewProps> = ({
     }
   };
 
+  const containerStyle = {
+    backgroundColor: containerBackground,
+    borderColor: borderColor,
+    borderRadius: containerBorderRadius,
+    borderWidth: '2px',
+    borderStyle: 'solid',
+    boxShadow: design.enableShadow !== false 
+      ? '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)' 
+      : 'none',
+    ...getSizeStyles()
+  };
+
   if (isSubmitted) {
     return (
       <div 
-        className={`flex items-center justify-center bg-white rounded-lg shadow-lg ${className}`}
-        style={getSizeStyles()}
+        className={`flex items-center justify-center ${className}`}
+        style={containerStyle}
       >
         <div className="text-center py-8">
           <div className="text-green-500 text-2xl mb-4">✓</div>
@@ -67,8 +81,8 @@ const FormPreview: React.FC<FormPreviewProps> = ({
 
   return (
     <div 
-      className={`bg-white rounded-lg shadow-lg ${className}`}
-      style={getSizeStyles()}
+      className={className}
+      style={containerStyle}
     >
       <div className="mb-6">
         <h2 className="text-xl font-semibold text-gray-900 mb-2">
@@ -93,7 +107,6 @@ const FormPreview: React.FC<FormPreviewProps> = ({
             fontWeight: design.textStyles?.button?.fontWeight,
             fontSize: design.textStyles?.button?.fontSize,
           },
-          // Ajout de styles pour les champs d'input si besoin
         }}
         inputBorderColor={borderColor}
         inputFocusColor={focusColor}
@@ -103,4 +116,3 @@ const FormPreview: React.FC<FormPreviewProps> = ({
 };
 
 export default FormPreview;
-
