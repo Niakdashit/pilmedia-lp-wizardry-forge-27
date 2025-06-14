@@ -91,7 +91,7 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
   // Hauteur fixe, largeur responsive
   const FIXED_CANVAS_HEIGHT = 700;
 
-  // Préparer la configuration complète du quiz avec les styles de design
+  // Préparer la configuration complète du quiz avec les styles de design IDENTIQUES à la modal
   const enhancedCampaign = {
     ...campaign,
     gameSize,
@@ -109,7 +109,21 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
       blockColor: campaign.design?.blockColor || '#ffffff',
       borderColor: campaign.design?.borderColor || '#e5e7eb',
       borderRadius: campaign.design?.borderRadius || '8px',
-      buttonTextColor: campaign.design?.buttonTextColor || '#ffffff'
+      buttonTextColor: campaign.design?.buttonTextColor || '#ffffff',
+      // Styles spécifiques pour le quiz - alignés avec la modal
+      containerBackgroundColor: campaign.design?.blockColor || '#ffffff',
+      primaryColor: campaign.design?.buttonColor || '#841b60',
+      secondaryColor: campaign.design?.secondaryColor || '#1e40af',
+      textColor: campaign.design?.titleColor || '#1f2937',
+      secondaryTextColor: campaign.design?.secondaryTextColor || '#6b7280',
+      fontFamily: campaign.design?.fontFamily || 'Inter, sans-serif',
+      questionFontSize: '1.5rem',
+      questionFontWeight: '600',
+      optionBackgroundColor: campaign.design?.blockColor || '#ffffff',
+      optionBorderColor: campaign.design?.borderColor || '#e5e7eb',
+      enableShadow: true,
+      enableGradient: true,
+      progressBackgroundColor: '#f3f4f6'
     },
     gameConfig: {
       ...campaign.gameConfig,
@@ -161,13 +175,40 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
           />
 
           <div className="flex-1 flex relative h-full">
-            <GameCanvasPreview
-              campaign={enhancedCampaign}
-              gameSize={gameSize}
-              className="w-full h-full"
-              key={`preview-${gameSize}-${gamePosition}-${campaign.design?.buttonColor}-${campaign.design?.blockColor}-${campaign.design?.borderColor}-${JSON.stringify(campaign.gameConfig?.[campaign.type])}`}
-              previewDevice={previewDevice}
-            />
+            {/* Container spécial pour les quizzes pour assurer la cohérence avec la modal */}
+            {campaign.type === 'quiz' ? (
+              <div 
+                className="w-full h-full flex items-center justify-center"
+                style={{
+                  padding: '40px 20px',
+                  backgroundColor: campaign.design?.background || '#f8fafc'
+                }}
+              >
+                <div 
+                  className="w-full h-full flex items-center justify-center"
+                  style={{
+                    maxWidth: '800px',
+                    margin: '0 auto'
+                  }}
+                >
+                  <GameCanvasPreview
+                    campaign={enhancedCampaign}
+                    gameSize={gameSize}
+                    className="w-full h-full"
+                    key={`quiz-preview-${gameSize}-${gamePosition}-${campaign.design?.buttonColor}-${campaign.design?.blockColor}-${campaign.design?.borderColor}-${JSON.stringify(campaign.gameConfig?.[campaign.type])}`}
+                    previewDevice={previewDevice}
+                  />
+                </div>
+              </div>
+            ) : (
+              <GameCanvasPreview
+                campaign={enhancedCampaign}
+                gameSize={gameSize}
+                className="w-full h-full"
+                key={`preview-${gameSize}-${gamePosition}-${campaign.design?.buttonColor}-${campaign.design?.blockColor}-${campaign.design?.borderColor}-${JSON.stringify(campaign.gameConfig?.[campaign.type])}`}
+                previewDevice={previewDevice}
+              />
+            )}
             
             {/* Custom Text Elements */}
             {customTexts.map((customText: any) => (
