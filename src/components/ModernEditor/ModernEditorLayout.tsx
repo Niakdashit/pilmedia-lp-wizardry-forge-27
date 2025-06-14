@@ -20,7 +20,6 @@ interface ModernEditorLayoutProps {
   onPreview: () => void;
   isLoading: boolean;
   campaignType: CampaignType;
-  isNewCampaign: boolean;
   gameTypeLabels: Record<CampaignType, string>;
   aiGenerated?: boolean;
   onBackToAI?: () => void;
@@ -37,7 +36,6 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
   onPreview,
   isLoading,
   campaignType,
-  isNewCampaign,
   gameTypeLabels,
   aiGenerated = false,
   onBackToAI
@@ -92,7 +90,6 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
               onSave={onSave}
               onPreview={onPreview}
               isLoading={isLoading}
-              isPanelOpen={isPanelOpen}
               onTogglePanel={() => setIsPanelOpen(!isPanelOpen)}
             />
           </div>
@@ -114,6 +111,8 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
 
         {/* Mobile Panel */}
         <EditorMobilePanel
+          isOpen={isPanelOpen}
+          onClose={() => setIsPanelOpen(false)}
           activeTab={activeTab}
           onTabChange={onTabChange}
           campaign={campaign}
@@ -127,7 +126,6 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
             campaign={campaign}
             setCampaign={setCampaign}
             previewDevice={previewDevice}
-            onDeviceChange={onDeviceChange}
             gameTypeLabel={gameTypeLabels[campaignType]}
           />
         </div>
