@@ -1,6 +1,10 @@
 
 import React, { useState, useEffect } from 'react';
-import { CheckCircle, Clock } from 'lucide-react';
+import QuizContainer from './Quiz/QuizContainer';
+import QuizProgress from './Quiz/QuizProgress';
+import QuizQuestion from './Quiz/QuizQuestion';
+import QuizOption from './Quiz/QuizOption';
+import QuizResults from './Quiz/QuizResults';
 
 interface QuizGameProps {
   config: any;
@@ -17,33 +21,31 @@ const QuizGame: React.FC<QuizGameProps> = ({
   const [selectedAnswers, setSelectedAnswers] = useState<Record<number, any>>({});
   const [showResults, setShowResults] = useState(false);
   const [timeLeft, setTimeLeft] = useState<number | null>(null);
+  const [score, setScore] = useState(0);
 
   const questions = config?.questions || [];
   const currentQuestion = questions[currentQuestionIndex];
 
-  const styles = {
-    container: {
-      backgroundColor: design.blockColor || design.containerBackgroundColor || '#ffffff',
-      borderColor: design.borderColor || '#e5e7eb',
-      borderRadius: design.borderRadius || '8px',
-      borderWidth: '1px',
-      borderStyle: 'solid'
-    },
-    question: {
-      color: design.textColor || design.titleColor || '#000000',
-      fontFamily: design.fontFamily || 'Inter, sans-serif'
-    },
-    option: {
-      backgroundColor: design.optionBackgroundColor || design.blockColor || '#ffffff',
-      borderColor: design.optionBorderColor || design.borderColor || '#e5e7eb',
-      borderRadius: design.borderRadius || '8px',
-      color: design.textColor || '#000000'
-    },
-    button: {
-      backgroundColor: design.buttonColor || '#841b60',
-      color: design.buttonTextColor || '#ffffff',
-      borderRadius: design.borderRadius || '8px'
-    }
+  // Enhanced design with better defaults
+  const enhancedDesign = {
+    containerBackgroundColor: design.containerBackgroundColor || '#ffffff',
+    background: design.background || '#f8fafc',
+    borderColor: design.borderColor || '#e5e7eb',
+    borderRadius: design.borderRadius || '16px',
+    primaryColor: design.primaryColor || '#841b60',
+    secondaryColor: design.secondaryColor || '#1e40af',
+    textColor: design.textColor || design.titleColor || '#1f2937',
+    secondaryTextColor: design.secondaryTextColor || '#6b7280',
+    fontFamily: design.fontFamily || 'Inter, sans-serif',
+    questionFontSize: design.questionFontSize || '1.5rem',
+    questionFontWeight: design.questionFontWeight || '600',
+    optionBackgroundColor: design.optionBackgroundColor || '#ffffff',
+    optionBorderColor: design.optionBorderColor || '#e5e7eb',
+    buttonTextColor: design.buttonTextColor || '#ffffff',
+    enableShadow: design.enableShadow !== false,
+    enableGradient: design.enableGradient !== false,
+    progressBackgroundColor: design.progressBackgroundColor || '#f3f4f6',
+    ...design
   };
 
   useEffect(() => {
@@ -82,56 +84,66 @@ const QuizGame: React.FC<QuizGameProps> = ({
     }
   };
 
+  const calculateCurrentScore = () => {
+    let currentScore = 0;
+    for (let i = 0; i <= currentQuestionIndex; i++) {
+      const question = questions[i];
+      const userAnswers = selectedAnswers[i] || [];
+      const correctAnswers = question?.options
+        ?.filter((opt: any) => opt.isCorrect)
+        ?.map((opt: any) => opt.id) || [];
+      
+      if (JSON.stringify(userAnswers.sort()) === JSON.stringify(correctAnswers.sort())) {
+        currentScore++;
+      }
+    }
+    return currentScore;
+  };
+
   const handleNextQuestion = () => {
+    const newScore = calculateCurrentScore();
+    setScore(newScore);
+
     if (currentQuestionIndex < questions.length - 1) {
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
       setShowResults(true);
       if (onGameComplete) {
-        const score = calculateScore();
-        onGameComplete({ score, total: questions.length });
+        onGameComplete({ score: newScore, total: questions.length });
       }
     }
   };
 
-  const calculateScore = () => {
-    let correct = 0;
-    questions.forEach((question: any, index: number) => {
-      const userAnswers = selectedAnswers[index] || [];
-      const correctAnswers = question.options
-        .filter((opt: any) => opt.isCorrect)
-        .map((opt: any) => opt.id);
-      
-      if (JSON.stringify(userAnswers.sort()) === JSON.stringify(correctAnswers.sort())) {
-        correct++;
-      }
-    });
-    return correct;
+  const handleRestart = () => {
+    setCurrentQuestionIndex(0);
+    setSelectedAnswers({});
+    setShowResults(false);
+    setScore(0);
+    setTimeLeft(null);
   };
 
   if (!currentQuestion && !showResults) {
     return (
-      <div className="flex items-center justify-center p-8" style={styles.container}>
-        <p style={styles.question}>Aucune question configurée</p>
-      </div>
+      <QuizContainer design={enhancedDesign} className="p-8">
+        <div className="text-center">
+          <p className="text-lg" style={{ color: enhancedDesign.textColor }}>
+            Aucune question configurée
+          </p>
+        </div>
+      </QuizContainer>
     );
   }
 
   if (showResults) {
-    const score = calculateScore();
     return (
-      <div className="p-6 text-center" style={styles.container}>
-        <h3 className="text-2xl font-bold mb-4" style={styles.question}>
-          Quiz terminé !
-        </h3>
-        <p className="text-lg mb-4" style={styles.question}>
-          Votre score : {score}/{questions.length}
-        </p>
-        <div className="text-sm" style={{ color: styles.question.color }}>
-          {score === questions.length ? '🎉 Parfait !' : 
-           score >= questions.length / 2 ? '👍 Bien joué !' : '💪 Continuez vos efforts !'}
-        </div>
-      </div>
+      <QuizContainer design={enhancedDesign}>
+        <QuizResults
+          score={score}
+          totalQuestions={questions.length}
+          design={enhancedDesign}
+          onRestart={handleRestart}
+        />
+      </QuizContainer>
     );
   }
 
@@ -139,94 +151,47 @@ const QuizGame: React.FC<QuizGameProps> = ({
   const isMultiple = currentQuestion.type === 'multiple';
 
   return (
-    <div className="p-6 max-w-2xl mx-auto" style={styles.container}>
-      {/* Header avec numéro de question et timer */}
-      <div className="flex justify-between items-center mb-6">
-        <span className="text-sm font-medium" style={styles.question}>
-          Question {currentQuestionIndex + 1} / {questions.length}
-        </span>
-        {timeLeft !== null && (
-          <div className="flex items-center space-x-2 text-sm" style={styles.question}>
-            <Clock className="w-4 h-4" />
-            <span>{timeLeft}s</span>
-          </div>
-        )}
-      </div>
+    <QuizContainer design={enhancedDesign} className="p-6 max-w-2xl mx-auto">
+      <QuizProgress
+        currentQuestion={currentQuestionIndex}
+        totalQuestions={questions.length}
+        timeLeft={timeLeft}
+        design={enhancedDesign}
+        score={score}
+      />
 
-      {/* Image de la question */}
-      {currentQuestion.image && (
-        <div className="mb-6">
-          <img
-            src={currentQuestion.image}
-            alt="Question"
-            className="w-full max-h-48 object-cover rounded-lg"
-          />
-        </div>
-      )}
+      <QuizQuestion question={currentQuestion} design={enhancedDesign} />
 
-      {/* Texte de la question */}
-      <h3 className="text-xl font-semibold mb-6" style={styles.question}>
-        {currentQuestion.text}
-      </h3>
-
-      {/* Options de réponse */}
-      <div className="space-y-3 mb-6">
-        {currentQuestion.options?.map((option: any) => (
-          <button
+      {/* Options */}
+      <div className="space-y-3 mb-8">
+        {currentQuestion.options?.map((option: any, index: number) => (
+          <QuizOption
             key={option.id}
-            onClick={() => handleAnswerSelect(option.id, isMultiple)}
-            className={`w-full p-4 text-left border-2 rounded-lg transition-all ${
-              currentAnswers.includes(option.id)
-                ? 'ring-2 ring-offset-2'
-                : 'hover:shadow-md'
-            }`}
-            style={{
-              ...styles.option,
-              borderColor: currentAnswers.includes(option.id) 
-                ? styles.button.backgroundColor 
-                : styles.option.borderColor,
-              backgroundColor: currentAnswers.includes(option.id)
-                ? `${styles.button.backgroundColor}10`
-                : styles.option.backgroundColor
-            }}
-          >
-            <div className="flex items-center space-x-3">
-              <div
-                className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-                  isMultiple ? 'rounded-sm' : ''
-                }`}
-                style={{
-                  borderColor: currentAnswers.includes(option.id) 
-                    ? styles.button.backgroundColor 
-                    : styles.option.borderColor,
-                  backgroundColor: currentAnswers.includes(option.id) 
-                    ? styles.button.backgroundColor 
-                    : 'transparent'
-                }}
-              >
-                {currentAnswers.includes(option.id) && (
-                  <CheckCircle className="w-3 h-3" style={{ color: styles.button.color }} />
-                )}
-              </div>
-              <span>{option.text}</span>
-            </div>
-          </button>
+            option={option}
+            isSelected={currentAnswers.includes(option.id)}
+            isMultiple={isMultiple}
+            onSelect={() => handleAnswerSelect(option.id, isMultiple)}
+            design={enhancedDesign}
+            index={index}
+          />
         ))}
       </div>
 
-      {/* Bouton suivant */}
+      {/* Next button */}
       <button
         onClick={handleNextQuestion}
         disabled={currentAnswers.length === 0}
-        className="w-full py-3 px-6 rounded-lg font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full py-4 px-6 font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:shadow-lg enabled:hover:scale-[1.02]"
         style={{
-          ...styles.button,
+          backgroundColor: enhancedDesign.primaryColor,
+          color: enhancedDesign.buttonTextColor,
+          borderRadius: enhancedDesign.borderRadius,
           opacity: currentAnswers.length === 0 ? 0.5 : 1
         }}
       >
         {currentQuestionIndex < questions.length - 1 ? 'Question suivante' : 'Voir les résultats'}
       </button>
-    </div>
+    </QuizContainer>
   );
 };
 
