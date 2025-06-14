@@ -12,10 +12,7 @@ const ModernCampaignEditor: React.FC<ModernCampaignEditorProps> = ({
   isNew = false 
 }) => {
   return (
-    <ModernEditorLayout 
-      campaignId={campaignId}
-      isNew={isNew}
-    />
+    <ModernEditorLayout />
   );
 };
 

@@ -8,6 +8,12 @@ interface BrandAssetsCardProps {
 }
 
 const BrandAssetsCard: React.FC<BrandAssetsCardProps> = ({ campaign, setCampaign }) => {
+  // Ensure brandAssets exists with default values
+  const brandAssets = campaign.brandAssets || {
+    primaryColor: '#841b60',
+    secondaryColor: '#ffffff'
+  };
+
   return (
     <div className="bg-gradient-to-br from-[#841b60]/5 to-[#6d164f]/5 rounded-xl p-6 border border-[#841b60]/10">
       <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
@@ -30,19 +36,25 @@ const BrandAssetsCard: React.FC<BrandAssetsCardProps> = ({ campaign, setCampaign
             <div className="flex items-center space-x-2">
               <input
                 type="color"
-                value={campaign.brandAssets.primaryColor}
+                value={brandAssets.primaryColor}
                 onChange={(e) => setCampaign((prev: any) => ({
                   ...prev,
-                  brandAssets: { ...prev.brandAssets, primaryColor: e.target.value }
+                  brandAssets: { 
+                    ...prev.brandAssets, 
+                    primaryColor: e.target.value 
+                  }
                 }))}
                 className="w-12 h-12 rounded-xl border-2 border-gray-200 cursor-pointer"
               />
               <input
                 type="text"
-                value={campaign.brandAssets.primaryColor}
+                value={brandAssets.primaryColor}
                 onChange={(e) => setCampaign((prev: any) => ({
                   ...prev,
-                  brandAssets: { ...prev.brandAssets, primaryColor: e.target.value }
+                  brandAssets: { 
+                    ...prev.brandAssets, 
+                    primaryColor: e.target.value 
+                  }
                 }))}
                 className="flex-1 px-3 py-2 bg-white/50 border-0 rounded-lg focus:ring-2 focus:ring-[#841b60]"
               />
@@ -54,19 +66,25 @@ const BrandAssetsCard: React.FC<BrandAssetsCardProps> = ({ campaign, setCampaign
             <div className="flex items-center space-x-2">
               <input
                 type="color"
-                value={campaign.brandAssets.secondaryColor}
+                value={brandAssets.secondaryColor}
                 onChange={(e) => setCampaign((prev: any) => ({
                   ...prev,
-                  brandAssets: { ...prev.brandAssets, secondaryColor: e.target.value }
+                  brandAssets: { 
+                    ...prev.brandAssets, 
+                    secondaryColor: e.target.value 
+                  }
                 }))}
                 className="w-12 h-12 rounded-xl border-2 border-gray-200 cursor-pointer"
               />
               <input
                 type="text"
-                value={campaign.brandAssets.secondaryColor}
+                value={brandAssets.secondaryColor}
                 onChange={(e) => setCampaign((prev: any) => ({
                   ...prev,
-                  brandAssets: { ...prev.brandAssets, secondaryColor: e.target.value }
+                  brandAssets: { 
+                    ...prev.brandAssets, 
+                    secondaryColor: e.target.value 
+                  }
                 }))}
                 className="flex-1 px-3 py-2 bg-white/50 border-0 rounded-lg focus:ring-2 focus:ring-[#841b60]"
               />
