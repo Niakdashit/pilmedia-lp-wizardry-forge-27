@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import QuizContainer from './Quiz/QuizContainer';
 import QuizProgress from './Quiz/QuizProgress';
@@ -21,7 +20,6 @@ const QuizGame: React.FC<QuizGameProps> = ({
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<Record<number, any>>({});
   const [showResults, setShowResults] = useState(false);
-  const [timeLeft, setTimeLeft] = useState<number | null>(null);
   const [score, setScore] = useState(0);
 
   const questions = config?.questions || [];
@@ -101,7 +99,6 @@ const QuizGame: React.FC<QuizGameProps> = ({
     setSelectedAnswers({});
     setShowResults(false);
     setScore(0);
-    setTimeLeft(null);
   };
 
   if (!currentQuestion && !showResults) {
