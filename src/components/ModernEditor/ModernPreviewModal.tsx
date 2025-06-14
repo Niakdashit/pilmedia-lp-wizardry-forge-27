@@ -40,7 +40,7 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
       backgroundColor: campaign.design?.background || '#f9fafb',
       position: 'relative' as const,
       overflow: 'auto' as const,
-      padding: '20px'
+      padding: campaign.type === 'quiz' ? '40px 20px' : '20px'
     } as React.CSSProperties;
 
     if (campaign.design?.backgroundImage) {
@@ -85,16 +85,31 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
     const funnel =
       enhancedCampaign.funnel ||
       (unlockedTypes.includes(enhancedCampaign.type) ? 'unlocked_game' : 'standard');
+    
+    const componentStyle = campaign.type === 'quiz' ? {
+      width: '100%',
+      height: '100%',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
+    } : {};
+    
     if (funnel === 'unlocked_game') {
       return (
-        <FunnelUnlockedGame
-          campaign={enhancedCampaign}
-          previewMode={device === 'desktop' ? 'desktop' : device}
-          modalContained={false}
-        />
+        <div style={componentStyle}>
+          <FunnelUnlockedGame
+            campaign={enhancedCampaign}
+            previewMode={device === 'desktop' ? 'desktop' : device}
+            modalContained={false}
+          />
+        </div>
       );
     }
-    return <FunnelStandard campaign={enhancedCampaign} />;
+    return (
+      <div style={componentStyle}>
+        <FunnelStandard campaign={enhancedCampaign} />
+      </div>
+    );
   };
 
   return (
@@ -152,7 +167,12 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
                 )}
                 <div
                   className="relative z-10 w-full h-full"
-                  style={{ minHeight: device === 'desktop' ? '600px' : '100%' }}
+                  style={{ 
+                    minHeight: device === 'desktop' ? '600px' : '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
                 >
                   {getFunnelComponent()}
                 </div>
