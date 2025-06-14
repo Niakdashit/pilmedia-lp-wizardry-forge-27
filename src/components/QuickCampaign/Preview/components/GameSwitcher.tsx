@@ -1,7 +1,8 @@
 
 import React from 'react';
 import WheelPreview from '../../../GameTypes/WheelPreview';
-import { Jackpot, QuizGame } from '../../../GameTypes';
+import { Jackpot } from '../../../GameTypes';
+import QuizPreview from '../../../GameTypes/QuizPreview';
 import ScratchPreview from '../../../GameTypes/ScratchPreview';
 import DicePreview from '../../../GameTypes/DicePreview';
 import FormPreview from '../../../GameTypes/FormPreview';
@@ -51,12 +52,21 @@ const GameSwitcher: React.FC<GameSwitcherProps> = ({
     ...containerStyle,
     minHeight: '400px',
     padding: '20px',
-    boxSizing: 'border-box' as const
+    boxSizing: 'border-box' as const,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden'
   };
 
   const baseWrapperStyle = {
     ...wrapperStyle,
-    ...getPositionStyles()
+    ...getPositionStyles(),
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    height: '100%'
   };
 
   switch (gameType) {
@@ -120,7 +130,6 @@ const GameSwitcher: React.FC<GameSwitcherProps> = ({
         </div>
       );
 
-
     case 'dice':
       return (
         <div style={baseContainerStyle}>
@@ -136,11 +145,19 @@ const GameSwitcher: React.FC<GameSwitcherProps> = ({
       return (
         <div style={baseContainerStyle}>
           <div style={baseWrapperStyle}>
-            <QuizGame
-              config={mockCampaign.gameConfig?.quiz || {}}
-              design={synchronizedCampaign.design}
-              onGameComplete={() => {}}
-            />
+            <div style={{ 
+              width: '100%', 
+              maxWidth: '800px', 
+              margin: '0 auto',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <QuizPreview
+                config={mockCampaign.gameConfig?.quiz || {}}
+                design={synchronizedCampaign.design}
+              />
+            </div>
           </div>
         </div>
       );

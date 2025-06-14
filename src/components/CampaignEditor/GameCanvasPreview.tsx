@@ -1,3 +1,4 @@
+
 import React from 'react';
 import GameRenderer from './GameRenderer';
 import { GameSize } from '../configurators/GameSizeSelector';
@@ -18,7 +19,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   className = '',
   previewDevice = 'desktop'
 }) => {
-  // Résoudre l’image de fond à afficher (priorité à la prop, fallback sur config)
+  // Résoudre l'image de fond à afficher (priorité à la prop, fallback sur config)
   const resolvedBackground =
     gameBackgroundImage || getCampaignBackgroundImage(campaign, previewDevice);
 
@@ -53,7 +54,7 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
           />
         )}
 
-        {/* Conteneur du jeu centré (remplit tout l’espace, centre la mécanique) */}
+        {/* Conteneur du jeu centré avec contraintes pour éviter les débordements */}
         <div 
           className="relative z-10"
           style={{
@@ -61,17 +62,29 @@ const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
             alignItems: 'center',
             justifyContent: 'center',
             width: '100%',
-            height: '100%'
+            height: '100%',
+            maxWidth: '100%',
+            maxHeight: '100%',
+            overflow: 'hidden'
           }}
         >
-          <GameRenderer
-            campaign={campaign}
-            gameSize={gameSize}
-            previewDevice={previewDevice}
-            buttonLabel={campaign.buttonConfig?.text || 'Jouer'}
-            buttonColor={campaign.buttonConfig?.color || '#841b60'}
-            gameBackgroundImage={resolvedBackground}
-          />
+          <div style={{
+            width: '100%',
+            height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            maxWidth: campaign.type === 'quiz' ? '900px' : '100%'
+          }}>
+            <GameRenderer
+              campaign={campaign}
+              gameSize={gameSize}
+              previewDevice={previewDevice}
+              buttonLabel={campaign.buttonConfig?.text || 'Jouer'}
+              buttonColor={campaign.buttonConfig?.color || '#841b60'}
+              gameBackgroundImage={resolvedBackground}
+            />
+          </div>
         </div>
       </div>
     </div>
