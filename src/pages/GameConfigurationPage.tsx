@@ -11,8 +11,8 @@ const GameConfigurationPage: React.FC = () => {
   const handleNext = (config: any) => {
     // Store config in localStorage or state management
     localStorage.setItem('gameConfig', JSON.stringify(config));
-    // Navigate to next step (Brand Customization - Step 3)
-    navigate(`/gamification/customization?type=${gameType}`);
+    // Navigate to Brand Customization (Step 3)
+    navigate(`/gamification/brand-customization?type=${gameType}`);
   };
 
   const handleBack = () => {
