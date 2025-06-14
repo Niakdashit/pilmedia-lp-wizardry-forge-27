@@ -1,8 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Zap, FolderOpen, Layers } from 'lucide-react';
+import { FolderOpen, Layers } from 'lucide-react';
 import { getCampaignTypeIcon } from '../../utils/campaignTypes';
 import { GameType } from './types';
+
 const QuickCreationSection: React.FC = () => {
   const gameTypes: GameType[] = [{
     type: 'wheel',
