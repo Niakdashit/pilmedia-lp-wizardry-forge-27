@@ -16,7 +16,7 @@ interface EditorMobilePanelProps {
   campaignType: CampaignType;
 }
 
-const EditorMobilePanel: React.FC<EditorMobilePanelProps> = ({
+const EditorMobilePanelProps: React.FC<EditorMobilePanelProps> = ({
   isOpen,
   onClose,
   activeTab,
@@ -43,7 +43,7 @@ const EditorMobilePanel: React.FC<EditorMobilePanelProps> = ({
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: -400, opacity: 0 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="fixed inset-0 w-full max-w-full sm:max-w-sm bg-white/95 backdrop-blur-md border-r border-gray-200/50 shadow-xl z-40 h-full overflow-y-auto relative md:hidden"
+            className="fixed inset-0 w-full max-w-full sm:max-w-md bg-white/95 backdrop-blur-md border-r border-gray-200/50 shadow-xl z-40 h-full overflow-y-auto relative md:hidden"
           >
             {/* Mobile close button */}
             <button
@@ -79,4 +79,4 @@ const EditorMobilePanel: React.FC<EditorMobilePanelProps> = ({
   );
 };
 
-export default EditorMobilePanel;
+export default EditorMobilePanelProps;

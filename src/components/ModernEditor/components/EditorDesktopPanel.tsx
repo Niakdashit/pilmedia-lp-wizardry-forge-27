@@ -33,7 +33,7 @@ const EditorDesktopPanel: React.FC<EditorDesktopPanelProps> = ({
           animate={{ x: 0, opacity: 1 }}
           exit={{ x: -400, opacity: 0 }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          className="hidden md:flex md:w-72 lg:w-80 xl:w-96 bg-white/95 backdrop-blur-md border-r border-gray-200/50 shadow-xl z-40 h-full overflow-y-auto relative"
+          className="hidden md:flex md:w-80 lg:w-96 xl:w-[420px] bg-white/95 backdrop-blur-md border-r border-gray-200/50 shadow-xl z-40 h-full overflow-y-auto relative"
         >
           {/* Panel collapse button - desktop only */}
           <button
