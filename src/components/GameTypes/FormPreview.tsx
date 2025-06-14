@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import DynamicContactForm from '../forms/DynamicContactForm';
 import { DEFAULT_FIELDS } from '../../utils/wheelConfig';
@@ -18,6 +19,12 @@ const FormPreview: React.FC<FormPreviewProps> = ({
   const fields = Array.isArray(campaign.formFields) && campaign.formFields.length > 0
     ? campaign.formFields 
     : DEFAULT_FIELDS;
+
+  const design = campaign.design || {};
+  const buttonColor = design.buttonColor || "#841b60";
+  const buttonTextColor = design.buttonTextColor || "#fff";
+  const borderColor = design.borderColor || "#E5E7EB";
+  const focusColor = buttonColor;
 
   const buttonLabel = campaign.buttonConfig?.text || campaign.gameConfig?.form?.buttonLabel || 'Valider le formulaire';
 
@@ -77,12 +84,23 @@ const FormPreview: React.FC<FormPreviewProps> = ({
         submitLabel={buttonLabel}
         onSubmit={handleFormSubmit}
         textStyles={{
-          label: campaign.design.textStyles?.label,
-          button: campaign.design.textStyles?.button
+          label: design.textStyles?.label,
+          button: {
+            backgroundColor: buttonColor,
+            color: buttonTextColor,
+            borderRadius: design.borderRadius,
+            fontFamily: design.fontFamily,
+            fontWeight: design.textStyles?.button?.fontWeight,
+            fontSize: design.textStyles?.button?.fontSize,
+          },
+          // Ajout de styles pour les champs d'input si besoin
         }}
+        inputBorderColor={borderColor}
+        inputFocusColor={focusColor}
       />
     </div>
   );
 };
 
 export default FormPreview;
+
