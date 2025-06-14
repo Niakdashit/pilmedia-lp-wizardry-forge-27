@@ -1,4 +1,3 @@
-
 import React from 'react';
 import ContrastBackground from '../../common/ContrastBackground';
 import ValidationMessage from '../../common/ValidationMessage';
@@ -117,7 +116,6 @@ const GameRenderer: React.FC<GameRendererProps> = ({
       case 'quiz':
         return (
           <QuizGame
-            campaignId={campaign.id}
             config={campaign.gameConfig?.quiz || {}}
             design={campaign.design}
           />

@@ -38,7 +38,6 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
       case 'quiz':
         return (
           <QuizGame
-            campaignId={campaign.id}
             config={campaign.gameConfig.quiz}
             design={campaign.design}
           />

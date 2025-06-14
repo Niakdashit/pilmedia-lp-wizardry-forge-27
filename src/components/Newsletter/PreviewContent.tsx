@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import Color from 'color';
 import confetti from 'canvas-confetti';
@@ -62,7 +61,6 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
       case 'quiz':
         return (
           <QuizGame
-            campaignId={campaign.id}
             config={campaign.gameConfig.quiz}
           />
         );

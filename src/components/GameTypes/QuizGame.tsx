@@ -1,19 +1,17 @@
 
 import React, { useState, useEffect } from 'react';
-import { CheckCircle, XCircle, Clock } from 'lucide-react';
+import { CheckCircle, Clock } from 'lucide-react';
 
 interface QuizGameProps {
   config: any;
   design?: any;
   onGameComplete?: (result: any) => void;
-  isPreview?: boolean;
 }
 
 const QuizGame: React.FC<QuizGameProps> = ({
   config,
   design = {},
-  onGameComplete,
-  isPreview = false
+  onGameComplete
 }) => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswers, setSelectedAnswers] = useState<Record<number, any>>({});
@@ -189,8 +187,7 @@ const QuizGame: React.FC<QuizGameProps> = ({
                 : styles.option.borderColor,
               backgroundColor: currentAnswers.includes(option.id)
                 ? `${styles.button.backgroundColor}10`
-                : styles.option.backgroundColor,
-              ringColor: styles.button.backgroundColor
+                : styles.option.backgroundColor
             }}
           >
             <div className="flex items-center space-x-3">

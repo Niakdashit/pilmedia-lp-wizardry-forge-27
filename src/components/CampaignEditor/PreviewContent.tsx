@@ -67,7 +67,6 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
       case 'quiz':
         return (
           <QuizGame
-            campaignId={campaign.id}
             config={campaign.gameConfig.quiz}
             design={campaign.design}
           />

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import WheelPreview from '../../../GameTypes/WheelPreview';
 import { Jackpot, QuizGame } from '../../../GameTypes';
@@ -137,7 +136,6 @@ const GameSwitcher: React.FC<GameSwitcherProps> = ({
         <div style={baseContainerStyle}>
           <div style={baseWrapperStyle}>
             <QuizGame
-              campaignId={synchronizedCampaign.id}
               config={mockCampaign.gameConfig?.quiz || {}}
             />
           </div>
