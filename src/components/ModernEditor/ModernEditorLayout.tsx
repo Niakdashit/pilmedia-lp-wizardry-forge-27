@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Eye, Save, Monitor, Tablet, Smartphone, Menu, X, ArrowLeft } from 'lucide-react';
@@ -181,8 +182,8 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
         </div>
       </div>
 
-      {/* Main content area */}
-      <div className="flex w-full pt-16 md:pt-20 h-screen">
+      {/* Main content area - Increased top padding to prevent cutoff */}
+      <div className="flex w-full pt-24 md:pt-20 h-screen">
         {/* Mobile overlay */}
         {isMobilePanelOpen && (
           <div
@@ -254,8 +255,8 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
           </div>
         )}
 
-        {/* Canvas area - Fixed container to prevent layout shifts */}
-        <div className="flex-1 h-full overflow-hidden bg-gradient-to-br from-gray-50 to-white">
+        {/* Canvas area - Fixed container with increased padding to prevent overflow */}
+        <div className="flex-1 h-full overflow-hidden bg-gradient-to-br from-gray-50 to-white" style={{ paddingTop: '2rem', paddingBottom: '2rem' }}>
           <ModernEditorCanvas
             campaign={campaign}
             setCampaign={setCampaign}
