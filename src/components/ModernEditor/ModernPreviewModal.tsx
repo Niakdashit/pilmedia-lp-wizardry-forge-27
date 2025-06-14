@@ -75,32 +75,17 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
       enhancedCampaign.funnel ||
       (unlockedTypes.includes(enhancedCampaign.type) ? 'unlocked_game' : 'standard');
     
-    // Style spécial pour les quiz - conteneur avec cadre blanc
-    const componentStyle = campaign.type === 'quiz' ? {
-      backgroundColor: '#ffffff',
-      borderRadius: '16px',
-      boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
-      border: '2px solid #e5e7eb',
-      padding: '32px',
-      maxWidth: '600px',
-      width: '100%'
-    } : {};
-    
     if (funnel === 'unlocked_game') {
       return (
-        <div style={componentStyle}>
-          <FunnelUnlockedGame
-            campaign={enhancedCampaign}
-            previewMode={device === 'desktop' ? 'desktop' : device}
-            modalContained={false}
-          />
-        </div>
+        <FunnelUnlockedGame
+          campaign={enhancedCampaign}
+          previewMode={device === 'desktop' ? 'desktop' : device}
+          modalContained={false}
+        />
       );
     }
     return (
-      <div style={componentStyle}>
-        <FunnelStandard campaign={enhancedCampaign} />
-      </div>
+      <FunnelStandard campaign={enhancedCampaign} />
     );
   };
 

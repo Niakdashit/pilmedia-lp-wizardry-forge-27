@@ -116,23 +116,54 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
 
       {step === 'form' && (
         <div className="w-full max-w-md p-6">
-          <h2
-            className="text-2xl font-bold mb-4"
-            style={{
-              ...campaign.design.textStyles?.title
-            }}
-          >
-            {campaign.screens[1]?.title || 'Your Information'}
-          </h2>
-          <DynamicContactForm
-            fields={fields}
-            submitLabel={participationLoading ? "Chargement..." : (campaign.screens[1]?.buttonText || "Continuer")}
-            onSubmit={handleFormSubmit}
-            textStyles={{
-              label: campaign.design.textStyles?.label,
-              button: campaign.design.textStyles?.button
-            }}
-          />
+          {/* Cadre blanc spécial pour les quiz */}
+          {campaign.type === 'quiz' ? (
+            <div 
+              className="p-8 rounded-2xl shadow-xl border-2"
+              style={{
+                backgroundColor: '#ffffff',
+                borderColor: '#e5e7eb'
+              }}
+            >
+              <h2
+                className="text-2xl font-bold mb-4"
+                style={{
+                  ...campaign.design.textStyles?.title
+                }}
+              >
+                {campaign.screens[1]?.title || 'Your Information'}
+              </h2>
+              <DynamicContactForm
+                fields={fields}
+                submitLabel={participationLoading ? "Chargement..." : (campaign.screens[1]?.buttonText || "Continuer")}
+                onSubmit={handleFormSubmit}
+                textStyles={{
+                  label: campaign.design.textStyles?.label,
+                  button: campaign.design.textStyles?.button
+                }}
+              />
+            </div>
+          ) : (
+            <div>
+              <h2
+                className="text-2xl font-bold mb-4"
+                style={{
+                  ...campaign.design.textStyles?.title
+                }}
+              >
+                {campaign.screens[1]?.title || 'Your Information'}
+              </h2>
+              <DynamicContactForm
+                fields={fields}
+                submitLabel={participationLoading ? "Chargement..." : (campaign.screens[1]?.buttonText || "Continuer")}
+                onSubmit={handleFormSubmit}
+                textStyles={{
+                  label: campaign.design.textStyles?.label,
+                  button: campaign.design.textStyles?.button
+                }}
+              />
+            </div>
+          )}
         </div>
       )}
 
