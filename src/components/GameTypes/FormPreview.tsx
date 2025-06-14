@@ -48,67 +48,69 @@ const FormPreview: React.FC<FormPreviewProps> = ({
     }
   };
 
-  // Conteneur pour le CADRE du formulaire : couleur, bordure, arrondi
   const containerStyle = {
-    backgroundColor: containerBackground, // cadre visible
+    backgroundColor: containerBackground,
     borderColor: borderColor,
     borderRadius: containerBorderRadius,
     borderWidth: '2px',
     borderStyle: 'solid',
     boxShadow: design.enableShadow !== false 
-      ? '0 8px 24px 0 rgb(0 0 0 / 0.11), 0 1.5px 8px -2px rgb(0 0 0 / 0.03)' 
+      ? '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)' 
       : 'none',
     ...getSizeStyles()
   };
 
-  // Centrage vertical et horizontal, fond subtil transparent (pour se détacher de l'image sous-jacente)
-  return (
-    <div className={`w-full h-full flex items-center justify-center ${className}`} style={{ minHeight: '350px', pointerEvents: 'auto' }}>
-      <div style={containerStyle} className="mx-auto w-full">
-        {isSubmitted ? (
-          <div className="flex items-center justify-center" style={{ minHeight: '220px' }}>
-            <div className="text-center py-8 w-full">
-              <div className="text-green-500 text-2xl mb-4">✓</div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Formulaire soumis !
-              </h3>
-              <p className="text-gray-600">
-                Merci pour votre participation
-              </p>
-            </div>
-          </div>
-        ) : (
-          <>
-            <div className="mb-6">
-              <h2 className="text-xl font-semibold text-gray-900 mb-2 text-center">
-                {campaign.screens?.[1]?.title || 'Vos informations'}
-              </h2>
-              <p className="text-gray-600 text-sm text-center">
-                {campaign.screens?.[1]?.description || 'Remplissez le formulaire ci-dessous'}
-              </p>
-            </div>
-            
-            <DynamicContactForm
-              fields={fields}
-              submitLabel={buttonLabel}
-              onSubmit={handleFormSubmit}
-              textStyles={{
-                label: design.textStyles?.label,
-                button: {
-                  backgroundColor: buttonColor,
-                  color: buttonTextColor,
-                  borderRadius: design.borderRadius,
-                  fontFamily: design.fontFamily,
-                  fontWeight: design.textStyles?.button?.fontWeight,
-                  fontSize: design.textStyles?.button?.fontSize,
-                },
-              }}
-              inputBorderColor={borderColor}
-              inputFocusColor={focusColor}
-            />
-          </>
-        )}
+  if (isSubmitted) {
+    return (
+      <div 
+        className={`flex items-center justify-center ${className}`}
+        style={containerStyle}
+      >
+        <div className="text-center py-8">
+          <div className="text-green-500 text-2xl mb-4">✓</div>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+            Formulaire soumis !
+          </h3>
+          <p className="text-gray-600">
+            Merci pour votre participation
+          </p>
+        </div>
       </div>
+    );
+  }
+
+  return (
+    <div 
+      className={className}
+      style={containerStyle}
+    >
+      <div className="mb-6">
+        <h2 className="text-xl font-semibold text-gray-900 mb-2">
+          {campaign.screens?.[1]?.title || 'Vos informations'}
+        </h2>
+        <p className="text-gray-600 text-sm">
+          {campaign.screens?.[1]?.description || 'Remplissez le formulaire ci-dessous'}
+        </p>
+      </div>
+      
+      <DynamicContactForm
+        fields={fields}
+        submitLabel={buttonLabel}
+        onSubmit={handleFormSubmit}
+        textStyles={{
+          label: design.textStyles?.label,
+          button: {
+            backgroundColor: buttonColor,
+            color: buttonTextColor,
+            borderRadius: design.borderRadius,
+            fontFamily: design.fontFamily,
+            fontWeight: design.textStyles?.button?.fontWeight,
+            fontSize: design.textStyles?.button?.fontSize,
+          },
+        }}
+        inputBorderColor={borderColor}
+        inputFocusColor={focusColor}
+      />
     </div>
   );
 };
