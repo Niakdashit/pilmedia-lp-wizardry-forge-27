@@ -67,7 +67,6 @@ const ContentSuggestions: React.FC<ContentSuggestionsProps> = ({
       <div className="space-y-6">
         {suggestions.map((suggestion, index) => {
           const Icon = suggestion.icon;
-          const isSelected = selectedSuggestions.includes(suggestion.id);
           
           return (
             <motion.div

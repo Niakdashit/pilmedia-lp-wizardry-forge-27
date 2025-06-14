@@ -70,7 +70,7 @@ const AIGenerationStep: React.FC<AIGenerationStepProps> = ({
       
       // Generate content for each phase
       const phaseContent = await generatePhaseContent(i);
-      setGeneratedContent(prev => ({
+      setGeneratedContent((prev: any) => ({
         ...prev,
         [phases[i].name.toLowerCase().replace(' ', '_')]: phaseContent
       }));
@@ -98,7 +98,7 @@ const AIGenerationStep: React.FC<AIGenerationStepProps> = ({
         };
         
       case 1: // Content Generation
-        return generateGameContent(gameType, brandData);
+        return generateGameContent(gameType);
         
       case 2: // UX Optimization
         return {
@@ -109,7 +109,7 @@ const AIGenerationStep: React.FC<AIGenerationStepProps> = ({
         
       case 3: // Final Configuration
         return {
-          gameConfiguration: generateGameConfig(gameType, brandData),
+          gameConfiguration: generateGameConfig(gameType),
           ready: true
         };
         
@@ -118,7 +118,7 @@ const AIGenerationStep: React.FC<AIGenerationStepProps> = ({
     }
   };
 
-  const generateGameContent = (type: string, brandData: any) => {
+  const generateGameContent = (type: string) => {
     const contentMap = {
       wheel: {
         title: 'Spin & Win!',
@@ -162,7 +162,11 @@ const AIGenerationStep: React.FC<AIGenerationStepProps> = ({
     }
   ];
 
-  const generateGameConfig = (type: string, brandData: any) => {
+  const generateGameConfig = (type: string) => {
+    // Get existing configuration data
+    const existingConfig = JSON.parse(localStorage.getItem('gameConfig') || '{}');
+    const brandData = existingConfig.brandCustomization || {};
+    
     return {
       type,
       theme: brandData.selectedBackground || 'gradient-1',
