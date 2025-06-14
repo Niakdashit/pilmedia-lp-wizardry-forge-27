@@ -62,7 +62,18 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
       buttonColor:
         campaign.buttonConfig?.color || campaign.design?.buttonColor || '#841b60',
       titleColor: campaign.design?.titleColor || '#000000',
-      background: campaign.design?.background || '#f8fafc'
+      background: campaign.design?.background || '#f8fafc',
+      blockColor: campaign.design?.blockColor || '#ffffff',
+      borderColor: campaign.design?.borderColor || '#e5e7eb',
+      borderRadius: campaign.design?.borderRadius || '8px',
+      buttonTextColor: campaign.design?.buttonTextColor || '#ffffff',
+      // Synchroniser exactement les mêmes styles que dans l'éditeur canvas
+      progressBackgroundColor: campaign.design?.progressBackgroundColor || '#f3f4f6',
+      primaryColor: campaign.design?.primaryColor || campaign.design?.buttonColor || '#841b60',
+      textColor: campaign.design?.textColor || campaign.design?.titleColor || '#374151',
+      questionFontSize: campaign.design?.questionFontSize || '1.5rem',
+      questionFontWeight: campaign.design?.questionFontWeight || '600',
+      fontFamily: campaign.design?.fontFamily || 'Inter, sans-serif'
     },
     gameConfig: {
       ...campaign.gameConfig,
@@ -75,7 +86,17 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
         buttonColor:
           campaign.buttonConfig?.color ||
           campaign.gameConfig?.[campaign.type]?.buttonColor ||
-          '#841b60'
+          '#841b60',
+        containerBackgroundColor: campaign.design?.blockColor || campaign.gameConfig?.[campaign.type]?.containerBackgroundColor || '#ffffff',
+        backgroundColor: campaign.design?.blockColor || campaign.gameConfig?.[campaign.type]?.backgroundColor || '#ffffff',
+        borderColor: campaign.design?.borderColor || campaign.gameConfig?.[campaign.type]?.borderColor || '#e5e7eb',
+        borderRadius: campaign.design?.borderRadius || campaign.gameConfig?.[campaign.type]?.borderRadius || '8px',
+        textColor: campaign.design?.titleColor || '#000000',
+        questionBackgroundColor: campaign.design?.blockColor || '#ffffff',
+        optionBackgroundColor: campaign.design?.blockColor || '#ffffff',
+        optionBorderColor: campaign.design?.borderColor || '#e5e7eb',
+        correctOptionColor: campaign.design?.buttonColor || '#841b60',
+        incorrectOptionColor: '#ef4444'
       }
     }
   };

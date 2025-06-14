@@ -109,7 +109,14 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
       blockColor: campaign.design?.blockColor || '#ffffff',
       borderColor: campaign.design?.borderColor || '#e5e7eb',
       borderRadius: campaign.design?.borderRadius || '8px',
-      buttonTextColor: campaign.design?.buttonTextColor || '#ffffff'
+      buttonTextColor: campaign.design?.buttonTextColor || '#ffffff',
+      // Synchroniser les styles spécifiques au quiz
+      progressBackgroundColor: campaign.design?.progressBackgroundColor || '#f3f4f6',
+      primaryColor: campaign.design?.primaryColor || campaign.design?.buttonColor || '#841b60',
+      textColor: campaign.design?.textColor || campaign.design?.titleColor || '#374151',
+      questionFontSize: campaign.design?.questionFontSize || '1.5rem',
+      questionFontWeight: campaign.design?.questionFontWeight || '600',
+      fontFamily: campaign.design?.fontFamily || 'Inter, sans-serif'
     },
     gameConfig: {
       ...campaign.gameConfig,
@@ -165,7 +172,7 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
               campaign={enhancedCampaign}
               gameSize={gameSize}
               className="w-full h-full"
-              key={`preview-${gameSize}-${gamePosition}-${campaign.design?.buttonColor}-${campaign.design?.blockColor}-${campaign.design?.borderColor}-${JSON.stringify(campaign.gameConfig?.[campaign.type])}`}
+              key={`preview-${gameSize}-${gamePosition}-${campaign.design?.buttonColor}-${campaign.design?.blockColor}-${campaign.design?.borderColor}-${JSON.stringify(campaign.gameConfig?.[campaign.type])}-${JSON.stringify(campaign.design)}`}
               previewDevice={previewDevice}
             />
             
