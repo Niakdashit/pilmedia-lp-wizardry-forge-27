@@ -8,4 +8,4 @@ export { generateAdvancedPaletteFromColors, extractCompletePaletteFromBrandfetch
 export { applyBrandStyleToWheel } from './brandStyle/brandWheelStyler';
 
 // Legacy export for backward compatibility
-export const getReadableTextColor = getAccessibleTextColor;
+export { getAccessibleTextColor as getReadableTextColor } from './brandStyle/colorUtils';

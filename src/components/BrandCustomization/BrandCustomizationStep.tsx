@@ -112,7 +112,6 @@ const BrandCustomizationStep: React.FC<BrandCustomizationStepProps> = ({
             selectedBackground={brandData.selectedBackground}
             onSelect={(background: string) => updateBrandData('selectedBackground', background)}
             brandColors={brandData.extractedColors}
-            gameType={gameType}
           />
         )}
       </motion.div>
