@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Zap } from 'lucide-react';
+import { Zap, FolderOpen, Layers } from 'lucide-react';
 import { getCampaignTypeIcon } from '../../utils/campaignTypes';
 import { GameType } from './types';
 
@@ -84,11 +84,21 @@ const QuickCreationSection: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex justify-center">
+          <div className="flex flex-col md:flex-row justify-center items-center gap-4">
             <Link to="/quick-campaign" className="inline-flex items-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
               <Zap className="w-6 h-6 mr-3" />
               Création rapide de campagne
             </Link>
+            
+            <Link to="/campaigns" className="inline-flex items-center px-6 py-4 bg-white text-[#841b60] font-semibold rounded-2xl hover:bg-gray-50 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 border border-[#841b60]/20">
+              <FolderOpen className="w-5 h-5 mr-2" />
+              Mes campagnes
+            </Link>
+            
+            <button className="inline-flex items-center px-6 py-4 bg-white text-[#841b60] font-semibold rounded-2xl hover:bg-gray-50 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 border border-[#841b60]/20">
+              <Layers className="w-5 h-5 mr-2" />
+              Modèles
+            </button>
           </div>
         </div>
       </div>
