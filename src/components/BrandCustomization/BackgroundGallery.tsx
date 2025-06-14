@@ -9,14 +9,12 @@ interface BackgroundGalleryProps {
     secondary: string;
     accent: string;
   };
-  gameType: string;
 }
 
 const BackgroundGallery: React.FC<BackgroundGalleryProps> = ({
   selectedBackground,
   onSelect,
-  brandColors,
-  gameType
+  brandColors
 }) => {
   const [activeTab, setActiveTab] = useState<'gradients' | 'images' | 'custom'>('gradients');
   const [backgroundType, setBackgroundType] = useState<string>('gradient');
