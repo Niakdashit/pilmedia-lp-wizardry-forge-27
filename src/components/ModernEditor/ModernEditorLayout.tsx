@@ -15,7 +15,6 @@ interface ModernEditorLayoutProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
   previewDevice: 'desktop' | 'tablet' | 'mobile';
-  onDeviceChange: (device: 'desktop' | 'tablet' | 'mobile') => void;
   onSave: () => void;
   onPreview: () => void;
   isLoading: boolean;
@@ -35,7 +34,6 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
   onPreview,
   isLoading,
   campaignType,
-  gameTypeLabels,
   aiGenerated = false,
   onBackToAI
 }) => {
@@ -48,6 +46,18 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
     } else {
       navigate('/gamification');
     }
+  };
+
+  const gameTypeLabels: Record<CampaignType, string> = {
+    wheel: 'Roue de la Fortune',
+    jackpot: 'Jackpot',
+    memory: 'Jeu de Mémoire',
+    puzzle: 'Puzzle',
+    quiz: 'Quiz Interactif',
+    dice: 'Dés Magiques',
+    scratch: 'Carte à Gratter',
+    swiper: 'Swiper',
+    form: 'Formulaire Dynamique'
   };
 
   return (
@@ -86,6 +96,14 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
             </div>
 
             <EditorHeader
+              campaign={campaign}
+              isNewCampaign={!campaign.id}
+              campaignType={campaignType}
+              gameTypeLabels={gameTypeLabels}
+              previewDevice={previewDevice}
+              onDeviceChange={() => {}}
+              onExit={handleBack}
+              onMobilePanelToggle={() => setIsPanelOpen(!isPanelOpen)}
               onSave={onSave}
               onPreview={onPreview}
               isLoading={isLoading}
@@ -124,6 +142,8 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
             campaign={campaign}
             setCampaign={setCampaign}
             previewDevice={previewDevice}
+            gameSize={campaign.gameSize || 'medium'}
+            gamePosition={campaign.gamePosition || 'center'}
           />
         </div>
       </div>
