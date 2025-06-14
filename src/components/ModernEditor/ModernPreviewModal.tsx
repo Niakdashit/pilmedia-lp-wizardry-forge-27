@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { X, Monitor, Smartphone, Tablet } from 'lucide-react';
 import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
@@ -42,7 +41,7 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
       backgroundColor: campaign.design?.background || '#f9fafb',
       position: 'relative' as const,
       overflow: 'auto' as const,
-      padding: campaign.type === 'form' ? '40px 20px' : '20px'
+      padding: (campaign.type === 'form' || campaign.type === 'quiz') ? '40px 20px' : '20px'
     } as React.CSSProperties;
 
     if (campaign.design?.backgroundImage) {
@@ -76,7 +75,16 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
       enhancedCampaign.funnel ||
       (unlockedTypes.includes(enhancedCampaign.type) ? 'unlocked_game' : 'standard');
     
-    const componentStyle = {};
+    // Style spécial pour les quiz - conteneur avec cadre blanc
+    const componentStyle = campaign.type === 'quiz' ? {
+      backgroundColor: '#ffffff',
+      borderRadius: '16px',
+      boxShadow: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
+      border: '2px solid #e5e7eb',
+      padding: '32px',
+      maxWidth: '600px',
+      width: '100%'
+    } : {};
     
     if (funnel === 'unlocked_game') {
       return (
