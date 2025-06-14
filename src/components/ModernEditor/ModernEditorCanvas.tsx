@@ -90,20 +90,8 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
 
   return (
     <div className="w-full h-full flex items-center justify-center p-4 md:p-6">
-      {/* Fixed-size canvas container - locked dimensions */}
-      <div 
-        className="bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-200/50"
-        style={{
-          width: '700px',
-          height: '800px',
-          maxWidth: '700px',
-          maxHeight: '800px',
-          minWidth: '700px',
-          minHeight: '800px',
-          position: 'relative',
-          flexShrink: 0
-        }}
-      >
+      {/* Canvas container with Canva-like styling - uses full available space */}
+      <div className="relative w-full h-full bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-200/50">
         {/* Canvas background */}
         <div
           ref={canvasRef}
@@ -228,7 +216,7 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
                   </div>
                   <span className="font-medium text-gray-900">Ajouter une image</span>
                 </button>
-                </div>
+              </div>
             )}
 
             {/* Main add button */}

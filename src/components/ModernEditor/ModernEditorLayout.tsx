@@ -192,7 +192,7 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
           />
         )}
 
-        {/* Side panel - Fixed width to prevent layout shifts */}
+        {/* Side panel */}
         <AnimatePresence mode="wait">
           {(isPanelOpen || isMobilePanelOpen) && (
             <motion.div
@@ -202,11 +202,7 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
               className={`${
                 isMobilePanelOpen ? 'fixed inset-0 w-full max-w-full sm:max-w-sm' : 'hidden md:flex'
-              } bg-white/95 backdrop-blur-md border-r border-gray-200/50 shadow-xl z-40 h-full overflow-y-auto relative`}
-              style={{
-                width: isMobilePanelOpen ? 'auto' : '400px',
-                flexShrink: 0
-              }}
+              } md:w-72 lg:w-80 xl:w-96 bg-white/95 backdrop-blur-md border-r border-gray-200/50 shadow-xl z-40 h-full overflow-y-auto relative`}
             >
               {/* Panel collapse button - desktop only */}
               <button
@@ -259,15 +255,8 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
           </div>
         )}
 
-        {/* Canvas area - Fixed to maintain consistent preview size */}
-        <div 
-          className="bg-gradient-to-br from-gray-50 to-white overflow-hidden"
-          style={{
-            width: isPanelOpen ? 'calc(100% - 400px)' : '100%',
-            transition: 'width 0.3s ease-in-out',
-            flexShrink: 0
-          }}
-        >
+        {/* Canvas area */}
+        <div className="flex-1 bg-gradient-to-br from-gray-50 to-white">
           <ModernEditorCanvas
             campaign={campaign}
             setCampaign={setCampaign}
