@@ -1,8 +1,10 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Zap } from 'lucide-react';
 import { getCampaignTypeIcon } from '../../utils/campaignTypes';
 import { GameType } from './types';
+
 const QuickCreationSection: React.FC = () => {
   const gameTypes: GameType[] = [{
     type: 'wheel',
@@ -29,6 +31,7 @@ const QuickCreationSection: React.FC = () => {
     type: 'form',
     label: 'Formulaire'
   }];
+
   return <div className="w-full mt-8">
       <div className="relative border-2 border-[#ffffff] rounded-3xl p-8 bg-gradient-to-b from-[#841b60]/5 to-white overflow-hidden bg-[#ffeef6]/0">
         <div className="absolute inset-0 bg-gradient-to-br from-[#841b60]/3 via-transparent to-transparent pointer-events-none"></div>
@@ -116,4 +119,5 @@ const QuickCreationSection: React.FC = () => {
       `}</style>
     </div>;
 };
+
 export default QuickCreationSection;

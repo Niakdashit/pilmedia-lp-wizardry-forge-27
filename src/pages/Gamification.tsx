@@ -1,64 +1,56 @@
 import React from 'react';
-import { Gamepad2, Dices, Cookie, Sparkles, Plus, FormInput, Grid3X3, FlipHorizontal2, Coins } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import PageHeader from '../components/Layout/PageHeader';
-import { CampaignType } from '../utils/campaignTypes';
+import { CampaignType, getCampaignTypeIcon } from '../utils/campaignTypes';
 
 const Gamification: React.FC = () => {
   const gamificationTypes = [
     {
       name: 'Roue de la fortune',
       description: 'Faites tourner la roue pour gagner des réductions, cadeaux ou surprises',
-      icon: <Gamepad2 className="w-10 h-10 text-white" />,
       color: '#841b60',
       type: 'wheel' as CampaignType
     },
     {
       name: 'Carte à gratter',
       description: 'Découvrez ce qui se cache sous la surface grattable',
-      icon: <Cookie className="w-10 h-10 text-white" />,
       color: '#2c7be5',
       type: 'scratch' as CampaignType
     },
     {
       name: 'Jeu de mémoire',
       description: 'Trouvez les paires correspondantes pour gagner des points',
-      icon: <FlipHorizontal2 className="w-10 h-10 text-white" />,
       color: '#00b8d9',
       type: 'memory' as CampaignType
     },
     {
       name: 'Quiz interactifs',
       description: 'Testez vos connaissances et gagnez des points en fonction de vos réponses',
-      icon: <Sparkles className="w-10 h-10 text-white" />,
       color: '#f5803e',
       type: 'quiz' as CampaignType
     },
     {
       name: 'Formulaire dynamique',
       description: 'Créez des formulaires interactifs avec logique conditionnelle et validation en temps réel',
-      icon: <FormInput className="w-10 h-10 text-white" />,
       color: '#36b37e',
       type: 'form' as CampaignType
     },
     {
       name: 'Puzzle',
       description: 'Reconstituez l\'image en déplaçant les pièces au bon endroit',
-      icon: <Grid3X3 className="w-10 h-10 text-white" />,
       color: '#6554c0',
       type: 'puzzle' as CampaignType
     },
     {
       name: 'Dés chanceux',
       description: 'Lancez les dés et tentez votre chance pour gagner des lots',
-      icon: <Dices className="w-10 h-10 text-white" />,
       color: '#ff5630',
       type: 'dice' as CampaignType
     },
     {
       name: 'Jackpot',
       description: 'Faites tourner les rouleaux et tentez de décrocher le jackpot',
-      icon: <Coins className="w-10 h-10 text-white" />,
       color: '#ffd700',
       type: 'jackpot' as CampaignType
     }
@@ -90,23 +82,26 @@ const Gamification: React.FC = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {gamificationTypes.map((game, index) => (
-              <div key={index} className="border border-gray-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow duration-300">
-                <div className="h-24 flex items-center justify-center" style={{ backgroundColor: game.color }}>
-                  {game.icon}
+            {gamificationTypes.map((game, index) => {
+              const IconComponent = getCampaignTypeIcon(game.type);
+              return (
+                <div key={index} className="border border-gray-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow duration-300">
+                  <div className="h-24 flex items-center justify-center" style={{ backgroundColor: game.color }}>
+                    <IconComponent className="w-10 h-10 text-white" />
+                  </div>
+                  <div className="p-4">
+                    <h3 className="font-bold text-gray-800 mb-1">{game.name}</h3>
+                    <p className="text-sm text-gray-600 mb-4">{game.description}</p>
+                    <Link 
+                      to={`/modern-campaign/new?type=${game.type}`} 
+                      className="w-full px-4 py-2 bg-gray-100 text-gray-800 font-medium rounded-lg hover:bg-gray-200 transition-colors duration-200 block text-center"
+                    >
+                      Créer une campagne
+                    </Link>
+                  </div>
                 </div>
-                <div className="p-4">
-                  <h3 className="font-bold text-gray-800 mb-1">{game.name}</h3>
-                  <p className="text-sm text-gray-600 mb-4">{game.description}</p>
-                  <Link 
-                    to={`/modern-campaign/new?type=${game.type}`} 
-                    className="w-full px-4 py-2 bg-gray-100 text-gray-800 font-medium rounded-lg hover:bg-gray-200 transition-colors duration-200 block text-center"
-                  >
-                    Créer une campagne
-                  </Link>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
         
