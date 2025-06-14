@@ -90,8 +90,18 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
 
   return (
     <div className="w-full h-full flex items-center justify-center p-4 md:p-6">
-      {/* Canvas container with Canva-like styling - uses full available space */}
-      <div className="relative w-full h-full bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-200/50">
+      {/* Canvas container avec taille fixe basée sur l'onglet "Jeu" */}
+      <div 
+        className="relative bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-200/50"
+        style={{
+          width: '800px',
+          height: '600px',
+          minWidth: '800px',
+          minHeight: '600px',
+          maxWidth: '800px',
+          maxHeight: '600px'
+        }}
+      >
         {/* Canvas background */}
         <div
           ref={canvasRef}
