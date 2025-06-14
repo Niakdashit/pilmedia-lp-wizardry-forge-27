@@ -1,16 +1,17 @@
 
-import React, { useState, useEffect } from 'react';
-import { ChevronRight } from 'lucide-react';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { ArrowLeft, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { CampaignType } from '../../utils/campaignTypes';
-import ModernEditorCanvas from './ModernEditorCanvas';
 import EditorHeader from './components/EditorHeader';
-import EditorMobilePanel from './components/EditorMobilePanel';
 import EditorDesktopPanel from './components/EditorDesktopPanel';
+import EditorMobilePanel from './components/EditorMobilePanel';
+import ModernEditorCanvas from './ModernEditorCanvas';
+import { CampaignType } from '../../utils/campaignTypes';
 
 interface ModernEditorLayoutProps {
   campaign: any;
-  setCampaign: (updater: (prev: any) => any) => void;
+  setCampaign: React.Dispatch<React.SetStateAction<any>>;
   activeTab: string;
   onTabChange: (tab: string) => void;
   previewDevice: 'desktop' | 'tablet' | 'mobile';
@@ -20,7 +21,9 @@ interface ModernEditorLayoutProps {
   isLoading: boolean;
   campaignType: CampaignType;
   isNewCampaign: boolean;
-  gameTypeLabels: Record<string, string>;
+  gameTypeLabels: Record<CampaignType, string>;
+  aiGenerated?: boolean;
+  onBackToAI?: () => void;
 }
 
 const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
@@ -35,74 +38,73 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
   isLoading,
   campaignType,
   isNewCampaign,
-  gameTypeLabels
+  gameTypeLabels,
+  aiGenerated = false,
+  onBackToAI
 }) => {
-  const [isPanelOpen, setIsPanelOpen] = useState(
-    typeof window !== 'undefined' && window.innerWidth >= 768
-  );
-  const [isMobilePanelOpen, setIsMobilePanelOpen] = useState(false);
   const navigate = useNavigate();
+  const [isPanelOpen, setIsPanelOpen] = useState(true);
 
-  const togglePanel = () => {
-    setIsPanelOpen(!isPanelOpen);
-  };
-
-  const toggleMobilePanel = () => {
-    setIsMobilePanelOpen(!isMobilePanelOpen);
-  };
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 768) {
-        setIsPanelOpen(false);
-      } else {
-        setIsPanelOpen(true);
-        setIsMobilePanelOpen(false);
-      }
-    };
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  const handleExit = () => {
-    navigate('/gamification');
+  const handleBack = () => {
+    if (aiGenerated && onBackToAI) {
+      onBackToAI();
+    } else {
+      navigate('/gamification');
+    }
   };
 
   return (
-    <div className="min-h-screen flex bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
-      {/* Header - Fixed top bar */}
-      <EditorHeader
-        campaign={campaign}
-        isNewCampaign={isNewCampaign}
-        campaignType={campaignType}
-        gameTypeLabels={gameTypeLabels}
-        previewDevice={previewDevice}
-        onDeviceChange={onDeviceChange}
-        onExit={handleExit}
-        onMobilePanelToggle={toggleMobilePanel}
-        onPreview={onPreview}
-        onSave={onSave}
-        isLoading={isLoading}
-      />
+    <div className="h-screen bg-gradient-to-br from-gray-50 via-white to-gray-50 flex flex-col overflow-hidden">
+      {/* Header */}
+      <div className="flex-shrink-0 bg-white/95 backdrop-blur-sm border-b border-gray-200/50 shadow-sm">
+        <div className="px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-4">
+              <button
+                onClick={handleBack}
+                className="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200"
+              >
+                <ArrowLeft className="w-5 h-5" />
+                <span className="hidden sm:inline">
+                  {aiGenerated ? 'Retour à l\'IA' : 'Retour'}
+                </span>
+              </button>
+              
+              <div className="flex items-center space-x-3">
+                <h1 className="text-xl font-bold text-gray-900">
+                  {campaign.name || 'Nouvelle Campagne'}
+                </h1>
+                
+                {aiGenerated && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="flex items-center space-x-2 px-3 py-1 bg-gradient-to-r from-purple-100 to-purple-50 text-purple-700 rounded-full text-sm font-medium"
+                  >
+                    <Sparkles className="w-4 h-4" />
+                    <span>Généré par IA</span>
+                  </motion.div>
+                )}
+              </div>
+            </div>
 
-      {/* Main content area */}
-      <div className="flex w-full pt-16 md:pt-20 h-screen">
-        {/* Mobile panel */}
-        <EditorMobilePanel
-          isOpen={isMobilePanelOpen}
-          onClose={() => setIsMobilePanelOpen(false)}
-          activeTab={activeTab}
-          onTabChange={onTabChange}
-          campaign={campaign}
-          setCampaign={setCampaign}
-          campaignType={campaignType}
-        />
+            <EditorHeader
+              onSave={onSave}
+              onPreview={onPreview}
+              isLoading={isLoading}
+              isPanelOpen={isPanelOpen}
+              onTogglePanel={() => setIsPanelOpen(!isPanelOpen)}
+            />
+          </div>
+        </div>
+      </div>
 
-        {/* Desktop side panel */}
+      {/* Main Content */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* Desktop Panel */}
         <EditorDesktopPanel
           isOpen={isPanelOpen}
-          onToggle={togglePanel}
+          onToggle={() => setIsPanelOpen(!isPanelOpen)}
           activeTab={activeTab}
           onTabChange={onTabChange}
           campaign={campaign}
@@ -110,26 +112,23 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
           campaignType={campaignType}
         />
 
-        {/* Panel toggle button when panel is closed */}
-        {!isPanelOpen && !isMobilePanelOpen && (
-          <div className="hidden md:flex fixed left-4 top-1/2 transform -translate-y-1/2 z-40">
-            <button
-              onClick={togglePanel}
-              className="p-3 bg-white/95 backdrop-blur-md hover:bg-white rounded-xl shadow-lg hover:shadow-xl transition-all border border-gray-200/50"
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
-          </div>
-        )}
+        {/* Mobile Panel */}
+        <EditorMobilePanel
+          activeTab={activeTab}
+          onTabChange={onTabChange}
+          campaign={campaign}
+          setCampaign={setCampaign}
+          campaignType={campaignType}
+        />
 
-        {/* Canvas area - Fixed container to prevent layout shifts */}
-        <div className="flex-1 h-full overflow-hidden bg-gradient-to-br from-gray-50 to-white">
+        {/* Canvas */}
+        <div className="flex-1 overflow-hidden">
           <ModernEditorCanvas
             campaign={campaign}
             setCampaign={setCampaign}
             previewDevice={previewDevice}
-            gameSize={campaign.gameSize}
-            gamePosition={campaign.gamePosition}
+            onDeviceChange={onDeviceChange}
+            gameTypeLabel={gameTypeLabels[campaignType]}
           />
         </div>
       </div>

@@ -126,6 +126,7 @@ function App() {
               <Route path="/gamification/configuration" element={<GameConfigurationPage />} />
               <Route path="/gamification/brand-customization" element={<BrandCustomizationPage />} />
               <Route path="/gamification/ai-generation" element={<AIGenerationPage />} />
+              <Route path="/gamification/editor/new" element={<ModernCampaignEditor />} />
               <Route path="/contacts" element={<Layout><Contacts /></Layout>} />
               <Route path="/social" element={<Layout><Social /></Layout>} />
               <Route path="/data" element={<Layout><Data /></Layout>} />
