@@ -90,19 +90,8 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
 
   return (
     <div className="w-full h-full flex items-center justify-center p-4 md:p-6">
-      {/* Canvas container with fixed size - locked to prevent resize across tabs */}
-      <div 
-        className="relative bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-200/50"
-        style={{
-          width: '900px',
-          height: '700px',
-          minWidth: '900px',
-          minHeight: '700px',
-          maxWidth: '900px',
-          maxHeight: '700px',
-          flexShrink: 0
-        }}
-      >
+      {/* Canvas container with Canva-like styling - uses full available space */}
+      <div className="relative w-full h-full bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-200/50">
         {/* Canvas background */}
         <div
           ref={canvasRef}
