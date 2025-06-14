@@ -62,11 +62,11 @@ const FormPreview: React.FC<FormPreviewProps> = ({
 
   if (isSubmitted) {
     return (
-      <div 
-        className={`flex items-center justify-center ${className}`}
-        style={containerStyle}
-      >
-        <div className="text-center py-8">
+      <div className={`flex items-center justify-center ${className}`}>
+        <div 
+          className="text-center py-8"
+          style={containerStyle}
+        >
           <div className="text-green-500 text-2xl mb-4">✓</div>
           <h3 className="text-lg font-semibold text-gray-900 mb-2">
             Formulaire soumis !
@@ -80,37 +80,36 @@ const FormPreview: React.FC<FormPreviewProps> = ({
   }
 
   return (
-    <div 
-      className={className}
-      style={containerStyle}
-    >
-      <div className="mb-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-2">
-          {campaign.screens?.[1]?.title || 'Vos informations'}
-        </h2>
-        <p className="text-gray-600 text-sm">
-          {campaign.screens?.[1]?.description || 'Remplissez le formulaire ci-dessous'}
-        </p>
+    <div className={`flex items-center justify-center ${className}`}>
+      <div style={containerStyle}>
+        <div className="mb-6">
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">
+            {campaign.screens?.[1]?.title || 'Vos informations'}
+          </h2>
+          <p className="text-gray-600 text-sm">
+            {campaign.screens?.[1]?.description || 'Remplissez le formulaire ci-dessous'}
+          </p>
+        </div>
+        
+        <DynamicContactForm
+          fields={fields}
+          submitLabel={buttonLabel}
+          onSubmit={handleFormSubmit}
+          textStyles={{
+            label: design.textStyles?.label,
+            button: {
+              backgroundColor: buttonColor,
+              color: buttonTextColor,
+              borderRadius: design.borderRadius,
+              fontFamily: design.fontFamily,
+              fontWeight: design.textStyles?.button?.fontWeight,
+              fontSize: design.textStyles?.button?.fontSize,
+            },
+          }}
+          inputBorderColor={borderColor}
+          inputFocusColor={focusColor}
+        />
       </div>
-      
-      <DynamicContactForm
-        fields={fields}
-        submitLabel={buttonLabel}
-        onSubmit={handleFormSubmit}
-        textStyles={{
-          label: design.textStyles?.label,
-          button: {
-            backgroundColor: buttonColor,
-            color: buttonTextColor,
-            borderRadius: design.borderRadius,
-            fontFamily: design.fontFamily,
-            fontWeight: design.textStyles?.button?.fontWeight,
-            fontSize: design.textStyles?.button?.fontSize,
-          },
-        }}
-        inputBorderColor={borderColor}
-        inputFocusColor={focusColor}
-      />
     </div>
   );
 };
