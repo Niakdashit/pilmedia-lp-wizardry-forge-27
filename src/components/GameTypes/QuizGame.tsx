@@ -1,120 +1,234 @@
-import React, { useState } from 'react';
-import { useGameResult } from '../../hooks/useGameResult';
+
+import React, { useState, useEffect } from 'react';
+import { CheckCircle, XCircle, Clock } from 'lucide-react';
 
 interface QuizGameProps {
-  campaignId: string;
   config: any;
   design?: any;
+  onGameComplete?: (result: any) => void;
+  isPreview?: boolean;
 }
 
-const QuizGame: React.FC<QuizGameProps> = ({ campaignId, config = {}, design = {} }) => {
-  const questions = config.questions || [];
-  const { checkWinningCondition, saveResult } = useGameResult(campaignId, config);
-  const [current, setCurrent] = useState(0);
-  const [answers, setAnswers] = useState<number[]>([]);
-  const [completed, setCompleted] = useState(false);
-  const [score, setScore] = useState(0);
-  const [started, setStarted] = useState(!config.introScreen);
+const QuizGame: React.FC<QuizGameProps> = ({
+  config,
+  design = {},
+  onGameComplete,
+  isPreview = false
+}) => {
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [selectedAnswers, setSelectedAnswers] = useState<Record<number, any>>({});
+  const [showResults, setShowResults] = useState(false);
+  const [timeLeft, setTimeLeft] = useState<number | null>(null);
 
-  const colors = design.customColors || { primary: '#841b60', text: '#ffffff' };
-  const textStyles = design.textStyles || {};
-  const containerStyles = {
-    backgroundColor: design.blockColor || '#ffffff',
-    border: `1px solid ${design.borderColor || '#e5e7eb'}`,
-    borderRadius: design.borderRadius || '0.5rem',
-    padding: '1rem'
-  };
+  const questions = config?.questions || [];
+  const currentQuestion = questions[currentQuestionIndex];
 
-  const handleAnswer = async (index: number) => {
-    const newAnswers = [...answers, index];
-    if (current + 1 < questions.length) {
-      setAnswers(newAnswers);
-      setCurrent(current + 1);
-    } else {
-      const finalAnswers = newAnswers;
-      const finalScore = questions.reduce((acc: number, q: any, i: number) => {
-        const option = q.options?.[finalAnswers[i]];
-        return acc + (option && option.isCorrect ? 1 : 0);
-      }, 0);
-      setScore(finalScore);
-      const isWinner = await checkWinningCondition();
-      await saveResult({
-        campaignId,
-        userId: 'anonymous',
-        gameType: 'quiz',
-        result: finalAnswers,
-        score: finalScore,
-        isWinner,
-      });
-      setAnswers(finalAnswers);
-      setCompleted(true);
+  const styles = {
+    container: {
+      backgroundColor: design.blockColor || design.containerBackgroundColor || '#ffffff',
+      borderColor: design.borderColor || '#e5e7eb',
+      borderRadius: design.borderRadius || '8px',
+      borderWidth: '1px',
+      borderStyle: 'solid'
+    },
+    question: {
+      color: design.textColor || design.titleColor || '#000000',
+      fontFamily: design.fontFamily || 'Inter, sans-serif'
+    },
+    option: {
+      backgroundColor: design.optionBackgroundColor || design.blockColor || '#ffffff',
+      borderColor: design.optionBorderColor || design.borderColor || '#e5e7eb',
+      borderRadius: design.borderRadius || '8px',
+      color: design.textColor || '#000000'
+    },
+    button: {
+      backgroundColor: design.buttonColor || '#841b60',
+      color: design.buttonTextColor || '#ffffff',
+      borderRadius: design.borderRadius || '8px'
     }
   };
 
-  if (!started) {
+  useEffect(() => {
+    if (currentQuestion?.timeLimit && currentQuestion.timeLimit > 0) {
+      setTimeLeft(currentQuestion.timeLimit);
+      const timer = setInterval(() => {
+        setTimeLeft((prev) => {
+          if (prev && prev <= 1) {
+            clearInterval(timer);
+            handleNextQuestion();
+            return null;
+          }
+          return prev ? prev - 1 : null;
+        });
+      }, 1000);
+
+      return () => clearInterval(timer);
+    }
+  }, [currentQuestionIndex]);
+
+  const handleAnswerSelect = (optionId: string, isMultiple: boolean) => {
+    if (isMultiple) {
+      const current = selectedAnswers[currentQuestionIndex] || [];
+      const updated = current.includes(optionId)
+        ? current.filter((id: string) => id !== optionId)
+        : [...current, optionId];
+      setSelectedAnswers({
+        ...selectedAnswers,
+        [currentQuestionIndex]: updated
+      });
+    } else {
+      setSelectedAnswers({
+        ...selectedAnswers,
+        [currentQuestionIndex]: [optionId]
+      });
+    }
+  };
+
+  const handleNextQuestion = () => {
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+    } else {
+      setShowResults(true);
+      if (onGameComplete) {
+        const score = calculateScore();
+        onGameComplete({ score, total: questions.length });
+      }
+    }
+  };
+
+  const calculateScore = () => {
+    let correct = 0;
+    questions.forEach((question: any, index: number) => {
+      const userAnswers = selectedAnswers[index] || [];
+      const correctAnswers = question.options
+        .filter((opt: any) => opt.isCorrect)
+        .map((opt: any) => opt.id);
+      
+      if (JSON.stringify(userAnswers.sort()) === JSON.stringify(correctAnswers.sort())) {
+        correct++;
+      }
+    });
+    return correct;
+  };
+
+  if (!currentQuestion && !showResults) {
     return (
-      <div className="text-center space-y-4" style={containerStyles}>
-        <h3 className="text-lg font-medium" style={textStyles.title}>
-          {config.introScreen?.title || 'Bienvenue au quiz'}
-        </h3>
-        {config.introScreen?.description && (
-          <p style={textStyles.description}>{config.introScreen.description}</p>
-        )}
-        <button
-          onClick={() => setStarted(true)}
-          className="px-4 py-2 rounded-lg"
-          style={{
-            backgroundColor: design.buttonColor || colors.primary,
-            color: design.buttonTextColor || colors.text,
-            borderRadius: design.borderRadius,
-            ...textStyles.button
-          }}
-        >
-          {config.introScreen?.buttonText || 'Commencer'}
-        </button>
+      <div className="flex items-center justify-center p-8" style={styles.container}>
+        <p style={styles.question}>Aucune question configurée</p>
       </div>
     );
   }
 
-  if (completed) {
+  if (showResults) {
+    const score = calculateScore();
     return (
-      <div className="text-center space-y-2" style={containerStyles}>
-        <h3 className="text-lg font-semibold" style={textStyles.title}>
-          {config.endMessage || 'Félicitations !'}
+      <div className="p-6 text-center" style={styles.container}>
+        <h3 className="text-2xl font-bold mb-4" style={styles.question}>
+          Quiz terminé !
         </h3>
-        <p style={textStyles.description}>
-          Vous avez obtenu {score} / {questions.length} points.
+        <p className="text-lg mb-4" style={styles.question}>
+          Votre score : {score}/{questions.length}
         </p>
+        <div className="text-sm" style={{ color: styles.question.color }}>
+          {score === questions.length ? '🎉 Parfait !' : 
+           score >= questions.length / 2 ? '👍 Bien joué !' : '💪 Continuez vos efforts !'}
+        </div>
       </div>
     );
   }
 
-  const question = questions[current];
-  if (!question) {
-    return <div className="text-center p-4">Aucune question configurée</div>;
-  }
+  const currentAnswers = selectedAnswers[currentQuestionIndex] || [];
+  const isMultiple = currentQuestion.type === 'multiple';
 
   return (
-    <div className="space-y-4" style={containerStyles}>
-      <p className="text-sm" style={textStyles.label}>
-        Question {current + 1} sur {questions.length}
-      </p>
-      <h3 className="text-lg font-medium" style={textStyles.title}>{question.text}</h3>
-      {question.options?.map((option: any, idx: number) => (
-        <button
-          key={option.id}
-          onClick={() => handleAnswer(idx)}
-          className="block w-full px-4 py-2 rounded-lg transition-colors"
-          style={{
-            backgroundColor: design.buttonColor || colors.primary,
-            color: design.buttonTextColor || colors.text,
-            borderRadius: design.borderRadius,
-            ...textStyles.button
-          }}
-        >
-          {option.text}
-        </button>
-      ))}
+    <div className="p-6 max-w-2xl mx-auto" style={styles.container}>
+      {/* Header avec numéro de question et timer */}
+      <div className="flex justify-between items-center mb-6">
+        <span className="text-sm font-medium" style={styles.question}>
+          Question {currentQuestionIndex + 1} / {questions.length}
+        </span>
+        {timeLeft !== null && (
+          <div className="flex items-center space-x-2 text-sm" style={styles.question}>
+            <Clock className="w-4 h-4" />
+            <span>{timeLeft}s</span>
+          </div>
+        )}
+      </div>
+
+      {/* Image de la question */}
+      {currentQuestion.image && (
+        <div className="mb-6">
+          <img
+            src={currentQuestion.image}
+            alt="Question"
+            className="w-full max-h-48 object-cover rounded-lg"
+          />
+        </div>
+      )}
+
+      {/* Texte de la question */}
+      <h3 className="text-xl font-semibold mb-6" style={styles.question}>
+        {currentQuestion.text}
+      </h3>
+
+      {/* Options de réponse */}
+      <div className="space-y-3 mb-6">
+        {currentQuestion.options?.map((option: any) => (
+          <button
+            key={option.id}
+            onClick={() => handleAnswerSelect(option.id, isMultiple)}
+            className={`w-full p-4 text-left border-2 rounded-lg transition-all ${
+              currentAnswers.includes(option.id)
+                ? 'ring-2 ring-offset-2'
+                : 'hover:shadow-md'
+            }`}
+            style={{
+              ...styles.option,
+              borderColor: currentAnswers.includes(option.id) 
+                ? styles.button.backgroundColor 
+                : styles.option.borderColor,
+              backgroundColor: currentAnswers.includes(option.id)
+                ? `${styles.button.backgroundColor}10`
+                : styles.option.backgroundColor,
+              ringColor: styles.button.backgroundColor
+            }}
+          >
+            <div className="flex items-center space-x-3">
+              <div
+                className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
+                  isMultiple ? 'rounded-sm' : ''
+                }`}
+                style={{
+                  borderColor: currentAnswers.includes(option.id) 
+                    ? styles.button.backgroundColor 
+                    : styles.option.borderColor,
+                  backgroundColor: currentAnswers.includes(option.id) 
+                    ? styles.button.backgroundColor 
+                    : 'transparent'
+                }}
+              >
+                {currentAnswers.includes(option.id) && (
+                  <CheckCircle className="w-3 h-3" style={{ color: styles.button.color }} />
+                )}
+              </div>
+              <span>{option.text}</span>
+            </div>
+          </button>
+        ))}
+      </div>
+
+      {/* Bouton suivant */}
+      <button
+        onClick={handleNextQuestion}
+        disabled={currentAnswers.length === 0}
+        className="w-full py-3 px-6 rounded-lg font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+        style={{
+          ...styles.button,
+          opacity: currentAnswers.length === 0 ? 0.5 : 1
+        }}
+      >
+        {currentQuestionIndex < questions.length - 1 ? 'Question suivante' : 'Voir les résultats'}
+      </button>
     </div>
   );
 };
