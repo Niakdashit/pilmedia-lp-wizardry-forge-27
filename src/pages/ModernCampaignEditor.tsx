@@ -328,12 +328,10 @@ const ModernCampaignEditor: React.FC = () => {
         activeTab={activeTab}
         onTabChange={setActiveTab}
         previewDevice={previewDevice}
-        onDeviceChange={setPreviewDevice}
         onSave={() => handleSave(true)}
         onPreview={() => setShowPreviewModal(true)}
         isLoading={isLoading}
         campaignType={campaignType}
-        gameTypeLabels={gameTypeLabels}
         aiGenerated={aiGenerated}
         onBackToAI={aiGenerated ? handleBackToAI : undefined}
       />
