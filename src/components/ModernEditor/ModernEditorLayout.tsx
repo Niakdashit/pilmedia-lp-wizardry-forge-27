@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, Eye, Save, Monitor, Tablet, Smartphone, Menu, X, ArrowLeft } from 'lucide-react';
@@ -69,7 +70,7 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
   };
 
   return (
-    <div className="min-h-screen flex bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
+    <div className="min-h-screen flex bg-gradient-to-br from-gray-50 to-gray-100 overflow-x-hidden">
       {/* Header - Fixed top bar */}
       <div className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200/50 shadow-sm">
         <div className="flex items-center justify-between px-4 md:px-6 py-3">
@@ -181,8 +182,8 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
         </div>
       </div>
 
-      {/* Main content area avec layout stable */}
-      <div className="flex w-full pt-16 md:pt-20 h-screen">
+      {/* Main content area */}
+      <div className="flex w-full pt-16 md:pt-20">
         {/* Mobile overlay */}
         {isMobilePanelOpen && (
           <div
@@ -191,7 +192,7 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
           />
         )}
 
-        {/* Side panel avec largeur fixe */}
+        {/* Side panel */}
         <AnimatePresence mode="wait">
           {(isPanelOpen || isMobilePanelOpen) && (
             <motion.div
@@ -201,12 +202,7 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
               transition={{ type: "spring", stiffness: 300, damping: 30 }}
               className={`${
                 isMobilePanelOpen ? 'fixed inset-0 w-full max-w-full sm:max-w-sm' : 'hidden md:flex'
-              } bg-white/95 backdrop-blur-md border-r border-gray-200/50 shadow-xl z-40 overflow-y-auto relative`}
-              style={{
-                width: isMobilePanelOpen ? 'auto' : '400px',
-                minWidth: isMobilePanelOpen ? 'auto' : '400px',
-                maxWidth: isMobilePanelOpen ? 'auto' : '400px'
-              }}
+              } md:w-72 lg:w-80 xl:w-96 bg-white/95 backdrop-blur-md border-r border-gray-200/50 shadow-xl z-40 h-full overflow-y-auto relative`}
             >
               {/* Panel collapse button - desktop only */}
               <button
@@ -259,14 +255,8 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
           </div>
         )}
 
-        {/* Canvas area avec taille stable */}
-        <div 
-          className="bg-gradient-to-br from-gray-50 to-white overflow-hidden"
-          style={{
-            flex: '1 1 0%',
-            minWidth: '0'
-          }}
-        >
+        {/* Canvas area */}
+        <div className="flex-1 bg-gradient-to-br from-gray-50 to-white">
           <ModernEditorCanvas
             campaign={campaign}
             setCampaign={setCampaign}
