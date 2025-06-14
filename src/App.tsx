@@ -22,7 +22,7 @@ function App() {
   return (
     <AppProvider>
       <Router>
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gradient-to-br from-[#161B33] to-[#24123B]">
           <Routes>
             <Route path="/" element={<Layout><Dashboard /></Layout>} />
             <Route path="/campaigns" element={<Layout><Campaigns /></Layout>} />
