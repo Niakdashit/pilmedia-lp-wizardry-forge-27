@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Globe, Palette, Wand2, Upload, CheckCircle } from 'lucide-react';
+import { Globe, Palette, Wand2, CheckCircle } from 'lucide-react';
 import { generateBrandThemeFromUrl } from '../../utils/BrandStyleAnalyzer';
 
 interface BrandUrlExtractorProps {

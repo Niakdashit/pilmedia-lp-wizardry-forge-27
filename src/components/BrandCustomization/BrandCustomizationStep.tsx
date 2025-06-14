@@ -1,162 +1,105 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Palette, Globe, Type, Image, ArrowRight, ArrowLeft, Wand2 } from 'lucide-react';
+import { ArrowRight, ArrowLeft } from 'lucide-react';
 import BrandUrlExtractor from './BrandUrlExtractor';
 import FontSelector from './FontSelector';
 import BackgroundGallery from './BackgroundGallery';
 
 interface BrandCustomizationStepProps {
   gameType: string;
-  onNext: (data: any) => void;
+  onNext: (brandData: any) => void;
   onBack: () => void;
-  className?: string;
 }
 
 const BrandCustomizationStep: React.FC<BrandCustomizationStepProps> = ({
   gameType,
   onNext,
-  onBack,
-  className = ''
+  onBack
 }) => {
-  const [activeSection, setActiveSection] = useState<'brand' | 'fonts' | 'background'>('brand');
+  const [activeTab, setActiveTab] = useState<'colors' | 'fonts' | 'backgrounds'>('colors');
   const [brandData, setBrandData] = useState({
+    websiteUrl: '',
+    logoUrl: '',
     extractedColors: {
       primary: '#3B82F6',
       secondary: '#8B5CF6',
-      accent: '#10B981'
+      accent: '#F59E0B'
     },
-    logoUrl: '',
-    websiteUrl: '',
     selectedFont: 'Inter',
-    backgroundImage: '',
-    backgroundType: 'gradient'
+    selectedBackground: 'gradient-1'
   });
 
-  const sections = [
-    { id: 'brand', label: 'Brand Colors', icon: Palette },
-    { id: 'fonts', label: 'Typography', icon: Type },
-    { id: 'background', label: 'Background', icon: Image }
+  const tabs = [
+    { id: 'colors', label: 'Colors & Logo', description: 'Extract your brand colors' },
+    { id: 'fonts', label: 'Typography', description: 'Choose your font style' },
+    { id: 'backgrounds', label: 'Backgrounds', description: 'Select visual themes' }
   ];
 
-  const updateBrandData = (section: string, data: any) => {
-    setBrandData(prev => ({
-      ...prev,
-      [section]: { ...prev[section as keyof typeof prev], ...data }
-    }));
+  const updateBrandData = (field: string, value: any) => {
+    setBrandData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleNext = () => {
-    const sectionIndex = sections.findIndex(section => section.id === activeSection);
-    if (sectionIndex < sections.length - 1) {
-      setActiveSection(sections[sectionIndex + 1].id as 'brand' | 'fonts' | 'background');
-    } else {
-      onNext(brandData);
-    }
-  };
-
-  const handlePrevious = () => {
-    const sectionIndex = sections.findIndex(section => section.id === activeSection);
-    if (sectionIndex > 0) {
-      setActiveSection(sections[sectionIndex - 1].id as 'brand' | 'fonts' | 'background');
-    } else {
-      onBack();
-    }
-  };
-
-  const isSectionComplete = (sectionId: string) => {
-    switch (sectionId) {
-      case 'brand':
-        return brandData.extractedColors.primary !== '#3B82F6';
-      case 'fonts':
-        return brandData.selectedFont !== 'Inter';
-      case 'background':
-        return brandData.backgroundImage || brandData.backgroundType !== 'gradient';
-      default:
-        return false;
-    }
-  };
-
-  const canProceed = isSectionComplete(activeSection);
+  const canProceed = brandData.extractedColors.primary !== '#3B82F6' || 
+                     brandData.selectedFont !== 'Inter' || 
+                     brandData.selectedBackground !== 'gradient-1';
 
   return (
-    <div className={`max-w-6xl mx-auto px-6 py-12 ${className}`}>
+    <div className="max-w-6xl mx-auto px-6 py-12">
       {/* Header */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="text-center mb-8"
       >
-        <h1 className="text-4xl font-bold text-gray-900 mb-4 flex items-center justify-center">
-          <Wand2 className="w-8 h-8 mr-3 text-purple-600" />
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">
           Brand Customization
         </h1>
         <p className="text-xl text-gray-600">
-          Extract your brand colors, choose typography, and select the perfect background
+          Customize your {gameType} campaign with your brand identity
         </p>
       </motion.div>
 
-      {/* Progress Steps */}
-      <div className="flex justify-center mb-12">
-        <div className="flex items-center space-x-8">
-          {sections.map((section, index) => {
-            const Icon = section.icon;
-            const isActive = activeSection === section.id;
-            const isCompleted = isSectionComplete(section.id);
-            const isPast = sections.findIndex(s => s.id === activeSection) > index;
-
-            return (
-              <motion.div
-                key={section.id}
-                className="flex items-center"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: index * 0.1 }}
-              >
-                <button
-                  onClick={() => setActiveSection(section.id as 'brand' | 'fonts' | 'background')}
-                  className={`flex items-center space-x-2 px-4 py-2 rounded-full transition-all duration-300 ${
-                    isActive
-                      ? 'bg-purple-600 text-white shadow-lg'
-                      : isCompleted || isPast
-                      ? 'bg-green-100 text-green-700 hover:bg-green-200'
-                      : 'bg-gray-100 text-gray-500 hover:bg-gray-200'
-                  }`}
-                >
-                  <Icon className="w-5 h-5" />
-                  <span className="font-medium">{section.label}</span>
-                  {(isCompleted || isPast) && !isActive && (
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  )}
-                </button>
-                {index < sections.length - 1 && (
-                  <div className="w-8 h-0.5 bg-gray-200 mx-4"></div>
-                )}
-              </motion.div>
-            );
-          })}
+      {/* Tabs */}
+      <div className="flex justify-center mb-8">
+        <div className="flex space-x-1 bg-gray-100 rounded-lg p-1">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as 'colors' | 'fonts' | 'backgrounds')}
+              className={`px-6 py-3 rounded-lg font-medium transition-all duration-300 ${
+                activeTab === tab.id
+                  ? 'bg-white text-gray-900 shadow-sm'
+                  : 'text-gray-600 hover:text-gray-900'
+              }`}
+            >
+              <div className="text-center">
+                <div className="font-semibold">{tab.label}</div>
+                <div className="text-xs opacity-75">{tab.description}</div>
+              </div>
+            </button>
+          ))}
         </div>
       </div>
 
       {/* Content */}
       <motion.div
-        key={activeSection}
+        key={activeTab}
         initial={{ opacity: 0, x: 20 }}
         animate={{ opacity: 1, x: 0 }}
-        exit={{ opacity: 0, x: -20 }}
         transition={{ duration: 0.3 }}
         className="bg-white rounded-2xl shadow-xl p-8 mb-8"
       >
-        {activeSection === 'brand' && (
+        {activeTab === 'colors' && (
           <BrandUrlExtractor
             data={brandData}
-            onChange={(data) => updateBrandData('extractedColors', data.extractedColors)}
+            onChange={(colors) => updateBrandData('extractedColors', colors)}
             onLogoChange={(logoUrl) => updateBrandData('logoUrl', logoUrl)}
             onWebsiteChange={(websiteUrl) => updateBrandData('websiteUrl', websiteUrl)}
           />
         )}
         
-        {activeSection === 'fonts' && (
+        {activeTab === 'fonts' && (
           <FontSelector
             selectedFont={brandData.selectedFont}
             onChange={(font) => updateBrandData('selectedFont', font)}
@@ -164,13 +107,12 @@ const BrandCustomizationStep: React.FC<BrandCustomizationStepProps> = ({
           />
         )}
         
-        {activeSection === 'background' && (
+        {activeTab === 'backgrounds' && (
           <BackgroundGallery
-            selectedBackground={brandData.backgroundImage}
-            backgroundType={brandData.backgroundType}
-            onBackgroundChange={(bg) => updateBrandData('backgroundImage', bg)}
-            onTypeChange={(type) => updateBrandData('backgroundType', type)}
+            selectedBackground={brandData.selectedBackground}
+            onChange={(background) => updateBrandData('selectedBackground', background)}
             brandColors={brandData.extractedColors}
+            gameType={gameType}
           />
         )}
       </motion.div>
@@ -178,7 +120,7 @@ const BrandCustomizationStep: React.FC<BrandCustomizationStepProps> = ({
       {/* Navigation */}
       <div className="flex justify-between items-center">
         <motion.button
-          onClick={handlePrevious}
+          onClick={onBack}
           className="flex items-center space-x-2 px-6 py-3 bg-gray-100 text-gray-700 rounded-full hover:bg-gray-200 transition-colors"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
@@ -188,7 +130,7 @@ const BrandCustomizationStep: React.FC<BrandCustomizationStepProps> = ({
         </motion.button>
 
         <motion.button
-          onClick={handleNext}
+          onClick={() => onNext(brandData)}
           disabled={!canProceed}
           className={`flex items-center space-x-2 px-8 py-3 rounded-full transition-all duration-300 ${
             canProceed
@@ -198,7 +140,7 @@ const BrandCustomizationStep: React.FC<BrandCustomizationStepProps> = ({
           whileHover={canProceed ? { scale: 1.05 } : {}}
           whileTap={canProceed ? { scale: 0.95 } : {}}
         >
-          <span>{activeSection === 'background' ? 'Continue to AI Generation' : 'Next Step'}</span>
+          <span>Continue to AI Generation</span>
           <ArrowRight className="w-5 h-5" />
         </motion.button>
       </div>
