@@ -1,3 +1,4 @@
+
 import React from 'react';
 import ContrastBackground from '../../common/ContrastBackground';
 import ValidationMessage from '../../common/ValidationMessage';
@@ -110,14 +111,15 @@ const GameRenderer: React.FC<GameRendererProps> = ({
             slotBorderWidth={campaign.gameConfig?.jackpot?.slotBorderWidth}
             slotBackgroundColor={campaign.gameConfig?.jackpot?.slotBackgroundColor}
             onFinish={handleGameComplete}
-          onStart={handleGameStartInternal}
-        />
-      );
+            onStart={handleGameStartInternal}
+          />
+        );
       case 'quiz':
         return (
           <QuizGame
             config={campaign.gameConfig?.quiz || {}}
             design={campaign.design}
+            onGameComplete={handleGameComplete}
           />
         );
       case 'dice':
@@ -143,7 +145,7 @@ const GameRenderer: React.FC<GameRendererProps> = ({
         </ContrastBackground>
       </div>
       
-      {!formValidated && (
+      {!formValidated && campaign.type !== 'quiz' && (
         <div 
           onClick={() => {
             onGameButtonClick();

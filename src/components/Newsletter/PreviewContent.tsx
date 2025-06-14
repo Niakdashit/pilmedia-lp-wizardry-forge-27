@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import Color from 'color';
 import confetti from 'canvas-confetti';
@@ -62,6 +63,8 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
         return (
           <QuizGame
             config={campaign.gameConfig.quiz}
+            design={campaign.design}
+            onGameComplete={handleGameComplete}
           />
         );
       case 'memory':

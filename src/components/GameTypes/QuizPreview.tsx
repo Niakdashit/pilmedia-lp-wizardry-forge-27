@@ -1,56 +1,48 @@
+
 import React from 'react';
+import QuizGame from './QuizGame';
 
 interface QuizPreviewProps {
   question?: any;
+  config?: any;
+  design?: any;
 }
 
-const QuizPreview: React.FC<QuizPreviewProps> = ({ question }) => {
-  if (!question) {
+const QuizPreview: React.FC<QuizPreviewProps> = ({ question, config, design }) => {
+  // Si on a une question spécifique, on crée une config temporaire
+  if (question) {
+    const tempConfig = {
+      questions: [question],
+      ...config
+    };
+    
     return (
-      <div className="flex items-center justify-center text-gray-500 text-sm p-4 border border-gray-200 rounded-lg h-full">
-        Sélectionnez ou ajoutez une question pour la prévisualiser
-      </div>
+      <QuizGame
+        config={tempConfig}
+        design={design}
+        onGameComplete={() => {}}
+      />
     );
   }
 
-  const { text, image, type, options = [], feedback = {}, timeLimit } = question;
-  const renderOptions = () => {
-    if (type === 'input') {
-      return (
-        <input
-          type="text"
-          disabled
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg"
-          placeholder="Votre réponse"
-        />
-      );
-    }
-    const inputType = type === 'multiple' ? 'checkbox' : 'radio';
+  // Si on n'a pas de question mais une config, on l'utilise directement
+  if (config?.questions?.length > 0) {
     return (
-      <div className="space-y-2">
-        {options.map((opt: any) => (
-          <label key={opt.id} className="flex items-center space-x-2">
-            <input type={inputType} disabled className="text-[#841b60]" />
-            <span>{opt.text || 'Option'}</span>
-          </label>
-        ))}
-      </div>
+      <QuizGame
+        config={config}
+        design={design}
+        onGameComplete={() => {}}
+      />
     );
-  };
+  }
 
+  // Fallback pour le cas où il n'y a pas de données
   return (
-    <div className="space-y-4 p-4 border border-gray-200 rounded-lg bg-white">
-      {image && (
-        <img src={image} alt="" className="w-full h-48 object-cover rounded-lg" />
-      )}
-      <h3 className="text-lg font-medium">{text || 'Question'}</h3>
-      {renderOptions()}
-      <div className="text-sm text-gray-400">
-        {(feedback.correct || 'Bonne réponse')} / {(feedback.incorrect || 'Mauvaise réponse')}
+    <div className="flex items-center justify-center text-gray-500 text-sm p-8 border border-gray-200 rounded-lg h-full min-h-[400px]">
+      <div className="text-center space-y-3">
+        <div className="text-lg font-medium">Quiz non configuré</div>
+        <div className="text-sm">Ajoutez des questions dans l'onglet "Jeu" pour commencer</div>
       </div>
-      {timeLimit > 0 && (
-        <div className="text-xs text-gray-500">Temps : {timeLimit}s</div>
-      )}
     </div>
   );
 };

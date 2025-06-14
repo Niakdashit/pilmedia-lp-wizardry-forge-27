@@ -1,6 +1,7 @@
+
 import React from 'react';
 import Jackpot from '../GameTypes/Jackpot';
-import { QuizPreview } from '../GameTypes';
+import { QuizGame } from '../GameTypes';
 import WheelPreview from '../GameTypes/WheelPreview';
 import MemoryPreview from '../GameTypes/MemoryPreview';
 import PuzzlePreview from '../GameTypes/PuzzlePreview';
@@ -68,11 +69,10 @@ const GameRenderer: React.FC<GameRendererProps> = ({
       return (
         <div style={{ ...containerStyle, minHeight: '400px', padding: '20px', boxSizing: 'border-box' }}>
           <div style={{ ...wrapperStyle, ...getPositionStyles() }}>
-            <QuizPreview
-              question={
-                campaign.previewQuestion ||
-                campaign.gameConfig?.quiz?.questions?.[campaign.activeQuizQuestion ?? 0]
-              }
+            <QuizGame
+              config={campaign.gameConfig?.quiz || {}}
+              design={campaign.design}
+              onGameComplete={() => {}}
             />
           </div>
         </div>
@@ -135,7 +135,7 @@ const GameRenderer: React.FC<GameRendererProps> = ({
 
     case 'dice':
       return (
-        <div style={{ ...containerStyle, minHeight: '400px', padding: '20px', boxSizing: 'border-box' }}>
+        <div style={{ ...containerStyle, minHeight: '400px', padding: '20px', boxSizing: 'border-color' }}>
           <div style={{ ...wrapperStyle, ...getPositionStyles() }}>
             <DicePreview config={campaign.gameConfig?.dice || {}} />
           </div>
