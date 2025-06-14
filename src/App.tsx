@@ -23,30 +23,66 @@ function App() {
     <AppProvider>
       <Router>
         <div className="min-h-screen bg-gradient-to-br from-[#161B33] to-[#24123B] relative overflow-hidden">
-          {/* Animated background effects */}
+          {/* Primary animated background layer */}
           <div className="absolute inset-0 pointer-events-none">
-            {/* Bokeh effects */}
-            <div className="absolute top-20 left-10 w-32 h-32 bg-blue-400/10 rounded-full blur-3xl animate-pulse"></div>
-            <div className="absolute top-40 right-20 w-24 h-24 bg-purple-400/15 rounded-full blur-2xl animate-ping" style={{animationDuration: '4s'}}></div>
-            <div className="absolute bottom-20 left-1/4 w-40 h-40 bg-indigo-400/8 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
-            <div className="absolute top-1/3 right-10 w-20 h-20 bg-violet-400/12 rounded-full blur-2xl animate-ping" style={{animationDuration: '6s', animationDelay: '2s'}}></div>
+            {/* Large moving bokeh effects with parallax */}
+            <div className="absolute top-20 left-10 w-32 h-32 bg-blue-400/15 rounded-full blur-3xl animate-pulse" style={{animationDuration: '3s'}}></div>
+            <div className="absolute top-40 right-20 w-24 h-24 bg-purple-400/20 rounded-full blur-2xl animate-ping" style={{animationDuration: '4s'}}></div>
+            <div className="absolute bottom-20 left-1/4 w-40 h-40 bg-indigo-400/12 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s', animationDuration: '5s'}}></div>
+            <div className="absolute top-1/3 right-10 w-20 h-20 bg-violet-400/18 rounded-full blur-2xl animate-ping" style={{animationDuration: '6s', animationDelay: '2s'}}></div>
+            <div className="absolute bottom-1/3 right-1/2 w-28 h-28 bg-cyan-400/10 rounded-full blur-3xl animate-pulse" style={{animationDuration: '7s', animationDelay: '3s'}}></div>
             
-            {/* Moving lens flares */}
-            <div className="absolute top-10 left-1/3 w-2 h-20 bg-gradient-to-b from-transparent via-blue-300/20 to-transparent transform rotate-45 animate-pulse"></div>
-            <div className="absolute bottom-1/4 right-1/3 w-1 h-16 bg-gradient-to-b from-transparent via-purple-300/25 to-transparent transform -rotate-12 animate-pulse" style={{animationDelay: '3s'}}></div>
+            {/* Medium floating orbs */}
+            <div className="absolute top-1/4 left-1/2 w-16 h-16 bg-blue-300/12 rounded-full blur-xl animate-ping" style={{animationDuration: '8s'}}></div>
+            <div className="absolute bottom-1/4 left-20 w-12 h-12 bg-purple-300/15 rounded-full blur-lg animate-pulse" style={{animationDuration: '4s', animationDelay: '1s'}}></div>
             
-            {/* Light leaks */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-radial from-blue-400/5 via-transparent to-transparent animate-pulse" style={{animationDuration: '8s'}}></div>
-            <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-radial from-purple-400/8 via-transparent to-transparent animate-pulse" style={{animationDuration: '10s', animationDelay: '2s'}}></div>
+            {/* Moving lens flares and light rays */}
+            <div className="absolute top-10 left-1/3 w-2 h-20 bg-gradient-to-b from-transparent via-blue-300/25 to-transparent transform rotate-45 animate-pulse" style={{animationDuration: '3s'}}></div>
+            <div className="absolute bottom-1/4 right-1/3 w-1 h-16 bg-gradient-to-b from-transparent via-purple-300/30 to-transparent transform -rotate-12 animate-pulse" style={{animationDelay: '3s', animationDuration: '4s'}}></div>
+            <div className="absolute top-1/2 left-10 w-1.5 h-24 bg-gradient-to-b from-transparent via-indigo-300/20 to-transparent transform rotate-75 animate-pulse" style={{animationDelay: '5s', animationDuration: '6s'}}></div>
             
-            {/* Subtle grain overlay */}
+            {/* Diagonal light streaks */}
+            <div className="absolute top-0 right-1/4 w-px h-32 bg-gradient-to-b from-blue-400/20 via-transparent to-transparent transform rotate-12 animate-pulse" style={{animationDuration: '5s'}}></div>
+            <div className="absolute bottom-0 left-1/4 w-px h-24 bg-gradient-to-t from-purple-400/15 via-transparent to-transparent transform -rotate-12 animate-pulse" style={{animationDuration: '7s', animationDelay: '2s'}}></div>
+            
+            {/* Enhanced light leaks with movement */}
+            <div className="absolute top-0 right-0 w-64 h-64 bg-gradient-radial from-blue-400/8 via-blue-400/3 to-transparent animate-pulse" style={{animationDuration: '8s'}}></div>
+            <div className="absolute bottom-0 left-0 w-48 h-48 bg-gradient-radial from-purple-400/12 via-purple-400/4 to-transparent animate-pulse" style={{animationDuration: '10s', animationDelay: '2s'}}></div>
+            <div className="absolute top-1/2 left-1/2 w-56 h-56 bg-gradient-radial from-indigo-400/6 via-transparent to-transparent animate-pulse" style={{animationDuration: '12s', animationDelay: '4s'}}></div>
+            
+            {/* Glass morphism layers */}
+            <div className="absolute top-1/4 right-1/4 w-32 h-32 bg-white/5 backdrop-blur-sm rounded-full animate-pulse border border-white/10" style={{animationDuration: '6s'}}></div>
+            <div className="absolute bottom-1/3 left-1/3 w-24 h-24 bg-white/3 backdrop-blur-sm rounded-full animate-pulse border border-white/5" style={{animationDuration: '8s', animationDelay: '3s'}}></div>
+            
+            {/* Floating particles */}
+            <div className="absolute top-1/5 left-1/5 w-1 h-1 bg-blue-300/40 rounded-full animate-ping" style={{animationDuration: '2s'}}></div>
+            <div className="absolute top-1/2 right-1/5 w-1 h-1 bg-purple-300/40 rounded-full animate-ping" style={{animationDuration: '3s', animationDelay: '1s'}}></div>
+            <div className="absolute bottom-1/5 left-2/5 w-1 h-1 bg-indigo-300/40 rounded-full animate-ping" style={{animationDuration: '4s', animationDelay: '2s'}}></div>
+            
+            {/* Enhanced grain overlay with texture */}
             <div 
-              className="absolute inset-0 opacity-[0.015] mix-blend-overlay"
+              className="absolute inset-0 opacity-[0.02] mix-blend-overlay"
               style={{
                 backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
                 backgroundSize: '200px 200px'
               }}
             ></div>
+            
+            {/* Secondary grain layer for depth */}
+            <div 
+              className="absolute inset-0 opacity-[0.015] mix-blend-soft-light"
+              style={{
+                backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter2'%3E%3CfeTurbulence type='turbulence' baseFrequency='1.2' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter2)'/%3E%3C/svg%3E")`,
+                backgroundSize: '150px 150px'
+              }}
+            ></div>
+            
+            {/* Atmospheric haze layers */}
+            <div className="absolute inset-0 bg-gradient-to-t from-[#1a1f3a]/20 via-transparent to-[#2a1340]/10"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-transparent via-blue-900/5 to-purple-900/10"></div>
+            
+            {/* Dynamic color overlays */}
+            <div className="absolute inset-0 bg-gradient-to-tr from-blue-600/5 via-transparent to-purple-600/8 animate-pulse" style={{animationDuration: '15s'}}></div>
           </div>
           
           <div className="relative z-10">
