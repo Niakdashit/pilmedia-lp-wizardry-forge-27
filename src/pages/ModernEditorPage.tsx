@@ -5,7 +5,6 @@ import ModernCampaignEditor from './ModernCampaignEditor';
 
 const ModernEditorPage: React.FC = () => {
   const { id } = useParams();
-  const isNew = id === 'new';
 
   return (
     <ModernCampaignEditor />
