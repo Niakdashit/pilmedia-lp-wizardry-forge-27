@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { X, Monitor, Smartphone, Tablet } from 'lucide-react';
 import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
 import FunnelStandard from '../funnels/FunnelStandard';
+import FormPreview from '../GameTypes/FormPreview';
 import { createSynchronizedQuizCampaign } from '../../utils/quizConfigSync';
 
 interface ModernPreviewModalProps {
@@ -60,6 +61,16 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
   const enhancedCampaign = createSynchronizedQuizCampaign(campaign);
 
   const getFunnelComponent = () => {
+    // Gestion spéciale pour le type 'form'
+    if (campaign.type === 'form') {
+      return (
+        <FormPreview
+          campaign={enhancedCampaign}
+          gameSize={campaign.gameSize || 'medium'}
+        />
+      );
+    }
+
     const unlockedTypes = ['wheel', 'scratch', 'jackpot', 'dice'];
     const funnel =
       enhancedCampaign.funnel ||
@@ -165,3 +176,4 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
 };
 
 export default ModernPreviewModal;
+
