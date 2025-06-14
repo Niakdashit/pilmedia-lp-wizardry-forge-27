@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Upload, Palette, Settings, Target, Users, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Palette, Settings, Target, ArrowRight, ArrowLeft } from 'lucide-react';
 import BrandCustomization from './BrandCustomization';
 import WheelConfiguration from './WheelConfiguration';
 import CampaignGoals from './CampaignGoals';

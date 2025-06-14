@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { RotateCcw, Gift, Plus, Trash2 } from 'lucide-react';
 
@@ -9,7 +8,6 @@ interface WheelConfigurationProps {
 }
 
 const WheelConfiguration: React.FC<WheelConfigurationProps> = ({
-  gameType,
   config,
   onChange
 }) => {
