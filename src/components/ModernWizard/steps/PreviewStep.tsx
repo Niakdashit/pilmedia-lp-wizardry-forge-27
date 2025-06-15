@@ -102,35 +102,29 @@ const PreviewStep: React.FC<PreviewStepProps> = ({
         </div>
 
         {/* Preview Area */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm mb-8">
-          <div className="flex items-center space-x-3 mb-6">
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm mb-8 overflow-hidden">
+          <div className="flex items-center space-x-3 p-6 border-b border-gray-200">
             <div className="w-8 h-8 bg-[#951b6d]/10 rounded-lg flex items-center justify-center">
               <Eye className="w-4 h-4 text-[#951b6d]" />
             </div>
             <h3 className="font-semibold text-[#141e29]">Aperçu {selectedDevice}</h3>
           </div>
           
-          <div
-            className="bg-gray-50 rounded-xl p-8 min-h-96 flex items-center justify-center"
-            style={{
-              backgroundImage: visual ? `url(${visual})` : undefined,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center'
-            }}
-          >
+          <div className="p-0">
             {hasQuizData ? (
-              <div className="w-full max-w-2xl">
-                <QuizPreview 
-                  config={buildQuizConfig()} 
-                  design={{
-                    containerBackgroundColor: '#ffffff',
-                    borderColor: '#e5e7eb',
-                    borderRadius: '16px'
-                  }} 
-                />
-              </div>
+              <QuizPreview 
+                config={buildQuizConfig()} 
+                design={{
+                  containerBackgroundColor: '#ffffff',
+                  borderColor: '#e5e7eb',
+                  borderRadius: '16px'
+                }}
+                useCustomLayout={true}
+                logoUrl={wizardData.logo}
+                backgroundUrl={visual}
+              />
             ) : (
-              <div className="text-center space-y-4">
+              <div className="p-8 text-center space-y-4">
                 <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
                   <AlertCircle className="w-8 h-8 text-red-500" />
                 </div>
