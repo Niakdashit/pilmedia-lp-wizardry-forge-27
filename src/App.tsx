@@ -18,6 +18,13 @@ import Studies from './pages/Studies';
 import Admin from './pages/Admin';
 import AdminClients from './pages/AdminClients';
 import AdminClientDetail from './pages/AdminClientDetail';
+import AdminTemplates from './pages/AdminTemplates';
+import AdminCampaigns from './pages/AdminCampaigns';
+import AdminAnalytics from './pages/AdminAnalytics';
+import AdminTeam from './pages/AdminTeam';
+import AdminAlerts from './pages/AdminAlerts';
+import AdminReports from './pages/AdminReports';
+import AdminSettings from './pages/AdminSettings';
 import AdminLayout from './components/Admin/AdminLayout';
 import Layout from './components/Layout/Layout';
 
