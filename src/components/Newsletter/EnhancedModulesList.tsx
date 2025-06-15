@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { DraggableModule } from './DraggableModule';
 import { useNewsletterStore } from '@/stores/newsletterStore';
 import { 
   Type, 
@@ -16,7 +15,8 @@ import {
   AlignJustify as FooterIcon, 
   Code,
   Search,
-  Sparkles
+  Sparkles,
+  Plus
 } from 'lucide-react';
 
 const modules = [
@@ -130,16 +130,13 @@ export const EnhancedModulesList: React.FC = () => {
     return matchesSearch && matchesCategory;
   });
 
-  const handleQuickAdd = (moduleType: string) => {
-    const moduleTemplate = modules.find(m => m.id === moduleType);
-    if (moduleTemplate) {
-      addModule({
-        id: `module-${Date.now()}`,
-        type: moduleType as any,
-        content: getDefaultContent(moduleType),
-        settings: {}
-      });
-    }
+  const handleAddModule = (moduleType: string) => {
+    addModule({
+      id: `module-${Date.now()}`,
+      type: moduleType as any,
+      content: getDefaultContent(moduleType),
+      settings: getDefaultSettings(moduleType)
+    });
   };
 
   const getDefaultContent = (moduleType: string) => {
@@ -152,8 +149,27 @@ export const EnhancedModulesList: React.FC = () => {
         return 'Cliquez ici';
       case 'image':
         return '';
+      case 'testimonial':
+        return 'Un témoignage client fantastique qui montre la satisfaction de nos clients.';
+      case 'html':
+        return '<div style="padding: 20px; background: #f5f5f5; border-radius: 8px;"><h3>Mon bloc HTML</h3><p>Contenu personnalisé</p></div>';
+      case 'columns':
+        return JSON.stringify(['Contenu de la première colonne', 'Contenu de la deuxième colonne']);
       default:
         return '';
+    }
+  };
+
+  const getDefaultSettings = (moduleType: string) => {
+    switch (moduleType) {
+      case 'button':
+        return { url: '#' };
+      case 'columns':
+        return { columns: 2 };
+      case 'testimonial':
+        return { author: 'Client satisfait' };
+      default:
+        return {};
     }
   };
 
@@ -162,7 +178,7 @@ export const EnhancedModulesList: React.FC = () => {
       {/* Header */}
       <div className="p-6 border-b border-gray-200/50 bg-gradient-to-b from-white to-gray-50/50">
         <h2 className="font-bold text-xl text-gray-800 mb-2">📦 Modules</h2>
-        <p className="text-sm text-gray-600 mb-4">Glissez ou cliquez pour ajouter</p>
+        <p className="text-sm text-gray-600 mb-4">Cliquez pour ajouter un module</p>
         
         {/* Search */}
         <div className="relative mb-4">
@@ -204,34 +220,24 @@ export const EnhancedModulesList: React.FC = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.2, delay: index * 0.05 }}
           >
-            <DraggableModule
-              id={module.id}
-              className={`${module.color} border-2 rounded-xl p-4 cursor-grab transition-all duration-200 hover:shadow-md hover:scale-[1.02] group relative overflow-hidden`}
+            <button
+              onClick={() => handleAddModule(module.id)}
+              className={`w-full ${module.color} border-2 rounded-xl p-4 cursor-pointer transition-all duration-200 hover:shadow-md hover:scale-[1.02] group relative overflow-hidden`}
             >
               <div className="flex items-start justify-between">
                 <div className="flex items-center flex-1 min-w-0">
                   <div className="text-gray-600 mr-3 group-hover:scale-110 transition-transform duration-200">
                     {module.icon}
                   </div>
-                  <div className="min-w-0 flex-1">
+                  <div className="min-w-0 flex-1 text-left">
                     <h3 className="font-semibold text-gray-800 text-sm">{module.label}</h3>
                     <p className="text-xs text-gray-600 mt-1 line-clamp-2">{module.description}</p>
                   </div>
                 </div>
                 
-                {/* Quick add button */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleQuickAdd(module.id);
-                  }}
-                  className="opacity-0 group-hover:opacity-100 ml-2 p-1.5 bg-white/80 hover:bg-[#841b60] hover:text-white rounded-lg transition-all duration-200 text-gray-600"
-                  title="Ajout rapide"
-                >
-                  <Sparkles className="w-3 h-3" />
-                </button>
+                <Plus className="w-5 h-5 text-[#841b60] opacity-60 group-hover:opacity-100 transition-opacity" />
               </div>
-            </DraggableModule>
+            </button>
           </motion.div>
         ))}
 

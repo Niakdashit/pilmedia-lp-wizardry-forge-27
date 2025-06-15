@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useNewsletterStore } from '@/stores/newsletterStore';
 import { Trash2, GripVertical, ChevronUp, ChevronDown, Copy } from 'lucide-react';
@@ -7,21 +8,37 @@ interface ModuleRendererProps {
 }
 
 export const ModuleRenderer: React.FC<ModuleRendererProps> = ({ module }) => {
-  const { updateModule, removeModule, selectModule } = useNewsletterStore();
+  const { updateModule, removeModule, selectModule, modules } = useNewsletterStore();
 
   const handleMoveUp = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // Implementation for moving module up
+    const currentIndex = modules.findIndex(m => m.id === module.id);
+    if (currentIndex > 0) {
+      const newModules = [...modules];
+      [newModules[currentIndex], newModules[currentIndex - 1]] = [newModules[currentIndex - 1], newModules[currentIndex]];
+      // Réorganiser via le store
+    }
   };
 
   const handleMoveDown = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // Implementation for moving module down
+    const currentIndex = modules.findIndex(m => m.id === module.id);
+    if (currentIndex < modules.length - 1) {
+      const newModules = [...modules];
+      [newModules[currentIndex], newModules[currentIndex + 1]] = [newModules[currentIndex + 1], newModules[currentIndex]];
+      // Réorganiser via le store
+    }
   };
 
   const handleDuplicate = (e: React.MouseEvent) => {
     e.stopPropagation();
-    // Add duplicate module logic here
+    const { addModule } = useNewsletterStore.getState();
+    addModule({
+      id: `module-${Date.now()}`,
+      type: module.type,
+      content: module.content,
+      settings: { ...module.settings }
+    });
   };
 
   return (
@@ -65,94 +82,80 @@ export const ModuleRenderer: React.FC<ModuleRendererProps> = ({ module }) => {
 
       <div className="pl-6 pr-24">
         {module.type === 'text' && (
-          <textarea
-            value={module.content || ''}
-            onChange={(e) => updateModule(module.id, { content: e.target.value })}
-            className="w-full p-2 border border-gray-200 rounded resize-y min-h-[100px] focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-            placeholder="Saisissez votre texte ici..."
-          />
+          <div className="w-full p-4 border border-gray-200 rounded bg-white">
+            <div 
+              className="min-h-[60px] whitespace-pre-wrap"
+              style={{ fontSize: '14px', lineHeight: '1.5' }}
+            >
+              {module.content || 'Cliquez pour modifier ce texte...'}
+            </div>
+          </div>
         )}
 
         {module.type === 'image' && (
           <div className="space-y-2">
-            <input
-              type="text"
-              value={module.content || ''}
-              onChange={(e) => updateModule(module.id, { content: e.target.value })}
-              className="w-full p-2 border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-              placeholder="URL de l'image..."
-            />
-            {module.content && (
+            {module.content ? (
               <img
                 src={module.content}
                 alt=""
-                className="max-w-full h-auto rounded"
+                className="max-w-full h-auto rounded border"
               />
+            ) : (
+              <div className="w-full h-32 bg-gray-100 border-2 border-dashed border-gray-300 rounded flex items-center justify-center">
+                <span className="text-gray-500">Image - URL à configurer</span>
+              </div>
             )}
           </div>
         )}
 
         {module.type === 'button' && (
-          <div className="space-y-2">
-            <input
-              type="text"
-              value={module.content || ''}
-              onChange={(e) => updateModule(module.id, { content: e.target.value })}
-              className="w-full p-2 border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-              placeholder="Texte du bouton..."
-            />
-            <input
-              type="text"
-              value={module.settings?.url || ''}
-              onChange={(e) => updateModule(module.id, { settings: { ...module.settings, url: e.target.value } })}
-              className="w-full p-2 border border-gray-200 rounded focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-              placeholder="URL du lien..."
-            />
-            {module.content && (
-              <button className="w-full px-6 py-3 bg-[#841b60] text-white font-medium rounded-lg hover:bg-[#6d164f] transition-colors duration-200">
-                {module.content}
-              </button>
-            )}
+          <div className="text-center">
+            <button className="px-6 py-3 bg-[#841b60] text-white font-medium rounded-lg hover:bg-[#6d164f] transition-colors duration-200">
+              {module.content || 'Bouton'}
+            </button>
           </div>
         )}
 
         {module.type === 'divider' && (
-          <hr className="border-t border-gray-200 my-2" />
+          <hr className="border-t-2 border-gray-300 my-4" />
         )}
 
         {module.type === 'header' && (
-          <div className="flex justify-between items-center">
-            <div className="w-32 h-10 bg-[#841b60] rounded flex items-center justify-center text-white font-bold">
-              LOGO
-            </div>
-            <div className="flex space-x-4 text-sm">
-              <a href="#" className="text-[#841b60] hover:underline">Accueil</a>
-              <a href="#" className="text-[#841b60] hover:underline">Produits</a>
-              <a href="#" className="text-[#841b60] hover:underline">Contact</a>
+          <div className="bg-white p-6 border border-gray-200 rounded">
+            <div className="flex justify-between items-center">
+              <div className="w-32 h-10 bg-[#841b60] rounded flex items-center justify-center text-white font-bold">
+                LOGO
+              </div>
+              <div className="flex space-x-4 text-sm">
+                <a href="#" className="text-[#841b60] hover:underline">Accueil</a>
+                <a href="#" className="text-[#841b60] hover:underline">Produits</a>
+                <a href="#" className="text-[#841b60] hover:underline">Contact</a>
+              </div>
             </div>
           </div>
         )}
 
         {module.type === 'footer' && (
-          <div className="text-center text-sm text-gray-600">
-            <p className="mb-2">Entreprise SAS - 123 rue de l'exemple, 75000 Paris</p>
-            <p className="mb-2">Pour vous désabonner, <a href="#" className="text-[#841b60] underline">cliquez ici</a></p>
-            <p>&copy; 2023 Tous droits réservés</p>
+          <div className="bg-gray-50 p-6 border border-gray-200 rounded">
+            <div className="text-center text-sm text-gray-600">
+              <p className="mb-2">Entreprise SAS - 123 rue de l'exemple, 75000 Paris</p>
+              <p className="mb-2">Pour vous désabonner, <a href="#" className="text-[#841b60] underline">cliquez ici</a></p>
+              <p>&copy; 2023 Tous droits réservés</p>
+            </div>
           </div>
         )}
 
         {module.type === 'social' && (
-          <div className="text-center">
-            <p className="mb-2 text-sm text-gray-600">Suivez-nous sur les réseaux sociaux</p>
+          <div className="text-center bg-white p-4 border border-gray-200 rounded">
+            <p className="mb-4 text-sm text-gray-600">Suivez-nous sur les réseaux sociaux</p>
             <div className="flex justify-center space-x-4">
-              {['facebook', 'twitter', 'instagram', 'linkedin'].map((network) => (
-                <a
+              {['Facebook', 'Twitter', 'Instagram', 'LinkedIn'].map((network) => (
+                <div
                   key={network}
-                  href="#"
-                  className="w-8 h-8 rounded-full bg-[#841b60] flex items-center justify-center text-white hover:bg-[#6d164f] transition-colors duration-200"
+                  className="w-10 h-10 rounded-full bg-[#841b60] flex items-center justify-center text-white text-xs font-bold"
                 >
-                  <i className={`fab fa-${network}`}></i>
-                </a>
+                  {network[0]}
+                </div>
               ))}
             </div>
           </div>
@@ -164,30 +167,16 @@ export const ModuleRenderer: React.FC<ModuleRendererProps> = ({ module }) => {
               let columnContent = '';
               try {
                 const parsedContent = JSON.parse(module.content || '[]');
-                columnContent = Array.isArray(parsedContent) ? (parsedContent[index] || '') : '';
+                columnContent = Array.isArray(parsedContent) ? (parsedContent[index] || `Contenu colonne ${index + 1}`) : `Contenu colonne ${index + 1}`;
               } catch {
-                columnContent = index === 0 ? (module.content || '') : '';
+                columnContent = index === 0 ? (module.content || `Contenu colonne ${index + 1}`) : `Contenu colonne ${index + 1}`;
               }
               
               return (
-                <div key={index} className="border border-gray-200 rounded p-4">
-                  <textarea
-                    value={columnContent}
-                    onChange={(e) => {
-                      try {
-                        const parsedContent = JSON.parse(module.content || '[]');
-                        const newContent = Array.isArray(parsedContent) ? [...parsedContent] : [];
-                        newContent[index] = e.target.value;
-                        updateModule(module.id, { content: JSON.stringify(newContent) });
-                      } catch {
-                        const newContent = new Array(module.settings?.columns || 2).fill('');
-                        newContent[index] = e.target.value;
-                        updateModule(module.id, { content: JSON.stringify(newContent) });
-                      }
-                    }}
-                    className="w-full p-2 border border-gray-200 rounded resize-y min-h-[100px] focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-                    placeholder={`Contenu de la colonne ${index + 1}...`}
-                  />
+                <div key={index} className="border border-gray-200 rounded p-4 bg-white">
+                  <div className="min-h-[80px]">
+                    {columnContent}
+                  </div>
                 </div>
               );
             })}
@@ -197,9 +186,36 @@ export const ModuleRenderer: React.FC<ModuleRendererProps> = ({ module }) => {
         {module.type === 'html' && (
           <div className="bg-white border border-gray-200 rounded p-4">
             <div
-              className="bg-gray-50 p-4 border rounded"
-              dangerouslySetInnerHTML={{ __html: String(module.content || '<p>(vide)</p>') }}
+              className="bg-gray-50 p-4 border rounded min-h-[60px]"
+              dangerouslySetInnerHTML={{ __html: String(module.content || '<p>Code HTML personnalisé</p>') }}
             />
+          </div>
+        )}
+
+        {module.type === 'video' && (
+          <div className="bg-white border border-gray-200 rounded p-4">
+            <div className="aspect-video bg-gray-100 border-2 border-dashed border-gray-300 rounded flex items-center justify-center">
+              <div className="text-center text-gray-500">
+                <div className="w-12 h-12 mx-auto mb-2 bg-gray-300 rounded-full flex items-center justify-center">
+                  ▶
+                </div>
+                <span>Vidéo - URL à configurer</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {module.type === 'testimonial' && (
+          <div className="bg-white border border-gray-200 rounded p-6">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gray-300 rounded-full mx-auto mb-4"></div>
+              <blockquote className="text-lg italic text-gray-700 mb-4">
+                "{module.content || 'Un témoignage client fantastique...'}"
+              </blockquote>
+              <cite className="text-sm font-semibold text-gray-600">
+                - {module.settings?.author || 'Nom du client'}
+              </cite>
+            </div>
           </div>
         )}
       </div>

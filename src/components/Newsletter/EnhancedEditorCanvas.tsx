@@ -1,15 +1,12 @@
 
 import React, { useEffect, useState } from 'react';
-import { useDroppable } from '@dnd-kit/core';
-import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { useNewsletterStore } from '@/stores/newsletterStore';
-import { SortableModule } from './SortableModule';
+import ModuleRenderer from './ModuleRenderer';
 import { Plus, Save, Clock } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export const EnhancedEditorCanvas: React.FC = () => {
   const { modules, generatedHTML, setFromGeneratedHTML } = useNewsletterStore();
-  const { setNodeRef, isOver } = useDroppable({ id: 'editor' });
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const [autoSaveStatus, setAutoSaveStatus] = useState<'idle' | 'saving' | 'saved'>('idle');
 
@@ -93,67 +90,42 @@ export const EnhancedEditorCanvas: React.FC = () => {
           </div>
 
           {/* Canvas content */}
-          <div
-            ref={setNodeRef}
-            className={`min-h-[600px] p-6 transition-all duration-300 ${
-              isOver 
-                ? 'bg-gradient-to-br from-[#841b60]/5 to-[#841b60]/10 border-2 border-dashed border-[#841b60]' 
-                : 'bg-white'
-            }`}
-          >
-            <SortableContext items={modules.map(m => m.id)} strategy={verticalListSortingStrategy}>
-              <AnimatePresence mode="popLayout">
-                {modules.length === 0 ? (
-                  <motion.div 
-                    className="h-full flex items-center justify-center border-2 border-dashed border-gray-300 rounded-xl"
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 0.95 }}
-                  >
-                    <div className="text-center text-gray-500 space-y-4">
-                      <div className="w-16 h-16 mx-auto bg-gray-100 rounded-full flex items-center justify-center">
-                        <Plus className="w-8 h-8 text-gray-400" />
-                      </div>
-                      <div>
-                        <p className="text-lg font-medium mb-2">Créez votre newsletter</p>
-                        <p className="text-sm">Glissez et déposez des modules depuis la barre latérale</p>
-                        <p className="text-xs text-gray-400 mt-2">ou cliquez sur un module pour l'ajouter</p>
-                      </div>
+          <div className="min-h-[600px] p-6 bg-white">
+            <AnimatePresence mode="popLayout">
+              {modules.length === 0 ? (
+                <motion.div 
+                  className="h-full flex items-center justify-center border-2 border-dashed border-gray-300 rounded-xl"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.95 }}
+                >
+                  <div className="text-center text-gray-500 space-y-4">
+                    <div className="w-16 h-16 mx-auto bg-gray-100 rounded-full flex items-center justify-center">
+                      <Plus className="w-8 h-8 text-gray-400" />
                     </div>
-                  </motion.div>
-                ) : (
-                  <div className="space-y-4">
-                    {modules.map((module, index) => (
-                      <motion.div
-                        key={module.id}
-                        layout
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -20 }}
-                        transition={{ duration: 0.2, delay: index * 0.05 }}
-                      >
-                        <SortableModule module={module} />
-                      </motion.div>
-                    ))}
+                    <div>
+                      <p className="text-lg font-medium mb-2">Créez votre newsletter</p>
+                      <p className="text-sm">Cliquez sur un module dans la barre latérale pour l'ajouter</p>
+                    </div>
                   </div>
-                )}
-              </AnimatePresence>
-            </SortableContext>
-
-            {/* Drop zone indicator */}
-            {isOver && (
-              <motion.div
-                className="absolute inset-4 border-2 border-dashed border-[#841b60] rounded-xl bg-[#841b60]/5 flex items-center justify-center pointer-events-none"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-              >
-                <div className="text-center text-[#841b60]">
-                  <Plus className="w-12 h-12 mx-auto mb-2 animate-pulse" />
-                  <p className="font-semibold">Déposez le module ici</p>
+                </motion.div>
+              ) : (
+                <div className="space-y-4">
+                  {modules.map((module, index) => (
+                    <motion.div
+                      key={module.id}
+                      layout
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -20 }}
+                      transition={{ duration: 0.2, delay: index * 0.05 }}
+                    >
+                      <ModuleRenderer module={module} />
+                    </motion.div>
+                  ))}
                 </div>
-              </motion.div>
-            )}
+              )}
+            </AnimatePresence>
           </div>
         </motion.div>
       </div>

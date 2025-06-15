@@ -1,10 +1,8 @@
-
 import React, { useState } from 'react';
 import { Eye, Send, Save, Sparkles } from 'lucide-react';
 import { EnhancedModulesList } from '../components/Newsletter/EnhancedModulesList';
 import { EnhancedEditorCanvas } from '../components/Newsletter/EnhancedEditorCanvas';
 import { PropertiesPanel } from '../components/Newsletter/PropertiesPanel';
-import { DragDropProvider } from '../components/Newsletter/DragDropProvider';
 import PageHeader from '../components/Layout/PageHeader';
 import NewsletterPreviewModal from '../components/Newsletter/NewsletterPreviewModal';
 import { SettingsTab } from '@/components/Newsletter/properties/Tab/SettingsTab';
@@ -105,11 +103,11 @@ const Newsletter: React.FC = () => {
       {/* Main content */}
       <div className="flex h-[calc(100vh-200px)]">
         {activeTab === 'edit' && (
-          <DragDropProvider>
+          <>
             <EnhancedModulesList />
             <EnhancedEditorCanvas />
             <PropertiesPanel />
-          </DragDropProvider>
+          </>
         )}
 
         {activeTab === 'settings' && (
