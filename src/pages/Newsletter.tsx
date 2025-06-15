@@ -50,7 +50,7 @@ const Newsletter: React.FC = () => {
           <div>
             {/* Bloc mobile : Aperçu + 2 boutons côte à côte, même largeur et bien alignés */}
             <div className="md:hidden w-full flex justify-center">
-              <div className="w-full max-w-xs flex flex-col gap-3">
+              <div className="w-full flex flex-col gap-3">
                 <button
                   onClick={() => setShowPreviewModal(true)}
                   className="w-full inline-flex items-center justify-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
