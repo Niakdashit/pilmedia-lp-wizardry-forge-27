@@ -47,27 +47,54 @@ const Newsletter: React.FC = () => {
         title="Éditeur de Newsletter"
         size="sm"
         actions={
-          <>
-            <button
-              onClick={() => setShowPreviewModal(true)}
-              className="inline-flex items-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-            >
-              <Eye className="w-5 h-5 mr-2" />
-              Aperçu
-            </button>
-            <button
-              className="inline-flex items-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-            >
-              <Save className="w-5 h-5 mr-2" />
-              Enregistrer
-            </button>
-            <button
-              className="inline-flex items-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-            >
-              <Send className="w-5 h-5 mr-2" />
-              Envoyer
-            </button>
-          </>
+          <div>
+            {/* Bloc mobile : disposition en 1 / 2 */}
+            <div className="flex flex-col gap-3 md:hidden w-full">
+              <button
+                onClick={() => setShowPreviewModal(true)}
+                className="inline-flex w-full items-center justify-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+              >
+                <Eye className="w-5 h-5 mr-2" />
+                Aperçu
+              </button>
+              <div className="flex gap-3">
+                <button
+                  className="inline-flex flex-1 items-center justify-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                >
+                  <Save className="w-5 h-5 mr-2" />
+                  Enregistrer
+                </button>
+                <button
+                  className="inline-flex flex-1 items-center justify-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                >
+                  <Send className="w-5 h-5 mr-2" />
+                  Envoyer
+                </button>
+              </div>
+            </div>
+            {/* Bloc desktop : disposition par défaut */}
+            <div className="hidden md:flex gap-4">
+              <button
+                onClick={() => setShowPreviewModal(true)}
+                className="inline-flex items-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+              >
+                <Eye className="w-5 h-5 mr-2" />
+                Aperçu
+              </button>
+              <button
+                className="inline-flex items-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+              >
+                <Save className="w-5 h-5 mr-2" />
+                Enregistrer
+              </button>
+              <button
+                className="inline-flex items-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+              >
+                <Send className="w-5 h-5 mr-2" />
+                Envoyer
+              </button>
+            </div>
+          </div>
         }
       />
 
