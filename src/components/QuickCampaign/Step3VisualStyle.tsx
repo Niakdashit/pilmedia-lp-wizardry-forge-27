@@ -89,7 +89,9 @@ const Step3VisualStyle: React.FC = () => {
           },
           template: selectedTheme || 'default',
           customColors,
-          jackpotColors
+          jackpotColors,
+          backgroundImage: backgroundImageUrl,
+          mobileBackgroundImage: backgroundImageUrl
         },
         status: 'draft' as const
       };
@@ -152,7 +154,9 @@ const Step3VisualStyle: React.FC = () => {
           },
           template: selectedTheme || 'default',
           customColors,
-          jackpotColors
+          jackpotColors,
+          backgroundImage: backgroundImageUrl,
+          mobileBackgroundImage: backgroundImageUrl
         },
         status: 'draft' as const
       };
