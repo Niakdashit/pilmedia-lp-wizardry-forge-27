@@ -1,20 +1,13 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { CampaignData } from '../../../pages/ModernCampaignWizard';
 
 interface LivePreviewProps {
-  campaignData: CampaignData;
-  updateCampaignData: (updates: Partial<CampaignData>) => void;
   onNext: () => void;
   onBack: () => void;
-  isFirstStep: boolean;
-  isLastStep: boolean;
 }
 
 const LivePreview: React.FC<LivePreviewProps> = ({
-  campaignData,
-  updateCampaignData,
   onNext,
   onBack
 }) => {

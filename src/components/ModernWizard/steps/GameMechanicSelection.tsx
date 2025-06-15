@@ -5,12 +5,8 @@ import { Target, HelpCircle, DollarSign, Brain, Puzzle, Dice6, Cookie, Zap } fro
 import { GameType, CampaignData } from '../../../pages/ModernCampaignWizard';
 
 interface GameMechanicSelectionProps {
-  campaignData: CampaignData;
   updateCampaignData: (updates: Partial<CampaignData>) => void;
   onNext: () => void;
-  onBack: () => void;
-  isFirstStep: boolean;
-  isLastStep: boolean;
 }
 
 const gameTypes = [
@@ -80,7 +76,6 @@ const gameTypes = [
 ];
 
 const GameMechanicSelection: React.FC<GameMechanicSelectionProps> = ({
-  campaignData,
   updateCampaignData,
   onNext
 }) => {

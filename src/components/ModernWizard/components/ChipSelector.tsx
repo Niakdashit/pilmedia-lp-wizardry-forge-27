@@ -7,15 +7,13 @@ interface ChipSelectorProps {
   options: string[];
   selected: string;
   onChange: (value: string) => void;
-  multiSelect?: boolean;
 }
 
 const ChipSelector: React.FC<ChipSelectorProps> = ({
   label,
   options,
   selected,
-  onChange,
-  multiSelect = false
+  onChange
 }) => {
   return (
     <div className="space-y-3">

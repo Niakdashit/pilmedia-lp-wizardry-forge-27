@@ -1,20 +1,13 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { CampaignData } from '../../../pages/ModernCampaignWizard';
 
 interface BrandCustomizationProps {
-  campaignData: CampaignData;
-  updateCampaignData: (updates: Partial<CampaignData>) => void;
   onNext: () => void;
   onBack: () => void;
-  isFirstStep: boolean;
-  isLastStep: boolean;
 }
 
 const BrandCustomization: React.FC<BrandCustomizationProps> = ({
-  campaignData,
-  updateCampaignData,
   onNext,
   onBack
 }) => {

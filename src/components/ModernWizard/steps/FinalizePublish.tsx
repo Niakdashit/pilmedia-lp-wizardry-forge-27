@@ -1,21 +1,12 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { CampaignData } from '../../../pages/ModernCampaignWizard';
 
 interface FinalizePublishProps {
-  campaignData: CampaignData;
-  updateCampaignData: (updates: Partial<CampaignData>) => void;
-  onNext: () => void;
   onBack: () => void;
-  isFirstStep: boolean;
-  isLastStep: boolean;
 }
 
 const FinalizePublish: React.FC<FinalizePublishProps> = ({
-  campaignData,
-  updateCampaignData,
-  onNext,
   onBack
 }) => {
   return (

@@ -25,7 +25,6 @@ export interface CampaignData {
 }
 
 const ModernCampaignWizard: React.FC = () => {
-  const { type } = useParams();
   const [searchParams] = useSearchParams();
   const preselectedType = searchParams.get('type') as GameType;
   
@@ -84,7 +83,6 @@ const ModernCampaignWizard: React.FC = () => {
             
             <WizardProgress 
               currentStep={currentStep} 
-              totalSteps={steps.length}
               steps={steps}
             />
           </div>

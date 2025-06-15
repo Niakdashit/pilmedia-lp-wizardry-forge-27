@@ -11,13 +11,11 @@ interface Step {
 
 interface WizardProgressProps {
   currentStep: number;
-  totalSteps: number;
   steps: Step[];
 }
 
 const WizardProgress: React.FC<WizardProgressProps> = ({ 
   currentStep, 
-  totalSteps, 
   steps 
 }) => {
   return (
@@ -25,7 +23,6 @@ const WizardProgress: React.FC<WizardProgressProps> = ({
       {steps.map((step, index) => {
         const isCompleted = step.id < currentStep;
         const isCurrent = step.id === currentStep;
-        const isUpcoming = step.id > currentStep;
 
         return (
           <div key={step.id} className="flex items-center">
