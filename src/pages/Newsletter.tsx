@@ -48,31 +48,31 @@ const Newsletter: React.FC = () => {
         size="sm"
         actions={
           <div>
-            {/* Bloc mobile : disposition en 1 / 2 */}
+            {/* Bloc mobile : Aperçu au-dessus, puis Enregistrer et Envoyer côte à côte, tous de même largeur */}
             <div className="flex flex-col gap-3 md:hidden w-full">
               <button
                 onClick={() => setShowPreviewModal(true)}
-                className="inline-flex w-full items-center justify-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                className="w-full inline-flex items-center justify-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
               >
                 <Eye className="w-5 h-5 mr-2" />
                 Aperçu
               </button>
-              <div className="flex gap-3">
+              <div className="flex gap-3 w-full">
                 <button
-                  className="inline-flex flex-1 items-center justify-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                  className="flex-1 inline-flex items-center justify-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                 >
                   <Save className="w-5 h-5 mr-2" />
                   Enregistrer
                 </button>
                 <button
-                  className="inline-flex flex-1 items-center justify-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                  className="flex-1 inline-flex items-center justify-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                 >
                   <Send className="w-5 h-5 mr-2" />
                   Envoyer
                 </button>
               </div>
             </div>
-            {/* Bloc desktop : disposition par défaut */}
+            {/* Bloc desktop : disposition horizontale classique */}
             <div className="hidden md:flex gap-4">
               <button
                 onClick={() => setShowPreviewModal(true)}
