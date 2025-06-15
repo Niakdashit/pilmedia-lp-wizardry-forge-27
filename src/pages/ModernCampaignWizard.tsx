@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import GameMechanicSelection from '../components/ModernWizard/steps/GameMechanicSelection';
 import GameConfiguration from '../components/ModernWizard/steps/GameConfiguration';
