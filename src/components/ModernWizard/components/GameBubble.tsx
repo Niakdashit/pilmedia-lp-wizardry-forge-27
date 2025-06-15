@@ -68,6 +68,12 @@ const GameBubble: React.FC<GameBubbleProps> = ({ game, index, isSelected, onSele
         <circle cx="36" cy="36" r="1"/>
       </svg>
     ),
+    swiper: (
+      <svg viewBox="0 0 48 48" className="w-8 h-8" fill="currentColor">
+        <rect x="8" y="16" width="32" height="16" rx="4" fill="none" stroke="currentColor" strokeWidth="2"/>
+        <path d="M16 24h16M28 20l4 4-4 4"/>
+      </svg>
+    ),
     form: (
       <svg viewBox="0 0 48 48" className="w-8 h-8" fill="currentColor">
         <rect x="12" y="8" width="24" height="32" rx="2" fill="none" stroke="currentColor" strokeWidth="2"/>
