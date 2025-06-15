@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { TrendingUp, Users, Target, Eye, Trophy, Award } from 'lucide-react';
+import { TrendingUp, Users, Target, Trophy, Award } from 'lucide-react';
 import { AdminStats } from './types';
 
 interface AdminKPICardsProps {
@@ -13,54 +13,54 @@ const AdminKPICards: React.FC<AdminKPICardsProps> = ({ stats }) => {
       title: 'Campagnes Actives',
       value: stats.activeCampaigns,
       icon: Target,
-      color: 'green',
-      bgColor: 'bg-green-50',
-      iconColor: 'text-green-600',
+      color: 'primary',
+      bgColor: 'bg-[#841b60]/10',
+      iconColor: 'text-[#841b60]',
       trend: '+2 cette semaine'
     },
     {
       title: 'Total Participations',
       value: stats.totalParticipations.toLocaleString(),
       icon: Users,
-      color: 'purple',
-      bgColor: 'bg-purple-50',
-      iconColor: 'text-purple-600',
+      color: 'secondary',
+      bgColor: 'bg-blue-50',
+      iconColor: 'text-blue-600',
       trend: '+18% ce mois'
     },
     {
       title: 'Taux Conversion Moyen',
       value: `${stats.avgConversionRate}%`,
       icon: TrendingUp,
-      color: 'orange',
-      bgColor: 'bg-orange-50',
-      iconColor: 'text-orange-600',
+      color: 'success',
+      bgColor: 'bg-emerald-50',
+      iconColor: 'text-emerald-600',
       trend: '+0.5% ce mois'
     },
     {
       title: 'Jeu le Plus Populaire',
       value: stats.topGameType,
       icon: Trophy,
-      color: 'blue',
-      bgColor: 'bg-blue-50',
-      iconColor: 'text-blue-600',
+      color: 'warning',
+      bgColor: 'bg-amber-50',
+      iconColor: 'text-amber-600',
       trend: '67% des campagnes'
     },
     {
       title: 'Client Top Perf.',
       value: stats.topClient,
       icon: Award,
-      color: 'indigo',
-      bgColor: 'bg-indigo-50',
-      iconColor: 'text-indigo-600',
+      color: 'info',
+      bgColor: 'bg-cyan-50',
+      iconColor: 'text-cyan-600',
       trend: 'Meilleur ROI'
     },
     {
       title: 'Total Clients',
       value: stats.totalClients,
       icon: Users,
-      color: 'pink',
-      bgColor: 'bg-pink-50',
-      iconColor: 'text-pink-600',
+      color: 'neutral',
+      bgColor: 'bg-gray-50',
+      iconColor: 'text-gray-600',
       trend: '+3 ce mois'
     }
   ];
