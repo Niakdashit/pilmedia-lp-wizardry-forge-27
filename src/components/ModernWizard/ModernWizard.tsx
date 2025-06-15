@@ -19,6 +19,8 @@ export interface WizardData {
   generatedCampaign?: any;
   generatedQuiz?: any;
   customizations?: any;
+  extractedBrandTheme?: any;
+  manualContent?: string; // <-- Ajouté pour correction TS
 }
 
 const ModernWizard: React.FC = () => {

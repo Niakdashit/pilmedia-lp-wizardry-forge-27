@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { WizardData } from '../ModernWizard';
-import { Loader } from 'lucide-react';
+import GenerationStatus from './GenerationStep/GenerationStatus';
+import ApiStatusCard from './GenerationStep/ApiStatusCard';
+import { useQuizGeneration } from './GenerationStep/useQuizGeneration';
 
 interface GenerationStepProps {
   wizardData: WizardData;
@@ -15,46 +17,22 @@ const GenerationStep: React.FC<GenerationStepProps> = ({
   nextStep,
   prevStep
 }) => {
-  const [isGenerating, setIsGenerating] = useState(false);
-  const quizEndpoint = import.meta.env.VITE_QUIZ_ENDPOINT || '/api/quiz';
+  // Custom hook centralise tout l'état & la logique d'appel API
+  const {
+    isGenerating,
+    error,
+    progress,
+    debugInfo,
+    quizEndpoint,
+    handleGenerate
+  } = useQuizGeneration({ wizardData, updateWizardData, nextStep });
 
   useEffect(() => {
-    // Auto-start generation when step loads
     if (!isGenerating) {
       handleGenerate();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const handleGenerate = async () => {
-    setIsGenerating(true);
-
-    try {
-      const response = await fetch(quizEndpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          logoUrl: wizardData.logo,
-          desktopVisualUrl: wizardData.desktopVisual,
-          mobileVisualUrl: wizardData.mobileVisual,
-          websiteUrl: wizardData.websiteUrl,
-          productName: wizardData.productName
-        })
-      });
-
-      if (!response.ok) {
-        console.error(`Quiz generation failed: ${response.status}`);
-        return;
-      }
-
-      const data = await response.json();
-      updateWizardData({ generatedQuiz: data });
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsGenerating(false);
-      setTimeout(() => nextStep(), 500);
-    }
-  };
 
   return (
     <div className="space-y-6">
@@ -71,20 +49,11 @@ const GenerationStep: React.FC<GenerationStepProps> = ({
         </div>
 
         {/* Generation Status */}
-        <div className="bg-white rounded-xl border border-gray-200 p-8 shadow-sm text-center mb-8">
-          <div className="space-y-6">
-            <div className="w-16 h-16 bg-[#951b6d]/10 rounded-full flex items-center justify-center mx-auto">
-              <Loader className="w-8 h-8 text-[#951b6d] animate-spin" />
-            </div>
-            <div>
-              <h3 className="font-semibold text-[#141e29] mb-2">Génération en cours...</h3>
-              <p className="text-gray-600">Configuration des paramètres et personnalisation</p>
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div className="bg-[#951b6d] h-2 rounded-full animate-pulse" style={{ width: '60%' }}></div>
-            </div>
-          </div>
-        </div>
+        <GenerationStatus
+          error={error}
+          progress={progress}
+          debugInfo={debugInfo}
+        />
 
         {/* Navigation */}
         <div className="flex justify-between">
@@ -95,10 +64,13 @@ const GenerationStep: React.FC<GenerationStepProps> = ({
             Retour
           </button>
           <div className="px-8 py-3 bg-gray-100 text-gray-500 font-semibold rounded-xl cursor-not-allowed">
-            Génération en cours...
+            {isGenerating ? 'Génération en cours...' : 'Génération terminée'}
           </div>
         </div>
       </div>
+
+      {/* API Status */}
+      <ApiStatusCard error={error} quizEndpoint={quizEndpoint} />
     </div>
   );
 };
