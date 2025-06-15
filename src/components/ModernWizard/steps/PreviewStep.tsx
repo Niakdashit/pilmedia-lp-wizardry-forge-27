@@ -1,6 +1,7 @@
 import React from 'react';
 import { WizardData } from '../ModernWizard';
-import { Eye, Monitor, Smartphone, Tablet } from 'lucide-react';
+import { Eye, Monitor, Smartphone, Tablet, Loader } from 'lucide-react';
+import QuizPreview from '../../GameTypes/QuizPreview';
 interface PreviewStepProps {
   wizardData: WizardData;
   updateWizardData: (data: Partial<WizardData>) => void;
@@ -12,7 +13,27 @@ const PreviewStep: React.FC<PreviewStepProps> = ({
   nextStep,
   prevStep
 }) => {
+  const buildQuizConfig = () => {
+    if (!wizardData.generatedQuiz) return { questions: [] };
+    const qs = wizardData.generatedQuiz.questions || [];
+    return {
+      questions: qs.map((q: any, qi: number) => ({
+        id: qi,
+        text: q.question,
+        options: q.choices.map((c: string, ci: number) => ({
+          id: ci,
+          text: c,
+          isCorrect: c === q.answer
+        })),
+        feedback: { correct: wizardData.generatedQuiz.successText, incorrect: wizardData.generatedQuiz.errorText }
+      }))
+    };
+  };
+
   const [selectedDevice, setSelectedDevice] = React.useState<'desktop' | 'tablet' | 'mobile'>('desktop');
+
+  const visual = selectedDevice === 'mobile' ? (wizardData.mobileVisual || wizardData.desktopVisual) : wizardData.desktopVisual;
+
   return <div className="space-y-6">
       {/* Main Content Card */}
       <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-8 shadow-sm border border-gray-100/50">
@@ -61,38 +82,17 @@ const PreviewStep: React.FC<PreviewStepProps> = ({
             <h3 className="font-semibold text-[#141e29]">Aperçu {selectedDevice}</h3>
           </div>
 
-          <div className="bg-gray-50 rounded-xl p-8 min-h-96 flex items-center justify-center">
-            <div className="text-center space-y-4">
-              {selectedDevice === 'desktop' && <div className="w-96 h-64 bg-white rounded-xl shadow-sm border border-gray-200 flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-[#951b6d]/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Monitor className="w-8 h-8 text-[#951b6d]" />
-                    </div>
-                    <h4 className="font-semibold text-[#141e29] mb-2">{wizardData.productName || 'Ma Campagne'}</h4>
-                    <p className="text-sm text-gray-600">Aperçu desktop de votre campagne {wizardData.selectedGame}</p>
-                  </div>
-                </div>}
-              
-              {selectedDevice === 'tablet' && <div className="w-80 h-60 bg-white rounded-xl shadow-sm border border-gray-200 flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-[#951b6d]/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Tablet className="w-8 h-8 text-[#951b6d]" />
-                    </div>
-                    <h4 className="font-semibold text-[#141e29] mb-2">{wizardData.productName || 'Ma Campagne'}</h4>
-                    <p className="text-sm text-gray-600">Aperçu tablet de votre campagne {wizardData.selectedGame}</p>
-                  </div>
-                </div>}
-              
-              {selectedDevice === 'mobile' && <div className="w-64 h-96 bg-white rounded-xl shadow-sm border border-gray-200 flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-[#951b6d]/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Smartphone className="w-8 h-8 text-[#951b6d]" />
-                    </div>
-                    <h4 className="font-semibold text-[#141e29] mb-2">{wizardData.productName || 'Ma Campagne'}</h4>
-                    <p className="text-sm text-gray-600">Aperçu mobile de votre campagne {wizardData.selectedGame}</p>
-                  </div>
-                </div>}
-            </div>
+          <div className="bg-gray-50 rounded-xl p-8 min-h-96 flex items-center justify-center" style={{ backgroundImage: visual ? `url(${visual})` : undefined, backgroundSize: 'cover', backgroundPosition: 'center' }}>
+            {wizardData.generatedQuiz ? (
+              <QuizPreview config={buildQuizConfig()} design={{}} />
+            ) : (
+              <div className="text-center space-y-4">
+                <div className="w-16 h-16 bg-[#951b6d]/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Loader className="w-8 h-8 text-[#951b6d] animate-spin" />
+                </div>
+                <p className="text-gray-600">Chargement de l'aperçu...</p>
+              </div>
+            )}
           </div>
         </div>
 
@@ -108,7 +108,10 @@ const PreviewStep: React.FC<PreviewStepProps> = ({
             Publier la campagne
           </button>
         </div>
+        </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default PreviewStep;
