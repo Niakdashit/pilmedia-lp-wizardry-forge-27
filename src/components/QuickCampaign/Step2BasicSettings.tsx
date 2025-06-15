@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, ArrowRight, Calendar, Target } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Calendar, Upload } from 'lucide-react';
 import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
 import LogoUploader from '../LogoUploader';
 
@@ -8,23 +8,37 @@ const Step2BasicSettings: React.FC = () => {
   const {
     campaignName,
     launchDate,
-    marketingGoal,
+    backgroundImage,
+    backgroundImageUrl,
     setCampaignName,
     setLaunchDate,
-    setMarketingGoal,
+    setBackgroundImage,
+    setBackgroundImageUrl,
     setCurrentStep
   } = useQuickCampaignStore();
 
-  const marketingGoals = [
-    { id: 'leads', label: 'Générer des leads', description: 'Collecter des contacts qualifiés' },
-    { id: 'engagement', label: 'Engagement client', description: 'Fidéliser votre audience' },
-    { id: 'brand', label: 'Notoriété de marque', description: 'Faire connaître votre marque' },
-    { id: 'sales', label: 'Augmenter les ventes', description: 'Convertir plus de prospects' }
-  ];
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    return () => {
+      if (backgroundImageUrl) {
+        URL.revokeObjectURL(backgroundImageUrl);
+      }
+    };
+  }, [backgroundImageUrl]);
+
+  const handleFileUpload = (files: FileList | null) => {
+    if (files && files[0]) {
+      const file = files[0];
+      setBackgroundImage(file);
+      const url = URL.createObjectURL(file);
+      setBackgroundImageUrl(url);
+    }
+  };
 
   // Les couleurs seront extraites automatiquement via le composant LogoUploader
 
-  const canProceed = campaignName.trim() && launchDate && marketingGoal;
+  const canProceed = campaignName.trim() && launchDate;
 
   return (
     <div className="min-h-screen bg-[#ebf4f7] py-12 px-0">
@@ -68,35 +82,58 @@ const Step2BasicSettings: React.FC = () => {
               />
             </motion.div>
 
-            {/* Marketing Goal */}
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}>
-              <label className="block text-lg font-medium text-gray-900 mb-6">
-                <Target className="w-5 h-5 inline mr-2" />
-                Objectif marketing
-              </label>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {marketingGoals.map(goal => (
-                  <div
-                    key={goal.id}
-                    onClick={() => setMarketingGoal(goal.id)}
-                    className={`
-                      p-6 rounded-2xl border-2 cursor-pointer transition-all
-                      ${marketingGoal === goal.id ? 'border-[#841b60] bg-[#841b60]/5' : 'border-gray-200 hover:border-[#841b60]/50 bg-gray-50'}
-                    `}
-                  >
-                    <h3 className="font-semibold text-gray-900 mb-2">{goal.label}</h3>
-                    <p className="text-gray-600 text-sm">{goal.description}</p>
-                  </div>
-                ))}
-              </div>
-            </motion.div>
 
             {/* Logo Upload */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
               <label className="block text-lg font-medium text-gray-900 mb-4">
                 Logo <span className="text-gray-500 font-normal">(optionnel)</span>
               </label>
-              <LogoUploader />
+            <LogoUploader />
+            </motion.div>
+
+            {/* Background Upload */}
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
+              <label className="block text-lg font-medium text-gray-900 mb-4">
+                Image de fond <span className="text-gray-500 font-normal">(optionnel)</span>
+              </label>
+              <div
+                className="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer"
+                onClick={() => fileInputRef.current?.click()}
+                role="button"
+                tabIndex={0}
+                onKeyDown={(e) => e.key === 'Enter' && fileInputRef.current?.click()}
+              >
+                <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                {backgroundImage ? (
+                  <div>
+                    <p className="text-gray-900 font-medium mb-2">{backgroundImage.name}</p>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setBackgroundImage(null);
+                        setBackgroundImageUrl(null);
+                      }}
+                      className="text-red-500 hover:text-red-600 transition-colors"
+                    >
+                      Supprimer
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <p className="text-gray-600 mb-2">
+                      <span className="text-[#841b60] font-medium">Téléchargez une image de fond</span>
+                    </p>
+                    <p className="text-gray-400 text-sm">PNG, JPG jusqu'à 10MB</p>
+                  </>
+                )}
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleFileUpload(e.target.files)}
+                  className="hidden"
+                />
+              </div>
             </motion.div>
           </div>
 
