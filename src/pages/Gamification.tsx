@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { Plus } from 'lucide-react';
+import { Plus, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import PageHeader from '../components/Layout/PageHeader';
 import { CampaignType, getCampaignTypeIcon } from '../utils/campaignTypes';
@@ -62,13 +61,22 @@ const Gamification: React.FC = () => {
       <PageHeader
         title="Gamification"
         actions={
-          <Link
-            to="/gamification/mechanic-selection"
-            className="inline-flex items-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-          >
-            <Plus className="w-5 h-5 mr-2" />
-            Nouveau Jeu
-          </Link>
+          <div className="flex gap-3">
+            <Link
+              to="/gamification/ai-generation?type=wheel"
+              className="inline-flex items-center px-6 py-4 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold rounded-2xl hover:from-purple-700 hover:to-purple-800 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+            >
+              <Sparkles className="w-5 h-5 mr-2" />
+              Créer avec l'IA
+            </Link>
+            <Link
+              to="/gamification/mechanic-selection"
+              className="inline-flex items-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+            >
+              <Plus className="w-5 h-5 mr-2" />
+              Nouveau Jeu
+            </Link>
+          </div>
         }
       />
 
@@ -93,12 +101,21 @@ const Gamification: React.FC = () => {
                   <div className="p-4">
                     <h3 className="font-bold text-gray-800 mb-1">{game.name}</h3>
                     <p className="text-sm text-gray-600 mb-4">{game.description}</p>
-                    <Link 
-                      to={`/gamification/mechanic-selection?type=${game.type}`} 
-                      className="w-full px-4 py-2 bg-gray-100 text-gray-800 font-medium rounded-lg hover:bg-gray-200 transition-colors duration-200 block text-center"
-                    >
-                      Créer une campagne
-                    </Link>
+                    <div className="space-y-2">
+                      <Link 
+                        to={`/gamification/ai-generation?type=${game.type}`} 
+                        className="w-full px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-medium rounded-lg hover:from-purple-700 hover:to-purple-800 transition-all duration-200 block text-center text-sm"
+                      >
+                        <Sparkles className="w-4 h-4 inline mr-1" />
+                        Créer avec l'IA
+                      </Link>
+                      <Link 
+                        to={`/gamification/mechanic-selection?type=${game.type}`} 
+                        className="w-full px-4 py-2 bg-gray-100 text-gray-800 font-medium rounded-lg hover:bg-gray-200 transition-colors duration-200 block text-center text-sm"
+                      >
+                        Configuration manuelle
+                      </Link>
+                    </div>
                   </div>
                 </div>
               );
