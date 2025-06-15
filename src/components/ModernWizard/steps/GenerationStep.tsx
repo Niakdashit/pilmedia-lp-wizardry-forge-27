@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { WizardData } from '../ModernWizard';
 import GenerationStatus from './GenerationStep/GenerationStatus';
@@ -18,6 +17,7 @@ const GenerationStep: React.FC<GenerationStepProps> = ({
   nextStep,
   prevStep
 }) => {
+  // Custom hook centralise tout l'état & la logique d'appel API
   const {
     isGenerating,
     error,
@@ -31,6 +31,7 @@ const GenerationStep: React.FC<GenerationStepProps> = ({
     if (!isGenerating) {
       handleGenerate();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
