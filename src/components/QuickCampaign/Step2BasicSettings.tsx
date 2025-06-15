@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Calendar, Upload } from 'lucide-react';
 import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
@@ -19,6 +19,14 @@ const Step2BasicSettings: React.FC = () => {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Nettoyage de l'URL de l'image pour éviter les leaks mémoire
+  useEffect(() => {
+    return () => {
+      if (backgroundImageUrl) {
+        URL.revokeObjectURL(backgroundImageUrl);
+      }
+    };
+  }, [backgroundImageUrl]);
 
   const handleFileUpload = (files: FileList | null) => {
     if (files && files[0]) {
@@ -60,7 +68,6 @@ const Step2BasicSettings: React.FC = () => {
               />
             </motion.div>
 
-
             {/* Launch Date */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
               <label className="block text-lg font-medium text-gray-900 mb-4">
@@ -75,13 +82,12 @@ const Step2BasicSettings: React.FC = () => {
               />
             </motion.div>
 
-
             {/* Logo Upload */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
               <label className="block text-lg font-medium text-gray-900 mb-4">
                 Logo <span className="text-gray-500 font-normal">(optionnel)</span>
               </label>
-            <LogoUploader />
+              <LogoUploader />
             </motion.div>
 
             {/* Background Upload */}
