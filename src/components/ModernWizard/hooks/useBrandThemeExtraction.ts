@@ -24,7 +24,7 @@ export function useBrandThemeExtraction(siteUrl: string | undefined) {
           setBrandTheme(theme);
         }
       })
-      .catch((err) => {
+      .catch(() => { // <- le paramètre err n'est plus nécessaire, remplacé par _
         if (!cancelled) {
           setError("Erreur lors de l'extraction du thème de marque.");
           setBrandTheme(null);
