@@ -51,10 +51,6 @@ const ModernWizard: React.FC = () => {
     }
   };
 
-  const goToStep = (stepIndex: number) => {
-    setCurrentStep(stepIndex);
-  };
-
   const handleClose = () => {
     navigate('/gamification');
   };
@@ -91,9 +87,6 @@ const ModernWizard: React.FC = () => {
               updateWizardData={updateWizardData}
               nextStep={nextStep}
               prevStep={prevStep}
-              goToStep={goToStep}
-              currentStep={currentStep}
-              totalSteps={steps.length}
             />
           </motion.div>
         </AnimatePresence>

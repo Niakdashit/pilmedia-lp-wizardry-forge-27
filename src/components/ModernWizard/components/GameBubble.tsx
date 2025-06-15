@@ -15,7 +15,7 @@ interface GameBubbleProps {
 }
 
 const GameBubble: React.FC<GameBubbleProps> = ({ game, index, isSelected, onSelect }) => {
-  const iconComponents = {
+  const iconComponents: Record<CampaignType, JSX.Element> = {
     wheel: (
       <svg viewBox="0 0 48 48" className="w-8 h-8" fill="currentColor">
         <circle cx="24" cy="24" r="20" fill="none" stroke="currentColor" strokeWidth="2"/>

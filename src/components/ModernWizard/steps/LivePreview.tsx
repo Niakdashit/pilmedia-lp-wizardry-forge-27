@@ -11,7 +11,6 @@ interface LivePreviewProps {
 }
 
 const LivePreview: React.FC<LivePreviewProps> = ({
-  wizardData,
   updateWizardData,
   nextStep,
   prevStep
