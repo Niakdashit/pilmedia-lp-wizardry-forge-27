@@ -44,6 +44,21 @@ export default {
         'glass': '0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05)',
         'glass-sm': '0 1px 2px 0 rgb(0 0 0 / 0.05)',
         'glass-hover': '0 8px 12px -2px rgb(0 0 0 / 0.05), 0 4px 8px -4px rgb(0 0 0 / 0.05)',
+      },
+      keyframes: {
+        fadeInUp: {
+          '0%': {
+            opacity: '0',
+            transform: 'translateY(20px)'
+          },
+          '100%': {
+            opacity: '1',
+            transform: 'translateY(0)'
+          }
+        }
+      },
+      animation: {
+        fadeInUp: 'fadeInUp 0.6s ease-out both'
       }
     },
   },

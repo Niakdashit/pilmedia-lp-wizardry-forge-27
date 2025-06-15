@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { CampaignType } from '../../../utils/campaignTypes';
-import { Zap, Brain, DollarSign, Layers, Grid3X3, Puzzle, Dice6, FileText, RotateCcw } from 'lucide-react';
+import { RotateCcw, Brain, DollarSign, Layers, Grid3X3, Puzzle, Dice6, FileText } from 'lucide-react';
 
 interface GameBubbleProps {
   gameType: CampaignType;
@@ -21,7 +21,7 @@ const iconComponents: Record<CampaignType, React.ReactElement> = {
   puzzle: <Puzzle className="w-8 h-8" />,
   dice: <Dice6 className="w-8 h-8" />,
   form: <FileText className="w-8 h-8" />,
-  swiper: <Zap className="w-8 h-8" />
+  swiper: <RotateCcw className="w-8 h-8" />
 };
 
 const GameBubble: React.FC<GameBubbleProps> = ({
@@ -34,51 +34,39 @@ const GameBubble: React.FC<GameBubbleProps> = ({
 }) => {
   return (
     <div
-      className={`
-        relative group cursor-pointer transition-all duration-500 transform hover:scale-110
-        ${isSelected ? 'scale-110' : ''}
-      `}
+      className="relative group cursor-pointer"
       onClick={onClick}
-      style={{ animationDelay: `${delay}ms` }}
+      style={{ 
+        animation: `fadeInUp 0.6s ease-out ${delay}ms both`,
+      }}
     >
       {/* Main bubble */}
       <div className={`
-        w-24 h-24 rounded-3xl flex items-center justify-center
-        transition-all duration-300 group-hover:shadow-2xl
+        w-24 h-24 rounded-2xl flex items-center justify-center transition-all duration-300 backdrop-blur-sm border shadow-sm
+        group-hover:scale-110 group-hover:shadow-lg
         ${isSelected 
-          ? 'bg-gradient-to-br from-[#841b60] to-[#6d164f] shadow-2xl shadow-[#841b60]/50' 
-          : 'bg-white/20 backdrop-blur-xl border border-white/30 group-hover:bg-white/30'
+          ? 'bg-[#951b6d] text-white border-[#951b6d] shadow-lg scale-110' 
+          : 'bg-white/80 text-gray-600 border-white/50 group-hover:bg-[#951b6d]/10 group-hover:text-[#951b6d] group-hover:border-[#951b6d]/30'
         }
       `}>
-        <div className={`
-          transition-colors duration-300
-          ${isSelected ? 'text-white' : 'text-gray-300 group-hover:text-white'}
-        `}>
-          {iconComponents[gameType]}
-        </div>
+        {iconComponents[gameType]}
       </div>
 
-      {/* Selection ring */}
+      {/* Selection indicator */}
       {isSelected && (
-        <div className="absolute inset-0 rounded-3xl border-2 border-[#841b60] animate-pulse"></div>
+        <div className="absolute -top-1 -right-1 w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center animate-pulse">
+          <div className="w-2 h-2 bg-white rounded-full"></div>
+        </div>
       )}
 
       {/* Tooltip */}
-      <div className="absolute top-full mt-4 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-        <div className="bg-black/80 backdrop-blur-sm rounded-2xl px-4 py-3 min-w-48 text-center">
-          <div className="text-white font-semibold text-sm mb-1">{name}</div>
+      <div className="absolute top-full mt-4 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none z-20">
+        <div className="bg-[#141e29] text-white rounded-xl px-4 py-3 min-w-48 text-center shadow-lg">
+          <div className="font-semibold text-sm mb-1">{name}</div>
           <div className="text-gray-300 text-xs">{description}</div>
         </div>
-        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-black/80"></div>
+        <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-[#141e29]"></div>
       </div>
-
-      {/* Floating particles */}
-      {isSelected && (
-        <>
-          <div className="absolute -top-2 -right-2 w-3 h-3 bg-[#841b60] rounded-full animate-ping"></div>
-          <div className="absolute -bottom-2 -left-2 w-2 h-2 bg-violet-400 rounded-full animate-ping" style={{animationDelay: '0.5s'}}></div>
-        </>
-      )}
     </div>
   );
 };
