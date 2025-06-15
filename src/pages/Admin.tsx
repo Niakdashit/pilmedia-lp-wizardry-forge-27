@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Plus, Filter, Eye, Copy, Archive, Trash2, ChevronDown, BarChart2, ExternalLink, MoreVertical, Users, Target, Calendar, Activity } from 'lucide-react';
+import { Search, Filter, Eye, Copy, Archive, ChevronDown, BarChart2, MoreVertical, Users, Target, Activity } from 'lucide-react';
 import PageHeader from '../components/Layout/PageHeader';
 import { getCampaignTypeIcon, CampaignType } from '../utils/campaignTypes';
 
@@ -70,7 +70,7 @@ const Admin: React.FC = () => {
       clientName: 'Fashion Brand',
       clientId: 'client2',
       status: 'draft',
-      type: 'contest',
+      type: 'quiz',
       participants: 0,
       views: 0,
       conversionRate: 0,
@@ -300,7 +300,6 @@ const Admin: React.FC = () => {
                   <option value="all">Tous les types</option>
                   <option value="quiz">Quiz</option>
                   <option value="wheel">Roue</option>
-                  <option value="contest">Concours</option>
                   <option value="survey">Sondage</option>
                 </select>
               </div>

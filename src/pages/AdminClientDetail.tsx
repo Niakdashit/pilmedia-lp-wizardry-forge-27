@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { ArrowLeft, Eye, Copy, Archive, Trash2, Edit, Plus, Target, Calendar, BarChart2, Users } from 'lucide-react';
+import { ArrowLeft, Eye, Copy, Archive, Edit, Target, Users, BarChart2 } from 'lucide-react';
 import PageHeader from '../components/Layout/PageHeader';
 import { getCampaignTypeIcon, CampaignType } from '../utils/campaignTypes';
 
@@ -22,6 +22,8 @@ interface ClientCampaign {
 const AdminClientDetail: React.FC = () => {
   const { clientId } = useParams();
   const [filterStatus, setFilterStatus] = useState('all');
+
+  console.log('Client ID:', clientId); // Pour éviter l'erreur unused variable
 
   // Mock client data
   const clientData = {
@@ -68,10 +70,10 @@ const AdminClientDetail: React.FC = () => {
     },
     {
       id: '3',
-      name: 'Concours Photo',
-      description: 'Concours de photos de produits',
+      name: 'Quiz Produit',
+      description: 'Quiz de connaissance de produits',
       status: 'draft',
-      type: 'contest',
+      type: 'quiz',
       participants: 0,
       views: 0,
       conversionRate: 0,
@@ -131,10 +133,6 @@ const AdminClientDetail: React.FC = () => {
               <ArrowLeft className="w-5 h-5 mr-2" />
               Retour Clients
             </Link>
-            <button className="inline-flex items-center px-6 py-2.5 bg-[#841b60] text-white font-semibold rounded-xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-base">
-              <Plus className="w-5 h-5 mr-2" />
-              Nouvelle Campagne
-            </button>
           </div>
         }
       />
@@ -203,7 +201,7 @@ const AdminClientDetail: React.FC = () => {
                       <p className="text-sm text-orange-600 font-medium">Conversion Moy.</p>
                       <p className="text-xl font-bold text-orange-900">{avgConversion.toFixed(1)}%</p>
                     </div>
-                    <Calendar className="w-8 h-8 text-orange-600" />
+                    <BarChart2 className="w-8 h-8 text-orange-600" />
                   </div>
                 </div>
               </div>
