@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Eye, Save, Wand2, Settings } from 'lucide-react';
+import { Sparkles, Eye, Save, Wand2, Settings, Gamepad2, FileText } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import ModernEditorPanel from './ModernEditorPanel';
 import AIAssistantSidebar from './AIAssistantSidebar';
@@ -38,8 +38,8 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
   const steps = [
     { id: 'setup', label: 'Configuration', icon: Settings },
     { id: 'content', label: 'Contenu', icon: Wand2 },
-    { id: 'game', label: 'Jeu', icon: Settings },
-    { id: 'wording', label: 'Textes', icon: Wand2 },
+    { id: 'game', label: 'Jeu', icon: Gamepad2 },
+    { id: 'wording', label: 'Textes', icon: FileText },
     { id: 'preview', label: 'Aperçu', icon: Eye },
     { id: 'publish', label: 'Publication', icon: Sparkles }
   ];
@@ -70,7 +70,7 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
               </button>
               <div>
                 <h1 className="text-xl font-bold text-gray-900">
-                  {isNewCampaign ? 'Nouvelle Campagne' : campaign.name || 'Campagne'}
+                  {isNewCampaign ? 'Ma Campagne' : campaign?.name || 'Ma Campagne'}
                 </h1>
                 <p className="text-sm text-gray-500">Créez une expérience unique pour vos utilisateurs</p>
               </div>
@@ -105,7 +105,7 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
           </div>
 
           {/* Step Navigation */}
-          <div className="flex items-center space-x-2 mt-6 overflow-x-auto pb-2">
+          <div className="flex items-center space-x-3 mt-6 overflow-x-auto pb-2">
             {steps.map((step, index) => {
               const Icon = step.icon;
               const isActive = activeTab === step.id;
@@ -115,29 +115,21 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
                 <motion.button
                   key={step.id}
                   onClick={() => handleStepChange(step.id)}
-                  className={`relative flex items-center space-x-3 px-6 py-3 rounded-full transition-all duration-300 whitespace-nowrap ${
+                  className={`relative flex items-center space-x-2 px-4 py-2 rounded-full transition-all duration-300 whitespace-nowrap text-sm font-medium ${
                     isActive 
-                      ? 'bg-gradient-to-r from-[#841b60] to-[#6d164f] text-white shadow-lg' 
+                      ? 'bg-[#841b60] text-white shadow-md' 
                       : isCompleted
-                      ? 'bg-green-50 text-green-700 hover:bg-green-100'
-                      : 'bg-white hover:bg-gray-50 text-gray-700 border border-gray-200'
+                      ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                      : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                   }`}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
                   <Icon className="w-4 h-4" />
-                  <span className="font-medium">{step.label}</span>
+                  <span>{step.label}</span>
                   
-                  {isCompleted && (
+                  {isCompleted && !isActive && (
                     <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  )}
-                  
-                  {isActive && (
-                    <motion.div
-                      layoutId="activeStepIndicator"
-                      className="absolute inset-0 bg-gradient-to-r from-[#841b60] to-[#6d164f] rounded-full"
-                      style={{ zIndex: -1 }}
-                    />
                   )}
                 </motion.button>
               );
