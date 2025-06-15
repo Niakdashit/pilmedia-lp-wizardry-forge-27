@@ -88,7 +88,7 @@ const ModernWizard: React.FC = () => {
     }
   };
   return <div className="min-h-screen">
-      <div className="max-w-7xl mx-auto py-8 px-0">
+      <div className="max-w-7xl mx-auto px-0 py-px">
         {/* Page Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-[#141e29] mb-3">Créer une nouvelle campagne</h1>
