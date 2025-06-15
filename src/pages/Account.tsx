@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { User, Mail, Lock, Building, BellRing, Shield, UserCircle, Plus } from 'lucide-react';
+import { User, Mail, Lock, Building, BellRing, Shield, UserCircle } from 'lucide-react';
 import PageHeader from '../components/Layout/PageHeader';
 
 const Account: React.FC = () => {
