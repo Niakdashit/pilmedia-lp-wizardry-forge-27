@@ -2,7 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Palette } from 'lucide-react';
-import { CampaignData, GameType } from '../../../pages/ModernCampaignWizard';
+import { CampaignData } from '../../../pages/ModernCampaignWizard';
 import ConfigSlider from '../components/ConfigSlider';
 import ChipSelector from '../components/ChipSelector';
 import ToggleSwitch from '../components/ToggleSwitch';
