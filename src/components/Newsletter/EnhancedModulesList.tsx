@@ -13,7 +13,7 @@ import {
   Layout, 
   Video, 
   Quote, 
-  Footer as FooterIcon, 
+  AlignJustify as FooterIcon, 
   Code,
   Search,
   Sparkles

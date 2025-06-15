@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { DndContext, DragEndEvent, DragOverEvent, closestCenter, DragOverlay } from '@dnd-kit/core';
+import { DndContext, DragEndEvent, closestCenter, DragOverlay } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { useNewsletterStore } from '@/stores/newsletterStore';
 import ModuleRenderer from './ModuleRenderer';
