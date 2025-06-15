@@ -42,72 +42,77 @@ const GameSelectionStep: React.FC<GameSelectionStepProps> = ({
     updateWizardData({ selectedGame: gameType });
     setTimeout(() => {
       nextStep();
-    }, 300);
+    }, 200);
   };
 
   return (
     <div className="space-y-8">
-      {/* Section Header */}
-      <div className="max-w-3xl">
-        <h2 className="text-xl font-bold text-[#141e29] mb-3">Choisissez votre mécanique de jeu</h2>
-        <p className="text-gray-600 leading-relaxed">
-          Sélectionnez le type d'interaction qui correspond le mieux à vos objectifs. 
-          Chaque mécanique peut être personnalisée selon vos besoins.
-        </p>
-      </div>
+      {/* Section Content */}
+      <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-8 shadow-sm border border-gray-100/50">
+        {/* Section Header */}
+        <div className="mb-8">
+          <h2 className="text-2xl font-bold text-[#141e29] mb-3">
+            Choisissez votre mécanique de jeu
+          </h2>
+          <p className="text-gray-600 leading-relaxed max-w-2xl">
+            Sélectionnez le type d'interaction qui correspond le mieux à vos objectifs. 
+            Chaque mécanique peut être personnalisée selon vos besoins.
+          </p>
+        </div>
 
-      {/* Game Selection Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {gameTypes.map((game) => (
-          <button
-            key={game.type}
-            onClick={() => handleGameSelect(game.type)}
-            className={`
-              p-6 rounded-xl border-2 transition-all duration-200 text-left group
-              hover:shadow-md hover:border-[#951b6d]/30 hover:-translate-y-0.5
-              ${wizardData.selectedGame === game.type
-                ? 'border-[#951b6d] bg-[#951b6d]/5 shadow-md' 
-                : 'border-gray-200 bg-white hover:bg-gray-50'
-              }
-            `}
-          >
-            <div className="flex items-center space-x-3 mb-3">
-              <div className={`
-                w-10 h-10 rounded-lg flex items-center justify-center transition-colors
+        {/* Game Selection Grid - Compact pills */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          {gameTypes.map((game) => (
+            <button
+              key={game.type}
+              onClick={() => handleGameSelect(game.type)}
+              className={`
+                group p-4 rounded-xl border transition-all duration-200 text-left
+                hover:shadow-md hover:-translate-y-0.5
                 ${wizardData.selectedGame === game.type
-                  ? 'bg-[#951b6d] text-white' 
-                  : 'bg-gray-100 text-gray-600 group-hover:bg-[#951b6d]/10 group-hover:text-[#951b6d]'
+                  ? 'border-[#951b6d] bg-[#951b6d]/5 shadow-md' 
+                  : 'border-gray-200 bg-white hover:bg-gray-50 hover:border-[#951b6d]/30'
                 }
-              `}>
-                {iconComponents[game.type]}
+              `}
+            >
+              <div className="flex items-center space-x-3 mb-2">
+                <div className={`
+                  w-8 h-8 rounded-lg flex items-center justify-center transition-colors
+                  ${wizardData.selectedGame === game.type
+                    ? 'bg-[#951b6d] text-white' 
+                    : 'bg-gray-100 text-gray-600 group-hover:bg-[#951b6d]/10 group-hover:text-[#951b6d]'
+                  }
+                `}>
+                  {iconComponents[game.type]}
+                </div>
+                
+                {wizardData.selectedGame === game.type && (
+                  <div className="w-2 h-2 bg-[#951b6d] rounded-full"></div>
+                )}
               </div>
               
-              {wizardData.selectedGame === game.type && (
-                <div className="w-2 h-2 bg-[#951b6d] rounded-full"></div>
-              )}
-            </div>
-            
-            <h3 className="font-semibold text-[#141e29] mb-2 group-hover:text-[#951b6d] transition-colors">
-              {game.name}
-            </h3>
-            <p className="text-sm text-gray-600 leading-relaxed">
-              {game.description}
-            </p>
-          </button>
-        ))}
-      </div>
-
-      {/* Next Button */}
-      {wizardData.selectedGame && (
-        <div className="flex justify-end pt-6">
-          <button
-            onClick={nextStep}
-            className="px-6 py-3 bg-[#951b6d] text-white font-semibold rounded-lg hover:bg-[#7d1659] transition-colors shadow-sm hover:shadow-md"
-          >
-            Continuer
-          </button>
+              <h3 className="font-semibold text-[#141e29] mb-1 text-sm group-hover:text-[#951b6d] transition-colors">
+                {game.name}
+              </h3>
+              <p className="text-xs text-gray-600 leading-relaxed">
+                {game.description}
+              </p>
+            </button>
+          ))}
         </div>
-      )}
+
+        {/* Continue Button */}
+        {wizardData.selectedGame && (
+          <div className="flex justify-end">
+            <button
+              onClick={nextStep}
+              className="px-8 py-3 bg-[#951b6d] text-white font-semibold rounded-xl hover:bg-[#7d1659] transition-all duration-200 shadow-sm hover:shadow-md"
+            >
+              Continuer
+            </button>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

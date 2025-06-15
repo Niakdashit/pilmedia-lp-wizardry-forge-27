@@ -8,7 +8,7 @@ import GenerationStep from './steps/GenerationStep';
 import PreviewStep from './steps/PreviewStep';
 import AdvancedStep from './steps/AdvancedStep';
 import PublishStep from './steps/PublishStep';
-import { Settings, Wand2, Eye, Sparkles, FileText, Upload } from 'lucide-react';
+import { Settings, Upload, Wand2, FileText, Eye, Sparkles } from 'lucide-react';
 
 export interface WizardData {
   selectedGame?: CampaignType;
@@ -86,49 +86,64 @@ const ModernWizard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8fafc]">
-      {/* Header with stepper */}
-      <div className="bg-white border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-8 py-6">
-          <div className="mb-8">
-            <h1 className="text-2xl font-bold text-[#141e29] mb-2">Créer une nouvelle campagne</h1>
-            <p className="text-gray-600">Configurez votre expérience interactive en quelques étapes simples</p>
-          </div>
-          
-          {/* Step Navigation */}
-          <div className="flex items-center space-x-1 overflow-x-auto">
-            {steps.map((step, index) => {
-              const Icon = step.icon;
-              const isActive = currentStep === index;
-              const isCompleted = currentStep > index;
-              
-              return (
+    <div className="space-y-6">
+      {/* Page Header - Left aligned, editorial style */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold text-[#141e29] mb-3">Créer une nouvelle campagne</h1>
+        <p className="text-lg text-gray-600 max-w-2xl">
+          Configurez votre expérience interactive en quelques étapes simples
+        </p>
+      </div>
+      
+      {/* Persistent Stepper - Horizontal pills */}
+      <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-gray-100/50">
+        <div className="flex items-center justify-between max-w-4xl">
+          {steps.map((step, index) => {
+            const Icon = step.icon;
+            const isActive = currentStep === index;
+            const isCompleted = currentStep > index;
+            const isAccessible = index <= currentStep + 1;
+            
+            return (
+              <React.Fragment key={step.id}>
                 <button
-                  key={step.id}
-                  onClick={() => goToStep(index)}
-                  className={`flex items-center space-x-3 px-4 py-2 rounded-lg transition-all duration-200 whitespace-nowrap ${
+                  onClick={() => isAccessible && goToStep(index)}
+                  disabled={!isAccessible}
+                  className={`flex flex-col items-center space-y-2 px-4 py-3 rounded-xl transition-all duration-200 ${
                     isActive 
-                      ? 'bg-[#951b6d] text-white shadow-sm' 
+                      ? 'bg-[#951b6d] text-white shadow-md' 
                       : isCompleted
-                      ? 'bg-green-50 text-green-700 hover:bg-green-100'
-                      : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
+                      ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                      : isAccessible
+                      ? 'bg-gray-50 text-gray-600 hover:bg-gray-100'
+                      : 'bg-gray-25 text-gray-400 cursor-not-allowed'
                   }`}
                 >
-                  <Icon className="w-4 h-4" />
-                  <span className="font-medium text-sm">{step.label}</span>
-                  
-                  {isCompleted && (
-                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
-                  )}
+                  <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                    isActive 
+                      ? 'bg-white/20' 
+                      : isCompleted
+                      ? 'bg-emerald-100'
+                      : 'bg-white'
+                  }`}>
+                    <Icon className="w-4 h-4" />
+                  </div>
+                  <span className="text-xs font-medium">{step.label}</span>
                 </button>
-              );
-            })}
-          </div>
+                
+                {index < steps.length - 1 && (
+                  <div className={`w-12 h-px ${
+                    currentStep > index ? 'bg-emerald-300' : 'bg-gray-200'
+                  }`} />
+                )}
+              </React.Fragment>
+            );
+          })}
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-8 py-8">
+      <div className="space-y-6">
         {renderCurrentStep()}
       </div>
     </div>
