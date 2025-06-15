@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import { CampaignType } from '../../utils/campaignTypes';
 import GameSelectionStep from './steps/GameSelectionStep';
 import BrandAssetsStep from './steps/BrandAssetsStep';
@@ -20,7 +20,6 @@ export interface WizardData {
 }
 
 const ModernWizard: React.FC = () => {
-  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [currentStep, setCurrentStep] = useState(0);
   const [wizardData, setWizardData] = useState<WizardData>({
