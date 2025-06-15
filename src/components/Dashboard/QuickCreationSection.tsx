@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FolderOpen, Layers } from 'lucide-react';
@@ -31,7 +30,6 @@ const QuickCreationSection: React.FC = () => {
     type: 'form',
     label: 'Formulaire'
   }];
-
   return <div className="w-full mt-8">
       <div className="relative border-2 border-[#ffffff] rounded-3xl p-8 bg-gradient-to-b from-[#841b60]/5 to-white overflow-hidden bg-[#ffeef6]/0">
         <div className="absolute inset-0 bg-gradient-to-br from-[#841b60]/3 via-transparent to-transparent pointer-events-none"></div>
@@ -85,6 +83,8 @@ const QuickCreationSection: React.FC = () => {
           </div>
 
           <div className="flex flex-col md:flex-row justify-center items-center gap-4">
+            
+            
             <Link to="/campaigns" className="inline-flex items-center px-6 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
               <FolderOpen className="w-5 h-5 mr-2" />
               Mes campagnes
@@ -124,5 +124,4 @@ const QuickCreationSection: React.FC = () => {
       `}</style>
     </div>;
 };
-
 export default QuickCreationSection;
