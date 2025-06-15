@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { DndContext, DragEndEvent, DragOverlay } from '@dnd-kit/core';
 import { Eye, Send, Save } from 'lucide-react';
@@ -12,14 +13,9 @@ import { SettingsTab } from '@/components/Newsletter/properties/Tab/SettingsTab'
 const Newsletter: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'edit' | 'settings' | 'send' | 'automate'>('edit');
   const [showPreviewModal, setShowPreviewModal] = useState(false);
-  const {
-    addModule
-  } = useNewsletterStore();
+  const { addModule } = useNewsletterStore();
   const handleDragEnd = (event: DragEndEvent) => {
-    const {
-      active,
-      over
-    } = event;
+    const { active, over } = event;
     if (over && over.id === 'editor') {
       const moduleType = active.id as string;
       addModule({
@@ -42,15 +38,15 @@ const Newsletter: React.FC = () => {
   };
 
   return (
-    <div className="-mx-6 -mt-6">
+    <div className="w-full min-h-screen bg-white overflow-x-hidden">
       <PageHeader
         title="Éditeur de Newsletter"
         size="sm"
         actions={
-          <div>
+          <div className="w-full">
             {/* Bloc mobile : Aperçu + 2 boutons côte à côte, même largeur et bien alignés */}
             <div className="md:hidden w-full flex justify-center">
-              <div className="w-full flex flex-col gap-3">
+              <div className="w-full flex flex-col gap-3 max-w-md mx-auto">
                 <button
                   onClick={() => setShowPreviewModal(true)}
                   className="w-full inline-flex items-center justify-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
@@ -100,44 +96,52 @@ const Newsletter: React.FC = () => {
         }
       />
 
-      <div className="bg-[#ebf4f7] border-b border-gray-300">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex space-x-6">
-            <button className={`px-6 py-3 font-semibold transition ${activeTab === 'edit' ? 'bg-white text-[#841b60] border-b-2 border-[#841b60]' : 'text-gray-600 hover:text-[#841b60] hover:bg-white rounded-t-md'}`} onClick={() => setActiveTab('edit')}>
+      <div className="bg-[#ebf4f7] border-b border-gray-300 w-full overflow-x-auto">
+        <div className="max-w-7xl mx-auto px-2 md:px-6 w-full">
+          <div className="flex space-x-2 md:space-x-6 w-full overflow-x-auto">
+            <button className={`flex-1 px-3 py-3 md:px-6 font-semibold transition ${activeTab === 'edit' ? 'bg-white text-[#841b60] border-b-2 border-[#841b60]' : 'text-gray-600 hover:text-[#841b60] hover:bg-white rounded-t-md'}`} onClick={() => setActiveTab('edit')}>
               Modifier
             </button>
-            <button className={`px-6 py-3 font-semibold transition ${activeTab === 'settings' ? 'bg-white text-[#841b60] border-b-2 border-[#841b60]' : 'text-gray-600 hover:text-[#841b60] hover:bg-white rounded-t-md'}`} onClick={() => setActiveTab('settings')}>
+            <button className={`flex-1 px-3 py-3 md:px-6 font-semibold transition ${activeTab === 'settings' ? 'bg-white text-[#841b60] border-b-2 border-[#841b60]' : 'text-gray-600 hover:text-[#841b60] hover:bg-white rounded-t-md'}`} onClick={() => setActiveTab('settings')}>
               Paramètres
             </button>
-            <button className={`px-6 py-3 font-semibold transition ${activeTab === 'send' ? 'bg-white text-[#841b60] border-b-2 border-[#841b60]' : 'text-gray-600 hover:text-[#841b60] hover:bg-white rounded-t-md'}`} onClick={() => setActiveTab('send')}>
+            <button className={`flex-1 px-3 py-3 md:px-6 font-semibold transition ${activeTab === 'send' ? 'bg-white text-[#841b60] border-b-2 border-[#841b60]' : 'text-gray-600 hover:text-[#841b60] hover:bg-white rounded-t-md'}`} onClick={() => setActiveTab('send')}>
               Envoyer ou planifier
             </button>
-            <button className={`px-6 py-3 font-semibold transition ${activeTab === 'automate' ? 'bg-white text-[#841b60] border-b-2 border-[#841b60]' : 'text-gray-600 hover:text-[#841b60] hover:bg-white rounded-t-md'}`} onClick={() => setActiveTab('automate')}>
+            <button className={`flex-1 px-3 py-3 md:px-6 font-semibold transition ${activeTab === 'automate' ? 'bg-white text-[#841b60] border-b-2 border-[#841b60]' : 'text-gray-600 hover:text-[#841b60] hover:bg-white rounded-t-md'}`} onClick={() => setActiveTab('automate')}>
               Automatiser
             </button>
           </div>
         </div>
       </div>
 
-      <div className="flex h-[calc(100vh-160px)]">
-        {activeTab === 'edit' && <DndContext onDragEnd={handleDragEnd}>
+      <div className="flex flex-col md:flex-row h-[calc(100vh-160px)] w-full overflow-x-hidden">
+        {activeTab === 'edit' && (
+          <DndContext onDragEnd={handleDragEnd}>
             <ModulesList />
             <EditorCanvas />
             <PropertiesPanel />
             <DragOverlay>{/* Preview during drag */}</DragOverlay>
-          </DndContext>}
+          </DndContext>
+        )}
 
-        {activeTab === 'settings' && <div className="flex-1 bg-white p-6 overflow-auto">
+        {activeTab === 'settings' && (
+          <div className="flex-1 bg-white p-6 overflow-auto">
             <SettingsTab />
-          </div>}
+          </div>
+        )}
 
-        {activeTab === 'send' && <div className="flex-1 p-6 bg-white text-gray-600">
+        {activeTab === 'send' && (
+          <div className="flex-1 p-6 bg-white text-gray-600">
             <h2>Envoyer ou planifier</h2>
-          </div>}
+          </div>
+        )}
 
-        {activeTab === 'automate' && <div className="flex-1 p-6 bg-white text-gray-600">
+        {activeTab === 'automate' && (
+          <div className="flex-1 p-6 bg-white text-gray-600">
             <h2>Automatiser</h2>
-          </div>}
+          </div>
+        )}
       </div>
 
       <NewsletterPreviewModal isOpen={showPreviewModal} onClose={() => setShowPreviewModal(false)} campaign={mockCampaign} />
