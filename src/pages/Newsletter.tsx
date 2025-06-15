@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { DndContext, DragEndEvent, DragOverlay } from '@dnd-kit/core';
 import { Eye, Send, Save } from 'lucide-react';
@@ -8,18 +9,15 @@ import PageHeader from '../components/Layout/PageHeader';
 import { useNewsletterStore } from '../stores/newsletterStore';
 import NewsletterPreviewModal from '../components/Newsletter/NewsletterPreviewModal';
 import { SettingsTab } from '@/components/Newsletter/properties/Tab/SettingsTab';
+import PageContainer from '../components/Layout/PageContainer';
 
 const Newsletter: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'edit' | 'settings' | 'send' | 'automate'>('edit');
   const [showPreviewModal, setShowPreviewModal] = useState(false);
-  const {
-    addModule
-  } = useNewsletterStore();
+  const { addModule } = useNewsletterStore();
+
   const handleDragEnd = (event: DragEndEvent) => {
-    const {
-      active,
-      over
-    } = event;
+    const { active, over } = event;
     if (over && over.id === 'editor') {
       const moduleType = active.id as string;
       addModule({
@@ -42,7 +40,7 @@ const Newsletter: React.FC = () => {
   };
 
   return (
-    <div className="-mx-6 -mt-6">
+    <PageContainer>
       <PageHeader
         title="Éditeur de Newsletter"
         size="sm"
@@ -120,28 +118,47 @@ const Newsletter: React.FC = () => {
       </div>
 
       <div className="flex h-[calc(100vh-160px)]">
-        {activeTab === 'edit' && <DndContext onDragEnd={handleDragEnd}>
+        {activeTab === 'edit' && (
+          <DndContext onDragEnd={handleDragEnd}>
             <ModulesList />
             <EditorCanvas />
             <PropertiesPanel />
             <DragOverlay>{/* Preview during drag */}</DragOverlay>
-          </DndContext>}
+          </DndContext>
+        )}
 
-        {activeTab === 'settings' && <div className="flex-1 bg-white p-6 overflow-auto">
-            <SettingsTab />
-          </div>}
+        {activeTab === 'settings' && (
+          <div className="flex-1 bg-white p-6 overflow-auto">
+            <div className="space-y-6">
+              <SettingsTab />
+            </div>
+          </div>
+        )}
 
-        {activeTab === 'send' && <div className="flex-1 p-6 bg-white text-gray-600">
-            <h2>Envoyer ou planifier</h2>
-          </div>}
+        {activeTab === 'send' && (
+          <div className="flex-1 p-6 bg-white text-gray-600">
+            <div className="space-y-6">
+              <h2>Envoyer ou planifier</h2>
+            </div>
+          </div>
+        )}
 
-        {activeTab === 'automate' && <div className="flex-1 p-6 bg-white text-gray-600">
-            <h2>Automatiser</h2>
-          </div>}
+        {activeTab === 'automate' && (
+          <div className="flex-1 p-6 bg-white text-gray-600">
+            <div className="space-y-6">
+              <h2>Automatiser</h2>
+            </div>
+          </div>
+        )}
       </div>
 
-      <NewsletterPreviewModal isOpen={showPreviewModal} onClose={() => setShowPreviewModal(false)} campaign={mockCampaign} />
-    </div>
+      <NewsletterPreviewModal 
+        isOpen={showPreviewModal} 
+        onClose={() => setShowPreviewModal(false)} 
+        campaign={mockCampaign} 
+      />
+    </PageContainer>
   );
 };
+
 export default Newsletter;
