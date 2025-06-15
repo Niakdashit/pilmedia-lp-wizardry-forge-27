@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Search, Filter, Eye, Copy, Archive, ChevronDown, BarChart2, MoreVertical, Users, Target, Activity } from 'lucide-react';
+import { Search, Filter, Eye, Copy, Archive, ChevronDown, BarChart2, MoreVertical, Users, Target, Activity, TrendingUp, Calendar, AlertCircle, Plus } from 'lucide-react';
 import PageHeader from '../components/Layout/PageHeader';
 import { getCampaignTypeIcon, CampaignType } from '../utils/campaignTypes';
 
@@ -25,8 +25,19 @@ interface AdminStats {
   totalCampaigns: number;
   activeCampaigns: number;
   totalClients: number;
-  totalViews: number;
+  totalParticipations: number;
   avgConversionRate: number;
+  topGameType: string;
+  topClient: string;
+}
+
+interface RecentActivity {
+  id: string;
+  type: 'campaign_created' | 'campaign_published' | 'status_change' | 'participation_spike';
+  message: string;
+  time: string;
+  campaignName?: string;
+  clientName?: string;
 }
 
 const Admin: React.FC = () => {
@@ -34,18 +45,54 @@ const Admin: React.FC = () => {
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterClient, setFilterClient] = useState('all');
   const [filterType, setFilterType] = useState('all');
-  const [sortBy, setSortBy] = useState('createdAt');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
+  const [viewMode, setViewMode] = useState<'table' | 'grid'>('table');
   const [selectedCampaigns, setSelectedCampaigns] = useState<string[]>([]);
 
-  // Mock data - remplacera par des vraies données Supabase
+  // Mock data - à remplacer par des vraies données Supabase
   const mockStats: AdminStats = {
     totalCampaigns: 247,
     activeCampaigns: 43,
     totalClients: 28,
-    totalViews: 125430,
-    avgConversionRate: 4.2
+    totalParticipations: 125430,
+    avgConversionRate: 4.2,
+    topGameType: 'Roue de la Fortune',
+    topClient: 'TechCorp Solutions'
   };
+
+  const mockRecentActivity: RecentActivity[] = [
+    {
+      id: '1',
+      type: 'campaign_created',
+      message: 'Nouvelle campagne "Quiz Marketing" créée',
+      time: 'Il y a 2 minutes',
+      campaignName: 'Quiz Marketing',
+      clientName: 'TechCorp Solutions'
+    },
+    {
+      id: '2',
+      type: 'participation_spike',
+      message: 'Pic de participation (+150%) sur "Roue Summer"',
+      time: 'Il y a 15 minutes',
+      campaignName: 'Roue Summer',
+      clientName: 'Fashion Brand'
+    },
+    {
+      id: '3',
+      type: 'campaign_published',
+      message: 'Campagne "Concours Photo" publiée',
+      time: 'Il y a 1 heure',
+      campaignName: 'Concours Photo',
+      clientName: 'E-commerce Plus'
+    },
+    {
+      id: '4',
+      type: 'status_change',
+      message: 'Campagne "Quiz Produit" archivée',
+      time: 'Il y a 3 heures',
+      campaignName: 'Quiz Produit',
+      clientName: 'TechCorp Solutions'
+    }
+  ];
 
   const mockCampaigns: AdminCampaign[] = [
     {
@@ -107,19 +154,6 @@ const Admin: React.FC = () => {
       const matchesClient = filterClient === 'all' || campaign.clientName === filterClient;
       const matchesType = filterType === 'all' || campaign.type === filterType;
       return matchesSearch && matchesStatus && matchesClient && matchesType;
-    })
-    .sort((a, b) => {
-      if (sortBy === 'createdAt') {
-        return sortOrder === 'desc'
-          ? new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-          : new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
-      }
-      if (sortBy === 'clientName') {
-        return sortOrder === 'desc'
-          ? b.clientName.localeCompare(a.clientName)
-          : a.clientName.localeCompare(b.clientName);
-      }
-      return 0;
     });
 
   const getStatusColor = (status: string) => {
@@ -148,6 +182,21 @@ const Admin: React.FC = () => {
     }
   };
 
+  const getActivityIcon = (type: string) => {
+    switch (type) {
+      case 'campaign_created':
+        return <Plus className="w-4 h-4 text-green-600" />;
+      case 'campaign_published':
+        return <Activity className="w-4 h-4 text-blue-600" />;
+      case 'status_change':
+        return <Archive className="w-4 h-4 text-orange-600" />;
+      case 'participation_spike':
+        return <TrendingUp className="w-4 h-4 text-purple-600" />;
+      default:
+        return <AlertCircle className="w-4 h-4 text-gray-600" />;
+    }
+  };
+
   const handleSelectCampaign = (campaignId: string) => {
     setSelectedCampaigns(prev => 
       prev.includes(campaignId)
@@ -167,10 +216,17 @@ const Admin: React.FC = () => {
   return (
     <div className="-mx-6 -mt-6">
       <PageHeader
-        title="Administration"
+        title="Dashboard Administrateur"
         size="sm"
         actions={
           <div className="flex gap-x-4">
+            <Link
+              to="/admin/templates"
+              className="inline-flex items-center px-6 py-2.5 bg-gray-600 text-white font-semibold rounded-xl hover:bg-gray-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-base"
+            >
+              <Target className="w-5 h-5 mr-2" />
+              Modèles
+            </Link>
             <Link
               to="/admin/clients"
               className="inline-flex items-center px-6 py-2.5 bg-[#841b60] text-white font-semibold rounded-xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-base"
@@ -178,32 +234,13 @@ const Admin: React.FC = () => {
               <Users className="w-5 h-5 mr-2" />
               Gestion Clients
             </Link>
-            <Link
-              to="/admin/analytics"
-              className="inline-flex items-center px-6 py-2.5 bg-gray-600 text-white font-semibold rounded-xl hover:bg-gray-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-base"
-            >
-              <BarChart2 className="w-5 h-5 mr-2" />
-              Analytiques
-            </Link>
           </div>
         }
       />
 
       <div className="px-6">
-        {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-6">
-          <div className="bg-white p-6 rounded-2xl shadow-md">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-600 text-sm font-medium">Total Campagnes</p>
-                <p className="text-2xl font-bold text-gray-900">{mockStats.totalCampaigns}</p>
-              </div>
-              <div className="w-12 h-12 bg-[#841b60]/10 rounded-lg flex items-center justify-center">
-                <Target className="w-6 h-6 text-[#841b60]" />
-              </div>
-            </div>
-          </div>
-
+        {/* KPI Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6 mb-8">
           <div className="bg-white p-6 rounded-2xl shadow-md">
             <div className="flex items-center justify-between">
               <div>
@@ -219,23 +256,11 @@ const Admin: React.FC = () => {
           <div className="bg-white p-6 rounded-2xl shadow-md">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-gray-600 text-sm font-medium">Total Clients</p>
-                <p className="text-2xl font-bold text-blue-600">{mockStats.totalClients}</p>
-              </div>
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Users className="w-6 h-6 text-blue-600" />
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white p-6 rounded-2xl shadow-md">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-600 text-sm font-medium">Total Vues</p>
-                <p className="text-2xl font-bold text-purple-600">{mockStats.totalViews.toLocaleString()}</p>
+                <p className="text-gray-600 text-sm font-medium">Total Participations</p>
+                <p className="text-2xl font-bold text-purple-600">{mockStats.totalParticipations.toLocaleString()}</p>
               </div>
               <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                <Eye className="w-6 h-6 text-purple-600" />
+                <Users className="w-6 h-6 text-purple-600" />
               </div>
             </div>
           </div>
@@ -251,11 +276,132 @@ const Admin: React.FC = () => {
               </div>
             </div>
           </div>
+
+          <div className="bg-white p-6 rounded-2xl shadow-md">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 text-sm font-medium">Jeu le Plus Populaire</p>
+                <p className="text-lg font-bold text-blue-600">{mockStats.topGameType}</p>
+              </div>
+              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                <Target className="w-6 h-6 text-blue-600" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white p-6 rounded-2xl shadow-md">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 text-sm font-medium">Client Top Perf.</p>
+                <p className="text-lg font-bold text-indigo-600">{mockStats.topClient}</p>
+              </div>
+              <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center">
+                <TrendingUp className="w-6 h-6 text-indigo-600" />
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white p-6 rounded-2xl shadow-md">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-gray-600 text-sm font-medium">Total Clients</p>
+                <p className="text-2xl font-bold text-[#841b60]">{mockStats.totalClients}</p>
+              </div>
+              <div className="w-12 h-12 bg-[#841b60]/10 rounded-lg flex items-center justify-center">
+                <Users className="w-6 h-6 text-[#841b60]" />
+              </div>
+            </div>
+          </div>
         </div>
 
-        {/* Main Table */}
+        {/* Recent Activity & Quick Actions */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+          <div className="lg:col-span-2 bg-white rounded-2xl shadow-md p-6">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-lg font-semibold text-gray-900">Activité Récente</h3>
+              <Calendar className="w-5 h-5 text-gray-400" />
+            </div>
+            <div className="space-y-4">
+              {mockRecentActivity.map((activity) => (
+                <div key={activity.id} className="flex items-start space-x-3 p-3 rounded-lg hover:bg-gray-50 transition-colors">
+                  <div className="flex-shrink-0 mt-1">
+                    {getActivityIcon(activity.type)}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900">{activity.message}</p>
+                    {activity.clientName && (
+                      <p className="text-sm text-gray-500">Client: {activity.clientName}</p>
+                    )}
+                    <p className="text-xs text-gray-400 mt-1">{activity.time}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="bg-white rounded-2xl shadow-md p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-6">Accès Rapide</h3>
+            <div className="space-y-3">
+              <Link
+                to="/admin/campaigns/new"
+                className="flex items-center p-3 rounded-lg bg-[#841b60] text-white hover:bg-[#6d164f] transition-colors"
+              >
+                <Plus className="w-5 h-5 mr-3" />
+                <span className="font-medium">Nouvelle Campagne</span>
+              </Link>
+              <Link
+                to="/admin/analytics"
+                className="flex items-center p-3 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
+              >
+                <BarChart2 className="w-5 h-5 mr-3" />
+                <span className="font-medium">Voir Statistiques</span>
+              </Link>
+              <Link
+                to="/admin/clients"
+                className="flex items-center p-3 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors"
+              >
+                <Users className="w-5 h-5 mr-3" />
+                <span className="font-medium">Gérer Clients</span>
+              </Link>
+            </div>
+
+            <div className="mt-6 pt-6 border-t border-gray-200">
+              <h4 className="text-sm font-medium text-gray-700 mb-3">Alertes Système</h4>
+              <div className="space-y-2">
+                <div className="flex items-center text-sm text-orange-600">
+                  <AlertCircle className="w-4 h-4 mr-2" />
+                  <span>3 campagnes inactives depuis 30j</span>
+                </div>
+                <div className="flex items-center text-sm text-red-600">
+                  <AlertCircle className="w-4 h-4 mr-2" />
+                  <span>1 client inactif</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Campaigns Table */}
         <div className="bg-white rounded-xl shadow-sm">
           <div className="p-6 border-b border-gray-200">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">Toutes les Campagnes</h3>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setViewMode('table')}
+                  className={`p-2 rounded-lg transition-colors ${viewMode === 'table' ? 'bg-[#841b60] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                >
+                  <BarChart2 className="w-4 h-4" />
+                </button>
+                <button
+                  onClick={() => setViewMode('grid')}
+                  className={`p-2 rounded-lg transition-colors ${viewMode === 'grid' ? 'bg-[#841b60] text-white' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}
+                >
+                  <Target className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
             <div className="flex flex-col md:flex-row gap-4 mb-4">
               <div className="relative flex-1">
                 <input
@@ -316,6 +462,9 @@ const Admin: React.FC = () => {
                 <button className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors">
                   Archiver
                 </button>
+                <button className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                  Exporter
+                </button>
               </div>
             )}
           </div>
@@ -336,16 +485,7 @@ const Admin: React.FC = () => {
                     Type
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    <button
-                      className="flex items-center space-x-1"
-                      onClick={() => {
-                        setSortBy('clientName');
-                        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
-                      }}
-                    >
-                      <span>Client & Campagne</span>
-                      <ChevronDown className={`w-4 h-4 transform ${sortOrder === 'desc' ? 'rotate-180' : ''}`} />
-                    </button>
+                    Client & Campagne
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Statut
@@ -381,9 +521,12 @@ const Admin: React.FC = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div>
-                          <div className="text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer">
+                          <Link 
+                            to={`/admin/clients/${campaign.clientId}`}
+                            className="text-sm font-medium text-blue-600 hover:text-blue-800 cursor-pointer"
+                          >
                             {campaign.clientName}
-                          </div>
+                          </Link>
                           <div className="text-sm font-medium text-gray-900">{campaign.name}</div>
                           <div className="text-sm text-gray-500">{campaign.description}</div>
                         </div>

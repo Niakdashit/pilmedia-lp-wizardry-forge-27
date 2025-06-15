@@ -47,6 +47,13 @@ function App() {
               <Route path="/admin" element={<Admin />} />
               <Route path="/admin/clients" element={<AdminClients />} />
               <Route path="/admin/clients/:clientId" element={<AdminClientDetail />} />
+              <Route path="/admin/templates" element={<AdminTemplates />} />
+              <Route path="/admin/campaigns" element={<AdminCampaigns />} />
+              <Route path="/admin/analytics" element={<AdminAnalytics />} />
+              <Route path="/admin/team" element={<AdminTeam />} />
+              <Route path="/admin/alerts" element={<AdminAlerts />} />
+              <Route path="/admin/reports" element={<AdminReports />} />
+              <Route path="/admin/settings" element={<AdminSettings />} />
             </Routes>
           </AdminLayout>
         ) : (

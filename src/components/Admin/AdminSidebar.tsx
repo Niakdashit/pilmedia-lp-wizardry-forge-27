@@ -12,7 +12,10 @@ import {
   UserCircle,
   LogOut,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Zap,
+  Bell,
+  FileText
 } from 'lucide-react';
 import { useAppContext } from '../../context/AppContext';
 import logo from '@/assets/logo.png';
@@ -23,13 +26,14 @@ const AdminSidebar: React.FC = () => {
   const { sidebarCollapsed, toggleSidebar } = useAppContext();
 
   const navItems = [
-    { name: 'Dashboard Admin', path: '/admin', icon: <LayoutDashboard className="w-5 h-5" /> },
-    { name: 'Gestion Clients', path: '/admin/clients', icon: <Users className="w-5 h-5" /> },
-    { name: 'Base Campagnes', path: '/admin/campaigns', icon: <Target className="w-5 h-5" /> },
+    { name: 'Dashboard', path: '/admin', icon: <LayoutDashboard className="w-5 h-5" /> },
+    { name: 'Campagnes', path: '/admin/campaigns', icon: <Target className="w-5 h-5" /> },
+    { name: 'Clients', path: '/admin/clients', icon: <Users className="w-5 h-5" /> },
+    { name: 'Modèles de Jeux', path: '/admin/templates', icon: <Zap className="w-5 h-5" /> },
     { name: 'Analytiques', path: '/admin/analytics', icon: <BarChart3 className="w-5 h-5" /> },
-    { name: 'Utilisateurs', path: '/admin/users', icon: <UserCircle className="w-5 h-5" /> },
-    { name: 'Rôles & Permissions', path: '/admin/roles', icon: <Shield className="w-5 h-5" /> },
-    { name: 'Base de Données', path: '/admin/database', icon: <Database className="w-5 h-5" /> },
+    { name: 'Équipe & Rôles', path: '/admin/team', icon: <Shield className="w-5 h-5" /> },
+    { name: 'Alertes & Automatisation', path: '/admin/alerts', icon: <Bell className="w-5 h-5" /> },
+    { name: 'Rapports', path: '/admin/reports', icon: <FileText className="w-5 h-5" /> },
     { name: 'Paramètres', path: '/admin/settings', icon: <Settings className="w-5 h-5" /> }
   ];
 
@@ -62,7 +66,7 @@ const AdminSidebar: React.FC = () => {
         <div className="space-y-0.5">
           {navItems.map((item) => {
             const isActive = location.pathname === item.path || 
-              (item.path === '/admin' && location.pathname.startsWith('/admin') && location.pathname !== '/admin/clients');
+              (item.path === '/admin' && location.pathname === '/admin');
             return (
               <Link
                 key={item.path}
