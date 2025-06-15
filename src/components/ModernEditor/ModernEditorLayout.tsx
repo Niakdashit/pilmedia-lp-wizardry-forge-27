@@ -104,29 +104,36 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
             </div>
           </div>
 
-          {/* Step Navigation - Style épuré comme dans l'image de référence */}
-          <div className="flex items-center justify-center mt-8 mb-4">
-            <div className="flex items-center space-x-2 bg-white rounded-full p-2 shadow-sm border border-gray-100">
-              {steps.map((step, index) => {
-                const Icon = step.icon;
-                const isActive = activeTab === step.id;
-                
-                return (
-                  <button
-                    key={step.id}
-                    onClick={() => handleStepChange(step.id)}
-                    className={`flex items-center space-x-2 px-4 py-2 rounded-full transition-all duration-200 text-sm font-medium ${
-                      isActive 
-                        ? 'bg-[#841b60] text-white shadow-sm' 
-                        : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                    }`}
-                  >
-                    <Icon className="w-4 h-4" />
-                    <span>{step.label}</span>
-                  </button>
-                );
-              })}
-            </div>
+          {/* Step Navigation */}
+          <div className="flex items-center space-x-3 mt-6 overflow-x-auto pb-2">
+            {steps.map((step, index) => {
+              const Icon = step.icon;
+              const isActive = activeTab === step.id;
+              const isCompleted = steps.findIndex(s => s.id === activeTab) > index;
+              
+              return (
+                <motion.button
+                  key={step.id}
+                  onClick={() => handleStepChange(step.id)}
+                  className={`relative flex items-center space-x-2 px-4 py-2 rounded-full transition-all duration-300 whitespace-nowrap text-sm font-medium ${
+                    isActive 
+                      ? 'bg-[#841b60] text-white shadow-md' 
+                      : isCompleted
+                      ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                      : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                  }`}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span>{step.label}</span>
+                  
+                  {isCompleted && !isActive && (
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  )}
+                </motion.button>
+              );
+            })}
           </div>
         </div>
       </div>
