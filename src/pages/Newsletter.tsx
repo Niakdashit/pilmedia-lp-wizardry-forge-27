@@ -48,28 +48,30 @@ const Newsletter: React.FC = () => {
         size="sm"
         actions={
           <div>
-            {/* Bloc mobile : Aperçu au-dessus, puis Enregistrer et Envoyer côte à côte, tous de même largeur */}
-            <div className="flex flex-col gap-3 md:hidden w-full">
-              <button
-                onClick={() => setShowPreviewModal(true)}
-                className="w-full inline-flex items-center justify-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-              >
-                <Eye className="w-5 h-5 mr-2" />
-                Aperçu
-              </button>
-              <div className="flex gap-3 w-full">
+            {/* Bloc mobile : Aperçu + 2 boutons côte à côte, même largeur et bien alignés */}
+            <div className="md:hidden w-full flex justify-center">
+              <div className="w-full max-w-xs flex flex-col gap-3">
                 <button
-                  className="flex-1 inline-flex items-center justify-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                  onClick={() => setShowPreviewModal(true)}
+                  className="w-full inline-flex items-center justify-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
                 >
-                  <Save className="w-5 h-5 mr-2" />
-                  Enregistrer
+                  <Eye className="w-5 h-5 mr-2" />
+                  Aperçu
                 </button>
-                <button
-                  className="flex-1 inline-flex items-center justify-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-                >
-                  <Send className="w-5 h-5 mr-2" />
-                  Envoyer
-                </button>
+                <div className="flex gap-3 w-full">
+                  <button
+                    className="flex-1 inline-flex items-center justify-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                  >
+                    <Save className="w-5 h-5 mr-2" />
+                    Enregistrer
+                  </button>
+                  <button
+                    className="flex-1 inline-flex items-center justify-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                  >
+                    <Send className="w-5 h-5 mr-2" />
+                    Envoyer
+                  </button>
+                </div>
               </div>
             </div>
             {/* Bloc desktop : disposition horizontale classique */}
