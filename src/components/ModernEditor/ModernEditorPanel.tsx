@@ -11,20 +11,51 @@ interface ModernEditorPanelProps {
   activeStep: string;
   campaign: any;
   setCampaign: (updater: (prev: any) => any) => void;
+  onNextStep?: () => void;
+  onPrevStep?: () => void;
 }
 
 const ModernEditorPanel: React.FC<ModernEditorPanelProps> = ({
   activeStep,
   campaign,
-  setCampaign
+  setCampaign,
+  onNextStep,
+  onPrevStep
 }) => {
+  // Default handlers if not provided
+  const handleNext = onNextStep || (() => console.log('Next step'));
+  const handlePrev = onPrevStep || (() => console.log('Previous step'));
+
+  // Ensure campaign has default structure to prevent undefined errors
+  const safeSetCampaign = (updater: any) => {
+    if (typeof updater === 'function') {
+      setCampaign((prev: any) => {
+        const currentCampaign = prev || { design: {}, type: 'wheel' };
+        return updater(currentCampaign);
+      });
+    } else {
+      setCampaign(() => updater || { design: {}, type: 'wheel' });
+    }
+  };
+
+  const safeCampaign = campaign || { design: {}, type: 'wheel' };
+
   return (
     <>
       {activeStep === 'setup' && (
-        <SetupStep campaign={campaign} setCampaign={setCampaign} />
+        <SetupStep 
+          campaign={safeCampaign} 
+          setCampaign={safeSetCampaign}
+          onNext={handleNext}
+        />
       )}
       {activeStep === 'content' && (
-        <ContentStep />
+        <ContentStep 
+          campaign={safeCampaign}
+          setCampaign={safeSetCampaign}
+          onNext={handleNext}
+          onPrev={handlePrev}
+        />
       )}
       {activeStep === 'game' && (
         <GameStep />

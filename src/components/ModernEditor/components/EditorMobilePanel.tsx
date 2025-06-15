@@ -25,6 +25,22 @@ const EditorMobilePanel: React.FC<EditorMobilePanelProps> = ({
   setCampaign,
   campaignType
 }) => {
+  const handleNextStep = () => {
+    const steps = ['setup', 'content', 'game', 'wording', 'preview', 'publish'];
+    const currentIndex = steps.indexOf(activeTab);
+    if (currentIndex < steps.length - 1) {
+      onTabChange(steps[currentIndex + 1]);
+    }
+  };
+
+  const handlePrevStep = () => {
+    const steps = ['setup', 'content', 'game', 'wording', 'preview', 'publish'];
+    const currentIndex = steps.indexOf(activeTab);
+    if (currentIndex > 0) {
+      onTabChange(steps[currentIndex - 1]);
+    }
+  };
+
   return (
     <>
       {/* Mobile overlay */}
@@ -69,6 +85,8 @@ const EditorMobilePanel: React.FC<EditorMobilePanelProps> = ({
                   activeStep={activeTab}
                   campaign={campaign}
                   setCampaign={setCampaign}
+                  onNextStep={handleNextStep}
+                  onPrevStep={handlePrevStep}
                 />
               </div>
             </div>
