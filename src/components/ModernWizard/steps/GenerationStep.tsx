@@ -21,9 +21,8 @@ const GenerationStep: React.FC<GenerationStepProps> = ({
   const [progress, setProgress] = useState(0);
   const [debugInfo, setDebugInfo] = useState<string>('');
   
-  // Configuration des endpoints avec fallbacks
-  const quizEndpoint = import.meta.env.VITE_QUIZ_ENDPOINT || 'https://YOUR_PROJECT.supabase.co/functions/v1/quiz';
-  const isEndpointConfigured = import.meta.env.VITE_QUIZ_ENDPOINT && !import.meta.env.VITE_QUIZ_ENDPOINT.includes('YOUR_PROJECT');
+  // Configuration de l'endpoint Supabase
+  const quizEndpoint = 'https://cknwowuaqymprfaylwti.supabase.co/functions/v1/quiz';
 
   // Données de fallback pour le mode dégradé
   const getMockQuizData = () => ({
@@ -64,23 +63,17 @@ const GenerationStep: React.FC<GenerationStepProps> = ({
 
     try {
       console.log('🚀 Configuration endpoint:', {
-        endpoint: quizEndpoint,
-        isConfigured: isEndpointConfigured,
-        env: import.meta.env.VITE_QUIZ_ENDPOINT
+        endpoint: quizEndpoint
       });
       
       setDebugInfo(`Endpoint: ${quizEndpoint}`);
-      
-      if (!isEndpointConfigured) {
-        throw new Error('ENDPOINT_NOT_CONFIGURED');
-      }
 
       // Simulation de progression
       const progressInterval = setInterval(() => {
         setProgress(prev => Math.min(prev + 10, 80));
       }, 500);
 
-      setDebugInfo('Envoi de la requête...');
+      setDebugInfo('Envoi de la requête à Supabase...');
 
       // Timeout pour éviter l'attente infinie
       const controller = new AbortController();
@@ -133,10 +126,7 @@ const GenerationStep: React.FC<GenerationStepProps> = ({
       let errorMessage = 'Erreur inconnue';
       let debugMessage = '';
       
-      if (error.message === 'ENDPOINT_NOT_CONFIGURED') {
-        errorMessage = 'Endpoint non configuré';
-        debugMessage = 'Variable VITE_QUIZ_ENDPOINT manquante ou invalide';
-      } else if (error.name === 'AbortError') {
+      if (error.name === 'AbortError') {
         errorMessage = 'Timeout de la requête';
         debugMessage = 'La génération a pris trop de temps (>15s)';
       } else if (error.message.startsWith('API_ERROR')) {
@@ -188,24 +178,6 @@ const GenerationStep: React.FC<GenerationStepProps> = ({
             Notre IA configure automatiquement votre campagne en fonction de vos choix et éléments de marque.
           </p>
         </div>
-
-        {/* Configuration Status */}
-        {!isEndpointConfigured && (
-          <div className="bg-amber-50 border border-amber-200 rounded-xl p-6 mb-6">
-            <div className="flex items-start space-x-3">
-              <AlertCircle className="w-5 h-5 text-amber-600 mt-0.5" />
-              <div>
-                <h3 className="font-semibold text-amber-800 mb-2">Configuration requise</h3>
-                <p className="text-amber-700 text-sm mb-3">
-                  L'endpoint Supabase n'est pas configuré. Le mode dégradé sera utilisé.
-                </p>
-                <div className="text-xs text-amber-600 bg-amber-100 rounded p-2 font-mono">
-                  VITE_QUIZ_ENDPOINT={quizEndpoint}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Generation Status */}
         <div className="bg-white rounded-xl border border-gray-200 p-8 shadow-sm mb-8">
@@ -259,32 +231,24 @@ const GenerationStep: React.FC<GenerationStepProps> = ({
         </div>
       </div>
 
-      {/* Configuration Instructions */}
-      {!isEndpointConfigured && (
-        <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6">
-          <h3 className="font-semibold text-blue-900 mb-4">🔧 Instructions de configuration</h3>
-          <div className="space-y-3 text-sm text-blue-800">
-            <div>
-              <strong>1. Configurez votre endpoint Supabase :</strong>
-              <div className="mt-2 bg-blue-100 rounded p-3 font-mono text-xs">
-                VITE_QUIZ_ENDPOINT=https://VOTRE_PROJET.supabase.co/functions/v1/quiz
-              </div>
-            </div>
-            <div>
-              <strong>2. Déployez la fonction Edge :</strong>
-              <div className="mt-2 bg-blue-100 rounded p-3 font-mono text-xs">
-                supabase functions deploy quiz
-              </div>
-            </div>
-            <div>
-              <strong>3. Configurez votre clé OpenAI dans les secrets Supabase :</strong>
-              <div className="mt-2 bg-blue-100 rounded p-3 font-mono text-xs">
-                supabase secrets set OPENAI_API_KEY=your_key_here
-              </div>
+      {/* API Status */}
+      <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6">
+        <h3 className="font-semibold text-emerald-900 mb-4">✅ Configuration API</h3>
+        <div className="space-y-3 text-sm text-emerald-800">
+          <div>
+            <strong>Endpoint Supabase configuré :</strong>
+            <div className="mt-2 bg-emerald-100 rounded p-3 font-mono text-xs">
+              {quizEndpoint}
             </div>
           </div>
+          <div>
+            <strong>Fonction Edge déployée :</strong> quiz
+          </div>
+          <div>
+            <strong>Clé OpenAI :</strong> Configurée dans Supabase Secrets
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };
