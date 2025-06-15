@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Eye, Monitor, Smartphone, Tablet, Loader, AlertCircle } from 'lucide-react';
+import { Eye, Monitor, Smartphone, Tablet, AlertCircle } from 'lucide-react';
 import type { WizardData } from '../ModernWizard';
 import QuizPreview from '../../GameTypes/QuizPreview';
 
