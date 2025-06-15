@@ -13,13 +13,17 @@ const DeviceFrame: React.FC<DeviceFrameProps> = ({ device, children }) => {
 
   if (device === 'tablet') {
     return (
-      <div className="relative">
+      <div className="relative w-full h-full flex items-center justify-center">
         {/* Tablet Frame */}
-        <div className="bg-gray-800 rounded-3xl p-6 shadow-2xl">
+        <div className="bg-gray-800 rounded-3xl p-6 shadow-2xl w-full max-w-[768px]">
           <div className="bg-black rounded-2xl p-2">
             <div
-              className="bg-white rounded-xl overflow-hidden relative"
-              style={{ width: '768px', height: '1024px', display: 'flex', flexDirection: 'column' }}
+              className="bg-white rounded-xl overflow-hidden relative w-full"
+              style={{
+                aspectRatio: '768 / 1024',
+                display: 'flex',
+                flexDirection: 'column'
+              }}
             >
               {/* Home indicator for tablet */}
               <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-gray-400 rounded-full"></div>
@@ -45,13 +49,17 @@ const DeviceFrame: React.FC<DeviceFrameProps> = ({ device, children }) => {
 
   // Mobile frame
   return (
-    <div className="relative">
+    <div className="relative w-full h-full flex items-center justify-center">
       {/* Mobile Frame */}
-      <div className="bg-gray-900 rounded-[3rem] p-2 shadow-2xl">
+      <div className="bg-gray-900 rounded-[3rem] p-2 shadow-2xl w-full max-w-[375px]">
         <div className="bg-black rounded-[2.5rem] p-1">
           <div
-            className="bg-white rounded-[2rem] overflow-hidden relative"
-            style={{ width: '375px', height: '812px', display: 'flex', flexDirection: 'column' }}
+            className="bg-white rounded-[2rem] overflow-hidden relative w-full"
+            style={{
+              aspectRatio: '375 / 812',
+              display: 'flex',
+              flexDirection: 'column'
+            }}
           >
             {/* Notch */}
             <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-6 bg-black rounded-b-2xl z-10"></div>
