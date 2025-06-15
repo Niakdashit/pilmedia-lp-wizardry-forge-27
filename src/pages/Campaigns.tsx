@@ -177,8 +177,9 @@ const Campaigns: React.FC = () => {
     <div className="-mx-6 -mt-6">
       <PageHeader
         title="Campagnes"
+        size="sm"
         actions={
-          <div className="flex flex-wrap gap-4 justify-center">
+          <div>
             <Link
               to="/quick-campaign"
               className="inline-flex items-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-lg"

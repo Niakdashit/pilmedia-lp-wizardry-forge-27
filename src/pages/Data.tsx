@@ -3,9 +3,11 @@ import { Download, Filter, RefreshCw } from 'lucide-react';
 import PageHeader from '../components/Layout/PageHeader';
 const Data: React.FC = () => {
   const [selectedCampaign, setSelectedCampaign] = useState('');
-  return <div className="-mx-6 -mt-6">
+  return (
+    <div className="-mx-6 -mt-6">
       <PageHeader
         title="Données"
+        size="sm"
         actions={
           <select
             value={selectedCampaign}
@@ -19,7 +21,6 @@ const Data: React.FC = () => {
           </select>
         }
       />
-
       <div className="px-6 space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
           <div className="bg-white rounded-xl shadow-sm p-6">
@@ -98,6 +99,7 @@ const Data: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
 export default Data;
