@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { WizardData } from '../../ModernWizard';
 
@@ -13,10 +12,10 @@ export const useQuizGeneration = ({ wizardData, updateWizardData, nextStep }: Us
   const [error, setError] = useState<string | null>(null);
   const [progress, setProgress] = useState(0);
   const [debugInfo, setDebugInfo] = useState<string>('');
-  const [lastRawApiResponse, setLastRawApiResponse] = useState<string>(''); // Ajout pour debug
-  
-  // Plus de switch entre mock/demo : on force l'usage de l'API SUPABASE sauf si elle renvoie une vraie erreur/fallback
+  const [lastRawApiResponse, setLastRawApiResponse] = useState<string>(''); // Pour debug
+
   const quizEndpoint = 'https://cknwowuaqymprfaylwti.supabase.co/functions/v1/quiz';
+  const supabaseApiKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNrbndvd3VhcXltcHJmYXlsd3RpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk5OTYyNzUsImV4cCI6MjA2NTU3MjI3NX0.dPKnFeUMeufXNyO531OPXhT-s0DeJVyJIV2fhbRcL3Q'; // clef publique ! Pas à sécuriser
 
   const getMockQuizData = () => ({
     intro: "Testez vos connaissances sur notre produit !",
@@ -49,14 +48,13 @@ export const useQuizGeneration = ({ wizardData, updateWizardData, nextStep }: Us
     setDebugInfo('Initialisation...');
 
     try {
-      setDebugInfo('Appel à l\'API Supabase forcé (debug: aucune condition de mock)');
-      console.log('🚀 [QuizGen] Forçage appel API avec endpoint:', quizEndpoint);
+      setDebugInfo('Appel à l\'API Supabase (header apikey envoyé)');
+      console.log('🚀 [QuizGen] Appel API avec endpoint:', quizEndpoint);
 
       const progressInterval = setInterval(() => {
         setProgress(prev => Math.min(prev + 10, 80));
       }, 500);
 
-      // Nouvelle payload : transmission des assets
       const payload = {
         logoUrl: wizardData.logo,
         desktopVisualUrl: wizardData.desktopVisual,
@@ -66,19 +64,21 @@ export const useQuizGeneration = ({ wizardData, updateWizardData, nextStep }: Us
         manualContent: wizardData['manualContent'] || ''
       };
 
-      console.log('📤 [QuizGen] Payload envoyé à l\'API:', payload);
+      console.log('[QuizGen] Payload envoyé à l\'API:', payload);
 
       const controller = new AbortController();
       const timeoutId = setTimeout(() => {
         controller.abort();
-      }, 12000); // Timeout 12s pour debug
+      }, 12000);
 
+      // Ajout du header apikey !
       const response = await fetch(quizEndpoint, {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'User-Agent': 'Lovable-Quiz-Generator/1.0',
-          'Origin': window.location.origin
+          'Origin': window.location.origin,
+          'apikey': supabaseApiKey // Ajout !
         },
         body: JSON.stringify(payload),
         signal: controller.signal,
@@ -88,31 +88,28 @@ export const useQuizGeneration = ({ wizardData, updateWizardData, nextStep }: Us
       clearInterval(progressInterval);
       clearTimeout(timeoutId);
 
-      console.log('📥 [QuizGen] Réponse brute HTTP:', response);
+      console.log('[QuizGen] Réponse HTTP:', response);
 
       let data;
       let textBody = '';
       try {
         textBody = await response.text();
-        setLastRawApiResponse(textBody); // Pour debug via UI si besoin
-        // Affiche la réponse brute JSON dans la console
+        setLastRawApiResponse(textBody);
         try {
           data = JSON.parse(textBody);
         } catch (jsonErr) {
-          console.error('❌ [QuizGen] Échec parsing JSON:', jsonErr, textBody);
-          throw new Error("Échec parsing JSON de la réponse API. Voir la console.");
+          console.error('[QuizGen] Échec parsing JSON:', jsonErr, textBody);
+          throw new Error("Échec parsing JSON de la réponse API.");
         }
       } catch (err) {
-        console.error('❌ [QuizGen] Impossible de lire la réponse HTTP:', err);
+        console.error('[QuizGen] Impossible de lire la réponse HTTP:', err);
         throw new Error("Erreur réseau/réponse introuvable");
       }
 
       if (!response.ok || data?.error) {
-        // Afficher le message d’erreur ou la structure erronée
-        console.error('❌ [QuizGen] Erreur API:', data?.error || textBody);
+        console.error('[QuizGen] Erreur API:', data?.error || textBody);
         setDebugInfo(data?.error ? String(data.error) : textBody);
         setError(`Erreur API : ${data?.error || "appel échoué"}`);
-        // En fallback (ex: CORS, time-out), on bascule sur mock mais on log tout
         updateWizardData({ generatedQuiz: getMockQuizData() });
         setProgress(100);
         setIsGenerating(false);
@@ -120,15 +117,14 @@ export const useQuizGeneration = ({ wizardData, updateWizardData, nextStep }: Us
         return;
       }
 
-      // Réponse ok et format JSON
-      console.log('✅ [QuizGen] Réponse JSON reçue :', data);
+      // Tout bon !
+      console.log('[QuizGen] Réponse JSON reçue :', data);
       setProgress(100);
       setDebugInfo('Réponse API OK. Quiz personnalisé reçu.');
       updateWizardData({ generatedQuiz: data });
-      
+
     } catch (error: any) {
-      // Fallback sécurisé : on log, on passe debug, ON affiche aussi lastRawApiResponse si dispo
-      console.error('❌ [QuizGen] Erreur génération:', error);
+      console.error('[QuizGen] Erreur génération:', error);
       setDebugInfo(error?.message || String(error));
       setError('Erreur lors de la génération du quiz - fallback mock');
       updateWizardData({ generatedQuiz: getMockQuizData() });
@@ -147,6 +143,6 @@ export const useQuizGeneration = ({ wizardData, updateWizardData, nextStep }: Us
     debugInfo,
     quizEndpoint,
     handleGenerate,
-    lastRawApiResponse // optionnel : si tu veux l’afficher dans un composant de debug UI
+    lastRawApiResponse
   };
 };
