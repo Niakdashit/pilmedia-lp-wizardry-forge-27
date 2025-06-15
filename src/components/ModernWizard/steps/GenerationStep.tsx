@@ -49,7 +49,6 @@ const GenerationStep: React.FC<GenerationStepProps> = ({
 
         {/* Generation Status */}
         <GenerationStatus
-          isGenerating={isGenerating}
           error={error}
           progress={progress}
           debugInfo={debugInfo}

@@ -3,14 +3,12 @@ import React from 'react';
 import { Loader, AlertCircle } from 'lucide-react';
 
 interface GenerationStatusProps {
-  isGenerating: boolean;
   error: string | null;
   progress: number;
   debugInfo: string;
 }
 
 const GenerationStatus: React.FC<GenerationStatusProps> = ({
-  isGenerating,
   error,
   progress,
   debugInfo
