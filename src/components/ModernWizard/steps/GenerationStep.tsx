@@ -1,7 +1,9 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { WizardData } from '../ModernWizard';
-import { Loader, AlertCircle } from 'lucide-react';
+import GenerationStatus from './GenerationStep/GenerationStatus';
+import ApiStatusCard from './GenerationStep/ApiStatusCard';
+import { useQuizGeneration } from './GenerationStep/useQuizGeneration';
 
 interface GenerationStepProps {
   wizardData: WizardData;
@@ -16,163 +18,20 @@ const GenerationStep: React.FC<GenerationStepProps> = ({
   nextStep,
   prevStep
 }) => {
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [progress, setProgress] = useState(0);
-  const [debugInfo, setDebugInfo] = useState<string>('');
-  
-  // Configuration de l'endpoint - utilise la variable d'environnement Vercel ou fallback
-  const quizEndpoint = import.meta.env.VITE_QUIZ_ENDPOINT || 'https://cknwowuaqymprfaylwti.supabase.co/functions/v1/quiz';
-
-  // Données de fallback pour le mode dégradé
-  const getMockQuizData = () => ({
-    intro: "Testez vos connaissances sur notre produit !",
-    cta: "Commencer le quiz",
-    questions: [
-      {
-        question: "Quelle est la principale caractéristique de notre produit ?",
-        choices: ["Innovation", "Qualité", "Prix", "Design"],
-        answer: "Innovation"
-      },
-      {
-        question: "Dans quel domaine excellons-nous le plus ?",
-        choices: ["Service client", "Technologie", "Marketing", "Logistique"],
-        answer: "Service client"
-      },
-      {
-        question: "Que recherchent nos clients avant tout ?",
-        choices: ["Rapidité", "Fiabilité", "Économies", "Simplicité"],
-        answer: "Fiabilité"
-      }
-    ],
-    errorText: "Oops ! Mauvaise réponse. Essayez encore !",
-    successText: "Bravo ! Vous connaissez bien notre produit !"
-  });
+  const {
+    isGenerating,
+    error,
+    progress,
+    debugInfo,
+    quizEndpoint,
+    handleGenerate
+  } = useQuizGeneration({ wizardData, updateWizardData, nextStep });
 
   useEffect(() => {
     if (!isGenerating) {
       handleGenerate();
     }
   }, []);
-
-  const handleGenerate = async () => {
-    setIsGenerating(true);
-    setError(null);
-    setProgress(10);
-    setDebugInfo('Initialisation...');
-
-    try {
-      console.log('🚀 Configuration endpoint:', {
-        endpoint: quizEndpoint,
-        envVariable: import.meta.env.VITE_QUIZ_ENDPOINT,
-        fallback: !import.meta.env.VITE_QUIZ_ENDPOINT ? 'Utilisant le fallback' : 'Variable configurée'
-      });
-      
-      setDebugInfo(`Endpoint: ${quizEndpoint} ${!import.meta.env.VITE_QUIZ_ENDPOINT ? '(fallback)' : '(env)'}`);
-
-      // Simulation de progression
-      const progressInterval = setInterval(() => {
-        setProgress(prev => Math.min(prev + 10, 80));
-      }, 500);
-
-      setDebugInfo('Envoi de la requête à Supabase...');
-
-      // Timeout pour éviter l'attente infinie
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => {
-        controller.abort();
-      }, 15000);
-
-      const payload = {
-        logoUrl: wizardData.logo,
-        desktopVisualUrl: wizardData.desktopVisual,
-        mobileVisualUrl: wizardData.mobileVisual,
-        websiteUrl: wizardData.websiteUrl,
-        productName: wizardData.productName
-      };
-
-      console.log('📤 Payload envoyé:', payload);
-
-      const response = await fetch(quizEndpoint, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'User-Agent': 'Lovable-Quiz-Generator/1.0'
-        },
-        body: JSON.stringify(payload),
-        signal: controller.signal
-      });
-
-      clearInterval(progressInterval);
-      clearTimeout(timeoutId);
-
-      console.log('📥 Réponse reçue:', {
-        status: response.status,
-        statusText: response.statusText,
-        ok: response.ok,
-        headers: Object.fromEntries(response.headers.entries())
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('❌ Erreur réponse:', errorText);
-        throw new Error(`API_ERROR: ${response.status} - ${errorText}`);
-      }
-
-      const data = await response.json();
-      console.log('✅ Quiz généré avec succès:', data);
-      
-      setProgress(100);
-      setDebugInfo('Quiz généré avec succès !');
-      updateWizardData({ generatedQuiz: data });
-      
-    } catch (error: any) {
-      console.error('❌ Erreur génération quiz:', error);
-      
-      let errorMessage = 'Erreur inconnue';
-      let debugMessage = '';
-      
-      if (error.name === 'AbortError') {
-        errorMessage = 'Timeout de la requête';
-        debugMessage = 'La génération a pris trop de temps (>15s)';
-      } else if (error.message.includes('fetch')) {
-        errorMessage = 'Erreur de connexion réseau';
-        debugMessage = 'Impossible de contacter le serveur Supabase';
-      } else if (error.message.startsWith('API_ERROR')) {
-        errorMessage = 'Erreur de l\'API Supabase';
-        debugMessage = error.message;
-      } else {
-        errorMessage = 'Erreur réseau';
-        debugMessage = error.message;
-      }
-      
-      setDebugInfo(debugMessage);
-      
-      // En cas d'erreur, utiliser les données mockées
-      console.log('🔄 Utilisation des données de fallback');
-      const mockData = getMockQuizData();
-      updateWizardData({ generatedQuiz: mockData });
-      
-      setError(`${errorMessage} - Mode dégradé activé`);
-      setProgress(100);
-      
-    } finally {
-      setIsGenerating(false);
-      setTimeout(() => nextStep(), 2000);
-    }
-  };
-
-  const getStatusColor = () => {
-    if (error) return 'text-orange-600';
-    if (progress === 100) return 'text-emerald-600';
-    return 'text-[#951b6d]';
-  };
-
-  const getProgressColor = () => {
-    if (error) return 'bg-orange-500';
-    if (progress === 100) return 'bg-emerald-500';
-    return 'bg-[#951b6d]';
-  };
 
   return (
     <div className="space-y-6">
@@ -189,42 +48,12 @@ const GenerationStep: React.FC<GenerationStepProps> = ({
         </div>
 
         {/* Generation Status */}
-        <div className="bg-white rounded-xl border border-gray-200 p-8 shadow-sm mb-8">
-          <div className="space-y-6">
-            <div className="w-16 h-16 bg-[#951b6d]/10 rounded-full flex items-center justify-center mx-auto">
-              {error ? (
-                <AlertCircle className="w-8 h-8 text-orange-500" />
-              ) : (
-                <Loader className="w-8 h-8 text-[#951b6d] animate-spin" />
-              )}
-            </div>
-            <div>
-              <h3 className={`font-semibold mb-2 ${getStatusColor()}`}>
-                {error ? 'Mode dégradé activé' : 
-                 progress === 100 ? 'Génération terminée' : 'Génération en cours...'}
-              </h3>
-              <p className="text-gray-600 mb-2">
-                {error || (progress === 100 ? 'Votre campagne est prête !' : 'Configuration des paramètres et personnalisation')}
-              </p>
-              {debugInfo && (
-                <p className="text-xs text-gray-500 font-mono bg-gray-50 rounded px-2 py-1">
-                  {debugInfo}
-                </p>
-              )}
-              {error && (
-                <p className="text-sm text-orange-600 mt-2">
-                  Votre campagne sera créée avec des données par défaut
-                </p>
-              )}
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div 
-                className={`h-2 rounded-full transition-all duration-500 ${getProgressColor()}`}
-                style={{ width: `${progress}%` }}
-              ></div>
-            </div>
-          </div>
-        </div>
+        <GenerationStatus
+          isGenerating={isGenerating}
+          error={error}
+          progress={progress}
+          debugInfo={debugInfo}
+        />
 
         {/* Navigation */}
         <div className="flex justify-between">
@@ -241,30 +70,7 @@ const GenerationStep: React.FC<GenerationStepProps> = ({
       </div>
 
       {/* API Status */}
-      <div className={`${error ? 'bg-orange-50 border-orange-200' : 'bg-emerald-50 border-emerald-200'} border rounded-2xl p-6`}>
-        <h3 className={`font-semibold mb-4 ${error ? 'text-orange-900' : 'text-emerald-900'}`}>
-          {error ? '⚠️ Configuration API' : '✅ Configuration API'}
-        </h3>
-        <div className={`space-y-3 text-sm ${error ? 'text-orange-800' : 'text-emerald-800'}`}>
-          <div>
-            <strong>Endpoint utilisé :</strong>
-            <div className={`mt-2 ${error ? 'bg-orange-100' : 'bg-emerald-100'} rounded p-3 font-mono text-xs`}>
-              {quizEndpoint}
-            </div>
-            {!import.meta.env.VITE_QUIZ_ENDPOINT && (
-              <div className="mt-2 text-orange-600 text-sm">
-                ⚠️ Variable VITE_QUIZ_ENDPOINT non configurée dans Vercel
-              </div>
-            )}
-          </div>
-          <div>
-            <strong>Fonction Edge déployée :</strong> quiz
-          </div>
-          <div>
-            <strong>Clé OpenAI :</strong> Configurée dans Supabase Secrets
-          </div>
-        </div>
-      </div>
+      <ApiStatusCard error={error} quizEndpoint={quizEndpoint} />
     </div>
   );
 };
