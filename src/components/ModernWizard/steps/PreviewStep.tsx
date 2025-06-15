@@ -2,6 +2,7 @@ import React from 'react';
 import { Eye, Monitor, Smartphone, Tablet, AlertCircle } from 'lucide-react';
 import type { WizardData } from '../ModernWizard';
 import QuizPreview from '../../GameTypes/QuizPreview';
+import PhoneFrame from './components/PhoneFrame';
 
 interface PreviewStepProps {
   wizardData: WizardData;
@@ -127,15 +128,29 @@ const PreviewStep: React.FC<PreviewStepProps> = ({
             <h3 className="font-semibold text-[#141e29]">Aperçu {selectedDevice}</h3>
           </div>
           
-          <div className="p-0">
+          <div className="p-0 flex justify-center">
             {hasQuizData ? (
-              <QuizPreview 
-                config={buildQuizConfig()} 
-                design={quizDesign}
-                useCustomLayout={true}
-                logoUrl={logoOrExtracted}
-                backgroundUrl={visual}
-              />
+              selectedDevice === 'mobile' ? (
+                <PhoneFrame logoUrl={logoOrExtracted}>
+                  <QuizPreview 
+                    config={buildQuizConfig()} 
+                    design={quizDesign}
+                    useCustomLayout={true}
+                    logoUrl={undefined} // déja mis dans la frame
+                    backgroundUrl={visual}
+                  />
+                </PhoneFrame>
+              ) : (
+                <div className="w-full flex justify-center items-center py-8 px-6">
+                  <QuizPreview 
+                    config={buildQuizConfig()} 
+                    design={quizDesign}
+                    useCustomLayout={true}
+                    logoUrl={logoOrExtracted}
+                    backgroundUrl={visual}
+                  />
+                </div>
+              )
             ) : (
               <div className="p-8 text-center space-y-4">
                 <div className="w-16 h-16 bg-red-50 rounded-full flex items-center justify-center mx-auto mb-4">
