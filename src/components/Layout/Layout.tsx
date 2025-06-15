@@ -35,16 +35,16 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
   }, [sidebarCollapsed]);
 
   return (
-    <div className="flex min-h-screen bg-[#ebf4f7] overflow-hidden">
+    <div className="flex min-h-screen bg-[#F8FAFC] overflow-hidden">
       <Sidebar />
       {/* Overlay mobile/tablette pour cliquer et fermer la sidebar */}
       <div
         onClick={toggleSidebar}
-        className={`md:hidden fixed inset-0 bg-black/30 transition-opacity z-30 ${sidebarCollapsed ? 'pointer-events-none opacity-0' : 'opacity-100'}`}
+        className={`md:hidden fixed inset-0 bg-black/10 transition-opacity z-30 ${sidebarCollapsed ? 'pointer-events-none opacity-0' : 'opacity-100'}`}
       />
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="md:hidden flex items-center justify-between bg-white border-b border-gray-200 p-4">
-          <button onClick={toggleSidebar} className="text-gray-500">
+        <header className="md:hidden flex items-center justify-between bg-white border-b border-[#EDF3F7] p-4 shadow-sm">
+          <button onClick={toggleSidebar} className="text-[#64748B]">
             <Menu className="w-6 h-6" />
           </button>
           <img src={logo} alt="Leadya Logo" className="h-8 w-auto" />
