@@ -46,22 +46,10 @@ const DashboardHeader: React.FC = () => {
         {/* Main Content */}
         <div className="relative z-10 px-8 py-12">
           <div className="max-w-7xl mx-auto">
-            {/* Top Bar with User Profile */}
-            <div className="flex justify-between items-start mb-8">
-              <div className="flex-1">
-                {/* Welcome Message */}
-                <div className="space-y-2">
-                  <h1 className="text-4xl font-bold text-white drop-shadow-lg">
-                    Bienvenue Jonathan 👋
-                  </h1>
-                  <p className="text-xl text-white/80 font-medium">
-                    Prêt à lancer une nouvelle campagne ?
-                  </p>
-                </div>
-              </div>
-
-              {/* User Profile */}
-              <div className="flex items-center space-x-4">
+            {/* Top Bar with User Profile - Centered */}
+            <div className="flex justify-center items-center mb-8">
+              {/* User Profile - Positioned at top right */}
+              <div className="absolute top-0 right-0 flex items-center space-x-4">
                 <div className="relative">
                   <div className="w-12 h-12 bg-gradient-to-br from-white/20 to-white/10 backdrop-blur-sm rounded-full border border-white/20 flex items-center justify-center shadow-lg">
                     <User className="w-6 h-6 text-white" />
@@ -69,71 +57,85 @@ const DashboardHeader: React.FC = () => {
                   <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-400 rounded-full border-2 border-white shadow-sm"></div>
                 </div>
               </div>
+
+              {/* Welcome Message - Centered */}
+              <div className="text-center">
+                <h1 className="text-4xl font-bold text-white drop-shadow-lg mb-2">
+                  Bienvenue Jonathan 👋
+                </h1>
+                <p className="text-xl text-white/80 font-medium">
+                  Prêt à lancer une nouvelle campagne ?
+                </p>
+              </div>
             </div>
 
-            {/* Game Shortcuts */}
-            <div className="flex flex-wrap gap-4 mb-8">
-              {gameShortcuts.map((game, index) => {
-                const IconComponent = getCampaignTypeIcon(game.type);
-                return (
-                  <Link
-                    key={game.type}
-                    to={`/quick-campaign?type=${game.type}`}
-                    className="group relative"
-                    style={{
-                      animationDelay: `${index * 0.1}s`
-                    }}
-                  >
-                    {/* Glassy Icon Bubble */}
-                    <div className="relative overflow-hidden">
-                      {/* Main Bubble */}
-                      <div className="w-16 h-16 bg-gradient-to-br from-white/25 to-white/10 backdrop-blur-sm rounded-2xl border border-white/20 flex items-center justify-center shadow-xl shadow-purple-500/10 transition-all duration-300 group-hover:scale-110 group-hover:shadow-2xl group-hover:shadow-purple-500/20 group-hover:bg-gradient-to-br group-hover:from-white/35 group-hover:to-white/15">
-                        <IconComponent className="w-7 h-7 text-white transition-transform duration-300 group-hover:scale-110" />
-                      </div>
-                      
-                      {/* Floating Particles on Hover */}
-                      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
-                        <div className="absolute top-1 left-3 w-1 h-1 bg-white/60 rounded-full animate-ping" style={{animationDelay: '0s'}}></div>
-                        <div className="absolute top-3 right-2 w-1 h-1 bg-purple-300/60 rounded-full animate-ping" style={{animationDelay: '0.3s'}}></div>
-                        <div className="absolute bottom-2 left-2 w-1 h-1 bg-blue-300/60 rounded-full animate-ping" style={{animationDelay: '0.6s'}}></div>
+            {/* Game Shortcuts - Centered */}
+            <div className="flex justify-center mb-8">
+              <div className="flex flex-wrap gap-4 justify-center">
+                {gameShortcuts.map((game, index) => {
+                  const IconComponent = getCampaignTypeIcon(game.type);
+                  return (
+                    <Link
+                      key={game.type}
+                      to={`/quick-campaign?type=${game.type}`}
+                      className="group relative"
+                      style={{
+                        animationDelay: `${index * 0.1}s`
+                      }}
+                    >
+                      {/* Glassy Icon Bubble */}
+                      <div className="relative overflow-hidden">
+                        {/* Main Bubble */}
+                        <div className="w-16 h-16 bg-gradient-to-br from-white/25 to-white/10 backdrop-blur-sm rounded-2xl border border-white/20 flex items-center justify-center shadow-xl shadow-purple-500/10 transition-all duration-300 group-hover:scale-110 group-hover:shadow-2xl group-hover:shadow-purple-500/20 group-hover:bg-gradient-to-br group-hover:from-white/35 group-hover:to-white/15">
+                          <IconComponent className="w-7 h-7 text-white transition-transform duration-300 group-hover:scale-110" />
+                        </div>
+                        
+                        {/* Floating Particles on Hover */}
+                        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                          <div className="absolute top-1 left-3 w-1 h-1 bg-white/60 rounded-full animate-ping" style={{animationDelay: '0s'}}></div>
+                          <div className="absolute top-3 right-2 w-1 h-1 bg-purple-300/60 rounded-full animate-ping" style={{animationDelay: '0.3s'}}></div>
+                          <div className="absolute bottom-2 left-2 w-1 h-1 bg-blue-300/60 rounded-full animate-ping" style={{animationDelay: '0.6s'}}></div>
+                        </div>
+
+                        {/* Glow Effect */}
+                        <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-400/0 to-blue-400/0 group-hover:from-purple-400/20 group-hover:to-blue-400/20 transition-all duration-300 blur-sm"></div>
                       </div>
 
-                      {/* Glow Effect */}
-                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-purple-400/0 to-blue-400/0 group-hover:from-purple-400/20 group-hover:to-blue-400/20 transition-all duration-300 blur-sm"></div>
-                    </div>
-
-                    {/* Label */}
-                    <div className="mt-2 text-center">
-                      <span className="text-sm font-medium text-white/90 group-hover:text-white transition-colors duration-300">
-                        {game.label}
-                      </span>
-                    </div>
-                  </Link>
-                );
-              })}
+                      {/* Label */}
+                      <div className="mt-2 text-center">
+                        <span className="text-sm font-medium text-white/90 group-hover:text-white transition-colors duration-300">
+                          {game.label}
+                        </span>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
             </div>
 
-            {/* Main Actions */}
-            <div className="flex flex-wrap gap-4">
-              <Link
-                to="/campaigns"
-                className="group relative overflow-hidden px-6 py-3 bg-gradient-to-r from-white/20 to-white/10 backdrop-blur-sm text-white font-semibold rounded-2xl border border-white/20 shadow-xl shadow-purple-500/10 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/20 hover:bg-gradient-to-r hover:from-white/30 hover:to-white/15"
-              >
-                <span className="relative z-10 flex items-center">
-                  <Sparkles className="w-5 h-5 mr-2 transition-transform group-hover:rotate-12" />
-                  Mes campagnes
-                </span>
-                {/* Shine Effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-              </Link>
+            {/* Main Actions - Centered */}
+            <div className="flex justify-center">
+              <div className="flex flex-wrap gap-4">
+                <Link
+                  to="/campaigns"
+                  className="group relative overflow-hidden px-6 py-3 bg-gradient-to-r from-white/20 to-white/10 backdrop-blur-sm text-white font-semibold rounded-2xl border border-white/20 shadow-xl shadow-purple-500/10 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/20 hover:bg-gradient-to-r hover:from-white/30 hover:to-white/15"
+                >
+                  <span className="relative z-10 flex items-center">
+                    <Sparkles className="w-5 h-5 mr-2 transition-transform group-hover:rotate-12" />
+                    Mes campagnes
+                  </span>
+                  {/* Shine Effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                </Link>
 
-              <button className="group relative overflow-hidden px-6 py-3 bg-gradient-to-r from-purple-500/80 to-blue-500/80 backdrop-blur-sm text-white font-semibold rounded-2xl border border-white/20 shadow-xl shadow-purple-500/20 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/30 hover:bg-gradient-to-r hover:from-purple-500/90 hover:to-blue-500/90">
-                <span className="relative z-10 flex items-center">
-                  Créer maintenant
-                </span>
-                {/* Shine Effect */}
-                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-              </button>
+                <button className="group relative overflow-hidden px-6 py-3 bg-gradient-to-r from-purple-500/80 to-blue-500/80 backdrop-blur-sm text-white font-semibold rounded-2xl border border-white/20 shadow-xl shadow-purple-500/20 transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:shadow-purple-500/30 hover:bg-gradient-to-r hover:from-purple-500/90 hover:to-blue-500/90">
+                  <span className="relative z-10 flex items-center">
+                    Créer maintenant
+                  </span>
+                  {/* Shine Effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                </button>
+              </div>
             </div>
           </div>
         </div>
