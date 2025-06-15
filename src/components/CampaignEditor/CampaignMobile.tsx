@@ -1,6 +1,6 @@
 
 import React, { useState } from 'react';
-import { Smartphone, Tablet, Monitor, Palette, Type, Layout } from 'lucide-react';
+import { Smartphone, Tablet } from 'lucide-react';
 import MobileLayout from './Mobile/MobileLayout';
 import MobileVisuals from './Mobile/MobileVisuals';
 import MobileTexts from './Mobile/MobileTexts';
@@ -24,24 +24,19 @@ const CampaignMobile: React.FC<CampaignMobileProps> = ({
 
   const subTabs = [{
     id: 'layout',
-    label: 'Layout',
-    icon: Layout
+    label: 'Layout'
   }, {
     id: 'visuals',
-    label: 'Visuels',
-    icon: Palette
+    label: 'Visuels'
   }, {
     id: 'texts',
-    label: 'Textes',
-    icon: Type
+    label: 'Textes'
   }, {
     id: 'game',
-    label: 'Jeu',
-    icon: Monitor
+    label: 'Jeu'
   }, {
     id: 'buttons',
-    label: 'Boutons',
-    icon: Smartphone
+    label: 'Boutons'
   }];
 
   const renderSubTabContent = () => {
@@ -62,99 +57,77 @@ const CampaignMobile: React.FC<CampaignMobileProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] p-6">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="text-left mb-12 max-w-3xl">
-          <div className="mb-8">
-            <h1 className="text-5xl font-light text-[#141E29] mb-6 leading-tight">
-              Optimisez pour
-              <span className="relative">
-                <span className="bg-gradient-to-r from-[#951B6D] to-[#A020F0] bg-clip-text text-transparent font-medium"> mobile</span>
-                <div className="absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-[#951B6D] to-[#A020F0] opacity-30"></div>
-              </span>
-            </h1>
-            
-            <p className="text-xl text-[#64748B] leading-relaxed font-light">
-              Adaptez votre campagne pour offrir une expérience parfaite 
-              sur tous les appareils mobiles et tablettes.
-            </p>
-          </div>
+    <div className="flex h-full w-full max-w-full overflow-hidden">
+      {/* Left Panel - Configuration */}
+      <div className="flex-1 flex flex-col min-w-0 max-w-full">
+        {/* Sub-tabs */}
+        <div className="border-b border-gray-200 bg-gray-50 flex-shrink-0">
+          <nav className="flex overflow-x-auto scrollbar-hide px-2 py-2">
+            <div className="flex space-x-1 min-w-max">
+              {subTabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveSubTab(tab.id)}
+                  className={`px-3 py-2 text-sm font-medium rounded-lg transition-colors whitespace-nowrap flex-shrink-0 ${
+                    activeSubTab === tab.id
+                      ? 'bg-white text-[#841b60] shadow-sm'
+                      : 'text-gray-600 hover:text-gray-900 hover:bg-white/50'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+          </nav>
         </div>
 
-        <div className="flex gap-8">
-          {/* Left Panel - Configuration */}
-          <div className="flex-1">
-            {/* Sub-tabs */}
-            <div className="bg-white rounded-xl border border-[#EDF3F7] shadow-sm mb-8">
-              <div className="flex overflow-x-auto p-2">
-                <div className="flex space-x-2 min-w-max">
-                  {subTabs.map((tab) => {
-                    const Icon = tab.icon;
-                    return (
-                      <button
-                        key={tab.id}
-                        onClick={() => setActiveSubTab(tab.id)}
-                        className={`flex items-center space-x-2 px-6 py-3 rounded-xl transition-all duration-300 whitespace-nowrap font-bold ${
-                          activeSubTab === tab.id
-                            ? 'bg-[#951B6D] text-white shadow-md'
-                            : 'text-[#64748B] hover:text-[#951B6D] hover:bg-[#F8FAFC]'
-                        }`}
-                      >
-                        <Icon className="w-4 h-4" />
-                        <span>{tab.label}</span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-
-            {/* Content */}
-            <div className="bg-white rounded-xl border border-[#EDF3F7] shadow-sm p-8">
-              {renderSubTabContent()}
-            </div>
+        {/* Content */}
+        <div className="flex-1 overflow-y-auto p-4 max-w-full">
+          <div className="max-w-full">
+            {renderSubTabContent()}
           </div>
-
-          {/* Right Panel - Preview */}
-          {!hidePreview && (
-            <div className="w-80 bg-white rounded-xl border border-[#EDF3F7] shadow-sm">
-              {/* Preview Mode Toggle */}
-              <div className="p-6 border-b border-[#EDF3F7]">
-                <div className="flex items-center justify-center space-x-2 bg-[#F8FAFC] rounded-xl p-1 border border-[#EDF3F7]">
-                  <button
-                    onClick={() => setPreviewMode('mobile')}
-                    className={`flex items-center space-x-2 px-4 py-2 text-sm rounded-lg font-bold transition-all duration-300 ${
-                      previewMode === 'mobile'
-                        ? 'bg-[#951B6D] text-white shadow-md'
-                        : 'text-[#64748B] hover:text-[#951B6D]'
-                    }`}
-                  >
-                    <Smartphone className="w-4 h-4" />
-                    <span>Mobile</span>
-                  </button>
-                  <button
-                    onClick={() => setPreviewMode('tablet')}
-                    className={`flex items-center space-x-2 px-4 py-2 text-sm rounded-lg font-bold transition-all duration-300 ${
-                      previewMode === 'tablet'
-                        ? 'bg-[#951B6D] text-white shadow-md'
-                        : 'text-[#64748B] hover:text-[#951B6D]'
-                    }`}
-                  >
-                    <Tablet className="w-4 h-4" />
-                    <span>Tablet</span>
-                  </button>
-                </div>
-              </div>
-
-              {/* Preview */}
-              <div className="p-6 flex items-center justify-center min-h-96 bg-gradient-to-br from-[#F8FAFC] to-[#EDF3F7]">
-                <MobilePreview campaign={campaign} previewMode={previewMode} />
-              </div>
-            </div>
-          )}
         </div>
       </div>
+
+      {/* Right Panel - Preview */}
+      {!hidePreview && (
+        <div className="w-80 flex-shrink-0 border-l border-gray-200 bg-gray-50 flex flex-col">
+          {/* Preview Mode Toggle */}
+          <div className="p-4 border-b border-gray-200 flex-shrink-0">
+            <div className="flex items-center justify-center space-x-2 bg-white rounded-lg p-1">
+              <button
+                onClick={() => setPreviewMode('mobile')}
+                className={`flex items-center space-x-2 px-3 py-2 text-sm rounded-md font-medium transition-colors ${
+                  previewMode === 'mobile'
+                    ? 'bg-[#841b60] text-white'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                <Smartphone className="w-4 h-4" />
+                <span>Mobile</span>
+              </button>
+              <button
+                onClick={() => setPreviewMode('tablet')}
+                className={`flex items-center space-x-2 px-3 py-2 text-sm rounded-md font-medium transition-colors ${
+                  previewMode === 'tablet'
+                    ? 'bg-[#841b60] text-white'
+                    : 'text-gray-600 hover:text-gray-900'
+                }`}
+              >
+                <Tablet className="w-4 h-4" />
+                <span>Tablet</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Preview */}
+          <div className="flex-1 p-4 flex items-center justify-center overflow-hidden bg-gradient-to-br from-gray-100 to-gray-200">
+            <div className="flex justify-center items-center w-full h-full">
+              <MobilePreview campaign={campaign} previewMode={previewMode} />
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

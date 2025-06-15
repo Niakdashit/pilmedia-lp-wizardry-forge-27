@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles, Eye, Save, Wand2, Settings, Gamepad2, FileText, ArrowLeft } from 'lucide-react';
+import { Sparkles, Eye, Save, Wand2, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import ModernEditorPanel from './ModernEditorPanel';
 import AIAssistantSidebar from './AIAssistantSidebar';
@@ -38,8 +38,8 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
   const steps = [
     { id: 'setup', label: 'Configuration', icon: Settings },
     { id: 'content', label: 'Contenu', icon: Wand2 },
-    { id: 'game', label: 'Jeu', icon: Gamepad2 },
-    { id: 'wording', label: 'Textes', icon: FileText },
+    { id: 'game', label: 'Jeu', icon: Settings },
+    { id: 'wording', label: 'Textes', icon: Wand2 },
     { id: 'preview', label: 'Aperçu', icon: Eye },
     { id: 'publish', label: 'Publication', icon: Sparkles }
   ];
@@ -56,40 +56,38 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
+    <div className="min-h-screen bg-gradient-to-br from-[#f8fafc] via-[#ebf4f7] to-[#f1f5f9]">
       {/* Header */}
-      <div className="bg-white border-b border-[#EDF3F7] sticky top-0 z-50 shadow-sm">
+      <div className="bg-white/95 backdrop-blur-sm border-b border-gray-100 sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <button
                 onClick={() => navigate('/gamification')}
-                className="p-2 hover:bg-[#F3F6F9] rounded-xl transition-colors text-[#64748B] hover:text-[#951B6D]"
+                className="p-2 hover:bg-gray-50 rounded-xl transition-colors"
               >
-                <ArrowLeft className="w-6 h-6" />
+                ←
               </button>
               <div>
-                <h1 className="text-xl font-bold text-[#141E29]">
-                  {isNewCampaign ? 'Nouvelle Campagne' : campaign?.name || 'Ma Campagne'}
+                <h1 className="text-xl font-bold text-gray-900">
+                  {isNewCampaign ? 'Nouvelle Campagne' : campaign.name || 'Campagne'}
                 </h1>
-                <p className="text-sm text-[#64748B] font-medium">
-                  Créez une expérience unique pour vos utilisateurs
-                </p>
+                <p className="text-sm text-gray-500">Créez une expérience unique pour vos utilisateurs</p>
               </div>
             </div>
 
             <div className="flex items-center space-x-3">
               <button
                 onClick={() => setShowAIAssistant(!showAIAssistant)}
-                className="flex items-center space-x-2 px-4 py-2 bg-[#F3F6F9] text-[#64748B] rounded-xl hover:bg-[#EDF3F7] hover:text-[#951B6D] transition-all duration-300 border border-[#EDF3F7]"
+                className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-[#841b60] to-[#6d164f] text-white rounded-full hover:shadow-lg transition-all duration-300 hover:scale-105"
               >
                 <Sparkles className="w-4 h-4" />
-                <span className="font-semibold">Assistant IA</span>
+                <span>Assistant IA</span>
               </button>
               
               <button 
                 onClick={onPreview}
-                className="flex items-center space-x-2 px-4 py-2 bg-[#F3F6F9] hover:bg-[#EDF3F7] text-[#64748B] hover:text-[#951B6D] rounded-xl transition-all border border-[#EDF3F7] font-semibold"
+                className="flex items-center space-x-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-full transition-all"
               >
                 <Eye className="w-4 h-4" />
                 <span>Aperçu</span>
@@ -98,7 +96,7 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
               <button 
                 onClick={onSave}
                 disabled={isLoading}
-                className="flex items-center space-x-2 px-6 py-2 bg-[#951B6D] hover:bg-[#A020F0] text-white rounded-xl shadow-sm hover:shadow-md transition-all duration-300 disabled:opacity-50 font-bold"
+                className="flex items-center space-x-2 px-6 py-2 bg-[#841b60] hover:bg-[#6d164f] text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-300 disabled:opacity-50"
               >
                 <Save className="w-4 h-4" />
                 <span>{isLoading ? 'Sauvegarde...' : 'Sauvegarder'}</span>
@@ -107,37 +105,43 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
           </div>
 
           {/* Step Navigation */}
-          <div className="flex items-center justify-center mt-8 mb-2">
-            <div className="flex items-center space-x-2 bg-[#F8FAFC] p-2 rounded-xl border border-[#EDF3F7]">
-              {steps.map((step, index) => {
-                const Icon = step.icon;
-                const isActive = activeTab === step.id;
-                const isCompleted = steps.findIndex(s => s.id === activeTab) > index;
-                
-                return (
-                  <motion.button
-                    key={step.id}
-                    onClick={() => handleStepChange(step.id)}
-                    className={`relative flex items-center space-x-2 px-4 py-2 rounded-xl transition-all duration-300 whitespace-nowrap text-sm font-bold ${
-                      isActive 
-                        ? 'bg-[#951B6D] text-white shadow-md' 
-                        : isCompleted
-                        ? 'bg-white text-[#16A34A] hover:bg-[#F0FDF4] shadow-sm border border-[#EDF3F7]'
-                        : 'bg-transparent hover:bg-white text-[#64748B] hover:text-[#951B6D] hover:shadow-sm'
-                    }`}
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <Icon className="w-4 h-4" />
-                    <span>{step.label}</span>
-                    
-                    {isCompleted && !isActive && (
-                      <div className="w-2 h-2 bg-[#16A34A] rounded-full"></div>
-                    )}
-                  </motion.button>
-                );
-              })}
-            </div>
+          <div className="flex items-center space-x-2 mt-6 overflow-x-auto pb-2">
+            {steps.map((step, index) => {
+              const Icon = step.icon;
+              const isActive = activeTab === step.id;
+              const isCompleted = steps.findIndex(s => s.id === activeTab) > index;
+              
+              return (
+                <motion.button
+                  key={step.id}
+                  onClick={() => handleStepChange(step.id)}
+                  className={`relative flex items-center space-x-3 px-6 py-3 rounded-full transition-all duration-300 whitespace-nowrap ${
+                    isActive 
+                      ? 'bg-gradient-to-r from-[#841b60] to-[#6d164f] text-white shadow-lg' 
+                      : isCompleted
+                      ? 'bg-green-50 text-green-700 hover:bg-green-100'
+                      : 'bg-white hover:bg-gray-50 text-gray-700 border border-gray-200'
+                  }`}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span className="font-medium">{step.label}</span>
+                  
+                  {isCompleted && (
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                  )}
+                  
+                  {isActive && (
+                    <motion.div
+                      layoutId="activeStepIndicator"
+                      className="absolute inset-0 bg-gradient-to-r from-[#841b60] to-[#6d164f] rounded-full"
+                      style={{ zIndex: -1 }}
+                    />
+                  )}
+                </motion.button>
+              );
+            })}
           </div>
         </div>
       </div>
@@ -172,7 +176,7 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: 300 }}
                 transition={{ duration: 0.3 }}
-                className="w-80 bg-white rounded-xl shadow-sm border border-[#EDF3F7] p-6 h-fit sticky top-24"
+                className="w-80 bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200 p-6 h-fit sticky top-24"
               >
                 <AIAssistantSidebar 
                   campaign={campaign}
