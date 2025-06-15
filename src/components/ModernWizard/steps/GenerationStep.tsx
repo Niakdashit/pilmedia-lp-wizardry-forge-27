@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
 import { WizardData } from '../ModernWizard';
-import { Wand2, Loader } from 'lucide-react';
+import { Loader } from 'lucide-react';
 
 interface GenerationStepProps {
   wizardData: WizardData;
