@@ -48,8 +48,14 @@ quiz content and therefore requires an `OPENAI_API_KEY` in your environment.
    OPENAI_API_KEY=your_key_here
    ```
 
-With Supabase running locally, you can trigger the function by sending a POST
-request to `/api/quiz`:
+With Supabase running locally, the function is available at
+`http://localhost:54321/functions/v1/quiz`. In production it uses your Supabase
+URL, e.g. `https://<project>.supabase.co/functions/v1/quiz`.
+
+Set this URL via the `VITE_QUIZ_ENDPOINT` variable in your `.env.local` file so
+the app knows where to send quiz generation requests.
+
+You can trigger the function manually by sending a POST request:
 
 ```bash
 curl -X POST \
@@ -58,8 +64,8 @@ curl -X POST \
      http://localhost:54321/functions/v1/quiz
 ```
 
-When deployed, the same endpoint is available at `/api/quiz` on your Supabase
-project.
+When deployed, use the corresponding URL for your Supabase project, for example
+`https://<project>.supabase.co/functions/v1/quiz`.
 
 ## Build
 
