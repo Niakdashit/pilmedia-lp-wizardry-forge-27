@@ -7,6 +7,14 @@ import Dashboard from './pages/Dashboard';
 import Campaigns from './pages/Campaigns';
 import CampaignEditor from './pages/CampaignEditor';
 import QuickCampaign from './pages/QuickCampaign';
+import Gamification from './pages/Gamification';
+import Newsletter from './pages/Newsletter';
+import Account from './pages/Account';
+import Statistics from './pages/Statistics';
+import Contacts from './pages/Contacts';
+import Data from './pages/Data';
+import Social from './pages/Social';
+import Studies from './pages/Studies';
 import Admin from './pages/Admin';
 import AdminClients from './pages/AdminClients';
 import AdminClientDetail from './pages/AdminClientDetail';
@@ -39,7 +47,6 @@ function App() {
               <Route path="/admin" element={<Admin />} />
               <Route path="/admin/clients" element={<AdminClients />} />
               <Route path="/admin/clients/:clientId" element={<AdminClientDetail />} />
-              {/* Ajouter d'autres routes admin ici */}
             </Routes>
           </AdminLayout>
         ) : (
@@ -49,6 +56,15 @@ function App() {
               <Route path="/campaigns" element={<Campaigns />} />
               <Route path="/campaign/:id" element={<CampaignEditor />} />
               <Route path="/quick-campaign" element={<QuickCampaign />} />
+              <Route path="/gamification" element={<Gamification />} />
+              <Route path="/newsletter" element={<Newsletter />} />
+              <Route path="/statistics" element={<Statistics />} />
+              <Route path="/contacts" element={<Contacts />} />
+              <Route path="/data" element={<Data />} />
+              <Route path="/social" element={<Social />} />
+              <Route path="/studies" element={<Studies />} />
+              <Route path="/account" element={<Account />} />
+              <Route path="/logout" element={<div className="p-6"><h1 className="text-2xl font-bold">Déconnexion</h1><p>Vous avez été déconnecté avec succès.</p></div>} />
             </Routes>
           </Layout>
         )}
