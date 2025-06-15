@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FolderOpen, Layers } from 'lucide-react';
@@ -65,24 +66,27 @@ const QuickCreationSection: React.FC = () => {
 
             {/* Container pour mobile avec scroll horizontal */}
             <div className="md:hidden w-full">
-              <div className="flex space-x-6 overflow-x-auto pb-4 px-2 scrollbar-hide" style={{
-              scrollbarWidth: 'none',
-              msOverflowStyle: 'none'
-            }}>
-                {gameTypes.map((game, index) => {
-                const IconComponent = getCampaignTypeIcon(game.type);
-                return <Link key={game.type} to={`/quick-campaign?type=${game.type}`} className="flex flex-col items-center group cursor-pointer opacity-0 animate-fade-in flex-shrink-0" style={{
-                  animationDelay: `${index * 0.1}s`,
-                  animationFillMode: 'forwards'
+              {/* Ajout de negative margins pour affleurer le bord */}
+              <div
+                className="flex space-x-4 overflow-x-auto pb-4 px-6 -mx-4 scrollbar-hide"
+                style={{
+                  scrollbarWidth: 'none',
+                  msOverflowStyle: 'none'
                 }}>
-                      <div className="w-16 h-16 bg-white/80 backdrop-blur-sm rounded-full shadow-xl shadow-purple-500/15 flex items-center justify-center group-hover:shadow-2xl group-hover:shadow-purple-500/25 transform group-hover:scale-110 transition-all duration-300 border border-white/50 group-hover:bg-white/90">
-                        <IconComponent className="w-8 h-8 text-[#841b60] group-hover:text-[#6d164f] transition-colors drop-shadow-sm" />
-                      </div>
-                      <span className="mt-2 text-sm font-medium text-gray-700 group-hover:text-[#841b60] transition-colors text-center drop-shadow-sm">
-                        {game.label}
-                      </span>
-                    </Link>;
-              })}
+                {gameTypes.map((game, index) => {
+                  const IconComponent = getCampaignTypeIcon(game.type);
+                  return <Link key={game.type} to={`/quick-campaign?type=${game.type}`} className="flex flex-col items-center group cursor-pointer opacity-0 animate-fade-in flex-shrink-0" style={{
+                    animationDelay: `${index * 0.1}s`,
+                    animationFillMode: 'forwards'
+                  }}>
+                        <div className="w-16 h-16 bg-white/80 backdrop-blur-sm rounded-full shadow-xl shadow-purple-500/15 flex items-center justify-center group-hover:shadow-2xl group-hover:shadow-purple-500/25 transform group-hover:scale-110 transition-all duration-300 border border-white/50 group-hover:bg-white/90">
+                          <IconComponent className="w-8 h-8 text-[#841b60] group-hover:text-[#6d164f] transition-colors drop-shadow-sm" />
+                        </div>
+                        <span className="mt-2 text-sm font-medium text-gray-700 group-hover:text-[#841b60] transition-colors text-center drop-shadow-sm">
+                          {game.label}
+                        </span>
+                      </Link>;
+                })}
               </div>
             </div>
           </div>
