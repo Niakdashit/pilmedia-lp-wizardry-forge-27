@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import {
@@ -83,7 +84,7 @@ const AdminSidebar: React.FC = () => {
       {/* Footer section */}
       <div className="p-3 border-t border-gray-200/50">
         <Link
-          to="/"
+          to="/dashboard"
           className="flex items-center px-3 py-2 rounded-xl text-gray-600 hover:bg-blue-50 hover:text-blue-600 transition-all duration-200 group mb-2"
         >
           <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-white group-hover:bg-white">
@@ -93,7 +94,7 @@ const AdminSidebar: React.FC = () => {
         </Link>
         
         <Link
-          to="/logout"
+          to="/login"
           className="flex items-center px-3 py-2 rounded-xl text-gray-600 hover:bg-red-50 hover:text-red-600 transition-all duration-200 group"
         >
           <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-white group-hover:bg-white">

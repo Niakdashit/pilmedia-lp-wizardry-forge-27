@@ -3,6 +3,7 @@ import { Routes, Route, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { AppProvider } from './context/AppContext';
+import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
 import Campaigns from './pages/Campaigns';
 import CampaignEditor from './pages/CampaignEditor';
@@ -31,6 +32,7 @@ import Layout from './components/Layout/Layout';
 function App() {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin');
+  const isLoginRoute = location.pathname === '/login' || location.pathname === '/';
 
   return (
     <AppProvider>
@@ -48,7 +50,12 @@ function App() {
           theme="light"
         />
         
-        {isAdminRoute ? (
+        {isLoginRoute ? (
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/login" element={<Login />} />
+          </Routes>
+        ) : isAdminRoute ? (
           <AdminLayout>
             <Routes>
               <Route path="/admin" element={<Admin />} />
@@ -66,7 +73,7 @@ function App() {
         ) : (
           <Layout>
             <Routes>
-              <Route path="/" element={<Dashboard />} />
+              <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/campaigns" element={<Campaigns />} />
               <Route path="/campaign/:id" element={<CampaignEditor />} />
               <Route path="/quick-campaign" element={<QuickCampaign />} />
