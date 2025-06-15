@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { useNewsletterStore } from '@/stores/newsletterStore';
 import { Trash2, GripVertical, ChevronUp, ChevronDown, Copy } from 'lucide-react';
@@ -197,21 +196,10 @@ export const ModuleRenderer: React.FC<ModuleRendererProps> = ({ module }) => {
 
         {module.type === 'html' && (
           <div className="bg-white border border-gray-200 rounded p-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">Code HTML</label>
-            <textarea
-              value={String(module.content || '')}
-              onChange={(e) => updateModule(module.id, { content: e.target.value })}
-              rows={10}
-              className="w-full font-mono p-2 border border-gray-300 rounded resize-y focus:outline-none focus:ring-2 focus:ring-[#841b60]"
-              placeholder="<div>Mon bloc HTML</div>"
+            <div
+              className="bg-gray-50 p-4 border rounded"
+              dangerouslySetInnerHTML={{ __html: String(module.content || '<p>(vide)</p>') }}
             />
-            <div className="mt-4 border-t pt-4">
-              <p className="text-sm text-gray-500 mb-1">Aperçu :</p>
-              <div
-                className="bg-gray-50 p-4 border rounded"
-                dangerouslySetInnerHTML={{ __html: String(module.content || '<p>(vide)</p>') }}
-              />
-            </div>
           </div>
         )}
       </div>
