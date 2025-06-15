@@ -15,7 +15,6 @@ serve(async (req) => {
   try {
     const body = await req.json();
 
-    // Récupération et fallback propre des valeurs envoyées par le front
     const {
       logoUrl = "",
       desktopVisualUrl = "",
@@ -25,7 +24,6 @@ serve(async (req) => {
       manualContent = ""
     } = body || {};
 
-    // --- PROMPT GPT-4o PERSONNALISÉ ---
     const gptPrompt = `
 Tu es un expert en gamification et en génération de quiz pédagogiques pour les marques.  
 
@@ -74,7 +72,7 @@ TA TÂCHE :
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'gpt-4o',
+        model: 'o3-2025-04-16', // <-- Migration vers le modèle recommandé
         messages: [
           { role: 'system', content: 'Tu es un assistant expert en gamification.' },
           { role: 'user', content: gptPrompt }
@@ -90,7 +88,6 @@ TA TÂCHE :
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    // Extraction du JSON dans le texte de réponse
     const data = await response.json();
     let quizJSON = null;
     try {
@@ -114,3 +111,4 @@ TA TÂCHE :
     });
   }
 });
+
