@@ -19,6 +19,7 @@ const Step2BasicSettings: React.FC = () => {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // Nettoyage de l'URL de l'image pour éviter les leaks mémoire
   useEffect(() => {
     return () => {
       if (backgroundImageUrl) {
@@ -67,7 +68,6 @@ const Step2BasicSettings: React.FC = () => {
               />
             </motion.div>
 
-
             {/* Launch Date */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
               <label className="block text-lg font-medium text-gray-900 mb-4">
@@ -82,13 +82,12 @@ const Step2BasicSettings: React.FC = () => {
               />
             </motion.div>
 
-
             {/* Logo Upload */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
               <label className="block text-lg font-medium text-gray-900 mb-4">
                 Logo <span className="text-gray-500 font-normal">(optionnel)</span>
               </label>
-            <LogoUploader />
+              <LogoUploader />
             </motion.div>
 
             {/* Background Upload */}
@@ -103,13 +102,24 @@ const Step2BasicSettings: React.FC = () => {
                 tabIndex={0}
                 onKeyDown={(e) => e.key === 'Enter' && fileInputRef.current?.click()}
               >
-                <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                {backgroundImageUrl ? (
+                  <img
+                    src={backgroundImageUrl}
+                    alt="Aperçu de l'image de fond"
+                    className="mx-auto mb-4 h-48 w-full object-cover rounded-xl"
+                  />
+                ) : (
+                  <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                )}
                 {backgroundImage ? (
                   <div>
                     <p className="text-gray-900 font-medium mb-2">{backgroundImage.name}</p>
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
+                        if (backgroundImageUrl) {
+                          URL.revokeObjectURL(backgroundImageUrl);
+                        }
                         setBackgroundImage(null);
                         setBackgroundImageUrl(null);
                       }}
