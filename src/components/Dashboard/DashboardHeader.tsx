@@ -1,27 +1,7 @@
+
 import React from 'react';
-import { Link } from 'react-router-dom';
-import { getCampaignTypeIcon } from '../../utils/campaignTypes';
-import { User, Sparkles } from 'lucide-react';
+
 const DashboardHeader: React.FC = () => {
-  const gameShortcuts = [{
-    type: 'wheel',
-    label: 'Roue'
-  }, {
-    type: 'quiz',
-    label: 'Quiz'
-  }, {
-    type: 'scratch',
-    label: 'Grattage'
-  }, {
-    type: 'dice',
-    label: 'Dés'
-  }, {
-    type: 'jackpot',
-    label: 'Jackpot'
-  }, {
-    type: 'memory',
-    label: 'Memory'
-  }];
   return <div className="relative overflow-hidden">
       {/* Enhanced Glassmorphic Header Container */}
       <div className="relative bg-gradient-to-br from-purple-600/40 via-blue-500/35 to-indigo-600/40 backdrop-blur-2xl border-b border-white/25 rounded-b-3xl shadow-2xl shadow-purple-500/20">
@@ -83,4 +63,5 @@ const DashboardHeader: React.FC = () => {
       `}</style>
     </div>;
 };
+
 export default DashboardHeader;
