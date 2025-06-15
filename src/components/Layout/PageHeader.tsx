@@ -1,4 +1,3 @@
-
 import React from 'react';
 interface PageHeaderProps {
   title: string;
@@ -25,7 +24,8 @@ const PageHeader: React.FC<PageHeaderProps> = ({
     return (
       <div className="relative w-full mt-3 pb-2 px-2 select-none md:px-[19px] z-10 overflow-hidden">
         {/* Fond glassmorphique pastel bleu, identique à QuickCreationSection */}
-        <div className="relative max-w-7xl mx-auto rounded-b-3xl shadow-2xl overflow-hidden">
+        {/* Suppression de l’ombre ici */}
+        <div className="relative max-w-7xl mx-auto rounded-b-3xl overflow-hidden">
           <div
             className="
               relative
