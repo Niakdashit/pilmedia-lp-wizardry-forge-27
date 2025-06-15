@@ -6,13 +6,11 @@ import { CampaignData } from '../../../pages/ModernCampaignWizard';
 
 interface FinalizePublishProps {
   campaignData: CampaignData;
-  updateCampaignData: (updates: Partial<CampaignData>) => void;
   onBack: () => void;
 }
 
 const FinalizePublish: React.FC<FinalizePublishProps> = ({
   campaignData,
-  updateCampaignData,
   onBack
 }) => {
   const [isPublishing, setIsPublishing] = useState(false);

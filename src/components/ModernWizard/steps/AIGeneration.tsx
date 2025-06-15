@@ -127,7 +127,6 @@ const AIGeneration: React.FC<AIGenerationProps> = ({
             {generationSteps.map((step, index) => {
               const isActive = index === currentStep && isGenerating;
               const isCompleted = index < currentStep || isComplete;
-              const isPending = index > currentStep && !isComplete;
 
               return (
                 <motion.div
