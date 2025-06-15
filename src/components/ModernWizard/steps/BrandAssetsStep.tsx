@@ -1,12 +1,11 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { WizardData } from '../ModernWizard';
 import { Image, Smartphone, Monitor } from 'lucide-react';
 import ImageUploadCard from './components/ImageUploadCard';
 import WebsiteUrlInput from './components/WebsiteUrlInput';
 import ProductNameInput from './components/ProductNameInput';
 import { useBrandThemeExtraction } from '../hooks/useBrandThemeExtraction';
-import { useWebsiteContentExtraction } from '../hooks/useWebsiteContentExtraction'; // <- NOUVEAU
 
 interface BrandAssetsStepProps {
   wizardData: WizardData;
@@ -21,11 +20,11 @@ const BrandAssetsStep: React.FC<BrandAssetsStepProps> = ({
   nextStep,
   prevStep
 }) => {
-  // Extraction du thème de marque : couleur, logo
+  // Extraction du thème de marque : couleur, logo (optionnel, pas automatique sur le texte)
   const { brandTheme, loading: extractingTheme } = useBrandThemeExtraction(wizardData.websiteUrl);
 
-  // Extraction du contenu du site (Firecrawl)
-  const { content: extractedContent, loading: extractingSiteContent, error: siteContentError } = useWebsiteContentExtraction(wizardData.websiteUrl);
+  // Champ de contenu saisi manuellement (optionnel, le prompt OpenAI peut aussi partir de rien)
+  const [manualContent, setManualContent] = useState(wizardData['manualContent'] || '');
 
   // Injection du résultat d'extraction de thème si changé
   React.useEffect(() => {
@@ -38,23 +37,15 @@ const BrandAssetsStep: React.FC<BrandAssetsStepProps> = ({
     if (!brandTheme && wizardData.extractedBrandTheme) {
       updateWizardData({ extractedBrandTheme: undefined });
     }
-    // eslint-disable-next-line
   }, [brandTheme]);
 
-  // Injection automatique du contenu du site dans wizardData.websiteContent
+  // Mémorise le contenu éventuel à chaque changement
   React.useEffect(() => {
-    if (
-      typeof extractedContent === "string" &&
-      extractedContent.length > 0 &&
-      extractedContent !== wizardData.websiteContent
-    ) {
-      updateWizardData({ websiteContent: extractedContent });
-    }
-    if (!extractedContent && wizardData.websiteContent) {
-      updateWizardData({ websiteContent: undefined });
+    if (manualContent !== wizardData['manualContent']) {
+      updateWizardData({ manualContent });
     }
     // eslint-disable-next-line
-  }, [extractedContent]);
+  }, [manualContent]);
 
   const handleFileUpload = (type: 'logo' | 'desktopVisual' | 'mobileVisual', file: File) => {
     const reader = new FileReader();
@@ -89,21 +80,6 @@ const BrandAssetsStep: React.FC<BrandAssetsStepProps> = ({
               <path className="opacity-75" fill="#ae8ac3" d="M4 12a8 8 0 018-8v8z" />
             </svg>
             Extraction du thème de marque en cours...
-          </div>
-        )}
-        {extractingSiteContent && (
-          <div className="mb-3 flex items-center gap-3 text-indigo-600 animate-pulse">
-            <svg width="20" height="20" fill="none" className="animate-spin" viewBox="0 0 24 24">
-              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="#6366F1" strokeWidth="4" />
-              <path className="opacity-75" fill="#6366F1" d="M4 12a8 8 0 018-8v8z" />
-            </svg>
-            Analyse automatique du contenu du site...
-          </div>
-        )}
-        {siteContentError && (
-          <div className="mb-3 text-red-500 flex items-center gap-2 text-sm">
-            <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="#ef4444" strokeWidth="3" /><line x1="12" y1="8" x2="12" y2="13" stroke="#ef4444" strokeWidth="2" /><circle cx="12" cy="16" r="1.2" fill="#ef4444" /></svg>
-            {siteContentError}
           </div>
         )}
 
@@ -151,6 +127,21 @@ const BrandAssetsStep: React.FC<BrandAssetsStepProps> = ({
           value={wizardData.productName || ''}
           onChange={(value) => updateWizardData({ productName: value })}
         />
+
+        {/* Ajout d'un champ pour un résumé/manuel facultatif */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            (Optionnel) Collez ici un texte/résumé clé de votre site (utile pour booster la pertinence du quiz si vous le souhaitez)
+          </label>
+          <textarea
+            value={manualContent}
+            onChange={e => setManualContent(e.target.value)}
+            className="w-full border border-gray-200 rounded-lg p-3 text-gray-900 focus:ring-[#951b6d] focus:border-[#951b6d] min-h-[64px]"
+            placeholder="Résumé, présentation, valeurs, infos..."
+            rows={3}
+            spellCheck={true}
+          />
+        </div>
 
         {/* Navigation */}
         <div className="flex justify-between">

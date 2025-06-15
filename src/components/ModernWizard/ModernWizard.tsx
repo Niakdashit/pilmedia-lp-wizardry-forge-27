@@ -19,8 +19,8 @@ export interface WizardData {
   generatedCampaign?: any;
   generatedQuiz?: any;
   customizations?: any;
-  extractedBrandTheme?: any; // <-- extraction auto
-  websiteContent?: string;   // <-- AJOUT: contenu texte du site pour analyse
+  extractedBrandTheme?: any; // <-- extraction auto (on conserve ce champ, mais sans Firecrawl)
+  // websiteContent?: string;   // <-- Supprimé : contenu texte du site pour analyse
 }
 
 const ModernWizard: React.FC = () => {

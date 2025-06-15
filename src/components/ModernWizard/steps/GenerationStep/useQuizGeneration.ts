@@ -81,14 +81,14 @@ export const useQuizGeneration = ({ wizardData, updateWizardData, nextStep }: Us
         controller.abort();
       }, 10000); // Timeout réduit à 10s
 
-      // Inclusion du contenu du site si présent
+      // Nouvelle payload : transmission seulement de l’URL, nom produit, visuels, mais plus de websiteContent
       const payload = {
         logoUrl: wizardData.logo,
         desktopVisualUrl: wizardData.desktopVisual,
         mobileVisualUrl: wizardData.mobileVisual,
         websiteUrl: wizardData.websiteUrl,
         productName: wizardData.productName,
-        websiteContent: wizardData.websiteContent // <-- AJOUT pour le prompt !
+        manualContent: wizardData['manualContent'] || ''
       };
 
       console.log('📤 Tentative d\'appel API:', payload);
