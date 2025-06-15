@@ -11,8 +11,6 @@ interface AdvancedCustomizationProps {
 }
 
 const AdvancedCustomization: React.FC<AdvancedCustomizationProps> = ({
-  wizardData,
-  updateWizardData,
   nextStep,
   prevStep
 }) => {

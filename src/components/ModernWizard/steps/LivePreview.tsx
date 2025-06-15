@@ -1,7 +1,6 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Monitor, Smartphone } from 'lucide-react';
 import { WizardData } from '../ModernWizard';
 
 interface LivePreviewProps {
@@ -9,139 +8,79 @@ interface LivePreviewProps {
   updateWizardData: (data: Partial<WizardData>) => void;
   nextStep: () => void;
   prevStep: () => void;
-  goToStep: (step: number) => void;
 }
 
 const LivePreview: React.FC<LivePreviewProps> = ({
   wizardData,
   updateWizardData,
   nextStep,
-  prevStep,
-  goToStep
+  prevStep
 }) => {
-  const [activeDevice, setActiveDevice] = React.useState<'desktop' | 'mobile'>('desktop');
-
-  const handleAdvanced = () => {
+  const handleAdvancedMode = () => {
     updateWizardData({ isAdvanced: true });
-    goToStep(4); // Go to advanced customization
+    nextStep();
   };
 
   return (
-    <div className="h-full flex flex-col px-6 py-8">
-      {/* Header */}
+    <div className="h-full flex flex-col items-center justify-center px-6">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-center mb-8"
+        className="text-center max-w-4xl"
       >
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-[#841b60] to-[#6554c0] bg-clip-text text-transparent mb-4">
+        <h1 className="text-4xl font-bold bg-gradient-to-r from-[#841b60] to-[#6554c0] bg-clip-text text-transparent mb-6">
           Votre expérience est prête !
         </h1>
-        <p className="text-lg text-gray-600">
-          Découvrez le rendu sur desktop et mobile
+        
+        <p className="text-xl text-gray-600 mb-12">
+          Découvrez votre campagne générée par IA
         </p>
-      </motion.div>
 
-      {/* Device selector */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="flex justify-center mb-8"
-      >
-        <div className="bg-white/70 backdrop-blur-md rounded-2xl p-2 border border-white/50 shadow-lg">
-          <button
-            onClick={() => setActiveDevice('desktop')}
-            className={`flex items-center px-6 py-3 rounded-xl transition-all duration-300 ${
-              activeDevice === 'desktop'
-                ? 'bg-gradient-to-r from-[#841b60] to-[#6554c0] text-white shadow-lg'
-                : 'text-gray-600 hover:bg-white/50'
-            }`}
+        {/* Preview area */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+          {/* Desktop Preview */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.2 }}
+            className="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20"
           >
-            <Monitor className="w-5 h-5 mr-2" />
-            Desktop
-          </button>
-          <button
-            onClick={() => setActiveDevice('mobile')}
-            className={`flex items-center px-6 py-3 rounded-xl transition-all duration-300 ${
-              activeDevice === 'mobile'
-                ? 'bg-gradient-to-r from-[#841b60] to-[#6554c0] text-white shadow-lg'
-                : 'text-gray-600 hover:bg-white/50'
-            }`}
-          >
-            <Smartphone className="w-5 h-5 mr-2" />
-            Mobile
-          </button>
-        </div>
-      </motion.div>
-
-      {/* Preview area */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.4 }}
-        className="flex-1 flex justify-center items-center mb-8"
-      >
-        <div className={`
-          bg-white rounded-3xl shadow-2xl border-8 border-gray-200 overflow-hidden
-          ${activeDevice === 'desktop' ? 'w-full max-w-4xl h-96' : 'w-80 h-[600px]'}
-          transition-all duration-500
-        `}>
-          <div className="w-full h-full bg-gradient-to-br from-violet-50 to-blue-50 flex items-center justify-center relative">
-            {/* Background image */}
-            {wizardData.campaign?.design?.backgroundImage && (
-              <img
-                src={activeDevice === 'mobile' 
-                  ? wizardData.campaign.design.mobileBackgroundImage || wizardData.campaign.design.backgroundImage
-                  : wizardData.campaign.design.backgroundImage
-                }
-                alt="Background"
-                className="absolute inset-0 w-full h-full object-cover"
-              />
-            )}
-            
-            {/* Content overlay */}
-            <div className="relative z-10 text-center p-8 bg-white/80 backdrop-blur-sm rounded-2xl m-8">
-              {wizardData.campaign?.design?.logo && (
-                <img
-                  src={wizardData.campaign.design.logo}
-                  alt="Logo"
-                  className="w-16 h-16 mx-auto mb-4 object-contain"
-                />
-              )}
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">
-                {wizardData.campaign?.content?.title}
-              </h2>
-              <p className="text-gray-600 mb-4">
-                {wizardData.campaign?.content?.description}
-              </p>
-              <button 
-                className="px-6 py-3 bg-gradient-to-r from-[#841b60] to-[#6554c0] text-white rounded-xl font-semibold"
-              >
-                {wizardData.campaign?.content?.cta}
-              </button>
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">Aperçu Desktop</h3>
+            <div className="aspect-video bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center">
+              <span className="text-gray-500">Prévisualisation Desktop</span>
             </div>
-          </div>
+          </motion.div>
+
+          {/* Mobile Preview */}
+          <motion.div
+            initial={{ opacity: 0, x: 30 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.4 }}
+            className="bg-white/10 backdrop-blur-md rounded-3xl p-8 border border-white/20"
+          >
+            <h3 className="text-lg font-semibold text-gray-800 mb-4">Aperçu Mobile</h3>
+            <div className="aspect-[9/16] max-h-80 bg-gradient-to-br from-gray-100 to-gray-200 rounded-xl flex items-center justify-center mx-auto">
+              <span className="text-gray-500">Prévisualisation Mobile</span>
+            </div>
+          </motion.div>
         </div>
-      </motion.div>
 
-      {/* Navigation */}
-      <div className="flex justify-between items-center">
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={prevStep}
-          className="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-colors duration-300"
-        >
-          Retour
-        </motion.button>
-
-        <div className="flex space-x-4">
+        {/* Action buttons */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={handleAdvanced}
-            className="px-6 py-3 border-2 border-[#841b60] text-[#841b60] rounded-xl font-semibold hover:bg-[#841b60] hover:text-white transition-all duration-300"
+            onClick={prevStep}
+            className="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl font-medium hover:bg-gray-200 transition-colors duration-300"
+          >
+            Retour
+          </motion.button>
+
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={handleAdvancedMode}
+            className="px-8 py-3 bg-white/20 backdrop-blur-md text-gray-800 rounded-xl font-semibold border border-white/30 hover:bg-white/30 transition-all duration-300"
           >
             + Avancé
           </motion.button>
@@ -149,13 +88,18 @@ const LivePreview: React.FC<LivePreviewProps> = ({
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
-            onClick={nextStep}
+            onClick={() => {
+              // Skip advanced customization
+              updateWizardData({ isAdvanced: false });
+              nextStep();
+              nextStep(); // Go directly to publish
+            }}
             className="px-8 py-3 bg-gradient-to-r from-[#841b60] to-[#6554c0] text-white rounded-xl font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
           >
-            Publier
+            Publier maintenant
           </motion.button>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 };
