@@ -1,7 +1,6 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Users, Target, Settings, BarChart3 } from 'lucide-react';
+import { Users, Target, Settings, BarChart3 } from 'lucide-react';
 
 const AdminQuickAccess: React.FC = () => {
   const quickActions = [
