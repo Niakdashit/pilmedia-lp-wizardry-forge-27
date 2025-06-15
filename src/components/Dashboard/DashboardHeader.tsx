@@ -2,8 +2,7 @@
 import React from 'react';
 
 const DashboardHeader: React.FC = () => {
-  return (
-    <div className="relative overflow-hidden">
+  return <div className="relative overflow-hidden">
       {/* Enhanced Glassmorphic Header Container */}
       <div className="relative bg-gradient-to-br from-purple-600/40 via-blue-500/35 to-indigo-600/40 backdrop-blur-2xl border-b border-white/25 rounded-b-3xl shadow-2xl shadow-purple-500/20">
         
@@ -36,64 +35,13 @@ const DashboardHeader: React.FC = () => {
         </div>
 
         {/* Main Content with Enhanced Z-index */}
-        <div className="relative z-20 px-6 py-12 md:py-16">
-          <div className="max-w-7xl mx-auto">
-            <div className="flex flex-col lg:flex-row items-center justify-between">
-              {/* Left Content */}
-              <div className="text-center lg:text-left mb-8 lg:mb-0 max-w-2xl">
-                <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-4 leading-tight">
-                  Bienvenue sur{' '}
-                  <span className="bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">
-                    Leadya
-                  </span>
-                </h1>
-                <p className="text-xl md:text-2xl text-white/90 mb-6 leading-relaxed">
-                  Créez des campagnes engageantes qui convertissent vos visiteurs en clients fidèles
-                </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                  <button className="px-8 py-4 bg-gradient-to-r from-[#841b60] to-[#6d164f] text-white font-semibold rounded-2xl hover:shadow-xl hover:shadow-[#841b60]/25 transition-all duration-300 transform hover:-translate-y-1">
-                    Créer une campagne
-                  </button>
-                  <button className="px-8 py-4 bg-white/20 backdrop-blur-sm text-white font-semibold rounded-2xl border border-white/30 hover:bg-white/30 transition-all duration-300">
-                    Voir le guide
-                  </button>
-                </div>
-              </div>
-
-              {/* Right Illustration - Hidden on small screens */}
-              <div className="hidden lg:block relative animate-float">
-                <div className="w-80 h-80 relative">
-                  {/* Floating Cards Animation */}
-                  <div className="absolute top-0 right-0 w-32 h-20 bg-white/95 rounded-xl shadow-2xl p-4 animate-float" style={{ animationDelay: '0s' }}>
-                    <div className="h-2 bg-gradient-to-r from-purple-400 to-blue-400 rounded mb-2"></div>
-                    <div className="h-1 bg-gray-200 rounded mb-1"></div>
-                    <div className="h-1 bg-gray-200 rounded w-3/4"></div>
-                  </div>
-                  <div className="absolute top-16 left-8 w-28 h-16 bg-white/95 rounded-xl shadow-2xl p-3 animate-float" style={{ animationDelay: '0.5s' }}>
-                    <div className="h-1.5 bg-gradient-to-r from-green-400 to-emerald-400 rounded mb-2"></div>
-                    <div className="h-1 bg-gray-200 rounded mb-1"></div>
-                    <div className="h-1 bg-gray-200 rounded w-2/3"></div>
-                  </div>
-                  <div className="absolute bottom-8 right-4 w-36 h-24 bg-white/95 rounded-xl shadow-2xl p-4 animate-float" style={{ animationDelay: '1s' }}>
-                    <div className="h-2 bg-gradient-to-r from-orange-400 to-red-400 rounded mb-2"></div>
-                    <div className="h-1 bg-gray-200 rounded mb-1"></div>
-                    <div className="h-1 bg-gray-200 rounded w-4/5"></div>
-                  </div>
-                  
-                  {/* Sparkle Effects */}
-                  <div className="absolute top-4 left-4 w-2 h-2 bg-yellow-300 rounded-full animate-sparkle" style={{ animationDelay: '0.2s' }}></div>
-                  <div className="absolute bottom-4 left-8 w-1.5 h-1.5 bg-blue-300 rounded-full animate-sparkle" style={{ animationDelay: '0.8s' }}></div>
-                  <div className="absolute top-1/2 right-8 w-1 h-1 bg-purple-300 rounded-full animate-sparkle" style={{ animationDelay: '1.2s' }}></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        
 
         {/* Enhanced Bottom Gradient Border */}
         <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent"></div>
       </div>
 
+      
       <style>{`
         @keyframes float {
           0%, 100% { transform: translateY(0px) rotate(0deg); }
@@ -113,8 +61,7 @@ const DashboardHeader: React.FC = () => {
           animation: sparkle 2s ease-in-out infinite;
         }
       `}</style>
-    </div>
-  );
+    </div>;
 };
 
 export default DashboardHeader;
