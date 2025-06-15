@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { WizardData } from '../ModernWizard';
-import { Upload, Image, Smartphone, Monitor } from 'lucide-react';
+import { Upload, Image, Smartphone, Monitor, Globe } from 'lucide-react';
 
 interface BrandAssetsStepProps {
   wizardData: WizardData;
@@ -141,6 +141,23 @@ const BrandAssetsStep: React.FC<BrandAssetsStepProps> = ({
               )}
             </div>
           </div>
+        </div>
+
+        {/* Website URL */}
+        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm mb-6">
+          <div className="flex items-center space-x-3 mb-4">
+            <div className="w-8 h-8 bg-[#951b6d]/10 rounded-lg flex items-center justify-center">
+              <Globe className="w-4 h-4 text-[#951b6d]" />
+            </div>
+            <h3 className="font-semibold text-[#141e29]">URL de votre site internet</h3>
+          </div>
+          <input
+            type="url"
+            value={wizardData.websiteUrl || ''}
+            onChange={(e) => updateWizardData({ websiteUrl: e.target.value })}
+            placeholder="https://www.monsite.com"
+            className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#951b6d]/20 focus:border-[#951b6d] transition-colors"
+          />
         </div>
 
         {/* Product Name */}

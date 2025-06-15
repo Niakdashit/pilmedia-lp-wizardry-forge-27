@@ -12,6 +12,7 @@ export interface WizardData {
   logo?: string;
   desktopVisual?: string;
   mobileVisual?: string;
+  websiteUrl?: string;
   productName?: string;
   generatedCampaign?: any;
   customizations?: any;
