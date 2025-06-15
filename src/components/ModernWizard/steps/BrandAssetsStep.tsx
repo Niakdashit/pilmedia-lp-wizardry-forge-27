@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { WizardData } from '../ModernWizard';
-import { Upload, Sparkles } from 'lucide-react';
+import { Upload, Image, Smartphone, Monitor } from 'lucide-react';
 
 interface BrandAssetsStepProps {
   wizardData: WizardData;
@@ -16,41 +16,42 @@ const BrandAssetsStep: React.FC<BrandAssetsStepProps> = ({
   nextStep,
   prevStep
 }) => {
-  const handleFileUpload = (field: keyof WizardData, file: File) => {
+  const handleFileUpload = (type: 'logo' | 'desktopVisual' | 'mobileVisual', file: File) => {
     const reader = new FileReader();
-    reader.onload = () => {
-      updateWizardData({ [field]: reader.result as string });
+    reader.onload = (e) => {
+      updateWizardData({ [type]: e.target?.result as string });
     };
     reader.readAsDataURL(file);
   };
 
-  const canProceed = wizardData.logo && wizardData.desktopVisual && wizardData.productName;
-
   return (
-    <div className="min-h-screen flex items-center justify-center px-6">
-      <div className="max-w-4xl mx-auto w-full">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-[#841b60] to-[#6d164f] rounded-2xl mb-6">
-            <Sparkles className="w-8 h-8 text-white" />
-          </div>
-          <h1 className="text-4xl font-bold text-white mb-4">
-            Donnez vie à votre marque
-          </h1>
-          <p className="text-xl text-gray-300">
-            Uploadez vos assets pour créer une expérience sur-mesure
-          </p>
-        </div>
+    <div className="space-y-8">
+      {/* Section Header */}
+      <div className="max-w-3xl">
+        <h2 className="text-xl font-bold text-[#141e29] mb-3">Ajoutez vos éléments de marque</h2>
+        <p className="text-gray-600 leading-relaxed">
+          Personnalisez votre campagne avec vos visuels de marque pour une expérience cohérente.
+        </p>
+      </div>
 
-        {/* Form */}
-        <div className="bg-white/10 backdrop-blur-xl rounded-3xl border border-white/20 p-8 shadow-2xl">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            {/* Logo Upload */}
-            <div className="space-y-4">
-              <label className="block text-white font-semibold text-lg">
-                Logo de votre marque *
-              </label>
-              <div className="relative">
+      {/* Upload Areas */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Logo Upload */}
+        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+          <div className="flex items-center space-x-3 mb-4">
+            <div className="w-8 h-8 bg-[#951b6d]/10 rounded-lg flex items-center justify-center">
+              <Image className="w-4 h-4 text-[#951b6d]" />
+            </div>
+            <h3 className="font-semibold text-[#141e29]">Logo</h3>
+          </div>
+          
+          <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-[#951b6d]/50 transition-colors">
+            {wizardData.logo ? (
+              <img src={wizardData.logo} alt="Logo" className="max-h-20 mx-auto" />
+            ) : (
+              <>
+                <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                <p className="text-sm text-gray-600 mb-2">Glissez votre logo ici</p>
                 <input
                   type="file"
                   accept="image/*"
@@ -60,26 +61,31 @@ const BrandAssetsStep: React.FC<BrandAssetsStepProps> = ({
                 />
                 <label
                   htmlFor="logo-upload"
-                  className="flex flex-col items-center justify-center h-48 border-2 border-dashed border-white/30 rounded-2xl cursor-pointer hover:border-[#841b60] hover:bg-white/5 transition-all duration-300"
+                  className="inline-block px-4 py-2 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 cursor-pointer text-sm font-medium"
                 >
-                  {wizardData.logo ? (
-                    <img src={wizardData.logo} alt="Logo" className="max-h-40 max-w-full object-contain" />
-                  ) : (
-                    <>
-                      <Upload className="w-12 h-12 text-gray-400 mb-4" />
-                      <span className="text-gray-300">Cliquez pour ajouter votre logo</span>
-                    </>
-                  )}
+                  Sélectionner un fichier
                 </label>
-              </div>
-            </div>
+              </>
+            )}
+          </div>
+        </div>
 
-            {/* Desktop Visual */}
-            <div className="space-y-4">
-              <label className="block text-white font-semibold text-lg">
-                Visuel desktop *
-              </label>
-              <div className="relative">
+        {/* Desktop Visual */}
+        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+          <div className="flex items-center space-x-3 mb-4">
+            <div className="w-8 h-8 bg-[#951b6d]/10 rounded-lg flex items-center justify-center">
+              <Monitor className="w-4 h-4 text-[#951b6d]" />
+            </div>
+            <h3 className="font-semibold text-[#141e29]">Visuel desktop</h3>
+          </div>
+          
+          <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-[#951b6d]/50 transition-colors">
+            {wizardData.desktopVisual ? (
+              <img src={wizardData.desktopVisual} alt="Desktop visual" className="max-h-20 mx-auto" />
+            ) : (
+              <>
+                <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                <p className="text-sm text-gray-600 mb-2">Visuel pour ordinateur</p>
                 <input
                   type="file"
                   accept="image/*"
@@ -89,26 +95,31 @@ const BrandAssetsStep: React.FC<BrandAssetsStepProps> = ({
                 />
                 <label
                   htmlFor="desktop-upload"
-                  className="flex flex-col items-center justify-center h-48 border-2 border-dashed border-white/30 rounded-2xl cursor-pointer hover:border-[#841b60] hover:bg-white/5 transition-all duration-300"
+                  className="inline-block px-4 py-2 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 cursor-pointer text-sm font-medium"
                 >
-                  {wizardData.desktopVisual ? (
-                    <img src={wizardData.desktopVisual} alt="Desktop Visual" className="max-h-40 max-w-full object-contain" />
-                  ) : (
-                    <>
-                      <Upload className="w-12 h-12 text-gray-400 mb-4" />
-                      <span className="text-gray-300">Visuel principal de campagne</span>
-                    </>
-                  )}
+                  Sélectionner un fichier
                 </label>
-              </div>
-            </div>
+              </>
+            )}
+          </div>
+        </div>
 
-            {/* Mobile Visual */}
-            <div className="space-y-4">
-              <label className="block text-white font-semibold text-lg">
-                Visuel mobile (optionnel)
-              </label>
-              <div className="relative">
+        {/* Mobile Visual */}
+        <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+          <div className="flex items-center space-x-3 mb-4">
+            <div className="w-8 h-8 bg-[#951b6d]/10 rounded-lg flex items-center justify-center">
+              <Smartphone className="w-4 h-4 text-[#951b6d]" />
+            </div>
+            <h3 className="font-semibold text-[#141e29]">Visuel mobile</h3>
+          </div>
+          
+          <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-[#951b6d]/50 transition-colors">
+            {wizardData.mobileVisual ? (
+              <img src={wizardData.mobileVisual} alt="Mobile visual" className="max-h-20 mx-auto" />
+            ) : (
+              <>
+                <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                <p className="text-sm text-gray-600 mb-2">Visuel pour mobile</p>
                 <input
                   type="file"
                   accept="image/*"
@@ -118,59 +129,42 @@ const BrandAssetsStep: React.FC<BrandAssetsStepProps> = ({
                 />
                 <label
                   htmlFor="mobile-upload"
-                  className="flex flex-col items-center justify-center h-48 border-2 border-dashed border-white/30 rounded-2xl cursor-pointer hover:border-[#841b60] hover:bg-white/5 transition-all duration-300"
+                  className="inline-block px-4 py-2 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 cursor-pointer text-sm font-medium"
                 >
-                  {wizardData.mobileVisual ? (
-                    <img src={wizardData.mobileVisual} alt="Mobile Visual" className="max-h-40 max-w-full object-contain" />
-                  ) : (
-                    <>
-                      <Upload className="w-12 h-12 text-gray-400 mb-4" />
-                      <span className="text-gray-300">Version mobile (fallback: desktop)</span>
-                    </>
-                  )}
+                  Sélectionner un fichier
                 </label>
-              </div>
-            </div>
-
-            {/* Product Name */}
-            <div className="space-y-4">
-              <label className="block text-white font-semibold text-lg">
-                Nom du produit/offre *
-              </label>
-              <input
-                type="text"
-                value={wizardData.productName || ''}
-                onChange={(e) => updateWizardData({ productName: e.target.value })}
-                placeholder="Ex: iPhone 15 Pro, Formation Marketing..."
-                className="w-full h-16 px-6 bg-white/10 border border-white/20 rounded-2xl text-white placeholder-gray-400 focus:outline-none focus:border-[#841b60] focus:bg-white/15 transition-all duration-300"
-              />
-            </div>
-          </div>
-
-          {/* Actions */}
-          <div className="flex justify-between items-center mt-12">
-            <button
-              onClick={prevStep}
-              className="px-8 py-4 text-gray-300 hover:text-white transition-colors duration-300"
-            >
-              ← Retour
-            </button>
-            
-            <button
-              onClick={nextStep}
-              disabled={!canProceed}
-              className={`
-                px-12 py-4 rounded-2xl font-semibold transition-all duration-300 transform
-                ${canProceed
-                  ? 'bg-gradient-to-r from-[#841b60] to-[#6d164f] text-white hover:scale-105 shadow-2xl hover:shadow-[#841b60]/50'
-                  : 'bg-gray-600 text-gray-400 cursor-not-allowed'
-                }
-              `}
-            >
-              Générer ma campagne →
-            </button>
+              </>
+            )}
           </div>
         </div>
+      </div>
+
+      {/* Product Name */}
+      <div className="bg-white rounded-xl border border-gray-200 p-6 shadow-sm">
+        <h3 className="font-semibold text-[#141e29] mb-4">Nom du produit</h3>
+        <input
+          type="text"
+          value={wizardData.productName || ''}
+          onChange={(e) => updateWizardData({ productName: e.target.value })}
+          placeholder="Entrez le nom de votre produit ou campagne"
+          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#951b6d]/20 focus:border-[#951b6d] transition-colors"
+        />
+      </div>
+
+      {/* Navigation */}
+      <div className="flex justify-between pt-6">
+        <button
+          onClick={prevStep}
+          className="px-6 py-3 bg-gray-100 text-gray-700 font-semibold rounded-lg hover:bg-gray-200 transition-colors"
+        >
+          Retour
+        </button>
+        <button
+          onClick={nextStep}
+          className="px-6 py-3 bg-[#951b6d] text-white font-semibold rounded-lg hover:bg-[#7d1659] transition-colors shadow-sm hover:shadow-md"
+        >
+          Continuer
+        </button>
       </div>
     </div>
   );

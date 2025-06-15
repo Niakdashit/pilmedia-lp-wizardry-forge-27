@@ -8,6 +8,7 @@ import GenerationStep from './steps/GenerationStep';
 import PreviewStep from './steps/PreviewStep';
 import AdvancedStep from './steps/AdvancedStep';
 import PublishStep from './steps/PublishStep';
+import { Settings, Wand2, Eye, Sparkles, FileText, Upload } from 'lucide-react';
 
 export interface WizardData {
   selectedGame?: CampaignType;
@@ -27,12 +28,12 @@ const ModernWizard: React.FC = () => {
   });
 
   const steps = [
-    'game-selection',
-    'brand-assets',
-    'generation',
-    'preview',
-    'advanced',
-    'publish'
+    { id: 'game-selection', label: 'Configuration', icon: Settings },
+    { id: 'brand-assets', label: 'Contenu', icon: Upload },
+    { id: 'generation', label: 'Jeu', icon: Wand2 },
+    { id: 'preview', label: 'Textes', icon: FileText },
+    { id: 'advanced', label: 'Aperçu', icon: Eye },
+    { id: 'publish', label: 'Publication', icon: Sparkles }
   ];
 
   const updateWizardData = (data: Partial<WizardData>) => {
@@ -66,7 +67,7 @@ const ModernWizard: React.FC = () => {
       totalSteps: steps.length
     };
 
-    switch (steps[currentStep]) {
+    switch (steps[currentStep].id) {
       case 'game-selection':
         return <GameSelectionStep {...commonProps} />;
       case 'brand-assets':
@@ -85,20 +86,49 @@ const ModernWizard: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#161B33] to-[#24123B] relative overflow-hidden">
-      {/* Enhanced animated background */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-20 left-10 w-40 h-40 bg-blue-400/25 rounded-full blur-3xl animate-pulse" style={{animationDuration: '2.5s'}}></div>
-        <div className="absolute top-40 right-20 w-32 h-32 bg-[#841b60]/30 rounded-full blur-2xl animate-ping" style={{animationDuration: '3.5s'}}></div>
-        <div className="absolute bottom-20 left-1/4 w-48 h-48 bg-indigo-400/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s', animationDuration: '4s'}}></div>
-        <div className="absolute top-1/3 right-10 w-28 h-28 bg-violet-400/25 rounded-full blur-2xl animate-ping" style={{animationDuration: '5s', animationDelay: '2s'}}></div>
-        
-        {/* Glass morphism overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-[#1a1f3a]/30 via-transparent to-[#2a1340]/15"></div>
+    <div className="min-h-screen bg-[#f8fafc]">
+      {/* Header with stepper */}
+      <div className="bg-white border-b border-gray-100">
+        <div className="max-w-7xl mx-auto px-8 py-6">
+          <div className="mb-8">
+            <h1 className="text-2xl font-bold text-[#141e29] mb-2">Créer une nouvelle campagne</h1>
+            <p className="text-gray-600">Configurez votre expérience interactive en quelques étapes simples</p>
+          </div>
+          
+          {/* Step Navigation */}
+          <div className="flex items-center space-x-1 overflow-x-auto">
+            {steps.map((step, index) => {
+              const Icon = step.icon;
+              const isActive = currentStep === index;
+              const isCompleted = currentStep > index;
+              
+              return (
+                <button
+                  key={step.id}
+                  onClick={() => goToStep(index)}
+                  className={`flex items-center space-x-3 px-4 py-2 rounded-lg transition-all duration-200 whitespace-nowrap ${
+                    isActive 
+                      ? 'bg-[#951b6d] text-white shadow-sm' 
+                      : isCompleted
+                      ? 'bg-green-50 text-green-700 hover:bg-green-100'
+                      : 'bg-gray-50 text-gray-600 hover:bg-gray-100'
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span className="font-medium text-sm">{step.label}</span>
+                  
+                  {isCompleted && (
+                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
-      {/* Content */}
-      <div className="relative z-10">
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-8 py-8">
         {renderCurrentStep()}
       </div>
     </div>
