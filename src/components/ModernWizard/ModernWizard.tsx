@@ -89,7 +89,7 @@ const ModernWizard: React.FC = () => {
     }
   };
   return <div className="min-h-screen">
-      <div className="max-w-7xl mx-auto px-0 py-px">
+      <div className="max-w-7xl px-0 py-px mx-0">
         {/* Page Header */}
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-[#141e29] mb-3">Créer une nouvelle campagne</h1>
@@ -100,7 +100,7 @@ const ModernWizard: React.FC = () => {
         
         {/* Stepper */}
         <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-gray-100/50 mb-8">
-          <div className="flex items-center justify-between max-w-4xl">
+          <div className="flex items-center justify-between max-w-4xl mx-0">
             {steps.map((step, index) => {
             const Icon = step.icon;
             const isActive = currentStep === index;
