@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Eye, Monitor, Smartphone, Tablet, AlertCircle } from 'lucide-react';
 import type { WizardData } from '../ModernWizard';
@@ -26,6 +25,24 @@ const PreviewStep: React.FC<PreviewStepProps> = ({
     questionsCount: wizardData.generatedQuiz?.questions?.length || 0,
     allData: wizardData
   });
+
+  // Ajout récupération design et logo extraits automatiquement si présents
+  const brandTheme = wizardData.extractedBrandTheme;
+  const quizDesign =
+    brandTheme?.customColors
+      ? {
+          containerBackgroundColor: '#ffffff',
+          borderColor: '#e5e7eb',
+          borderRadius: '16px',
+          customColors: brandTheme.customColors // pour compat potentiel CustomQuizGame ou usage futur
+        }
+      : {
+          containerBackgroundColor: '#ffffff',
+          borderColor: '#e5e7eb',
+          borderRadius: '16px',
+        };
+
+  const logoOrExtracted = brandTheme?.logoUrl || wizardData.logo;
 
   // Construction sécurisée de la configuration du quiz
   const buildQuizConfig = () => {
@@ -114,13 +131,9 @@ const PreviewStep: React.FC<PreviewStepProps> = ({
             {hasQuizData ? (
               <QuizPreview 
                 config={buildQuizConfig()} 
-                design={{
-                  containerBackgroundColor: '#ffffff',
-                  borderColor: '#e5e7eb',
-                  borderRadius: '16px'
-                }}
+                design={quizDesign}
                 useCustomLayout={true}
-                logoUrl={wizardData.logo}
+                logoUrl={logoOrExtracted}
                 backgroundUrl={visual}
               />
             ) : (

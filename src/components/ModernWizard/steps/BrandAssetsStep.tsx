@@ -1,10 +1,10 @@
-
 import React from 'react';
 import { WizardData } from '../ModernWizard';
 import { Image, Smartphone, Monitor } from 'lucide-react';
 import ImageUploadCard from './components/ImageUploadCard';
 import WebsiteUrlInput from './components/WebsiteUrlInput';
 import ProductNameInput from './components/ProductNameInput';
+import { useBrandThemeExtraction } from '../hooks/useBrandThemeExtraction';
 
 interface BrandAssetsStepProps {
   wizardData: WizardData;
@@ -19,6 +19,24 @@ const BrandAssetsStep: React.FC<BrandAssetsStepProps> = ({
   nextStep,
   prevStep
 }) => {
+  const { brandTheme, loading: extractingTheme } = useBrandThemeExtraction(wizardData.websiteUrl);
+
+  // injection automatique du résultat d'extraction si changé
+  React.useEffect(() => {
+    // S'il y a un brandTheme extrait (et pas déjà pris en compte), on l'injecte dans wizardData
+    if (
+      brandTheme && 
+      JSON.stringify(wizardData.extractedBrandTheme || {}) !== JSON.stringify(brandTheme)
+    ) {
+      updateWizardData({ extractedBrandTheme: brandTheme });
+    }
+    // En cas de reset de brandTheme (siteUrl vide): on nettoie la donnée
+    if (!brandTheme && wizardData.extractedBrandTheme) {
+      updateWizardData({ extractedBrandTheme: undefined });
+    }
+    // eslint-disable-next-line
+  }, [brandTheme /*, wizardData.websiteUrl*/]);
+
   const handleFileUpload = (type: 'logo' | 'desktopVisual' | 'mobileVisual', file: File) => {
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -44,6 +62,24 @@ const BrandAssetsStep: React.FC<BrandAssetsStepProps> = ({
             Personnalisez votre campagne avec vos visuels de marque pour une expérience cohérente.
           </p>
         </div>
+
+        {/* Info extraction marque */}
+        {extractingTheme && (
+          <div className="mb-6 flex items-center gap-3 text-[#815194] animate-pulse">
+            <svg width="22" height="22" fill="none" className="animate-spin" viewBox="0 0 24 24">
+              <circle 
+                className="opacity-25"
+                cx="12" cy="12" r="10" stroke="#ae8ac3" strokeWidth="4"
+              />
+              <path 
+                className="opacity-75"
+                fill="#ae8ac3"
+                d="M4 12a8 8 0 018-8v8z"
+              />
+            </svg>
+             Extraction du thème de marque en cours...
+          </div>
+        )}
 
         {/* Upload Areas */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
