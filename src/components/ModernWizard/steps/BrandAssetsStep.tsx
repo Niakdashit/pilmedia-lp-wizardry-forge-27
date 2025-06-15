@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { WizardData } from '../ModernWizard';
 import { Image, Smartphone, Monitor } from 'lucide-react';
@@ -5,6 +6,7 @@ import ImageUploadCard from './components/ImageUploadCard';
 import WebsiteUrlInput from './components/WebsiteUrlInput';
 import ProductNameInput from './components/ProductNameInput';
 import { useBrandThemeExtraction } from '../hooks/useBrandThemeExtraction';
+import { useWebsiteContentExtraction } from '../hooks/useWebsiteContentExtraction'; // <- NOUVEAU
 
 interface BrandAssetsStepProps {
   wizardData: WizardData;
@@ -19,23 +21,40 @@ const BrandAssetsStep: React.FC<BrandAssetsStepProps> = ({
   nextStep,
   prevStep
 }) => {
+  // Extraction du thème de marque : couleur, logo
   const { brandTheme, loading: extractingTheme } = useBrandThemeExtraction(wizardData.websiteUrl);
 
-  // injection automatique du résultat d'extraction si changé
+  // Extraction du contenu du site (Firecrawl)
+  const { content: extractedContent, loading: extractingSiteContent, error: siteContentError } = useWebsiteContentExtraction(wizardData.websiteUrl);
+
+  // Injection du résultat d'extraction de thème si changé
   React.useEffect(() => {
-    // S'il y a un brandTheme extrait (et pas déjà pris en compte), on l'injecte dans wizardData
     if (
       brandTheme && 
       JSON.stringify(wizardData.extractedBrandTheme || {}) !== JSON.stringify(brandTheme)
     ) {
       updateWizardData({ extractedBrandTheme: brandTheme });
     }
-    // En cas de reset de brandTheme (siteUrl vide): on nettoie la donnée
     if (!brandTheme && wizardData.extractedBrandTheme) {
       updateWizardData({ extractedBrandTheme: undefined });
     }
     // eslint-disable-next-line
-  }, [brandTheme /*, wizardData.websiteUrl*/]);
+  }, [brandTheme]);
+
+  // Injection automatique du contenu du site dans wizardData.websiteContent
+  React.useEffect(() => {
+    if (
+      typeof extractedContent === "string" &&
+      extractedContent.length > 0 &&
+      extractedContent !== wizardData.websiteContent
+    ) {
+      updateWizardData({ websiteContent: extractedContent });
+    }
+    if (!extractedContent && wizardData.websiteContent) {
+      updateWizardData({ websiteContent: undefined });
+    }
+    // eslint-disable-next-line
+  }, [extractedContent]);
 
   const handleFileUpload = (type: 'logo' | 'desktopVisual' | 'mobileVisual', file: File) => {
     const reader = new FileReader();
@@ -62,22 +81,29 @@ const BrandAssetsStep: React.FC<BrandAssetsStepProps> = ({
             Personnalisez votre campagne avec vos visuels de marque pour une expérience cohérente.
           </p>
         </div>
-
-        {/* Info extraction marque */}
+        {/* Infos extraction */}
         {extractingTheme && (
-          <div className="mb-6 flex items-center gap-3 text-[#815194] animate-pulse">
+          <div className="mb-3 flex items-center gap-3 text-[#815194] animate-pulse">
             <svg width="22" height="22" fill="none" className="animate-spin" viewBox="0 0 24 24">
-              <circle 
-                className="opacity-25"
-                cx="12" cy="12" r="10" stroke="#ae8ac3" strokeWidth="4"
-              />
-              <path 
-                className="opacity-75"
-                fill="#ae8ac3"
-                d="M4 12a8 8 0 018-8v8z"
-              />
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="#ae8ac3" strokeWidth="4" />
+              <path className="opacity-75" fill="#ae8ac3" d="M4 12a8 8 0 018-8v8z" />
             </svg>
-             Extraction du thème de marque en cours...
+            Extraction du thème de marque en cours...
+          </div>
+        )}
+        {extractingSiteContent && (
+          <div className="mb-3 flex items-center gap-3 text-indigo-600 animate-pulse">
+            <svg width="20" height="20" fill="none" className="animate-spin" viewBox="0 0 24 24">
+              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="#6366F1" strokeWidth="4" />
+              <path className="opacity-75" fill="#6366F1" d="M4 12a8 8 0 018-8v8z" />
+            </svg>
+            Analyse automatique du contenu du site...
+          </div>
+        )}
+        {siteContentError && (
+          <div className="mb-3 text-red-500 flex items-center gap-2 text-sm">
+            <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="#ef4444" strokeWidth="3" /><line x1="12" y1="8" x2="12" y2="13" stroke="#ef4444" strokeWidth="2" /><circle cx="12" cy="16" r="1.2" fill="#ef4444" /></svg>
+            {siteContentError}
           </div>
         )}
 

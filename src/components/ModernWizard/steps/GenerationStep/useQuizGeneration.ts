@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { WizardData } from '../../ModernWizard';
 
@@ -57,21 +56,16 @@ export const useQuizGeneration = ({ wizardData, updateWizardData, nextStep }: Us
       
       setDebugInfo(`Environnement: ${isLovableEnvironment ? 'Lovable (mode test)' : 'Production'}`);
 
-      // En environnement Lovable, utiliser directement le fallback avec un message explicatif
+      // Environnement Lovable de test
       if (isLovableEnvironment && !import.meta.env.VITE_QUIZ_ENDPOINT) {
         setProgress(50);
         setDebugInfo('Mode test Lovable détecté - Utilisation des données de démonstration');
-        
-        // Simulation d'une génération pour l'UX
         await new Promise(resolve => setTimeout(resolve, 2000));
-        
         const mockData = getMockQuizData();
         updateWizardData({ generatedQuiz: mockData });
-        
         setProgress(100);
         setDebugInfo('Quiz de démonstration généré avec succès !');
         setError('Mode démonstration - Quiz généré avec des données de test');
-        
         setTimeout(() => nextStep(), 2000);
         return;
       }
@@ -87,12 +81,14 @@ export const useQuizGeneration = ({ wizardData, updateWizardData, nextStep }: Us
         controller.abort();
       }, 10000); // Timeout réduit à 10s
 
+      // Inclusion du contenu du site si présent
       const payload = {
         logoUrl: wizardData.logo,
         desktopVisualUrl: wizardData.desktopVisual,
         mobileVisualUrl: wizardData.mobileVisual,
         websiteUrl: wizardData.websiteUrl,
-        productName: wizardData.productName
+        productName: wizardData.productName,
+        websiteContent: wizardData.websiteContent // <-- AJOUT pour le prompt !
       };
 
       console.log('📤 Tentative d\'appel API:', payload);
