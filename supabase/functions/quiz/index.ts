@@ -24,45 +24,54 @@ serve(async (req) => {
       manualContent = ""
     } = body || {};
 
+    // ----- PROMPT RENFORCÉ POUR UNE PERSONNALISATION MAXIMALE -----
     const gptPrompt = `
-Tu es un expert en gamification et en génération de quiz pédagogiques pour les marques.  
+Tu es un expert en gamification et en génération de quiz pédagogiques interactifs pour des marques.
 
 OBJECTIF :
-Génère pour moi un quiz interactif à choix multiples pour tester la connaissance des utilisateurs sur le site et sa marque.
+Analyse au maximum les informations fournies (nom, url, résumé, visuels) pour générer un quiz vraiment personnalisé à la marque/produit.
 
-INFORMATIONS DE CONTEXTE (ta base d'inspiration, à utiliser au maximum) :
+1️⃣ COMMENCE par ENONCER (en français) :
+- Un secteur ou thématique déduit du nom/URL/texte (invente si besoin)
+- Un persona/cible principale plausible pour cette marque
+- 2-3 éléments différenciants ou valeurs de la marque/du produit (même si tu dois déduire ou inventer à partir des données fournies).
+- Liste 3 anecdotes/faits/propriétés spécifiques exploités dans tes questions.
+
+2️⃣ UTILISE impérativement ces éléments DANS TOUT LE QUIZ (questions, choix, feedback, intro, cta).
+
+3️⃣ Structure ta réponse STRICTEMENT en JSON (pas de texte autour), avec CES CHAMPS :
+{
+  "intro": "Phrase d’intro motivante adaptée à la marque, personnalisée avec la thématique, la cible.",
+  "cta": "Libellé du bouton pour lancer le quiz, adapté à la marque/cible",
+  "questions": [
+    {
+      "question": "Texte d’une question contextualisée (utilise le nom, le secteur, anecdotes, valeurs…)",
+      "choices": ["Choix n°1", "Choix n°2", "Choix n°3", "Choix n°4"],
+      "answer": "Texte du choix correct"
+    },
+    ...
+  ],
+  "errorText": "Texte positif personnalisé affiché en cas de mauvaise réponse",
+  "successText": "Félicitations personnalisées",
+  "explicationsGPT": {
+    "secteur": "XX",
+    "cible": "XX",
+    "valeurs": ["X", "Y"],
+    "faits_remarquables": ["X", "Y"],
+    "commentaires": "Brève justification de tes choix de questions et d’axes de personnalisation."
+  }
+}
+Si une information n’est pas fournie, invente au mieux. Tu DOIS toujours inclure le champ explicationsGPT. Strictement aucun texte de ta part en dehors de ce JSON.
+Informations de contexte :
 - Nom du produit/marque : ${productName || "inconnu"}
 - URL du site : ${websiteUrl || "non communiqué"}
-- (Facultatif) Contenu ou résumé fourni par l'utilisateur :
+- (Facultatif) Résumé fourni :
 """
 ${manualContent}
 """
-
 - Logo : ${logoUrl}
 - Visuel desktop : ${desktopVisualUrl}
 - Visuel mobile : ${mobileVisualUrl}
-
-TA TÂCHE :
-- Si un résumé/contenu a été fourni, utilise-le en priorité pour créer tes questions.
-- Sinon, inspire-toi du nom de la marque et/ou de l’URL pour déduire la thématique et générer un quiz pertinent ou générique.
-- Crée 3 à 5 questions de type QCM adaptées au public du site.
-- Diversifie la difficulté et le type de questions (générales, anecdotes, infos produits/services...).
-- Si certaines infos sont absentes, adapte tes questions ou propose des questions génériques pertinentes.
-- Formate ta réponse EN JSON STRICT (pas de texte autour) :
-{
-  "intro": "Phrase d’intro motivante adaptée à la marque et à la cible.",
-  "cta": "Libellé du bouton pour lancer le quiz",
-  "questions": [
-    {
-      "question": "Texte de la question",
-      "choices": ["Choix n°1", "Choix n°2", "Choix n°3", "Choix n°4"],
-      "answer": "Texte du choix correct"
-    }
-    ...
-  ],
-  "errorText": "Texte positif affiché en cas de mauvaise réponse",
-  "successText": "Félicitations personnalisées"
-}
 `;
 
     const response = await fetch('https://api.openai.com/v1/chat/completions', {
@@ -72,13 +81,13 @@ TA TÂCHE :
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: 'o3-2025-04-16', // <-- Migration vers le modèle recommandé
+        model: 'o3-2025-04-16',
         messages: [
           { role: 'system', content: 'Tu es un assistant expert en gamification.' },
           { role: 'user', content: gptPrompt }
         ],
         temperature: 0.6,
-        max_tokens: 1100
+        max_tokens: 1400
       }),
     });
 
