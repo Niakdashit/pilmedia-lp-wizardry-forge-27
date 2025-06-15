@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { CampaignType } from '../../utils/campaignTypes';
@@ -24,7 +23,7 @@ const CampaignEditorContainer: React.FC = () => {
     saveCampaign
   } = useCampaignData();
 
-  const { isLoadingAIData, aiGenerated, setAiGenerated } = useAIGeneration(
+  const { isLoadingAIData, aiGenerated } = useAIGeneration(
     isNewCampaign,
     campaignType,
     setCampaign
