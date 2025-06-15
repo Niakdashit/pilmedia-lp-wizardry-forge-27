@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { CampaignType } from '../../utils/campaignTypes';
@@ -7,6 +8,7 @@ import GenerationStep from './steps/GenerationStep';
 import PreviewStep from './steps/PreviewStep';
 import PublishStep from './steps/PublishStep';
 import { Settings, Upload, Wand2, Eye, Sparkles } from 'lucide-react';
+
 export interface WizardData {
   selectedGame?: CampaignType;
   logo?: string;
@@ -17,12 +19,14 @@ export interface WizardData {
   generatedCampaign?: any;
   customizations?: any;
 }
+
 const ModernWizard: React.FC = () => {
   const [searchParams] = useSearchParams();
   const [currentStep, setCurrentStep] = useState(0);
   const [wizardData, setWizardData] = useState<WizardData>({
     selectedGame: searchParams.get('type') as CampaignType || undefined
   });
+
   const steps = [{
     id: 'mechanic',
     label: 'Mécanique',
@@ -44,25 +48,30 @@ const ModernWizard: React.FC = () => {
     label: 'Publication',
     icon: Sparkles
   }];
+
   const updateWizardData = (data: Partial<WizardData>) => {
     setWizardData(prev => ({
       ...prev,
       ...data
     }));
   };
+
   const nextStep = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
     }
   };
+
   const prevStep = () => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
     }
   };
+
   const goToStep = (stepIndex: number) => {
     setCurrentStep(stepIndex);
   };
+
   const renderCurrentStep = () => {
     const commonProps = {
       wizardData,
@@ -73,6 +82,7 @@ const ModernWizard: React.FC = () => {
       currentStep,
       totalSteps: steps.length
     };
+
     switch (steps[currentStep].id) {
       case 'mechanic':
         return <GameSelectionStep {...commonProps} />;
@@ -88,7 +98,9 @@ const ModernWizard: React.FC = () => {
         return <GameSelectionStep {...commonProps} />;
     }
   };
-  return <div className="min-h-screen">
+
+  return (
+    <div className="min-h-screen">
       <div className="max-w-7xl px-0 py-px mx-0">
         {/* Page Header */}
         <div className="mb-8">
@@ -100,23 +112,44 @@ const ModernWizard: React.FC = () => {
         
         {/* Stepper */}
         <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-gray-100/50 mb-8">
-          <div className="flex items-center justify-between max-w-4xl mx-0">
+          <div className="flex items-center justify-center max-w-4xl mx-auto">
             {steps.map((step, index) => {
-            const Icon = step.icon;
-            const isActive = currentStep === index;
-            const isCompleted = currentStep > index;
-            const isAccessible = index <= currentStep + 1;
-            return <React.Fragment key={step.id}>
-                  <button onClick={() => isAccessible && goToStep(index)} disabled={!isAccessible} className={`flex flex-col items-center space-y-2 px-4 py-3 rounded-xl transition-all duration-200 ${isActive ? 'bg-[#951b6d] text-white shadow-md' : isCompleted ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100' : isAccessible ? 'bg-gray-50 text-gray-600 hover:bg-gray-100' : 'bg-gray-25 text-gray-400 cursor-not-allowed'}`}>
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isActive ? 'bg-white/20' : isCompleted ? 'bg-emerald-100' : 'bg-white'}`}>
+              const Icon = step.icon;
+              const isActive = currentStep === index;
+              const isCompleted = currentStep > index;
+              const isAccessible = index <= currentStep + 1;
+
+              return (
+                <React.Fragment key={step.id}>
+                  <button
+                    onClick={() => isAccessible && goToStep(index)}
+                    disabled={!isAccessible}
+                    className={`flex flex-col items-center space-y-2 px-4 py-3 rounded-xl transition-all duration-200 ${
+                      isActive
+                        ? 'bg-[#951b6d] text-white shadow-md'
+                        : isCompleted
+                        ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100'
+                        : isAccessible
+                        ? 'bg-gray-50 text-gray-600 hover:bg-gray-100'
+                        : 'bg-gray-25 text-gray-400 cursor-not-allowed'
+                    }`}
+                  >
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                      isActive ? 'bg-white/20' : isCompleted ? 'bg-emerald-100' : 'bg-white'
+                    }`}>
                       <Icon className="w-4 h-4" />
                     </div>
                     <span className="text-xs font-medium">{step.label}</span>
                   </button>
                   
-                  {index < steps.length - 1 && <div className={`w-12 h-px ${currentStep > index ? 'bg-emerald-300' : 'bg-gray-200'}`} />}
-                </React.Fragment>;
-          })}
+                  {index < steps.length - 1 && (
+                    <div className={`w-12 h-px ${
+                      currentStep > index ? 'bg-emerald-300' : 'bg-gray-200'
+                    }`} />
+                  )}
+                </React.Fragment>
+              );
+            })}
           </div>
         </div>
 
@@ -125,6 +158,8 @@ const ModernWizard: React.FC = () => {
           {renderCurrentStep()}
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default ModernWizard;
