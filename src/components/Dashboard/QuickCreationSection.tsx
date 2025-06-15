@@ -92,13 +92,13 @@ const QuickCreationSection: React.FC = () => {
           </div>
 
           <div className="flex flex-col md:flex-row justify-center items-center gap-4">
-            <Link to="/campaigns" className="inline-flex items-center px-6 py-4 bg-gradient-to-r from-[#841b60]/90 to-[#6d164f]/90 backdrop-blur-sm text-white font-semibold rounded-2xl hover:from-[#841b60] hover:to-[#6d164f] transition-all duration-300 shadow-xl shadow-[#841b60]/20 hover:shadow-2xl hover:shadow-[#841b60]/30 transform hover:-translate-y-1 border border-white/20">
-              <FolderOpen className="w-5 h-5 mr-2 drop-shadow-sm" />
+            <Link to="/campaigns" className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-[#841b60]/90 to-[#6d164f]/90 backdrop-blur-sm text-white font-medium rounded-xl hover:from-[#841b60] hover:to-[#6d164f] transition-all duration-300 shadow-lg shadow-[#841b60]/20 hover:shadow-xl hover:shadow-[#841b60]/30 transform hover:-translate-y-0.5 border border-white/20 text-sm">
+              <FolderOpen className="w-4 h-4 mr-2 drop-shadow-sm" />
               <span className="drop-shadow-sm">Mes campagnes</span>
             </Link>
             
-            <button className="inline-flex items-center px-6 py-4 bg-gradient-to-r from-[#841b60]/90 to-[#6d164f]/90 backdrop-blur-sm text-white font-semibold rounded-2xl hover:from-[#841b60] hover:to-[#6d164f] transition-all duration-300 shadow-xl shadow-[#841b60]/20 hover:shadow-2xl hover:shadow-[#841b60]/30 transform hover:-translate-y-1 border border-white/20">
-              <Layers className="w-5 h-5 mr-2 drop-shadow-sm" />
+            <button className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-[#841b60]/90 to-[#6d164f]/90 backdrop-blur-sm text-white font-medium rounded-xl hover:from-[#841b60] hover:to-[#6d164f] transition-all duration-300 shadow-lg shadow-[#841b60]/20 hover:shadow-xl hover:shadow-[#841b60]/30 transform hover:-translate-y-0.5 border border-white/20 text-sm">
+              <Layers className="w-4 h-4 mr-2 drop-shadow-sm" />
               <span className="drop-shadow-sm">Modèles</span>
             </button>
           </div>
