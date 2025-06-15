@@ -6,6 +6,7 @@ const Data: React.FC = () => {
   return <div className="-mx-6 -mt-6">
       <PageHeader
         title="Données"
+        variant="plain"
         actions={
           <select
             value={selectedCampaign}
