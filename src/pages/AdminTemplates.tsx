@@ -77,138 +77,145 @@ const AdminTemplates: React.FC = () => {
   });
 
   return (
-    <div className="-mx-6 -mt-6">
+    <div className="-mx-6 -mt-6 min-h-screen">
       <PageHeader
         title="Modèles de Jeux"
         size="sm"
         actions={
-          <div className="flex gap-x-4">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 w-full sm:w-auto">
             <Link
               to="/admin"
-              className="inline-flex items-center px-6 py-2.5 bg-gray-600 text-white font-semibold rounded-xl hover:bg-gray-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-base"
+              className="inline-flex items-center justify-center px-4 sm:px-6 py-2.5 bg-gray-600 text-white font-semibold rounded-xl hover:bg-gray-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-sm sm:text-base whitespace-nowrap"
             >
-              <ArrowLeft className="w-5 h-5 mr-2" />
-              Retour Dashboard
+              <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+              <span className="hidden sm:inline">Retour Dashboard</span>
+              <span className="sm:hidden">Retour</span>
             </Link>
-            <button className="inline-flex items-center px-6 py-2.5 bg-[#841b60] text-white font-semibold rounded-xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-base">
-              <Plus className="w-5 h-5 mr-2" />
-              Créer un Modèle
+            <button className="inline-flex items-center justify-center px-4 sm:px-6 py-2.5 bg-[#841b60] text-white font-semibold rounded-xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-sm sm:text-base whitespace-nowrap">
+              <Plus className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+              <span className="hidden sm:inline">Créer un Modèle</span>
+              <span className="sm:hidden">Créer</span>
             </button>
           </div>
         }
       />
 
-      <div className="px-6">
+      <div className="px-3 sm:px-6 pb-6 max-w-full overflow-hidden">
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-          <div className="bg-white p-6 rounded-2xl shadow-md">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6">
+          <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-md">
             <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-600 text-sm font-medium">Total Modèles</p>
-                <p className="text-2xl font-bold text-gray-900">{mockTemplates.length}</p>
+              <div className="min-w-0 flex-1">
+                <p className="text-gray-600 text-xs sm:text-sm font-medium truncate">Total Modèles</p>
+                <p className="text-xl sm:text-2xl font-bold text-gray-900">{mockTemplates.length}</p>
               </div>
-              <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                <Zap className="w-6 h-6 text-purple-600" />
+              <div className="w-8 h-8 sm:w-12 sm:h-12 bg-purple-100 rounded-lg flex items-center justify-center flex-shrink-0 ml-2">
+                <Zap className="w-4 h-4 sm:w-6 sm:h-6 text-purple-600" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-2xl shadow-md">
+          <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-md">
             <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-600 text-sm font-medium">Modèles Publics</p>
-                <p className="text-2xl font-bold text-green-600">
+              <div className="min-w-0 flex-1">
+                <p className="text-gray-600 text-xs sm:text-sm font-medium truncate">Modèles Publics</p>
+                <p className="text-xl sm:text-2xl font-bold text-green-600">
                   {mockTemplates.filter(t => !t.isPrivate).length}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                <Users className="w-6 h-6 text-green-600" />
+              <div className="w-8 h-8 sm:w-12 sm:h-12 bg-green-100 rounded-lg flex items-center justify-center flex-shrink-0 ml-2">
+                <Users className="w-4 h-4 sm:w-6 sm:h-6 text-green-600" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-2xl shadow-md">
+          <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-md">
             <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-600 text-sm font-medium">Modèles Privés</p>
-                <p className="text-2xl font-bold text-orange-600">
+              <div className="min-w-0 flex-1">
+                <p className="text-gray-600 text-xs sm:text-sm font-medium truncate">Modèles Privés</p>
+                <p className="text-xl sm:text-2xl font-bold text-orange-600">
                   {mockTemplates.filter(t => t.isPrivate).length}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                <Target className="w-6 h-6 text-orange-600" />
+              <div className="w-8 h-8 sm:w-12 sm:h-12 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0 ml-2">
+                <Target className="w-4 h-4 sm:w-6 sm:h-6 text-orange-600" />
               </div>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-2xl shadow-md">
+          <div className="bg-white p-4 sm:p-6 rounded-2xl shadow-md">
             <div className="flex items-center justify-between">
-              <div>
-                <p className="text-gray-600 text-sm font-medium">Utilisations Totales</p>
-                <p className="text-2xl font-bold text-blue-600">
+              <div className="min-w-0 flex-1">
+                <p className="text-gray-600 text-xs sm:text-sm font-medium truncate">Utilisations Totales</p>
+                <p className="text-xl sm:text-2xl font-bold text-blue-600">
                   {mockTemplates.reduce((sum, t) => sum + t.usageCount, 0)}
                 </p>
               </div>
-              <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
-                <Target className="w-6 h-6 text-blue-600" />
+              <div className="w-8 h-8 sm:w-12 sm:h-12 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0 ml-2">
+                <Target className="w-4 h-4 sm:w-6 sm:h-6 text-blue-600" />
               </div>
             </div>
           </div>
         </div>
 
         {/* Filters and Search */}
-        <div className="bg-white rounded-xl shadow-sm mb-6">
-          <div className="p-6 border-b border-gray-200">
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="relative flex-1">
+        <div className="bg-white rounded-xl shadow-sm mb-6 overflow-hidden">
+          <div className="p-4 sm:p-6 border-b border-gray-200">
+            <div className="flex flex-col gap-4">
+              <div className="relative">
                 <input
                   type="text"
                   placeholder="Rechercher par nom, description ou tags..."
-                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60]"
+                  className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] text-sm sm:text-base"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 sm:w-5 sm:h-5" />
               </div>
 
-              <div className="flex items-center gap-2">
-                <Filter className="text-gray-400 w-5 h-5" />
-                <select
-                  className="border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-[#841b60]"
-                  value={filterType}
-                  onChange={(e) => setFilterType(e.target.value)}
-                >
-                  <option value="all">Tous les types</option>
-                  <option value="quiz">Quiz</option>
-                  <option value="wheel">Roue</option>
-                  <option value="survey">Sondage</option>
-                </select>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4">
+                <div className="flex items-center gap-2">
+                  <Filter className="text-gray-400 w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
+                  <span className="text-sm text-gray-600 whitespace-nowrap">Filtres :</span>
+                </div>
+                <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+                  <select
+                    className="border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-[#841b60] text-sm bg-white min-w-0 flex-1 sm:flex-none"
+                    value={filterType}
+                    onChange={(e) => setFilterType(e.target.value)}
+                  >
+                    <option value="all">Tous les types</option>
+                    <option value="quiz">Quiz</option>
+                    <option value="wheel">Roue</option>
+                    <option value="survey">Sondage</option>
+                  </select>
 
-                <select
-                  className="border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-[#841b60]"
-                  value={filterVisibility}
-                  onChange={(e) => setFilterVisibility(e.target.value)}
-                >
-                  <option value="all">Toute visibilité</option>
-                  <option value="public">Public</option>
-                  <option value="private">Privé</option>
-                </select>
+                  <select
+                    className="border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-[#841b60] text-sm bg-white min-w-0 flex-1 sm:flex-none"
+                    value={filterVisibility}
+                    onChange={(e) => setFilterVisibility(e.target.value)}
+                  >
+                    <option value="all">Toute visibilité</option>
+                    <option value="public">Public</option>
+                    <option value="private">Privé</option>
+                  </select>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
         {/* Templates Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {filteredTemplates.map((template) => {
             const CampaignIcon = getCampaignTypeIcon(template.type);
             return (
-              <div key={template.id} className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300">
+              <div key={template.id} className="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300 flex flex-col">
                 <div className="relative">
                   <img 
                     src={template.thumbnail} 
                     alt={template.name}
-                    className="w-full h-48 object-cover"
+                    className="w-full h-36 sm:h-48 object-cover"
                   />
                   <div className="absolute top-3 left-3">
                     <CampaignIcon />
@@ -224,9 +231,9 @@ const AdminTemplates: React.FC = () => {
                   </div>
                 </div>
                 
-                <div className="p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">{template.name}</h3>
-                  <p className="text-gray-600 text-sm mb-4">{template.description}</p>
+                <div className="p-4 sm:p-6 flex-1 flex flex-col">
+                  <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2 line-clamp-2">{template.name}</h3>
+                  <p className="text-gray-600 text-sm mb-4 line-clamp-2 flex-1">{template.description}</p>
                   
                   <div className="flex flex-wrap gap-1 mb-4">
                     {template.tags.map((tag) => (
@@ -236,27 +243,27 @@ const AdminTemplates: React.FC = () => {
                     ))}
                   </div>
                   
-                  <div className="flex items-center justify-between text-sm text-gray-500 mb-4">
-                    <span>Utilisé {template.usageCount} fois</span>
-                    <span>Par {template.createdBy}</span>
+                  <div className="flex items-center justify-between text-xs sm:text-sm text-gray-500 mb-4">
+                    <span className="truncate">Utilisé {template.usageCount} fois</span>
+                    <span className="truncate ml-2">Par {template.createdBy}</span>
                   </div>
                   
                   <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-400">
+                    <span className="text-xs text-gray-400 truncate">
                       {new Date(template.createdAt).toLocaleDateString('fr-FR')}
                     </span>
-                    <div className="flex items-center gap-2">
-                      <button className="p-2 text-gray-500 hover:text-blue-600 rounded-lg hover:bg-blue-50 transition-colors">
-                        <Eye className="w-4 h-4" />
+                    <div className="flex items-center gap-1 ml-2">
+                      <button className="p-1.5 sm:p-2 text-gray-500 hover:text-blue-600 rounded-lg hover:bg-blue-50 transition-colors">
+                        <Eye className="w-3 h-3 sm:w-4 sm:h-4" />
                       </button>
-                      <button className="p-2 text-gray-500 hover:text-green-600 rounded-lg hover:bg-green-50 transition-colors">
-                        <Copy className="w-4 h-4" />
+                      <button className="p-1.5 sm:p-2 text-gray-500 hover:text-green-600 rounded-lg hover:bg-green-50 transition-colors">
+                        <Copy className="w-3 h-3 sm:w-4 sm:h-4" />
                       </button>
-                      <button className="p-2 text-gray-500 hover:text-orange-600 rounded-lg hover:bg-orange-50 transition-colors">
-                        <Edit className="w-4 h-4" />
+                      <button className="p-1.5 sm:p-2 text-gray-500 hover:text-orange-600 rounded-lg hover:bg-orange-50 transition-colors">
+                        <Edit className="w-3 h-3 sm:w-4 sm:h-4" />
                       </button>
-                      <button className="p-2 text-gray-500 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors">
-                        <Trash2 className="w-4 h-4" />
+                      <button className="p-1.5 sm:p-2 text-gray-500 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors">
+                        <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
                       </button>
                     </div>
                   </div>

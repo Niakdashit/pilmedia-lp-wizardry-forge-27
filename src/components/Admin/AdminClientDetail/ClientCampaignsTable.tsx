@@ -46,12 +46,12 @@ const ClientCampaignsTable: React.FC<ClientCampaignsTableProps> = ({
   };
 
   return (
-    <div className="bg-white rounded-xl shadow-sm">
-      <div className="p-6 border-b border-gray-200">
-        <div className="flex justify-between items-center">
+    <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+      <div className="p-4 sm:p-6 border-b border-gray-200">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <h3 className="text-lg font-semibold text-gray-900">Campagnes du Client</h3>
           <select
-            className="border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-[#841b60]"
+            className="w-full sm:w-auto border border-gray-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-[#841b60] text-sm bg-white"
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
           >
@@ -63,8 +63,63 @@ const ClientCampaignsTable: React.FC<ClientCampaignsTableProps> = ({
         </div>
       </div>
 
-      <div className="overflow-x-auto">
-        <table className="w-full">
+      {/* Mobile Card View */}
+      <div className="block sm:hidden">
+        {filteredCampaigns.map((campaign) => {
+          const CampaignIcon = getCampaignTypeIcon(campaign.type as CampaignType);
+          return (
+            <div key={campaign.id} className="border-b border-gray-200 p-4">
+              <div className="flex items-start justify-between mb-3">
+                <div className="flex items-center gap-3 min-w-0 flex-1">
+                  <div className="flex-shrink-0">
+                    <CampaignIcon />
+                  </div>
+                  <div className="min-w-0 flex-1">
+                    <h4 className="text-sm font-medium text-gray-900 truncate">{campaign.name}</h4>
+                    <p className="text-xs text-gray-500 line-clamp-2">{campaign.description}</p>
+                  </div>
+                </div>
+                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium whitespace-nowrap ml-2 ${getStatusColor(campaign.status)}`}>
+                  {getStatusText(campaign.status)}
+                </span>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4 mb-3 text-xs text-gray-500">
+                <div>
+                  <div className="font-medium text-gray-700">Performance</div>
+                  <div>{campaign.views.toLocaleString()} vues</div>
+                  <div>{campaign.participants} participants</div>
+                  <div className="text-green-600 font-medium">{campaign.conversionRate}% conversion</div>
+                </div>
+                <div>
+                  <div className="font-medium text-gray-700">Période</div>
+                  <div>Début: {new Date(campaign.startDate).toLocaleDateString('fr-FR')}</div>
+                  <div>Fin: {new Date(campaign.endDate).toLocaleDateString('fr-FR')}</div>
+                </div>
+              </div>
+              
+              <div className="flex items-center justify-end gap-1">
+                <button className="p-2 text-gray-500 hover:text-blue-600 rounded-lg hover:bg-blue-50 transition-colors">
+                  <Eye className="w-4 h-4" />
+                </button>
+                <button className="p-2 text-gray-500 hover:text-green-600 rounded-lg hover:bg-green-50 transition-colors">
+                  <Copy className="w-4 h-4" />
+                </button>
+                <button className="p-2 text-gray-500 hover:text-orange-600 rounded-lg hover:bg-orange-50 transition-colors">
+                  <Edit className="w-4 h-4" />
+                </button>
+                <button className="p-2 text-gray-500 hover:text-red-600 rounded-lg hover:bg-red-50 transition-colors">
+                  <Archive className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Desktop Table View */}
+      <div className="hidden sm:block overflow-x-auto">
+        <table className="w-full min-w-full">
           <thead>
             <tr className="bg-gray-50">
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -97,10 +152,10 @@ const ClientCampaignsTable: React.FC<ClientCampaignsTableProps> = ({
                       <CampaignIcon />
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="px-6 py-4 whitespace-nowrap max-w-xs">
                     <div>
-                      <div className="text-sm font-medium text-gray-900">{campaign.name}</div>
-                      <div className="text-sm text-gray-500">{campaign.description}</div>
+                      <div className="text-sm font-medium text-gray-900 truncate">{campaign.name}</div>
+                      <div className="text-sm text-gray-500 truncate">{campaign.description}</div>
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -142,12 +197,13 @@ const ClientCampaignsTable: React.FC<ClientCampaignsTableProps> = ({
             })}
           </tbody>
         </table>
-        {filteredCampaigns.length === 0 && (
-          <div className="text-center py-10">
-            <p className="text-gray-500">Aucune campagne ne correspond au filtre sélectionné.</p>
-          </div>
-        )}
       </div>
+
+      {filteredCampaigns.length === 0 && (
+        <div className="text-center py-10">
+          <p className="text-gray-500">Aucune campagne ne correspond au filtre sélectionné.</p>
+        </div>
+      )}
     </div>
   );
 };

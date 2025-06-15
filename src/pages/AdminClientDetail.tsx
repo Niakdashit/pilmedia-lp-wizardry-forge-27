@@ -72,7 +72,7 @@ const AdminClientDetail: React.FC = () => {
   ];
 
   return (
-    <div className="-mx-6 -mt-6">
+    <div className="-mx-6 -mt-6 min-h-screen">
       <PageHeader
         title={`Client: ${clientData.company}`}
         size="sm"
@@ -80,16 +80,17 @@ const AdminClientDetail: React.FC = () => {
           <div className="flex gap-x-4">
             <Link
               to="/admin/clients"
-              className="inline-flex items-center px-6 py-2.5 bg-gray-600 text-white font-semibold rounded-xl hover:bg-gray-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-base"
+              className="inline-flex items-center px-4 sm:px-6 py-2.5 bg-gray-600 text-white font-semibold rounded-xl hover:bg-gray-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-sm sm:text-base whitespace-nowrap"
             >
-              <ArrowLeft className="w-5 h-5 mr-2" />
-              Retour Clients
+              <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+              <span className="hidden sm:inline">Retour Clients</span>
+              <span className="sm:hidden">Retour</span>
             </Link>
           </div>
         }
       />
 
-      <div className="px-6">
+      <div className="px-3 sm:px-6 pb-6 max-w-full overflow-hidden">
         <ClientInfoCard clientData={clientData} campaigns={campaigns} />
         <ClientCampaignsTable 
           campaigns={campaigns} 
