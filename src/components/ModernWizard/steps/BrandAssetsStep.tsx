@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { WizardData } from '../ModernWizard';
-import { Upload, Image, Smartphone, Monitor, Globe } from 'lucide-react';
+import { Upload, Image, Smartphone, Monitor, Globe, X } from 'lucide-react';
 
 interface BrandAssetsStepProps {
   wizardData: WizardData;
@@ -24,6 +24,10 @@ const BrandAssetsStep: React.FC<BrandAssetsStepProps> = ({
     reader.readAsDataURL(file);
   };
 
+  const handleRemoveImage = (type: 'logo' | 'desktopVisual' | 'mobileVisual') => {
+    updateWizardData({ [type]: undefined });
+  };
+
   return (
     <div className="space-y-6">
       {/* Main Content Card */}
@@ -41,20 +45,28 @@ const BrandAssetsStep: React.FC<BrandAssetsStepProps> = ({
         {/* Upload Areas */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
           {/* Logo Upload */}
-          <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+          <div className="bg-white rounded-xl border border-gray-200 p-3 shadow-sm">
             <div className="flex items-center space-x-3 mb-3">
-              <div className="w-8 h-8 bg-[#951b6d]/10 rounded-lg flex items-center justify-center">
-                <Image className="w-4 h-4 text-[#951b6d]" />
+              <div className="w-6 h-6 bg-[#951b6d]/10 rounded-lg flex items-center justify-center">
+                <Image className="w-3 h-3 text-[#951b6d]" />
               </div>
-              <h3 className="font-semibold text-[#141e29]">Logo</h3>
+              <h3 className="font-semibold text-[#141e29] text-sm">Logo</h3>
             </div>
             
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-[#951b6d]/50 transition-colors">
+            <div className="border-2 border-dashed border-gray-300 rounded-lg p-3 text-center hover:border-[#951b6d]/50 transition-colors">
               {wizardData.logo ? (
-                <img src={wizardData.logo} alt="Logo" className="max-h-16 mx-auto" />
+                <div className="relative">
+                  <img src={wizardData.logo} alt="Logo" className="max-h-12 mx-auto" />
+                  <button
+                    onClick={() => handleRemoveImage('logo')}
+                    className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
               ) : (
                 <>
-                  <Upload className="w-6 h-6 text-gray-400 mx-auto mb-2" />
+                  <Upload className="w-5 h-5 text-gray-400 mx-auto mb-2" />
                   <p className="text-xs text-gray-600 mb-2">Glissez votre logo ici</p>
                   <input
                     type="file"
@@ -65,7 +77,7 @@ const BrandAssetsStep: React.FC<BrandAssetsStepProps> = ({
                   />
                   <label
                     htmlFor="logo-upload"
-                    className="inline-block px-3 py-1.5 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 cursor-pointer text-xs font-medium"
+                    className="inline-block px-2 py-1 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 cursor-pointer text-xs font-medium"
                   >
                     Sélectionner un fichier
                   </label>
@@ -75,20 +87,28 @@ const BrandAssetsStep: React.FC<BrandAssetsStepProps> = ({
           </div>
 
           {/* Desktop Visual */}
-          <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+          <div className="bg-white rounded-xl border border-gray-200 p-3 shadow-sm">
             <div className="flex items-center space-x-3 mb-3">
-              <div className="w-8 h-8 bg-[#951b6d]/10 rounded-lg flex items-center justify-center">
-                <Monitor className="w-4 h-4 text-[#951b6d]" />
+              <div className="w-6 h-6 bg-[#951b6d]/10 rounded-lg flex items-center justify-center">
+                <Monitor className="w-3 h-3 text-[#951b6d]" />
               </div>
-              <h3 className="font-semibold text-[#141e29]">Visuel desktop</h3>
+              <h3 className="font-semibold text-[#141e29] text-sm">Visuel desktop</h3>
             </div>
             
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-[#951b6d]/50 transition-colors">
+            <div className="border-2 border-dashed border-gray-300 rounded-lg p-3 text-center hover:border-[#951b6d]/50 transition-colors">
               {wizardData.desktopVisual ? (
-                <img src={wizardData.desktopVisual} alt="Desktop visual" className="max-h-16 mx-auto" />
+                <div className="relative">
+                  <img src={wizardData.desktopVisual} alt="Desktop visual" className="max-h-12 mx-auto" />
+                  <button
+                    onClick={() => handleRemoveImage('desktopVisual')}
+                    className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
               ) : (
                 <>
-                  <Upload className="w-6 h-6 text-gray-400 mx-auto mb-2" />
+                  <Upload className="w-5 h-5 text-gray-400 mx-auto mb-2" />
                   <p className="text-xs text-gray-600 mb-2">Visuel pour ordinateur</p>
                   <input
                     type="file"
@@ -99,7 +119,7 @@ const BrandAssetsStep: React.FC<BrandAssetsStepProps> = ({
                   />
                   <label
                     htmlFor="desktop-upload"
-                    className="inline-block px-3 py-1.5 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 cursor-pointer text-xs font-medium"
+                    className="inline-block px-2 py-1 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 cursor-pointer text-xs font-medium"
                   >
                     Sélectionner un fichier
                   </label>
@@ -109,20 +129,28 @@ const BrandAssetsStep: React.FC<BrandAssetsStepProps> = ({
           </div>
 
           {/* Mobile Visual */}
-          <div className="bg-white rounded-xl border border-gray-200 p-4 shadow-sm">
+          <div className="bg-white rounded-xl border border-gray-200 p-3 shadow-sm">
             <div className="flex items-center space-x-3 mb-3">
-              <div className="w-8 h-8 bg-[#951b6d]/10 rounded-lg flex items-center justify-center">
-                <Smartphone className="w-4 h-4 text-[#951b6d]" />
+              <div className="w-6 h-6 bg-[#951b6d]/10 rounded-lg flex items-center justify-center">
+                <Smartphone className="w-3 h-3 text-[#951b6d]" />
               </div>
-              <h3 className="font-semibold text-[#141e29]">Visuel mobile</h3>
+              <h3 className="font-semibold text-[#141e29] text-sm">Visuel mobile</h3>
             </div>
             
-            <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-[#951b6d]/50 transition-colors">
+            <div className="border-2 border-dashed border-gray-300 rounded-lg p-3 text-center hover:border-[#951b6d]/50 transition-colors">
               {wizardData.mobileVisual ? (
-                <img src={wizardData.mobileVisual} alt="Mobile visual" className="max-h-16 mx-auto" />
+                <div className="relative">
+                  <img src={wizardData.mobileVisual} alt="Mobile visual" className="max-h-12 mx-auto" />
+                  <button
+                    onClick={() => handleRemoveImage('mobileVisual')}
+                    className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white rounded-full flex items-center justify-center hover:bg-red-600 transition-colors"
+                  >
+                    <X className="w-3 h-3" />
+                  </button>
+                </div>
               ) : (
                 <>
-                  <Upload className="w-6 h-6 text-gray-400 mx-auto mb-2" />
+                  <Upload className="w-5 h-5 text-gray-400 mx-auto mb-2" />
                   <p className="text-xs text-gray-600 mb-2">Visuel pour mobile</p>
                   <input
                     type="file"
@@ -133,7 +161,7 @@ const BrandAssetsStep: React.FC<BrandAssetsStepProps> = ({
                   />
                   <label
                     htmlFor="mobile-upload"
-                    className="inline-block px-3 py-1.5 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 cursor-pointer text-xs font-medium"
+                    className="inline-block px-2 py-1 bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100 cursor-pointer text-xs font-medium"
                   >
                     Sélectionner un fichier
                   </label>
