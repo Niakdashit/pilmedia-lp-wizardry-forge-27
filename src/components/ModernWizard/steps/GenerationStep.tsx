@@ -21,8 +21,8 @@ const GenerationStep: React.FC<GenerationStepProps> = ({
   const [progress, setProgress] = useState(0);
   const [debugInfo, setDebugInfo] = useState<string>('');
   
-  // Configuration de l'endpoint Supabase
-  const quizEndpoint = 'https://cknwowuaqymprfaylwti.supabase.co/functions/v1/quiz';
+  // Configuration de l'endpoint - utilise la variable d'environnement Vercel ou fallback
+  const quizEndpoint = import.meta.env.VITE_QUIZ_ENDPOINT || 'https://cknwowuaqymprfaylwti.supabase.co/functions/v1/quiz';
 
   // Données de fallback pour le mode dégradé
   const getMockQuizData = () => ({
@@ -63,10 +63,12 @@ const GenerationStep: React.FC<GenerationStepProps> = ({
 
     try {
       console.log('🚀 Configuration endpoint:', {
-        endpoint: quizEndpoint
+        endpoint: quizEndpoint,
+        envVariable: import.meta.env.VITE_QUIZ_ENDPOINT,
+        fallback: !import.meta.env.VITE_QUIZ_ENDPOINT ? 'Utilisant le fallback' : 'Variable configurée'
       });
       
-      setDebugInfo(`Endpoint: ${quizEndpoint}`);
+      setDebugInfo(`Endpoint: ${quizEndpoint} ${!import.meta.env.VITE_QUIZ_ENDPOINT ? '(fallback)' : '(env)'}`);
 
       // Simulation de progression
       const progressInterval = setInterval(() => {
@@ -93,7 +95,10 @@ const GenerationStep: React.FC<GenerationStepProps> = ({
 
       const response = await fetch(quizEndpoint, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'User-Agent': 'Lovable-Quiz-Generator/1.0'
+        },
         body: JSON.stringify(payload),
         signal: controller.signal
       });
@@ -104,7 +109,8 @@ const GenerationStep: React.FC<GenerationStepProps> = ({
       console.log('📥 Réponse reçue:', {
         status: response.status,
         statusText: response.statusText,
-        ok: response.ok
+        ok: response.ok,
+        headers: Object.fromEntries(response.headers.entries())
       });
 
       if (!response.ok) {
@@ -129,6 +135,9 @@ const GenerationStep: React.FC<GenerationStepProps> = ({
       if (error.name === 'AbortError') {
         errorMessage = 'Timeout de la requête';
         debugMessage = 'La génération a pris trop de temps (>15s)';
+      } else if (error.message.includes('fetch')) {
+        errorMessage = 'Erreur de connexion réseau';
+        debugMessage = 'Impossible de contacter le serveur Supabase';
       } else if (error.message.startsWith('API_ERROR')) {
         errorMessage = 'Erreur de l\'API Supabase';
         debugMessage = error.message;
@@ -232,14 +241,21 @@ const GenerationStep: React.FC<GenerationStepProps> = ({
       </div>
 
       {/* API Status */}
-      <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6">
-        <h3 className="font-semibold text-emerald-900 mb-4">✅ Configuration API</h3>
-        <div className="space-y-3 text-sm text-emerald-800">
+      <div className={`${error ? 'bg-orange-50 border-orange-200' : 'bg-emerald-50 border-emerald-200'} border rounded-2xl p-6`}>
+        <h3 className={`font-semibold mb-4 ${error ? 'text-orange-900' : 'text-emerald-900'}`}>
+          {error ? '⚠️ Configuration API' : '✅ Configuration API'}
+        </h3>
+        <div className={`space-y-3 text-sm ${error ? 'text-orange-800' : 'text-emerald-800'}`}>
           <div>
-            <strong>Endpoint Supabase configuré :</strong>
-            <div className="mt-2 bg-emerald-100 rounded p-3 font-mono text-xs">
+            <strong>Endpoint utilisé :</strong>
+            <div className={`mt-2 ${error ? 'bg-orange-100' : 'bg-emerald-100'} rounded p-3 font-mono text-xs`}>
               {quizEndpoint}
             </div>
+            {!import.meta.env.VITE_QUIZ_ENDPOINT && (
+              <div className="mt-2 text-orange-600 text-sm">
+                ⚠️ Variable VITE_QUIZ_ENDPOINT non configurée dans Vercel
+              </div>
+            )}
           </div>
           <div>
             <strong>Fonction Edge déployée :</strong> quiz
