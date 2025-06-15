@@ -26,29 +26,28 @@ const GenerationStep: React.FC<GenerationStepProps> = ({
 
   const handleGenerate = async () => {
     setIsGenerating(true);
-    
-    // Simulate AI generation process
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    
-    // Update wizard data with generated campaign
-    const generatedCampaign = {
-      id: Date.now().toString(),
-      name: wizardData.productName || 'Ma Campagne',
-      type: wizardData.selectedGame,
-      status: 'draft',
-      design: {
-        primaryColor: '#951b6d',
-        background: '#f8fafc'
-      }
-    };
-    
-    updateWizardData({ generatedCampaign });
-    setIsGenerating(false);
-    
-    // Automatically go to next step (Preview) after generation is complete
-    setTimeout(() => {
-      nextStep();
-    }, 500);
+
+    try {
+      const response = await fetch('/api/quiz', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          logoUrl: wizardData.logo,
+          desktopVisualUrl: wizardData.desktopVisual,
+          mobileVisualUrl: wizardData.mobileVisual,
+          websiteUrl: wizardData.websiteUrl,
+          productName: wizardData.productName
+        })
+      });
+
+      const data = await response.json();
+      updateWizardData({ generatedQuiz: data });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsGenerating(false);
+      setTimeout(() => nextStep(), 500);
+    }
   };
 
   return (

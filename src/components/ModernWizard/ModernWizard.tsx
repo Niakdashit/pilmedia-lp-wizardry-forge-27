@@ -17,6 +17,7 @@ export interface WizardData {
   websiteUrl?: string;
   productName?: string;
   generatedCampaign?: any;
+  generatedQuiz?: any;
   customizations?: any;
 }
 
