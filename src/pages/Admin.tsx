@@ -105,34 +105,36 @@ const Admin: React.FC = () => {
   ];
 
   return (
-    <div className="-mx-6 -mt-6">
+    <div className="-mx-6 -mt-6 min-h-screen">
       <PageHeader
         title="Dashboard Administrateur"
         size="sm"
         actions={
-          <div className="flex gap-x-4">
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 w-full sm:w-auto">
             <Link
               to="/admin/templates"
-              className="inline-flex items-center px-6 py-2.5 bg-gray-600 text-white font-semibold rounded-xl hover:bg-gray-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-base"
+              className="inline-flex items-center justify-center px-4 sm:px-6 py-2.5 bg-gray-600 text-white font-semibold rounded-xl hover:bg-gray-700 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-sm sm:text-base whitespace-nowrap"
             >
-              <Target className="w-5 h-5 mr-2" />
-              Modèles
+              <Target className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+              <span className="hidden sm:inline">Modèles</span>
+              <span className="sm:hidden">Modèles</span>
             </Link>
             <Link
               to="/admin/clients"
-              className="inline-flex items-center px-6 py-2.5 bg-[#841b60] text-white font-semibold rounded-xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-base"
+              className="inline-flex items-center justify-center px-4 sm:px-6 py-2.5 bg-[#841b60] text-white font-semibold rounded-xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-sm sm:text-base whitespace-nowrap"
             >
-              <Users className="w-5 h-5 mr-2" />
-              Gestion Clients
+              <Users className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
+              <span className="hidden sm:inline">Gestion Clients</span>
+              <span className="sm:hidden">Clients</span>
             </Link>
           </div>
         }
       />
 
-      <div className="px-6">
+      <div className="px-3 sm:px-6 pb-6 max-w-full overflow-hidden">
         <AdminKPICards stats={mockStats} />
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
           <div className="lg:col-span-2">
             <AdminRecentActivity activities={mockRecentActivity} />
           </div>
