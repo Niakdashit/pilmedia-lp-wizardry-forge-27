@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { User, Mail, Lock, Building, BellRing, Shield, UserCircle } from 'lucide-react';
 import PageHeader from '../components/Layout/PageHeader';
@@ -23,7 +24,6 @@ const Account: React.FC = () => {
     <div className="-mx-6 -mt-6">
       <PageHeader
         title="Compte"
-        variant="plain"
         actions={null}
       />
 

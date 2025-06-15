@@ -177,7 +177,6 @@ const Campaigns: React.FC = () => {
     <div className="-mx-6 -mt-6">
       <PageHeader
         title="Campagnes"
-        variant="plain"
         actions={
           <div className="flex flex-wrap gap-4 justify-center">
             <Link
