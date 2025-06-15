@@ -1,10 +1,9 @@
-
 import React from 'react';
 import MobileWheelPreview from '../../GameTypes/MobileWheelPreview';
 import MobileButton from './MobileButton';
 import MobileContent from './MobileContent';
 import MobileOverlays from './MobileOverlays';
-import { getDeviceStyle, getScreenStyle, getContentLayoutStyle } from './styles';
+import { getScreenStyle, getContentLayoutStyle } from './styles';
 
 interface MobilePreviewProps {
   campaign: any;
