@@ -16,6 +16,7 @@ const GenerationStep: React.FC<GenerationStepProps> = ({
   prevStep
 }) => {
   const [isGenerating, setIsGenerating] = useState(false);
+  const quizEndpoint = import.meta.env.VITE_QUIZ_ENDPOINT || '/api/quiz';
 
   useEffect(() => {
     // Auto-start generation when step loads
@@ -28,7 +29,7 @@ const GenerationStep: React.FC<GenerationStepProps> = ({
     setIsGenerating(true);
 
     try {
-      const response = await fetch('/api/quiz', {
+      const response = await fetch(quizEndpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -39,6 +40,11 @@ const GenerationStep: React.FC<GenerationStepProps> = ({
           productName: wizardData.productName
         })
       });
+
+      if (!response.ok) {
+        console.error(`Quiz generation failed: ${response.status}`);
+        return;
+      }
 
       const data = await response.json();
       updateWizardData({ generatedQuiz: data });
