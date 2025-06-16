@@ -1,15 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
 import { CampaignType, getDefaultGameConfig } from '../utils/campaignTypes';
 import { useCampaigns } from '../hooks/useCampaigns';
-import ModernEditorSidebar from '../components/ModernEditor/ModernEditorSidebar';
-import ModernEditorPanel from '../components/ModernEditor/ModernEditorPanel';
-import ModernEditorCanvas from '../components/ModernEditor/ModernEditorCanvas';
+import ModernEditorLayout from '../components/ModernEditor/ModernEditorLayout';
 import ModernPreviewModal from '../components/ModernEditor/ModernPreviewModal';
-import EditorHeader from '../components/ModernEditor/components/EditorHeader';
-import EditorDesktopPanel from '../components/ModernEditor/components/EditorDesktopPanel';
-import EditorMobilePanel from '../components/ModernEditor/components/EditorMobilePanel';
 
 const defaultFormFields = [
   {
@@ -43,7 +37,6 @@ const ModernCampaignEditor: React.FC = () => {
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const [previewDevice, setPreviewDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
   const [isLoading, setIsLoading] = useState(false);
-  const [isPanelOpen, setIsPanelOpen] = useState(true);
   
   const { saveCampaign, getCampaign } = useCampaigns();
   
@@ -183,7 +176,7 @@ const ModernCampaignEditor: React.FC = () => {
       };
       const savedCampaign = await saveCampaign(campaignData);
       if (savedCampaign && !continueEditing) {
-        navigate('/campaigns');
+        navigate('/gamification');
       } else if (savedCampaign && isNewCampaign) {
         setCampaign((prev: any) => ({
           ...prev,
@@ -195,54 +188,34 @@ const ModernCampaignEditor: React.FC = () => {
     }
   };
 
+  const gameTypeLabels: Record<CampaignType, string> = {
+    wheel: 'Roue de la Fortune',
+    jackpot: 'Jackpot',
+    memory: 'Jeu de Mémoire',
+    puzzle: 'Puzzle',
+    quiz: 'Quiz Interactif',
+    dice: 'Dés Magiques',
+    scratch: 'Carte à Gratter',
+    swiper: 'Swiper',
+    form: 'Formulaire Dynamique'
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 flex flex-col">
-      {/* Header */}
-      <EditorHeader
+    <div className="relative">
+      <ModernEditorLayout
         campaign={campaign}
-        isNewCampaign={isNewCampaign}
-        isLoading={isLoading}
+        setCampaign={setCampaign}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
         previewDevice={previewDevice}
         onDeviceChange={setPreviewDevice}
         onSave={() => handleSave(true)}
         onPreview={() => setShowPreviewModal(true)}
-        onTogglePanel={() => setIsPanelOpen(!isPanelOpen)}
-        isPanelOpen={isPanelOpen}
-        onBack={() => navigate('/campaigns')}
+        isLoading={isLoading}
+        campaignType={campaignType}
+        isNewCampaign={isNewCampaign}
+        gameTypeLabels={gameTypeLabels}
       />
-
-      {/* Main Content */}
-      <div className="flex-1 flex overflow-hidden">
-        {/* Desktop Panel */}
-        <EditorDesktopPanel
-          isOpen={isPanelOpen}
-          onToggle={() => setIsPanelOpen(!isPanelOpen)}
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-          campaign={campaign}
-          setCampaign={setCampaign}
-          campaignType={campaignType}
-        />
-
-        {/* Canvas */}
-        <div className="flex-1 overflow-hidden">
-          <ModernEditorCanvas
-            campaign={campaign}
-            setCampaign={setCampaign}
-            previewDevice={previewDevice}
-            activeTab={activeTab}
-          />
-        </div>
-
-        {/* Mobile Panel */}
-        <EditorMobilePanel
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-          campaign={campaign}
-          setCampaign={setCampaign}
-          campaignType={campaignType}
-        />
-      </div>
 
       {/* Preview Modal */}
       {showPreviewModal && (

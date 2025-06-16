@@ -1,13 +1,18 @@
-
 import React, { useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
 import Sidebar from '../Sidebar/Sidebar';
 import { useAppContext } from '../../context/AppContext';
 import { Menu } from 'lucide-react';
 import logo from '@/assets/logo.png';
-
-const Layout: React.FC = () => {
-  const { sidebarCollapsed, toggleSidebar } = useAppContext();
+interface LayoutProps {
+  children: React.ReactNode;
+}
+const Layout: React.FC<LayoutProps> = ({
+  children
+}) => {
+  const {
+    sidebarCollapsed,
+    toggleSidebar
+  } = useAppContext();
 
   // Empêche le scroll du background seulement quand la sidebar est ouverte sur mobile
   useEffect(() => {
@@ -29,18 +34,11 @@ const Layout: React.FC = () => {
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [sidebarCollapsed]);
-
-  return (
-    <div className="flex min-h-screen bg-[#ebf4f7] overflow-hidden w-full">
+  return <div className="flex min-h-screen bg-[#ebf4f7] overflow-hidden">
       <Sidebar />
       {/* Overlay mobile/tablette pour cliquer et fermer la sidebar */}
-      <div 
-        onClick={toggleSidebar} 
-        className={`md:hidden fixed inset-0 bg-black/30 transition-opacity z-30 ${
-          sidebarCollapsed ? 'pointer-events-none opacity-0' : 'opacity-100'
-        }`} 
-      />
-      <div className="flex-1 flex flex-col min-w-0 max-w-full">
+      <div onClick={toggleSidebar} className={`md:hidden fixed inset-0 bg-black/30 transition-opacity z-30 ${sidebarCollapsed ? 'pointer-events-none opacity-0' : 'opacity-100'}`} />
+      <div className="flex-1 flex flex-col min-w-0">
         <header className="md:hidden flex items-center justify-between bg-white border-b border-gray-200 p-4">
           <button onClick={toggleSidebar} className="text-gray-500">
             <Menu className="w-6 h-6" />
@@ -48,13 +46,11 @@ const Layout: React.FC = () => {
           <img src={logo} alt="Leadya Logo" className="h-8 w-auto" />
         </header>
         <main className="flex-1 overflow-y-auto w-full">
-          <div className="p-3 sm:p-6 w-full max-w-full">
-            <Outlet />
+          <div className="p-8 w-full py-0">
+            {children}
           </div>
         </main>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Layout;
