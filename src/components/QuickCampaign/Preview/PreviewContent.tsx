@@ -121,20 +121,7 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
     <div className="flex-1 pt-20 overflow-auto">
       <div className="w-full h-full flex items-center justify-center p-4">
         <DeviceFrame device={selectedDevice}>
-          <div
-            style={{
-              ...getContainerStyle(),
-              width: '100%',
-              height: '100%',
-              minHeight: 0,      // Pour éviter le débordement vertical
-              minWidth: 0,       // Pour éviter le débordement horizontal
-              position: 'relative',
-              overflow: 'hidden',
-              display: 'flex',
-              alignItems: 'stretch',
-              justifyContent: 'stretch'
-            }}
-          >
+          <div style={getContainerStyle()}>
             {/* Background overlay for better contrast if background image exists */}
             {(selectedDevice === 'mobile'
               ? enhancedCampaign.design?.mobileBackgroundImage
@@ -150,10 +137,7 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
               className="relative z-10 w-full h-full flex items-center justify-center"
               style={{ 
                 minHeight: selectedDevice === 'desktop' ? '600px' : '100%',
-                padding: selectedDevice === 'mobile' ? '32px 16px 16px' : selectedDevice === 'tablet' ? '24px 16px' : '16px',
-                overflowY: 'auto', // Ajoute le scroll pour le funnel/formulaire à l'intérieur du device !
-                width: '100%',
-                height: '100%'
+                padding: selectedDevice === 'mobile' ? '32px 16px 16px' : selectedDevice === 'tablet' ? '24px 16px' : '16px'
               }}
             >
               {getFunnelComponent()}
@@ -166,4 +150,3 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
 };
 
 export default PreviewContent;
-
