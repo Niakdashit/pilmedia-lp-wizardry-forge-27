@@ -1,5 +1,5 @@
 
-import { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
+import { createContext, useContext, useReducer, ReactNode } from 'react';
 
 interface AppState {
   user: any;
@@ -19,7 +19,7 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 const initialState: AppState = {
   user: null,
   campaigns: [],
-  sidebarCollapsed: typeof window !== 'undefined' ? window.innerWidth < 768 : false,
+  sidebarCollapsed: false,
 };
 
 function appReducer(state: AppState, action: any): AppState {
@@ -30,8 +30,6 @@ function appReducer(state: AppState, action: any): AppState {
       return { ...state, campaigns: action.payload };
     case 'TOGGLE_SIDEBAR':
       return { ...state, sidebarCollapsed: !state.sidebarCollapsed };
-    case 'SET_SIDEBAR_COLLAPSED':
-      return { ...state, sidebarCollapsed: action.payload };
     default:
       return state;
   }
@@ -39,17 +37,6 @@ function appReducer(state: AppState, action: any): AppState {
 
 export const AppProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
-
-  // keep sidebar state in sync with screen size
-  useEffect(() => {
-    const handleResize = () => {
-      const shouldCollapse = window.innerWidth < 768;
-      dispatch({ type: 'SET_SIDEBAR_COLLAPSED', payload: shouldCollapse });
-    };
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   const toggleSidebar = () => {
     dispatch({ type: 'TOGGLE_SIDEBAR' });

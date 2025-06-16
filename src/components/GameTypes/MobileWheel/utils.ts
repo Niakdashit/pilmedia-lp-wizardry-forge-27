@@ -1,24 +1,27 @@
 
 export const getContainerWidth = (canvasSize: number, shouldCropWheel: boolean): number => {
   if (!shouldCropWheel) return canvasSize;
-
-  // Coupe toujours exactement la moitié de la roue
-  return canvasSize * 0.5;
+  
+  // Pour les grandes tailles, on augmente la portion visible
+  if (canvasSize >= 500) {
+    return canvasSize * 0.65; // 65% au lieu de 50% pour les grandes roues
+  }
+  return canvasSize * 0.5; // 50% pour les petites roues
 };
 
 export const getCanvasOffset = (
-  shouldCropWheel: boolean,
+  shouldCropWheel: boolean, 
   gamePosition: 'left' | 'right' | 'center' | 'top' | 'bottom',
   canvasSize: number
 ): string => {
   if (!shouldCropWheel) return '0px';
-
+  
   if (gamePosition === 'left') {
-    // Décale la roue pour n'afficher que sa moitié droite
-    return `-${canvasSize * 0.5}px`;
-  } else { // right
-    // Décale la roue pour n'afficher que sa moitié gauche
     return '0px';
+  } else { // right
+    // Pour les grandes tailles, on ajuste le décalage
+    const offset = canvasSize >= 500 ? canvasSize * 0.35 : canvasSize * 0.5;
+    return `-${offset}px`;
   }
 };
 

@@ -68,7 +68,7 @@ const ButtonConfigTab: React.FC<ButtonConfigTabProps> = ({
           <Palette className="w-4 h-4 mr-2" />
           Couleur du bouton
         </label>
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex items-center space-x-3">
           <input
             type="color"
             value={buttonConfig.color}
@@ -79,7 +79,7 @@ const ButtonConfigTab: React.FC<ButtonConfigTabProps> = ({
             type="text"
             value={buttonConfig.color}
             onChange={(e) => handleChange('color', e.target.value)}
-            className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
+            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
             placeholder="#841b60"
           />
         </div>
@@ -91,7 +91,7 @@ const ButtonConfigTab: React.FC<ButtonConfigTabProps> = ({
           <Square className="w-4 h-4 mr-2" />
           Couleur de bordure
         </label>
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex items-center space-x-3">
           <input
             type="color"
             value={buttonConfig.borderColor}
@@ -102,7 +102,7 @@ const ButtonConfigTab: React.FC<ButtonConfigTabProps> = ({
             type="text"
             value={buttonConfig.borderColor}
             onChange={(e) => handleChange('borderColor', e.target.value)}
-            className="flex-1 min-w-0 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
+            className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
             placeholder="#000000"
           />
         </div>
@@ -154,7 +154,7 @@ const ButtonConfigTab: React.FC<ButtonConfigTabProps> = ({
             <button
               key={option.value}
               onClick={() => handleChange('size', option.value)}
-              className={`p-1.5 text-xs rounded border transition-colors ${
+              className={`p-2 text-xs rounded border transition-colors ${
                 buttonConfig.size === option.value
                   ? 'bg-[#841b60] text-white border-[#841b60]'
                   : 'bg-white text-gray-700 border-gray-300 hover:border-[#841b60]'
@@ -216,9 +216,9 @@ const ButtonConfigTab: React.FC<ButtonConfigTabProps> = ({
                 borderStyle: 'solid'
               }}
               className={`text-white font-medium transition-opacity hover:opacity-80 ${
-                buttonConfig.size === 'small' ? 'px-2 py-1 text-xs' :
-                buttonConfig.size === 'large' ? 'px-6 py-3 text-base' :
-                'px-4 py-2 text-sm'
+                buttonConfig.size === 'small' ? 'px-3 py-1 text-sm' :
+                buttonConfig.size === 'large' ? 'px-8 py-4 text-lg' :
+                'px-6 py-3 text-base'
               }`}
             >
               {buttonConfig.text || 'Bouton d\'exemple'}

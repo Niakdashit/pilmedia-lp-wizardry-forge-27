@@ -1,91 +1,134 @@
 
-import React from 'react';
-import GameRenderer from './GameRenderer';
-import { GameSize } from '../configurators/GameSizeSelector';
-import { getCampaignBackgroundImage } from '../../utils/background';
+import React, { useState } from 'react';
+import Jackpot from '../GameTypes/Jackpot';
+import { Quiz } from '../GameTypes';
+import WheelPreview from '../GameTypes/WheelPreview';
+import MemoryPreview from '../GameTypes/MemoryPreview';
+import PuzzlePreview from '../GameTypes/PuzzlePreview';
+import ScratchPreview from '../GameTypes/ScratchPreview';
+import DicePreview from '../GameTypes/DicePreview';
+import GameSizeSelector, { GameSize } from '../configurators/GameSizeSelector';
+import GamePositionSelector, { GamePosition } from '../configurators/GamePositionSelector';
 
 interface GameCanvasPreviewProps {
   campaign: any;
-  gameSize: GameSize;
-  gameBackgroundImage?: string;
   className?: string;
-  previewDevice?: 'desktop' | 'tablet' | 'mobile';
 }
 
 const GameCanvasPreview: React.FC<GameCanvasPreviewProps> = ({
   campaign,
-  gameSize,
-  gameBackgroundImage,
-  className = '',
-  previewDevice = 'desktop'
+  className = ""
 }) => {
-  // Résoudre l'image de fond à afficher (priorité à la prop, fallback sur config)
-  const resolvedBackground =
-    gameBackgroundImage || getCampaignBackgroundImage(campaign, previewDevice);
+  const [gameSize, setGameSize] = useState<GameSize>('small');
+  const [gamePosition, setGamePosition] = useState<GamePosition>('center');
+  
+  const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage;
+  const buttonLabel = campaign.gameConfig?.[campaign.type]?.buttonLabel || 'Lancer le Jackpot';
+  const buttonColor = campaign.gameConfig?.[campaign.type]?.buttonColor || '#ec4899';
+  
+  // Récupération du template sélectionné
+  const selectedTemplateId = campaign?.design?.template || campaign?.gameConfig?.jackpot?.template;
 
-  // Style du container principal : plein écran, centré, background cover
-  const mainContainerStyles: React.CSSProperties = {
-    width: '100%',
-    height: '100%',
-    minHeight: '600px',
-    position: 'relative',
-    overflow: 'hidden',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: campaign.design?.background || '#f8fafc'
+  const renderGame = () => {
+    switch (campaign.type) {
+      case 'jackpot':
+        return (
+          <Jackpot
+            isPreview={true}
+            instantWinConfig={{
+              mode: 'instant_winner' as const,
+              winProbability: campaign.gameConfig?.jackpot?.instantWin?.winProbability || 0.05,
+              maxWinners: campaign.gameConfig?.jackpot?.instantWin?.maxWinners,
+              winnersCount: 0
+            }}
+            buttonLabel={buttonLabel}
+            buttonColor={buttonColor}
+            selectedTemplate={selectedTemplateId}
+          />
+        );
+      case 'quiz':
+        return (
+          <Quiz 
+            config={campaign.gameConfig?.quiz || {}} 
+            onConfigChange={() => {}}
+          />
+        );
+      case 'wheel':
+        return (
+          <WheelPreview
+            campaign={campaign}
+            config={{
+              mode: 'instant_winner' as const,
+              winProbability: campaign.gameConfig?.wheel?.winProbability || 0.1,
+              maxWinners: campaign.gameConfig?.wheel?.maxWinners,
+              winnersCount: 0
+            }}
+            onFinish={() => {}}
+            gameSize={gameSize}
+            gamePosition={gamePosition}
+            key={`${gameSize}-${gamePosition}-${JSON.stringify(campaign.config?.roulette)}`}
+          />
+        );
+      case 'scratch':
+        return (
+          <ScratchPreview 
+            config={campaign.gameConfig?.scratch || {}} 
+          />
+        );
+      case 'memory':
+        return (
+          <MemoryPreview 
+            config={campaign.gameConfig?.memory || {}} 
+          />
+        );
+      case 'puzzle':
+        return (
+          <PuzzlePreview 
+            config={campaign.gameConfig?.puzzle || {}} 
+          />
+        );
+      case 'dice':
+        return (
+          <DicePreview 
+            config={campaign.gameConfig?.dice || {}} 
+          />
+        );
+      default:
+        return (
+          <div className="text-center text-gray-500 flex items-center justify-center h-full">
+            <p className="text-sm">Type de jeu non pris en charge</p>
+          </div>
+        );
+    }
   };
 
-  if (resolvedBackground) {
-    mainContainerStyles.backgroundImage = `url(${resolvedBackground})`;
-    mainContainerStyles.backgroundSize = 'cover';
-    mainContainerStyles.backgroundPosition = 'center';
-    mainContainerStyles.backgroundRepeat = 'no-repeat';
-  }
-
   return (
-    <div className={`bg-white rounded-lg border-2 border-gray-200 overflow-hidden ${className}`}>
-      <div style={mainContainerStyles}>
-        {/* Overlay pour améliorer la lisibilité */}
-        {resolvedBackground && (
-          <div 
-            className="absolute inset-0 bg-black/10" 
-            style={{ zIndex: 1 }}
-          />
-        )}
+    <div className={`relative w-full h-full overflow-hidden ${className}`} style={{ minHeight: '600px' }}>
+      {/* Image de fond plein écran */}
+      {gameBackgroundImage && (
+        <img
+          src={gameBackgroundImage}
+          alt="Background"
+          className="absolute inset-0 w-full h-full object-cover z-0"
+          style={{ pointerEvents: 'none' }}
+        />
+      )}
 
-        {/* Conteneur du jeu centré avec contraintes pour éviter les débordements */}
-        <div 
-          className="relative z-10"
-          style={{
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '100%',
-            height: '100%',
-            maxWidth: '100%',
-            maxHeight: '100%',
-            overflow: 'hidden'
-          }}
-        >
-          <div style={{
-            width: '100%',
-            height: '100%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            maxWidth: campaign.type === 'quiz' ? '900px' : '100%'
-          }}>
-            <GameRenderer
-              campaign={campaign}
-              gameSize={gameSize}
-              previewDevice={previewDevice}
-              buttonLabel={campaign.buttonConfig?.text || 'Jouer'}
-              buttonColor={campaign.buttonConfig?.color || '#841b60'}
-              gameBackgroundImage={resolvedBackground}
-            />
-          </div>
-        </div>
+      {/* Panneau de contrôle des tailles et positions */}
+      <div className="absolute top-4 right-4 z-30 bg-white p-4 rounded-lg shadow-lg border space-y-4">
+        <GameSizeSelector
+          selectedSize={gameSize}
+          onSizeChange={setGameSize}
+        />
+        <GamePositionSelector
+          selectedPosition={gamePosition}
+          onPositionChange={setGamePosition}
+        />
+      </div>
+
+      {/* Conteneur pour le jeu avec positionnement relatif */}
+      <div className="relative z-20 w-full h-full">
+        {renderGame()}
       </div>
     </div>
   );

@@ -40,7 +40,9 @@ const defaultJackpotConfig = {
   }
 };
 const CampaignEditor: React.FC = () => {
-  const { id } = useParams();
+  const {
+    id
+  } = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const isNewCampaign = id === 'new';
@@ -100,8 +102,7 @@ const CampaignEditor: React.FC = () => {
       fontSize: 'normal',
       fontWeight: 'normal',
       logoUrl: '',
-      backgroundImage: '',
-      mobileBackgroundImage: ''
+      backgroundImage: ''
     },
     rewards: {
       mode: 'probability',
@@ -152,8 +153,6 @@ const CampaignEditor: React.FC = () => {
       descriptionSize: 'text-base',
       descriptionAlignment: 'text-center',
       gameVerticalAlign: 'center',
-      gameVerticalOffset: 0,
-      gameHorizontalOffset: 0, // <--- merge OK
       gameMaxWidth: 90,
       gameMaxHeight: 60,
       gamePaddingX: 16,
@@ -192,16 +191,7 @@ const CampaignEditor: React.FC = () => {
     }
   };
   const handleSave = async (continueEditing = false) => {
-    if (campaign.type === 'quiz') {
-      const questions = campaign.gameConfig?.quiz?.questions || [];
-      const valid = questions.every((q: any) =>
-        Array.isArray(q.options) && q.options.length >= 2 && q.options.some((o: any) => o.isCorrect)
-      );
-      if (!valid) {
-        alert('Chaque question doit comporter au moins deux options et une réponse correcte.');
-        return;
-      }
-    }
+    console.log('Saving campaign:', campaign);
     const campaignData = {
       ...campaign,
       form_fields: campaign.formFields

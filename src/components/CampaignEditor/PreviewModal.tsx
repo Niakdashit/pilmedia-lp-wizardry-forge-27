@@ -3,8 +3,7 @@ import React, { useState } from 'react';
 import { X, Monitor, Tablet, Smartphone } from 'lucide-react';
 import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
 import FunnelStandard from '../funnels/FunnelStandard';
-import CampaignPreview from './CampaignPreview';
-import { getCampaignBackgroundImage } from '../../utils/background';
+import MobilePreview from './Mobile/MobilePreview';
 
 interface PreviewModalProps {
   isOpen: boolean;
@@ -18,48 +17,26 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
   if (!isOpen) return null;
 
   const getPreviewFunnel = () => {
-    const funnel = campaign.funnel || (['wheel', 'scratch', 'jackpot', 'dice'].includes(campaign.type) ? 'unlocked_game' : 'standard');
-    
-    const componentStyle = campaign.type === 'quiz' ? {
-      width: '100%',
-      height: '100%',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center'
-    } : {};
-    
-    if (funnel === 'unlocked_game') {
+    if (['wheel', 'scratch', 'jackpot', 'dice'].includes(campaign.type)) {
       return (
-        <div style={componentStyle}>
-          <FunnelUnlockedGame
-            campaign={campaign}
-            previewMode={selectedDevice}
-            modalContained={true}
-            key={`${selectedDevice}-${campaign.id}-${JSON.stringify({
-              gameConfig: campaign.gameConfig,
-              design: campaign.design,
-              screens: campaign.screens
-            })}`} // Force re-render with comprehensive dependencies
-          />
-        </div>
-      );
-    }
-    return (
-      <div style={componentStyle}>
-        <FunnelStandard
-          campaign={campaign}
-          key={`${campaign.id}-${JSON.stringify({
+        <FunnelUnlockedGame 
+          campaign={campaign} 
+          previewMode={selectedDevice} 
+          modalContained={true}
+          key={`${selectedDevice}-${campaign.id}-${JSON.stringify({
             gameConfig: campaign.gameConfig,
             design: campaign.design,
-            screens: campaign.screens,
-          })}`}
+            screens: campaign.screens
+          })}`} // Force re-render with comprehensive dependencies
         />
-      </div>
-    );
+      );
+    }
+    return <FunnelStandard campaign={campaign} key={`${campaign.id}-${JSON.stringify(campaign.gameConfig)}`} />;
   };
 
   // Récupérer l'image de fond du jeu
-  const gameBackgroundImage = getCampaignBackgroundImage(campaign, selectedDevice);
+  const gameBackgroundImage = campaign.gameConfig?.[campaign.type]?.backgroundImage || 
+                              campaign.design?.backgroundImage;
 
   const getBackgroundStyle = () => {
     const style: any = {
@@ -70,7 +47,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: campaign.type === 'quiz' ? '40px 20px' : '20px'
+      padding: '20px'
     };
 
     if (gameBackgroundImage) {
@@ -89,36 +66,19 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
     </div>
   );
 
-  const renderMobilePreview = () => {
-    const specs = selectedDevice === 'tablet'
-      ? { width: 768, height: 1024, borderRadius: 20 }
-      : { width: 375, height: 667, borderRadius: 24 };
-
-    return (
-      <div className="w-full h-full flex items-center justify-center p-4">
-        <div
-          style={{
-            width: specs.width,
-            height: specs.height,
-            border: '1px solid #e5e7eb',
-            borderRadius: specs.borderRadius,
-            overflow: 'auto',
-            backgroundColor: '#ffffff'
-          }}
-        >
-          <CampaignPreview
-            campaign={campaign}
-            previewDevice={selectedDevice}
-            key={`mobile-${campaign.id}-${JSON.stringify({
-              gameConfig: campaign.gameConfig,
-              design: campaign.design,
-              screens: campaign.screens
-            })}`}
-          />
-        </div>
-      </div>
-    );
-  };
+  const renderMobilePreview = () => (
+    <div className="w-full h-full flex items-center justify-center p-4">
+      <MobilePreview
+        campaign={campaign}
+        previewMode={selectedDevice === 'tablet' ? 'tablet' : 'mobile'}
+        key={`mobile-${campaign.id}-${JSON.stringify({
+          mobileConfig: campaign.mobileConfig,
+          gameConfig: campaign.gameConfig,
+          design: campaign.design
+        })}`} // Force re-render with comprehensive dependencies
+      />
+    </div>
+  );
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-70">

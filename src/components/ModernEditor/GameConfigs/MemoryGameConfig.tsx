@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+
+import React from 'react';
 import { Brain, Image, Clock } from 'lucide-react';
-import ColorPaletteSelector from './ColorPaletteSelector';
 
 interface MemoryGameConfigProps {
   campaign: any;
@@ -11,8 +11,6 @@ const MemoryGameConfig: React.FC<MemoryGameConfigProps> = ({
   campaign,
   setCampaign
 }) => {
-  const [selectedPalette, setSelectedPalette] = useState<any>(undefined);
-
   const handleMemoryChange = (field: string, value: any) => {
     setCampaign((prev: any) => ({
       ...prev,
@@ -21,21 +19,6 @@ const MemoryGameConfig: React.FC<MemoryGameConfigProps> = ({
         memory: {
           ...prev.gameConfig?.memory,
           [field]: value
-        }
-      }
-    }));
-  };
-
-  const handlePaletteSelect = (palette: any) => {
-    setSelectedPalette(palette);
-    
-    setCampaign((prev: any) => ({
-      ...prev,
-      gameConfig: {
-        ...prev.gameConfig,
-        memory: {
-          ...prev.gameConfig?.memory,
-          palette: palette
         }
       }
     }));
@@ -56,13 +39,6 @@ const MemoryGameConfig: React.FC<MemoryGameConfigProps> = ({
 
   return (
     <div className="space-y-6">
-      {/* Palette de couleurs */}
-      <ColorPaletteSelector
-        selectedPalette={selectedPalette}
-        onPaletteSelect={handlePaletteSelect}
-        gameType="memory"
-      />
-
       {/* Difficulté */}
       <div className="space-y-3">
         <label className="flex items-center text-sm font-medium text-gray-700">

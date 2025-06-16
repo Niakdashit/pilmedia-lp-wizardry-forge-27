@@ -14,27 +14,12 @@ const WheelPointer: React.FC<WheelPointerProps> = ({
   gamePosition,
   pointerSize
 }) => {
-  // Calcul de la position horizontale du pointeur
-  const getPointerLeft = () => {
-    if (shouldCropWheel) {
-      if (gamePosition === 'left') {
-        // Pour position left : pointeur au centre de la partie visible (moitié droite)
-        return canvasSize * 0.25 - pointerSize / 2;
-      } else if (gamePosition === 'right') {
-        // Pour position right : pointeur au centre de la partie visible (moitié gauche)
-        return -canvasSize * 0.25 - pointerSize / 2;
-      }
-    }
-    // Position normale : au centre de la roue complète
-    return canvasSize / 2 - pointerSize / 2;
-  };
-
   return (
     <div
       style={{
         position: 'absolute',
-        left: getPointerLeft(),
-        top: -pointerSize * 0.6, // Ajuster pour que le pointeur touche le bord de la roue
+        left: (shouldCropWheel ? (gamePosition === 'left' ? 0 : -canvasSize * 0.5) : canvasSize / 2) + canvasSize / 2 - pointerSize / 2,
+        top: -pointerSize * 0.7,
         width: pointerSize,
         height: pointerSize * 1.6,
         zIndex: 3,
@@ -57,6 +42,7 @@ const WheelPointer: React.FC<WheelPointerProps> = ({
           fill="url(#pointerGradient)"
           stroke="#8B4513"
           strokeWidth="2"
+          style={{ filter: 'drop-shadow(0 4px 8px rgba(0,0,0,0.3))' }}
         />
       </svg>
     </div>

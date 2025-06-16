@@ -7,6 +7,7 @@ export const useCampaignState = (initialCampaign: any) => {
   const updateCampaign = useCallback((updates: any) => {
     setCampaign((prev: any) => {
       const newCampaign = typeof updates === 'function' ? updates(prev) : { ...prev, ...updates };
+      console.log('Campaign updated:', newCampaign);
       return newCampaign;
     });
   }, []);

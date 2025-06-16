@@ -1,234 +1,335 @@
 
-import React, { useState, useRef } from 'react';
-import { Plus } from 'lucide-react';
-import GameCanvasPreview from '../CampaignEditor/GameCanvasPreview';
-import TextElement from './TextElement';
-import ImageElement from './ImageElement';
-import CanvasHeader from './components/CanvasHeader';
-import CanvasFooter from './components/CanvasFooter';
-import GridToggle from './components/GridToggle';
-import { useCanvasElements } from './hooks/useCanvasElements';
-import { createSynchronizedQuizCampaign } from '../../utils/quizConfigSync';
+import React, { useEffect, useRef } from 'react';
+import WheelPreview from '../GameTypes/WheelPreview';
+import ScratchPreview from '../GameTypes/ScratchPreview';
+import MemoryPreview from '../GameTypes/MemoryPreview';
+import PuzzlePreview from '../GameTypes/PuzzlePreview';
+import DicePreview from '../GameTypes/DicePreview';
+import { GameSize } from '../configurators/GameSizeSelector';
+import { GamePosition } from '../configurators/GamePositionSelector';
 
 interface ModernEditorCanvasProps {
   campaign: any;
-  setCampaign: (updater: (prev: any) => any) => void;
   previewDevice: 'desktop' | 'tablet' | 'mobile';
-  gameSize: 'small' | 'medium' | 'large' | 'xlarge';
-  gamePosition: 'top' | 'center' | 'bottom' | 'left' | 'right';
+  gameSize: GameSize;
+  gamePosition: GamePosition;
 }
 
 const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
   campaign,
-  setCampaign,
   previewDevice,
   gameSize,
   gamePosition
 }) => {
-  const [showGridLines, setShowGridLines] = useState(false);
-  const [showAddMenu, setShowAddMenu] = useState(false);
   const canvasRef = useRef<HTMLDivElement>(null);
 
-  const {
-    selectedElement,
-    setSelectedElement,
-    customTexts,
-    customImages,
-    updateTextElement,
-    updateImageElement,
-    deleteTextElement,
-    deleteImageElement,
-    getElementDeviceConfig,
-    addTextElement,
-    addImageElement
-  } = useCanvasElements(campaign, setCampaign, previewDevice);
+  // Force re-render when game size or position changes
+  useEffect(() => {
+    if (canvasRef.current) {
+      // Trigger a reflow to ensure changes are applied
+      canvasRef.current.style.display = 'none';
+      canvasRef.current.offsetHeight; // Trigger reflow
+      canvasRef.current.style.display = '';
+    }
+  }, [gameSize, gamePosition]);
 
-  const headerBanner = campaign.design?.headerBanner;
-  const footerBanner = campaign.design?.footerBanner;
-  const headerText = campaign.design?.headerText;
-  const footerText = campaign.design?.footerText;
-
-  const sizeMap: Record<string, string> = {
-    xs: '10px',
-    sm: '12px',
-    base: '14px',
-    lg: '16px',
-    xl: '18px',
-    '2xl': '20px',
-    '3xl': '24px',
-    '4xl': '28px',
-    '5xl': '32px',
-    '6xl': '36px',
-    '7xl': '48px',
-    '8xl': '60px',
-    '9xl': '72px'
-  };
-
-  const handleCanvasClick = (e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      setSelectedElement(null);
-      setShowAddMenu(false);
+  const getDeviceStyles = () => {
+    switch (previewDevice) {
+      case 'mobile':
+        return {
+          width: '375px',
+          height: '667px',
+          maxWidth: '100%'
+        };
+      case 'tablet':
+        return {
+          width: '768px',
+          height: '1024px',
+          maxWidth: '100%'
+        };
+      default:
+        return {
+          width: '100%',
+          height: '600px'
+        };
     }
   };
 
-  const handleAddText = () => {
-    console.log('Ajout de texte déclenché');
-    addTextElement();
-    setShowAddMenu(false);
-  };
-
-  const handleAddImage = () => {
-    console.log('Ajout d\'image déclenché');
-    addImageElement();
-    setShowAddMenu(false);
-  };
-
-  const toggleAddMenu = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    console.log('Toggle menu:', !showAddMenu);
-    setShowAddMenu(!showAddMenu);
-  };
-
-  // Hauteur fixe, largeur responsive
-  const FIXED_CANVAS_HEIGHT = 700;
-
-  // Utiliser le système de synchronisation centralisé
-  const enhancedCampaign = createSynchronizedQuizCampaign({
-    ...campaign,
-    gameSize,
-    gamePosition,
-    buttonConfig: {
-      ...campaign.buttonConfig,
-      text: campaign.buttonConfig?.text || campaign.gameConfig?.[campaign.type]?.buttonLabel || 'Jouer',
-      color: campaign.design?.buttonColor || campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor || '#841b60'
+  const renderGamePreview = () => {
+    const gameConfig = campaign.gameConfig || {};
+    const key = `${campaign.type}-${gameSize}-${gamePosition}-${Date.now()}`;
+    
+    switch (campaign.type) {
+      case 'wheel':
+        return <WheelPreview key={key} campaign={campaign} config={gameConfig.wheel} gameSize={gameSize} gamePosition={gamePosition} previewDevice={previewDevice} />;
+      case 'scratch':
+        return <ScratchPreview key={key} config={gameConfig.scratch} />;
+      case 'memory':
+        return <MemoryPreview key={key} config={gameConfig.memory} />;
+      case 'puzzle':
+        return <PuzzlePreview key={key} config={gameConfig.puzzle} />;
+      case 'dice':
+        return <DicePreview key={key} config={gameConfig.dice} />;
+      case 'jackpot':
+        return <div key={key} className="p-4 border-2 border-dashed border-gray-300 rounded-lg">
+            <div className="text-center text-gray-500">
+              <div className="text-sm">Aperçu Jackpot</div>
+              <div className="text-xs mt-1">🎰 Machine à sous</div>
+            </div>
+          </div>;
+      default:
+        return <div key={key} className="p-4 border-2 border-dashed border-gray-300 rounded-lg">
+            <div className="text-center text-gray-500">
+              <div className="text-sm">Aperçu du jeu : {campaign.type}</div>
+              <div className="text-xs mt-1">Position : {gamePosition}</div>
+            </div>
+          </div>;
     }
-  });
+  };
 
-  return (
-    <div className="w-full h-full flex items-center justify-center p-4 md:p-6 bg-gradient-to-br from-gray-50 to-white overflow-hidden">
-      {/* Canvas container avec largeur responsive et hauteur fixe */}
-      <div 
-        className="bg-white rounded-3xl shadow-2xl border border-gray-200/50 overflow-hidden relative w-full max-w-none"
+  const renderHeaderBanner = () => {
+    const headerBanner = campaign.design?.headerBanner;
+    if (!headerBanner?.enabled || !headerBanner?.image) {
+      return null;
+    }
+
+    return (
+      <div className="w-full bg-cover bg-center bg-no-repeat" style={{
+        backgroundImage: `url(${headerBanner.image})`,
+        height: headerBanner.height || '120px'
+      }}>
+        {headerBanner.overlay && (
+          <div className="w-full h-full bg-black/20"></div>
+        )}
+      </div>
+    );
+  };
+
+  const renderFooterBanner = () => {
+    const footerBanner = campaign.design?.footerBanner;
+    if (!footerBanner?.enabled || !footerBanner?.image) {
+      return null;
+    }
+
+    return (
+      <div className="w-full bg-cover bg-center bg-no-repeat" style={{
+        backgroundImage: `url(${footerBanner.image})`,
+        height: footerBanner.height || '120px'
+      }}>
+        {footerBanner.overlay && (
+          <div className="w-full h-full bg-black/20"></div>
+        )}
+      </div>
+    );
+  };
+
+  const renderTextContents = (textContents: any[], baseStyle: any) => {
+    if (!textContents || textContents.length === 0) return null;
+    
+    return textContents.map((content: any, index: number) => (
+      <span 
+        key={content.id || index}
         style={{
-          height: `${FIXED_CANVAS_HEIGHT}px`,
-          minHeight: `${FIXED_CANVAS_HEIGHT}px`,
-          maxHeight: `${FIXED_CANVAS_HEIGHT}px`
+          ...baseStyle,
+          fontWeight: content.bold ? 'bold' : 'normal',
+          fontStyle: content.italic ? 'italic' : 'normal',
+          textDecoration: content.underline ? 'underline' : 'none',
+          display: 'block',
+          marginBottom: index < textContents.length - 1 ? '8px' : '0'
         }}
       >
-        {/* Canvas background */}
-        <div
-          ref={canvasRef}
-          onClick={handleCanvasClick}
-          className="relative w-full h-full overflow-hidden"
-          style={{
-            background: `linear-gradient(135deg, ${campaign.design?.background || '#f8fafc'} 0%, ${campaign.design?.background || '#f8fafc'}88 100%)`,
-            backgroundImage: showGridLines ? 
-              'radial-gradient(circle, rgba(147, 197, 253, 0.2) 1px, transparent 1px)' : 'none',
-            backgroundSize: showGridLines ? '20px 20px' : 'auto'
-          }}
-        >
-          <CanvasHeader
-            headerBanner={headerBanner}
-            headerText={headerText}
-            sizeMap={sizeMap}
-          />
+        {content.text}
+      </span>
+    ));
+  };
 
-          <div className="flex-1 flex relative h-full">
-            <GameCanvasPreview
-              campaign={enhancedCampaign}
-              gameSize={gameSize}
-              className="w-full h-full"
-              key={`preview-${gameSize}-${gamePosition}-${JSON.stringify(enhancedCampaign.design)}-${JSON.stringify(enhancedCampaign.gameConfig)}`}
-              previewDevice={previewDevice}
-            />
-            
-            {/* Custom Text Elements */}
-            {customTexts.map((customText: any) => (
-              customText?.enabled && (
-                <TextElement
-                  key={`text-${customText.id}-${previewDevice}`}
-                  element={customText}
-                  isSelected={selectedElement?.type === 'text' && selectedElement?.id === customText.id}
-                  onSelect={() => setSelectedElement({ type: 'text', id: customText.id })}
-                  onUpdate={(updates) => updateTextElement(customText.id, updates)}
-                  onDelete={() => deleteTextElement(customText.id)}
-                  containerRef={canvasRef}
-                  sizeMap={sizeMap}
-                  getElementDeviceConfig={getElementDeviceConfig}
-                />
-              )
-            ))}
+  const renderHeaderCustomText = () => {
+    const headerText = campaign.design?.headerText;
+    if (!headerText?.enabled) {
+      return null;
+    }
 
-            {/* Custom Image Elements */}
-            {customImages.map((customImage: any) => (
-              <ImageElement
-                key={`image-${customImage.id}-${previewDevice}`}
-                element={customImage}
-                isSelected={selectedElement?.type === 'image' && selectedElement?.id === customImage.id}
-                onSelect={() => setSelectedElement({ type: 'image', id: customImage.id })}
-                onUpdate={(updates) => updateImageElement(customImage.id, updates)}
-                onDelete={() => deleteImageElement(customImage.id)}
-                containerRef={canvasRef}
-                getElementDeviceConfig={getElementDeviceConfig}
-              />
-            ))}
-          </div>
+    const frameStyles = headerText.showFrame ? {
+      backgroundColor: headerText.frameColor || '#ffffff',
+      border: `1px solid ${headerText.frameBorderColor || '#e5e7eb'}`,
+      borderRadius: '8px',
+      padding: '12px 16px',
+      margin: '0 16px',
+      boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+    } : {
+      padding: '12px 16px'
+    };
 
-          <CanvasFooter
-            footerBanner={footerBanner}
-            footerText={footerText}
-            sizeMap={sizeMap}
-          />
+    const getTextSize = () => {
+      const sizeMap: Record<string, string> = {
+        small: '14px',
+        medium: '18px',
+        large: '24px'
+      };
+      return sizeMap[headerText.size as string] || '18px';
+    };
+
+    const baseTextStyle = {
+      color: headerText.color || '#000000',
+      fontFamily: campaign.design?.fontFamily || 'Inter',
+      fontSize: getTextSize(),
+      textAlign: 'center' as const
+    };
+
+    return (
+      <div className="w-full flex justify-center" style={frameStyles}>
+        <div className="my-[20px] px-[42px]">
+          {headerText.textContents && headerText.textContents.length > 0 ? (
+            renderTextContents(headerText.textContents, baseTextStyle)
+          ) : (
+            <p style={baseTextStyle} className="text-xl">
+              {headerText.text || 'Texte d\'en-tête'}
+            </p>
+          )}
         </div>
+      </div>
+    );
+  };
 
-        {/* Floating action button - Canva style */}
-        <div className="absolute bottom-8 right-8" style={{ zIndex: 50 }}>
-          <div className="relative">
-            {/* Add menu */}
-            {showAddMenu && (
-              <div
-                className="absolute bottom-16 right-0 bg-white rounded-2xl shadow-2xl border border-gray-200/50 p-2 min-w-48"
-                style={{ zIndex: 60 }}
-                onClick={(e) => e.stopPropagation()}
-              >
-                <button
-                  onClick={handleAddText}
-                  className="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-50 transition-colors text-left"
-                >
-                  <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                    <span className="text-blue-600 font-semibold text-sm">T</span>
-                  </div>
-                  <span className="font-medium text-gray-900">Ajouter du texte</span>
-                </button>
-                <button
-                  onClick={handleAddImage}
-                  className="w-full flex items-center space-x-3 p-3 rounded-xl hover:bg-gray-50 transition-colors text-left"
-                >
-                  <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                    <span className="text-green-600 font-semibold text-sm">📷</span>
-                  </div>
-                  <span className="font-medium text-gray-900">Ajouter une image</span>
-                </button>
-              </div>
+  const renderFooterCustomText = () => {
+    const footerText = campaign.design?.footerText;
+    if (!footerText?.enabled) {
+      return null;
+    }
+
+    const frameStyles = footerText.showFrame ? {
+      backgroundColor: footerText.frameColor || '#ffffff',
+      border: `1px solid ${footerText.frameBorderColor || '#e5e7eb'}`,
+      borderRadius: '8px',
+      padding: '12px 16px',
+      margin: '0 16px',
+      boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+    } : {
+      padding: '12px 16px'
+    };
+
+    const getTextSize = () => {
+      const sizeMap: Record<string, string> = {
+        small: '14px',
+        medium: '18px',
+        large: '24px'
+      };
+      return sizeMap[footerText.size as string] || '18px';
+    };
+
+    const baseTextStyle = {
+      color: footerText.color || '#000000',
+      fontFamily: campaign.design?.fontFamily || 'Inter',
+      fontSize: getTextSize(),
+      textAlign: 'center' as const
+    };
+
+    return (
+      <div className="w-full flex justify-center" style={frameStyles}>
+        <div className="my-0 py-[12px]">
+          {footerText.textContents && footerText.textContents.length > 0 ? (
+            renderTextContents(footerText.textContents, baseTextStyle)
+          ) : (
+            <p style={baseTextStyle}>
+              {footerText.text || 'Texte de pied de page'}
+            </p>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  const renderCustomText = () => {
+    const customText = campaign.design?.customText;
+    if (!customText?.enabled || !customText?.text) {
+      return null;
+    }
+
+    const getTextSize = () => {
+      switch (customText.size) {
+        case 'small':
+          return 'text-sm';
+        case 'large':
+          return 'text-2xl';
+        default:
+          return 'text-lg';
+      }
+    };
+
+    const getPositionStyles = () => {
+      const baseStyles = 'absolute z-20 max-w-md';
+      const positionMap: Record<string, string> = {
+        top: `${baseStyles} top-4 left-1/2 transform -translate-x-1/2`,
+        bottom: `${baseStyles} bottom-4 left-1/2 transform -translate-x-1/2`,
+        left: `${baseStyles} left-4 top-1/2 transform -translate-y-1/2`,
+        right: `${baseStyles} right-4 top-1/2 transform -translate-y-1/2`,
+        center: `${baseStyles} top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2`
+      };
+      return positionMap[customText.position as string] || positionMap.center;
+    };
+
+    const frameStyles = customText.showFrame ? {
+      backgroundColor: customText.frameColor || '#ffffff',
+      border: `1px solid ${customText.frameBorderColor || '#e5e7eb'}`,
+      borderRadius: '8px',
+      padding: '12px 16px',
+      boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+    } : {};
+
+    return (
+      <div className={getPositionStyles()} style={frameStyles}>
+        <p className={`${getTextSize()} font-medium text-center`} style={{
+          color: customText.color || '#000000',
+          fontFamily: campaign.design?.fontFamily || 'Inter'
+        }}>
+          {customText.text}
+        </p>
+      </div>
+    );
+  };
+
+  const deviceStyles = getDeviceStyles();
+  const backgroundStyle = campaign.design?.backgroundImage ? {
+    backgroundImage: `url(${campaign.design.backgroundImage})`,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat'
+  } : {
+    backgroundColor: campaign.design?.background || '#f8fafc'
+  };
+
+  return (
+    <div className="h-full flex flex-col">
+      {/* Zone d'aperçu */}
+      <div className="flex-1 flex items-center justify-center p-8 bg-gray-100">
+        <div ref={canvasRef} className="bg-white rounded-lg shadow-lg overflow-hidden relative" style={deviceStyles}>
+          {/* Conteneur avec image de fond complète */}
+          <div className="h-full w-full relative flex flex-col" style={backgroundStyle}>
+            {/* Overlay pour améliorer la lisibilité si nécessaire */}
+            {campaign.design?.backgroundImage && (
+              <div className="absolute inset-0 bg-black/10"></div>
             )}
+            
+            {/* Header Section */}
+            <div className="relative z-10 w-full">
+              {renderHeaderBanner()}
+              {renderHeaderCustomText()}
+            </div>
+            
+            {/* Texte personnalisé (legacy positioning) */}
+            {renderCustomText()}
+            
+            {/* Zone de jeu repositionnable */}
+            <div className="flex-1 relative">
+              {renderGamePreview()}
+            </div>
 
-            {/* Main add button */}
-            <button
-              onClick={toggleAddMenu}
-              className="w-14 h-14 bg-gradient-to-r from-[#841b60] to-[#6d164f] hover:from-[#6d164f] hover:to-[#841b60] text-white rounded-2xl shadow-2xl hover:shadow-3xl transition-all duration-300 flex items-center justify-center transform hover:scale-105"
-              type="button"
-            >
-              <Plus className={`w-6 h-6 transition-transform duration-300 ${showAddMenu ? 'rotate-45' : ''}`} />
-            </button>
+            {/* Footer Section */}
+            <div className="relative z-10 w-full">
+              {renderFooterCustomText()}
+              {renderFooterBanner()}
+            </div>
           </div>
-        </div>
-
-        {/* Grid toggle */}
-        <div className="absolute top-6 right-6" style={{ zIndex: 20 }}>
-          <GridToggle
-            showGridLines={showGridLines}
-            onToggle={() => setShowGridLines(!showGridLines)}
-          />
         </div>
       </div>
     </div>

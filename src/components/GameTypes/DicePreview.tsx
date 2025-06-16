@@ -12,9 +12,8 @@ const DicePreview: React.FC<DicePreviewProps> = ({ config = {} }) => {
   const [result, setResult] = useState<'win' | 'lose' | null>(null);
   const [rollCount, setRollCount] = useState(0);
 
-  // Align preview with main Dice component configuration
-  const numberOfDice = config?.diceCount || 2;
-  const winningCombinations = config?.winningConditions || [7, 11];
+  const numberOfDice = config?.numberOfDice || 2;
+  const winningCombinations = config?.winningCombinations || [7, 11];
 
   const rollDice = () => {
     if (isRolling) return;

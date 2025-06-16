@@ -36,7 +36,7 @@ export interface ScratchConfig extends GameConfig {
 }
 
 export interface MemoryConfig extends GameConfig {
-  pairs: number;
+  pairCount: number;
   theme: string;
   timer: boolean;
 }
@@ -49,7 +49,7 @@ export interface PuzzleConfig extends GameConfig {
 
 export interface DiceConfig extends GameConfig {
   diceCount: number;
-  winningConditions: number[];
+  winConditions: number[][];
 }
 
 // ----------- AJOUT CONFIG JACKPOT -----------
@@ -66,4 +66,4 @@ export interface JackpotConfig extends GameConfig {
 }
 
 // ----------- AJOUT TYPE GAME "JACKPOT" -----------
-export type GameType = 'wheel' | 'scratch' | 'memory' | 'puzzle' | 'dice' | 'jackpot' | 'quiz';
+export type GameType = 'wheel' | 'scratch' | 'memory' | 'puzzle' | 'dice' | 'jackpot';

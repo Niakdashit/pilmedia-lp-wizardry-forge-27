@@ -1,8 +1,8 @@
+
 import React, { useState, useEffect } from 'react';
 import Color from 'color';
 import confetti from 'canvas-confetti';
-import { QuizGame, Wheel, Scratch, Memory, Puzzle, Dice } from '../GameTypes';
-import FormPreview from '../GameTypes/FormPreview';
+import { Quiz, Wheel, Scratch, Memory, Puzzle, Dice } from '../GameTypes';
 
 interface PreviewContentProps {
   campaign: any;
@@ -42,19 +42,21 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
     if (isComplete) {
       return (
         <div className="flex flex-col items-center justify-center text-center h-full w-full max-w-2xl mx-auto px-4">
-          <h2
+          <h2 
             className="text-3xl font-bold mb-6"
-            style={{
-              ...campaign.design.textStyles?.title
+            style={{ 
+              color: campaign.design.titleColor,
+              fontFamily: campaign.design.titleFont
             }}
           >
             {campaign.screens[3].title || 'Félicitations !'}
           </h2>
-          <p
+          
+          <p 
             className="text-xl"
-            style={{
-              ...campaign.design.textStyles?.description,
-              color: campaign.design.textStyles?.description?.color || getContrastColor(campaign.design.blockColor)
+            style={{ 
+              color: getContrastColor(campaign.design.blockColor),
+              fontFamily: campaign.design.textFont
             }}
           >
             {campaign.screens[3].description || 'Merci pour votre participation !'}
@@ -66,9 +68,9 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
     switch (campaign.type) {
       case 'quiz':
         return (
-          <QuizGame
-            config={campaign.gameConfig.quiz}
-            design={campaign.design}
+          <Quiz 
+            config={campaign.gameConfig.quiz} 
+            onConfigChange={() => {}}
           />
         );
 
@@ -113,14 +115,6 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
           <Dice 
             config={campaign.gameConfig.dice} 
             onConfigChange={() => {}}
-          />
-        );
-
-      case 'form':
-        return (
-          <FormPreview
-            campaign={campaign}
-            gameSize="medium"
           />
         );
 

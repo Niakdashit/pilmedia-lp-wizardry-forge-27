@@ -1,4 +1,3 @@
-
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
@@ -36,9 +35,6 @@ export default {
           900: '#0c4a6e',
           950: '#082f49',
         }
-      },
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
       },
       boxShadow: {
         'glass': '0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05)',

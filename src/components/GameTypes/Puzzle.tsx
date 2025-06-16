@@ -65,7 +65,6 @@ const Puzzle: React.FC<PuzzleProps> = ({ config = {}, onConfigChange, isPreview,
           <ImageUpload
             value={config?.image}
             onChange={(value) => onConfigChange({ ...config, image: value })}
-            label="Sélectionnez une image pour le puzzle"
           />
         </div>
 

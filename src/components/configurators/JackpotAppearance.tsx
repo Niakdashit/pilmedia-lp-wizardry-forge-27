@@ -1,3 +1,4 @@
+
 import React from 'react';
 import GameCanvasPreview from '../CampaignEditor/GameCanvasPreview';
 
@@ -29,10 +30,7 @@ const JackpotAppearance: React.FC<JackpotAppearanceProps> = ({
   return (
     <div className="space-y-6">
       {/* Aperçu du jeu avec configurateur intégré */}
-      <GameCanvasPreview 
-        campaign={campaign}
-        gameSize={campaign.gameSize || 'large'}
-      />
+      <GameCanvasPreview campaign={campaign} />
 
       {/* Configurateur d'apparence */}
       <div className="space-y-4 bg-white p-6 rounded-lg border">

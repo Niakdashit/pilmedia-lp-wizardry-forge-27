@@ -17,10 +17,6 @@ const CampaignContent: React.FC<CampaignContentProps> = ({
   setCampaign,
 }) => {
   const [activeSection, setActiveSection] = useState<'game' | 'visual'>('game');
-  const [activeQuizQuestion, setActiveQuizQuestion] = useState(0);
-  const [previewQuestion, setPreviewQuestion] = useState<any>(
-    campaign.gameConfig?.quiz?.questions?.[0]
-  );
 
   const updateGameConfig = (gameType: string, config: any) => {
     setCampaign((prev: any) => ({
@@ -39,9 +35,6 @@ const CampaignContent: React.FC<CampaignContentProps> = ({
           <Quiz
             config={campaign.gameConfig?.quiz}
             onConfigChange={(config) => updateGameConfig('quiz', config)}
-            activeQuestion={activeQuizQuestion}
-            onActiveQuestionChange={setActiveQuizQuestion}
-            onQuestionChange={setPreviewQuestion}
           />
         );
       case 'wheel':
@@ -127,10 +120,7 @@ const CampaignContent: React.FC<CampaignContentProps> = ({
               <Eye className="w-5 h-5 text-[#841b60]" />
               <h3 className="text-lg font-medium text-gray-900">Aperçu du jeu</h3>
             </div>
-            <GameCanvasPreview
-              campaign={{ ...campaign, activeQuizQuestion, previewQuestion }}
-              gameSize={campaign.gameSize || 'large'}
-            />
+            <GameCanvasPreview campaign={campaign} />
           </div>
 
           <div>
@@ -149,10 +139,7 @@ const CampaignContent: React.FC<CampaignContentProps> = ({
                 <Eye className="w-5 h-5 text-[#841b60]" />
                 <h3 className="text-lg font-medium text-gray-900">Aperçu du jeu</h3>
               </div>
-              <GameCanvasPreview
-                campaign={{ ...campaign, activeQuizQuestion, previewQuestion }}
-                gameSize={campaign.gameSize || 'large'}
-              />
+              <GameCanvasPreview campaign={campaign} />
 
               <div>
                 <h3 className="text-lg font-medium text-gray-900 mb-4">Image de fond du jeu</h3>
@@ -171,6 +158,7 @@ const CampaignContent: React.FC<CampaignContentProps> = ({
                     }));
                   }}
                   label="Téléchargez ou sélectionnez une image de fond pour votre jeu"
+                  className="w-full"
                 />
               </div>
             </>

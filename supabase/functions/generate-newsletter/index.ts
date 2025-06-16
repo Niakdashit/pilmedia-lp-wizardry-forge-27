@@ -14,28 +14,12 @@ serve(async (req) => {
   try {
     const { prompt, style } = await req.json();
 
-    const endpoint = Deno.env.get('VITE_AI_API_ENDPOINT');
-    const model = Deno.env.get('VITE_AI_MODEL');
-
-    if (!endpoint || !model) {
-      return new Response(
-        JSON.stringify({ error: 'Missing environment variables VITE_AI_API_ENDPOINT and/or VITE_AI_MODEL' }),
-        {
-          status: 500,
-          headers: {
-            'Content-Type': 'application/json',
-            ...corsHeaders
-          }
-        }
-      );
-    }
-
     // Call AI API (example using Ollama)
-    const response = await fetch(endpoint, {
+    const response = await fetch(Deno.env.get('VITE_AI_API_ENDPOINT'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: model,
+        model: Deno.env.get('VITE_AI_MODEL'),
         prompt: `Generate an HTML email newsletter with the following requirements:
                 Style: ${style}
                 Requirements: ${prompt}

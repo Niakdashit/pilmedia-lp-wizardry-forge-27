@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Type } from 'lucide-react';
 import ImageUpload from '../common/ImageUpload';
@@ -189,7 +190,6 @@ const Scratch: React.FC<ScratchProps> = ({
         <ImageUpload
           value={config?.revealImage}
           onChange={(value) => onConfigChange({ ...config, revealImage: value })}
-          label="Sélectionnez l'image à révéler"
         />
       </div>
 
@@ -215,7 +215,6 @@ const Scratch: React.FC<ScratchProps> = ({
           <ImageUpload
             value={config?.scratchImage}
             onChange={(value) => onConfigChange({ ...config, scratchImage: value })}
-            label="Image de la couche à gratter"
           />
         </div>
       </div>
@@ -245,7 +244,6 @@ const Scratch: React.FC<ScratchProps> = ({
         <ImageUpload
           value={config?.cursorImage}
           onChange={(value) => onConfigChange({ ...config, cursorImage: value })}
-          label="Image du curseur"
         />
       </div>
 

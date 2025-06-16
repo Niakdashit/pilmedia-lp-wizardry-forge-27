@@ -1,50 +1,48 @@
 import React, { useState } from 'react';
 import { Calendar, Download, ChevronRight } from 'lucide-react';
-import PageHeader from '../components/Layout/PageHeader';
-
 const Studies: React.FC = () => {
   const [selectedEvent, setSelectedEvent] = useState<string[]>([]);
-  const marketingEvents = [
-    {
-      id: '1',
-      name: 'Saint-Valentin',
-      date: '14 février'
-    },
-    {
-      id: '2',
-      name: 'Soldes d\'été',
-      date: '28 juin'
-    },
-    {
-      id: '3',
-      name: 'Black Friday',
-      date: '29 novembre'
-    },
-    {
-      id: '4',
-      name: 'Noël',
-      date: '25 décembre'
-    }
-  ];
+  const marketingEvents = [{
+    id: '1',
+    name: 'Saint-Valentin',
+    date: '14 février'
+  }, {
+    id: '2',
+    name: 'Soldes d\'été',
+    date: '28 juin'
+  }, {
+    id: '3',
+    name: 'Black Friday',
+    date: '29 novembre'
+  }, {
+    id: '4',
+    name: 'Noël',
+    date: '25 décembre'
+  }];
   const toggleEvent = (id: string) => {
-    setSelectedEvent(prev =>
-      prev.includes(id)
-        ? prev.filter(eventId => eventId !== id)
-        : [...prev, id]
-    );
+    setSelectedEvent(prev => prev.includes(id) ? prev.filter(eventId => eventId !== id) : [...prev, id]);
   };
-  return (
-    <div className="-mx-6 -mt-6">
-      <PageHeader
-        title="Études"
-        size="sm"
-        actions={
-          <button className="inline-flex items-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+  return <div className="-mx-6 -mt-6">
+      <div className="relative h-[100px] bg-[#841b60] overflow-hidden">
+        <div className="absolute inset-10 opacity-[0.15]" style={{
+        backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+        backgroundSize: '60px 60px'
+      }} />
+        
+        <div className="relative h-full max-w-7xl mx-auto px-6 flex items-center justify-between">
+          <h1 className="text-3xl font-bold text-white mb-3">Études</h1>
+          <button className="inline-flex items-center px-6 py-3 bg-white text-[#841b60] font-medium rounded-xl hover:bg-white/90 transition-all duration-200 shadow-lg hover:shadow-xl mb-3">
             <Download className="w-5 h-5 mr-2" />
             Télécharger le rapport
           </button>
-        }
-      />
+        </div>
+
+        <div className="absolute bottom-0 left-0 right-0">
+          <svg viewBox="0 0 1440 116" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full" preserveAspectRatio="none" height="10">
+            <path d="M0 116L60 96.3C120 76.7 240 37.3 360 21.7C480 6 600 14 720 34.7C840 55.3 960 89.7 1080 96.3C1200 103 1320 82 1380 71.5L1440 61V116H1380C1320 116 1200 116 1080 116C960 116 840 116 720 116C600 116 480 116 360 116C240 116 120 116 60 116H0Z" fill="#ebf4f7" />
+          </svg>
+        </div>
+      </div>
 
       <div className="px-6 space-y-6">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
@@ -94,8 +92,7 @@ const Studies: React.FC = () => {
             <div className="bg-white rounded-xl shadow-sm p-6">
               <h2 className="text-lg font-bold text-gray-800 mb-4">Calendrier marketing</h2>
               <div className="space-y-3">
-                {marketingEvents.map(event => (
-                  <div key={event.id} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:border-[#841b60] transition-colors duration-200">
+                {marketingEvents.map(event => <div key={event.id} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg hover:border-[#841b60] transition-colors duration-200">
                     <div className="flex items-center">
                       <Calendar className="w-5 h-5 text-gray-400 mr-3" />
                       <div>
@@ -104,16 +101,10 @@ const Studies: React.FC = () => {
                       </div>
                     </div>
                     <label className="relative inline-flex items-center cursor-pointer">
-                      <input
-                        type="checkbox"
-                        className="sr-only peer"
-                        checked={selectedEvent.includes(event.id)}
-                        onChange={() => toggleEvent(event.id)}
-                      />
+                      <input type="checkbox" className="sr-only peer" checked={selectedEvent.includes(event.id)} onChange={() => toggleEvent(event.id)} />
                       <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#841b60]/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#841b60]"></div>
                     </label>
-                  </div>
-                ))}
+                  </div>)}
               </div>
             </div>
 
@@ -150,8 +141,6 @@ const Studies: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default Studies;

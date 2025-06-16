@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
-import { toast } from 'react-toastify';
 
 export interface Participation {
   id: string;
@@ -65,6 +64,7 @@ export const useParticipations = () => {
         return null;
       }
 
+      console.log('Participation créée avec succès:', participation);
       return participation;
     } catch (err) {
       console.error('Erreur inattendue:', err);
@@ -104,7 +104,7 @@ export const useParticipations = () => {
 
   const exportParticipationsToCSV = (participations: Participation[], campaignName: string) => {
     if (participations.length === 0) {
-      toast.info('Aucune participation à exporter');
+      alert('Aucune participation à exporter');
       return;
     }
 

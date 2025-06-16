@@ -1,8 +1,7 @@
-
 import React, { useState } from 'react';
 import Color from 'color';
 import DynamicContactForm from '../forms/DynamicContactForm';
-import { QuizGame, Memory, Puzzle } from '../GameTypes';
+import { Quiz, Memory, Puzzle } from '../GameTypes';
 import { useParticipations } from '../../hooks/useParticipations';
 
 const DEFAULT_FIELDS = [
@@ -36,6 +35,7 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
   const handleStart = () => setStep('form');
   
   const handleFormSubmit = async (formData: Record<string, string>) => {
+    console.log('Form data submitted:', formData);
     
     if (campaign.id) {
       const participation = await createParticipation({
@@ -45,14 +45,10 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
       });
       
       if (participation) {
+        console.log('Participation sauvegardée:', participation);
       }
     }
     
-    if (campaign.type === 'form') {
-      setStep('end');
-      return;
-    }
-
     setStep('game');
   };
   
@@ -61,12 +57,7 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
   const getGameComponent = () => {
     switch (campaign.type) {
       case 'quiz':
-        return (
-          <QuizGame
-            config={campaign.gameConfig.quiz}
-            design={campaign.design}
-          />
-        );
+        return <Quiz config={campaign.gameConfig.quiz} onConfigChange={() => {}} />;
       case 'memory':
         return <Memory config={campaign.gameConfig.memory} onConfigChange={() => {}} />;
       case 'puzzle':
@@ -85,7 +76,8 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
           <h2
             className="text-2xl font-bold mb-4"
             style={{
-              ...campaign.design.textStyles?.title
+              color: campaign.design.titleColor,
+              fontFamily: campaign.design.titleFont
             }}
           >
             {campaign.screens[0]?.title || 'Ready to Play?'}
@@ -93,8 +85,8 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
           <p
             className="mb-6"
             style={{
-              ...campaign.design.textStyles?.description,
-              color: campaign.design.textStyles?.description?.color || getContrastColor(campaign.design.blockColor)
+              color: getContrastColor(campaign.design.blockColor),
+              fontFamily: campaign.design.textFont
             }}
           >
             {campaign.screens[0]?.description || 'Click below to participate'}
@@ -104,9 +96,9 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
             className="px-8 py-3 font-medium transition-colors duration-200 hover:opacity-90"
             style={{
               backgroundColor: campaign.design.buttonColor,
+              color: getContrastColor(campaign.design.buttonColor),
               borderRadius: campaign.design.borderRadius,
-              ...campaign.design.textStyles?.button,
-              color: campaign.design.textStyles?.button?.color || getContrastColor(campaign.design.buttonColor)
+              fontFamily: campaign.design.textFont
             }}
           >
             {campaign.screens[0]?.buttonText || 'Participate'}
@@ -116,54 +108,20 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
 
       {step === 'form' && (
         <div className="w-full max-w-md p-6">
-          {/* Cadre blanc spécial pour les quiz */}
-          {campaign.type === 'quiz' ? (
-            <div 
-              className="p-8 rounded-2xl shadow-xl border-2"
-              style={{
-                backgroundColor: '#ffffff',
-                borderColor: '#e5e7eb'
-              }}
-            >
-              <h2
-                className="text-2xl font-bold mb-4"
-                style={{
-                  ...campaign.design.textStyles?.title
-                }}
-              >
-                {campaign.screens[1]?.title || 'Your Information'}
-              </h2>
-              <DynamicContactForm
-                fields={fields}
-                submitLabel={participationLoading ? "Chargement..." : (campaign.screens[1]?.buttonText || "Continuer")}
-                onSubmit={handleFormSubmit}
-                textStyles={{
-                  label: campaign.design.textStyles?.label,
-                  button: campaign.design.textStyles?.button
-                }}
-              />
-            </div>
-          ) : (
-            <div>
-              <h2
-                className="text-2xl font-bold mb-4"
-                style={{
-                  ...campaign.design.textStyles?.title
-                }}
-              >
-                {campaign.screens[1]?.title || 'Your Information'}
-              </h2>
-              <DynamicContactForm
-                fields={fields}
-                submitLabel={participationLoading ? "Chargement..." : (campaign.screens[1]?.buttonText || "Continuer")}
-                onSubmit={handleFormSubmit}
-                textStyles={{
-                  label: campaign.design.textStyles?.label,
-                  button: campaign.design.textStyles?.button
-                }}
-              />
-            </div>
-          )}
+          <h2
+            className="text-2xl font-bold mb-4"
+            style={{
+              color: campaign.design.titleColor,
+              fontFamily: campaign.design.titleFont
+            }}
+          >
+            {campaign.screens[1]?.title || 'Your Information'}
+          </h2>
+          <DynamicContactForm
+            fields={fields}
+            submitLabel={participationLoading ? "Chargement..." : (campaign.screens[1]?.buttonText || "Continuer")}
+            onSubmit={handleFormSubmit}
+          />
         </div>
       )}
 
@@ -171,18 +129,17 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
         <div className="w-full p-6">
           {getGameComponent()}
           <div className="mt-6 text-center">
-          <button
-            onClick={handleEnd}
-            className="px-6 py-3 transition-colors duration-200 hover:opacity-90"
-            style={{
-              backgroundColor: campaign.design.buttonColor,
-              color: campaign.design.textStyles?.button?.color || getContrastColor(campaign.design.buttonColor),
-              borderRadius: campaign.design.borderRadius,
-              ...campaign.design.textStyles?.button
-            }}
-          >
-            {campaign.screens[2]?.buttonText || 'Submit'}
-          </button>
+            <button
+              onClick={handleEnd}
+              className="px-6 py-3 transition-colors duration-200 hover:opacity-90"
+              style={{
+                backgroundColor: campaign.design.buttonColor,
+                color: getContrastColor(campaign.design.buttonColor),
+                borderRadius: campaign.design.borderRadius
+              }}
+            >
+              {campaign.screens[2]?.buttonText || 'Submit'}
+            </button>
           </div>
         </div>
       )}
@@ -192,7 +149,8 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
           <h2
             className="text-3xl font-bold mb-4"
             style={{
-              ...campaign.design.textStyles?.title
+              color: campaign.design.titleColor,
+              fontFamily: campaign.design.titleFont
             }}
           >
             {campaign.screens[3]?.confirmationTitle || 'Thank you!'}
@@ -200,8 +158,8 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
           <p
             className="mb-6"
             style={{
-              ...campaign.design.textStyles?.description,
-              color: campaign.design.textStyles?.description?.color || getContrastColor(campaign.design.blockColor)
+              color: getContrastColor(campaign.design.blockColor),
+              fontFamily: campaign.design.textFont
             }}
           >
             {campaign.screens[3]?.confirmationMessage || 'Your participation has been recorded.'}
@@ -211,9 +169,8 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
             className="px-6 py-3 font-medium transition-colors duration-200 hover:opacity-90"
             style={{
               backgroundColor: campaign.design.buttonColor,
-              color: campaign.design.textStyles?.button?.color || getContrastColor(campaign.design.buttonColor),
-              borderRadius: campaign.design.borderRadius,
-              ...campaign.design.textStyles?.button
+              color: getContrastColor(campaign.design.buttonColor),
+              borderRadius: campaign.design.borderRadius
             }}
           >
             {campaign.screens[3]?.replayButtonText || 'Play Again'}

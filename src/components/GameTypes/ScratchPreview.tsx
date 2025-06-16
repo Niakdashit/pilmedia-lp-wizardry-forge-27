@@ -1,173 +1,198 @@
 
-import React, { useState, useEffect } from 'react';
-import ScratchGameGrid from './ScratchGameGrid';
+import React, { useState, useRef, useEffect } from 'react';
+import { motion } from 'framer-motion';
 
 interface ScratchPreviewProps {
   config?: any;
-  onFinish?: (result: 'win' | 'lose') => void;
-  onStart?: () => void;
-  disabled?: boolean;
-  buttonLabel?: string;
-  buttonColor?: string;
-  gameSize?: 'small' | 'medium' | 'large' | 'xlarge';
-  gamePosition?: 'top' | 'center' | 'bottom' | 'left' | 'right';
-  autoStart?: boolean;
-  isModal?: boolean;
 }
 
-const STORAGE_KEY = 'scratch_session_card';
-const SCRATCH_STARTED_KEY = 'scratch_session_started';
+const ScratchPreview: React.FC<ScratchPreviewProps> = ({ config = {} }) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [isRevealed, setIsRevealed] = useState(false);
+  const [scratchPercentage, setScratchPercentage] = useState(0);
+  const [result] = useState<'win' | 'lose'>(Math.random() > 0.7 ? 'win' : 'lose');
 
-const ScratchPreview: React.FC<ScratchPreviewProps> = ({
-  config = {},
-  onFinish,
-  onStart,
-  disabled = false,
-  buttonLabel = 'Gratter',
-  buttonColor = '#841b60',
-  gameSize = 'medium',
-  autoStart = false,
-  isModal = false
-}) => {
-  const [gameStarted, setGameStarted] = useState(autoStart && !disabled);
-  const [finishedCards, setFinishedCards] = useState<Set<number>>(new Set());
-  const [hasWon, setHasWon] = useState(false);
-  const [selectedCard, setSelectedCard] = useState<number | null>(null);
-  const [scratchStarted, setScratchStarted] = useState(false);
-  const [showResult, setShowResult] = useState(false);
-
-  // Clear any previous session data on component mount to ensure fresh start
   useEffect(() => {
-    localStorage.removeItem(STORAGE_KEY);
-    localStorage.removeItem(SCRATCH_STARTED_KEY);
-  }, []);
+    if (canvasRef.current && !isRevealed) {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
 
-  // Automatically start the game in preview mode if autoStart is enabled
-  useEffect(() => {
-    if (autoStart && !gameStarted && !disabled) {
-      setGameStarted(true);
-      if (onStart) onStart();
-    }
-  }, [autoStart, gameStarted, disabled, onStart]);
+      // Set canvas size
+      canvas.width = 280;
+      canvas.height = 200;
 
-  const handleGameStart = () => {
-    if (disabled) return;
-    setGameStarted(true);
-    if (onStart) onStart();
-  };
+      // Draw scratch layer
+      ctx.fillStyle = config?.scratchColor || '#C0C0C0';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-  const handleCardSelect = (index: number) => {
-    // Only allow selection if no scratch has started and no card is selected
-    if (!scratchStarted && selectedCard === null) {
-      setSelectedCard(index);
-    }
-  };
+      // Add scratch pattern text
+      ctx.fillStyle = '#999';
+      ctx.font = '16px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('Grattez ici', canvas.width / 2, canvas.height / 2 - 10);
+      ctx.fillText('pour découvrir', canvas.width / 2, canvas.height / 2 + 10);
 
-  const handleScratchStart = (index: number) => {
-    // Only allow scratch to start on the selected card and if no scratch has started yet
-    if (selectedCard === index && !scratchStarted) {
-      setScratchStarted(true);
-      localStorage.setItem(STORAGE_KEY, index.toString());
-      localStorage.setItem(SCRATCH_STARTED_KEY, 'true');
-    }
-  };
+      let isDrawing = false;
 
-  const handleCardFinish = (result: 'win' | 'lose', cardIndex: number) => {
-    const newFinishedCards = new Set([...finishedCards, cardIndex]);
-    setFinishedCards(newFinishedCards);
-
-    if (result === 'win') {
-      setHasWon(true);
-    }
-
-    const totalCards = config?.cards?.length || 1;
-    if (newFinishedCards.size >= totalCards) {
-      setShowResult(true);
-      setTimeout(() => {
-        if (onFinish) {
-          onFinish(hasWon || result === 'win' ? 'win' : 'lose');
+      const getXY = (e: MouseEvent | TouchEvent) => {
+        const rect = canvas.getBoundingClientRect();
+        if ('touches' in e) {
+          return {
+            x: (e.touches[0].clientX - rect.left) * (canvas.width / rect.width),
+            y: (e.touches[0].clientY - rect.top) * (canvas.height / rect.height),
+          };
         }
-      }, 1000);
+        return {
+          x: (e.clientX - rect.left) * (canvas.width / rect.width),
+          y: (e.clientY - rect.top) * (canvas.height / rect.height),
+        };
+      };
+
+      const scratch = (e: MouseEvent | TouchEvent) => {
+        if (!isDrawing) return;
+        const { x, y } = getXY(e);
+
+        ctx.globalCompositeOperation = 'destination-out';
+        ctx.beginPath();
+        ctx.arc(x, y, 20, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Calculate scratch percentage
+        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const pixels = imageData.data;
+        let transparentPixels = 0;
+
+        for (let i = 0; i < pixels.length; i += 4) {
+          if (pixels[i + 3] === 0) transparentPixels++;
+        }
+
+        const percentage = (transparentPixels / (pixels.length / 4)) * 100;
+        setScratchPercentage(Math.round(percentage));
+
+        if (percentage >= (config?.requiredScratchPercent || 70) && !isRevealed) {
+          setIsRevealed(true);
+        }
+      };
+
+      const startDrawing = () => (isDrawing = true);
+      const stopDrawing = () => (isDrawing = false);
+
+      canvas.addEventListener('mousedown', startDrawing);
+      canvas.addEventListener('mousemove', scratch);
+      canvas.addEventListener('mouseup', stopDrawing);
+      canvas.addEventListener('mouseleave', stopDrawing);
+      canvas.addEventListener('touchstart', startDrawing);
+      canvas.addEventListener('touchmove', scratch);
+      canvas.addEventListener('touchend', stopDrawing);
+
+      return () => {
+        canvas.removeEventListener('mousedown', startDrawing);
+        canvas.removeEventListener('mousemove', scratch);
+        canvas.removeEventListener('mouseup', stopDrawing);
+        canvas.removeEventListener('mouseleave', stopDrawing);
+        canvas.removeEventListener('touchstart', startDrawing);
+        canvas.removeEventListener('touchmove', scratch);
+        canvas.removeEventListener('touchend', stopDrawing);
+      };
     }
-  };
+  }, [config, isRevealed]);
 
-  // Ensure we have at least one card with proper defaults
-  const cards = config?.cards && config.cards.length > 0 ? config.cards : [{
-    id: 1,
-    revealImage: config?.revealImage || '',
-    revealMessage: config?.revealMessage || 'Félicitations !',
-    scratchColor: config?.scratchColor || '#C0C0C0'
-  }];
+  const getResultContent = () => {
+    if (config?.revealImage) {
+      return (
+        <img
+          src={config.revealImage}
+          alt="Contenu révélé"
+          className="w-full h-full object-cover"
+        />
+      );
+    }
 
-  if (!gameStarted) {
     return (
-      <div className="w-full h-full flex flex-col bg-gradient-to-br from-gray-50 to-gray-100">
-        {/* Zone d'aperçu des cartes - prend tout l'espace disponible */}
-        <div className="flex-1 w-full h-full">
-          <ScratchGameGrid
-            cards={cards}
-            gameSize={gameSize}
-            gameStarted={false}
-            onCardFinish={() => {}}
-            onCardSelect={() => {}}
-            onScratchStart={() => {}}
-            selectedCard={null}
-            scratchStarted={false}
-            config={config}
-            isModal={isModal}
-          />
+      <div className={`w-full h-full flex flex-col items-center justify-center ${
+        result === 'win' ? 'bg-gradient-to-br from-yellow-300 to-yellow-500' : 'bg-gradient-to-br from-gray-300 to-gray-500'
+      }`}>
+        <div className="text-4xl mb-2">
+          {result === 'win' ? '🎉' : '😔'}
         </div>
-
-        {/* Bouton de démarrage - uniquement si pas en modal */}
-        {!isModal && (
-          <div className="flex-shrink-0 text-center py-8 px-4">
-            <div className="space-y-4">
-              <div className="space-y-2">
-                <h3 className="text-xl font-bold text-gray-800">Cartes à gratter</h3>
-                <p className="text-gray-600">Cliquez sur le bouton pour commencer à jouer</p>
-              </div>
-              
-              <button
-                onClick={handleGameStart}
-                disabled={disabled}
-                className="px-8 py-4 rounded-xl font-semibold text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 shadow-lg"
-                style={{
-                  backgroundColor: disabled ? '#6b7280' : buttonColor
-                }}
-              >
-                {disabled ? 'Remplissez le formulaire' : buttonLabel}
-              </button>
-            </div>
-          </div>
-        )}
+        <div className="text-lg font-bold text-gray-800">
+          {result === 'win' 
+            ? config?.winMessage || 'Félicitations !' 
+            : config?.loseMessage || 'Dommage !'}
+        </div>
       </div>
     );
-  }
+  };
+
+  const resetGame = () => {
+    setIsRevealed(false);
+    setScratchPercentage(0);
+    // Trigger useEffect to redraw canvas
+    if (canvasRef.current) {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+      if (ctx) {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+  };
 
   return (
-    <div className="w-full h-full flex flex-col bg-gradient-to-br from-gray-50 to-gray-100">
-      {/* Zone de jeu - prend tout l'espace disponible */}
-      <div className="flex-1 w-full h-full">
-        <ScratchGameGrid
-          cards={cards}
-          gameSize={gameSize}
-          gameStarted={gameStarted}
-          onCardFinish={handleCardFinish}
-          onCardSelect={handleCardSelect}
-          onScratchStart={handleScratchStart}
-          selectedCard={selectedCard}
-          scratchStarted={scratchStarted}
-          config={config}
-          isModal={isModal}
-        />
+    <div className="w-full max-w-sm mx-auto p-4">
+      <div className="mb-4 text-center">
+        <div className="text-sm text-gray-600 mb-2">
+          Progression: {scratchPercentage}% / {config?.requiredScratchPercent || 70}%
+        </div>
+        <div className="w-full bg-gray-200 rounded-full h-2">
+          <div 
+            className="bg-[#841b60] h-2 rounded-full transition-all duration-300"
+            style={{ width: `${Math.min(scratchPercentage, 100)}%` }}
+          />
+        </div>
       </div>
 
-      {/* Messages et instructions - en bas si nécessaire */}
-      {!showResult && !isModal && (
-        <div className="flex-shrink-0 py-4">
-          {/* Contenu d'instruction si nécessaire */}
+      <div className="relative w-full aspect-[7/5] rounded-lg overflow-hidden border-2 border-gray-300">
+        {/* Background content */}
+        <div className="absolute inset-0">
+          {getResultContent()}
         </div>
-      )}
+
+        {/* Scratch canvas overlay */}
+        {!isRevealed && (
+          <canvas
+            ref={canvasRef}
+            className="absolute inset-0 w-full h-full cursor-crosshair"
+            style={{ touchAction: 'none' }}
+          />
+        )}
+
+        {/* Result overlay */}
+        {isRevealed && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="absolute inset-0 flex items-center justify-center bg-black/80"
+          >
+            <div className="bg-white p-4 rounded-lg shadow-lg text-center">
+              <div className="text-2xl mb-2">
+                {result === 'win' ? '🎊' : '💫'}
+              </div>
+              <p className="text-lg font-bold mb-2">
+                {result === 'win' 
+                  ? config?.winMessage || 'Vous avez gagné !' 
+                  : config?.loseMessage || 'Réessayez !'}
+              </p>
+              <button
+                onClick={resetGame}
+                className="px-4 py-2 bg-[#841b60] text-white rounded hover:bg-[#6d1650] transition-colors"
+              >
+                Rejouer
+              </button>
+            </div>
+          </motion.div>
+        )}
+      </div>
     </div>
   );
 };
