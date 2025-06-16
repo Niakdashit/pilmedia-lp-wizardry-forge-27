@@ -1,11 +1,11 @@
 export const getWheelPreviewConfig = (campaign: any) => {
-  const position = campaign?.gameConfig?.wheel?.position || 'centre';
-  const centerImage = campaign?.gameConfig?.wheel?.centerImage;
-  const centerLogo = campaign?.design?.centerLogo || campaign?.gameConfig?.wheel?.centerImage;
-  const theme = campaign?.gameConfig?.wheel?.theme || 'default';
+  const position = campaign?.config?.roulette?.position || 'centre';
+  const centerImage = campaign?.config?.roulette?.centerImage;
+  const centerLogo = campaign?.design?.centerLogo || campaign?.config?.roulette?.centerImage;
+  const theme = campaign?.config?.roulette?.theme || 'default';
 
-  const borderColor = campaign?.gameConfig?.wheel?.borderColor || '#841b60';
-  const borderOutlineColor = campaign?.gameConfig?.wheel?.borderOutlineColor || '#FFD700';
+  const borderColor = campaign?.config?.roulette?.borderColor || '#841b60';
+  const borderOutlineColor = campaign?.config?.roulette?.borderOutlineColor || '#FFD700';
 
   const customColors = campaign?.design?.customColors;
 

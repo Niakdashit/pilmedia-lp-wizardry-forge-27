@@ -379,7 +379,7 @@ export interface BrandColors {
   accent?: string;
 }
 export function applyBrandStyleToWheel(campaign: any, colors: BrandColors) {
-  const updatedSegments = (campaign?.gameConfig?.wheel?.segments || []).map(
+  const updatedSegments = (campaign?.config?.roulette?.segments || []).map(
     (segment: any, index: number) => ({
       ...segment,
       color:
@@ -388,10 +388,10 @@ export function applyBrandStyleToWheel(campaign: any, colors: BrandColors) {
   );
   return {
     ...campaign,
-    gameConfig: {
-      ...campaign.gameConfig,
-      wheel: {
-        ...(campaign.gameConfig?.wheel || {}),
+    config: {
+      ...campaign.config,
+      roulette: {
+        ...(campaign.config?.roulette || {}),
         borderColor: colors.primary,
         borderOutlineColor: colors.accent || colors.secondary || colors.primary,
         segmentColor1: colors.primary,

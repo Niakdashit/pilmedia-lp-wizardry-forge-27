@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -10,48 +11,56 @@ const Gamification: React.FC = () => {
       name: 'Roue de la fortune',
       description: 'Faites tourner la roue pour gagner des réductions, cadeaux ou surprises',
       color: '#841b60',
+      image: '/gamification/wheel.svg',
       type: 'wheel' as CampaignType
     },
     {
       name: 'Carte à gratter',
       description: 'Découvrez ce qui se cache sous la surface grattable',
       color: '#2c7be5',
+      image: '/gamification/scratch.svg',
       type: 'scratch' as CampaignType
     },
     {
       name: 'Jeu de mémoire',
       description: 'Trouvez les paires correspondantes pour gagner des points',
       color: '#00b8d9',
+      image: '/gamification/memory.svg',
       type: 'memory' as CampaignType
     },
     {
       name: 'Quiz interactifs',
       description: 'Testez vos connaissances et gagnez des points en fonction de vos réponses',
       color: '#f5803e',
+      image: '/gamification/quiz.svg',
       type: 'quiz' as CampaignType
     },
     {
       name: 'Formulaire dynamique',
       description: 'Créez des formulaires interactifs avec logique conditionnelle et validation en temps réel',
       color: '#36b37e',
+      image: '/gamification/form.svg',
       type: 'form' as CampaignType
     },
     {
       name: 'Puzzle',
       description: 'Reconstituez l\'image en déplaçant les pièces au bon endroit',
       color: '#6554c0',
+      image: '/gamification/puzzle.svg',
       type: 'puzzle' as CampaignType
     },
     {
       name: 'Dés chanceux',
       description: 'Lancez les dés et tentez votre chance pour gagner des lots',
       color: '#ff5630',
+      image: '/gamification/dice.svg',
       type: 'dice' as CampaignType
     },
     {
       name: 'Jackpot',
       description: 'Faites tourner les rouleaux et tentez de décrocher le jackpot',
       color: '#ffd700',
+      image: '/gamification/jackpot.svg',
       type: 'jackpot' as CampaignType
     }
   ];
@@ -61,13 +70,15 @@ const Gamification: React.FC = () => {
       <PageHeader
         title="Gamification"
         actions={
-          <Link
-            to="/modern-campaign/new?type=wheel"
-            className="inline-flex items-center px-8 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-          >
-            <Plus className="w-5 h-5 mr-2" />
-            Nouveau Jeu
-          </Link>
+          <div className="flex gap-x-4">
+            <Link
+              to="/modern-wizard"
+              className="inline-flex items-center px-6 py-2.5 bg-[#841b60] text-white font-semibold rounded-xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-base"
+            >
+              <Plus className="w-5 h-5 mr-2" />
+              Nouveau Jeu
+            </Link>
+          </div>
         }
       />
 
@@ -86,14 +97,16 @@ const Gamification: React.FC = () => {
               const IconComponent = getCampaignTypeIcon(game.type);
               return (
                 <div key={index} className="border border-gray-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow duration-300">
-                  <div className="h-24 flex items-center justify-center" style={{ backgroundColor: game.color }}>
-                    <IconComponent className="w-10 h-10 text-white" />
+                  <div className="relative h-24 overflow-hidden">
+                    <img src={game.image} alt={game.name} className="object-cover w-full h-full" />
+                    <div className="absolute inset-0" style={{ backgroundColor: game.color, opacity: 0.3 }} />
+                    <IconComponent className="absolute inset-0 m-auto w-10 h-10 text-white" />
                   </div>
                   <div className="p-4">
                     <h3 className="font-bold text-gray-800 mb-1">{game.name}</h3>
                     <p className="text-sm text-gray-600 mb-4">{game.description}</p>
                     <Link 
-                      to={`/modern-campaign/new?type=${game.type}`} 
+                      to={`/modern-wizard?type=${game.type}`} 
                       className="w-full px-4 py-2 bg-gray-100 text-gray-800 font-medium rounded-lg hover:bg-gray-200 transition-colors duration-200 block text-center"
                     >
                       Créer une campagne
@@ -197,3 +210,4 @@ const Gamification: React.FC = () => {
 };
 
 export default Gamification;
+

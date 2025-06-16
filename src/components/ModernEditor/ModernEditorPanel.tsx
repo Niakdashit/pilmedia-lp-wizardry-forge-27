@@ -1,86 +1,75 @@
 
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import ModernGeneralTab from './ModernGeneralTab';
-import ModernGameTab from './ModernGameTab';
-import ModernDesignTab from './ModernDesignTab';
-import ModernFormTab from './ModernFormTab';
-import ModernGameConfigTab from './ModernGameConfigTab';
-import ModernMobileTab from './ModernMobileTab';
+import SetupStep from './steps/SetupStep';
+import ContentStep from './steps/ContentStep';
+import GameStep from './steps/GameStep';
+import WordingStep from './steps/WordingStep';
+import PreviewStep from './steps/PreviewStep';
+import PublishStep from './steps/PublishStep';
 
 interface ModernEditorPanelProps {
-  activeTab: string;
+  activeStep: string;
   campaign: any;
   setCampaign: (updater: (prev: any) => any) => void;
+  onNextStep?: () => void;
+  onPrevStep?: () => void;
 }
 
 const ModernEditorPanel: React.FC<ModernEditorPanelProps> = ({
-  activeTab,
+  activeStep,
   campaign,
-  setCampaign
+  setCampaign,
+  onNextStep,
+  onPrevStep
 }) => {
-  const handleGameSizeChange = (size: 'small' | 'medium' | 'large' | 'xlarge') => {
-    setCampaign((prev: any) => ({
-      ...prev,
-      gameSize: size
-    }));
+  // Default handlers if not provided
+  const handleNext = onNextStep || (() => console.log('Next step'));
+  const handlePrev = onPrevStep || (() => console.log('Previous step'));
+
+  // Ensure campaign has default structure to prevent undefined errors
+  const safeSetCampaign = (updater: any) => {
+    if (typeof updater === 'function') {
+      setCampaign((prev: any) => {
+        const currentCampaign = prev || { design: {}, type: 'wheel' };
+        return updater(currentCampaign);
+      });
+    } else {
+      setCampaign(() => updater || { design: {}, type: 'wheel' });
+    }
   };
 
-  const handleGamePositionChange = (position: 'top' | 'center' | 'bottom' | 'left' | 'right') => {
-    setCampaign((prev: any) => ({
-      ...prev,
-      gamePosition: position
-    }));
-  };
-
-  const handleButtonConfigChange = (config: any) => {
-    setCampaign((prev: any) => ({
-      ...prev,
-      buttonConfig: config
-    }));
-  };
+  const safeCampaign = campaign || { design: {}, type: 'wheel' };
 
   return (
-    <div className="h-full bg-white/50 backdrop-blur-sm">
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={activeTab}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.2 }}
-          className="h-full overflow-y-auto"
-        >
-          <div className="p-6">
-            {activeTab === 'general' && (
-              <ModernGeneralTab campaign={campaign} setCampaign={setCampaign} />
-            )}
-            {activeTab === 'game' && (
-              <ModernGameTab campaign={campaign} setCampaign={setCampaign} />
-            )}
-            {activeTab === 'gameconfig' && (
-              <ModernGameConfigTab
-                gameSize={campaign.gameSize}
-                gamePosition={campaign.gamePosition}
-                onGameSizeChange={handleGameSizeChange}
-                onGamePositionChange={handleGamePositionChange}
-                buttonConfig={campaign.buttonConfig}
-                onButtonConfigChange={handleButtonConfigChange}
-              />
-            )}
-            {activeTab === 'design' && (
-              <ModernDesignTab campaign={campaign} setCampaign={setCampaign} />
-            )}
-            {activeTab === 'form' && (
-              <ModernFormTab campaign={campaign} setCampaign={setCampaign} />
-            )}
-            {activeTab === 'mobile' && (
-              <ModernMobileTab campaign={campaign} setCampaign={setCampaign} />
-            )}
-          </div>
-        </motion.div>
-      </AnimatePresence>
-    </div>
+    <>
+      {activeStep === 'setup' && (
+        <SetupStep 
+          campaign={safeCampaign} 
+          setCampaign={safeSetCampaign}
+          onNext={handleNext}
+        />
+      )}
+      {activeStep === 'content' && (
+        <ContentStep 
+          campaign={safeCampaign}
+          setCampaign={safeSetCampaign}
+          onNext={handleNext}
+          onPrev={handlePrev}
+        />
+      )}
+      {activeStep === 'game' && (
+        <GameStep />
+      )}
+      {activeStep === 'wording' && (
+        <WordingStep />
+      )}
+      {activeStep === 'preview' && (
+        <PreviewStep />
+      )}
+      {activeStep === 'publish' && (
+        <PublishStep />
+      )}
+    </>
   );
 };
 

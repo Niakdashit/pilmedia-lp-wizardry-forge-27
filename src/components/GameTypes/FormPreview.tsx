@@ -49,6 +49,7 @@ const FormPreview: React.FC<FormPreviewProps> = ({
   };
 
   const containerStyle = {
+    width: '100%',
     backgroundColor: containerBackground,
     borderColor: borderColor,
     borderRadius: containerBorderRadius,

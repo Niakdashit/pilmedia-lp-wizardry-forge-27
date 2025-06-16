@@ -16,7 +16,7 @@ interface EditorMobilePanelProps {
   campaignType: CampaignType;
 }
 
-const EditorMobilePanelProps: React.FC<EditorMobilePanelProps> = ({
+const EditorMobilePanel: React.FC<EditorMobilePanelProps> = ({
   isOpen,
   onClose,
   activeTab,
@@ -25,6 +25,22 @@ const EditorMobilePanelProps: React.FC<EditorMobilePanelProps> = ({
   setCampaign,
   campaignType
 }) => {
+  const handleNextStep = () => {
+    const steps = ['setup', 'content', 'game', 'wording', 'preview', 'publish'];
+    const currentIndex = steps.indexOf(activeTab);
+    if (currentIndex < steps.length - 1) {
+      onTabChange(steps[currentIndex + 1]);
+    }
+  };
+
+  const handlePrevStep = () => {
+    const steps = ['setup', 'content', 'game', 'wording', 'preview', 'publish'];
+    const currentIndex = steps.indexOf(activeTab);
+    if (currentIndex > 0) {
+      onTabChange(steps[currentIndex - 1]);
+    }
+  };
+
   return (
     <>
       {/* Mobile overlay */}
@@ -66,9 +82,11 @@ const EditorMobilePanelProps: React.FC<EditorMobilePanelProps> = ({
               {/* Panel content */}
               <div className="flex-1 overflow-y-auto min-w-0">
                 <ModernEditorPanel
-                  activeTab={activeTab}
+                  activeStep={activeTab}
                   campaign={campaign}
                   setCampaign={setCampaign}
+                  onNextStep={handleNextStep}
+                  onPrevStep={handlePrevStep}
                 />
               </div>
             </div>
@@ -79,4 +97,4 @@ const EditorMobilePanelProps: React.FC<EditorMobilePanelProps> = ({
   );
 };
 
-export default EditorMobilePanelProps;
+export default EditorMobilePanel;

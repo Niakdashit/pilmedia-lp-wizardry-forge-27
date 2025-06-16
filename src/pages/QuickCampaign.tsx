@@ -12,7 +12,9 @@ const QuickCampaign: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#ebf4f7]">
-      <QuickCampaignCreator />
+      <div className="space-y-6">
+        <QuickCampaignCreator />
+      </div>
     </div>
   );
 };

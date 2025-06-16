@@ -14,5 +14,5 @@ test('generatePreviewCampaign reflects segment count', () => {
   useQuickCampaignStore.getState().setSelectedGameType('wheel');
   useQuickCampaignStore.getState().setSegmentCount(3);
   const preview = useQuickCampaignStore.getState().generatePreviewCampaign();
-  assert.equal(preview.gameConfig.wheel.segments.length, 3);
+  assert.equal(preview.config.roulette.segments.length, 3);
 });

@@ -22,13 +22,13 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
   campaign,
   setCampaign
 }) => {
-  const segments = campaign.gameConfig?.wheel?.segments || [];
-  const borderColor = campaign.gameConfig?.wheel?.borderColor || '#841b60';
-  const borderOutlineColor = campaign.gameConfig?.wheel?.borderOutlineColor || '#FFD700';
-  const segmentColor1 = campaign.gameConfig?.wheel?.segmentColor1 || '#FFB3BA';
-  const segmentColor2 = campaign.gameConfig?.wheel?.segmentColor2 || '#BAFFC9';
+  const segments = campaign.config?.roulette?.segments || [];
+  const borderColor = campaign.config?.roulette?.borderColor || '#841b60';
+  const borderOutlineColor = campaign.config?.roulette?.borderOutlineColor || '#FFD700';
+  const segmentColor1 = campaign.config?.roulette?.segmentColor1 || '#FFB3BA';
+  const segmentColor2 = campaign.config?.roulette?.segmentColor2 || '#BAFFC9';
   // 🟢 Position ajoutée
-  const position = campaign.gameConfig?.wheel?.position || 'centre';
+  const position = campaign.config?.roulette?.position || 'centre';
 
   // Initialize with 4 default segments
   useEffect(() => {
@@ -52,10 +52,10 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
       }];
       setCampaign((prev: any) => ({
         ...prev,
-        gameConfig: {
-          ...prev.gameConfig,
-          wheel: {
-            ...prev.gameConfig?.wheel,
+        config: {
+          ...prev.config,
+          roulette: {
+            ...prev.config?.roulette,
             segments: defaultSegments,
             segmentColor1,
             segmentColor2
@@ -68,10 +68,10 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
     const newPosition = e.target.value;
     setCampaign((prev: any) => ({
       ...prev,
-      gameConfig: {
-        ...prev.gameConfig,
-        wheel: {
-          ...prev.gameConfig?.wheel,
+      config: {
+        ...prev.config,
+        roulette: {
+          ...prev.config?.roulette,
           position: newPosition
         }
       }
@@ -82,10 +82,10 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
     const segmentColor = newSegmentIndex % 2 === 0 ? segmentColor1 : segmentColor2;
     setCampaign((prev: any) => ({
       ...prev,
-      gameConfig: {
-        ...prev.gameConfig,
-        wheel: {
-          ...prev.gameConfig?.wheel,
+      config: {
+        ...prev.config,
+        roulette: {
+          ...prev.config?.roulette,
           segments: [...segments, {
             label: '',
             color: segmentColor,
@@ -103,10 +103,10 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
     };
     setCampaign((prev: any) => ({
       ...prev,
-      gameConfig: {
-        ...prev.gameConfig,
-        wheel: {
-          ...prev.gameConfig?.wheel,
+      config: {
+        ...prev.config,
+        roulette: {
+          ...prev.config?.roulette,
           segments: updatedSegments
         }
       }
@@ -116,10 +116,10 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
     const updatedSegments = segments.filter((_: any, i: number) => i !== index);
     setCampaign((prev: any) => ({
       ...prev,
-      gameConfig: {
-        ...prev.gameConfig,
-        wheel: {
-          ...prev.gameConfig?.wheel,
+      config: {
+        ...prev.config,
+        roulette: {
+          ...prev.config?.roulette,
           segments: updatedSegments
         }
       }
@@ -128,10 +128,10 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
   const updateBorderColor = (color: string) => {
     setCampaign((prev: any) => ({
       ...prev,
-      gameConfig: {
-        ...prev.gameConfig,
-        wheel: {
-          ...prev.gameConfig?.wheel,
+      config: {
+        ...prev.config,
+        roulette: {
+          ...prev.config?.roulette,
           borderColor: color
         }
       }
@@ -140,10 +140,10 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
   const updateBorderOutlineColor = (color: string) => {
     setCampaign((prev: any) => ({
       ...prev,
-      gameConfig: {
-        ...prev.gameConfig,
-        wheel: {
-          ...prev.gameConfig?.wheel,
+      config: {
+        ...prev.config,
+        roulette: {
+          ...prev.config?.roulette,
           borderOutlineColor: color
         }
       }
@@ -154,25 +154,18 @@ const WheelGameConfig: React.FC<WheelGameConfigProps> = ({
     setCampaign((prev: any) => {
       const newConfig = {
         ...prev,
-        gameConfig: {
-          ...prev.gameConfig,
-          wheel: {
-            ...prev.gameConfig?.wheel,
+        config: {
+          ...prev.config,
+          roulette: {
+            ...prev.config?.roulette,
             [colorKey]: color
           }
         }
       };
-      if (newConfig.gameConfig.wheel.segments) {
-        newConfig.gameConfig.wheel.segments = newConfig.gameConfig.wheel.segments.map((segment: any, index: number) => ({
+      if (newConfig.config.roulette.segments) {
+        newConfig.config.roulette.segments = newConfig.config.roulette.segments.map((segment: any, index: number) => ({
           ...segment,
-          color:
-            index % 2 === 0
-              ? colorIndex === 1
-                ? color
-                : newConfig.gameConfig.wheel.segmentColor1 || segmentColor1
-              : colorIndex === 2
-                ? color
-                : newConfig.gameConfig.wheel.segmentColor2 || segmentColor2
+          color: index % 2 === 0 ? colorIndex === 1 ? color : newConfig.config.roulette.segmentColor1 || segmentColor1 : colorIndex === 2 ? color : newConfig.config.roulette.segmentColor2 || segmentColor2
         }));
       }
       return newConfig;

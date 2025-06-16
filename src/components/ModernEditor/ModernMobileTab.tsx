@@ -1,6 +1,6 @@
 
 import React from 'react';
-import CampaignMobile from './CampaignMobile';
+import CampaignMobile from '../CampaignEditor/CampaignMobile';
 
 interface ModernMobileTabProps {
   campaign: any;

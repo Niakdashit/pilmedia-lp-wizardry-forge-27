@@ -4,18 +4,21 @@ import DashboardHeader from '../components/Dashboard/DashboardHeader';
 import QuickCreationSection from '../components/Dashboard/QuickCreationSection';
 import StatsGrid from '../components/Dashboard/StatsGrid';
 import RecentCampaigns from '../components/Dashboard/RecentCampaigns';
+import PageContainer from '../components/Layout/PageContainer';
 
 const Dashboard: React.FC = () => {
   return (
-    <div className="-mx-6 -mt-6">
+    <PageContainer>
       <DashboardHeader />
-
+      
       <div className="px-6 space-y-6">
-        <QuickCreationSection />
+        <div className="mt-6">
+          <QuickCreationSection />
+        </div>
         <StatsGrid />
         <RecentCampaigns />
       </div>
-    </div>
+    </PageContainer>
   );
 };
 
