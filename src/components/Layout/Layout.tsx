@@ -1,15 +1,12 @@
 
 import React, { useEffect } from 'react';
+import { Outlet } from 'react-router-dom';
 import Sidebar from '../Sidebar/Sidebar';
 import { useAppContext } from '../../context/AppContext';
 import { Menu } from 'lucide-react';
 import logo from '@/assets/logo.png';
 
-interface LayoutProps {
-  children: React.ReactNode;
-}
-
-const Layout: React.FC<LayoutProps> = ({ children }) => {
+const Layout: React.FC = () => {
   const { sidebarCollapsed, toggleSidebar } = useAppContext();
 
   // Empêche le scroll du background seulement quand la sidebar est ouverte sur mobile
@@ -52,7 +49,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         </header>
         <main className="flex-1 overflow-y-auto w-full">
           <div className="p-3 sm:p-6 w-full max-w-full">
-            {children}
+            <Outlet />
           </div>
         </main>
       </div>
