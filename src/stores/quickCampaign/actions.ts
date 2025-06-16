@@ -1,7 +1,7 @@
 
-import { QuickCampaignState, CustomColors, JackpotColors } from '../../types/quickCampaign';
+import { CustomColors, JackpotColors } from '../../types/quickCampaign';
 
-export const createActions = (set: any, get: any) => ({
+export const createActions = (set: any) => ({
   setCurrentStep: (step: number) => set({ currentStep: step }),
   setCampaignName: (name: string) => set({ campaignName: name }),
   setSelectedGameType: (type: string) => set({ selectedGameType: type }),

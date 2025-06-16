@@ -9,7 +9,7 @@ type QuickCampaignStore = QuickCampaignState & QuickCampaignActions;
 
 export const useQuickCampaignStore = create<QuickCampaignStore>((set, get) => ({
   ...initialState,
-  ...createActions(set, get),
+  ...createActions(set),
   
   generatePreviewCampaign: () => {
     const state = get();
