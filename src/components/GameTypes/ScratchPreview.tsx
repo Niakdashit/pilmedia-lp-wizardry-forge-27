@@ -1,37 +1,106 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { motion } from 'framer-motion';
 
 interface ScratchPreviewProps {
   config?: any;
+  onFinish?: (result: 'win' | 'lose') => void;
+  onStart?: () => void;
+  disabled?: boolean;
+  buttonLabel?: string;
+  buttonColor?: string;
+  gameSize?: 'small' | 'medium' | 'large' | 'xlarge';
+  gamePosition?: 'top' | 'center' | 'bottom' | 'left' | 'right';
+  isPreview?: boolean;
+  instantWinConfig?: {
+    mode: 'instant_winner';
+    winProbability: number;
+    maxWinners?: number;
+    winnersCount?: number;
+  };
 }
 
-const ScratchPreview: React.FC<ScratchPreviewProps> = ({ config = {} }) => {
+const ScratchPreview: React.FC<ScratchPreviewProps> = ({ 
+  config = {},
+  onFinish,
+  onStart,
+  disabled = false,
+  buttonLabel = 'Gratter',
+  buttonColor = '#841b60',
+  gameSize = 'medium',
+  instantWinConfig
+}) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isRevealed, setIsRevealed] = useState(false);
   const [scratchPercentage, setScratchPercentage] = useState(0);
-  const [result] = useState<'win' | 'lose'>(Math.random() > 0.7 ? 'win' : 'lose');
+  const [gameStarted, setGameStarted] = useState(false);
+  const [result, setResult] = useState<'win' | 'lose' | null>(null);
+
+  // Calculer le résultat avec la logique instant win
+  const calculateResult = (): 'win' | 'lose' => {
+    if (instantWinConfig && instantWinConfig.mode === 'instant_winner') {
+      const hasReachedMaxWinners = instantWinConfig.maxWinners 
+        ? (instantWinConfig.winnersCount || 0) >= instantWinConfig.maxWinners 
+        : false;
+      
+      if (hasReachedMaxWinners) return 'lose';
+      
+      return Math.random() < instantWinConfig.winProbability ? 'win' : 'lose';
+    }
+    
+    return Math.random() > 0.7 ? 'win' : 'lose';
+  };
+
+  // Gérer le démarrage du jeu
+  const handleGameStart = () => {
+    if (disabled) return;
+    
+    setGameStarted(true);
+    const gameResult = calculateResult();
+    setResult(gameResult);
+    
+    if (onStart) onStart();
+  };
+
+  // Dimensions selon la taille
+  const getDimensions = () => {
+    switch (gameSize) {
+      case 'small': return { width: 200, height: 140 };
+      case 'medium': return { width: 280, height: 200 };
+      case 'large': return { width: 350, height: 250 };
+      case 'xlarge': return { width: 420, height: 300 };
+      default: return { width: 280, height: 200 };
+    }
+  };
+
+  const { width, height } = getDimensions();
 
   useEffect(() => {
-    if (canvasRef.current && !isRevealed) {
+    if (canvasRef.current && gameStarted && !isRevealed) {
       const canvas = canvasRef.current;
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
-      // Set canvas size
-      canvas.width = 280;
-      canvas.height = 200;
+      canvas.width = width;
+      canvas.height = height;
 
-      // Draw scratch layer
-      ctx.fillStyle = config?.scratchColor || '#C0C0C0';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // Add scratch pattern text
-      ctx.fillStyle = '#999';
-      ctx.font = '16px Arial';
-      ctx.textAlign = 'center';
-      ctx.fillText('Grattez ici', canvas.width / 2, canvas.height / 2 - 10);
-      ctx.fillText('pour découvrir', canvas.width / 2, canvas.height / 2 + 10);
+      // Surface à gratter
+      if (config?.scratchSurface) {
+        const img = new Image();
+        img.onload = () => {
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+        };
+        img.src = config.scratchSurface;
+      } else {
+        ctx.fillStyle = config?.scratchColor || '#C0C0C0';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        // Texture métallique par défaut
+        ctx.fillStyle = '#999';
+        ctx.font = '16px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('Grattez ici', canvas.width / 2, canvas.height / 2 - 10);
+        ctx.fillText('pour découvrir', canvas.width / 2, canvas.height / 2 + 10);
+      }
 
       let isDrawing = false;
 
@@ -58,7 +127,7 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({ config = {} }) => {
         ctx.arc(x, y, 20, 0, Math.PI * 2);
         ctx.fill();
 
-        // Calculate scratch percentage
+        // Calculer le pourcentage gratté
         const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
         const pixels = imageData.data;
         let transparentPixels = 0;
@@ -70,12 +139,19 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({ config = {} }) => {
         const percentage = (transparentPixels / (pixels.length / 4)) * 100;
         setScratchPercentage(Math.round(percentage));
 
-        if (percentage >= (config?.requiredScratchPercent || 70) && !isRevealed) {
+        const requiredPercent = config?.scratchArea || 70;
+        if (percentage >= requiredPercent && !isRevealed) {
           setIsRevealed(true);
+          if (onFinish && result) {
+            setTimeout(() => onFinish(result), 500);
+          }
         }
       };
 
-      const startDrawing = () => (isDrawing = true);
+      const startDrawing = (e: Event) => {
+        e.preventDefault();
+        isDrawing = true;
+      };
       const stopDrawing = () => (isDrawing = false);
 
       canvas.addEventListener('mousedown', startDrawing);
@@ -96,7 +172,7 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({ config = {} }) => {
         canvas.removeEventListener('touchend', stopDrawing);
       };
     }
-  }, [config, isRevealed]);
+  }, [config, isRevealed, gameStarted, result, width, height, onFinish]);
 
   const getResultContent = () => {
     if (config?.revealImage) {
@@ -118,8 +194,8 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({ config = {} }) => {
         </div>
         <div className="text-lg font-bold text-gray-800">
           {result === 'win' 
-            ? config?.winMessage || 'Félicitations !' 
-            : config?.loseMessage || 'Dommage !'}
+            ? config?.revealMessage || 'Félicitations !' 
+            : 'Dommage, réessayez !'}
         </div>
       </div>
     );
@@ -128,38 +204,64 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({ config = {} }) => {
   const resetGame = () => {
     setIsRevealed(false);
     setScratchPercentage(0);
-    // Trigger useEffect to redraw canvas
-    if (canvasRef.current) {
-      const canvas = canvasRef.current;
-      const ctx = canvas.getContext('2d');
-      if (ctx) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-      }
-    }
+    setGameStarted(false);
+    setResult(null);
   };
 
-  return (
-    <div className="w-full max-w-sm mx-auto p-4">
-      <div className="mb-4 text-center">
-        <div className="text-sm text-gray-600 mb-2">
-          Progression: {scratchPercentage}% / {config?.requiredScratchPercent || 70}%
+  // Si le jeu n'a pas encore commencé, afficher le bouton
+  if (!gameStarted) {
+    return (
+      <div className="flex flex-col items-center space-y-4">
+        <div 
+          className="relative rounded-lg overflow-hidden border-2 border-gray-300"
+          style={{ width: `${width}px`, height: `${height}px` }}
+        >
+          <div className="absolute inset-0 bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center">
+            <div className="text-white text-center">
+              <div className="text-2xl mb-2">🎫</div>
+              <div className="text-sm">Carte à gratter</div>
+            </div>
+          </div>
         </div>
-        <div className="w-full bg-gray-200 rounded-full h-2">
-          <div 
-            className="bg-[#841b60] h-2 rounded-full transition-all duration-300"
-            style={{ width: `${Math.min(scratchPercentage, 100)}%` }}
-          />
-        </div>
+        
+        <button
+          onClick={handleGameStart}
+          disabled={disabled}
+          className="px-6 py-3 rounded-lg font-semibold text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90"
+          style={{ 
+            backgroundColor: disabled ? '#6b7280' : buttonColor
+          }}
+        >
+          {disabled ? 'Remplissez le formulaire' : buttonLabel}
+        </button>
       </div>
+    );
+  }
 
-      <div className="relative w-full aspect-[7/5] rounded-lg overflow-hidden border-2 border-gray-300">
-        {/* Background content */}
+  return (
+    <div className="w-full flex flex-col items-center space-y-4">
+      {gameStarted && !isRevealed && (
+        <div className="text-center">
+          <div className="text-sm text-gray-600 mb-2">
+            Progression: {scratchPercentage}% / {config?.scratchArea || 70}%
+          </div>
+          <div className="w-full bg-gray-200 rounded-full h-2 max-w-xs mx-auto">
+            <div 
+              className="bg-[#841b60] h-2 rounded-full transition-all duration-300"
+              style={{ width: `${Math.min(scratchPercentage, 100)}%` }}
+            />
+          </div>
+        </div>
+      )}
+
+      <div className="relative rounded-lg overflow-hidden border-2 border-gray-300" style={{ width: `${width}px`, height: `${height}px` }}>
+        {/* Contenu à révéler */}
         <div className="absolute inset-0">
           {getResultContent()}
         </div>
 
-        {/* Scratch canvas overlay */}
-        {!isRevealed && (
+        {/* Canvas de grattage */}
+        {gameStarted && !isRevealed && (
           <canvas
             ref={canvasRef}
             className="absolute inset-0 w-full h-full cursor-crosshair"
@@ -167,7 +269,7 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({ config = {} }) => {
           />
         )}
 
-        {/* Result overlay */}
+        {/* Overlay de résultat */}
         {isRevealed && (
           <motion.div
             initial={{ opacity: 0 }}
@@ -180,8 +282,8 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({ config = {} }) => {
               </div>
               <p className="text-lg font-bold mb-2">
                 {result === 'win' 
-                  ? config?.winMessage || 'Vous avez gagné !' 
-                  : config?.loseMessage || 'Réessayez !'}
+                  ? config?.revealMessage || 'Vous avez gagné !' 
+                  : 'Réessayez !'}
               </p>
               <button
                 onClick={resetGame}

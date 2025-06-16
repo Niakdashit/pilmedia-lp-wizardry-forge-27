@@ -1,18 +1,12 @@
 
-import React, { useEffect, useRef } from 'react';
-import WheelPreview from '../GameTypes/WheelPreview';
-import ScratchPreview from '../GameTypes/ScratchPreview';
-import MemoryPreview from '../GameTypes/MemoryPreview';
-import PuzzlePreview from '../GameTypes/PuzzlePreview';
-import DicePreview from '../GameTypes/DicePreview';
-import { GameSize } from '../configurators/GameSizeSelector';
-import { GamePosition } from '../configurators/GamePositionSelector';
+import React from 'react';
+import GameCanvasPreview from '../CampaignEditor/GameCanvasPreview';
 
 interface ModernEditorCanvasProps {
   campaign: any;
   previewDevice: 'desktop' | 'tablet' | 'mobile';
-  gameSize: GameSize;
-  gamePosition: GamePosition;
+  gameSize: 'small' | 'medium' | 'large' | 'xlarge';
+  gamePosition: 'top' | 'center' | 'bottom' | 'left' | 'right';
 }
 
 const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
@@ -21,316 +15,84 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
   gameSize,
   gamePosition
 }) => {
-  const canvasRef = useRef<HTMLDivElement>(null);
+  console.log('ModernEditorCanvas received:', { gameSize, gamePosition, buttonConfig: campaign.buttonConfig });
 
-  // Force re-render when game size or position changes
-  useEffect(() => {
-    if (canvasRef.current) {
-      // Trigger a reflow to ensure changes are applied
-      canvasRef.current.style.display = 'none';
-      canvasRef.current.offsetHeight; // Trigger reflow
-      canvasRef.current.style.display = '';
-    }
-  }, [gameSize, gamePosition]);
+  const getCanvasStyle = () => {
+    const baseStyle = {
+      width: '100%',
+      height: '100%',
+      backgroundColor: campaign.design?.background || '#f8fafc',
+      transition: 'all 0.3s ease',
+    };
 
-  const getDeviceStyles = () => {
     switch (previewDevice) {
-      case 'mobile':
-        return {
-          width: '375px',
-          height: '667px',
-          maxWidth: '100%'
-        };
       case 'tablet':
         return {
-          width: '768px',
-          height: '1024px',
-          maxWidth: '100%'
-        };
-      default:
-        return {
-          width: '100%',
-          height: '600px'
-        };
-    }
-  };
-
-  const renderGamePreview = () => {
-    const gameConfig = campaign.gameConfig || {};
-    const key = `${campaign.type}-${gameSize}-${gamePosition}-${Date.now()}`;
-    
-    switch (campaign.type) {
-      case 'wheel':
-        return <WheelPreview key={key} campaign={campaign} config={gameConfig.wheel} gameSize={gameSize} gamePosition={gamePosition} previewDevice={previewDevice} />;
-      case 'scratch':
-        return <ScratchPreview key={key} config={gameConfig.scratch} />;
-      case 'memory':
-        return <MemoryPreview key={key} config={gameConfig.memory} />;
-      case 'puzzle':
-        return <PuzzlePreview key={key} config={gameConfig.puzzle} />;
-      case 'dice':
-        return <DicePreview key={key} config={gameConfig.dice} />;
-      case 'jackpot':
-        return <div key={key} className="p-4 border-2 border-dashed border-gray-300 rounded-lg">
-            <div className="text-center text-gray-500">
-              <div className="text-sm">Aperçu Jackpot</div>
-              <div className="text-xs mt-1">🎰 Machine à sous</div>
-            </div>
-          </div>;
-      default:
-        return <div key={key} className="p-4 border-2 border-dashed border-gray-300 rounded-lg">
-            <div className="text-center text-gray-500">
-              <div className="text-sm">Aperçu du jeu : {campaign.type}</div>
-              <div className="text-xs mt-1">Position : {gamePosition}</div>
-            </div>
-          </div>;
-    }
-  };
-
-  const renderHeaderBanner = () => {
-    const headerBanner = campaign.design?.headerBanner;
-    if (!headerBanner?.enabled || !headerBanner?.image) {
-      return null;
-    }
-
-    return (
-      <div className="w-full bg-cover bg-center bg-no-repeat" style={{
-        backgroundImage: `url(${headerBanner.image})`,
-        height: headerBanner.height || '120px'
-      }}>
-        {headerBanner.overlay && (
-          <div className="w-full h-full bg-black/20"></div>
-        )}
-      </div>
-    );
-  };
-
-  const renderFooterBanner = () => {
-    const footerBanner = campaign.design?.footerBanner;
-    if (!footerBanner?.enabled || !footerBanner?.image) {
-      return null;
-    }
-
-    return (
-      <div className="w-full bg-cover bg-center bg-no-repeat" style={{
-        backgroundImage: `url(${footerBanner.image})`,
-        height: footerBanner.height || '120px'
-      }}>
-        {footerBanner.overlay && (
-          <div className="w-full h-full bg-black/20"></div>
-        )}
-      </div>
-    );
-  };
-
-  const renderTextContents = (textContents: any[], baseStyle: any) => {
-    if (!textContents || textContents.length === 0) return null;
-    
-    return textContents.map((content: any, index: number) => (
-      <span 
-        key={content.id || index}
-        style={{
           ...baseStyle,
-          fontWeight: content.bold ? 'bold' : 'normal',
-          fontStyle: content.italic ? 'italic' : 'normal',
-          textDecoration: content.underline ? 'underline' : 'none',
-          display: 'block',
-          marginBottom: index < textContents.length - 1 ? '8px' : '0'
-        }}
-      >
-        {content.text}
-      </span>
-    ));
+          maxWidth: '768px',
+          maxHeight: '1024px',
+          margin: '0 auto',
+          border: '1px solid #e5e7eb',
+          borderRadius: '12px',
+          overflow: 'hidden'
+        };
+      case 'mobile':
+        return {
+          ...baseStyle,
+          maxWidth: '375px',
+          maxHeight: '812px',
+          margin: '0 auto',
+          border: '1px solid #e5e7eb',
+          borderRadius: '20px',
+          overflow: 'hidden'
+        };
+      default:
+        return baseStyle;
+    }
   };
 
-  const renderHeaderCustomText = () => {
-    const headerText = campaign.design?.headerText;
-    if (!headerText?.enabled) {
-      return null;
-    }
-
-    const frameStyles = headerText.showFrame ? {
-      backgroundColor: headerText.frameColor || '#ffffff',
-      border: `1px solid ${headerText.frameBorderColor || '#e5e7eb'}`,
-      borderRadius: '8px',
-      padding: '12px 16px',
-      margin: '0 16px',
-      boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-    } : {
-      padding: '12px 16px'
-    };
-
-    const getTextSize = () => {
-      const sizeMap: Record<string, string> = {
-        small: '14px',
-        medium: '18px',
-        large: '24px'
-      };
-      return sizeMap[headerText.size as string] || '18px';
-    };
-
-    const baseTextStyle = {
-      color: headerText.color || '#000000',
-      fontFamily: campaign.design?.fontFamily || 'Inter',
-      fontSize: getTextSize(),
-      textAlign: 'center' as const
-    };
-
-    return (
-      <div className="w-full flex justify-center" style={frameStyles}>
-        <div className="my-[20px] px-[42px]">
-          {headerText.textContents && headerText.textContents.length > 0 ? (
-            renderTextContents(headerText.textContents, baseTextStyle)
-          ) : (
-            <p style={baseTextStyle} className="text-xl">
-              {headerText.text || 'Texte d\'en-tête'}
-            </p>
-          )}
-        </div>
-      </div>
-    );
-  };
-
-  const renderFooterCustomText = () => {
-    const footerText = campaign.design?.footerText;
-    if (!footerText?.enabled) {
-      return null;
-    }
-
-    const frameStyles = footerText.showFrame ? {
-      backgroundColor: footerText.frameColor || '#ffffff',
-      border: `1px solid ${footerText.frameBorderColor || '#e5e7eb'}`,
-      borderRadius: '8px',
-      padding: '12px 16px',
-      margin: '0 16px',
-      boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-    } : {
-      padding: '12px 16px'
-    };
-
-    const getTextSize = () => {
-      const sizeMap: Record<string, string> = {
-        small: '14px',
-        medium: '18px',
-        large: '24px'
-      };
-      return sizeMap[footerText.size as string] || '18px';
-    };
-
-    const baseTextStyle = {
-      color: footerText.color || '#000000',
-      fontFamily: campaign.design?.fontFamily || 'Inter',
-      fontSize: getTextSize(),
-      textAlign: 'center' as const
-    };
-
-    return (
-      <div className="w-full flex justify-center" style={frameStyles}>
-        <div className="my-0 py-[12px]">
-          {footerText.textContents && footerText.textContents.length > 0 ? (
-            renderTextContents(footerText.textContents, baseTextStyle)
-          ) : (
-            <p style={baseTextStyle}>
-              {footerText.text || 'Texte de pied de page'}
-            </p>
-          )}
-        </div>
-      </div>
-    );
-  };
-
-  const renderCustomText = () => {
-    const customText = campaign.design?.customText;
-    if (!customText?.enabled || !customText?.text) {
-      return null;
-    }
-
-    const getTextSize = () => {
-      switch (customText.size) {
-        case 'small':
-          return 'text-sm';
-        case 'large':
-          return 'text-2xl';
-        default:
-          return 'text-lg';
+  // Créer une copie de la campagne avec les paramètres de taille et position mis à jour
+  const enhancedCampaign = {
+    ...campaign,
+    gameSize,
+    gamePosition,
+    // S'assurer que la configuration des boutons est cohérente
+    buttonConfig: {
+      ...campaign.buttonConfig,
+      // Synchroniser avec la configuration du jeu si elle existe
+      text: campaign.buttonConfig?.text || campaign.gameConfig?.[campaign.type]?.buttonLabel,
+      color: campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor || '#841b60'
+    },
+    // S'assurer que les couleurs personnalisées sont incluses
+    gameConfig: {
+      ...campaign.gameConfig,
+      [campaign.type]: {
+        ...campaign.gameConfig?.[campaign.type],
+        // Synchroniser la configuration des boutons
+        buttonLabel: campaign.buttonConfig?.text || campaign.gameConfig?.[campaign.type]?.buttonLabel,
+        buttonColor: campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor,
+        // Garder les autres couleurs existantes
+        containerBackgroundColor: campaign.gameConfig?.[campaign.type]?.containerBackgroundColor,
+        backgroundColor: campaign.gameConfig?.[campaign.type]?.backgroundColor,
+        borderColor: campaign.gameConfig?.[campaign.type]?.borderColor,
+        borderWidth: campaign.gameConfig?.[campaign.type]?.borderWidth,
+        slotBorderColor: campaign.gameConfig?.[campaign.type]?.slotBorderColor,
+        slotBorderWidth: campaign.gameConfig?.[campaign.type]?.slotBorderWidth,
+        slotBackgroundColor: campaign.gameConfig?.[campaign.type]?.slotBackgroundColor,
       }
-    };
-
-    const getPositionStyles = () => {
-      const baseStyles = 'absolute z-20 max-w-md';
-      const positionMap: Record<string, string> = {
-        top: `${baseStyles} top-4 left-1/2 transform -translate-x-1/2`,
-        bottom: `${baseStyles} bottom-4 left-1/2 transform -translate-x-1/2`,
-        left: `${baseStyles} left-4 top-1/2 transform -translate-y-1/2`,
-        right: `${baseStyles} right-4 top-1/2 transform -translate-y-1/2`,
-        center: `${baseStyles} top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2`
-      };
-      return positionMap[customText.position as string] || positionMap.center;
-    };
-
-    const frameStyles = customText.showFrame ? {
-      backgroundColor: customText.frameColor || '#ffffff',
-      border: `1px solid ${customText.frameBorderColor || '#e5e7eb'}`,
-      borderRadius: '8px',
-      padding: '12px 16px',
-      boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
-    } : {};
-
-    return (
-      <div className={getPositionStyles()} style={frameStyles}>
-        <p className={`${getTextSize()} font-medium text-center`} style={{
-          color: customText.color || '#000000',
-          fontFamily: campaign.design?.fontFamily || 'Inter'
-        }}>
-          {customText.text}
-        </p>
-      </div>
-    );
+    }
   };
 
-  const deviceStyles = getDeviceStyles();
-  const backgroundStyle = campaign.design?.backgroundImage ? {
-    backgroundImage: `url(${campaign.design.backgroundImage})`,
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat'
-  } : {
-    backgroundColor: campaign.design?.background || '#f8fafc'
-  };
+  console.log('Enhanced campaign for preview:', enhancedCampaign);
 
   return (
-    <div className="h-full flex flex-col">
-      {/* Zone d'aperçu */}
-      <div className="flex-1 flex items-center justify-center p-8 bg-gray-100">
-        <div ref={canvasRef} className="bg-white rounded-lg shadow-lg overflow-hidden relative" style={deviceStyles}>
-          {/* Conteneur avec image de fond complète */}
-          <div className="h-full w-full relative flex flex-col" style={backgroundStyle}>
-            {/* Overlay pour améliorer la lisibilité si nécessaire */}
-            {campaign.design?.backgroundImage && (
-              <div className="absolute inset-0 bg-black/10"></div>
-            )}
-            
-            {/* Header Section */}
-            <div className="relative z-10 w-full">
-              {renderHeaderBanner()}
-              {renderHeaderCustomText()}
-            </div>
-            
-            {/* Texte personnalisé (legacy positioning) */}
-            {renderCustomText()}
-            
-            {/* Zone de jeu repositionnable */}
-            <div className="flex-1 relative">
-              {renderGamePreview()}
-            </div>
-
-            {/* Footer Section */}
-            <div className="relative z-10 w-full">
-              {renderFooterCustomText()}
-              {renderFooterBanner()}
-            </div>
-          </div>
-        </div>
+    <div className="w-full h-full flex items-center justify-center bg-gray-100 p-4">
+      <div style={getCanvasStyle()}>
+        <GameCanvasPreview 
+          campaign={enhancedCampaign}
+          className="w-full h-full"
+          key={`preview-${gameSize}-${gamePosition}-${campaign.buttonConfig?.color}-${JSON.stringify(campaign.gameConfig?.[campaign.type])}`}
+        />
       </div>
     </div>
   );

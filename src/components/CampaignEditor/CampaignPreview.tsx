@@ -50,8 +50,9 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
     <div dangerouslySetInnerHTML={{ __html: design.customHTML }} />
   ) : null;
 
-  // Choisir le bon funnel selon le type de campagne
+  // Choisir le bon funnel selon le type de campagne - logique corrigée
   const getFunnelComponent = () => {
+    // Types de jeux qui utilisent FunnelUnlockedGame (jeux instantanés)
     if (['wheel', 'scratch', 'jackpot', 'dice'].includes(campaign.type)) {
       return (
         <FunnelUnlockedGame 
@@ -61,6 +62,7 @@ const CampaignPreview: React.FC<CampaignPreviewProps> = ({ campaign }) => {
         />
       );
     }
+    // Types de jeux qui utilisent FunnelStandard (jeux avec étapes)
     return <FunnelStandard campaign={campaign} />;
   };
 

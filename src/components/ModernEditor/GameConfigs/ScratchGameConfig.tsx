@@ -1,6 +1,6 @@
-
-import React from 'react';
-import { Cookie, Image, Settings } from 'lucide-react';
+import React, { useState } from 'react';
+import { Image, Percent, Type } from 'lucide-react';
+import ColorPaletteSelector from './ColorPaletteSelector';
 
 interface ScratchGameConfigProps {
   campaign: any;
@@ -11,6 +11,8 @@ const ScratchGameConfig: React.FC<ScratchGameConfigProps> = ({
   campaign,
   setCampaign
 }) => {
+  const [selectedPalette, setSelectedPalette] = useState<any>(undefined);
+
   const handleScratchChange = (field: string, value: any) => {
     setCampaign((prev: any) => ({
       ...prev,
@@ -24,48 +26,70 @@ const ScratchGameConfig: React.FC<ScratchGameConfigProps> = ({
     }));
   };
 
+  const handlePaletteSelect = (palette: any) => {
+    setSelectedPalette(palette);
+    
+    setCampaign((prev: any) => ({
+      ...prev,
+      gameConfig: {
+        ...prev.gameConfig,
+        scratch: {
+          ...prev.gameConfig?.scratch,
+          scratchColor: palette.colors.background || palette.colors.primary,
+          palette: palette
+        }
+      }
+    }));
+  };
+
   return (
     <div className="space-y-6">
+      {/* Palette de couleurs */}
+      <ColorPaletteSelector
+        selectedPalette={selectedPalette}
+        onPaletteSelect={handlePaletteSelect}
+        gameType="scratch"
+      />
+
       {/* Zone à gratter */}
-      <div className="space-y-3">
+      <div className="space-y-2">
         <label className="flex items-center text-sm font-medium text-gray-700">
-          <Cookie className="w-4 h-4 mr-2" />
-          Zone à gratter ({campaign.gameConfig?.scratch?.scratchArea || 70}%)
+          <Percent className="w-4 h-4 mr-2" />
+          Pourcentage à gratter pour révéler
         </label>
         <input
           type="range"
-          min="50"
+          min="30"
           max="90"
           value={campaign.gameConfig?.scratch?.scratchArea || 70}
           onChange={(e) => handleScratchChange('scratchArea', parseInt(e.target.value))}
           className="w-full"
         />
-        <div className="flex justify-between text-xs text-gray-500">
-          <span>50%</span>
-          <span>90%</span>
+        <div className="text-xs text-gray-500 text-center">
+          {campaign.gameConfig?.scratch?.scratchArea || 70}%
         </div>
-        <p className="text-xs text-gray-500">
-          Pourcentage de la surface qui doit être grattée pour révéler le contenu
-        </p>
       </div>
 
       {/* Message de révélation */}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-700">Message à révéler</label>
+        <label className="flex items-center text-sm font-medium text-gray-700">
+          <Type className="w-4 h-4 mr-2" />
+          Message de révélation
+        </label>
         <input
           type="text"
           value={campaign.gameConfig?.scratch?.revealMessage || 'Félicitations !'}
           onChange={(e) => handleScratchChange('revealMessage', e.target.value)}
-          placeholder="Félicitations !"
           className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
+          placeholder="Message affiché en cas de victoire"
         />
       </div>
 
-      {/* Image de fond à révéler */}
+      {/* Image de révélation */}
       <div className="space-y-2">
         <label className="flex items-center text-sm font-medium text-gray-700">
           <Image className="w-4 h-4 mr-2" />
-          Image à révéler (optionnel)
+          Image de révélation (optionnel)
         </label>
         <input
           type="file"
@@ -83,22 +107,22 @@ const ScratchGameConfig: React.FC<ScratchGameConfigProps> = ({
           <div className="mt-2">
             <img
               src={campaign.gameConfig.scratch.revealImage}
-              alt="Aperçu de l'image à révéler"
-              className="w-full h-32 object-cover rounded border"
+              alt="Aperçu"
+              className="w-full h-20 object-cover rounded border"
             />
             <button
               onClick={() => handleScratchChange('revealImage', '')}
               className="mt-1 text-xs text-red-600 hover:text-red-800"
             >
-              Supprimer l'image
+              Supprimer
             </button>
           </div>
         )}
       </div>
 
-      {/* Surface de grattage personnalisée */}
+      {/* Surface à gratter personnalisée */}
       <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-700">Surface de grattage (optionnel)</label>
+        <label className="text-sm font-medium text-gray-700">Surface à gratter personnalisée</label>
         <input
           type="file"
           accept="image/*"
@@ -115,7 +139,7 @@ const ScratchGameConfig: React.FC<ScratchGameConfigProps> = ({
           <div className="mt-2">
             <img
               src={campaign.gameConfig.scratch.scratchSurface}
-              alt="Aperçu de la surface"
+              alt="Surface à gratter"
               className="w-full h-20 object-cover rounded border"
             />
             <button
@@ -127,43 +151,8 @@ const ScratchGameConfig: React.FC<ScratchGameConfigProps> = ({
           </div>
         )}
         <p className="text-xs text-gray-500">
-          Image qui sera utilisée comme surface à gratter (par défaut: gris métallique)
+          Image qui sera utilisée comme surface à gratter (par défaut: couleur métallique)
         </p>
-      </div>
-
-      {/* Image de fond */}
-      <div className="space-y-2">
-        <label className="flex items-center text-sm font-medium text-gray-700">
-          <Settings className="w-4 h-4 mr-2" />
-          Image de fond de l'interface (optionnel)
-        </label>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => {
-            const file = e.target.files?.[0];
-            if (file) {
-              const url = URL.createObjectURL(file);
-              handleScratchChange('backgroundImage', url);
-            }
-          }}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-        />
-        {campaign.gameConfig?.scratch?.backgroundImage && (
-          <div className="mt-2">
-            <img
-              src={campaign.gameConfig.scratch.backgroundImage}
-              alt="Aperçu du fond"
-              className="w-full h-20 object-cover rounded border"
-            />
-            <button
-              onClick={() => handleScratchChange('backgroundImage', '')}
-              className="mt-1 text-xs text-red-600 hover:text-red-800"
-            >
-              Supprimer
-            </button>
-          </div>
-        )}
       </div>
     </div>
   );
