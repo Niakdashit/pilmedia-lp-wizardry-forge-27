@@ -40,7 +40,9 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
       customColors: customColors,
       buttonColor: customColors.primary,
       titleColor: mockCampaign.design?.titleColor || '#000000',
-      background: mockCampaign.design?.background || '#f8fafc'
+      background: mockCampaign.design?.backgroundImage ? 'transparent' : (mockCampaign.design?.background || '#f8fafc'),
+      backgroundImage: mockCampaign.design?.backgroundImage,
+      mobileBackgroundImage: mockCampaign.design?.mobileBackgroundImage || mockCampaign.design?.backgroundImage
     },
     buttonConfig: {
       ...mockCampaign.buttonConfig,
@@ -93,27 +95,30 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: enhancedCampaign.design?.background || '#f9fafb',
       position: 'relative' as const,
       overflow: 'hidden' as const
     };
 
-    const mobileBg = enhancedCampaign.design?.mobileBackgroundImage;
-    const bgImage = selectedDevice === 'mobile' && mobileBg
-      ? mobileBg
+    // Utiliser l'image de fond appropriée selon l'appareil
+    const backgroundImage = selectedDevice === 'mobile'
+      ? enhancedCampaign.design?.mobileBackgroundImage || enhancedCampaign.design?.backgroundImage
       : enhancedCampaign.design?.backgroundImage;
 
-    if (bgImage) {
+    if (backgroundImage) {
       return {
         ...baseStyle,
-        backgroundImage: `url(${bgImage})`,
+        backgroundImage: `url(${backgroundImage})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
+        backgroundRepeat: 'no-repeat',
+        backgroundColor: 'transparent'
       };
     }
 
-    return baseStyle;
+    return {
+      ...baseStyle,
+      backgroundColor: enhancedCampaign.design?.background || '#f9fafb'
+    };
   };
 
   const getDeviceContainerStyle = () => {
@@ -153,7 +158,7 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
           <div style={getContainerStyle()}>
             {/* Background overlay for better contrast if background image exists */}
             {(selectedDevice === 'mobile'
-              ? enhancedCampaign.design?.mobileBackgroundImage
+              ? enhancedCampaign.design?.mobileBackgroundImage || enhancedCampaign.design?.backgroundImage
               : enhancedCampaign.design?.backgroundImage) && (
               <div
                 className="absolute inset-0 bg-black opacity-20"
