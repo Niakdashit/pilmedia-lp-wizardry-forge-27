@@ -1,4 +1,3 @@
-
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -27,7 +26,6 @@ import AdminTeam from './pages/AdminTeam';
 import AdminAlerts from './pages/AdminAlerts';
 import AdminReports from './pages/AdminReports';
 import AdminSettings from './pages/AdminSettings';
-import ModernEditorPage from './pages/ModernEditorPage';
 import ModernCampaignEditor from './pages/ModernCampaignEditor';
 import AdminLayout from './components/Admin/AdminLayout';
 import Layout from './components/Layout/Layout';
@@ -52,7 +50,7 @@ function App() {
           pauseOnHover
           theme="light"
         />
-        
+
         {isLoginRoute ? (
           <Routes>
             <Route path="/" element={<Login />} />
@@ -79,8 +77,9 @@ function App() {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/campaigns" element={<Campaigns />} />
               <Route path="/campaign/:id" element={<CampaignEditor />} />
+              {/* ModernCampaignEditor sur les 2 routes */}
               <Route path="/modern-campaign/new" element={<ModernCampaignEditor />} />
-              <Route path="/modern-campaign/:id" element={<ModernEditorPage />} />
+              <Route path="/modern-campaign/:id" element={<ModernCampaignEditor />} />
               <Route path="/quick-campaign" element={<QuickCampaign />} />
               <Route path="/modern-wizard" element={<ModernWizardPage />} />
               <Route path="/gamification" element={<Gamification />} />
