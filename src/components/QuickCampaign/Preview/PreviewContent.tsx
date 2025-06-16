@@ -3,7 +3,6 @@ import React from 'react';
 import FunnelUnlockedGame from '../../funnels/FunnelUnlockedGame';
 import FunnelStandard from '../../funnels/FunnelStandard';
 import DeviceFrame from './DeviceFrame';
-import { useQuickCampaignStore } from '../../../stores/quickCampaignStore';
 
 interface PreviewContentProps {
   selectedDevice: 'desktop' | 'tablet' | 'mobile';
@@ -32,7 +31,6 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
   customColors,
   jackpotColors
 }) => {
-  const { backgroundImageUrl } = useQuickCampaignStore();
   const unlockedTypes = ['wheel', 'scratch', 'jackpot', 'dice'];
 
   // Enhanced campaign with custom colors and proper configuration
@@ -43,10 +41,7 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
       customColors: customColors,
       buttonColor: customColors.primary,
       titleColor: mockCampaign.design?.titleColor || '#000000',
-      background: mockCampaign.design?.background || '#f8fafc',
-      // Utiliser l'image de fond uploadée depuis le store
-      backgroundImage: backgroundImageUrl || mockCampaign.design?.backgroundImage,
-      mobileBackgroundImage: backgroundImageUrl || mockCampaign.design?.mobileBackgroundImage
+      background: mockCampaign.design?.background || '#f8fafc'
     },
     buttonConfig: {
       ...mockCampaign.buttonConfig,
@@ -86,8 +81,7 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
           gameConfig: enhancedCampaign.gameConfig,
           design: enhancedCampaign.design,
           screens: enhancedCampaign.screens,
-          customColors: customColors,
-          backgroundImageUrl: backgroundImageUrl
+          customColors: customColors
         })}
       />
     );
@@ -105,11 +99,10 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
       overflow: 'hidden' as const
     };
 
-    // Prioriser l'image uploadée depuis le store
-    const mobileBg = backgroundImageUrl || enhancedCampaign.design?.mobileBackgroundImage;
+    const mobileBg = enhancedCampaign.design?.mobileBackgroundImage;
     const bgImage = selectedDevice === 'mobile' && mobileBg
       ? mobileBg
-      : (backgroundImageUrl || enhancedCampaign.design?.backgroundImage);
+      : enhancedCampaign.design?.backgroundImage;
 
     if (bgImage) {
       return {
@@ -143,10 +136,9 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
             }}
           >
             {/* Background overlay for better contrast if background image exists */}
-            {(backgroundImageUrl || 
-              (selectedDevice === 'mobile'
-                ? enhancedCampaign.design?.mobileBackgroundImage
-                : enhancedCampaign.design?.backgroundImage)) && (
+            {(selectedDevice === 'mobile'
+              ? enhancedCampaign.design?.mobileBackgroundImage
+              : enhancedCampaign.design?.backgroundImage) && (
               <div
                 className="absolute inset-0 bg-black opacity-20"
                 style={{ zIndex: 1 }}
@@ -174,3 +166,4 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
 };
 
 export default PreviewContent;
+

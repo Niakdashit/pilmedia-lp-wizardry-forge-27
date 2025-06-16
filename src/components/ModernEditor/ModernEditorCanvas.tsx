@@ -1,7 +1,7 @@
 
 import React, { useState, useRef } from 'react';
 import { Plus } from 'lucide-react';
-import GameCanvasPreview from './GameCanvasPreview';
+import GameCanvasPreview from '../CampaignEditor/GameCanvasPreview';
 import TextElement from './TextElement';
 import ImageElement from './ImageElement';
 import CanvasHeader from './components/CanvasHeader';
