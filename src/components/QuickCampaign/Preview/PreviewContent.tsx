@@ -3,6 +3,7 @@ import React from 'react';
 import FunnelUnlockedGame from '../../funnels/FunnelUnlockedGame';
 import FunnelStandard from '../../funnels/FunnelStandard';
 import DeviceFrame from './DeviceFrame';
+import { useQuickCampaignStore } from '../../../stores/quickCampaignStore';
 
 interface PreviewContentProps {
   selectedDevice: 'desktop' | 'tablet' | 'mobile';
@@ -31,6 +32,7 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
   customColors,
   jackpotColors
 }) => {
+  const { backgroundImageUrl } = useQuickCampaignStore();
   const unlockedTypes = ['wheel', 'scratch', 'jackpot', 'dice'];
 
   // Enhanced campaign with custom colors and proper configuration
@@ -41,7 +43,10 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
       customColors: customColors,
       buttonColor: customColors.primary,
       titleColor: mockCampaign.design?.titleColor || '#000000',
-      background: mockCampaign.design?.background || '#f8fafc'
+      background: mockCampaign.design?.background || '#f8fafc',
+      // Utiliser l'image de fond uploadée depuis le store
+      backgroundImage: backgroundImageUrl || mockCampaign.design?.backgroundImage,
+      mobileBackgroundImage: backgroundImageUrl || mockCampaign.design?.mobileBackgroundImage
     },
     buttonConfig: {
       ...mockCampaign.buttonConfig,
@@ -81,7 +86,8 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
           gameConfig: enhancedCampaign.gameConfig,
           design: enhancedCampaign.design,
           screens: enhancedCampaign.screens,
-          customColors: customColors
+          customColors: customColors,
+          backgroundImageUrl: backgroundImageUrl
         })}
       />
     );
@@ -99,10 +105,11 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
       overflow: 'hidden' as const
     };
 
-    const mobileBg = enhancedCampaign.design?.mobileBackgroundImage;
+    // Prioriser l'image uploadée depuis le store
+    const mobileBg = backgroundImageUrl || enhancedCampaign.design?.mobileBackgroundImage;
     const bgImage = selectedDevice === 'mobile' && mobileBg
       ? mobileBg
-      : enhancedCampaign.design?.backgroundImage;
+      : (backgroundImageUrl || enhancedCampaign.design?.backgroundImage);
 
     if (bgImage) {
       return {
@@ -121,11 +128,25 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
     <div className="flex-1 pt-20 overflow-auto">
       <div className="w-full h-full flex items-center justify-center p-4">
         <DeviceFrame device={selectedDevice}>
-          <div style={getContainerStyle()}>
+          <div
+            style={{
+              ...getContainerStyle(),
+              width: '100%',
+              height: '100%',
+              minHeight: 0,      // Pour éviter le débordement vertical
+              minWidth: 0,       // Pour éviter le débordement horizontal
+              position: 'relative',
+              overflow: 'hidden',
+              display: 'flex',
+              alignItems: 'stretch',
+              justifyContent: 'stretch'
+            }}
+          >
             {/* Background overlay for better contrast if background image exists */}
-            {(selectedDevice === 'mobile'
-              ? enhancedCampaign.design?.mobileBackgroundImage
-              : enhancedCampaign.design?.backgroundImage) && (
+            {(backgroundImageUrl || 
+              (selectedDevice === 'mobile'
+                ? enhancedCampaign.design?.mobileBackgroundImage
+                : enhancedCampaign.design?.backgroundImage)) && (
               <div
                 className="absolute inset-0 bg-black opacity-20"
                 style={{ zIndex: 1 }}
@@ -137,7 +158,10 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
               className="relative z-10 w-full h-full flex items-center justify-center"
               style={{ 
                 minHeight: selectedDevice === 'desktop' ? '600px' : '100%',
-                padding: selectedDevice === 'mobile' ? '32px 16px 16px' : selectedDevice === 'tablet' ? '24px 16px' : '16px'
+                padding: selectedDevice === 'mobile' ? '32px 16px 16px' : selectedDevice === 'tablet' ? '24px 16px' : '16px',
+                overflowY: 'auto', // Ajoute le scroll pour le funnel/formulaire à l'intérieur du device !
+                width: '100%',
+                height: '100%'
               }}
             >
               {getFunnelComponent()}
