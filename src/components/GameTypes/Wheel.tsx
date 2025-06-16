@@ -1,4 +1,3 @@
-
 import React, { useRef, useEffect, useState } from 'react';
 import WheelStyleSelector from '../configurators/WheelStyleSelector';
 import { useGameSize } from '../../hooks/useGameSize';
@@ -8,20 +7,39 @@ interface WheelProps {
   isPreview?: boolean;
   onComplete?: (prize: string) => void;
   onFinish?: (result: 'win' | 'lose') => void;
+  onStart?: () => void;
   currentWinners?: number;
   maxWinners?: number;
   winRate?: number;
   disabled?: boolean;
   gameSize?: 'small' | 'medium' | 'large' | 'xlarge';
+  position?: 'gauche' | 'droite' | 'bas' | 'centre'; // AJOUT DE LA POSITION
 }
+
+const getClipPath = (position: string | undefined) => {
+  // Retourne le clip-path CSS adapté à la position choisie
+  switch (position) {
+    case 'gauche':
+      return 'inset(0 0 0 50%)';
+    case 'droite':
+      return 'inset(0 50% 0 0)';
+    case 'bas':
+      return 'inset(0 0 50% 0)';
+    case 'centre':
+    default:
+      return 'none';
+  }
+};
 
 const Wheel: React.FC<WheelProps> = ({ 
   config, 
   isPreview, 
   onComplete, 
-  onFinish, 
+  onFinish,
+  onStart,
   disabled = false,
-  gameSize = 'small'
+  gameSize = 'small',
+  position = 'centre' // NOUVEAU : par défaut "centre"
 }) => {
   const wheelRef = useRef<HTMLDivElement>(null);
   const [isSpinning, setIsSpinning] = useState(false);
@@ -48,6 +66,11 @@ const Wheel: React.FC<WheelProps> = ({
   const spin = () => {
     if (!wheelRef.current || isSpinning || disabled) return;
 
+    // Déclencher l'événement de début de jeu
+    if (onStart) {
+      onStart();
+    }
+
     setIsSpinning(true);
     const randomRotation = Math.random() * 360 + 1440; // Au moins 4 tours
     
@@ -60,8 +83,11 @@ const Wheel: React.FC<WheelProps> = ({
       const prizeIndex = Math.floor(normalizedRotation / segmentAngle);
       const selectedSegment = segments[prizeIndex] || segments[0];
       
+      
       // Appeler onComplete si fourni (pour la compatibilité)
-      onComplete?.(selectedSegment.label);
+      if (onComplete) {
+        onComplete(selectedSegment.label);
+      }
       
       // Appeler onFinish si fourni (pour la cohérence avec les autres jeux)
       if (onFinish) {
@@ -100,7 +126,21 @@ const Wheel: React.FC<WheelProps> = ({
         maxHeight: `${gameDimensions.height}px`
       }}
     >
-      <div className="relative" style={{ width: wheelSize, height: wheelSize }}>
+      {/* --- CLIPPING RESPONSIVE --- */}
+      <div 
+        className="relative"
+        style={{
+          width: wheelSize,
+          height: wheelSize,
+          // CLIPPING dynamique selon la position
+          clipPath: getClipPath(position),
+          WebkitClipPath: getClipPath(position), // pour Safari
+          overflow: 'hidden', // sécurité
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
         {/* Roue */}
         <div
           ref={wheelRef}

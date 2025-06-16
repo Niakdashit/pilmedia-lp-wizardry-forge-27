@@ -1,29 +1,26 @@
 
 import { create } from 'zustand';
 
-interface QuickCampaignState {
-  // Étape 1 - Choix de la mécanique
-  selectedGameType: string | null;
-  
-  // Étape 2 - Paramètres essentiels
+export interface QuickCampaignState {
+  currentStep: number;
   campaignName: string;
+  selectedGameType: string | null;
   launchDate: string;
   marketingGoal: string;
   logoFile: File | null;
-  
-  // Étape 3 - Style visuel
-  selectedTheme: string | null;
+  brandSiteUrl: string;
+  logoUrl: string | null;
+  fontUrl: string | null;
+  selectedTheme: string;
   backgroundImage: File | null;
-  
-  // Nouvelles options de couleurs personnalisées
+  backgroundImageUrl: string | null;
+  segmentCount: number;
   customColors: {
     primary: string;
     secondary: string;
-    accent?: string;
+    accent: string;
+    textColor?: string; // Nouvelle propriété pour la couleur de texte automatique
   };
-  segmentCount: number;
-  
-  // Nouvelles options de bordures et couleurs pour jackpot
   jackpotColors: {
     containerBackgroundColor: string;
     backgroundColor: string;
@@ -33,320 +30,181 @@ interface QuickCampaignState {
     slotBorderWidth: number;
     slotBackgroundColor: string;
   };
-  
-  // État général
-  currentStep: number;
-  
-  // Actions
-  setGameType: (type: string) => void;
+  setCurrentStep: (step: number) => void;
   setCampaignName: (name: string) => void;
+  setSelectedGameType: (type: string) => void;
   setLaunchDate: (date: string) => void;
   setMarketingGoal: (goal: string) => void;
   setLogoFile: (file: File | null) => void;
+  setBrandSiteUrl: (url: string) => void;
+  setLogoUrl: (url: string | null) => void;
+  setFontUrl: (url: string | null) => void;
   setSelectedTheme: (theme: string) => void;
   setBackgroundImage: (file: File | null) => void;
-  setCustomColors: (colors: { primary: string; secondary: string; accent?: string }) => void;
+  setBackgroundImageUrl: (url: string | null) => void;
   setSegmentCount: (count: number) => void;
-  setJackpotColors: (colors: { containerBackgroundColor: string; backgroundColor: string; borderColor: string; borderWidth: number; slotBorderColor: string; slotBorderWidth: number; slotBackgroundColor: string }) => void;
-  setCurrentStep: (step: number) => void;
-  reset: () => void;
-  
-  // Nouvelle méthode pour générer les données de campagne pour l'aperçu
+  setCustomColors: (colors: { primary: string; secondary: string; accent: string; textColor?: string }) => void;
+  setJackpotColors: (colors: any) => void;
   generatePreviewCampaign: () => any;
+  reset: () => void;
 }
 
 export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
-  // État initial
+  currentStep: 1,
+  campaignName: 'Ma Nouvelle Campagne',
   selectedGameType: null,
-  campaignName: '',
   launchDate: '',
   marketingGoal: '',
   logoFile: null,
-  selectedTheme: null,
+  brandSiteUrl: '',
+  logoUrl: null,
+  fontUrl: null,
+  selectedTheme: 'default',
   backgroundImage: null,
+  backgroundImageUrl: null,
+  segmentCount: 4,
   customColors: {
-    primary: '#841b60',
-    secondary: '#3b82f6',
-    accent: '#10b981'
+    primary: '#ffffff',   // Blanc par défaut
+    secondary: '#E3F2FD', // Bleu clair
+    accent: '#ffffff',    // Accent forcé blanc
+    textColor: '#ffffff'  // Texte blanc par défaut
   },
-  segmentCount: 6,
   jackpotColors: {
     containerBackgroundColor: '#1f2937',
-    backgroundColor: '#f3f4f6',
-    borderColor: '#ffd700',
-    borderWidth: 4,
-    slotBorderColor: '#ffffff',
+    backgroundColor: '#3B82F6',
+    borderColor: '#1E40AF',
+    borderWidth: 3,
+    slotBorderColor: '#60A5FA',
     slotBorderWidth: 2,
     slotBackgroundColor: '#ffffff'
   },
-  currentStep: 1,
-  
-  // Actions
-  setGameType: (type) => set({ selectedGameType: type }),
+
+  setCurrentStep: (step) => set({ currentStep: step }),
   setCampaignName: (name) => set({ campaignName: name }),
+  setSelectedGameType: (type) => set({ selectedGameType: type }),
   setLaunchDate: (date) => set({ launchDate: date }),
   setMarketingGoal: (goal) => set({ marketingGoal: goal }),
   setLogoFile: (file) => set({ logoFile: file }),
+  setBrandSiteUrl: (url) => set({ brandSiteUrl: url }),
+  setLogoUrl: (url) => set({ logoUrl: url }),
+  setFontUrl: (url) => set({ fontUrl: url }),
   setSelectedTheme: (theme) => set({ selectedTheme: theme }),
   setBackgroundImage: (file) => set({ backgroundImage: file }),
-  setCustomColors: (colors) => set({ customColors: colors }),
+  setBackgroundImageUrl: (url) => set({ backgroundImageUrl: url }),
   setSegmentCount: (count) => set({ segmentCount: count }),
+  setCustomColors: (colors) => set({ customColors: colors }),
   setJackpotColors: (colors) => set({ jackpotColors: colors }),
-  setCurrentStep: (step) => set({ currentStep: step }),
+
+  generatePreviewCampaign: () => {
+    const state = get();
+
+    const baseConfig = {
+      id: 'quick-preview',
+      name: state.campaignName,
+      type: state.selectedGameType || 'wheel',
+      design: {
+        customColors: state.customColors,
+        centerLogo: state.logoUrl || null,
+        backgroundImage: state.backgroundImageUrl || null,
+        mobileBackgroundImage: state.backgroundImageUrl || null
+      },
+      buttonConfig: {
+        color: state.customColors.accent,
+        textColor: state.customColors.primary,
+        borderColor: state.customColors.primary,
+        borderWidth: 2,
+        borderRadius: 8,
+        size: 'medium',
+        text: 'Jouer maintenant !',
+        visible: true
+      },
+      config: {
+        roulette: {}
+      },
+      gameConfig: {},
+      mobileConfig: {}
+    };
+
+    // Roue
+    if (state.selectedGameType === 'wheel') {
+      baseConfig.config.roulette = {
+        segments: Array.from({ length: state.segmentCount }).map((_, i) => ({
+          label: '',
+          color: i % 2 === 0 ? state.customColors.primary : state.customColors.secondary,
+          image: null
+        })),
+        borderColor: state.customColors.secondary,
+        borderOutlineColor: state.customColors.accent,
+        segmentColor1: state.customColors.primary,
+        segmentColor2: state.customColors.secondary,
+        theme: state.selectedTheme
+      };
+
+      baseConfig.gameConfig = {
+        wheel: {
+          mode: 'instant_winner',
+          winProbability: 0.1,
+          maxWinners: 10,
+          winnersCount: 0
+        }
+      };
+    }
+
+    // Jackpot
+    if (state.selectedGameType === 'jackpot') {
+      baseConfig.gameConfig = {
+        jackpot: {
+          instantWin: {
+            mode: 'instant_winner',
+            winProbability: 0.1,
+            maxWinners: 10,
+            winnersCount: 0
+          },
+          buttonLabel: 'Lancer le Jackpot',
+          ...state.jackpotColors
+        }
+      };
+    }
+
+    baseConfig.mobileConfig = {
+      roulette: baseConfig.config.roulette,
+      buttonColor: state.customColors.accent,
+      buttonTextColor: state.customColors.primary,
+      buttonPlacement: 'bottom',
+      gamePosition: 'center'
+    };
+
+    return baseConfig;
+  },
+
   reset: () => set({
+    currentStep: 1,
+    campaignName: 'Ma Nouvelle Campagne',
     selectedGameType: null,
-    campaignName: '',
     launchDate: '',
     marketingGoal: '',
     logoFile: null,
-    selectedTheme: null,
+    brandSiteUrl: '',
+    logoUrl: null,
+    fontUrl: null,
+    selectedTheme: 'default',
     backgroundImage: null,
+    backgroundImageUrl: null,
+    segmentCount: 4,
     customColors: {
-      primary: '#841b60',
-      secondary: '#3b82f6',
-      accent: '#10b981'
+      primary: '#ffffff',
+      secondary: '#E3F2FD',
+      accent: '#ffffff',
+      textColor: '#ffffff'
     },
-    segmentCount: 6,
     jackpotColors: {
       containerBackgroundColor: '#1f2937',
-      backgroundColor: '#f3f4f6',
-      borderColor: '#ffd700',
-      borderWidth: 4,
-      slotBorderColor: '#ffffff',
+      backgroundColor: '#3B82F6',
+      borderColor: '#1E40AF',
+      borderWidth: 3,
+      slotBorderColor: '#60A5FA',
       slotBorderWidth: 2,
       slotBackgroundColor: '#ffffff'
-    },
-    currentStep: 1,
-  }),
-
-  // Nouvelle méthode pour générer les données de campagne selon le type de jeu
-  generatePreviewCampaign: () => {
-    const state = get();
-    
-    // Configuration de base commune
-    const baseConfig = {
-      id: 'preview',
-      name: state.campaignName || 'Aperçu de la campagne',
-      type: state.selectedGameType || 'wheel',
-      design: {
-        template: state.selectedTheme,
-        theme: state.selectedTheme,
-        colors: {
-          primary: state.customColors.primary,
-          secondary: state.customColors.secondary,
-          accent: state.customColors.accent
-        },
-        customColors: state.customColors,
-        backgroundImage: state.backgroundImage ? URL.createObjectURL(state.backgroundImage) : undefined,
-        centerLogo: state.logoFile ? URL.createObjectURL(state.logoFile) : undefined
-      },
-      buttonConfig: {
-        color: state.customColors.primary,
-        borderColor: state.customColors.primary,
-        borderWidth: 2,
-        borderRadius: 12,
-        size: 'medium',
-        text: 'Jouer',
-        visible: true
-      },
-      screens: [
-        {
-          title: 'Tentez votre chance !',
-          description: 'Participez pour avoir une chance de gagner !',
-          showTitle: true,
-          showDescription: true
-        },
-        {
-          title: 'Vos informations',
-          buttonText: "C'est parti !"
-        },
-        {},
-        {
-          winMessage: 'Félicitations, vous avez gagné !',
-          loseMessage: 'Dommage, réessayez !',
-          replayButtonText: 'Rejouer'
-        }
-      ],
-      formFields: [
-        {
-          id: "prenom",
-          label: "Prénom",
-          required: true
-        },
-        {
-          id: "nom", 
-          label: "Nom",
-          required: true
-        },
-        {
-          id: "email",
-          label: "Email",
-          type: "email",
-          required: true
-        }
-      ],
-      mobileConfig: {
-        backgroundColor: '#ebf4f7',
-        gamePosition: 'center',
-        textPosition: 'top',
-        verticalSpacing: 20,
-        horizontalPadding: 16,
-        showTitle: true,
-        showDescription: true,
-        title: 'Tentez votre chance !',
-        description: 'Participez pour avoir une chance de gagner !',
-        titleColor: '#000000',
-        descriptionColor: '#666666',
-        titleSize: 'text-2xl',
-        descriptionSize: 'text-base',
-        titleAlignment: 'text-center',
-        descriptionAlignment: 'text-center',
-        fontFamily: 'Inter',
-        contrastBackground: {
-          enabled: false
-        }
-      }
-    };
-
-    // Configuration spécifique selon le type de jeu
-    switch (state.selectedGameType) {
-      case 'wheel':
-        const colors = [state.customColors.primary, state.customColors.secondary, state.customColors.accent || '#10b981'];
-        const segments = Array.from({ length: state.segmentCount }).map((_, i) => ({
-          label: `Prix ${i + 1}`,
-          color: colors[i % colors.length],
-          chance: Math.floor(100 / state.segmentCount)
-        }));
-
-        return {
-          ...baseConfig,
-          config: {
-            roulette: {
-              segments: segments,
-              theme: state.selectedTheme || 'default',
-              borderColor: state.customColors.primary,
-              pointerColor: state.customColors.primary,
-              centerLogo: state.logoFile ? URL.createObjectURL(state.logoFile) : undefined
-            }
-          },
-          gameConfig: {
-            wheel: {
-              template: state.selectedTheme,
-              backgroundImage: state.backgroundImage ? URL.createObjectURL(state.backgroundImage) : undefined,
-              buttonLabel: 'Lancer la roue',
-              buttonColor: state.customColors.primary,
-              instantWin: {
-                mode: 'instant_winner' as const,
-                winProbability: 0.1,
-                maxWinners: 10,
-                winnersCount: 0
-              }
-            }
-          },
-          buttonConfig: {
-            ...baseConfig.buttonConfig,
-            text: 'Lancer la roue'
-          }
-        };
-
-      case 'jackpot':
-        return {
-          ...baseConfig,
-          gameConfig: {
-            jackpot: {
-              template: state.selectedTheme,
-              backgroundImage: state.backgroundImage ? URL.createObjectURL(state.backgroundImage) : undefined,
-              buttonLabel: 'Lancer le Jackpot',
-              buttonColor: state.customColors.primary,
-              containerBackgroundColor: state.jackpotColors.containerBackgroundColor,
-              backgroundColor: state.jackpotColors.backgroundColor,
-              borderColor: state.jackpotColors.borderColor,
-              borderWidth: state.jackpotColors.borderWidth,
-              slotBorderColor: state.jackpotColors.slotBorderColor,
-              slotBorderWidth: state.jackpotColors.slotBorderWidth,
-              slotBackgroundColor: state.jackpotColors.slotBackgroundColor,
-              symbols: ['🍒', '🍋', '🍊'],
-              reels: 3,
-              winMessage: 'JACKPOT ! Vous avez gagné !',
-              loseMessage: 'Dommage, pas de jackpot !',
-              instantWin: {
-                enabled: true,
-                mode: 'instant_winner' as const,
-                winProbability: 0.1,
-                maxWinners: 10,
-                winnersCount: 0
-              }
-            }
-          },
-          buttonConfig: {
-            ...baseConfig.buttonConfig,
-            text: 'Lancer le Jackpot'
-          }
-        };
-
-      case 'scratch':
-        return {
-          ...baseConfig,
-          gameConfig: {
-            scratch: {
-              template: state.selectedTheme,
-              backgroundImage: state.backgroundImage ? URL.createObjectURL(state.backgroundImage) : undefined,
-              buttonLabel: 'Gratter',
-              buttonColor: state.customColors.primary,
-              scratchImage: undefined,
-              winMessage: 'Félicitations ! Vous avez gagné !',
-              loseMessage: 'Dommage, réessayez !',
-              instantWin: {
-                enabled: true,
-                mode: 'instant_winner' as const,
-                winProbability: 0.1,
-                maxWinners: 10,
-                winnersCount: 0
-              }
-            }
-          },
-          buttonConfig: {
-            ...baseConfig.buttonConfig,
-            text: 'Gratter'
-          }
-        };
-
-      case 'dice':
-        return {
-          ...baseConfig,
-          gameConfig: {
-            dice: {
-              template: state.selectedTheme,
-              backgroundImage: state.backgroundImage ? URL.createObjectURL(state.backgroundImage) : undefined,
-              buttonLabel: 'Lancer les dés',
-              buttonColor: state.customColors.primary,
-              diceCount: 2,
-              winCondition: 'sum',
-              targetSum: 7,
-              winMessage: 'Félicitations ! Vous avez gagné !',
-              loseMessage: 'Dommage, réessayez !',
-              instantWin: {
-                enabled: true,
-                mode: 'instant_winner' as const,
-                winProbability: 0.1,
-                maxWinners: 10,
-                winnersCount: 0
-              }
-            }
-          },
-          buttonConfig: {
-            ...baseConfig.buttonConfig,
-            text: 'Lancer les dés'
-          }
-        };
-
-      default:
-        // Fallback vers la roue si type non reconnu
-        return {
-          ...baseConfig,
-          type: 'wheel',
-          // ... configuration roue par défaut
-        };
     }
-  }
+  })
 }));

@@ -1,6 +1,10 @@
+
 import React, { useState } from 'react';
-import { Image, Percent, Type } from 'lucide-react';
 import ColorPaletteSelector from './ColorPaletteSelector';
+import ScratchSurfaceConfig from './ScratchConfig/ScratchSurfaceConfig';
+import ScratchRevealConfig from './ScratchConfig/ScratchRevealConfig';
+import ScratchCardsManager from './ScratchConfig/ScratchCardsManager';
+import ScratchHelpSection from './ScratchConfig/ScratchHelpSection';
 
 interface ScratchGameConfigProps {
   campaign: any;
@@ -11,7 +15,8 @@ const ScratchGameConfig: React.FC<ScratchGameConfigProps> = ({
   campaign,
   setCampaign
 }) => {
-  const [selectedPalette, setSelectedPalette] = useState<any>(undefined);
+  const [selectedPalette, setSelectedPalette] = useState<any>(campaign.gameConfig?.scratch?.palette);
+  const MAX_CARDS = 6;
 
   const handleScratchChange = (field: string, value: any) => {
     setCampaign((prev: any) => ({
@@ -24,6 +29,32 @@ const ScratchGameConfig: React.FC<ScratchGameConfigProps> = ({
         }
       }
     }));
+  };
+
+  const addCard = () => {
+    const cards = campaign.gameConfig?.scratch?.cards || [];
+    if (cards.length >= MAX_CARDS) return;
+    
+    const newCard = { 
+      id: Date.now(), 
+      revealImage: '', 
+      revealMessage: 'Félicitations !',
+      scratchColor: campaign.gameConfig?.scratch?.scratchColor || '#C0C0C0'
+    };
+    handleScratchChange('cards', [...cards, newCard]);
+  };
+
+  const removeCard = (index: number) => {
+    const cards = [...(campaign.gameConfig?.scratch?.cards || [])];
+    if (cards.length <= 1) return;
+    cards.splice(index, 1);
+    handleScratchChange('cards', cards);
+  };
+
+  const updateCard = (index: number, field: string, value: string) => {
+    const cards = [...(campaign.gameConfig?.scratch?.cards || [])];
+    cards[index] = { ...cards[index], [field]: value };
+    handleScratchChange('cards', cards);
   };
 
   const handlePaletteSelect = (palette: any) => {
@@ -42,6 +73,11 @@ const ScratchGameConfig: React.FC<ScratchGameConfigProps> = ({
     }));
   };
 
+  // S'assurer qu'il y a au moins une carte par défaut
+  const cards = campaign.gameConfig?.scratch?.cards && campaign.gameConfig.scratch.cards.length > 0
+    ? campaign.gameConfig.scratch.cards
+    : [{ id: 1, revealImage: '', revealMessage: 'Félicitations !', scratchColor: '#C0C0C0' }];
+
   return (
     <div className="space-y-6">
       {/* Palette de couleurs */}
@@ -51,109 +87,38 @@ const ScratchGameConfig: React.FC<ScratchGameConfigProps> = ({
         gameType="scratch"
       />
 
-      {/* Zone à gratter */}
-      <div className="space-y-2">
-        <label className="flex items-center text-sm font-medium text-gray-700">
-          <Percent className="w-4 h-4 mr-2" />
-          Pourcentage à gratter pour révéler
-        </label>
-        <input
-          type="range"
-          min="30"
-          max="90"
-          value={campaign.gameConfig?.scratch?.scratchArea || 70}
-          onChange={(e) => handleScratchChange('scratchArea', parseInt(e.target.value))}
-          className="w-full"
-        />
-        <div className="text-xs text-gray-500 text-center">
-          {campaign.gameConfig?.scratch?.scratchArea || 70}%
-        </div>
-      </div>
+      {/* Configuration de la surface */}
+      <ScratchSurfaceConfig
+        scratchColor={campaign.gameConfig?.scratch?.scratchColor || '#C0C0C0'}
+        scratchSurface={campaign.gameConfig?.scratch?.scratchSurface}
+        onScratchColorChange={(color) => handleScratchChange('scratchColor', color)}
+        onScratchSurfaceChange={(surface) => handleScratchChange('scratchSurface', surface)}
+      />
 
-      {/* Message de révélation */}
-      <div className="space-y-2">
-        <label className="flex items-center text-sm font-medium text-gray-700">
-          <Type className="w-4 h-4 mr-2" />
-          Message de révélation
-        </label>
-        <input
-          type="text"
-          value={campaign.gameConfig?.scratch?.revealMessage || 'Félicitations !'}
-          onChange={(e) => handleScratchChange('revealMessage', e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-          placeholder="Message affiché en cas de victoire"
-        />
-      </div>
+      {/* Configuration de révélation */}
+      <ScratchRevealConfig
+        scratchArea={campaign.gameConfig?.scratch?.scratchArea || 70}
+        revealMessage={campaign.gameConfig?.scratch?.revealMessage || 'Félicitations !'}
+        revealImage={campaign.gameConfig?.scratch?.revealImage}
+        onScratchAreaChange={(area) => handleScratchChange('scratchArea', area)}
+        onRevealMessageChange={(message) => handleScratchChange('revealMessage', message)}
+        onRevealImageChange={(image) => handleScratchChange('revealImage', image)}
+      />
 
-      {/* Image de révélation */}
-      <div className="space-y-2">
-        <label className="flex items-center text-sm font-medium text-gray-700">
-          <Image className="w-4 h-4 mr-2" />
-          Image de révélation (optionnel)
-        </label>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => {
-            const file = e.target.files?.[0];
-            if (file) {
-              const url = URL.createObjectURL(file);
-              handleScratchChange('revealImage', url);
-            }
-          }}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-        />
-        {campaign.gameConfig?.scratch?.revealImage && (
-          <div className="mt-2">
-            <img
-              src={campaign.gameConfig.scratch.revealImage}
-              alt="Aperçu"
-              className="w-full h-20 object-cover rounded border"
-            />
-            <button
-              onClick={() => handleScratchChange('revealImage', '')}
-              className="mt-1 text-xs text-red-600 hover:text-red-800"
-            >
-              Supprimer
-            </button>
-          </div>
-        )}
-      </div>
+      {/* Gestion des cartes */}
+      <ScratchCardsManager
+        cards={cards}
+        onAddCard={addCard}
+        onRemoveCard={removeCard}
+        onUpdateCard={updateCard}
+        maxCards={MAX_CARDS}
+      />
 
-      {/* Surface à gratter personnalisée */}
-      <div className="space-y-2">
-        <label className="text-sm font-medium text-gray-700">Surface à gratter personnalisée</label>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => {
-            const file = e.target.files?.[0];
-            if (file) {
-              const url = URL.createObjectURL(file);
-              handleScratchChange('scratchSurface', url);
-            }
-          }}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#841b60] focus:border-transparent"
-        />
-        {campaign.gameConfig?.scratch?.scratchSurface && (
-          <div className="mt-2">
-            <img
-              src={campaign.gameConfig.scratch.scratchSurface}
-              alt="Surface à gratter"
-              className="w-full h-20 object-cover rounded border"
-            />
-            <button
-              onClick={() => handleScratchChange('scratchSurface', '')}
-              className="mt-1 text-xs text-red-600 hover:text-red-800"
-            >
-              Supprimer
-            </button>
-          </div>
-        )}
-        <p className="text-xs text-gray-500">
-          Image qui sera utilisée comme surface à gratter (par défaut: couleur métallique)
-        </p>
-      </div>
+      {/* Section d'aide */}
+      <ScratchHelpSection
+        maxCards={MAX_CARDS}
+        scratchArea={campaign.gameConfig?.scratch?.scratchArea || 70}
+      />
     </div>
   );
 };

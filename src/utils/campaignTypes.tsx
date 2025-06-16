@@ -61,9 +61,17 @@ interface ScratchConfig extends BaseConfig {
   instantWin: InstantWinConfig;
   scratchArea: number;
   revealMessage: string;
+  cards?: ScratchCard[];
+}
+
+interface ScratchCard {
+  id: number;
+  revealImage: string;
+  revealMessage: string;
 }
 
 interface MemoryConfig extends BaseConfig {
+  pairs: number;
   difficulty: string;
   timeLimit: number;
 }
@@ -79,8 +87,8 @@ interface QuizConfig extends BaseConfig {
 }
 
 interface DiceConfig extends BaseConfig {
-  numberOfDice: number;
-  winningCombination: string;
+  diceCount: number;
+  winningConditions: number[];
 }
 
 interface SwiperConfig extends BaseConfig {
@@ -131,10 +139,14 @@ export const getDefaultGameConfig = (type: CampaignType) => {
       },
       scratchArea: 70,
       revealMessage: 'Félicitations !',
+      cards: [
+        { id: 1, revealImage: '', revealMessage: 'Félicitations !' }
+      ],
       buttonLabel: 'Gratter',
       buttonColor: '#841b60'
     },
     memory: {
+      pairs: 8,
       difficulty: 'medium',
       timeLimit: 60,
       buttonLabel: 'Commencer',
@@ -153,8 +165,8 @@ export const getDefaultGameConfig = (type: CampaignType) => {
       buttonColor: '#841b60'
     },
     dice: {
-      numberOfDice: 2,
-      winningCombination: 'double',
+      diceCount: 2,
+      winningConditions: [7, 11],
       buttonLabel: 'Lancer les dés',
       buttonColor: '#841b60'
     },

@@ -1,7 +1,7 @@
 
 import React from 'react';
-import GameRenderer from './GameRenderer';
-import MobilePreview from '../../CampaignEditor/Mobile/MobilePreview';
+import FunnelUnlockedGame from '../../funnels/FunnelUnlockedGame';
+import FunnelStandard from '../../funnels/FunnelStandard';
 
 interface PreviewContentProps {
   selectedDevice: 'desktop' | 'tablet' | 'mobile';
@@ -30,56 +30,147 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
   customColors,
   jackpotColors
 }) => {
-  const renderDesktopPreview = () => (
-    <div className="w-full h-full flex items-center justify-center bg-gray-50 relative overflow-hidden">
-      {/* Background image if available */}
-      {mockCampaign.design?.backgroundImage && (
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30"
-          style={{
-            backgroundImage: `url(${mockCampaign.design.backgroundImage})`
-          }}
-        />
-      )}
-      
-      {/* Content container */}
-      <div className="relative z-10 max-w-2xl mx-auto p-8 text-center">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
-            {mockCampaign.screens?.[0]?.title || 'Tentez votre chance !'}
-          </h1>
-          <p className="text-lg text-gray-600">
-            {mockCampaign.screens?.[0]?.description || 'Participez pour avoir une chance de gagner !'}
-          </p>
-        </div>
-        
-        {/* Game Component */}
-        <div className="flex justify-center">
-          <GameRenderer
-            gameType={selectedGameType || 'wheel'}
-            mockCampaign={mockCampaign}
-            customColors={customColors}
-            jackpotColors={jackpotColors}
-            gameSize={mockCampaign.gameSize || 'large'}
-            gamePosition={mockCampaign.gamePosition || 'center'}
-          />
-        </div>
-      </div>
-    </div>
-  );
+  const unlockedTypes = ['wheel', 'scratch', 'jackpot', 'dice'];
 
-  const renderMobilePreview = () => (
-    <div className="w-full h-full flex items-center justify-center p-4 bg-gray-50">
-      <MobilePreview
-        campaign={mockCampaign}
-        previewMode={selectedDevice === 'tablet' ? 'tablet' : 'mobile'}
+  // Enhanced campaign with custom colors and proper configuration
+  const enhancedCampaign = {
+    ...mockCampaign,
+    design: {
+      ...mockCampaign.design,
+      customColors: customColors,
+      buttonColor: customColors.primary,
+      titleColor: mockCampaign.design?.titleColor || '#000000',
+      background: mockCampaign.design?.background || '#f8fafc'
+    },
+    buttonConfig: {
+      ...mockCampaign.buttonConfig,
+      color: customColors.primary,
+      borderColor: customColors.primary
+    },
+    gameConfig: {
+      ...mockCampaign.gameConfig,
+      jackpot: {
+        ...mockCampaign.gameConfig?.jackpot,
+        ...jackpotColors,
+        buttonColor: customColors.primary
+      },
+      [selectedGameType]: {
+        ...mockCampaign.gameConfig?.[selectedGameType],
+        buttonColor: customColors.primary,
+        buttonLabel: mockCampaign.gameConfig?.[selectedGameType]?.buttonLabel || 'Jouer'
+      }
+    }
+  };
+
+  const getFunnelComponent = () => {
+    const funnel = enhancedCampaign.funnel || (unlockedTypes.includes(selectedGameType) ? 'unlocked_game' : 'standard');
+    if (funnel === 'unlocked_game') {
+      return (
+        <FunnelUnlockedGame
+          campaign={enhancedCampaign}
+          previewMode={selectedDevice === 'desktop' ? 'desktop' : selectedDevice}
+          modalContained={false}
+        />
+      );
+    }
+    return (
+      <FunnelStandard
+        campaign={enhancedCampaign}
+        key={JSON.stringify({
+          gameConfig: enhancedCampaign.gameConfig,
+          design: enhancedCampaign.design,
+          screens: enhancedCampaign.screens,
+          customColors: customColors
+        })}
       />
-    </div>
-  );
+    );
+  };
+
+  const getContainerStyle = () => {
+    const baseStyle = {
+      width: '100%',
+      height: '100%',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: enhancedCampaign.design?.background || '#f9fafb',
+      position: 'relative' as const,
+      overflow: 'hidden' as const
+    };
+
+    const mobileBg = enhancedCampaign.design?.mobileBackgroundImage;
+    const bgImage = selectedDevice === 'mobile' && mobileBg
+      ? mobileBg
+      : enhancedCampaign.design?.backgroundImage;
+
+    if (bgImage) {
+      return {
+        ...baseStyle,
+        backgroundImage: `url(${bgImage})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      };
+    }
+
+    return baseStyle;
+  };
+
+  const getDeviceContainerStyle = () => {
+    switch (selectedDevice) {
+      case 'tablet':
+        return {
+          maxWidth: '768px',
+          maxHeight: '1024px',
+          margin: '0 auto',
+          border: '1px solid #e5e7eb',
+          borderRadius: '12px',
+          overflow: 'hidden' as const,
+          backgroundColor: '#ffffff'
+        };
+      case 'mobile':
+        return {
+          maxWidth: '375px',
+          maxHeight: '812px',
+          margin: '0 auto',
+          border: '1px solid #e5e7eb',
+          borderRadius: '20px',
+          overflow: 'hidden' as const,
+          backgroundColor: '#ffffff'
+        };
+      default:
+        return {
+          width: '100%',
+          height: '100%'
+        };
+    }
+  };
 
   return (
     <div className="flex-1 pt-20 overflow-auto">
-      {selectedDevice === 'desktop' ? renderDesktopPreview() : renderMobilePreview()}
+      <div className="w-full h-full flex items-center justify-center p-4">
+        <div style={getDeviceContainerStyle()}>
+          <div style={getContainerStyle()}>
+            {/* Background overlay for better contrast if background image exists */}
+            {(selectedDevice === 'mobile'
+              ? enhancedCampaign.design?.mobileBackgroundImage
+              : enhancedCampaign.design?.backgroundImage) && (
+              <div
+                className="absolute inset-0 bg-black opacity-20"
+                style={{ zIndex: 1 }}
+              />
+            )}
+            
+            {/* Content container */}
+            <div 
+              className="relative z-10 w-full h-full flex items-center justify-center p-4"
+              style={{ minHeight: selectedDevice === 'desktop' ? '600px' : '100%' }}
+            >
+              {getFunnelComponent()}
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

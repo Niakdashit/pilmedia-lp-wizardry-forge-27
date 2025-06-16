@@ -36,7 +36,7 @@ export interface ScratchConfig extends GameConfig {
 }
 
 export interface MemoryConfig extends GameConfig {
-  pairCount: number;
+  pairs: number;
   theme: string;
   timer: boolean;
 }
@@ -49,7 +49,7 @@ export interface PuzzleConfig extends GameConfig {
 
 export interface DiceConfig extends GameConfig {
   diceCount: number;
-  winConditions: number[][];
+  winningConditions: number[];
 }
 
 // ----------- AJOUT CONFIG JACKPOT -----------

@@ -19,106 +19,187 @@ interface ColorPaletteSelectorProps {
 }
 
 const colorPalettes: Record<string, ColorPalette[]> = {
-  wheel: [
-    {
-      name: 'Classique',
-      colors: { primary: '#841b60', secondary: '#f3f4f6', accent: '#10b981' }
-    },
-    {
-      name: 'Casino',
-      colors: { primary: '#000000', secondary: '#FFD700', accent: '#FF0000' }
-    },
-    {
-      name: 'Océan',
-      colors: { primary: '#0ea5e9', secondary: '#bae6fd', accent: '#0284c7' }
-    },
-    {
-      name: 'Sunset',
-      colors: { primary: '#f97316', secondary: '#fed7aa', accent: '#ea580c' }
-    },
-    {
-      name: 'Nature',
-      colors: { primary: '#16a34a', secondary: '#dcfce7', accent: '#15803d' }
-    },
-    {
-      name: 'Royal',
-      colors: { primary: '#7c3aed', secondary: '#ede9fe', accent: '#6d28d9' }
+  wheel: [{
+    name: 'Bleu Corporate',
+    colors: {
+      primary: '#3B82F6',
+      secondary: '#E3F2FD',
+      accent: '#1E40AF'
     }
-  ],
-  scratch: [
-    {
-      name: 'Argent',
-      colors: { primary: '#6b7280', secondary: '#f3f4f6', accent: '#374151', background: '#C0C0C0' }
-    },
-    {
-      name: 'Or',
-      colors: { primary: '#f59e0b', secondary: '#fef3c7', accent: '#d97706', background: '#FFD700' }
-    },
-    {
-      name: 'Cuivre',
-      colors: { primary: '#ea580c', secondary: '#fed7aa', accent: '#c2410c', background: '#B87333' }
-    },
-    {
-      name: 'Platine',
-      colors: { primary: '#64748b', secondary: '#f1f5f9', accent: '#475569', background: '#E5E4E2' }
+  }, {
+    name: 'Vert Nature',
+    colors: {
+      primary: '#10B981',
+      secondary: '#D1FAE5',
+      accent: '#047857'
     }
-  ],
-  jackpot: [
-    {
-      name: 'Vegas',
-      colors: { primary: '#dc2626', secondary: '#FFD700', accent: '#000000', background: '#1f2937' }
-    },
-    {
-      name: 'Néon',
-      colors: { primary: '#8b5cf6', secondary: '#c4b5fd', accent: '#7c3aed', background: '#1e1b4b' }
-    },
-    {
-      name: 'Luxe',
-      colors: { primary: '#d4af37', secondary: '#ffffff', accent: '#b8860b', background: '#0f0f0f' }
+  }, {
+    name: 'Violet Moderne',
+    colors: {
+      primary: '#8B5CF6',
+      secondary: '#EDE9FE',
+      accent: '#7C3AED'
     }
-  ],
-  memory: [
-    {
-      name: 'Enfantin',
-      colors: { primary: '#f472b6', secondary: '#fce7f3', accent: '#ec4899' }
-    },
-    {
-      name: 'Zen',
-      colors: { primary: '#06b6d4', secondary: '#cffafe', accent: '#0891b2' }
-    },
-    {
-      name: 'Vintage',
-      colors: { primary: '#a78bfa', secondary: '#ede9fe', accent: '#8b5cf6' }
+  }, {
+    name: 'Orange Dynamique',
+    colors: {
+      primary: '#F97316',
+      secondary: '#FED7AA',
+      accent: '#EA580C'
     }
-  ],
-  puzzle: [
-    {
-      name: 'Moderne',
-      colors: { primary: '#0ea5e9', secondary: '#e0f2fe', accent: '#0284c7' }
-    },
-    {
-      name: 'Chaleureux',
-      colors: { primary: '#f97316', secondary: '#ffedd5', accent: '#ea580c' }
-    },
-    {
-      name: 'Mystique',
-      colors: { primary: '#7c3aed', secondary: '#f3e8ff', accent: '#6d28d9' }
+  }, {
+    name: 'Rose Élégant',
+    colors: {
+      primary: '#EC4899',
+      secondary: '#FCE7F3',
+      accent: '#BE185D'
     }
-  ],
-  dice: [
-    {
-      name: 'Classique',
-      colors: { primary: '#dc2626', secondary: '#fef2f2', accent: '#b91c1c' }
-    },
-    {
-      name: 'Digital',
-      colors: { primary: '#06b6d4', secondary: '#cffafe', accent: '#0891b2' }
-    },
-    {
-      name: 'Rétro',
-      colors: { primary: '#d97706', secondary: '#fef3c7', accent: '#b45309' }
+  }, {
+    name: 'Bleu Pastel',
+    colors: {
+      primary: '#60A5FA',
+      secondary: '#DBEAFE',
+      accent: '#2563EB'
     }
-  ]
+  }, {
+    name: 'Turquoise Zen',
+    colors: {
+      primary: '#14B8A6',
+      secondary: '#CCFBF1',
+      accent: '#0F766E'
+    }
+  }, {
+    name: 'Lavande Doux',
+    colors: {
+      primary: '#A78BFA',
+      secondary: '#F3E8FF',
+      accent: '#7C3AED'
+    }
+  }],
+  scratch: [{
+    name: 'Argent',
+    colors: {
+      primary: '#6b7280',
+      secondary: '#f3f4f6',
+      accent: '#374151',
+      background: '#C0C0C0'
+    }
+  }, {
+    name: 'Or',
+    colors: {
+      primary: '#f59e0b',
+      secondary: '#fef3c7',
+      accent: '#d97706',
+      background: '#FFD700'
+    }
+  }, {
+    name: 'Cuivre',
+    colors: {
+      primary: '#ea580c',
+      secondary: '#fed7aa',
+      accent: '#c2410c',
+      background: '#B87333'
+    }
+  }, {
+    name: 'Platine',
+    colors: {
+      primary: '#64748b',
+      secondary: '#f1f5f9',
+      accent: '#475569',
+      background: '#E5E4E2'
+    }
+  }],
+  jackpot: [{
+    name: 'Vegas',
+    colors: {
+      primary: '#dc2626',
+      secondary: '#FFD700',
+      accent: '#000000',
+      background: '#1f2937'
+    }
+  }, {
+    name: 'Néon',
+    colors: {
+      primary: '#8b5cf6',
+      secondary: '#c4b5fd',
+      accent: '#7c3aed',
+      background: '#1e1b4b'
+    }
+  }, {
+    name: 'Luxe',
+    colors: {
+      primary: '#d4af37',
+      secondary: '#ffffff',
+      accent: '#b8860b',
+      background: '#0f0f0f'
+    }
+  }],
+  memory: [{
+    name: 'Enfantin',
+    colors: {
+      primary: '#f472b6',
+      secondary: '#fce7f3',
+      accent: '#ec4899'
+    }
+  }, {
+    name: 'Zen',
+    colors: {
+      primary: '#06b6d4',
+      secondary: '#cffafe',
+      accent: '#0891b2'
+    }
+  }, {
+    name: 'Vintage',
+    colors: {
+      primary: '#a78bfa',
+      secondary: '#ede9fe',
+      accent: '#8b5cf6'
+    }
+  }],
+  puzzle: [{
+    name: 'Moderne',
+    colors: {
+      primary: '#0ea5e9',
+      secondary: '#e0f2fe',
+      accent: '#0284c7'
+    }
+  }, {
+    name: 'Chaleureux',
+    colors: {
+      primary: '#f97316',
+      secondary: '#ffedd5',
+      accent: '#ea580c'
+    }
+  }, {
+    name: 'Mystique',
+    colors: {
+      primary: '#7c3aed',
+      secondary: '#f3e8ff',
+      accent: '#6d28d9'
+    }
+  }],
+  dice: [{
+    name: 'Classique',
+    colors: {
+      primary: '#dc2626',
+      secondary: '#fef2f2',
+      accent: '#b91c1c'
+    }
+  }, {
+    name: 'Digital',
+    colors: {
+      primary: '#06b6d4',
+      secondary: '#cffafe',
+      accent: '#0891b2'
+    }
+  }, {
+    name: 'Rétro',
+    colors: {
+      primary: '#d97706',
+      secondary: '#fef3c7',
+      accent: '#b45309'
+    }
+  }]
 };
 
 const ColorPaletteSelector: React.FC<ColorPaletteSelectorProps> = ({
@@ -129,38 +210,40 @@ const ColorPaletteSelector: React.FC<ColorPaletteSelectorProps> = ({
   const palettes = colorPalettes[gameType] || colorPalettes.wheel;
 
   const generateRandomPalette = () => {
-    const colors = [
-      '#ef4444', '#f97316', '#f59e0b', '#eab308', '#84cc16', '#22c55e',
-      '#10b981', '#14b8a6', '#06b6d4', '#0ea5e9', '#3b82f6', '#6366f1',
-      '#8b5cf6', '#a855f7', '#c084fc', '#d946ef', '#ec4899', '#f43f5e'
+    const harmonicColors = [
+      // Bleus harmonieux
+      '#3B82F6', '#E3F2FD', '#1E40AF',
+      // Verts naturels
+      '#10B981', '#D1FAE5', '#047857',
+      // Violets modernes
+      '#8B5CF6', '#EDE9FE', '#7C3AED',
+      // Oranges dynamiques
+      '#F97316', '#FED7AA', '#EA580C'
     ];
-    
-    const shuffled = [...colors].sort(() => Math.random() - 0.5);
+    const shuffled = [...harmonicColors].sort(() => Math.random() - 0.5);
     const randomPalette: ColorPalette = {
       name: 'Personnalisé',
       colors: {
         primary: shuffled[0],
-        secondary: shuffled[1] + '20', // Ajouter de la transparence
+        secondary: shuffled[1],
         accent: shuffled[2]
       }
     };
-    
     onPaletteSelect(randomPalette);
   };
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <label className="flex items-center text-sm font-medium text-gray-700">
-          <Palette className="w-4 h-4 mr-2" />
-          Palette de couleurs
-        </label>
+        <h3 className="text-lg font-medium text-gray-900 flex items-center">
+          <Palette className="w-5 h-5 mr-2" />
+          Combinaisons de couleurs
+        </h3>
         <button
           onClick={generateRandomPalette}
-          className="flex items-center space-x-1 px-2 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded transition-colors"
-          title="Générer une palette aléatoire"
+          className="flex items-center space-x-1 px-3 py-1 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
         >
-          <RefreshCw className="w-3 h-3" />
+          <RefreshCw className="w-4 h-4" />
           <span>Aléatoire</span>
         </button>
       </div>
@@ -172,90 +255,32 @@ const ColorPaletteSelector: React.FC<ColorPaletteSelectorProps> = ({
             onClick={() => onPaletteSelect(palette)}
             className={`p-3 rounded-lg border-2 transition-all ${
               selectedPalette?.name === palette.name
-                ? 'border-[#841b60] bg-[#841b60]/10'
-                : 'border-gray-300 hover:border-gray-400'
+                ? 'border-[#841b60] bg-[#841b60]/5'
+                : 'border-gray-200 hover:border-gray-300'
             }`}
           >
-            <div className="flex items-center space-x-2 mb-2">
-              <div
-                className="w-4 h-4 rounded-full border"
-                style={{ backgroundColor: palette.colors.primary }}
-              />
-              <div
-                className="w-4 h-4 rounded-full border"
-                style={{ backgroundColor: palette.colors.secondary }}
-              />
-              {palette.colors.accent && (
+            <div className="space-y-2">
+              <div className="flex space-x-1">
                 <div
-                  className="w-4 h-4 rounded-full border"
-                  style={{ backgroundColor: palette.colors.accent }}
+                  className="w-6 h-6 rounded"
+                  style={{ backgroundColor: palette.colors.primary }}
                 />
-              )}
+                <div
+                  className="w-6 h-6 rounded"
+                  style={{ backgroundColor: palette.colors.secondary }}
+                />
+                {palette.colors.accent && (
+                  <div
+                    className="w-6 h-6 rounded"
+                    style={{ backgroundColor: palette.colors.accent }}
+                  />
+                )}
+              </div>
+              <p className="text-sm font-medium text-gray-700">{palette.name}</p>
             </div>
-            <div className="text-xs font-medium text-gray-700">{palette.name}</div>
           </button>
         ))}
       </div>
-
-      {selectedPalette && (
-        <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-          <div className="text-sm font-medium text-gray-700 mb-2">Couleurs personnalisées</div>
-          <div className="grid grid-cols-2 gap-2">
-            <div>
-              <label className="text-xs text-gray-600">Primaire</label>
-              <input
-                type="color"
-                value={selectedPalette.colors.primary}
-                onChange={(e) => onPaletteSelect({
-                  ...selectedPalette,
-                  colors: { ...selectedPalette.colors, primary: e.target.value }
-                })}
-                className="w-full h-8 rounded border border-gray-300"
-              />
-            </div>
-            <div>
-              <label className="text-xs text-gray-600">Secondaire</label>
-              <input
-                type="color"
-                value={selectedPalette.colors.secondary}
-                onChange={(e) => onPaletteSelect({
-                  ...selectedPalette,
-                  colors: { ...selectedPalette.colors, secondary: e.target.value }
-                })}
-                className="w-full h-8 rounded border border-gray-300"
-              />
-            </div>
-            {selectedPalette.colors.accent && (
-              <div>
-                <label className="text-xs text-gray-600">Accent</label>
-                <input
-                  type="color"
-                  value={selectedPalette.colors.accent}
-                  onChange={(e) => onPaletteSelect({
-                    ...selectedPalette,
-                    colors: { ...selectedPalette.colors, accent: e.target.value }
-                  })}
-                  className="w-full h-8 rounded border border-gray-300"
-                />
-              </div>
-            )}
-            {selectedPalette.colors.background && (
-              <div>
-                <label className="text-xs text-gray-600">Fond</label>
-                <input
-                  type="color"
-                  value={selectedPalette.colors.background}
-                  onChange={(e) => onPaletteSelect({
-                    ...selectedPalette,
-                    colors: { ...selectedPalette.colors, background: e.target.value }
-                  })}
-                  className="w-full h-8 rounded border border-gray-300"
-                />
-              </div>
-            )}
-          </div>
-        </div>
-      )}
     </div>
   );
 };

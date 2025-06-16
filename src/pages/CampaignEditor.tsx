@@ -40,9 +40,7 @@ const defaultJackpotConfig = {
   }
 };
 const CampaignEditor: React.FC = () => {
-  const {
-    id
-  } = useParams();
+  const { id } = useParams();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const isNewCampaign = id === 'new';
@@ -102,7 +100,8 @@ const CampaignEditor: React.FC = () => {
       fontSize: 'normal',
       fontWeight: 'normal',
       logoUrl: '',
-      backgroundImage: ''
+      backgroundImage: '',
+      mobileBackgroundImage: ''
     },
     rewards: {
       mode: 'probability',
@@ -153,6 +152,8 @@ const CampaignEditor: React.FC = () => {
       descriptionSize: 'text-base',
       descriptionAlignment: 'text-center',
       gameVerticalAlign: 'center',
+      gameVerticalOffset: 0,
+      gameHorizontalOffset: 0, // <--- merge OK
       gameMaxWidth: 90,
       gameMaxHeight: 60,
       gamePaddingX: 16,
@@ -191,7 +192,6 @@ const CampaignEditor: React.FC = () => {
     }
   };
   const handleSave = async (continueEditing = false) => {
-    console.log('Saving campaign:', campaign);
     const campaignData = {
       ...campaign,
       form_fields: campaign.formFields

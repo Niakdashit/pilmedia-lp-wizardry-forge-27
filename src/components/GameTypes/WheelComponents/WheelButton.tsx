@@ -1,5 +1,6 @@
 
 import React from 'react';
+import { getAccessibleTextColor } from '../../../utils/BrandStyleAnalyzer';
 
 interface ButtonConfig {
   color: string;
@@ -9,6 +10,7 @@ interface ButtonConfig {
   size: 'small' | 'medium' | 'large';
   text: string;
   visible: boolean;
+  textColor?: string;
 }
 
 interface WheelButtonProps {
@@ -39,26 +41,32 @@ const WheelButton: React.FC<WheelButtonProps> = ({
 
   if (!buttonConfig.visible) return null;
 
+  // Utiliser la couleur de texte automatique si elle n'est pas définie
+  const textColor = buttonConfig.textColor || getAccessibleTextColor(buttonConfig.color);
+
   return (
-    <button
-      onClick={onClick}
-      disabled={spinning || disabled}
+    <button 
+      onClick={onClick} 
+      disabled={spinning || disabled} 
       style={{
         background: `linear-gradient(45deg, ${buttonConfig.color}, ${buttonConfig.color}dd)`,
-        borderColor: '#FFD700',
-        borderWidth: '2px',
+        borderColor: buttonConfig.borderColor,
+        borderWidth: `${buttonConfig.borderWidth}px`,
         borderRadius: `${buttonConfig.borderRadius}px`,
         borderStyle: 'solid',
-        boxShadow: '0 4px 15px rgba(255, 215, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.2)'
-      }}
-      className={`${getButtonSizeClasses()} text-white font-bold disabled:opacity-50 hover:opacity-90 transition-all duration-200 relative overflow-hidden`}
+        boxShadow: `0 4px 15px ${buttonConfig.borderColor}30, inset 0 1px 0 rgba(255, 255, 255, 0.2)`,
+        color: textColor
+      }} 
+      className={`${getButtonSizeClasses()} font-bold disabled:opacity-50 hover:opacity-90 transition-all duration-200 relative overflow-hidden`}
     >
       <span className="relative z-10">
-        {spinning ? 'Tourne...' : formValidated ? 'Lancer la roue' : (buttonConfig.text || 'Remplir le formulaire')}
+        {spinning ? 'Tourne...' : formValidated ? 'Lancer la roue' : buttonConfig.text || 'Remplir le formulaire'}
       </span>
       <div 
-        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300"
-        style={{ transform: 'skewX(-15deg)' }}
+        style={{
+          transform: 'skewX(-15deg)'
+        }} 
+        className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 mx-0 px-0" 
       />
     </button>
   );

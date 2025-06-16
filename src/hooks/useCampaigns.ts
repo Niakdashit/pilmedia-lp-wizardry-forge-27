@@ -52,7 +52,6 @@ export const useCampaigns = () => {
           return null;
         }
 
-        console.log('Campagne mise à jour avec succès:', data);
         return data;
       } else {
         const { data, error } = await supabase
@@ -76,7 +75,6 @@ export const useCampaigns = () => {
           return null;
         }
 
-        console.log('Campagne créée avec succès:', data);
         return data;
       }
     } catch (err) {

@@ -1,6 +1,4 @@
-
 import React from 'react';
-import { Settings } from 'lucide-react';
 import WheelGameConfig from './GameConfigs/WheelGameConfig';
 import JackpotGameConfig from './GameConfigs/JackpotGameConfig';
 import MemoryGameConfig from './GameConfigs/MemoryGameConfig';
@@ -39,25 +37,18 @@ const ModernGameTab: React.FC<ModernGameTabProps> = ({
     }
   };
 
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6">
       <div>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">Configuration du jeu</h2>
-        <p className="text-sm text-gray-600">
-          Configurez les paramètres spécifiques à votre jeu
-        </p>
+        
       </div>
 
       {/* Configuration spécifique au jeu */}
       <div className="border-t pt-6">
-        <h3 className="flex items-center text-lg font-semibold text-gray-900 mb-4">
-          <Settings className="w-5 h-5 mr-2" />
-          Paramètres spécifiques
-        </h3>
+        
         {renderGameConfig()}
       </div>
-    </div>
-  );
+    </div>;
 };
 
 export default ModernGameTab;

@@ -1,9 +1,8 @@
-
 import React from 'react';
-import WheelPreview from '../../GameTypes/WheelPreview';
-import { Jackpot } from '../../GameTypes';
-import ScratchPreview from '../../GameTypes/ScratchPreview';
-import DicePreview from '../../GameTypes/DicePreview';
+import { useGamePositionCalculator } from '../../CampaignEditor/GamePositionCalculator';
+import useCenteredStyles from '../../../hooks/useCenteredStyles';
+import { synchronizeCampaignWithColors } from './utils/campaignSynchronizer';
+import GameSwitcher from './components/GameSwitcher';
 
 interface GameRendererProps {
   gameType: string;
@@ -22,8 +21,11 @@ interface GameRendererProps {
     slotBorderWidth: number;
     slotBackgroundColor: string;
   };
+  logoUrl?: string;
+  fontUrl?: string;
   gameSize?: 'small' | 'medium' | 'large' | 'xlarge';
   gamePosition?: 'top' | 'center' | 'bottom' | 'left' | 'right';
+  previewDevice?: 'desktop' | 'tablet' | 'mobile';
 }
 
 const GameRenderer: React.FC<GameRendererProps> = ({
@@ -31,79 +33,60 @@ const GameRenderer: React.FC<GameRendererProps> = ({
   mockCampaign,
   customColors,
   jackpotColors,
+  logoUrl,
+  fontUrl,
   gameSize = 'large',
-  gamePosition = 'center'
+  gamePosition = 'center',
+  previewDevice = 'desktop'
 }) => {
-  console.log('GameRenderer received:', { 
-    gameType, 
-    gameSize, 
+  // Couleurs directement issues du logo
+  const finalColors = customColors;
+
+  // Chargement dynamique de la police
+  React.useEffect(() => {
+    if (fontUrl) {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = fontUrl;
+      document.head.appendChild(link);
+      return () => {
+        document.head.removeChild(link);
+      };
+    }
+  }, [fontUrl]);
+
+  // Synchronisation de la campagne avec les couleurs extraites
+  const synchronizedCampaign = React.useMemo(() => {
+    return synchronizeCampaignWithColors(mockCampaign, finalColors, logoUrl);
+  }, [mockCampaign, finalColors, logoUrl]);
+
+  // Styles et positionnement
+  const { containerStyle, wrapperStyle } = useCenteredStyles();
+  const { getPositionStyles } = useGamePositionCalculator({
+    gameSize,
     gamePosition,
-    jackpotColors,
-    mockCampaign: mockCampaign.gameConfig?.jackpot 
+    shouldCropWheel: false
   });
 
-  switch (gameType) {
-    case 'wheel':
-      return (
-        <WheelPreview
-          campaign={mockCampaign}
-          config={mockCampaign.gameConfig?.wheel || {
-            mode: "instant_winner" as const,
-            winProbability: 0.1,
-            maxWinners: 10,
-            winnersCount: 0
-          }}
-          gameSize={gameSize}
-          gamePosition={gamePosition}
-          previewDevice="desktop"
-        />
-      );
+  // Clé de rendu forcé pour la mise à jour des couleurs
+  const renderKey = `${gameType}-${JSON.stringify(finalColors)}-${Date.now()}`;
 
-    case 'jackpot':
-      return (
-        <Jackpot
-          isPreview={true}
-          instantWinConfig={mockCampaign.gameConfig?.jackpot?.instantWin || {
-            mode: "instant_winner" as const,
-            winProbability: 0.1,
-            maxWinners: 10,
-            winnersCount: 0
-          }}
-          buttonLabel={mockCampaign.gameConfig?.jackpot?.buttonLabel || mockCampaign.buttonConfig?.text || 'Lancer le Jackpot'}
-          buttonColor={customColors.primary}
-          backgroundImage={mockCampaign.gameConfig?.jackpot?.backgroundImage}
-          // Utiliser directement les couleurs du store jackpotColors
-          containerBackgroundColor={jackpotColors.containerBackgroundColor}
-          backgroundColor={jackpotColors.backgroundColor}
-          borderColor={jackpotColors.borderColor}
-          borderWidth={jackpotColors.borderWidth}
-          slotBorderColor={jackpotColors.slotBorderColor}
-          slotBorderWidth={jackpotColors.slotBorderWidth}
-          slotBackgroundColor={jackpotColors.slotBackgroundColor}
-        />
-      );
-
-    case 'scratch':
-      return (
-        <ScratchPreview 
-          config={mockCampaign.gameConfig?.scratch || {}}
-        />
-      );
-
-    case 'dice':
-      return (
-        <DicePreview 
-          config={mockCampaign.gameConfig?.dice || {}}
-        />
-      );
-
-    default:
-      return (
-        <div className="text-center text-gray-500">
-          <p>Type de jeu non supporté: {gameType}</p>
-        </div>
-      );
-  }
+  return (
+    <GameSwitcher
+      gameType={gameType}
+      synchronizedCampaign={synchronizedCampaign}
+      mockCampaign={mockCampaign}
+      finalColors={finalColors}
+      jackpotColors={jackpotColors}
+      gameSize={gameSize}
+      gamePosition={gamePosition}
+      previewDevice={previewDevice}
+      containerStyle={containerStyle}
+      wrapperStyle={wrapperStyle}
+      getPositionStyles={getPositionStyles}
+      renderKey={renderKey}
+    />
+  );
 };
 
 export default GameRenderer;

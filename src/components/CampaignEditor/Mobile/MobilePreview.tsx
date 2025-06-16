@@ -4,7 +4,6 @@ import MobileWheelPreview from '../../GameTypes/MobileWheelPreview';
 import MobileButton from './MobileButton';
 import MobileContent from './MobileContent';
 import MobileOverlays from './MobileOverlays';
-import { DEVICE_SPECS } from './constants';
 import { getDeviceStyle, getScreenStyle, getContentLayoutStyle } from './styles';
 
 interface MobilePreviewProps {
@@ -16,17 +15,32 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
   campaign,
   previewMode
 }) => {
-  const mobileConfig = campaign.mobileConfig || {};
-  const specs = DEVICE_SPECS[previewMode];
+  const fallbackMobile = campaign.config?.mobileConfig || {};
+  const mobileConfig = { ...fallbackMobile, ...(campaign.mobileConfig || {}) };
   const gamePosition = mobileConfig.gamePosition || 'left';
-  const deviceWidth = specs.width;
+  const verticalOffset = mobileConfig.gameVerticalOffset || 0;
+  const horizontalOffset = mobileConfig.gameHorizontalOffset || 0;
 
-  const deviceStyle = getDeviceStyle(specs, deviceWidth);
-  const screenStyle = getScreenStyle(mobileConfig, previewMode);
+  const deviceStyle = getDeviceStyle();
+  const screenStyle = getScreenStyle(mobileConfig);
   const contentLayoutStyle = getContentLayoutStyle(mobileConfig);
 
+  // Get custom images for mobile
+  const customImages = campaign.design?.customImages || [];
+
+  // Helper function to get mobile-specific config for elements
+  const getElementMobileConfig = (element: any) => {
+    const mobileConfig = element.deviceConfig?.mobile;
+    return {
+      x: mobileConfig?.x ?? element.x ?? 0,
+      y: mobileConfig?.y ?? element.y ?? 0,
+      width: mobileConfig?.width ?? element.width ?? 100,
+      height: mobileConfig?.height ?? element.height ?? 100
+    };
+  };
+
   return (
-    <div style={deviceStyle}>
+    <div style={deviceStyle} key={`mobile-preview-${campaign.gameSize}-${JSON.stringify(mobileConfig)}`}>
       <div style={screenStyle}>
         <MobileOverlays mobileConfig={mobileConfig} previewMode={previewMode} />
 
@@ -47,9 +61,44 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
             <MobileWheelPreview
               campaign={campaign}
               gamePosition={gamePosition}
+              verticalOffset={verticalOffset}
+              horizontalOffset={horizontalOffset}
             />
           </div>
         )}
+
+        {/* Custom Images Layer */}
+        {customImages.map((customImage: any) => {
+          if (!customImage?.src) return null;
+          
+          const mobileConfig = getElementMobileConfig(customImage);
+          
+          return (
+            <div
+              key={`mobile-image-${customImage.id}`}
+              style={{
+                position: 'absolute',
+                transform: `translate3d(${mobileConfig.x}px, ${mobileConfig.y}px, 0) rotate(${customImage.rotation || 0}deg)`,
+                width: mobileConfig.width,
+                height: mobileConfig.height,
+                zIndex: 15,
+                pointerEvents: 'none'
+              }}
+            >
+              <img
+                src={customImage.src}
+                alt="Custom element"
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  borderRadius: '4px'
+                }}
+                draggable={false}
+              />
+            </div>
+          );
+        })}
 
         {/* Content Layer */}
         <div style={contentLayoutStyle}>
@@ -60,8 +109,10 @@ const MobilePreview: React.FC<MobilePreviewProps> = ({
           />
         </div>
 
-        {/* Button Layer */}
-        <MobileButton mobileConfig={mobileConfig} campaign={campaign} />
+        {/* Button Layer - only show if not hidden */}
+        {!mobileConfig.hideLaunchButton && (
+          <MobileButton mobileConfig={mobileConfig} campaign={campaign} />
+        )}
       </div>
     </div>
   );

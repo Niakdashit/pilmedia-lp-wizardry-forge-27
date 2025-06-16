@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Move, ArrowUp, ArrowDown, Layers } from 'lucide-react';
 
@@ -63,32 +62,99 @@ const MobileLayout: React.FC<MobileLayoutProps> = ({ campaign, setCampaign }) =>
             </button>
           ))}
         </div>
+        
+        {/* Décalage vertical - toujours affiché */}
+        <div className="mt-4">
+          <label className="block text-xs text-gray-600 mb-1">
+            Décalage vertical (%)
+          </label>
+          <input
+            type="range"
+            min="-50"
+            max="50"
+            value={mobileConfig.gameVerticalOffset || 0}
+            onChange={(e) =>
+              updateMobileConfig('gameVerticalOffset', Number(e.target.value))
+            }
+            className="w-full"
+          />
+          <div className="text-xs text-gray-500 mt-1">
+            {mobileConfig.gameVerticalOffset || 0}%
+          </div>
+        </div>
+        
+        {/* Décalage horizontal - toujours affiché */}
+        <div className="mt-4">
+          <label className="block text-xs text-gray-600 mb-1">
+            Décalage horizontal (%)
+          </label>
+          <input
+            type="range"
+            min="-50"
+            max="50"
+            value={mobileConfig.gameHorizontalOffset || 0}
+            onChange={(e) =>
+              updateMobileConfig('gameHorizontalOffset', Number(e.target.value))
+            }
+            className="w-full"
+          />
+          <div className="text-xs text-gray-500 mt-1">
+            {mobileConfig.gameHorizontalOffset || 0}%
+          </div>
+        </div>
       </div>
 
-      {/* Button Position */}
-      <div>
+      {/* Launch Button Configuration */}
+      <div className="border-t pt-6">
         <label className="block text-sm font-medium text-gray-700 mb-3">
-          Position du bouton principal
+          Configuration du bouton de lancement
         </label>
-        <div className="grid grid-cols-2 gap-3">
-          {[
-            { value: 'above', label: 'Au-dessus du jeu', icon: ArrowUp },
-            { value: 'below', label: 'En-dessous du jeu', icon: ArrowDown }
-          ].map((option) => (
-            <button
-              key={option.value}
-              onClick={() => updateMobileConfig('buttonPosition', option.value)}
-              className={`p-4 border-2 rounded-lg text-center transition-colors ${
-                mobileConfig.buttonPosition === option.value
-                  ? 'border-[#841b60] bg-[#f9f0f5] text-[#841b60]'
-                  : 'border-gray-200 hover:border-gray-300'
-              }`}
-            >
-              <option.icon className="w-5 h-5 mx-auto mb-2" />
-              <div className="text-sm font-medium">{option.label}</div>
-            </button>
-          ))}
+        
+        {/* Hide Launch Button Toggle */}
+        <div className="mb-4">
+          <label className="flex items-center space-x-3">
+            <input
+              type="checkbox"
+              checked={mobileConfig.hideLaunchButton || false}
+              onChange={(e) => updateMobileConfig('hideLaunchButton', e.target.checked)}
+              className="w-4 h-4 text-[#841b60] rounded focus:ring-[#841b60]"
+            />
+            <span className="text-sm font-medium text-gray-700">
+              Masquer le bouton de lancement externe
+            </span>
+          </label>
+          <p className="text-xs text-gray-500 mt-1 ml-7">
+            Le bouton sera placé au centre de la roue pour gagner de l'espace
+          </p>
         </div>
+
+        {/* Button Position - only show if not hidden */}
+        {!mobileConfig.hideLaunchButton && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-3">
+              Position du bouton principal
+            </label>
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { value: 'above', label: 'Au-dessus du jeu', icon: ArrowUp },
+                { value: 'below', label: 'En-dessous du jeu', icon: ArrowDown }
+              ].map((option) => (
+                <button
+                  key={option.value}
+                  onClick={() => updateMobileConfig('buttonPosition', option.value)}
+                  className={`p-4 border-2 rounded-lg text-center transition-colors ${
+                    mobileConfig.buttonPosition === option.value
+                      ? 'border-[#841b60] bg-[#f9f0f5] text-[#841b60]'
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  <option.icon className="w-5 h-5 mx-auto mb-2" />
+                  <div className="text-sm font-medium">{option.label}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Text Block Position */}

@@ -1,10 +1,12 @@
 import React from 'react';
 import { Palette } from 'lucide-react';
 import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
-
 const JackpotBorderCustomizer: React.FC = () => {
-  const { jackpotColors, setJackpotColors, customColors } = useQuickCampaignStore();
-
+  const {
+    jackpotColors,
+    setJackpotColors,
+    customColors
+  } = useQuickCampaignStore();
   const handleColorChange = (field: keyof typeof jackpotColors, value: string | number) => {
     setJackpotColors({
       ...jackpotColors,
@@ -18,27 +20,22 @@ const JackpotBorderCustomizer: React.FC = () => {
       ...jackpotColors,
       borderColor: customColors.primary,
       slotBorderColor: customColors.secondary,
-      containerBackgroundColor: customColors.primary + '20', // Version transparente
-      backgroundColor: customColors.accent + '30' || customColors.secondary + '20', // Utiliser accent ou secondary en transparence
+      containerBackgroundColor: customColors.primary + '20',
+      // Version transparente
+      backgroundColor: customColors.accent + '30' || customColors.secondary + '20' // Utiliser accent ou secondary en transparence
     });
   };
-
   React.useEffect(() => {
     // Synchroniser automatiquement les couleurs quand les couleurs personnalisées changent
     syncWithCustomColors();
   }, [customColors.primary, customColors.secondary, customColors.accent]);
-
-  return (
-    <div className="space-y-6">
+  return <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h3 className="text-xl font-medium text-gray-900 flex items-center">
           <Palette className="w-5 h-5 mr-2" />
           Couleurs du Jackpot
         </h3>
-        <button
-          onClick={syncWithCustomColors}
-          className="text-sm px-3 py-1 bg-[#841b60] text-white rounded-lg hover:bg-[#841b60]/90 transition-colors"
-        >
+        <button onClick={syncWithCustomColors} className="text-sm px-3 py-1 bg-[#841b60] text-white rounded-lg hover:bg-[#841b60]/90 transition-colors">
           Synchroniser
         </button>
       </div>
@@ -50,18 +47,8 @@ const JackpotBorderCustomizer: React.FC = () => {
             Arrière-plan du conteneur
           </label>
           <div className="flex items-center space-x-3">
-            <input
-              type="color"
-              value={jackpotColors.containerBackgroundColor}
-              onChange={(e) => handleColorChange('containerBackgroundColor', e.target.value)}
-              className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
-            />
-            <input
-              type="text"
-              value={jackpotColors.containerBackgroundColor}
-              onChange={(e) => handleColorChange('containerBackgroundColor', e.target.value)}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#841b60] focus:border-transparent text-sm"
-            />
+            <input type="color" value={jackpotColors.containerBackgroundColor} onChange={e => handleColorChange('containerBackgroundColor', e.target.value)} className="w-12 h-10 border border-gray-300 rounded cursor-pointer" />
+            <input type="text" value={jackpotColors.containerBackgroundColor} onChange={e => handleColorChange('containerBackgroundColor', e.target.value)} className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#841b60] focus:border-transparent text-sm" />
           </div>
         </div>
 
@@ -71,18 +58,8 @@ const JackpotBorderCustomizer: React.FC = () => {
             Arrière-plan interne
           </label>
           <div className="flex items-center space-x-3">
-            <input
-              type="color"
-              value={jackpotColors.backgroundColor}
-              onChange={(e) => handleColorChange('backgroundColor', e.target.value)}
-              className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
-            />
-            <input
-              type="text"
-              value={jackpotColors.backgroundColor}
-              onChange={(e) => handleColorChange('backgroundColor', e.target.value)}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#841b60] focus:border-transparent text-sm"
-            />
+            <input type="color" value={jackpotColors.backgroundColor} onChange={e => handleColorChange('backgroundColor', e.target.value)} className="w-12 h-10 border border-gray-300 rounded cursor-pointer" />
+            <input type="text" value={jackpotColors.backgroundColor} onChange={e => handleColorChange('backgroundColor', e.target.value)} className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#841b60] focus:border-transparent text-sm" />
           </div>
         </div>
 
@@ -92,18 +69,8 @@ const JackpotBorderCustomizer: React.FC = () => {
             Bordure principale
           </label>
           <div className="flex items-center space-x-3">
-            <input
-              type="color"
-              value={jackpotColors.borderColor}
-              onChange={(e) => handleColorChange('borderColor', e.target.value)}
-              className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
-            />
-            <input
-              type="text"
-              value={jackpotColors.borderColor}
-              onChange={(e) => handleColorChange('borderColor', e.target.value)}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#841b60] focus:border-transparent text-sm"
-            />
+            <input type="color" value={jackpotColors.borderColor} onChange={e => handleColorChange('borderColor', e.target.value)} className="w-12 h-10 border border-gray-300 rounded cursor-pointer" />
+            <input type="text" value={jackpotColors.borderColor} onChange={e => handleColorChange('borderColor', e.target.value)} className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#841b60] focus:border-transparent text-sm" />
           </div>
         </div>
 
@@ -112,14 +79,7 @@ const JackpotBorderCustomizer: React.FC = () => {
           <label className="text-sm font-medium text-gray-700">
             Épaisseur bordure principale ({jackpotColors.borderWidth}px)
           </label>
-          <input
-            type="range"
-            min="0"
-            max="10"
-            value={jackpotColors.borderWidth}
-            onChange={(e) => handleColorChange('borderWidth', parseInt(e.target.value))}
-            className="w-full"
-          />
+          <input type="range" min="0" max="10" value={jackpotColors.borderWidth} onChange={e => handleColorChange('borderWidth', parseInt(e.target.value))} className="w-full" />
         </div>
 
         {/* Couleur de bordure des slots */}
@@ -128,18 +88,8 @@ const JackpotBorderCustomizer: React.FC = () => {
             Bordure des slots
           </label>
           <div className="flex items-center space-x-3">
-            <input
-              type="color"
-              value={jackpotColors.slotBorderColor}
-              onChange={(e) => handleColorChange('slotBorderColor', e.target.value)}
-              className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
-            />
-            <input
-              type="text"
-              value={jackpotColors.slotBorderColor}
-              onChange={(e) => handleColorChange('slotBorderColor', e.target.value)}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#841b60] focus:border-transparent text-sm"
-            />
+            <input type="color" value={jackpotColors.slotBorderColor} onChange={e => handleColorChange('slotBorderColor', e.target.value)} className="w-12 h-10 border border-gray-300 rounded cursor-pointer" />
+            <input type="text" value={jackpotColors.slotBorderColor} onChange={e => handleColorChange('slotBorderColor', e.target.value)} className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#841b60] focus:border-transparent text-sm" />
           </div>
         </div>
 
@@ -148,14 +98,7 @@ const JackpotBorderCustomizer: React.FC = () => {
           <label className="text-sm font-medium text-gray-700">
             Épaisseur bordure slots ({jackpotColors.slotBorderWidth}px)
           </label>
-          <input
-            type="range"
-            min="0"
-            max="6"
-            value={jackpotColors.slotBorderWidth}
-            onChange={(e) => handleColorChange('slotBorderWidth', parseInt(e.target.value))}
-            className="w-full"
-          />
+          <input type="range" min="0" max="6" value={jackpotColors.slotBorderWidth} onChange={e => handleColorChange('slotBorderWidth', parseInt(e.target.value))} className="w-full" />
         </div>
 
         {/* Arrière-plan des slots */}
@@ -164,29 +107,13 @@ const JackpotBorderCustomizer: React.FC = () => {
             Arrière-plan des slots
           </label>
           <div className="flex items-center space-x-3">
-            <input
-              type="color"
-              value={jackpotColors.slotBackgroundColor}
-              onChange={(e) => handleColorChange('slotBackgroundColor', e.target.value)}
-              className="w-12 h-10 border border-gray-300 rounded cursor-pointer"
-            />
-            <input
-              type="text"
-              value={jackpotColors.slotBackgroundColor}
-              onChange={(e) => handleColorChange('slotBackgroundColor', e.target.value)}
-              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#841b60] focus:border-transparent text-sm"
-            />
+            <input type="color" value={jackpotColors.slotBackgroundColor} onChange={e => handleColorChange('slotBackgroundColor', e.target.value)} className="w-12 h-10 border border-gray-300 rounded cursor-pointer" />
+            <input type="text" value={jackpotColors.slotBackgroundColor} onChange={e => handleColorChange('slotBackgroundColor', e.target.value)} className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#841b60] focus:border-transparent text-sm" />
           </div>
         </div>
       </div>
 
-      <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-        <p className="text-sm text-blue-800">
-          💡 <strong>Astuce :</strong> Utilisez le bouton "Synchroniser" pour appliquer automatiquement vos couleurs personnalisées au jackpot.
-        </p>
-      </div>
-    </div>
-  );
+      
+    </div>;
 };
-
 export default JackpotBorderCustomizer;

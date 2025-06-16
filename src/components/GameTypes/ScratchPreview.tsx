@@ -1,6 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { motion } from 'framer-motion';
-
+import React, { useState, useEffect } from 'react';
+import ScratchGameGrid from './ScratchGameGrid';
 interface ScratchPreviewProps {
   config?: any;
   onFinish?: (result: 'win' | 'lose') => void;
@@ -10,16 +9,12 @@ interface ScratchPreviewProps {
   buttonColor?: string;
   gameSize?: 'small' | 'medium' | 'large' | 'xlarge';
   gamePosition?: 'top' | 'center' | 'bottom' | 'left' | 'right';
-  isPreview?: boolean;
-  instantWinConfig?: {
-    mode: 'instant_winner';
-    winProbability: number;
-    maxWinners?: number;
-    winnersCount?: number;
-  };
+  autoStart?: boolean;
+  isModal?: boolean;
 }
-
-const ScratchPreview: React.FC<ScratchPreviewProps> = ({ 
+const STORAGE_KEY = 'scratch_session_card';
+const SCRATCH_STARTED_KEY = 'scratch_session_started';
+const ScratchPreview: React.FC<ScratchPreviewProps> = ({
   config = {},
   onFinish,
   onStart,
@@ -27,276 +22,99 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
   buttonLabel = 'Gratter',
   buttonColor = '#841b60',
   gameSize = 'medium',
-  instantWinConfig
+  autoStart = false,
+  isModal = false
 }) => {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [isRevealed, setIsRevealed] = useState(false);
-  const [scratchPercentage, setScratchPercentage] = useState(0);
-  const [gameStarted, setGameStarted] = useState(false);
-  const [result, setResult] = useState<'win' | 'lose' | null>(null);
+  const [gameStarted, setGameStarted] = useState(autoStart && !disabled);
+  const [finishedCards, setFinishedCards] = useState<Set<number>>(new Set());
+  const [hasWon, setHasWon] = useState(false);
+  const [selectedCard, setSelectedCard] = useState<number | null>(null);
+  const [scratchStarted, setScratchStarted] = useState(false);
+  const [showResult, setShowResult] = useState(false);
 
-  // Calculer le résultat avec la logique instant win
-  const calculateResult = (): 'win' | 'lose' => {
-    if (instantWinConfig && instantWinConfig.mode === 'instant_winner') {
-      const hasReachedMaxWinners = instantWinConfig.maxWinners 
-        ? (instantWinConfig.winnersCount || 0) >= instantWinConfig.maxWinners 
-        : false;
-      
-      if (hasReachedMaxWinners) return 'lose';
-      
-      return Math.random() < instantWinConfig.winProbability ? 'win' : 'lose';
+  // Clear any previous session data on component mount to ensure fresh start
+  useEffect(() => {
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(SCRATCH_STARTED_KEY);
+  }, []);
+
+  // Automatically start the game in preview mode if autoStart is enabled
+  useEffect(() => {
+    if (autoStart && !gameStarted && !disabled) {
+      setGameStarted(true);
+      if (onStart) onStart();
     }
-    
-    return Math.random() > 0.7 ? 'win' : 'lose';
-  };
-
-  // Gérer le démarrage du jeu
+  }, [autoStart, gameStarted, disabled, onStart]);
   const handleGameStart = () => {
     if (disabled) return;
-    
     setGameStarted(true);
-    const gameResult = calculateResult();
-    setResult(gameResult);
-    
     if (onStart) onStart();
   };
-
-  // Dimensions selon la taille
-  const getDimensions = () => {
-    switch (gameSize) {
-      case 'small': return { width: 200, height: 140 };
-      case 'medium': return { width: 280, height: 200 };
-      case 'large': return { width: 350, height: 250 };
-      case 'xlarge': return { width: 420, height: 300 };
-      default: return { width: 280, height: 200 };
+  const handleCardSelect = (index: number) => {
+    // Only allow selection if no scratch has started and no card is selected
+    if (!scratchStarted && selectedCard === null) {
+      setSelectedCard(index);
+    }
+  };
+  const handleScratchStart = (index: number) => {
+    // Only allow scratch to start on the selected card and if no scratch has started yet
+    if (selectedCard === index && !scratchStarted) {
+      setScratchStarted(true);
+      localStorage.setItem(STORAGE_KEY, index.toString());
+      localStorage.setItem(SCRATCH_STARTED_KEY, 'true');
+    }
+  };
+  const handleCardFinish = (result: 'win' | 'lose', cardIndex: number) => {
+    const newFinishedCards = new Set([...finishedCards, cardIndex]);
+    setFinishedCards(newFinishedCards);
+    if (result === 'win') {
+      setHasWon(true);
+    }
+    const totalCards = config?.cards?.length || 1;
+    if (newFinishedCards.size >= totalCards) {
+      setShowResult(true);
+      setTimeout(() => {
+        if (onFinish) {
+          onFinish(hasWon || result === 'win' ? 'win' : 'lose');
+        }
+      }, 1000);
     }
   };
 
-  const { width, height } = getDimensions();
-
-  useEffect(() => {
-    if (canvasRef.current && gameStarted && !isRevealed) {
-      const canvas = canvasRef.current;
-      const ctx = canvas.getContext('2d');
-      if (!ctx) return;
-
-      canvas.width = width;
-      canvas.height = height;
-
-      // Surface à gratter
-      if (config?.scratchSurface) {
-        const img = new Image();
-        img.onload = () => {
-          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-        };
-        img.src = config.scratchSurface;
-      } else {
-        ctx.fillStyle = config?.scratchColor || '#C0C0C0';
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
-        // Texture métallique par défaut
-        ctx.fillStyle = '#999';
-        ctx.font = '16px Arial';
-        ctx.textAlign = 'center';
-        ctx.fillText('Grattez ici', canvas.width / 2, canvas.height / 2 - 10);
-        ctx.fillText('pour découvrir', canvas.width / 2, canvas.height / 2 + 10);
-      }
-
-      let isDrawing = false;
-
-      const getXY = (e: MouseEvent | TouchEvent) => {
-        const rect = canvas.getBoundingClientRect();
-        if ('touches' in e) {
-          return {
-            x: (e.touches[0].clientX - rect.left) * (canvas.width / rect.width),
-            y: (e.touches[0].clientY - rect.top) * (canvas.height / rect.height),
-          };
-        }
-        return {
-          x: (e.clientX - rect.left) * (canvas.width / rect.width),
-          y: (e.clientY - rect.top) * (canvas.height / rect.height),
-        };
-      };
-
-      const scratch = (e: MouseEvent | TouchEvent) => {
-        if (!isDrawing) return;
-        const { x, y } = getXY(e);
-
-        ctx.globalCompositeOperation = 'destination-out';
-        ctx.beginPath();
-        ctx.arc(x, y, 20, 0, Math.PI * 2);
-        ctx.fill();
-
-        // Calculer le pourcentage gratté
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const pixels = imageData.data;
-        let transparentPixels = 0;
-
-        for (let i = 0; i < pixels.length; i += 4) {
-          if (pixels[i + 3] === 0) transparentPixels++;
-        }
-
-        const percentage = (transparentPixels / (pixels.length / 4)) * 100;
-        setScratchPercentage(Math.round(percentage));
-
-        const requiredPercent = config?.scratchArea || 70;
-        if (percentage >= requiredPercent && !isRevealed) {
-          setIsRevealed(true);
-          if (onFinish && result) {
-            setTimeout(() => onFinish(result), 500);
-          }
-        }
-      };
-
-      const startDrawing = (e: Event) => {
-        e.preventDefault();
-        isDrawing = true;
-      };
-      const stopDrawing = () => (isDrawing = false);
-
-      canvas.addEventListener('mousedown', startDrawing);
-      canvas.addEventListener('mousemove', scratch);
-      canvas.addEventListener('mouseup', stopDrawing);
-      canvas.addEventListener('mouseleave', stopDrawing);
-      canvas.addEventListener('touchstart', startDrawing);
-      canvas.addEventListener('touchmove', scratch);
-      canvas.addEventListener('touchend', stopDrawing);
-
-      return () => {
-        canvas.removeEventListener('mousedown', startDrawing);
-        canvas.removeEventListener('mousemove', scratch);
-        canvas.removeEventListener('mouseup', stopDrawing);
-        canvas.removeEventListener('mouseleave', stopDrawing);
-        canvas.removeEventListener('touchstart', startDrawing);
-        canvas.removeEventListener('touchmove', scratch);
-        canvas.removeEventListener('touchend', stopDrawing);
-      };
-    }
-  }, [config, isRevealed, gameStarted, result, width, height, onFinish]);
-
-  const getResultContent = () => {
-    if (config?.revealImage) {
-      return (
-        <img
-          src={config.revealImage}
-          alt="Contenu révélé"
-          className="w-full h-full object-cover"
-        />
-      );
-    }
-
-    return (
-      <div className={`w-full h-full flex flex-col items-center justify-center ${
-        result === 'win' ? 'bg-gradient-to-br from-yellow-300 to-yellow-500' : 'bg-gradient-to-br from-gray-300 to-gray-500'
-      }`}>
-        <div className="text-4xl mb-2">
-          {result === 'win' ? '🎉' : '😔'}
-        </div>
-        <div className="text-lg font-bold text-gray-800">
-          {result === 'win' 
-            ? config?.revealMessage || 'Félicitations !' 
-            : 'Dommage, réessayez !'}
-        </div>
-      </div>
-    );
-  };
-
-  const resetGame = () => {
-    setIsRevealed(false);
-    setScratchPercentage(0);
-    setGameStarted(false);
-    setResult(null);
-  };
-
-  // Si le jeu n'a pas encore commencé, afficher le bouton
+  // Ensure we have at least one card with proper defaults
+  const cards = config?.cards && config.cards.length > 0 ? config.cards : [{
+    id: 1,
+    revealImage: config?.revealImage || '',
+    revealMessage: config?.revealMessage || 'Félicitations !',
+    scratchColor: config?.scratchColor || '#C0C0C0'
+  }];
   if (!gameStarted) {
-    return (
-      <div className="flex flex-col items-center space-y-4">
-        <div 
-          className="relative rounded-lg overflow-hidden border-2 border-gray-300"
-          style={{ width: `${width}px`, height: `${height}px` }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-br from-gray-400 to-gray-600 flex items-center justify-center">
-            <div className="text-white text-center">
-              <div className="text-2xl mb-2">🎫</div>
-              <div className="text-sm">Carte à gratter</div>
-            </div>
-          </div>
+    return <div className={`flex flex-col items-center justify-center ${isModal ? 'py-6 min-h-[400px]' : 'py-12 min-h-[500px]'} bg-gradient-to-br from-gray-50 to-gray-100`}>
+        <div className="w-full mb-8">
+          <ScratchGameGrid cards={cards} gameSize={gameSize} gameStarted={false} onCardFinish={() => {}} onCardSelect={() => {}} onScratchStart={() => {}} selectedCard={null} scratchStarted={false} config={config} isModal={isModal} />
         </div>
-        
-        <button
-          onClick={handleGameStart}
-          disabled={disabled}
-          className="px-6 py-3 rounded-lg font-semibold text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-90"
-          style={{ 
-            backgroundColor: disabled ? '#6b7280' : buttonColor
-          }}
-        >
-          {disabled ? 'Remplissez le formulaire' : buttonLabel}
-        </button>
-      </div>
-    );
+
+        {!isModal && <div className="text-center space-y-6">
+            <div className="space-y-2">
+              <h3 className="text-xl font-bold text-gray-800">Cartes à gratter</h3>
+              <p className="text-gray-600">Cliquez sur le bouton pour commencer à jouer</p>
+            </div>
+            
+            <button onClick={handleGameStart} disabled={disabled} className="px-8 py-4 rounded-xl font-semibold text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 shadow-lg" style={{
+          backgroundColor: disabled ? '#6b7280' : buttonColor
+        }}>
+              {disabled ? 'Remplissez le formulaire' : buttonLabel}
+            </button>
+          </div>}
+      </div>;
   }
-
-  return (
-    <div className="w-full flex flex-col items-center space-y-4">
-      {gameStarted && !isRevealed && (
-        <div className="text-center">
-          <div className="text-sm text-gray-600 mb-2">
-            Progression: {scratchPercentage}% / {config?.scratchArea || 70}%
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-2 max-w-xs mx-auto">
-            <div 
-              className="bg-[#841b60] h-2 rounded-full transition-all duration-300"
-              style={{ width: `${Math.min(scratchPercentage, 100)}%` }}
-            />
-          </div>
-        </div>
-      )}
-
-      <div className="relative rounded-lg overflow-hidden border-2 border-gray-300" style={{ width: `${width}px`, height: `${height}px` }}>
-        {/* Contenu à révéler */}
-        <div className="absolute inset-0">
-          {getResultContent()}
-        </div>
-
-        {/* Canvas de grattage */}
-        {gameStarted && !isRevealed && (
-          <canvas
-            ref={canvasRef}
-            className="absolute inset-0 w-full h-full cursor-crosshair"
-            style={{ touchAction: 'none' }}
-          />
-        )}
-
-        {/* Overlay de résultat */}
-        {isRevealed && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="absolute inset-0 flex items-center justify-center bg-black/80"
-          >
-            <div className="bg-white p-4 rounded-lg shadow-lg text-center">
-              <div className="text-2xl mb-2">
-                {result === 'win' ? '🎊' : '💫'}
-              </div>
-              <p className="text-lg font-bold mb-2">
-                {result === 'win' 
-                  ? config?.revealMessage || 'Vous avez gagné !' 
-                  : 'Réessayez !'}
-              </p>
-              <button
-                onClick={resetGame}
-                className="px-4 py-2 bg-[#841b60] text-white rounded hover:bg-[#6d1650] transition-colors"
-              >
-                Rejouer
-              </button>
-            </div>
-          </motion.div>
-        )}
+  return <div className={`w-full flex flex-col items-center ${isModal ? 'py-6 min-h-[500px]' : 'py-8 min-h-[600px]'} bg-gradient-to-br from-gray-50 to-gray-100`}>
+      <div className="w-full flex-1">
+        <ScratchGameGrid cards={cards} gameSize={gameSize} gameStarted={gameStarted} onCardFinish={handleCardFinish} onCardSelect={handleCardSelect} onScratchStart={handleScratchStart} selectedCard={selectedCard} scratchStarted={scratchStarted} config={config} isModal={isModal} />
       </div>
-    </div>
-  );
-};
 
+      {/* Message d'instruction et progression - en bas, séparé des cartes */}
+      {!showResult && !isModal}
+    </div>;
+};
 export default ScratchPreview;

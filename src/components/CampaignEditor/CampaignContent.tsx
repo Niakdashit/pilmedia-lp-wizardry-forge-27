@@ -120,7 +120,10 @@ const CampaignContent: React.FC<CampaignContentProps> = ({
               <Eye className="w-5 h-5 text-[#841b60]" />
               <h3 className="text-lg font-medium text-gray-900">Aperçu du jeu</h3>
             </div>
-            <GameCanvasPreview campaign={campaign} />
+            <GameCanvasPreview 
+              campaign={campaign} 
+              gameSize={campaign.gameSize || 'large'}
+            />
           </div>
 
           <div>
@@ -139,7 +142,10 @@ const CampaignContent: React.FC<CampaignContentProps> = ({
                 <Eye className="w-5 h-5 text-[#841b60]" />
                 <h3 className="text-lg font-medium text-gray-900">Aperçu du jeu</h3>
               </div>
-              <GameCanvasPreview campaign={campaign} />
+              <GameCanvasPreview 
+                campaign={campaign} 
+                gameSize={campaign.gameSize || 'large'}
+              />
 
               <div>
                 <h3 className="text-lg font-medium text-gray-900 mb-4">Image de fond du jeu</h3>
@@ -158,7 +164,6 @@ const CampaignContent: React.FC<CampaignContentProps> = ({
                     }));
                   }}
                   label="Téléchargez ou sélectionnez une image de fond pour votre jeu"
-                  className="w-full"
                 />
               </div>
             </>

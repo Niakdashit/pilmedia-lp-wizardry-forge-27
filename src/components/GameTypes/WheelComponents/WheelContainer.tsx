@@ -15,79 +15,60 @@ const WheelContainer: React.FC<WheelContainerProps> = ({
   gameDimensions,
   previewDevice
 }) => {
-  // Check if we're on mobile/tablet and position is left/right for 50% cropping
-  const isMobileTablet = previewDevice === 'mobile' || previewDevice === 'tablet';
-  const isLeftRightPosition = gamePosition === 'left' || gamePosition === 'right';
-  const shouldCropWheel = isMobileTablet && isLeftRightPosition;
+  // Crop the wheel on mobile when placed left, right or bottom
+  const isMobile = previewDevice === 'mobile';
+  const isCroppablePosition = ['left', 'right', 'bottom'].includes(gamePosition);
+  const shouldCropWheel = isMobile && isCroppablePosition;
 
-  const getAbsolutePositionStyles = (): React.CSSProperties => {
-    const containerStyle: React.CSSProperties = {
-      position: 'absolute',
+  // Container style - always center by default, no matter the position setting
+  const getContainerStyles = (): React.CSSProperties => {
+    const baseStyle: React.CSSProperties = {
       display: 'flex',
+      flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
-      gap: '16px',
-      zIndex: 10
+      gap: '20px',
+      position: 'relative',
+      width: '100%',
+      height: '100%',
+      minHeight: '300px',
+      overflow: shouldCropWheel ? 'hidden' : 'visible',
+      padding: '20px',
+      boxSizing: 'border-box'
     };
 
-    const safeMargin = 20;
-
-    switch (gamePosition) {
-      case 'top':
-        return { 
-          ...containerStyle, 
-          flexDirection: 'column-reverse',
-          top: `${safeMargin}px`, 
-          left: '50%', 
-          transform: 'translateX(-50%)',
-          width: `${gameDimensions.width}px`,
-          height: `${gameDimensions.height}px`
-        };
-      case 'bottom':
-        return { 
-          ...containerStyle, 
-          flexDirection: 'column',
-          bottom: `${safeMargin}px`, 
-          left: '50%', 
-          transform: 'translateX(-50%)',
-          width: `${gameDimensions.width}px`,
-          height: `${gameDimensions.height}px`
-        };
-      case 'left':
-        return { 
-          ...containerStyle, 
-          flexDirection: shouldCropWheel ? 'row-reverse' : 'row',
-          left: shouldCropWheel ? '0px' : `${safeMargin}px`, 
-          top: '50%', 
-          transform: 'translateY(-50%)',
-          width: `${gameDimensions.width}px`,
-          height: `${gameDimensions.height}px`
-        };
-      case 'right':
-        return { 
-          ...containerStyle, 
-          flexDirection: shouldCropWheel ? 'row' : 'row-reverse',
-          right: shouldCropWheel ? '0px' : `${safeMargin}px`, 
-          top: '50%', 
-          transform: 'translateY(-50%)',
-          width: `${gameDimensions.width}px`,
-          height: `${gameDimensions.height}px`
-        };
-      default: // center
-        return { 
-          ...containerStyle, 
-          flexDirection: 'column',
-          top: '50%', 
-          left: '50%', 
-          transform: 'translate(-50%, -50%)',
-          width: `${gameDimensions.width}px`,
-          height: `${gameDimensions.height}px`
-        };
+    // For cropped mobile views, adjust the container
+    if (shouldCropWheel) {
+      switch (gamePosition) {
+        case 'left':
+          return {
+            ...baseStyle,
+            width: `${gameDimensions.width / 2}px`,
+            clipPath: 'inset(0 0 0 50%)',
+            justifyContent: 'flex-start'
+          };
+        case 'right':
+          return {
+            ...baseStyle,
+            width: `${gameDimensions.width / 2}px`,
+            clipPath: 'inset(0 50% 0 0)',
+            justifyContent: 'flex-end'
+          };
+        case 'bottom':
+          return {
+            ...baseStyle,
+            height: `${gameDimensions.height / 2}px`,
+            clipPath: 'inset(0 0 50% 0)',
+            alignItems: 'flex-end'
+          };
+      }
     }
+
+    return baseStyle;
   };
 
   return (
-    <div style={getAbsolutePositionStyles()}>
+    <div style={getContainerStyles()}>
       {children}
     </div>
   );
