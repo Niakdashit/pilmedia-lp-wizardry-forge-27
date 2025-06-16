@@ -177,10 +177,15 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
     return baseConfig;
   },
 
-  reset: () => set({
-    currentStep: 1,
-    campaignName: 'Ma Nouvelle Campagne',
-    selectedGameType: null,
+  reset: () => {
+    const url = get().backgroundImageUrl;
+    if (url) {
+      URL.revokeObjectURL(url);
+    }
+    set({
+      currentStep: 1,
+      campaignName: 'Ma Nouvelle Campagne',
+      selectedGameType: null,
     launchDate: '',
     marketingGoal: '',
     logoFile: null,
@@ -207,4 +212,5 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
       slotBackgroundColor: '#ffffff'
     }
   })
+  }
 }));

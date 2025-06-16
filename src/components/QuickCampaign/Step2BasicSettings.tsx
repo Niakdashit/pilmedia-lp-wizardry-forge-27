@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Calendar, Upload } from 'lucide-react';
 import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
@@ -19,19 +19,17 @@ const Step2BasicSettings: React.FC = () => {
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Nettoyage de l'URL de l'image pour éviter les leaks mémoire
-  useEffect(() => {
-    return () => {
-      if (backgroundImageUrl) {
-        URL.revokeObjectURL(backgroundImageUrl);
-      }
-    };
-  }, [backgroundImageUrl]);
 
   const handleFileUpload = (files: FileList | null) => {
     if (files && files[0]) {
       const file = files[0];
       setBackgroundImage(file);
+
+      // Nettoie l'ancienne URL si une nouvelle image est sélectionnée
+      if (backgroundImageUrl) {
+        URL.revokeObjectURL(backgroundImageUrl);
+      }
+
       const url = URL.createObjectURL(file);
       setBackgroundImageUrl(url);
     }
