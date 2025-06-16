@@ -1,10 +1,12 @@
+
 import React from 'react';
 import { Plus } from 'lucide-react';
 import PageHeader from '../components/Layout/PageHeader';
+import PageContainer from '../components/Layout/PageContainer';
 
 const Contacts: React.FC = () => {
   return (
-    <div className="-mx-6 -mt-6">
+    <PageContainer>
       <PageHeader
         title="Contacts"
         size="sm"
@@ -33,7 +35,8 @@ const Contacts: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
+    </PageContainer>
   );
 };
+
 export default Contacts;
