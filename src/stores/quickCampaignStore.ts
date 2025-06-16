@@ -19,5 +19,5 @@ export const useQuickCampaignStore = create<QuickCampaignStore>((set, get) => ({
   reset: () => set(initialState)
 }));
 
-// Export du type pour la compatibilité
-export interface { QuickCampaignState };
+// Export des types pour la compatibilité
+export type { QuickCampaignState, QuickCampaignActions } from '../types/quickCampaign';
