@@ -39,7 +39,7 @@ const TabRoulette: React.FC<TabRouletteProps> = ({
   campaign,
   setCampaign
 }) => {
-  const [segments, setSegments] = useState<Segment[]>(campaign?.config?.roulette?.segments || []);
+  const [segments, setSegments] = useState<Segment[]>(campaign?.gameConfig?.wheel?.segments || []);
   const [centerImage, setCenterImage] = useState<File | null>(null);
   const [rotation] = useState(0);
   const [desiredCount, setDesiredCount] = useState<number>(segments.length);
@@ -53,10 +53,10 @@ const TabRoulette: React.FC<TabRouletteProps> = ({
     setCenterImage(center);
     setCampaign((prev: any) => ({
       ...prev,
-      config: {
-        ...prev.config,
-        roulette: {
-          ...prev.config?.roulette,
+      gameConfig: {
+        ...prev.gameConfig,
+        wheel: {
+          ...prev.gameConfig?.wheel,
           segments: newSegments,
           centerImage: center || null
         }

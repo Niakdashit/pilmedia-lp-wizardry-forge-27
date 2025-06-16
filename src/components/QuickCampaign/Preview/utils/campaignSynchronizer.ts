@@ -17,15 +17,15 @@ export const synchronizeCampaignWithColors = (
   const campaign = applyBrandStyleToWheel(mockCampaign, finalColors as BrandColors);
   
   // Application forcée des couleurs exactes à la configuration de la roue
-  if (campaign.config?.roulette) {
-    campaign.config.roulette = {
-      ...campaign.config.roulette,
+  if (campaign.gameConfig?.wheel) {
+    campaign.gameConfig.wheel = {
+      ...campaign.gameConfig.wheel,
       borderColor: finalColors.primary,
       borderOutlineColor: finalColors.accent || finalColors.secondary,
       segmentColor1: finalColors.primary,
       segmentColor2: finalColors.secondary,
       // Forcer la mise à jour des segments avec les couleurs exactes
-      segments: campaign.config.roulette.segments?.map((segment: any, index: number) => ({
+      segments: campaign.gameConfig.wheel.segments?.map((segment: any, index: number) => ({
         ...segment,
         color: index % 2 === 0 ? finalColors.primary : finalColors.secondary
       })) || []
