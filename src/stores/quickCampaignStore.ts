@@ -106,8 +106,7 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
         customColors: state.customColors,
         centerLogo: state.logoUrl || null,
         backgroundImage: state.backgroundImageUrl || null,
-        mobileBackgroundImage: state.backgroundImageUrl || null,
-        background: state.backgroundImageUrl ? 'transparent' : '#f9fafb'
+        mobileBackgroundImage: state.backgroundImageUrl || null
       },
       buttonConfig: {
         color: state.customColors.accent,
@@ -172,8 +171,7 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
       buttonColor: state.customColors.accent,
       buttonTextColor: state.customColors.primary,
       buttonPlacement: 'bottom',
-      gamePosition: 'center',
-      backgroundImage: state.backgroundImageUrl || null
+      gamePosition: 'center'
     };
 
     return baseConfig;
