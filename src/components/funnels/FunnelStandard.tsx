@@ -1,7 +1,8 @@
+
 import React, { useState } from 'react';
 import Color from 'color';
 import DynamicContactForm from '../forms/DynamicContactForm';
-import { Quiz, Memory, Puzzle } from '../GameTypes';
+import { QuizGame, Memory, Puzzle } from '../GameTypes';
 import { useParticipations } from '../../hooks/useParticipations';
 
 const DEFAULT_FIELDS = [
@@ -60,7 +61,12 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
   const getGameComponent = () => {
     switch (campaign.type) {
       case 'quiz':
-        return <Quiz config={campaign.gameConfig.quiz} onConfigChange={() => {}} />;
+        return (
+          <QuizGame
+            config={campaign.gameConfig.quiz}
+            design={campaign.design}
+          />
+        );
       case 'memory':
         return <Memory config={campaign.gameConfig.memory} onConfigChange={() => {}} />;
       case 'puzzle':
@@ -110,23 +116,54 @@ const FunnelStandard: React.FC<GameFunnelProps> = ({ campaign }) => {
 
       {step === 'form' && (
         <div className="w-full max-w-md p-6">
-          <h2
-            className="text-2xl font-bold mb-4"
-            style={{
-              ...campaign.design.textStyles?.title
-            }}
-          >
-            {campaign.screens[1]?.title || 'Your Information'}
-          </h2>
-          <DynamicContactForm
-            fields={fields}
-            submitLabel={participationLoading ? "Chargement..." : (campaign.screens[1]?.buttonText || "Continuer")}
-            onSubmit={handleFormSubmit}
-            textStyles={{
-              label: campaign.design.textStyles?.label,
-              button: campaign.design.textStyles?.button
-            }}
-          />
+          {/* Cadre blanc spécial pour les quiz */}
+          {campaign.type === 'quiz' ? (
+            <div 
+              className="p-8 rounded-2xl shadow-xl border-2"
+              style={{
+                backgroundColor: '#ffffff',
+                borderColor: '#e5e7eb'
+              }}
+            >
+              <h2
+                className="text-2xl font-bold mb-4"
+                style={{
+                  ...campaign.design.textStyles?.title
+                }}
+              >
+                {campaign.screens[1]?.title || 'Your Information'}
+              </h2>
+              <DynamicContactForm
+                fields={fields}
+                submitLabel={participationLoading ? "Chargement..." : (campaign.screens[1]?.buttonText || "Continuer")}
+                onSubmit={handleFormSubmit}
+                textStyles={{
+                  label: campaign.design.textStyles?.label,
+                  button: campaign.design.textStyles?.button
+                }}
+              />
+            </div>
+          ) : (
+            <div>
+              <h2
+                className="text-2xl font-bold mb-4"
+                style={{
+                  ...campaign.design.textStyles?.title
+                }}
+              >
+                {campaign.screens[1]?.title || 'Your Information'}
+              </h2>
+              <DynamicContactForm
+                fields={fields}
+                submitLabel={participationLoading ? "Chargement..." : (campaign.screens[1]?.buttonText || "Continuer")}
+                onSubmit={handleFormSubmit}
+                textStyles={{
+                  label: campaign.design.textStyles?.label,
+                  button: campaign.design.textStyles?.button
+                }}
+              />
+            </div>
+          )}
         </div>
       )}
 

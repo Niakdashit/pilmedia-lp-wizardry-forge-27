@@ -8,6 +8,7 @@ import CanvasHeader from './components/CanvasHeader';
 import CanvasFooter from './components/CanvasFooter';
 import GridToggle from './components/GridToggle';
 import { useCanvasElements } from './hooks/useCanvasElements';
+import { createSynchronizedQuizCampaign } from '../../utils/quizConfigSync';
 
 interface ModernEditorCanvasProps {
   campaign: any;
@@ -88,10 +89,32 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
     setShowAddMenu(!showAddMenu);
   };
 
+  // Hauteur fixe, largeur responsive
+  const FIXED_CANVAS_HEIGHT = 700;
+
+  // Utiliser le système de synchronisation centralisé
+  const enhancedCampaign = createSynchronizedQuizCampaign({
+    ...campaign,
+    gameSize,
+    gamePosition,
+    buttonConfig: {
+      ...campaign.buttonConfig,
+      text: campaign.buttonConfig?.text || campaign.gameConfig?.[campaign.type]?.buttonLabel || 'Jouer',
+      color: campaign.design?.buttonColor || campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor || '#841b60'
+    }
+  });
+
   return (
-    <div className="w-full h-full flex items-center justify-center p-4 md:p-6">
-      {/* Canvas container with Canva-like styling - uses full available space */}
-      <div className="relative w-full h-full bg-white rounded-3xl shadow-2xl overflow-hidden border border-gray-200/50">
+    <div className="w-full h-full flex items-center justify-center p-4 md:p-6 bg-gradient-to-br from-gray-50 to-white overflow-hidden">
+      {/* Canvas container avec largeur responsive et hauteur fixe */}
+      <div 
+        className="bg-white rounded-3xl shadow-2xl border border-gray-200/50 overflow-hidden relative w-full max-w-none"
+        style={{
+          height: `${FIXED_CANVAS_HEIGHT}px`,
+          minHeight: `${FIXED_CANVAS_HEIGHT}px`,
+          maxHeight: `${FIXED_CANVAS_HEIGHT}px`
+        }}
+      >
         {/* Canvas background */}
         <div
           ref={canvasRef}
@@ -112,40 +135,10 @@ const ModernEditorCanvas: React.FC<ModernEditorCanvasProps> = ({
 
           <div className="flex-1 flex relative h-full">
             <GameCanvasPreview
-              campaign={{
-                ...campaign,
-                gameSize,
-                gamePosition,
-                buttonConfig: {
-                  ...campaign.buttonConfig,
-                  text: campaign.buttonConfig?.text || campaign.gameConfig?.[campaign.type]?.buttonLabel || 'Jouer',
-                  color: campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor || '#841b60'
-                },
-                design: {
-                  ...campaign.design,
-                  buttonColor: campaign.buttonConfig?.color || campaign.design?.buttonColor || '#841b60',
-                  titleColor: campaign.design?.titleColor || '#000000',
-                  background: campaign.design?.background || '#f8fafc'
-                },
-                gameConfig: {
-                  ...campaign.gameConfig,
-                  [campaign.type]: {
-                    ...campaign.gameConfig?.[campaign.type],
-                    buttonLabel: campaign.buttonConfig?.text || campaign.gameConfig?.[campaign.type]?.buttonLabel || 'Jouer',
-                    buttonColor: campaign.buttonConfig?.color || campaign.gameConfig?.[campaign.type]?.buttonColor || '#841b60',
-                    containerBackgroundColor: campaign.gameConfig?.[campaign.type]?.containerBackgroundColor,
-                    backgroundColor: campaign.gameConfig?.[campaign.type]?.backgroundColor,
-                    borderColor: campaign.gameConfig?.[campaign.type]?.borderColor,
-                    borderWidth: campaign.gameConfig?.[campaign.type]?.borderWidth,
-                    slotBorderColor: campaign.gameConfig?.[campaign.type]?.slotBorderColor,
-                    slotBorderWidth: campaign.gameConfig?.[campaign.type]?.slotBorderWidth,
-                    slotBackgroundColor: campaign.gameConfig?.[campaign.type]?.slotBackgroundColor,
-                  }
-                }
-              }}
+              campaign={enhancedCampaign}
               gameSize={gameSize}
               className="w-full h-full"
-              key={`preview-${gameSize}-${gamePosition}-${campaign.buttonConfig?.color}-${JSON.stringify(campaign.gameConfig?.[campaign.type])}`}
+              key={`preview-${gameSize}-${gamePosition}-${JSON.stringify(enhancedCampaign.design)}-${JSON.stringify(enhancedCampaign.gameConfig)}`}
               previewDevice={previewDevice}
             />
             

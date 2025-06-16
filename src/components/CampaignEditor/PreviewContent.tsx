@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Color from 'color';
 import confetti from 'canvas-confetti';
-import { Quiz, Wheel, Scratch, Memory, Puzzle, Dice } from '../GameTypes';
+import { QuizGame, Wheel, Scratch, Memory, Puzzle, Dice } from '../GameTypes';
 import FormPreview from '../GameTypes/FormPreview';
 
 interface PreviewContentProps {
@@ -41,7 +41,7 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
   const getGameComponent = () => {
     if (isComplete) {
       return (
-          <div className="flex flex-col items-center justify-center text-center h-full w-full max-w-2xl mx-auto px-4">
+        <div className="flex flex-col items-center justify-center text-center h-full w-full max-w-2xl mx-auto px-4">
           <h2
             className="text-3xl font-bold mb-6"
             style={{
@@ -50,7 +50,6 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
           >
             {campaign.screens[3].title || 'Félicitations !'}
           </h2>
-          
           <p
             className="text-xl"
             style={{
@@ -67,9 +66,9 @@ const PreviewContent: React.FC<PreviewContentProps> = ({ campaign, step = 'game'
     switch (campaign.type) {
       case 'quiz':
         return (
-          <Quiz 
-            config={campaign.gameConfig.quiz} 
-            onConfigChange={() => {}}
+          <QuizGame
+            config={campaign.gameConfig.quiz}
+            design={campaign.design}
           />
         );
 

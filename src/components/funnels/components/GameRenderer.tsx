@@ -4,6 +4,7 @@ import ContrastBackground from '../../common/ContrastBackground';
 import ValidationMessage from '../../common/ValidationMessage';
 import WheelPreview from '../../GameTypes/WheelPreview';
 import { Jackpot } from '../../GameTypes';
+import QuizPreview from '../../GameTypes/QuizPreview';
 import ScratchPreview from '../../GameTypes/ScratchPreview';
 import DicePreview from '../../GameTypes/DicePreview';
 import { GAME_SIZES, GameSize } from '../../configurators/GameSizeSelector';
@@ -114,10 +115,26 @@ const GameRenderer: React.FC<GameRendererProps> = ({
             onStart={handleGameStartInternal}
           />
         );
+      case 'quiz':
+        return (
+          <div style={{ 
+            width: '100%', 
+            maxWidth: '800px', 
+            margin: '0 auto',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <QuizPreview
+              config={campaign.gameConfig?.quiz || {}}
+              design={campaign.design}
+            />
+          </div>
+        );
       case 'dice':
         return (
-          <DicePreview 
-            config={campaign.gameConfig?.dice || {}} 
+          <DicePreview
+            config={campaign.gameConfig?.dice || {}}
           />
         );
       default:
@@ -126,18 +143,43 @@ const GameRenderer: React.FC<GameRendererProps> = ({
   };
 
   return (
-    <div style={{ ...containerStyle, minHeight: '400px', padding: '20px', boxSizing: 'border-box' }} className="rounded-lg overflow-visible relative">
-      <div style={{ ...wrapperStyle, ...getPositionStyles() }}>
+    <div style={{ 
+      ...containerStyle, 
+      minHeight: '400px', 
+      padding: '20px', 
+      boxSizing: 'border-box',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      overflow: 'hidden'
+    }} className="rounded-lg overflow-visible relative">
+      <div style={{ 
+        ...wrapperStyle, 
+        ...getPositionStyles(),
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
+        height: '100%'
+      }}>
         <ContrastBackground
           enabled={contrastBg?.enabled && contrastBg?.applyToGame}
           config={contrastBg}
-          className="flex items-center justify-center"
+          className="flex items-center justify-center w-full h-full"
         >
-          {renderGameComponent()}
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '100%',
+            height: '100%'
+          }}>
+            {renderGameComponent()}
+          </div>
         </ContrastBackground>
       </div>
       
-      {!formValidated && (
+      {!formValidated && campaign.type !== 'quiz' && (
         <div 
           onClick={() => {
             onGameButtonClick();

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import Jackpot from '../GameTypes/Jackpot';
-import { Quiz } from '../GameTypes';
+import QuizPreview from '../GameTypes/QuizPreview';
 import WheelPreview from '../GameTypes/WheelPreview';
 import MemoryPreview from '../GameTypes/MemoryPreview';
 import PuzzlePreview from '../GameTypes/PuzzlePreview';
@@ -11,6 +11,7 @@ import FormPreview from '../GameTypes/FormPreview';
 import { GameSize } from '../configurators/GameSizeSelector';
 import { useGamePositionCalculator } from './GamePositionCalculator';
 import useCenteredStyles from '../../hooks/useCenteredStyles';
+import { createSynchronizedQuizCampaign } from '../../utils/quizConfigSync';
 
 interface GameRendererProps {
   campaign: any;
@@ -37,11 +38,37 @@ const GameRenderer: React.FC<GameRendererProps> = ({
     shouldCropWheel: false
   });
 
+  const baseContainerStyle = {
+    ...containerStyle,
+    minHeight: '400px',
+    padding: '20px',
+    boxSizing: 'border-box' as const,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden'
+  };
+
+  const baseWrapperStyle = {
+    ...wrapperStyle,
+    ...getPositionStyles(),
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    height: '100%'
+  };
+
+  // Utiliser le système de synchronisation pour le quiz
+  const enhancedCampaign = campaign.type === 'quiz' 
+    ? createSynchronizedQuizCampaign(campaign)
+    : campaign;
+
   switch (campaign.type) {
     case 'jackpot':
       return (
-        <div style={{ ...containerStyle, minHeight: '400px', padding: '20px', boxSizing: 'border-box' }}>
-          <div style={{ ...wrapperStyle, ...getPositionStyles() }}>
+        <div style={baseContainerStyle}>
+          <div style={baseWrapperStyle}>
             <Jackpot
               isPreview={true}
               instantWinConfig={{
@@ -67,17 +94,29 @@ const GameRenderer: React.FC<GameRendererProps> = ({
 
     case 'quiz':
       return (
-        <div style={{ ...containerStyle, minHeight: '400px', padding: '20px', boxSizing: 'border-box' }}>
-          <div style={{ ...wrapperStyle, ...getPositionStyles() }}>
-            <Quiz config={campaign.gameConfig?.quiz || {}} onConfigChange={() => {}} />
+        <div style={baseContainerStyle}>
+          <div style={baseWrapperStyle}>
+            <div style={{ 
+              width: '100%', 
+              maxWidth: '800px', 
+              margin: '0 auto',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <QuizPreview
+                config={enhancedCampaign.gameConfig?.quiz || {}}
+                design={enhancedCampaign.design}
+              />
+            </div>
           </div>
         </div>
       );
 
     case 'wheel':
       return (
-        <div style={{ ...containerStyle, minHeight: '400px', padding: '20px', boxSizing: 'border-box' }}>
-          <div style={{ ...wrapperStyle, ...getPositionStyles() }}>
+        <div style={baseContainerStyle}>
+          <div style={baseWrapperStyle}>
             <WheelPreview
               campaign={campaign}
               config={{
@@ -98,8 +137,8 @@ const GameRenderer: React.FC<GameRendererProps> = ({
 
     case 'scratch':
       return (
-        <div style={{ ...containerStyle, minHeight: '400px', padding: '20px', boxSizing: 'border-box' }}>
-          <div style={{ ...wrapperStyle, ...getPositionStyles() }}>
+        <div style={baseContainerStyle}>
+          <div style={baseWrapperStyle}>
             <ScratchPreview
               config={campaign.gameConfig?.scratch || {}}
               buttonLabel={buttonLabel}
@@ -113,8 +152,8 @@ const GameRenderer: React.FC<GameRendererProps> = ({
 
     case 'memory':
       return (
-        <div style={{ ...containerStyle, minHeight: '400px', padding: '20px', boxSizing: 'border-box' }}>
-          <div style={{ ...wrapperStyle, ...getPositionStyles() }}>
+        <div style={baseContainerStyle}>
+          <div style={baseWrapperStyle}>
             <MemoryPreview config={campaign.gameConfig?.memory || {}} />
           </div>
         </div>
@@ -122,8 +161,8 @@ const GameRenderer: React.FC<GameRendererProps> = ({
 
     case 'puzzle':
       return (
-        <div style={{ ...containerStyle, minHeight: '400px', padding: '20px', boxSizing: 'border-box' }}>
-          <div style={{ ...wrapperStyle, ...getPositionStyles() }}>
+        <div style={baseContainerStyle}>
+          <div style={baseWrapperStyle}>
             <PuzzlePreview config={campaign.gameConfig?.puzzle || {}} />
           </div>
         </div>
@@ -131,8 +170,8 @@ const GameRenderer: React.FC<GameRendererProps> = ({
 
     case 'dice':
       return (
-        <div style={{ ...containerStyle, minHeight: '400px', padding: '20px', boxSizing: 'border-box' }}>
-          <div style={{ ...wrapperStyle, ...getPositionStyles() }}>
+        <div style={baseContainerStyle}>
+          <div style={baseWrapperStyle}>
             <DicePreview config={campaign.gameConfig?.dice || {}} />
           </div>
         </div>
@@ -140,8 +179,8 @@ const GameRenderer: React.FC<GameRendererProps> = ({
 
     case 'form':
       return (
-        <div style={{ ...containerStyle, minHeight: '400px', padding: '20px', boxSizing: 'border-box' }}>
-          <div style={{ ...wrapperStyle, ...getPositionStyles() }}>
+        <div style={baseContainerStyle}>
+          <div style={baseWrapperStyle}>
             <FormPreview
               campaign={campaign}
               gameSize={gameSize}
@@ -152,8 +191,8 @@ const GameRenderer: React.FC<GameRendererProps> = ({
 
     default:
       return (
-        <div style={{ ...containerStyle, minHeight: '400px', padding: '20px', boxSizing: 'border-box' }}>
-          <div style={{ ...wrapperStyle, ...getPositionStyles() }}>
+        <div style={baseContainerStyle}>
+          <div style={baseWrapperStyle}>
             <div className="text-center text-gray-500 flex items-center justify-center h-full">
               <p className="text-sm">Type de jeu non pris en charge</p>
             </div>

@@ -1,8 +1,9 @@
-
 import React, { useState } from 'react';
 import { X, Monitor, Smartphone, Tablet } from 'lucide-react';
 import FunnelUnlockedGame from '../funnels/FunnelUnlockedGame';
 import FunnelStandard from '../funnels/FunnelStandard';
+import FormPreview from '../GameTypes/FormPreview';
+import { createSynchronizedQuizCampaign } from '../../utils/quizConfigSync';
 
 interface ModernPreviewModalProps {
   isOpen: boolean;
@@ -40,7 +41,7 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
       backgroundColor: campaign.design?.background || '#f9fafb',
       position: 'relative' as const,
       overflow: 'auto' as const,
-      padding: '20px'
+      padding: (campaign.type === 'form' || campaign.type === 'quiz') ? '40px 20px' : '20px'
     } as React.CSSProperties;
 
     if (campaign.design?.backgroundImage) {
@@ -55,36 +56,25 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
     return baseStyle;
   };
 
-  const enhancedCampaign = {
-    ...campaign,
-    design: {
-      ...campaign.design,
-      buttonColor:
-        campaign.buttonConfig?.color || campaign.design?.buttonColor || '#841b60',
-      titleColor: campaign.design?.titleColor || '#000000',
-      background: campaign.design?.background || '#f8fafc'
-    },
-    gameConfig: {
-      ...campaign.gameConfig,
-      [campaign.type]: {
-        ...campaign.gameConfig?.[campaign.type],
-        buttonLabel:
-          campaign.buttonConfig?.text ||
-          campaign.gameConfig?.[campaign.type]?.buttonLabel ||
-          'Jouer',
-        buttonColor:
-          campaign.buttonConfig?.color ||
-          campaign.gameConfig?.[campaign.type]?.buttonColor ||
-          '#841b60'
-      }
-    }
-  };
+  // Utiliser le système de synchronisation centralisé
+  const enhancedCampaign = createSynchronizedQuizCampaign(campaign);
 
   const getFunnelComponent = () => {
+    // Gestion spéciale pour le type 'form'
+    if (campaign.type === 'form') {
+      return (
+        <FormPreview
+          campaign={enhancedCampaign}
+          gameSize={campaign.gameSize || 'medium'}
+        />
+      );
+    }
+
     const unlockedTypes = ['wheel', 'scratch', 'jackpot', 'dice'];
     const funnel =
       enhancedCampaign.funnel ||
       (unlockedTypes.includes(enhancedCampaign.type) ? 'unlocked_game' : 'standard');
+    
     if (funnel === 'unlocked_game') {
       return (
         <FunnelUnlockedGame
@@ -94,7 +84,9 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
         />
       );
     }
-    return <FunnelStandard campaign={enhancedCampaign} />;
+    return (
+      <FunnelStandard campaign={enhancedCampaign} />
+    );
   };
 
   return (
@@ -152,7 +144,12 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
                 )}
                 <div
                   className="relative z-10 w-full h-full"
-                  style={{ minHeight: device === 'desktop' ? '600px' : '100%' }}
+                  style={{ 
+                    minHeight: device === 'desktop' ? '600px' : '100%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center'
+                  }}
                 >
                   {getFunnelComponent()}
                 </div>

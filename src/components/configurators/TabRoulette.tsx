@@ -272,7 +272,7 @@ const TabRoulette: React.FC<TabRouletteProps> = ({
       </div>
 
       {segments.map((seg, index) => (
-        <div key={index} className="flex flex-col md:flex-row items-start md:items-center gap-3 border p-4 rounded-lg bg-white shadow-sm">
+        <div key={index} className="flex flex-col md:flex-row flex-wrap items-start md:items-center gap-3 border p-4 rounded-lg bg-white shadow-sm">
           <input
             type="text"
             placeholder="Nom du segment"

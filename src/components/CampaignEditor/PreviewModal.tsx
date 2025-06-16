@@ -19,29 +19,42 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
 
   const getPreviewFunnel = () => {
     const funnel = campaign.funnel || (['wheel', 'scratch', 'jackpot', 'dice'].includes(campaign.type) ? 'unlocked_game' : 'standard');
+    
+    const componentStyle = campaign.type === 'quiz' ? {
+      width: '100%',
+      height: '100%',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
+    } : {};
+    
     if (funnel === 'unlocked_game') {
       return (
-        <FunnelUnlockedGame
-          campaign={campaign}
-          previewMode={selectedDevice}
-          modalContained={true}
-          key={`${selectedDevice}-${campaign.id}-${JSON.stringify({
-            gameConfig: campaign.gameConfig,
-            design: campaign.design,
-            screens: campaign.screens
-          })}`} // Force re-render with comprehensive dependencies
-        />
+        <div style={componentStyle}>
+          <FunnelUnlockedGame
+            campaign={campaign}
+            previewMode={selectedDevice}
+            modalContained={true}
+            key={`${selectedDevice}-${campaign.id}-${JSON.stringify({
+              gameConfig: campaign.gameConfig,
+              design: campaign.design,
+              screens: campaign.screens
+            })}`} // Force re-render with comprehensive dependencies
+          />
+        </div>
       );
     }
     return (
-      <FunnelStandard
-        campaign={campaign}
-        key={`${campaign.id}-${JSON.stringify({
-          gameConfig: campaign.gameConfig,
-          design: campaign.design,
-          screens: campaign.screens,
-        })}`}
-      />
+      <div style={componentStyle}>
+        <FunnelStandard
+          campaign={campaign}
+          key={`${campaign.id}-${JSON.stringify({
+            gameConfig: campaign.gameConfig,
+            design: campaign.design,
+            screens: campaign.screens,
+          })}`}
+        />
+      </div>
     );
   };
 
@@ -57,7 +70,7 @@ const PreviewModal: React.FC<PreviewModalProps> = ({ isOpen, onClose, campaign }
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      padding: '20px'
+      padding: campaign.type === 'quiz' ? '40px 20px' : '20px'
     };
 
     if (gameBackgroundImage) {

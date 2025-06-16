@@ -1,5 +1,7 @@
+
 import React, { useState, useEffect } from 'react';
 import ScratchGameGrid from './ScratchGameGrid';
+
 interface ScratchPreviewProps {
   config?: any;
   onFinish?: (result: 'win' | 'lose') => void;
@@ -12,8 +14,10 @@ interface ScratchPreviewProps {
   autoStart?: boolean;
   isModal?: boolean;
 }
+
 const STORAGE_KEY = 'scratch_session_card';
 const SCRATCH_STARTED_KEY = 'scratch_session_started';
+
 const ScratchPreview: React.FC<ScratchPreviewProps> = ({
   config = {},
   onFinish,
@@ -45,17 +49,20 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
       if (onStart) onStart();
     }
   }, [autoStart, gameStarted, disabled, onStart]);
+
   const handleGameStart = () => {
     if (disabled) return;
     setGameStarted(true);
     if (onStart) onStart();
   };
+
   const handleCardSelect = (index: number) => {
     // Only allow selection if no scratch has started and no card is selected
     if (!scratchStarted && selectedCard === null) {
       setSelectedCard(index);
     }
   };
+
   const handleScratchStart = (index: number) => {
     // Only allow scratch to start on the selected card and if no scratch has started yet
     if (selectedCard === index && !scratchStarted) {
@@ -64,12 +71,15 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
       localStorage.setItem(SCRATCH_STARTED_KEY, 'true');
     }
   };
+
   const handleCardFinish = (result: 'win' | 'lose', cardIndex: number) => {
     const newFinishedCards = new Set([...finishedCards, cardIndex]);
     setFinishedCards(newFinishedCards);
+
     if (result === 'win') {
       setHasWon(true);
     }
+
     const totalCards = config?.cards?.length || 1;
     if (newFinishedCards.size >= totalCards) {
       setShowResult(true);
@@ -88,33 +98,78 @@ const ScratchPreview: React.FC<ScratchPreviewProps> = ({
     revealMessage: config?.revealMessage || 'Félicitations !',
     scratchColor: config?.scratchColor || '#C0C0C0'
   }];
+
   if (!gameStarted) {
-    return <div className={`flex flex-col items-center justify-center ${isModal ? 'py-6 min-h-[400px]' : 'py-12 min-h-[500px]'} bg-gradient-to-br from-gray-50 to-gray-100`}>
-        <div className="w-full mb-8">
-          <ScratchGameGrid cards={cards} gameSize={gameSize} gameStarted={false} onCardFinish={() => {}} onCardSelect={() => {}} onScratchStart={() => {}} selectedCard={null} scratchStarted={false} config={config} isModal={isModal} />
+    return (
+      <div className="w-full h-full flex flex-col bg-gradient-to-br from-gray-50 to-gray-100">
+        {/* Zone d'aperçu des cartes - prend tout l'espace disponible */}
+        <div className="flex-1 w-full h-full">
+          <ScratchGameGrid
+            cards={cards}
+            gameSize={gameSize}
+            gameStarted={false}
+            onCardFinish={() => {}}
+            onCardSelect={() => {}}
+            onScratchStart={() => {}}
+            selectedCard={null}
+            scratchStarted={false}
+            config={config}
+            isModal={isModal}
+          />
         </div>
 
-        {!isModal && <div className="text-center space-y-6">
-            <div className="space-y-2">
-              <h3 className="text-xl font-bold text-gray-800">Cartes à gratter</h3>
-              <p className="text-gray-600">Cliquez sur le bouton pour commencer à jouer</p>
+        {/* Bouton de démarrage - uniquement si pas en modal */}
+        {!isModal && (
+          <div className="flex-shrink-0 text-center py-8 px-4">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <h3 className="text-xl font-bold text-gray-800">Cartes à gratter</h3>
+                <p className="text-gray-600">Cliquez sur le bouton pour commencer à jouer</p>
+              </div>
+              
+              <button
+                onClick={handleGameStart}
+                disabled={disabled}
+                className="px-8 py-4 rounded-xl font-semibold text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 shadow-lg"
+                style={{
+                  backgroundColor: disabled ? '#6b7280' : buttonColor
+                }}
+              >
+                {disabled ? 'Remplissez le formulaire' : buttonLabel}
+              </button>
             </div>
-            
-            <button onClick={handleGameStart} disabled={disabled} className="px-8 py-4 rounded-xl font-semibold text-white transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 shadow-lg" style={{
-          backgroundColor: disabled ? '#6b7280' : buttonColor
-        }}>
-              {disabled ? 'Remplissez le formulaire' : buttonLabel}
-            </button>
-          </div>}
-      </div>;
+          </div>
+        )}
+      </div>
+    );
   }
-  return <div className={`w-full flex flex-col items-center ${isModal ? 'py-6 min-h-[500px]' : 'py-8 min-h-[600px]'} bg-gradient-to-br from-gray-50 to-gray-100`}>
-      <div className="w-full flex-1">
-        <ScratchGameGrid cards={cards} gameSize={gameSize} gameStarted={gameStarted} onCardFinish={handleCardFinish} onCardSelect={handleCardSelect} onScratchStart={handleScratchStart} selectedCard={selectedCard} scratchStarted={scratchStarted} config={config} isModal={isModal} />
+
+  return (
+    <div className="w-full h-full flex flex-col bg-gradient-to-br from-gray-50 to-gray-100">
+      {/* Zone de jeu - prend tout l'espace disponible */}
+      <div className="flex-1 w-full h-full">
+        <ScratchGameGrid
+          cards={cards}
+          gameSize={gameSize}
+          gameStarted={gameStarted}
+          onCardFinish={handleCardFinish}
+          onCardSelect={handleCardSelect}
+          onScratchStart={handleScratchStart}
+          selectedCard={selectedCard}
+          scratchStarted={scratchStarted}
+          config={config}
+          isModal={isModal}
+        />
       </div>
 
-      {/* Message d'instruction et progression - en bas, séparé des cartes */}
-      {!showResult && !isModal}
-    </div>;
+      {/* Messages et instructions - en bas si nécessaire */}
+      {!showResult && !isModal && (
+        <div className="flex-shrink-0 py-4">
+          {/* Contenu d'instruction si nécessaire */}
+        </div>
+      )}
+    </div>
+  );
 };
+
 export default ScratchPreview;

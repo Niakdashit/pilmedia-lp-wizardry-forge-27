@@ -1,3 +1,4 @@
+
 import React from 'react';
 import CampaignMobile from '../CampaignEditor/CampaignMobile';
 
@@ -8,11 +9,13 @@ interface ModernMobileTabProps {
 
 const ModernMobileTab: React.FC<ModernMobileTabProps> = ({ campaign, setCampaign }) => {
   return (
-    <CampaignMobile
-      campaign={campaign}
-      setCampaign={setCampaign}
-      hidePreview={true}
-    />
+    <div className="w-full max-w-full overflow-hidden">
+      <CampaignMobile
+        campaign={campaign}
+        setCampaign={setCampaign}
+        hidePreview={true}
+      />
+    </div>
   );
 };
 
