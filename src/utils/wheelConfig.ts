@@ -9,10 +9,10 @@ export const DEFAULT_FIELDS: FieldConfig[] = [
 ];
 
 export const getWheelSegments = (campaign: any) => {
-  const segmentColor1 = campaign?.config?.roulette?.segmentColor1 || '#ff6b6b';
-  const segmentColor2 = campaign?.config?.roulette?.segmentColor2 || '#4ecdc4';
-  
-  const originalSegments = campaign?.config?.roulette?.segments || [];
+  const segmentColor1 = campaign?.gameConfig?.wheel?.segmentColor1 || '#ff6b6b';
+  const segmentColor2 = campaign?.gameConfig?.wheel?.segmentColor2 || '#4ecdc4';
+
+  const originalSegments = campaign?.gameConfig?.wheel?.segments || [];
   return originalSegments.map((segment: any, index: number) => ({
     ...segment,
     color: segment.color || (index % 2 === 0 ? segmentColor1 : segmentColor2)
