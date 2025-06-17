@@ -1,3 +1,4 @@
+
 import React from 'react';
 
 interface DeviceFrameProps {
@@ -9,8 +10,8 @@ interface DeviceFrameProps {
 const FRAME_PADDING = 32;
 
 const DEVICE_DIMENSIONS = {
-  mobile: { width: 375, height: 812, aspect: 375 / 812 },
-  tablet: { width: 768, height: 1024, aspect: 768 / 1024 },
+  mobile: { aspect: 375 / 812 },
+  tablet: { aspect: 768 / 1024 },
 };
 
 const DeviceFrame: React.FC<DeviceFrameProps> = ({ device, children }) => {
@@ -25,7 +26,7 @@ const DeviceFrame: React.FC<DeviceFrameProps> = ({ device, children }) => {
 
   // Gère automatiquement la taille max en fonction du container parent (100% - padding)
   // Utilise aspect-ratio natif pour éviter toute déformation, et padding pour ne jamais coller les bords
-  const { width, height, aspect } = DEVICE_DIMENSIONS[device];
+  const { aspect } = DEVICE_DIMENSIONS[device];
 
   return (
     <div
