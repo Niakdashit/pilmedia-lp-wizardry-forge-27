@@ -126,7 +126,11 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
       },
       gameConfig: {},
       mobileConfig: {
-        gamePosition: state.gamePosition
+        gamePosition: state.gamePosition,
+        ...(state.selectedGameType === 'wheel' && { roulette: {} }),
+        buttonColor: state.customColors.accent,
+        buttonTextColor: state.customColors.primary,
+        buttonPlacement: 'bottom'
       }
     };
 
@@ -153,6 +157,12 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
           winnersCount: 0
         }
       };
+
+      // Update mobileConfig with roulette config
+      baseConfig.mobileConfig = {
+        ...baseConfig.mobileConfig,
+        roulette: baseConfig.config.roulette
+      };
     }
 
     // Jackpot
@@ -170,15 +180,6 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
         }
       };
     }
-
-    // Fix the mobileConfig to include the roulette config properly
-    baseConfig.mobileConfig = {
-      gamePosition: state.gamePosition,
-      ...(state.selectedGameType === 'wheel' && { roulette: baseConfig.config.roulette }),
-      buttonColor: state.customColors.accent,
-      buttonTextColor: state.customColors.primary,
-      buttonPlacement: 'bottom'
-    };
 
     return baseConfig;
   },
