@@ -1,376 +1,237 @@
-import React, { useState } from 'react';
-import { ArrowLeft, Eye, Settings, CheckCircle } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
-import { useCampaigns } from '../../hooks/useCampaigns';
-import CampaignPreviewModal from './CampaignPreviewModal';
 import ColorCustomizer from './ColorCustomizer';
-import JackpotPreview from './Preview/JackpotPreview';
-import GameRenderer from './Preview/GameRenderer';
-import GamePositionSelector from '../configurators/GamePositionSelector';
+import JackpotBorderCustomizer from './JackpotBorderCustomizer';
+import PreviewWindowButton from '../common/PreviewWindowButton';
 
 const Step3VisualStyle: React.FC = () => {
-  const navigate = useNavigate();
-  const {
-    saveCampaign
-  } = useCampaigns();
   const {
     selectedGameType,
-    campaignName,
-    launchDate,
-    marketingGoal,
-    logoFile,
-    logoUrl,
-    fontUrl,
-    selectedTheme,
-    backgroundImage,
-    backgroundImageUrl,
     customColors,
+    setCustomColors,
     jackpotColors,
+    setJackpotColors,
+    backgroundImage,
+    setBackgroundImage,
+    backgroundImageUrl,
+    setBackgroundImageUrl,
     segmentCount,
+    setSegmentCount,
     gamePosition,
-    generatePreviewCampaign,
-    setCurrentStep,
     setGamePosition,
-    reset
+    setCurrentStep,
+    generatePreviewCampaign,
+    campaignName
   } = useQuickCampaignStore();
-  
-  const [showFinalStep, setShowFinalStep] = useState(false);
-  const [isCreating, setIsCreating] = useState(false);
-  const [showPreview, setShowPreview] = useState(false);
-  const [creationSuccess, setCreationSuccess] = useState(false);
-  
-  const previewCampaign = generatePreviewCampaign();
 
-  const handleFinish = () => {
-    setShowFinalStep(true);
-  };
-  const handlePreview = () => {
-    setShowPreview(true);
-  };
-  const handleCreateCampaign = async () => {
-    setIsCreating(true);
-    try {
-      const campaignData = {
-        name: campaignName,
-        description: `Campagne ${selectedGameType} - ${marketingGoal}`,
-        type: selectedGameType || 'quiz',
-        game_config: {
-          theme: selectedTheme || 'default',
-          launchDate,
-          marketingGoal,
-          hasLogo: !!logoFile,
-          hasBackgroundImage: !!backgroundImage,
-          customColors,
-          jackpotColors,
-          gamePosition,
-          ...(selectedGameType === 'wheel' && {
-            segmentCount,
-            roulette: {
-              segments: Array.from({
-                length: segmentCount
-              }).map((_, i) => ({
-                label: `Segment ${i + 1}`,
-                color: [customColors.primary, customColors.secondary, customColors.accent || '#10b981'][i % 3],
-                chance: Math.floor(100 / segmentCount)
-              })),
-              theme: selectedTheme || 'default',
-              borderColor: customColors.primary
-            }
-          }),
-          [selectedGameType || 'quiz']: {
-            ...(selectedGameType === 'jackpot' && {
-              template: selectedTheme || 'default',
-              ...jackpotColors
-            })
-          }
-        },
-        design: {
-          theme: selectedTheme || 'default',
-          colors: {
-            primary: customColors.primary,
-            secondary: customColors.secondary,
-            accent: customColors.accent
-          },
-          template: selectedTheme || 'default',
-          customColors,
-          jackpotColors,
-          backgroundImage: backgroundImageUrl,
-          mobileBackgroundImage: backgroundImageUrl
-        },
-        mobileConfig: {
-          gamePosition
-        },
-        status: 'draft' as const
-      };
-      const result = await saveCampaign(campaignData);
-      if (result) {
-        setCreationSuccess(true);
-        setTimeout(() => {
-          reset();
-          navigate('/campaigns');
-        }, 2000);
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (backgroundImageUrl) {
+        URL.revokeObjectURL(backgroundImageUrl);
       }
-    } catch (error) {
-      console.error('Erreur lors de la création:', error);
-    } finally {
-      setIsCreating(false);
-    }
-  };
-  const handleAdvancedSettings = async () => {
-    setIsCreating(true);
-    try {
-      const campaignData = {
-        name: campaignName,
-        description: `Campagne ${selectedGameType} - ${marketingGoal}`,
-        type: selectedGameType || 'quiz',
-        game_config: {
-          theme: selectedTheme || 'default',
-          launchDate,
-          marketingGoal,
-          hasLogo: !!logoFile,
-          hasBackgroundImage: !!backgroundImage,
-          customColors,
-          jackpotColors,
-          gamePosition,
-          ...(selectedGameType === 'wheel' && {
-            segmentCount,
-            roulette: {
-              segments: Array.from({
-                length: segmentCount
-              }).map((_, i) => ({
-                label: `Segment ${i + 1}`,
-                color: [customColors.primary, customColors.secondary, customColors.accent || '#10b981'][i % 3],
-                chance: Math.floor(100 / segmentCount)
-              })),
-              theme: selectedTheme || 'default',
-              borderColor: customColors.primary
-            }
-          }),
-          [selectedGameType || 'quiz']: {
-            ...(selectedGameType === 'jackpot' && {
-              template: selectedTheme || 'default',
-              ...jackpotColors
-            })
-          }
-        },
-        design: {
-          theme: selectedTheme || 'default',
-          colors: {
-            primary: customColors.primary,
-            secondary: customColors.secondary,
-            accent: customColors.accent
-          },
-          template: selectedTheme || 'default',
-          customColors,
-          jackpotColors,
-          backgroundImage: backgroundImageUrl,
-          mobileBackgroundImage: backgroundImageUrl
-        },
-        mobileConfig: {
-          gamePosition
-        },
-        status: 'draft' as const
-      };
-      const result = await saveCampaign(campaignData);
-      if (result) {
-        reset();
-        navigate(`/modern-campaign/${result.id}`);
-      }
-    } catch (error) {
-      console.error('Erreur lors de la création:', error);
-    } finally {
-      setIsCreating(false);
+      
+      const url = URL.createObjectURL(file);
+      setBackgroundImage(file);
+      setBackgroundImageUrl(url);
     }
   };
 
-  const getPreviewContainerStyle = () => {
-    const baseStyle: React.CSSProperties = {
-      background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
-      borderRadius: '24px',
-      boxShadow: 'inset 0 2px 8px rgba(0,0,0,0.1)',
-      border: '1px solid rgba(0,0,0,0.05)',
-      maxWidth: '800px',
-      width: '100%',
-      minHeight: '500px',
-      position: 'relative',
-      overflow: 'hidden',
-      display: 'flex',
-      alignItems: getAlignItems(),
-      justifyContent: getJustifyContent(),
-      padding: '40px'
-    };
-
+  const removeBackgroundImage = () => {
     if (backgroundImageUrl) {
-      return {
-        ...baseStyle,
-        backgroundImage: `url(${backgroundImageUrl})`,
-        backgroundSize: 'contain',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
-      };
+      URL.revokeObjectURL(backgroundImageUrl);
     }
-
-    return baseStyle;
+    setBackgroundImage(null);
+    setBackgroundImageUrl(null);
   };
 
-  const getAlignItems = () => {
-    switch (gamePosition) {
-      case 'top': return 'flex-start';
-      case 'bottom': return 'flex-end';
-      default: return 'center';
-    }
-  };
+  useEffect(() => {
+    return () => {
+      if (backgroundImageUrl) {
+        URL.revokeObjectURL(backgroundImageUrl);
+      }
+    };
+  }, [backgroundImageUrl]);
 
-  const getJustifyContent = () => {
-    switch (gamePosition) {
-      case 'left': return 'flex-start';
-      case 'right': return 'flex-end';
-      default: return 'center';
-    }
-  };
-
-  if (showFinalStep) {
-    return (
-      <div className="min-h-screen bg-[#ebf4f7] flex items-center justify-center px-6 py-12">
-        <div className="max-w-lg w-full text-center">
-          <div className="bg-white border border-gray-200 rounded-3xl p-12 shadow-xl">
-            <div className="mb-8">
-              {creationSuccess ? <CheckCircle className="w-16 h-16 text-green-500 mx-auto" /> : <div className="w-16 h-16 bg-[#841b60]/10 rounded-2xl flex items-center justify-center mx-auto">
-                  <CheckCircle className="w-8 h-8 text-[#841b60]" />
-                </div>}
-            </div>
-            <h1 className="text-3xl font-light text-gray-900 mb-6">
-              {creationSuccess ? 'Campagne créée avec succès !' : 'Votre campagne est prête !'}
-            </h1>
-            {creationSuccess ? <p className="text-xl text-gray-600 font-light">
-                Redirection vers vos campagnes...
-              </p> : <>
-                <p className="text-lg text-gray-600 font-light mb-12">
-                  Vous pouvez maintenant la tester ou la personnaliser davantage.
-                </p>
-                <div className="space-y-4">
-                  <button onClick={handlePreview} className="w-full py-4 bg-gray-50 text-gray-900 font-medium rounded-2xl
-                               border border-gray-200 hover:bg-gray-100 transition-all
-                               flex items-center justify-center space-x-3">
-                    <Eye className="w-5 h-5" />
-                    <span>Voir un aperçu</span>
-                  </button>
-                  <button onClick={handleCreateCampaign} disabled={isCreating} className="w-full py-4 bg-[#841b60] text-white font-medium rounded-2xl
-                               hover:bg-[#841b60]/90 transition-all disabled:opacity-50">
-                    {isCreating ? <div className="flex items-center justify-center space-x-2">
-                        <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                        <span>Création...</span>
-                      </div> : 'Créer la campagne'}
-                  </button>
-                  <button onClick={handleAdvancedSettings} disabled={isCreating} className="w-full py-4 bg-gray-50 text-gray-900 font-medium rounded-2xl
-                               border border-gray-200 hover:bg-gray-100 transition-all
-                               flex items-center justify-center space-x-3 disabled:opacity-50">
-                    <Settings className="w-5 h-5" />
-                    <span>Éditeur avancé</span>
-                  </button>
-                </div>
-              </>}
-          </div>
-        </div>
-        <CampaignPreviewModal isOpen={showPreview} onClose={() => setShowPreview(false)} />
-      </div>
-    );
-  }
+  const mockCampaign = generatePreviewCampaign();
 
   return (
-    <div className="min-h-screen bg-[#ebf4f7] py-12 px-0">
-      <div className="max-w-6xl mx-auto">
-        <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-8 md:p-12">
-          {/* Header */}
-          <div className="text-center mb-16">
-            <h1 className="text-4xl font-light text-gray-900 mb-4">
-              Style visuel
+    <div className="min-h-screen bg-[#ebf4f7] flex">
+      {/* Panel de configuration - côté gauche */}
+      <div className="w-1/2 p-8 bg-white border-r border-gray-200">
+        <div className="max-w-md mx-auto">
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-800 mb-2">
+              Style et Personnalisation
             </h1>
-            <p className="text-xl text-gray-600 font-light">
-              Personnalisez l'apparence de votre expérience
+            <p className="text-gray-600">
+              Personnalisez l'apparence de votre campagne {selectedGameType}
             </p>
           </div>
 
-          <div className="space-y-16">
-
-            {/* Aperçu dynamique du jeu avec position personnalisable */}
-            <div className="flex justify-center">
-              <div style={getPreviewContainerStyle()}>
-                {/* Overlay pour améliorer la lisibilité si image de fond */}
-                {backgroundImageUrl && (
-                  <div
-                    className="absolute inset-0 bg-black/10 rounded-3xl"
-                    style={{ zIndex: 1 }}
-                  />
-                )}
-                
-                <div className="relative z-10">
-                  {selectedGameType === 'jackpot' ? (
-                    <JackpotPreview 
-                      customColors={customColors} 
-                      jackpotColors={jackpotColors} 
-                    />
-                  ) : (
-                    <div className="transform scale-90 origin-center">
-                      <GameRenderer
-                        gameType={selectedGameType || 'wheel'}
-                        mockCampaign={previewCampaign}
-                        customColors={customColors}
-                        jackpotColors={jackpotColors}
-                        logoUrl={logoUrl || undefined}
-                        fontUrl={fontUrl || undefined}
-                        gameSize="medium"
-                        gamePosition={gamePosition}
-                        previewDevice="desktop"
-                      />
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Sélecteur de position du jeu */}
-            <div className="max-w-md mx-auto">
-              <GamePositionSelector
-                selectedPosition={gamePosition}
-                onPositionChange={setGamePosition}
-                className="text-center"
+          <div className="space-y-8">
+            {/* Couleurs personnalisées */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Couleurs</h3>
+              <ColorCustomizer
+                colors={customColors}
+                onChange={setCustomColors}
               />
             </div>
 
-            {/* Color Customizer */}
-            <ColorCustomizer />
+            {/* Configuration spécifique au jackpot */}
+            {selectedGameType === 'jackpot' && (
+              <div>
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Apparence du Jackpot</h3>
+                <JackpotBorderCustomizer
+                  colors={jackpotColors}
+                  onChange={setJackpotColors}
+                />
+              </div>
+            )}
 
+            {/* Configuration spécifique à la roue */}
+            {selectedGameType === 'wheel' && (
+              <div>
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Configuration de la roue</h3>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Nombre de segments: {segmentCount}
+                    </label>
+                    <input
+                      type="range"
+                      min="4"
+                      max="12"
+                      value={segmentCount}
+                      onChange={(e) => setSegmentCount(parseInt(e.target.value))}
+                      className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                    />
+                    <div className="flex justify-between text-xs text-gray-500 mt-1">
+                      <span>4</span>
+                      <span>12</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Position du jeu */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Position du jeu</h3>
+              <div className="grid grid-cols-3 gap-2">
+                {[
+                  { value: 'top', label: 'Haut' },
+                  { value: 'center', label: 'Centre' },
+                  { value: 'bottom', label: 'Bas' },
+                  { value: 'left', label: 'Gauche' },
+                  { value: 'right', label: 'Droite' }
+                ].map((position) => (
+                  <button
+                    key={position.value}
+                    onClick={() => setGamePosition(position.value as any)}
+                    className={`px-3 py-2 text-sm rounded-lg border transition-colors ${
+                      gamePosition === position.value
+                        ? 'bg-blue-600 text-white border-blue-600'
+                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
+                    }`}
+                  >
+                    {position.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Image de fond */}
+            <div>
+              <h3 className="text-lg font-semibold text-gray-800 mb-4">Image de fond</h3>
+              <div className="space-y-4">
+                {!backgroundImageUrl ? (
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      className="hidden"
+                      id="background-upload"
+                    />
+                    <label htmlFor="background-upload" className="cursor-pointer">
+                      <div className="text-gray-400 mb-2">
+                        <svg className="mx-auto h-12 w-12" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                          <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                        </svg>
+                      </div>
+                      <span className="text-sm text-gray-600">
+                        Cliquez pour ajouter une image de fond
+                      </span>
+                    </label>
+                  </div>
+                ) : (
+                  <div className="relative">
+                    <img
+                      src={backgroundImageUrl}
+                      alt="Aperçu de l'image de fond"
+                      className="w-full h-32 object-cover rounded-lg"
+                    />
+                    <button
+                      onClick={removeBackgroundImage}
+                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600"
+                    >
+                      ×
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
           </div>
 
-          {/* Navigation */}
-          <div className="flex justify-between items-center mt-16">
+          {/* Boutons de navigation */}
+          <div className="flex justify-between mt-12">
             <button
               onClick={() => setCurrentStep(2)}
-              className="flex items-center space-x-2 px-6 py-3 text-gray-600 hover:text-gray-900
-                         transition-colors font-medium"
+              className="flex items-center px-6 py-3 text-gray-600 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors"
             >
-              <ArrowLeft className="w-5 h-5" />
-              <span>Retour</span>
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Retour
             </button>
 
-            <button
-              onClick={handleFinish}
-              className="px-8 py-4 rounded-2xl transition-all bg-[#841b60] text-white hover:bg-[#841b60]/90 shadow-lg font-medium"
+            <PreviewWindowButton
+              campaign={mockCampaign}
+              title={`Aperçu - ${campaignName}`}
+              className="bg-green-600 hover:bg-green-700"
             >
-              Finaliser
-            </button>
+              Voir l'aperçu final
+            </PreviewWindowButton>
           </div>
+        </div>
+      </div>
 
-          {/* Progress */}
-          <div className="text-center mt-16">
-            <div className="flex items-center justify-center space-x-2 mb-4">
-              <div className="w-8 h-1 bg-[#841b60] rounded-full"></div>
-              <div className="w-8 h-1 bg-[#841b60] rounded-full"></div>
-              <div className="w-8 h-1 bg-[#841b60] rounded-full"></div>
+      {/* Panel d'aperçu - côté droit */}
+      <div className="w-1/2 p-8 bg-gray-50">
+        <div className="h-full flex flex-col">
+          <div className="mb-6">
+            <h2 className="text-xl font-semibold text-gray-800">Aperçu en temps réel</h2>
+            <p className="text-gray-600 text-sm">Les modifications apparaissent instantanément</p>
+          </div>
+          
+          <div className="flex-1 bg-white rounded-xl shadow-lg p-6 flex items-center justify-center">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full mx-auto mb-4 flex items-center justify-center">
+                <span className="text-white text-lg font-bold">
+                  {selectedGameType?.toUpperCase().slice(0, 2)}
+                </span>
+              </div>
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">{campaignName}</h3>
+              <p className="text-gray-600 text-sm mb-4">Type: {selectedGameType}</p>
+              <div className="space-y-2">
+                <div className="w-32 h-2 bg-gray-200 rounded mx-auto"></div>
+                <div className="w-24 h-2 bg-gray-200 rounded mx-auto"></div>
+              </div>
+              <p className="text-xs text-gray-500 mt-4">
+                Cliquez sur "Voir l'aperçu final" pour une vue complète
+              </p>
             </div>
-            <p className="text-gray-500 font-light">Étape 3 sur 3</p>
           </div>
         </div>
       </div>

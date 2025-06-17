@@ -208,11 +208,6 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
           winnersCount: 0
         }
       };
-
-      baseConfig.mobileConfig = {
-        ...baseConfig.mobileConfig,
-        roulette: baseConfig.config.roulette
-      };
     }
 
     // Quiz
