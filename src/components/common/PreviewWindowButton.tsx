@@ -1,7 +1,7 @@
 
-import React from 'react';
 import { ExternalLink, Eye } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import type { FC } from 'react';
 
 interface PreviewWindowButtonProps {
   campaign: any;
@@ -12,9 +12,7 @@ interface PreviewWindowButtonProps {
   size?: 'sm' | 'md' | 'lg';
 }
 
-const PreviewWindowButton: React.FC<PreviewWindowButtonProps> = ({
-  campaign,
-  title,
+const PreviewWindowButton: FC<PreviewWindowButtonProps> = ({
   children,
   className = '',
   variant = 'default',
