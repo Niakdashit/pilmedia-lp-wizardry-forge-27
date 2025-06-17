@@ -9,10 +9,6 @@ import PreviewWindowButton from '../common/PreviewWindowButton';
 const Step3VisualStyle: React.FC = () => {
   const {
     selectedGameType,
-    customColors,
-    setCustomColors,
-    jackpotColors,
-    setJackpotColors,
     backgroundImageUrl,
     setBackgroundImage,
     setBackgroundImageUrl,
