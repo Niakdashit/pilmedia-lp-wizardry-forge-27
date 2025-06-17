@@ -1,13 +1,13 @@
 
-import React, { useEffect, useState } from 'react';
-import { useSearchParams, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import type { FC } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { X, ArrowLeft } from 'lucide-react';
 import { useQuickCampaignStore } from '../stores/quickCampaignStore';
 import PreviewContent from '../components/QuickCampaign/Preview/PreviewContent';
 import DeviceSelector from '../components/QuickCampaign/Preview/DeviceSelector';
 
-const CampaignPreview: React.FC = () => {
-  const [searchParams] = useSearchParams();
+const CampaignPreview: FC = () => {
   const navigate = useNavigate();
   const [selectedDevice, setSelectedDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
   
