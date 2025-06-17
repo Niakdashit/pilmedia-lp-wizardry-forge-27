@@ -1,4 +1,3 @@
-
 import { create } from 'zustand';
 
 export interface QuickCampaignState {
@@ -175,7 +174,7 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
     // Fix the mobileConfig to include the roulette config properly
     baseConfig.mobileConfig = {
       gamePosition: state.gamePosition,
-      roulette: baseConfig.config.roulette,
+      ...(state.selectedGameType === 'wheel' && { roulette: baseConfig.config.roulette }),
       buttonColor: state.customColors.accent,
       buttonTextColor: state.customColors.primary,
       buttonPlacement: 'bottom'
