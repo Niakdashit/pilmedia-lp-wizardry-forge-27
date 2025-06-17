@@ -118,6 +118,41 @@ const GameSwitcher: React.FC<GameSwitcherProps> = ({
         </div>
       );
 
+    case 'quiz':
+      return (
+        <div style={baseContainerStyle}>
+          <div style={baseWrapperStyle}>
+            <div style={{ 
+              width: '100%', 
+              maxWidth: '800px', 
+              margin: '0 auto',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <QuizPreview
+                config={mockCampaign.gameConfig?.quiz || {
+                  questions: [
+                    {
+                      id: 1,
+                      text: 'Question exemple',
+                      type: 'multiple',
+                      options: [
+                        { id: 1, text: 'Option A', isCorrect: false },
+                        { id: 2, text: 'Option B', isCorrect: true }
+                      ]
+                    }
+                  ]
+                }}
+                design={synchronizedCampaign.design}
+                useCustomLayout={true}
+                key={renderKey}
+              />
+            </div>
+          </div>
+        </div>
+      );
+
     case 'scratch':
       return (
         <div style={baseContainerStyle}>
@@ -137,27 +172,6 @@ const GameSwitcher: React.FC<GameSwitcherProps> = ({
             <DicePreview
               config={mockCampaign.gameConfig?.dice || {}}
             />
-          </div>
-        </div>
-      );
-
-    case 'quiz':
-      return (
-        <div style={baseContainerStyle}>
-          <div style={baseWrapperStyle}>
-            <div style={{ 
-              width: '100%', 
-              maxWidth: '800px', 
-              margin: '0 auto',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center'
-            }}>
-              <QuizPreview
-                config={mockCampaign.gameConfig?.quiz || {}}
-                design={synchronizedCampaign.design}
-              />
-            </div>
           </div>
         </div>
       );

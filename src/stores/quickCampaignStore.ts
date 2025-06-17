@@ -1,3 +1,4 @@
+
 import { create } from 'zustand';
 
 export interface QuickCampaignState {
@@ -30,6 +31,7 @@ export interface QuickCampaignState {
     slotBorderWidth: number;
     slotBackgroundColor: string;
   };
+  quizQuestions: any[];
   setCurrentStep: (step: number) => void;
   setCampaignName: (name: string) => void;
   setSelectedGameType: (type: string) => void;
@@ -46,6 +48,7 @@ export interface QuickCampaignState {
   setGamePosition: (position: 'top' | 'center' | 'bottom' | 'left' | 'right') => void;
   setCustomColors: (colors: { primary: string; secondary: string; accent: string; textColor?: string }) => void;
   setJackpotColors: (colors: any) => void;
+  setQuizQuestions: (questions: any[]) => void;
   generatePreviewCampaign: () => any;
   reset: () => void;
 }
@@ -80,6 +83,23 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
     slotBorderWidth: 2,
     slotBackgroundColor: '#ffffff'
   },
+  quizQuestions: [
+    {
+      id: 1,
+      text: 'Quelle est votre couleur préférée ?',
+      type: 'multiple',
+      options: [
+        { id: 1, text: 'Rouge', isCorrect: false },
+        { id: 2, text: 'Bleu', isCorrect: true },
+        { id: 3, text: 'Vert', isCorrect: false },
+        { id: 4, text: 'Jaune', isCorrect: false }
+      ],
+      feedback: {
+        correct: 'Excellent choix !',
+        incorrect: 'Dommage, essayez encore !'
+      }
+    }
+  ],
 
   setCurrentStep: (step) => set({ currentStep: step }),
   setCampaignName: (name) => set({ campaignName: name }),
@@ -97,6 +117,7 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
   setGamePosition: (position) => set({ gamePosition: position }),
   setCustomColors: (colors) => set({ customColors: colors }),
   setJackpotColors: (colors) => set({ jackpotColors: colors }),
+  setQuizQuestions: (questions) => set({ quizQuestions: questions }),
 
   generatePreviewCampaign: () => {
     const state = get();
@@ -109,7 +130,13 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
         customColors: state.customColors,
         centerLogo: state.logoUrl || null,
         backgroundImage: state.backgroundImageUrl || null,
-        mobileBackgroundImage: state.backgroundImageUrl || null
+        mobileBackgroundImage: state.backgroundImageUrl || null,
+        containerBackgroundColor: '#ffffff',
+        borderColor: state.customColors.primary,
+        borderRadius: '16px',
+        buttonColor: state.customColors.accent,
+        buttonTextColor: state.customColors.primary,
+        textColor: state.customColors.textColor || '#000000'
       },
       buttonConfig: {
         color: state.customColors.accent,
@@ -162,6 +189,18 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
       baseConfig.mobileConfig = {
         ...baseConfig.mobileConfig,
         roulette: baseConfig.config.roulette
+      };
+    }
+
+    // Quiz
+    if (state.selectedGameType === 'quiz') {
+      baseConfig.gameConfig = {
+        quiz: {
+          questions: state.quizQuestions,
+          timePerQuestion: 30,
+          buttonLabel: 'Commencer le Quiz',
+          buttonColor: state.customColors.accent
+        }
       };
     }
 
@@ -218,7 +257,24 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
         slotBorderColor: '#60A5FA',
         slotBorderWidth: 2,
         slotBackgroundColor: '#ffffff'
-      }
+      },
+      quizQuestions: [
+        {
+          id: 1,
+          text: 'Quelle est votre couleur préférée ?',
+          type: 'multiple',
+          options: [
+            { id: 1, text: 'Rouge', isCorrect: false },
+            { id: 2, text: 'Bleu', isCorrect: true },
+            { id: 3, text: 'Vert', isCorrect: false },
+            { id: 4, text: 'Jaune', isCorrect: false }
+          ],
+          feedback: {
+            correct: 'Excellent choix !',
+            incorrect: 'Dommage, essayez encore !'
+          }
+        }
+      ]
     })
   }
 }));
