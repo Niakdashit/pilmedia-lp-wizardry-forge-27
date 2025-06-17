@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { ArrowLeft, ArrowRight } from 'lucide-react';
+
+import React, { useEffect } from 'react';
+import { ArrowLeft } from 'lucide-react';
 import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
 import ColorCustomizer from './ColorCustomizer';
 import JackpotBorderCustomizer from './JackpotBorderCustomizer';
@@ -12,9 +13,8 @@ const Step3VisualStyle: React.FC = () => {
     setCustomColors,
     jackpotColors,
     setJackpotColors,
-    backgroundImage,
-    setBackgroundImage,
     backgroundImageUrl,
+    setBackgroundImage,
     setBackgroundImageUrl,
     segmentCount,
     setSegmentCount,
@@ -74,20 +74,14 @@ const Step3VisualStyle: React.FC = () => {
             {/* Couleurs personnalisées */}
             <div>
               <h3 className="text-lg font-semibold text-gray-800 mb-4">Couleurs</h3>
-              <ColorCustomizer
-                colors={customColors}
-                onChange={setCustomColors}
-              />
+              <ColorCustomizer />
             </div>
 
             {/* Configuration spécifique au jackpot */}
             {selectedGameType === 'jackpot' && (
               <div>
                 <h3 className="text-lg font-semibold text-gray-800 mb-4">Apparence du Jackpot</h3>
-                <JackpotBorderCustomizer
-                  colors={jackpotColors}
-                  onChange={setJackpotColors}
-                />
+                <JackpotBorderCustomizer />
               </div>
             )}
 
@@ -199,7 +193,7 @@ const Step3VisualStyle: React.FC = () => {
             <PreviewWindowButton
               campaign={mockCampaign}
               title={`Aperçu - ${campaignName}`}
-              className="bg-green-600 hover:bg-green-700"
+              className="bg-green-600 hover:bg-green-700 text-white"
             >
               Voir l'aperçu final
             </PreviewWindowButton>

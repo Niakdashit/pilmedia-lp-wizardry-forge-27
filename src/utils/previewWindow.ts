@@ -58,8 +58,6 @@ export class PreviewWindowManager {
   }
 
   private static generatePreviewHTML(campaign: any, title: string): string {
-    const baseUrl = window.location.origin;
-    
     return `
 <!DOCTYPE html>
 <html lang="fr">
@@ -134,27 +132,88 @@ export class PreviewWindowManager {
         // Données de la campagne injectées
         window.campaignData = ${JSON.stringify(campaign)};
         
-        // Simulation de rendu de campagne (remplacé par le vrai composant React dans une vraie implémentation)
+        // Simulation de rendu de campagne avec couleurs personnalisées pour Quiz
         setTimeout(() => {
             const previewElement = document.getElementById('campaign-preview');
-            if (previewElement) {
-                previewElement.innerHTML = \`
-                    <div class="p-8 bg-gradient-to-br from-blue-50 to-indigo-100 min-h-[600px] flex items-center justify-center">
-                        <div class="bg-white rounded-xl shadow-lg p-8 max-w-md w-full text-center">
-                            <h2 class="text-2xl font-bold text-gray-800 mb-4">\${window.campaignData.name}</h2>
-                            <div class="mb-6">
-                                <div class="w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full mx-auto mb-4 flex items-center justify-center">
-                                    <span class="text-white text-2xl font-bold">\${window.campaignData.type?.toUpperCase()}</span>
+            if (previewElement && window.campaignData) {
+                const campaign = window.campaignData;
+                const colors = campaign.design?.customColors || {
+                    primary: '#8b5cf6',
+                    secondary: '#a78bfa',
+                    accent: '#c4b5fd'
+                };
+                
+                // Rendu spécial pour Quiz avec couleurs extraites du logo
+                if (campaign.type === 'quiz') {
+                    previewElement.innerHTML = \`
+                        <div class="p-8 min-h-[600px] flex items-center justify-center" style="background: linear-gradient(135deg, \${colors.secondary}20, \${colors.primary}20);">
+                            <div class="bg-white rounded-xl shadow-lg p-8 max-w-2xl w-full" style="border: 2px solid \${colors.primary};">
+                                <div class="mb-6">
+                                    <div class="flex justify-between text-sm text-gray-600 mb-2">
+                                        <span>Question 1 sur 3</span>
+                                        <span>Quiz Interactif</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2">
+                                        <div class="h-2 rounded-full transition-all duration-300" style="background-color: \${colors.primary}; width: 33%;"></div>
+                                    </div>
                                 </div>
-                                <p class="text-gray-600">Type de jeu: \${window.campaignData.type || 'Non défini'}</p>
+                                
+                                <h2 class="text-2xl font-bold mb-6" style="color: \${colors.primary};">\${campaign.name}</h2>
+                                <h3 class="text-xl font-semibold mb-6 text-gray-800">Quelle est votre couleur préférée ?</h3>
+                                
+                                <div class="space-y-3 mb-6">
+                                    <button class="w-full p-4 text-left rounded-lg border-2 transition-all duration-200 hover:scale-[1.02]" style="border-color: \${colors.primary}; background-color: rgba(255, 255, 255, 0.8);">
+                                        <div class="flex items-center">
+                                            <div class="w-6 h-6 rounded-full border-2 mr-3 flex items-center justify-center" style="border-color: \${colors.primary};">
+                                                <span class="text-sm font-medium">A</span>
+                                            </div>
+                                            Rouge
+                                        </div>
+                                    </button>
+                                    <button class="w-full p-4 text-left rounded-lg border-2 transition-all duration-200 hover:scale-[1.02]" style="border-color: \${colors.primary}; background-color: rgba(255, 255, 255, 0.8);">
+                                        <div class="flex items-center">
+                                            <div class="w-6 h-6 rounded-full border-2 mr-3 flex items-center justify-center" style="border-color: \${colors.primary};">
+                                                <span class="text-sm font-medium">B</span>
+                                            </div>
+                                            Bleu
+                                        </div>
+                                    </button>
+                                    <button class="w-full p-4 text-left rounded-lg border-2 transition-all duration-200 hover:scale-[1.02]" style="border-color: \${colors.primary}; background-color: rgba(255, 255, 255, 0.8);">
+                                        <div class="flex items-center">
+                                            <div class="w-6 h-6 rounded-full border-2 mr-3 flex items-center justify-center" style="border-color: \${colors.primary};">
+                                                <span class="text-sm font-medium">C</span>
+                                            </div>
+                                            Vert
+                                        </div>
+                                    </button>
+                                </div>
+                                
+                                <button class="w-full py-3 px-6 rounded-lg font-semibold transition-all duration-200 hover:opacity-90" style="background-color: \${colors.accent}; color: \${colors.primary};">
+                                    Question suivante
+                                </button>
                             </div>
-                            <button class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors">
-                                Jouer maintenant !
-                            </button>
-                            <p class="text-xs text-gray-500 mt-4">Aperçu - Fenêtre indépendante</p>
                         </div>
-                    </div>
-                \`;
+                    \`;
+                } else {
+                    // Rendu par défaut pour autres types de jeux
+                    previewElement.innerHTML = \`
+                        <div class="p-8 bg-gradient-to-br from-blue-50 to-indigo-100 min-h-[600px] flex items-center justify-center">
+                            <div class="bg-white rounded-xl shadow-lg p-8 max-w-md w-full text-center">
+                                <h2 class="text-2xl font-bold text-gray-800 mb-4">\${campaign.name}</h2>
+                                <div class="mb-6">
+                                    <div class="w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full mx-auto mb-4 flex items-center justify-center">
+                                        <span class="text-white text-2xl font-bold">\${campaign.type?.toUpperCase()}</span>
+                                    </div>
+                                    <p class="text-gray-600">Type de jeu: \${campaign.type || 'Non défini'}</p>
+                                </div>
+                                <button class="w-full font-semibold py-3 px-6 rounded-lg transition-colors" style="background-color: \${colors.primary}; color: white;">
+                                    Jouer maintenant !
+                                </button>
+                                <p class="text-xs text-gray-500 mt-4">Aperçu - Fenêtre indépendante</p>
+                            </div>
+                        </div>
+                    \`;
+                }
             }
         }, 1000);
     </script>
