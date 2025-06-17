@@ -7,6 +7,7 @@ import CampaignPreviewModal from './CampaignPreviewModal';
 import ColorCustomizer from './ColorCustomizer';
 import JackpotPreview from './Preview/JackpotPreview';
 import GameRenderer from './Preview/GameRenderer';
+import GamePositionSelector from '../configurators/GamePositionSelector';
 
 const Step3VisualStyle: React.FC = () => {
   const navigate = useNavigate();
@@ -27,8 +28,10 @@ const Step3VisualStyle: React.FC = () => {
     customColors,
     jackpotColors,
     segmentCount,
+    gamePosition,
     generatePreviewCampaign,
     setCurrentStep,
+    setGamePosition,
     reset
   } = useQuickCampaignStore();
   
@@ -38,6 +41,7 @@ const Step3VisualStyle: React.FC = () => {
   const [creationSuccess, setCreationSuccess] = useState(false);
   
   const previewCampaign = generatePreviewCampaign();
+
   const handleFinish = () => {
     setShowFinalStep(true);
   };
@@ -59,6 +63,7 @@ const Step3VisualStyle: React.FC = () => {
           hasBackgroundImage: !!backgroundImage,
           customColors,
           jackpotColors,
+          gamePosition,
           ...(selectedGameType === 'wheel' && {
             segmentCount,
             roulette: {
@@ -92,6 +97,9 @@ const Step3VisualStyle: React.FC = () => {
           jackpotColors,
           backgroundImage: backgroundImageUrl,
           mobileBackgroundImage: backgroundImageUrl
+        },
+        mobileConfig: {
+          gamePosition
         },
         status: 'draft' as const
       };
@@ -124,6 +132,7 @@ const Step3VisualStyle: React.FC = () => {
           hasBackgroundImage: !!backgroundImage,
           customColors,
           jackpotColors,
+          gamePosition,
           ...(selectedGameType === 'wheel' && {
             segmentCount,
             roulette: {
@@ -158,6 +167,9 @@ const Step3VisualStyle: React.FC = () => {
           backgroundImage: backgroundImageUrl,
           mobileBackgroundImage: backgroundImageUrl
         },
+        mobileConfig: {
+          gamePosition
+        },
         status: 'draft' as const
       };
       const result = await saveCampaign(campaignData);
@@ -172,8 +184,55 @@ const Step3VisualStyle: React.FC = () => {
     }
   };
 
+  const getPreviewContainerStyle = () => {
+    const baseStyle: React.CSSProperties = {
+      background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+      borderRadius: '24px',
+      boxShadow: 'inset 0 2px 8px rgba(0,0,0,0.1)',
+      border: '1px solid rgba(0,0,0,0.05)',
+      maxWidth: '800px',
+      width: '100%',
+      minHeight: '500px',
+      position: 'relative',
+      overflow: 'hidden',
+      display: 'flex',
+      alignItems: getAlignItems(),
+      justifyContent: getJustifyContent(),
+      padding: '40px'
+    };
+
+    if (backgroundImageUrl) {
+      return {
+        ...baseStyle,
+        backgroundImage: `url(${backgroundImageUrl})`,
+        backgroundSize: 'contain',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      };
+    }
+
+    return baseStyle;
+  };
+
+  const getAlignItems = () => {
+    switch (gamePosition) {
+      case 'top': return 'flex-start';
+      case 'bottom': return 'flex-end';
+      default: return 'center';
+    }
+  };
+
+  const getJustifyContent = () => {
+    switch (gamePosition) {
+      case 'left': return 'flex-start';
+      case 'right': return 'flex-end';
+      default: return 'center';
+    }
+  };
+
   if (showFinalStep) {
-    return <div className="min-h-screen bg-[#ebf4f7] flex items-center justify-center px-6 py-12">
+    return (
+      <div className="min-h-screen bg-[#ebf4f7] flex items-center justify-center px-6 py-12">
         <div className="max-w-lg w-full text-center">
           <div className="bg-white border border-gray-200 rounded-3xl p-12 shadow-xl">
             <div className="mb-8">
@@ -215,10 +274,12 @@ const Step3VisualStyle: React.FC = () => {
           </div>
         </div>
         <CampaignPreviewModal isOpen={showPreview} onClose={() => setShowPreview(false)} />
-      </div>;
+      </div>
+    );
   }
 
-  return <div className="min-h-screen bg-[#ebf4f7] py-12 px-0">
+  return (
+    <div className="min-h-screen bg-[#ebf4f7] py-12 px-0">
       <div className="max-w-6xl mx-auto">
         <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-8 md:p-12">
           {/* Header */}
@@ -233,24 +294,24 @@ const Step3VisualStyle: React.FC = () => {
 
           <div className="space-y-16">
 
-            {/* Aperçu dynamique du jeu - Design unifié pour toutes les mécaniques */}
+            {/* Aperçu dynamique du jeu avec position personnalisable */}
             <div className="flex justify-center">
-              <div
-                className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-3xl shadow-inner border border-gray-200/50 max-w-2xl w-full flex items-center justify-center min-h-[400px] p-8 py-0"
-                style={backgroundImageUrl ? {
-                  backgroundImage: `url(${backgroundImageUrl})`,
-                  backgroundSize: 'cover',
-                  backgroundPosition: 'center',
-                  backgroundRepeat: 'no-repeat'
-                } : undefined}
-              >
-                {selectedGameType === 'jackpot' ? (
-                  <JackpotPreview 
-                    customColors={customColors} 
-                    jackpotColors={jackpotColors} 
+              <div style={getPreviewContainerStyle()}>
+                {/* Overlay pour améliorer la lisibilité si image de fond */}
+                {backgroundImageUrl && (
+                  <div
+                    className="absolute inset-0 bg-black/10 rounded-3xl"
+                    style={{ zIndex: 1 }}
                   />
-                ) : (
-                  <div className="flex flex-col items-center justify-center w-full h-full">
+                )}
+                
+                <div className="relative z-10">
+                  {selectedGameType === 'jackpot' ? (
+                    <JackpotPreview 
+                      customColors={customColors} 
+                      jackpotColors={jackpotColors} 
+                    />
+                  ) : (
                     <div className="transform scale-90 origin-center">
                       <GameRenderer
                         gameType={selectedGameType || 'wheel'}
@@ -260,13 +321,22 @@ const Step3VisualStyle: React.FC = () => {
                         logoUrl={logoUrl || undefined}
                         fontUrl={fontUrl || undefined}
                         gameSize="medium"
-                        gamePosition="center"
+                        gamePosition={gamePosition}
                         previewDevice="desktop"
                       />
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
+            </div>
+
+            {/* Sélecteur de position du jeu */}
+            <div className="max-w-md mx-auto">
+              <GamePositionSelector
+                selectedPosition={gamePosition}
+                onPositionChange={setGamePosition}
+                className="text-center"
+              />
             </div>
 
             {/* Color Customizer */}
@@ -304,7 +374,8 @@ const Step3VisualStyle: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>;
+    </div>
+  );
 };
 
 export default Step3VisualStyle;

@@ -32,7 +32,7 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
   customColors,
   jackpotColors
 }) => {
-  const { backgroundImageUrl } = useQuickCampaignStore();
+  const { backgroundImageUrl, gamePosition } = useQuickCampaignStore();
   const unlockedTypes = ['wheel', 'scratch', 'jackpot', 'dice'];
 
   // Enhanced campaign with custom colors and proper configuration
@@ -44,7 +44,6 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
       buttonColor: customColors.primary,
       titleColor: mockCampaign.design?.titleColor || '#000000',
       background: mockCampaign.design?.background || '#f8fafc',
-      // Utiliser l'image de fond uploadée depuis le store
       backgroundImage: backgroundImageUrl || mockCampaign.design?.backgroundImage,
       mobileBackgroundImage: backgroundImageUrl || mockCampaign.design?.mobileBackgroundImage
     },
@@ -65,6 +64,10 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
         buttonColor: customColors.primary,
         buttonLabel: mockCampaign.gameConfig?.[selectedGameType]?.buttonLabel || 'Jouer'
       }
+    },
+    mobileConfig: {
+      ...mockCampaign.mobileConfig,
+      gamePosition: gamePosition
     }
   };
 
@@ -87,7 +90,8 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
           design: enhancedCampaign.design,
           screens: enhancedCampaign.screens,
           customColors: customColors,
-          backgroundImageUrl: backgroundImageUrl
+          backgroundImageUrl: backgroundImageUrl,
+          gamePosition: gamePosition
         })}
       />
     );
@@ -98,14 +102,13 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
       width: '100%',
       height: '100%',
       display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
+      alignItems: getAlignItems(),
+      justifyContent: getJustifyContent(),
       backgroundColor: enhancedCampaign.design?.background || '#f9fafb',
       position: 'relative' as const,
       overflow: 'hidden' as const
     };
 
-    // Prioriser l'image uploadée depuis le store
     const mobileBg = backgroundImageUrl || enhancedCampaign.design?.mobileBackgroundImage;
     const bgImage = selectedDevice === 'mobile' && mobileBg
       ? mobileBg
@@ -115,13 +118,33 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
       return {
         ...baseStyle,
         backgroundImage: `url(${bgImage})`,
-        backgroundSize: 'cover',
+        backgroundSize: 'contain',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'
       };
     }
 
     return baseStyle;
+  };
+
+  const getAlignItems = () => {
+    if (selectedDevice === 'mobile') return 'center';
+    
+    switch (gamePosition) {
+      case 'top': return 'flex-start';
+      case 'bottom': return 'flex-end';
+      default: return 'center';
+    }
+  };
+
+  const getJustifyContent = () => {
+    if (selectedDevice === 'mobile') return 'center';
+    
+    switch (gamePosition) {
+      case 'left': return 'flex-start';
+      case 'right': return 'flex-end';
+      default: return 'center';
+    }
   };
 
   return (
@@ -133,20 +156,17 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
               ...getContainerStyle(),
               width: '100%',
               height: '100%',
-              minHeight: 0,      // Pour éviter le débordement vertical
-              minWidth: 0,       // Pour éviter le débordement horizontal
+              minHeight: 0,
+              minWidth: 0,
               position: 'relative',
               overflow: 'hidden',
               display: 'flex',
-              alignItems: 'stretch',
-              justifyContent: 'stretch'
+              alignItems: getAlignItems(),
+              justifyContent: getJustifyContent()
             }}
           >
             {/* Background overlay for better contrast if background image exists */}
-            {(backgroundImageUrl || 
-              (selectedDevice === 'mobile'
-                ? enhancedCampaign.design?.mobileBackgroundImage
-                : enhancedCampaign.design?.backgroundImage)) && (
+            {backgroundImageUrl && (
               <div
                 className="absolute inset-0 bg-black opacity-20"
                 style={{ zIndex: 1 }}
@@ -159,7 +179,7 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
               style={{ 
                 minHeight: selectedDevice === 'desktop' ? '600px' : '100%',
                 padding: selectedDevice === 'mobile' ? '32px 16px 16px' : selectedDevice === 'tablet' ? '24px 16px' : '16px',
-                overflowY: 'auto', // Ajoute le scroll pour le funnel/formulaire à l'intérieur du device !
+                overflowY: 'auto',
                 width: '100%',
                 height: '100%'
               }}

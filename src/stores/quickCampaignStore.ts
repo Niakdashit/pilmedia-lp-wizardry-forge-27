@@ -1,4 +1,3 @@
-
 import { create } from 'zustand';
 
 export interface QuickCampaignState {
@@ -15,11 +14,12 @@ export interface QuickCampaignState {
   backgroundImage: File | null;
   backgroundImageUrl: string | null;
   segmentCount: number;
+  gamePosition: 'top' | 'center' | 'bottom' | 'left' | 'right';
   customColors: {
     primary: string;
     secondary: string;
     accent: string;
-    textColor?: string; // Nouvelle propriété pour la couleur de texte automatique
+    textColor?: string;
   };
   jackpotColors: {
     containerBackgroundColor: string;
@@ -43,6 +43,7 @@ export interface QuickCampaignState {
   setBackgroundImage: (file: File | null) => void;
   setBackgroundImageUrl: (url: string | null) => void;
   setSegmentCount: (count: number) => void;
+  setGamePosition: (position: 'top' | 'center' | 'bottom' | 'left' | 'right') => void;
   setCustomColors: (colors: { primary: string; secondary: string; accent: string; textColor?: string }) => void;
   setJackpotColors: (colors: any) => void;
   generatePreviewCampaign: () => any;
@@ -63,11 +64,12 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
   backgroundImage: null,
   backgroundImageUrl: null,
   segmentCount: 4,
+  gamePosition: 'center',
   customColors: {
-    primary: '#ffffff',   // Blanc par défaut
-    secondary: '#E3F2FD', // Bleu clair
-    accent: '#ffffff',    // Accent forcé blanc
-    textColor: '#ffffff'  // Texte blanc par défaut
+    primary: '#ffffff',
+    secondary: '#E3F2FD',
+    accent: '#ffffff',
+    textColor: '#ffffff'
   },
   jackpotColors: {
     containerBackgroundColor: '#1f2937',
@@ -92,6 +94,7 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
   setBackgroundImage: (file) => set({ backgroundImage: file }),
   setBackgroundImageUrl: (url) => set({ backgroundImageUrl: url }),
   setSegmentCount: (count) => set({ segmentCount: count }),
+  setGamePosition: (position) => set({ gamePosition: position }),
   setCustomColors: (colors) => set({ customColors: colors }),
   setJackpotColors: (colors) => set({ jackpotColors: colors }),
 
@@ -122,7 +125,9 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
         roulette: {}
       },
       gameConfig: {},
-      mobileConfig: {}
+      mobileConfig: {
+        gamePosition: state.gamePosition
+      }
     };
 
     // Roue
@@ -171,7 +176,7 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
       buttonColor: state.customColors.accent,
       buttonTextColor: state.customColors.primary,
       buttonPlacement: 'bottom',
-      gamePosition: 'center'
+      gamePosition: state.gamePosition
     };
 
     return baseConfig;
@@ -186,31 +191,32 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
       currentStep: 1,
       campaignName: 'Ma Nouvelle Campagne',
       selectedGameType: null,
-    launchDate: '',
-    marketingGoal: '',
-    logoFile: null,
-    brandSiteUrl: '',
-    logoUrl: null,
-    fontUrl: null,
-    selectedTheme: 'default',
-    backgroundImage: null,
-    backgroundImageUrl: null,
-    segmentCount: 4,
-    customColors: {
-      primary: '#ffffff',
-      secondary: '#E3F2FD',
-      accent: '#ffffff',
-      textColor: '#ffffff'
-    },
-    jackpotColors: {
-      containerBackgroundColor: '#1f2937',
-      backgroundColor: '#3B82F6',
-      borderColor: '#1E40AF',
-      borderWidth: 3,
-      slotBorderColor: '#60A5FA',
-      slotBorderWidth: 2,
-      slotBackgroundColor: '#ffffff'
-    }
-  })
+      launchDate: '',
+      marketingGoal: '',
+      logoFile: null,
+      brandSiteUrl: '',
+      logoUrl: null,
+      fontUrl: null,
+      selectedTheme: 'default',
+      backgroundImage: null,
+      backgroundImageUrl: null,
+      segmentCount: 4,
+      gamePosition: 'center',
+      customColors: {
+        primary: '#ffffff',
+        secondary: '#E3F2FD',
+        accent: '#ffffff',
+        textColor: '#ffffff'
+      },
+      jackpotColors: {
+        containerBackgroundColor: '#1f2937',
+        backgroundColor: '#3B82F6',
+        borderColor: '#1E40AF',
+        borderWidth: 3,
+        slotBorderColor: '#60A5FA',
+        slotBorderWidth: 2,
+        slotBackgroundColor: '#ffffff'
+      }
+    })
   }
 }));
