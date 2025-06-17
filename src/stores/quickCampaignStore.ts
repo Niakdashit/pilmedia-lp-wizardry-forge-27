@@ -1,4 +1,3 @@
-
 import { create } from 'zustand';
 
 export interface QuickCampaignState {
@@ -148,13 +147,38 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
         text: 'Jouer maintenant !',
         visible: true
       },
+      screens: [
+        {
+          title: 'Prêt à jouer ?',
+          description: 'Participez à notre jeu et tentez de gagner des prix !',
+          buttonText: 'Participer'
+        },
+        {
+          title: 'Vos informations',
+          description: 'Remplissez le formulaire pour continuer',
+          buttonText: "C'est parti !"
+        },
+        {
+          title: 'Jouez maintenant !',
+          description: 'Bonne chance !',
+          buttonText: 'Jouer'
+        },
+        {
+          title: 'Merci !',
+          description: 'Merci pour votre participation !',
+          confirmationTitle: 'Félicitations !',
+          confirmationMessage: 'Votre participation a été enregistrée.',
+          replayButtonText: 'Rejouer',
+          winMessage: 'Bravo ! Vous avez gagné !',
+          loseMessage: 'Pas de chance cette fois !'
+        }
+      ],
       config: {
         roulette: {}
       },
       gameConfig: {},
       mobileConfig: {
         gamePosition: state.gamePosition,
-        ...(state.selectedGameType === 'wheel' && { roulette: {} }),
         buttonColor: state.customColors.accent,
         buttonTextColor: state.customColors.primary,
         buttonPlacement: 'bottom'
@@ -185,7 +209,6 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
         }
       };
 
-      // Update mobileConfig with roulette config
       baseConfig.mobileConfig = {
         ...baseConfig.mobileConfig,
         roulette: baseConfig.config.roulette
@@ -216,6 +239,25 @@ export const useQuickCampaignStore = create<QuickCampaignState>((set, get) => ({
           },
           buttonLabel: 'Lancer le Jackpot',
           ...state.jackpotColors
+        }
+      };
+    }
+
+    // Scratch
+    if (state.selectedGameType === 'scratch') {
+      baseConfig.gameConfig = {
+        scratch: {
+          cards: [
+            {
+              id: 1,
+              revealImage: '',
+              revealMessage: 'Félicitations !',
+              scratchColor: '#C0C0C0'
+            }
+          ],
+          buttonLabel: 'Gratter',
+          winMessage: 'Bravo ! Vous avez gagné !',
+          loseMessage: 'Pas de chance cette fois !'
         }
       };
     }
