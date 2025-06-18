@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
@@ -12,7 +11,6 @@ const Step2BasicSettings: React.FC = () => {
     setLaunchDate,
     marketingGoal,
     setMarketingGoal,
-    logoFile,
     brandSiteUrl,
     setBrandSiteUrl,
     setCurrentStep,
