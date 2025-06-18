@@ -1,7 +1,7 @@
 
+import React from 'react';
 import { ExternalLink, Eye } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import type { FC } from 'react';
+import { PreviewWindowManager } from '../../utils/previewWindow';
 
 interface PreviewWindowButtonProps {
   campaign: any;
@@ -12,17 +12,23 @@ interface PreviewWindowButtonProps {
   size?: 'sm' | 'md' | 'lg';
 }
 
-const PreviewWindowButton: FC<PreviewWindowButtonProps> = ({
+const PreviewWindowButton: React.FC<PreviewWindowButtonProps> = ({
+  campaign,
+  title,
   children,
   className = '',
   variant = 'default',
   size = 'md'
 }) => {
-  const navigate = useNavigate();
-
   const handlePreview = () => {
-    // Naviguer vers la page d'aperçu au lieu d'ouvrir une popup
-    navigate('/preview');
+    const previewTitle = title || `Aperçu - ${campaign.name || 'Campagne'}`;
+    
+    PreviewWindowManager.openPreviewWindow({
+      campaign,
+      title: previewTitle,
+      width: 1200,
+      height: 800
+    });
   };
 
   const getVariantClasses = () => {
