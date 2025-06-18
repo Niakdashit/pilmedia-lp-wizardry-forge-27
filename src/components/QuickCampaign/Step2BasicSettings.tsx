@@ -1,3 +1,4 @@
+
 import React, { useRef } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, ArrowRight, Calendar, Upload } from 'lucide-react';
@@ -18,7 +19,7 @@ const Step2BasicSettings: React.FC = () => {
   } = useQuickCampaignStore();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
-
+  const mobileFileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileUpload = (files: FileList | null) => {
     if (files && files[0]) {
@@ -35,7 +36,21 @@ const Step2BasicSettings: React.FC = () => {
     }
   };
 
-  // Les couleurs seront extraites automatiquement via le composant LogoUploader
+  const handleMobileFileUpload = (files: FileList | null) => {
+    if (files && files[0]) {
+      const file = files[0];
+      // For now, we'll use the same store properties but this could be extended
+      // to have separate mobile background image storage
+      setBackgroundImage(file);
+
+      if (backgroundImageUrl) {
+        URL.revokeObjectURL(backgroundImageUrl);
+      }
+
+      const url = URL.createObjectURL(file);
+      setBackgroundImageUrl(url);
+    }
+  };
 
   const canProceed = campaignName.trim() && launchDate;
 
@@ -88,59 +103,120 @@ const Step2BasicSettings: React.FC = () => {
               <LogoUploader />
             </motion.div>
 
-            {/* Background Upload */}
+            {/* Background Images - Split into two columns */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
-              <label className="block text-lg font-medium text-gray-900 mb-4">
-                Image de fond <span className="text-gray-500 font-normal">(optionnel)</span>
-              </label>
-              <div
-                className="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer"
-                onClick={() => fileInputRef.current?.click()}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => e.key === 'Enter' && fileInputRef.current?.click()}
-              >
-                {backgroundImageUrl ? (
-                  <img
-                    src={backgroundImageUrl}
-                    alt="Aperçu de l'image de fond"
-                    className="mx-auto mb-4 h-48 w-full object-cover rounded-xl"
-                  />
-                ) : (
-                  <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                )}
-                {backgroundImage ? (
-                  <div>
-                    <p className="text-gray-900 font-medium mb-2">{backgroundImage.name}</p>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (backgroundImageUrl) {
-                          URL.revokeObjectURL(backgroundImageUrl);
-                        }
-                        setBackgroundImage(null);
-                        setBackgroundImageUrl(null);
-                      }}
-                      className="text-red-500 hover:text-red-600 transition-colors"
-                    >
-                      Supprimer
-                    </button>
+              <div className="grid grid-cols-2 gap-6">
+                {/* Desktop Background Upload */}
+                <div>
+                  <label className="block text-lg font-medium text-gray-900 mb-4">
+                    Image de fond <span className="text-gray-500 font-normal">(optionnel)</span>
+                  </label>
+                  <div
+                    className="border-2 border-dashed border-gray-300 rounded-2xl p-6 text-center bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer h-48"
+                    onClick={() => fileInputRef.current?.click()}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => e.key === 'Enter' && fileInputRef.current?.click()}
+                  >
+                    {backgroundImageUrl ? (
+                      <img
+                        src={backgroundImageUrl}
+                        alt="Aperçu de l'image de fond"
+                        className="mx-auto mb-4 h-32 w-full object-cover rounded-xl"
+                      />
+                    ) : (
+                      <Upload className="w-8 h-8 text-gray-400 mx-auto mb-4 mt-8" />
+                    )}
+                    {backgroundImage ? (
+                      <div>
+                        <p className="text-gray-900 font-medium mb-2 text-sm">{backgroundImage.name}</p>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (backgroundImageUrl) {
+                              URL.revokeObjectURL(backgroundImageUrl);
+                            }
+                            setBackgroundImage(null);
+                            setBackgroundImageUrl(null);
+                          }}
+                          className="text-red-500 hover:text-red-600 transition-colors text-sm"
+                        >
+                          Supprimer
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        <p className="text-gray-600 mb-2 text-sm">
+                          <span className="text-[#841b60] font-medium">Téléchargez une image</span>
+                        </p>
+                        <p className="text-gray-400 text-xs">PNG, JPG jusqu'à 10MB</p>
+                      </>
+                    )}
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleFileUpload(e.target.files)}
+                      className="hidden"
+                    />
                   </div>
-                ) : (
-                  <>
-                    <p className="text-gray-600 mb-2">
-                      <span className="text-[#841b60] font-medium">Téléchargez une image de fond</span>
-                    </p>
-                    <p className="text-gray-400 text-sm">PNG, JPG jusqu'à 10MB</p>
-                  </>
-                )}
-                <input
-                  ref={fileInputRef}
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => handleFileUpload(e.target.files)}
-                  className="hidden"
-                />
+                </div>
+
+                {/* Mobile Background Upload */}
+                <div>
+                  <label className="block text-lg font-medium text-gray-900 mb-4">
+                    Image de fond mobile <span className="text-gray-500 font-normal">(optionnel)</span>
+                  </label>
+                  <div
+                    className="border-2 border-dashed border-gray-300 rounded-2xl p-6 text-center bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer h-48"
+                    onClick={() => mobileFileInputRef.current?.click()}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => e.key === 'Enter' && mobileFileInputRef.current?.click()}
+                  >
+                    {backgroundImageUrl ? (
+                      <img
+                        src={backgroundImageUrl}
+                        alt="Aperçu de l'image de fond mobile"
+                        className="mx-auto mb-4 h-32 w-full object-cover rounded-xl"
+                      />
+                    ) : (
+                      <Upload className="w-8 h-8 text-gray-400 mx-auto mb-4 mt-8" />
+                    )}
+                    {backgroundImage ? (
+                      <div>
+                        <p className="text-gray-900 font-medium mb-2 text-sm">{backgroundImage.name}</p>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (backgroundImageUrl) {
+                              URL.revokeObjectURL(backgroundImageUrl);
+                            }
+                            setBackgroundImage(null);
+                            setBackgroundImageUrl(null);
+                          }}
+                          className="text-red-500 hover:text-red-600 transition-colors text-sm"
+                        >
+                          Supprimer
+                        </button>
+                      </div>
+                    ) : (
+                      <>
+                        <p className="text-gray-600 mb-2 text-sm">
+                          <span className="text-[#841b60] font-medium">Téléchargez une image</span>
+                        </p>
+                        <p className="text-gray-400 text-xs">PNG, JPG jusqu'à 10MB</p>
+                      </>
+                    )}
+                    <input
+                      ref={mobileFileInputRef}
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => handleMobileFileUpload(e.target.files)}
+                      className="hidden"
+                    />
+                  </div>
+                </div>
               </div>
             </motion.div>
           </div>
