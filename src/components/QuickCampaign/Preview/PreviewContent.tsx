@@ -219,7 +219,7 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
             <div 
               className="relative z-10 w-full h-full flex items-center justify-center"
               style={{ 
-                minHeight: selectedDevice === 'desktop' ? '600px' : '100%',
+                minHeight: selectedDevice === 'tablet' ? '600px' : '100%',
                 padding: selectedDevice === 'mobile' ? '32px 16px 16px' : selectedDevice === 'tablet' ? '24px 16px' : '16px',
                 overflowY: 'auto',
                 width: '100%',

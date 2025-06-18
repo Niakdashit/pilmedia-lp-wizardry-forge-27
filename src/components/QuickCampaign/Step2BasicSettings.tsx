@@ -13,7 +13,6 @@ const Step2BasicSettings: React.FC = () => {
     marketingGoal,
     setMarketingGoal,
     logoFile,
-    setLogoFile,
     brandSiteUrl,
     setBrandSiteUrl,
     setCurrentStep,
@@ -117,10 +116,7 @@ const Step2BasicSettings: React.FC = () => {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Logo de la marque
             </label>
-            <LogoUploader
-              onLogoUpload={setLogoFile}
-              currentLogo={logoFile}
-            />
+            <LogoUploader />
           </div>
 
           {/* URL du site de la marque */}
