@@ -1,54 +1,25 @@
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
 import ColorCustomizer from './ColorCustomizer';
 import JackpotBorderCustomizer from './JackpotBorderCustomizer';
 import PreviewWindowButton from '../common/PreviewWindowButton';
+import PreviewContent from './Preview/PreviewContent';
 
 const Step3VisualStyle: React.FC = () => {
   const {
     selectedGameType,
-    backgroundImageUrl,
-    setBackgroundImage,
-    setBackgroundImageUrl,
     segmentCount,
     setSegmentCount,
     gamePosition,
     setGamePosition,
     setCurrentStep,
     generatePreviewCampaign,
-    campaignName
+    campaignName,
+    customColors,
+    jackpotColors
   } = useQuickCampaignStore();
-
-  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      if (backgroundImageUrl) {
-        URL.revokeObjectURL(backgroundImageUrl);
-      }
-      
-      const url = URL.createObjectURL(file);
-      setBackgroundImage(file);
-      setBackgroundImageUrl(url);
-    }
-  };
-
-  const removeBackgroundImage = () => {
-    if (backgroundImageUrl) {
-      URL.revokeObjectURL(backgroundImageUrl);
-    }
-    setBackgroundImage(null);
-    setBackgroundImageUrl(null);
-  };
-
-  useEffect(() => {
-    return () => {
-      if (backgroundImageUrl) {
-        URL.revokeObjectURL(backgroundImageUrl);
-      }
-    };
-  }, [backgroundImageUrl]);
 
   const mockCampaign = generatePreviewCampaign();
 
@@ -132,48 +103,6 @@ const Step3VisualStyle: React.FC = () => {
                 ))}
               </div>
             </div>
-
-            {/* Image de fond */}
-            <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-4">Image de fond</h3>
-              <div className="space-y-4">
-                {!backgroundImageUrl ? (
-                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      onChange={handleImageUpload}
-                      className="hidden"
-                      id="background-upload"
-                    />
-                    <label htmlFor="background-upload" className="cursor-pointer">
-                      <div className="text-gray-400 mb-2">
-                        <svg className="mx-auto h-12 w-12" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                          <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                        </svg>
-                      </div>
-                      <span className="text-sm text-gray-600">
-                        Cliquez pour ajouter une image de fond
-                      </span>
-                    </label>
-                  </div>
-                ) : (
-                  <div className="relative">
-                    <img
-                      src={backgroundImageUrl}
-                      alt="Aperçu de l'image de fond"
-                      className="w-full h-32 object-cover rounded-lg"
-                    />
-                    <button
-                      onClick={removeBackgroundImage}
-                      className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600"
-                    >
-                      ×
-                    </button>
-                  </div>
-                )}
-              </div>
-            </div>
           </div>
 
           {/* Boutons de navigation */}
@@ -205,23 +134,14 @@ const Step3VisualStyle: React.FC = () => {
             <p className="text-gray-600 text-sm">Les modifications apparaissent instantanément</p>
           </div>
           
-          <div className="flex-1 bg-white rounded-xl shadow-lg p-6 flex items-center justify-center">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full mx-auto mb-4 flex items-center justify-center">
-                <span className="text-white text-lg font-bold">
-                  {selectedGameType?.toUpperCase().slice(0, 2)}
-                </span>
-              </div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">{campaignName}</h3>
-              <p className="text-gray-600 text-sm mb-4">Type: {selectedGameType}</p>
-              <div className="space-y-2">
-                <div className="w-32 h-2 bg-gray-200 rounded mx-auto"></div>
-                <div className="w-24 h-2 bg-gray-200 rounded mx-auto"></div>
-              </div>
-              <p className="text-xs text-gray-500 mt-4">
-                Cliquez sur "Voir l'aperçu final" pour une vue complète
-              </p>
-            </div>
+          <div className="flex-1 bg-white rounded-xl shadow-lg overflow-hidden">
+            <PreviewContent
+              selectedDevice="desktop"
+              mockCampaign={mockCampaign}
+              selectedGameType={selectedGameType || 'wheel'}
+              customColors={customColors}
+              jackpotColors={jackpotColors}
+            />
           </div>
         </div>
       </div>
