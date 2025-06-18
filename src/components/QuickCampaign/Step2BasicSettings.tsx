@@ -1,3 +1,4 @@
+
 import React, { useEffect } from 'react';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
@@ -11,6 +12,8 @@ const Step2BasicSettings: React.FC = () => {
     setLaunchDate,
     marketingGoal,
     setMarketingGoal,
+    logoFile,
+    setLogoFile,
     brandSiteUrl,
     setBrandSiteUrl,
     setCurrentStep,
@@ -114,7 +117,10 @@ const Step2BasicSettings: React.FC = () => {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Logo de la marque
             </label>
-            <LogoUploader />
+            <LogoUploader
+              onLogoUpload={setLogoFile}
+              currentLogo={logoFile}
+            />
           </div>
 
           {/* URL du site de la marque */}
