@@ -3,7 +3,6 @@ import React from 'react';
 import FunnelUnlockedGame from '../../funnels/FunnelUnlockedGame';
 import FunnelStandard from '../../funnels/FunnelStandard';
 import DeviceFrame from './DeviceFrame';
-import CampaignPreviewFrame from './CampaignPreviewFrame';
 import { useQuickCampaignStore } from '../../../stores/quickCampaignStore';
 
 interface PreviewContentProps {
@@ -98,15 +97,96 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
     );
   };
 
+  const getContainerStyle = () => {
+    const baseStyle = {
+      width: '100%',
+      height: '100%',
+      display: 'flex',
+      alignItems: getAlignItems(),
+      justifyContent: getJustifyContent(),
+      backgroundColor: enhancedCampaign.design?.background || '#f9fafb',
+      position: 'relative' as const,
+      overflow: 'hidden' as const
+    };
+
+    const mobileBg = backgroundImageUrl || enhancedCampaign.design?.mobileBackgroundImage;
+    const bgImage = selectedDevice === 'mobile' && mobileBg
+      ? mobileBg
+      : (backgroundImageUrl || enhancedCampaign.design?.backgroundImage);
+
+    if (bgImage) {
+      return {
+        ...baseStyle,
+        backgroundImage: `url(${bgImage})`,
+        backgroundSize: 'contain',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      };
+    }
+
+    return baseStyle;
+  };
+
+  const getAlignItems = () => {
+    if (selectedDevice === 'mobile') return 'center';
+    
+    switch (gamePosition) {
+      case 'top': return 'flex-start';
+      case 'bottom': return 'flex-end';
+      default: return 'center';
+    }
+  };
+
+  const getJustifyContent = () => {
+    if (selectedDevice === 'mobile') return 'center';
+    
+    switch (gamePosition) {
+      case 'left': return 'flex-start';
+      case 'right': return 'flex-end';
+      default: return 'center';
+    }
+  };
+
   return (
-    <div className="flex-1 overflow-auto">
+    <div className="flex-1 pt-20 overflow-auto">
       <div className="w-full h-full flex items-center justify-center p-4">
         <DeviceFrame device={selectedDevice}>
-          <CampaignPreviewFrame selectedDevice={selectedDevice}>
-            <div className="w-full h-full flex items-center justify-center">
+          <div
+            style={{
+              ...getContainerStyle(),
+              width: '100%',
+              height: '100%',
+              minHeight: 0,
+              minWidth: 0,
+              position: 'relative',
+              overflow: 'hidden',
+              display: 'flex',
+              alignItems: getAlignItems(),
+              justifyContent: getJustifyContent()
+            }}
+          >
+            {/* Background overlay for better contrast if background image exists */}
+            {backgroundImageUrl && (
+              <div
+                className="absolute inset-0 bg-black opacity-20"
+                style={{ zIndex: 1 }}
+              />
+            )}
+            
+            {/* Content container */}
+            <div 
+              className="relative z-10 w-full h-full flex items-center justify-center"
+              style={{ 
+                minHeight: selectedDevice === 'desktop' ? '600px' : '100%',
+                padding: selectedDevice === 'mobile' ? '32px 16px 16px' : selectedDevice === 'tablet' ? '24px 16px' : '16px',
+                overflowY: 'auto',
+                width: '100%',
+                height: '100%'
+              }}
+            >
               {getFunnelComponent()}
             </div>
-          </CampaignPreviewFrame>
+          </div>
         </DeviceFrame>
       </div>
     </div>
