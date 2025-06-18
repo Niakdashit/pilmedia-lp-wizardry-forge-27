@@ -1,178 +1,207 @@
-import React, { useRef } from 'react';
-import { motion } from 'framer-motion';
-import { ArrowLeft, ArrowRight, Calendar, Upload } from 'lucide-react';
+
+import React, { useEffect } from 'react';
+import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useQuickCampaignStore } from '../../stores/quickCampaignStore';
 import LogoUploader from '../LogoUploader';
 
 const Step2BasicSettings: React.FC = () => {
   const {
     campaignName,
-    launchDate,
-    backgroundImage,
-    backgroundImageUrl,
     setCampaignName,
+    launchDate,
     setLaunchDate,
+    marketingGoal,
+    setMarketingGoal,
+    logoFile,
+    setLogoFile,
+    brandSiteUrl,
+    setBrandSiteUrl,
+    setCurrentStep,
+    backgroundImageUrl,
     setBackgroundImage,
-    setBackgroundImageUrl,
-    setCurrentStep
+    setBackgroundImageUrl
   } = useQuickCampaignStore();
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-
-  const handleFileUpload = (files: FileList | null) => {
-    if (files && files[0]) {
-      const file = files[0];
-      setBackgroundImage(file);
-
-      // Nettoie l'ancienne URL si une nouvelle image est sélectionnée
+  const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
       if (backgroundImageUrl) {
         URL.revokeObjectURL(backgroundImageUrl);
       }
-
+      
       const url = URL.createObjectURL(file);
+      setBackgroundImage(file);
       setBackgroundImageUrl(url);
     }
   };
 
-  // Les couleurs seront extraites automatiquement via le composant LogoUploader
+  const removeBackgroundImage = () => {
+    if (backgroundImageUrl) {
+      URL.revokeObjectURL(backgroundImageUrl);
+    }
+    setBackgroundImage(null);
+    setBackgroundImageUrl(null);
+  };
 
-  const canProceed = campaignName.trim() && launchDate;
+  useEffect(() => {
+    return () => {
+      if (backgroundImageUrl) {
+        URL.revokeObjectURL(backgroundImageUrl);
+      }
+    };
+  }, [backgroundImageUrl]);
+
+  const canProceed = campaignName.trim() !== '';
 
   return (
-    <div className="min-h-screen bg-[#ebf4f7] py-12 px-0">
-      <div className="max-w-6xl mx-auto">
-        <div className="bg-white rounded-3xl shadow-lg border border-gray-100 p-8 md:p-12">
-          {/* Header */}
-          <div className="text-center mb-16">
-            <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-4xl mb-4 text-[#841b60] font-semibold">
-              Paramètres essentiels
-            </motion.h1>
-            <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="text-xl font-light text-[#991c6e]/[0.78]">
-              Configurons les bases de votre campagne
-            </motion.p>
+    <div className="min-h-screen bg-[#ebf4f7] flex items-center justify-center p-8">
+      <div className="max-w-2xl w-full bg-white rounded-2xl shadow-xl p-8">
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold text-gray-800 mb-2">
+            Paramètres de base
+          </h1>
+          <p className="text-gray-600">
+            Configurez les informations essentielles de votre campagne
+          </p>
+        </div>
+
+        <div className="space-y-6">
+          {/* Nom de la campagne */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Nom de la campagne *
+            </label>
+            <input
+              type="text"
+              value={campaignName}
+              onChange={(e) => setCampaignName(e.target.value)}
+              placeholder="Ma super campagne quiz"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
           </div>
 
-          <div className="space-y-12">
-            {/* Campaign Name */}
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}>
-              <label className="block text-lg font-medium text-gray-900 mb-4">Nom de la campagne</label>
-              <input
-                type="text"
-                value={campaignName}
-                onChange={e => setCampaignName(e.target.value)}
-                placeholder="Ex: Jeu concours été 2024"
-                className="w-full px-6 py-4 border-2 border-gray-200 rounded-2xl focus:border-[#841b60] focus:outline-none transition-all text-lg bg-gray-50"
-              />
-            </motion.div>
+          {/* Date de lancement */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Date de lancement
+            </label>
+            <input
+              type="date"
+              value={launchDate}
+              onChange={(e) => setLaunchDate(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
 
-            {/* Launch Date */}
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3 }}>
-              <label className="block text-lg font-medium text-gray-900 mb-4">
-                <Calendar className="w-5 h-5 inline mr-2" />
-                Date de lancement
-              </label>
-              <input
-                type="date"
-                value={launchDate}
-                onChange={e => setLaunchDate(e.target.value)}
-                className="w-full px-6 py-4 border-2 border-gray-200 rounded-2xl focus:border-[#841b60] focus:outline-none transition-all text-lg bg-gray-50"
-              />
-            </motion.div>
+          {/* Objectif marketing */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Objectif marketing
+            </label>
+            <select
+              value={marketingGoal}
+              onChange={(e) => setMarketingGoal(e.target.value)}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            >
+              <option value="">Sélectionnez un objectif</option>
+              <option value="awareness">Notoriété de marque</option>
+              <option value="leads">Génération de leads</option>
+              <option value="engagement">Engagement client</option>
+              <option value="sales">Conversion/Ventes</option>
+              <option value="retention">Fidélisation</option>
+            </select>
+          </div>
 
-            {/* Logo Upload */}
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }}>
-              <label className="block text-lg font-medium text-gray-900 mb-4">
-                Logo <span className="text-gray-500 font-normal">(optionnel)</span>
-              </label>
-              <LogoUploader />
-            </motion.div>
+          {/* Logo de la marque */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Logo de la marque
+            </label>
+            <LogoUploader
+              onLogoUpload={setLogoFile}
+              currentLogo={logoFile}
+            />
+          </div>
 
-            {/* Background Upload */}
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.6 }}>
-              <label className="block text-lg font-medium text-gray-900 mb-4">
-                Image de fond <span className="text-gray-500 font-normal">(optionnel)</span>
-              </label>
-              <div
-                className="border-2 border-dashed border-gray-300 rounded-2xl p-8 text-center bg-gray-50 hover:bg-gray-100 transition-colors cursor-pointer"
-                onClick={() => fileInputRef.current?.click()}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => e.key === 'Enter' && fileInputRef.current?.click()}
-              >
-                {backgroundImageUrl ? (
-                  <img
-                    src={backgroundImageUrl}
-                    alt="Aperçu de l'image de fond"
-                    className="mx-auto mb-4 h-48 w-full object-cover rounded-xl"
-                  />
-                ) : (
-                  <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                )}
-                {backgroundImage ? (
-                  <div>
-                    <p className="text-gray-900 font-medium mb-2">{backgroundImage.name}</p>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (backgroundImageUrl) {
-                          URL.revokeObjectURL(backgroundImageUrl);
-                        }
-                        setBackgroundImage(null);
-                        setBackgroundImageUrl(null);
-                      }}
-                      className="text-red-500 hover:text-red-600 transition-colors"
-                    >
-                      Supprimer
-                    </button>
-                  </div>
-                ) : (
-                  <>
-                    <p className="text-gray-600 mb-2">
-                      <span className="text-[#841b60] font-medium">Téléchargez une image de fond</span>
-                    </p>
-                    <p className="text-gray-400 text-sm">PNG, JPG jusqu'à 10MB</p>
-                  </>
-                )}
+          {/* URL du site de la marque */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              URL du site web de la marque
+            </label>
+            <input
+              type="url"
+              value={brandSiteUrl}
+              onChange={(e) => setBrandSiteUrl(e.target.value)}
+              placeholder="https://monsite.com"
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+
+          {/* Image de fond */}
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Image de fond (optionnel)
+            </label>
+            {!backgroundImageUrl ? (
+              <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
                 <input
-                  ref={fileInputRef}
                   type="file"
                   accept="image/*"
-                  onChange={(e) => handleFileUpload(e.target.files)}
+                  onChange={handleImageUpload}
                   className="hidden"
+                  id="background-upload"
                 />
+                <label htmlFor="background-upload" className="cursor-pointer">
+                  <div className="text-gray-400 mb-2">
+                    <svg className="mx-auto h-12 w-12" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                      <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                    </svg>
+                  </div>
+                  <span className="text-sm text-gray-600">
+                    Cliquez pour ajouter une image de fond
+                  </span>
+                </label>
               </div>
-            </motion.div>
+            ) : (
+              <div className="relative">
+                <img
+                  src={backgroundImageUrl}
+                  alt="Aperçu de l'image de fond"
+                  className="w-full h-32 object-cover rounded-lg"
+                />
+                <button
+                  onClick={removeBackgroundImage}
+                  className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600"
+                >
+                  ×
+                </button>
+              </div>
+            )}
           </div>
+        </div>
 
-          {/* Navigation */}
-          <div className="flex justify-between items-center mt-16">
-            <button onClick={() => setCurrentStep(1)} className="flex items-center space-x-2 px-6 py-3 text-gray-600 hover:text-gray-900 transition-colors font-medium">
-              <ArrowLeft className="w-5 h-5" />
-              <span>Retour</span>
-            </button>
-            <button
-              onClick={() => setCurrentStep(3)}
-              disabled={!canProceed}
-              className={`
-                flex items-center space-x-2 px-8 py-4 rounded-2xl font-medium transition-all
-                ${canProceed ? 'bg-[#841b60] text-white hover:bg-[#841b60]/90 shadow-lg' : 'bg-gray-100 text-gray-400 cursor-not-allowed'}
-              `}
-            >
-              <span>Continuer</span>
-              <ArrowRight className="w-5 h-5" />
-            </button>
-          </div>
+        {/* Boutons de navigation */}
+        <div className="flex justify-between mt-8">
+          <button
+            onClick={() => setCurrentStep(1)}
+            className="flex items-center px-6 py-3 text-gray-600 bg-gray-100 rounded-xl hover:bg-gray-200 transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Retour
+          </button>
 
-          {/* Progress Indicator */}
-          <div className="text-center mt-16">
-            <div className="flex items-center justify-center space-x-2 mb-4">
-              <div className="w-8 h-1 bg-[#841b60] rounded-full"></div>
-              <div className="w-8 h-1 bg-[#841b60] rounded-full"></div>
-              <div className="w-8 h-1 bg-gray-200 rounded-full"></div>
-            </div>
-            <p className="text-gray-500 font-light">Étape 2 sur 3</p>
-          </div>
+          <button
+            onClick={() => setCurrentStep(3)}
+            disabled={!canProceed}
+            className={`flex items-center px-6 py-3 rounded-xl transition-colors ${
+              canProceed
+                ? 'bg-blue-600 text-white hover:bg-blue-700'
+                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            }`}
+          >
+            Continuer
+            <ArrowRight className="w-4 h-4 ml-2" />
+          </button>
         </div>
       </div>
     </div>
