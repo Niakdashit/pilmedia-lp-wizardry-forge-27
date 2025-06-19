@@ -17,7 +17,6 @@ import Data from './pages/Data';
 import Social from './pages/Social';
 import Studies from './pages/Studies';
 import ModernWizardPage from './pages/ModernWizardPage';
-import WizardPage from './pages/WizardPage';
 import Admin from './pages/Admin';
 import AdminClients from './pages/AdminClients';
 import AdminClientDetail from './pages/AdminClientDetail';
@@ -82,7 +81,6 @@ function App() {
               <Route path="/modern-campaign/:id" element={<ModernEditorPage />} />
               <Route path="/quick-campaign" element={<QuickCampaign />} />
               <Route path="/modern-wizard" element={<ModernWizardPage />} />
-              <Route path="/wizard" element={<WizardPage />} />
               <Route path="/gamification" element={<Gamification />} />
               <Route path="/newsletter" element={<Newsletter />} />
               <Route path="/statistics" element={<Statistics />} />
