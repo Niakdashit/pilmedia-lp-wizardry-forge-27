@@ -15,6 +15,9 @@ export const initialState: QuickCampaignState = {
   backgroundImageUrl: null,
   segmentCount: 4,
   gamePosition: 'center',
+  advancedMode: false,
+  pointerImage: null,
+  pointerImageUrl: null,
   customColors: {
     primary: '#3B82F6',
     secondary: '#60A5FA',

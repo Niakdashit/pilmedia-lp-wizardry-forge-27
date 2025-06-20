@@ -8,6 +8,7 @@ export const getWheelPreviewConfig = (campaign: any) => {
   const borderOutlineColor = campaign?.config?.roulette?.borderOutlineColor || '#FFD700';
 
   const customColors = campaign?.design?.customColors;
+  const pointerImage = campaign?.design?.pointerImage;
 
   const buttonConfig = campaign?.buttonConfig || {
     color: customColors?.primary || '#841b60',
@@ -29,6 +30,7 @@ export const getWheelPreviewConfig = (campaign: any) => {
     borderColor,
     borderOutlineColor,
     customColors,
+    pointerImage,
     buttonConfig
   };
 };

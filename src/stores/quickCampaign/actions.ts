@@ -19,6 +19,9 @@ export const createActions = (set: any, get: any) => ({
   setGamePosition: (position: 'top' | 'center' | 'bottom' | 'left' | 'right') => set({ gamePosition: position }),
   setCustomColors: (colors: { primary: string; secondary: string; accent: string; textColor?: string; buttonStyle?: string }) => set({ customColors: colors }),
   setJackpotColors: (colors: any) => set({ jackpotColors: colors }),
+  setAdvancedMode: (mode: boolean) => set({ advancedMode: mode }),
+  setPointerImage: (file: File | null) => set({ pointerImage: file }),
+  setPointerImageUrl: (url: string | null) => set({ pointerImageUrl: url }),
   setQuizQuestions: (questions: any[]) => set({ quizQuestions: questions }),
 
   reset: () => {
