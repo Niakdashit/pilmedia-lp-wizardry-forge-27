@@ -1,4 +1,3 @@
-
 import { QuickCampaignState } from './types';
 
 export const initialState: QuickCampaignState = {
@@ -17,10 +16,11 @@ export const initialState: QuickCampaignState = {
   segmentCount: 4,
   gamePosition: 'center',
   customColors: {
-    primary: '#ffffff',
-    secondary: '#E3F2FD',
-    accent: '#ffffff',
-    textColor: '#ffffff'
+    primary: '#3B82F6',
+    secondary: '#60A5FA',
+    accent: '#93C5FD',
+    textColor: '#ffffff',
+    buttonStyle: 'primary'
   },
   jackpotColors: {
     containerBackgroundColor: '#1f2937',

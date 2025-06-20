@@ -19,6 +19,7 @@ export interface QuickCampaignState {
     secondary: string;
     accent: string;
     textColor?: string;
+    buttonStyle?: string;
   };
   jackpotColors: {
     containerBackgroundColor: string;
@@ -47,7 +48,7 @@ export interface QuickCampaignActions {
   setBackgroundImageUrl: (url: string | null) => void;
   setSegmentCount: (count: number) => void;
   setGamePosition: (position: 'top' | 'center' | 'bottom' | 'left' | 'right') => void;
-  setCustomColors: (colors: { primary: string; secondary: string; accent: string; textColor?: string }) => void;
+  setCustomColors: (colors: { primary: string; secondary: string; accent: string; textColor?: string; buttonStyle?: string }) => void;
   setJackpotColors: (colors: any) => void;
   setQuizQuestions: (questions: any[]) => void;
   generatePreviewCampaign: () => any;
