@@ -8,10 +8,9 @@ interface CampaignPreviewFrameProps {
 }
 
 const CampaignPreviewFrame: React.FC<CampaignPreviewFrameProps> = ({
-  children,
-  selectedDevice
+  children
 }) => {
-  const { campaignName, backgroundImageUrl } = useQuickCampaignStore();
+  const { backgroundImageUrl } = useQuickCampaignStore();
 
   const getContainerStyle = () => {
     const baseStyle = {
