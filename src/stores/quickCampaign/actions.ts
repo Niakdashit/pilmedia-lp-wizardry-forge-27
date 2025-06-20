@@ -1,4 +1,3 @@
-
 import { QuickCampaignState } from './types';
 import { initialState } from './initialState';
 

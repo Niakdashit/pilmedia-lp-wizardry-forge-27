@@ -14,7 +14,10 @@ const Step3Header: React.FC = () => {
     setAdvancedMode
   } = useQuickCampaignStore();
 
-  const mockCampaign = generatePreviewCampaign();
+  const mockCampaign = React.useMemo(
+    () => generatePreviewCampaign(),
+    [generatePreviewCampaign]
+  );
 
   return (
     <div className="mb-8">
