@@ -34,9 +34,11 @@ test('segment prizes propagate to preview', () => {
   useQuickCampaignStore.getState().setPrize(0, { label: 'Prize A', image: 'img.png' });
   const preview = useQuickCampaignStore.getState().generatePreviewCampaign();
   assert.equal(preview.config.roulette.segments[0].label, 'Prize A');
+  assert.equal(preview.config.roulette.segments[0].image, 'img.png');
 });
 
 test('analytics counters increment', () => {
+  useQuickCampaignStore.getState().reset(); // Reset to avoid previous state
   useQuickCampaignStore.getState().recordClick();
   useQuickCampaignStore.getState().recordSpin();
   useQuickCampaignStore.getState().recordWin();

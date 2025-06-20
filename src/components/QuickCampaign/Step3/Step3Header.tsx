@@ -1,5 +1,4 @@
-
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { ArrowLeft, Eye } from 'lucide-react';
 import { useQuickCampaignStore } from '../../../stores/quickCampaignStore';
 import PreviewWindowButton from '../../common/PreviewWindowButton';
@@ -17,7 +16,7 @@ const Step3Header: React.FC = () => {
 
   const [simulation, setSimulation] = useState<{ wins: number; losses: number } | null>(null);
 
-  const mockCampaign = generatePreviewCampaign();
+  const mockCampaign = useMemo(() => generatePreviewCampaign(), [generatePreviewCampaign]);
 
   return (
     <div className="mb-8">

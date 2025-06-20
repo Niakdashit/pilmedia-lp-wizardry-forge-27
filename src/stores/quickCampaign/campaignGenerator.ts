@@ -1,13 +1,13 @@
-
 import { QuickCampaignState } from './types';
 
 export const generatePreviewCampaign = (state: QuickCampaignState) => {
-  const skin = state.skins[state.activeSkinIndex] || {
+  const skin = state.skins?.[state.activeSkinIndex] || {
     customColors: state.customColors,
     pointerImageUrl: state.pointerImageUrl,
     borderRadius: state.borderRadius,
     id: 'default'
   };
+
   const baseConfig = {
     id: 'quick-preview',
     name: state.campaignName,

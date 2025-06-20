@@ -1,4 +1,3 @@
-
 export interface PrizeData {
   label: string;
   image: string | null;
