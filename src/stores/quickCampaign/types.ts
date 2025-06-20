@@ -1,4 +1,22 @@
 
+export interface PrizeData {
+  label: string;
+  image: string | null;
+}
+
+export interface CampaignSkin {
+  id: string;
+  customColors: {
+    primary: string;
+    secondary: string;
+    accent: string;
+    textColor?: string;
+    buttonStyle?: string;
+  };
+  pointerImageUrl: string | null;
+  borderRadius: number;
+}
+
 export interface QuickCampaignState {
   currentStep: number;
   campaignName: string;
@@ -14,6 +32,18 @@ export interface QuickCampaignState {
   backgroundImageUrl: string | null;
   segmentCount: number;
   gamePosition: 'top' | 'center' | 'bottom' | 'left' | 'right';
+  advancedMode: boolean;
+  pointerImage: File | null;
+  pointerImageUrl: string | null;
+  borderRadius: number;
+  segmentPrizes: PrizeData[];
+  stats: {
+    spins: number;
+    wins: number;
+    clicks: number;
+  };
+  skins: CampaignSkin[];
+  activeSkinIndex: number;
   customColors: {
     primary: string;
     secondary: string;
@@ -50,6 +80,17 @@ export interface QuickCampaignActions {
   setGamePosition: (position: 'top' | 'center' | 'bottom' | 'left' | 'right') => void;
   setCustomColors: (colors: { primary: string; secondary: string; accent: string; textColor?: string; buttonStyle?: string }) => void;
   setJackpotColors: (colors: any) => void;
+  setAdvancedMode: (mode: boolean) => void;
+  setPointerImage: (file: File | null) => void;
+  setPointerImageUrl: (url: string | null) => void;
+  setBorderRadius: (radius: number) => void;
+  setPrize: (index: number, prize: PrizeData) => void;
+  addSkin: (skin: CampaignSkin) => void;
+  setActiveSkinIndex: (index: number) => void;
+  recordClick: () => void;
+  recordSpin: () => void;
+  recordWin: () => void;
+  simulateWins: (trials: number, winProbability: number) => { wins: number; losses: number };
   setQuizQuestions: (questions: any[]) => void;
   generatePreviewCampaign: () => any;
   reset: () => void;

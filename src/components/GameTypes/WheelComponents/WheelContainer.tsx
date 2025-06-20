@@ -33,7 +33,7 @@ const WheelContainer: React.FC<WheelContainerProps> = ({
       height: '100%',
       minHeight: '300px',
       overflow: shouldCropWheel ? 'hidden' : 'visible',
-      padding: '20px',
+      padding: '20px env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left)',
       boxSizing: 'border-box'
     };
 

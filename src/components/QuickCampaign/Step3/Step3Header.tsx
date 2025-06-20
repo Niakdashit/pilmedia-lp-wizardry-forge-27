@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { ArrowLeft, Eye } from 'lucide-react';
 import { useQuickCampaignStore } from '../../../stores/quickCampaignStore';
 import PreviewWindowButton from '../../common/PreviewWindowButton';
@@ -9,8 +9,13 @@ const Step3Header: React.FC = () => {
     selectedGameType,
     setCurrentStep,
     generatePreviewCampaign,
-    campaignName
+    campaignName,
+    advancedMode,
+    setAdvancedMode,
+    simulateWins
   } = useQuickCampaignStore();
+
+  const [simulation, setSimulation] = useState<{ wins: number; losses: number } | null>(null);
 
   const mockCampaign = generatePreviewCampaign();
 
@@ -26,6 +31,15 @@ const Step3Header: React.FC = () => {
           </p>
         </div>
         <div className="flex items-center space-x-3">
+          <label className="flex items-center space-x-2 mr-4">
+            <input
+              type="checkbox"
+              checked={advancedMode}
+              onChange={(e) => setAdvancedMode(e.target.checked)}
+              className="rounded"
+            />
+            <span className="text-sm text-gray-700">Mode Expert</span>
+          </label>
           <button
             onClick={() => setCurrentStep(2)}
             className="flex items-center px-4 py-2 text-gray-600 bg-white rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors shadow-sm"
@@ -41,8 +55,19 @@ const Step3Header: React.FC = () => {
             <Eye className="w-4 h-4 mr-2" />
             Aperçu final
           </PreviewWindowButton>
+          <button
+            onClick={() => setSimulation(simulateWins(100, 0.1))}
+            className="px-4 py-2 bg-green-600 text-white rounded-xl shadow"
+          >
+            Simuler 100 tours
+          </button>
         </div>
       </div>
+      {simulation && (
+        <p className="mt-2 text-sm text-gray-600">
+          Résultat simulation: {simulation.wins} gains / {simulation.losses} pertes
+        </p>
+      )}
     </div>
   );
 };

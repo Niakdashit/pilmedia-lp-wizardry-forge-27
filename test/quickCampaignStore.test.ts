@@ -16,3 +16,32 @@ test('generatePreviewCampaign reflects segment count', () => {
   const preview = useQuickCampaignStore.getState().generatePreviewCampaign();
   assert.equal(preview.config.roulette.segments.length, 3);
 });
+
+test('pointer image url is included in preview', () => {
+  useQuickCampaignStore.getState().setPointerImageUrl('http://example.com/pointer.png');
+  const preview = useQuickCampaignStore.getState().generatePreviewCampaign();
+  assert.equal(preview.design.pointerImage, 'http://example.com/pointer.png');
+});
+
+test('border radius is customizable', () => {
+  useQuickCampaignStore.getState().setBorderRadius(24);
+  const preview = useQuickCampaignStore.getState().generatePreviewCampaign();
+  assert.equal(preview.design.borderRadius, '24px');
+});
+
+test('segment prizes propagate to preview', () => {
+  useQuickCampaignStore.getState().setSelectedGameType('wheel');
+  useQuickCampaignStore.getState().setPrize(0, { label: 'Prize A', image: 'img.png' });
+  const preview = useQuickCampaignStore.getState().generatePreviewCampaign();
+  assert.equal(preview.config.roulette.segments[0].label, 'Prize A');
+});
+
+test('analytics counters increment', () => {
+  useQuickCampaignStore.getState().recordClick();
+  useQuickCampaignStore.getState().recordSpin();
+  useQuickCampaignStore.getState().recordWin();
+  const { stats } = useQuickCampaignStore.getState();
+  assert.equal(stats.clicks, 1);
+  assert.equal(stats.spins, 1);
+  assert.equal(stats.wins, 1);
+});

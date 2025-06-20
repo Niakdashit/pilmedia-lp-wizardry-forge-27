@@ -1,5 +1,6 @@
 
 import { useState } from 'react';
+import { useQuickCampaignStore } from '../../../stores/quickCampaignStore';
 import { useParticipations } from '../../../hooks/useParticipations';
 import { useGameSize } from '../../../hooks/useGameSize';
 import { useWheelSpin } from '../../../hooks/useWheelSpin';
@@ -51,12 +52,19 @@ export const useWheelPreviewLogic = ({
   );
 
   const segments = getWheelSegments(campaign);
+  const { recordClick, recordSpin, recordWin } = useQuickCampaignStore();
+
+  const onFinishWrapper = (result: 'win' | 'lose') => {
+    if (result === 'win') recordWin();
+    if (onFinish) onFinish(result);
+  };
+
   const { rotation, spinning, spinWheel } = useWheelSpin({
     segments,
     disabled,
     config,
     onStart,
-    onFinish
+    onFinish: onFinishWrapper
   });
 
   const {
@@ -82,6 +90,7 @@ export const useWheelPreviewLogic = ({
   };
 
   const handleWheelClick = () => {
+    recordClick();
     const buttonConfig = campaign?.buttonConfig || {
       color: campaign?.design?.customColors?.primary || '#841b60',
       borderColor: campaign?.design?.customColors?.primary || '#841b60',
@@ -102,6 +111,7 @@ export const useWheelPreviewLogic = ({
       setShowFormModal(true);
       return;
     }
+    recordSpin();
     spinWheel();
   };
 
