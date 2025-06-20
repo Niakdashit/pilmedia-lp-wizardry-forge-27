@@ -15,7 +15,7 @@ before building the project.
 
 ## Testing
 
-Install dependencies and execute the test suite:
+Run `npm ci` before executing the tests to ensure all dependencies are installed:
 
 ```bash
 npm ci
