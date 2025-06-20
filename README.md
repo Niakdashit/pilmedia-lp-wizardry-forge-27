@@ -48,6 +48,13 @@ quiz content and therefore requires an `OPENAI_API_KEY` in your environment.
    OPENAI_API_KEY=your_key_here
    ```
 
+If the key is not defined, the function returns a JSON error response with a 500
+status code:
+
+```json
+{ "error": "Missing OPENAI_API_KEY" }
+```
+
 With Supabase running locally, the function is available at
 `http://localhost:54321/functions/v1/quiz`. In production it uses your Supabase
 URL, e.g. `https://<project>.supabase.co/functions/v1/quiz`.
