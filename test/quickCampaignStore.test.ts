@@ -38,7 +38,7 @@ test('segment prizes propagate to preview', () => {
 });
 
 test('analytics counters increment', () => {
-  useQuickCampaignStore.getState().reset(); // Reset to avoid previous state
+  useQuickCampaignStore.getState().reset(); // reset to avoid side-effects
   useQuickCampaignStore.getState().recordClick();
   useQuickCampaignStore.getState().recordSpin();
   useQuickCampaignStore.getState().recordWin();

@@ -16,6 +16,24 @@ export interface CampaignSkin {
   borderRadius: number;
 }
 
+export interface PrizeData {
+  label: string;
+  image: string | null;
+}
+
+export interface CampaignSkin {
+  id: string;
+  customColors: {
+    primary: string;
+    secondary: string;
+    accent: string;
+    textColor?: string;
+    buttonStyle?: string;
+  };
+  pointerImageUrl: string | null;
+  borderRadius: number;
+}
+
 export interface QuickCampaignState {
   currentStep: number;
   campaignName: string;

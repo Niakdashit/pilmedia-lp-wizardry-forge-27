@@ -23,13 +23,25 @@ export const createActions = (set: any, get: any) => ({
       )
     })),
 
-  setGamePosition: (position: 'top' | 'center' | 'bottom' | 'left' | 'right') => set({ gamePosition: position }),
-  setCustomColors: (colors: { primary: string; secondary: string; accent: string; textColor?: string; buttonStyle?: string }) => set({ customColors: colors }),
+  setGamePosition: (position: 'top' | 'center' | 'bottom' | 'left' | 'right') =>
+    set({ gamePosition: position }),
+
+  setCustomColors: (colors: {
+    primary: string;
+    secondary: string;
+    accent: string;
+    textColor?: string;
+    buttonStyle?: string;
+  }) => set({ customColors: colors }),
+
   setJackpotColors: (colors: any) => set({ jackpotColors: colors }),
+
   setAdvancedMode: (mode: boolean) => set({ advancedMode: mode }),
+
   setPointerImage: (file: File | null) => set({ pointerImage: file }),
   setPointerImageUrl: (url: string | null) => set({ pointerImageUrl: url }),
   setBorderRadius: (radius: number) => set({ borderRadius: radius }),
+
   setPrize: (index: number, prize: { label: string; image: string | null }) =>
     set((state: QuickCampaignState) => {
       const segmentPrizes = [...state.segmentPrizes];
@@ -39,16 +51,19 @@ export const createActions = (set: any, get: any) => ({
 
   addSkin: (skin: any) =>
     set((state: QuickCampaignState) => ({ skins: [...state.skins, skin] })),
+
   setActiveSkinIndex: (index: number) => set({ activeSkinIndex: index }),
 
   recordClick: () =>
     set((state: QuickCampaignState) => ({
       stats: { ...state.stats, clicks: state.stats.clicks + 1 }
     })),
+
   recordSpin: () =>
     set((state: QuickCampaignState) => ({
       stats: { ...state.stats, spins: state.stats.spins + 1 }
     })),
+
   recordWin: () =>
     set((state: QuickCampaignState) => ({
       stats: { ...state.stats, wins: state.stats.wins + 1 }
