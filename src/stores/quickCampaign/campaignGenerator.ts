@@ -11,9 +11,10 @@ export const generatePreviewCampaign = (state: QuickCampaignState) => {
       centerLogo: state.logoUrl || null,
       backgroundImage: state.backgroundImageUrl || null,
       mobileBackgroundImage: state.backgroundImageUrl || null,
+      pointerImage: state.pointerImageUrl || null,
       containerBackgroundColor: '#ffffff',
       borderColor: state.customColors.primary,
-      borderRadius: '16px',
+      borderRadius: `${state.borderRadius}px`,
       buttonColor: state.customColors.accent,
       buttonTextColor: state.customColors.primary,
       textColor: state.customColors.textColor || '#000000'

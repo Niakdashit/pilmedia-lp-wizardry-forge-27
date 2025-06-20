@@ -9,7 +9,9 @@ const Step3Header: React.FC = () => {
     selectedGameType,
     setCurrentStep,
     generatePreviewCampaign,
-    campaignName
+    campaignName,
+    advancedMode,
+    setAdvancedMode
   } = useQuickCampaignStore();
 
   const mockCampaign = generatePreviewCampaign();
@@ -26,6 +28,15 @@ const Step3Header: React.FC = () => {
           </p>
         </div>
         <div className="flex items-center space-x-3">
+          <label className="flex items-center space-x-2 mr-4">
+            <input
+              type="checkbox"
+              checked={advancedMode}
+              onChange={(e) => setAdvancedMode(e.target.checked)}
+              className="rounded"
+            />
+            <span className="text-sm text-gray-700">Mode Expert</span>
+          </label>
           <button
             onClick={() => setCurrentStep(2)}
             className="flex items-center px-4 py-2 text-gray-600 bg-white rounded-xl border border-gray-200 hover:bg-gray-50 transition-colors shadow-sm"
