@@ -26,9 +26,13 @@ export const createActions = (set: any, get: any) => ({
 
   reset: () => {
     const state = get() as QuickCampaignState;
-    const url = state.backgroundImageUrl;
-    if (url) {
-      URL.revokeObjectURL(url);
+    const bgUrl = state.backgroundImageUrl;
+    if (bgUrl) {
+      URL.revokeObjectURL(bgUrl);
+    }
+    const pointerUrl = state.pointerImageUrl;
+    if (pointerUrl) {
+      URL.revokeObjectURL(pointerUrl);
     }
     set(initialState);
   }
