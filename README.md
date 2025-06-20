@@ -10,8 +10,12 @@ Install dependencies:
 npm ci
 ```
 
+
 This step installs Vite and all other dependencies. It must be run at least once
 before building the project.
+
+Copy `.env.example` to `.env.local` and add any secrets or API keys there. The
+`.env.local` file is listed in `.gitignore` so its contents remain private.
 
 ## Testing
 
@@ -47,6 +51,8 @@ quiz content and therefore requires an `OPENAI_API_KEY` in your environment.
    ```bash
    OPENAI_API_KEY=your_key_here
    ```
+
+   The `.env.local` file is ignored by Git so your secrets remain private.
 
 With Supabase running locally, the function is available at
 `http://localhost:54321/functions/v1/quiz`. In production it uses your Supabase
