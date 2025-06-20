@@ -1,13 +1,13 @@
-
 import { QuickCampaignState } from './types';
 
 export const generatePreviewCampaign = (state: QuickCampaignState) => {
-  const skin = state.skins[state.activeSkinIndex] || {
+  const skin = state.skins?.[state.activeSkinIndex] || {
     customColors: state.customColors,
     pointerImageUrl: state.pointerImageUrl,
     borderRadius: state.borderRadius,
     id: 'default'
   };
+
   const baseConfig = {
     id: 'quick-preview',
     name: state.campaignName,
@@ -73,7 +73,6 @@ export const generatePreviewCampaign = (state: QuickCampaignState) => {
     }
   };
 
-  // Roue
   if (state.selectedGameType === 'wheel') {
     baseConfig.config.roulette = {
       segments: Array.from({ length: state.segmentCount }).map((_, i) => ({
@@ -98,7 +97,6 @@ export const generatePreviewCampaign = (state: QuickCampaignState) => {
     };
   }
 
-  // Quiz
   if (state.selectedGameType === 'quiz') {
     baseConfig.gameConfig = {
       quiz: {
@@ -110,7 +108,6 @@ export const generatePreviewCampaign = (state: QuickCampaignState) => {
     };
   }
 
-  // Jackpot
   if (state.selectedGameType === 'jackpot') {
     baseConfig.gameConfig = {
       jackpot: {
@@ -126,7 +123,6 @@ export const generatePreviewCampaign = (state: QuickCampaignState) => {
     };
   }
 
-  // Scratch
   if (state.selectedGameType === 'scratch') {
     baseConfig.gameConfig = {
       scratch: {
