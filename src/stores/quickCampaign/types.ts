@@ -1,4 +1,3 @@
-
 export interface QuickCampaignState {
   currentStep: number;
   campaignName: string;
