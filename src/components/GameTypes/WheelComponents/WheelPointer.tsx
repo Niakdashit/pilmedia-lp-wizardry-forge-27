@@ -6,13 +6,15 @@ interface WheelPointerProps {
   shouldCropWheel: boolean;
   gamePosition: 'top' | 'center' | 'bottom' | 'left' | 'right';
   pointerSize: number;
+  pointerImageUrl?: string | null;
 }
 
 const WheelPointer: React.FC<WheelPointerProps> = ({
   canvasSize,
   shouldCropWheel,
   gamePosition,
-  pointerSize
+  pointerSize,
+  pointerImageUrl
 }) => {
   // Calcul de la position horizontale du pointeur
   const getPointerLeft = () => {
@@ -44,21 +46,25 @@ const WheelPointer: React.FC<WheelPointerProps> = ({
         alignItems: 'flex-start',
       }}
     >
-      <svg width={pointerSize} height={pointerSize * 1.6}>
-        <defs>
-          <linearGradient id="pointerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#FFD700" />
-            <stop offset="50%" stopColor="#FFA500" />
-            <stop offset="100%" stopColor="#B8860B" />
-          </linearGradient>
-        </defs>
-        <polygon
-          points={`${pointerSize/2},${pointerSize*1.6} ${pointerSize*0.85},${pointerSize*0.4} ${pointerSize*0.15},${pointerSize*0.4}`}
-          fill="url(#pointerGradient)"
-          stroke="#8B4513"
-          strokeWidth="2"
-        />
-      </svg>
+      {pointerImageUrl ? (
+        <img src={pointerImageUrl} alt="Pointer" style={{ width: pointerSize, height: pointerSize * 1.6 }} />
+      ) : (
+        <svg width={pointerSize} height={pointerSize * 1.6}>
+          <defs>
+            <linearGradient id="pointerGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stopColor="#FFD700" />
+              <stop offset="50%" stopColor="#FFA500" />
+              <stop offset="100%" stopColor="#B8860B" />
+            </linearGradient>
+          </defs>
+          <polygon
+            points={`${pointerSize/2},${pointerSize*1.6} ${pointerSize*0.85},${pointerSize*0.4} ${pointerSize*0.15},${pointerSize*0.4}`}
+            fill="url(#pointerGradient)"
+            stroke="#8B4513"
+            strokeWidth="2"
+          />
+        </svg>
+      )}
     </div>
   );
 };

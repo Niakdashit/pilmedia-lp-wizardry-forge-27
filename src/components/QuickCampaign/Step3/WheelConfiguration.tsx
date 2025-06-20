@@ -3,7 +3,26 @@ import React from 'react';
 import { useQuickCampaignStore } from '../../../stores/quickCampaignStore';
 
 const WheelConfiguration: React.FC = () => {
-  const { segmentCount, setSegmentCount } = useQuickCampaignStore();
+  const {
+    segmentCount,
+    setSegmentCount,
+    advancedMode,
+    pointerImageUrl,
+    setPointerImage,
+    setPointerImageUrl
+  } = useQuickCampaignStore();
+
+  const handlePointerUpload = (files: FileList | null) => {
+    if (files && files[0]) {
+      const file = files[0];
+      setPointerImage(file);
+      if (pointerImageUrl) {
+        URL.revokeObjectURL(pointerImageUrl);
+      }
+      const url = URL.createObjectURL(file);
+      setPointerImageUrl(url);
+    }
+  };
 
   return (
     <>
@@ -26,6 +45,23 @@ const WheelConfiguration: React.FC = () => {
             <span>12 segments</span>
           </div>
         </div>
+
+        {advancedMode && (
+          <div className="bg-gray-50 rounded-xl p-4">
+            <label className="block text-sm font-medium text-gray-700 mb-3">Pointeur personnalisé</label>
+            <div className="flex items-center space-x-3">
+              {pointerImageUrl && (
+                <img src={pointerImageUrl} alt="Aperçu pointeur" className="h-10" />
+              )}
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => handlePointerUpload(e.target.files)}
+                className="text-sm"
+              />
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

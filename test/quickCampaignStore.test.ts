@@ -16,3 +16,9 @@ test('generatePreviewCampaign reflects segment count', () => {
   const preview = useQuickCampaignStore.getState().generatePreviewCampaign();
   assert.equal(preview.config.roulette.segments.length, 3);
 });
+
+test('pointer image url is included in preview', () => {
+  useQuickCampaignStore.getState().setPointerImageUrl('http://example.com/pointer.png');
+  const preview = useQuickCampaignStore.getState().generatePreviewCampaign();
+  assert.equal(preview.design.pointerImage, 'http://example.com/pointer.png');
+});

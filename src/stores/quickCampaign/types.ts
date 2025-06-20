@@ -14,6 +14,9 @@ export interface QuickCampaignState {
   backgroundImageUrl: string | null;
   segmentCount: number;
   gamePosition: 'top' | 'center' | 'bottom' | 'left' | 'right';
+  advancedMode: boolean;
+  pointerImage: File | null;
+  pointerImageUrl: string | null;
   customColors: {
     primary: string;
     secondary: string;
@@ -50,6 +53,9 @@ export interface QuickCampaignActions {
   setGamePosition: (position: 'top' | 'center' | 'bottom' | 'left' | 'right') => void;
   setCustomColors: (colors: { primary: string; secondary: string; accent: string; textColor?: string; buttonStyle?: string }) => void;
   setJackpotColors: (colors: any) => void;
+  setAdvancedMode: (mode: boolean) => void;
+  setPointerImage: (file: File | null) => void;
+  setPointerImageUrl: (url: string | null) => void;
   setQuizQuestions: (questions: any[]) => void;
   generatePreviewCampaign: () => any;
   reset: () => void;
