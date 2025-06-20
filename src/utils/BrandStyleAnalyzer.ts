@@ -211,6 +211,7 @@ export async function extractColorsFromLogo(
 ): Promise<string[]> {
   try {
     const img = new window.Image();
+    img.alt = 'Brand logo';
     img.crossOrigin = "Anonymous";
     return new Promise((resolve, reject) => {
       img.onload = async () => {
@@ -367,9 +368,17 @@ export function generateBrandThemeFromMicrolinkPalette(
 ): BrandPalette {
   return extractCompletePaletteFromBrandfetch(palette);
 }
-function getLuminance(hex: string): number {
+export function getLuminance(hex: string): number {
   const rgb = hexToRgb(hex);
   return (0.299 * rgb[0] + 0.587 * rgb[1] + 0.114 * rgb[2]) / 255;
+}
+
+export function calculateContrast(colorA: string, colorB: string): number {
+  const lumA = getLuminance(colorA);
+  const lumB = getLuminance(colorB);
+  const brightest = Math.max(lumA, lumB);
+  const darkest = Math.min(lumA, lumB);
+  return (brightest + 0.05) / (darkest + 0.05);
 }
 
 // Application de la charte sur la roue
