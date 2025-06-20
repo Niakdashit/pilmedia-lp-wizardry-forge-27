@@ -62,9 +62,11 @@ const PreviewPanel: React.FC = () => {
         
         <div className="p-6">
           {/* Container adaptatif selon l'appareil */}
-          <div className={`w-full bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl overflow-hidden border border-gray-200 relative ${
-            selectedDevice === 'desktop' ? 'h-[500px]' : 'h-[600px]'
-          }`}>
+          <div
+            className={`w-full bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl border border-gray-200 relative p-4 overflow-visible ${
+              selectedDevice === 'desktop' ? 'h-[500px]' : 'min-h-[620px]'
+            }`}
+          >
             {/* Barre de navigation pour desktop */}
             {selectedDevice === 'desktop' && (
               <div className="bg-white border-b border-gray-200 px-4 py-2 flex items-center space-x-2">
