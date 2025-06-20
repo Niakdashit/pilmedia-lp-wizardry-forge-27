@@ -14,7 +14,8 @@ const ButtonStyleSelector: React.FC = () => {
         color: '#ffffff',
         border: `2px solid ${customColors.primary}`,
         borderRadius: '8px'
-      }
+      },
+      textColor: '#ffffff'
     },
     {
       id: 'secondary',
@@ -24,7 +25,8 @@ const ButtonStyleSelector: React.FC = () => {
         color: customColors.primary,
         border: `2px solid ${customColors.secondary}`,
         borderRadius: '8px'
-      }
+      },
+      textColor: customColors.primary
     },
     {
       id: 'outline',
@@ -34,7 +36,8 @@ const ButtonStyleSelector: React.FC = () => {
         color: customColors.primary,
         border: `2px solid ${customColors.primary}`,
         borderRadius: '8px'
-      }
+      },
+      textColor: customColors.primary
     },
     {
       id: 'gradient',
@@ -44,7 +47,8 @@ const ButtonStyleSelector: React.FC = () => {
         color: '#ffffff',
         border: 'none',
         borderRadius: '8px'
-      }
+      },
+      textColor: '#ffffff'
     }
   ];
 
@@ -54,7 +58,7 @@ const ButtonStyleSelector: React.FC = () => {
       setCustomColors({
         ...customColors,
         buttonStyle: styleId,
-        textColor: style.preview.color as string
+        textColor: style.textColor
       });
     }
   };

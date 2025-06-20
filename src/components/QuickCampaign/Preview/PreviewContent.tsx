@@ -14,6 +14,8 @@ interface PreviewContentProps {
     primary: string;
     secondary: string;
     accent?: string;
+    textColor?: string;
+    buttonStyle?: string;
   };
   jackpotColors: {
     containerBackgroundColor: string;
@@ -51,7 +53,8 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
     buttonConfig: {
       ...mockCampaign.buttonConfig,
       color: customColors.primary,
-      borderColor: customColors.primary
+      borderColor: customColors.primary,
+      textColor: customColors.textColor || '#ffffff'
     },
     gameConfig: {
       ...mockCampaign.gameConfig,
@@ -92,7 +95,9 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
           screens: enhancedCampaign.screens,
           customColors: customColors,
           backgroundImageUrl: backgroundImageUrl,
-          gamePosition: gamePosition
+          gamePosition: gamePosition,
+          buttonStyle: customColors.buttonStyle,
+          textColor: customColors.textColor
         })}
       />
     );
@@ -101,13 +106,21 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
   return (
     <div className="flex-1 overflow-auto">
       <div className="w-full h-full flex items-center justify-center p-4">
-        <DeviceFrame device={selectedDevice}>
+        {selectedDevice === 'desktop' ? (
           <CampaignPreviewFrame selectedDevice={selectedDevice}>
             <div className="w-full h-full flex items-center justify-center">
               {getFunnelComponent()}
             </div>
           </CampaignPreviewFrame>
-        </DeviceFrame>
+        ) : (
+          <DeviceFrame device={selectedDevice}>
+            <CampaignPreviewFrame selectedDevice={selectedDevice}>
+              <div className="w-full h-full flex items-center justify-center">
+                {getFunnelComponent()}
+              </div>
+            </CampaignPreviewFrame>
+          </DeviceFrame>
+        )}
       </div>
     </div>
   );

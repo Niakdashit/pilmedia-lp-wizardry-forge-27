@@ -17,7 +17,7 @@ export const createActions = (set: any, get: any) => ({
   setBackgroundImageUrl: (url: string | null) => set({ backgroundImageUrl: url }),
   setSegmentCount: (count: number) => set({ segmentCount: count }),
   setGamePosition: (position: 'top' | 'center' | 'bottom' | 'left' | 'right') => set({ gamePosition: position }),
-  setCustomColors: (colors: { primary: string; secondary: string; accent: string; textColor?: string }) => set({ customColors: colors }),
+  setCustomColors: (colors: { primary: string; secondary: string; accent: string; textColor?: string; buttonStyle?: string }) => set({ customColors: colors }),
   setJackpotColors: (colors: any) => set({ jackpotColors: colors }),
   setQuizQuestions: (questions: any[]) => set({ quizQuestions: questions }),
 

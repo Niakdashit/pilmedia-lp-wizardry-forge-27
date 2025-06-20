@@ -8,7 +8,8 @@ interface CampaignPreviewFrameProps {
 }
 
 const CampaignPreviewFrame: React.FC<CampaignPreviewFrameProps> = ({
-  children
+  children,
+  selectedDevice
 }) => {
   const { backgroundImageUrl } = useQuickCampaignStore();
 
@@ -16,7 +17,7 @@ const CampaignPreviewFrame: React.FC<CampaignPreviewFrameProps> = ({
     const baseStyle = {
       width: '100%',
       height: '100%',
-      minHeight: '460px',
+      minHeight: selectedDevice === 'desktop' ? '460px' : '500px',
       backgroundColor: '#ffffff',
       position: 'relative' as const,
       overflow: 'hidden' as const
@@ -26,7 +27,7 @@ const CampaignPreviewFrame: React.FC<CampaignPreviewFrameProps> = ({
       return {
         ...baseStyle,
         backgroundImage: `url(${backgroundImageUrl})`,
-        backgroundSize: 'cover',
+        backgroundSize: selectedDevice === 'desktop' ? 'cover' : 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'
       };
@@ -37,10 +38,10 @@ const CampaignPreviewFrame: React.FC<CampaignPreviewFrameProps> = ({
 
   return (
     <div style={getContainerStyle()}>
-      {/* Content Area - Sans masque blanc */}
+      {/* Contenu sans masque blanc */}
       <div className="h-full relative">
         <div className="h-full flex items-center justify-center">
-          <div className="w-full max-w-4xl">
+          <div className={`w-full ${selectedDevice === 'desktop' ? 'max-w-4xl' : 'max-w-full px-4'}`}>
             {children}
           </div>
         </div>
