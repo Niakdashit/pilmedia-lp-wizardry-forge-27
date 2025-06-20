@@ -22,3 +22,9 @@ test('pointer image url is included in preview', () => {
   const preview = useQuickCampaignStore.getState().generatePreviewCampaign();
   assert.equal(preview.design.pointerImage, 'http://example.com/pointer.png');
 });
+
+test('border radius is customizable', () => {
+  useQuickCampaignStore.getState().setBorderRadius(24);
+  const preview = useQuickCampaignStore.getState().generatePreviewCampaign();
+  assert.equal(preview.design.borderRadius, '24px');
+});

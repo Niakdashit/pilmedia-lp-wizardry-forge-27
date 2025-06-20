@@ -1,4 +1,3 @@
-
 import { QuickCampaignState } from './types';
 import { initialState } from './initialState';
 
@@ -22,6 +21,7 @@ export const createActions = (set: any, get: any) => ({
   setAdvancedMode: (mode: boolean) => set({ advancedMode: mode }),
   setPointerImage: (file: File | null) => set({ pointerImage: file }),
   setPointerImageUrl: (url: string | null) => set({ pointerImageUrl: url }),
+  setBorderRadius: (radius: number) => set({ borderRadius: radius }),
   setQuizQuestions: (questions: any[]) => set({ quizQuestions: questions }),
 
   reset: () => {

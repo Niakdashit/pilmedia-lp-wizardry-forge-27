@@ -18,6 +18,7 @@ export const initialState: QuickCampaignState = {
   advancedMode: false,
   pointerImage: null,
   pointerImageUrl: null,
+  borderRadius: 16,
   customColors: {
     primary: '#3B82F6',
     secondary: '#60A5FA',
