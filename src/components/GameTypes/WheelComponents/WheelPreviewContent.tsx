@@ -24,6 +24,7 @@ interface WheelPreviewContentProps {
   formValidated: boolean;
   showValidationMessage: boolean;
   onWheelClick: () => void;
+  pointerImage?: string | null;
 }
 
 const WheelPreviewContent: React.FC<WheelPreviewContentProps> = ({
@@ -43,7 +44,8 @@ const WheelPreviewContent: React.FC<WheelPreviewContentProps> = ({
   gamePosition,
   formValidated,
   showValidationMessage,
-  onWheelClick
+  onWheelClick,
+  pointerImage
 }) => {
   return (
     <div style={{ 
@@ -103,6 +105,7 @@ const WheelPreviewContent: React.FC<WheelPreviewContentProps> = ({
           shouldCropWheel={shouldCropWheel}
           gamePosition={gamePosition}
           pointerSize={pointerSize}
+          pointerImageUrl={pointerImage}
         />
       </WheelInteractionHandler>
 
