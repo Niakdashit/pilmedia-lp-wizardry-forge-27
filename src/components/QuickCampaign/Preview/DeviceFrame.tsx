@@ -41,10 +41,10 @@ const DeviceFrame: React.FC<DeviceFrameProps> = ({ device, children }) => {
           ? "bg-gray-900 rounded-[3rem] p-2 shadow-2xl flex items-center justify-center"
           : "bg-gray-800 rounded-3xl p-6 shadow-2xl flex items-center justify-center"}
         style={{
-          // Calcul dynamique : 80% du parent max, sinon dim. réelle, ratio respecté
+          height: '100%',
+          width: 'auto',
           maxWidth: 'min(80vw, 100%)',
           maxHeight: 'min(80vh, 100%)',
-          width: device === 'mobile' ? 375 : 768,
           aspectRatio: aspect.toString(),
         }}
       >
