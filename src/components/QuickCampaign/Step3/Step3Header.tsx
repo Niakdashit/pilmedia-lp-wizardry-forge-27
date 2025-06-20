@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { ArrowLeft, Eye } from 'lucide-react';
 import { useQuickCampaignStore } from '../../../stores/quickCampaignStore';
 import PreviewWindowButton from '../../common/PreviewWindowButton';
@@ -11,13 +10,13 @@ const Step3Header: React.FC = () => {
     generatePreviewCampaign,
     campaignName,
     advancedMode,
-    setAdvancedMode
+    setAdvancedMode,
+    simulateWins
   } = useQuickCampaignStore();
 
-  const mockCampaign = React.useMemo(
-    () => generatePreviewCampaign(),
-    [generatePreviewCampaign]
-  );
+  const [simulation, setSimulation] = useState<{ wins: number; losses: number } | null>(null);
+
+  const mockCampaign = useMemo(() => generatePreviewCampaign(), [generatePreviewCampaign]);
 
   return (
     <div className="mb-8">
@@ -55,8 +54,19 @@ const Step3Header: React.FC = () => {
             <Eye className="w-4 h-4 mr-2" />
             Aperçu final
           </PreviewWindowButton>
+          <button
+            onClick={() => setSimulation(simulateWins(100, 0.1))}
+            className="px-4 py-2 bg-green-600 text-white rounded-xl shadow"
+          >
+            Simuler 100 tours
+          </button>
         </div>
       </div>
+      {simulation && (
+        <p className="mt-2 text-sm text-gray-600">
+          Résultat simulation: {simulation.wins} gains / {simulation.losses} pertes
+        </p>
+      )}
     </div>
   );
 };

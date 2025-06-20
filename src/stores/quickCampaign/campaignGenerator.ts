@@ -1,23 +1,29 @@
-
 import { QuickCampaignState } from './types';
 
 export const generatePreviewCampaign = (state: QuickCampaignState) => {
+  const skin = state.skins?.[state.activeSkinIndex] || {
+    customColors: state.customColors,
+    pointerImageUrl: state.pointerImageUrl,
+    borderRadius: state.borderRadius,
+    id: 'default'
+  };
+
   const baseConfig = {
     id: 'quick-preview',
     name: state.campaignName,
     type: state.selectedGameType || 'wheel',
     design: {
-      customColors: state.customColors,
+      customColors: skin.customColors || state.customColors,
       centerLogo: state.logoUrl || null,
       backgroundImage: state.backgroundImageUrl || null,
       mobileBackgroundImage: state.backgroundImageUrl || null,
-      pointerImage: state.pointerImageUrl || null,
+      pointerImage: skin.pointerImageUrl || state.pointerImageUrl || null,
       containerBackgroundColor: '#ffffff',
-      borderColor: state.customColors.primary,
-      borderRadius: `${state.borderRadius}px`,
-      buttonColor: state.customColors.accent,
-      buttonTextColor: state.customColors.primary,
-      textColor: state.customColors.textColor || '#000000'
+      borderColor: (skin.customColors || state.customColors).primary,
+      borderRadius: `${skin.borderRadius ?? state.borderRadius}px`,
+      buttonColor: (skin.customColors || state.customColors).accent,
+      buttonTextColor: (skin.customColors || state.customColors).primary,
+      textColor: (skin.customColors || state.customColors).textColor || '#000000'
     },
     buttonConfig: {
       color: state.customColors.accent,
@@ -71,9 +77,9 @@ export const generatePreviewCampaign = (state: QuickCampaignState) => {
   if (state.selectedGameType === 'wheel') {
     baseConfig.config.roulette = {
       segments: Array.from({ length: state.segmentCount }).map((_, i) => ({
-        label: '',
+        label: state.segmentPrizes[i]?.label || '',
         color: i % 2 === 0 ? state.customColors.primary : state.customColors.secondary,
-        image: null
+        image: state.segmentPrizes[i]?.image || null
       })),
       borderColor: state.customColors.secondary,
       borderOutlineColor: state.customColors.accent,
