@@ -18,7 +18,8 @@ const ButtonStyleSelector: React.FC = () => {
         padding: '12px 24px',
         fontWeight: '600',
         cursor: 'pointer',
-        transition: 'all 0.2s ease'
+        transition: 'all 0.2s ease',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.1)'
       }
     },
     {
@@ -26,7 +27,7 @@ const ButtonStyleSelector: React.FC = () => {
       name: 'Bouton Secondaire',
       preview: 'Aperçu',
       style: {
-        backgroundColor: customColors.secondary,
+        backgroundColor: 'transparent',
         color: customColors.primary,
         border: `2px solid ${customColors.primary}`,
         borderRadius: '8px',
@@ -42,8 +43,8 @@ const ButtonStyleSelector: React.FC = () => {
       preview: 'Aperçu',
       style: {
         backgroundColor: 'transparent',
-        color: customColors.primary,
-        border: `2px solid ${customColors.primary}`,
+        color: customColors.secondary,
+        border: `2px solid ${customColors.secondary}`,
         borderRadius: '8px',
         padding: '10px 22px',
         fontWeight: '600',
@@ -63,7 +64,8 @@ const ButtonStyleSelector: React.FC = () => {
         padding: '12px 24px',
         fontWeight: '600',
         cursor: 'pointer',
-        transition: 'all 0.2s ease'
+        transition: 'all 0.2s ease',
+        boxShadow: '0 2px 4px rgba(0,0,0,0.15)'
       }
     }
   ];
@@ -78,7 +80,7 @@ const ButtonStyleSelector: React.FC = () => {
   return (
     <div className="space-y-6">
       <div className="flex items-center space-x-2">
-        <div className="w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+        <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
           <span className="text-white text-xs">🎨</span>
         </div>
         <h3 className="text-lg font-semibold text-gray-900">Style du bouton</h3>
@@ -91,7 +93,7 @@ const ButtonStyleSelector: React.FC = () => {
             onClick={() => handleStyleSelect(style.id)}
             className={`p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 hover:shadow-lg ${
               customColors.buttonStyle === style.id
-                ? 'border-blue-500 bg-blue-50 shadow-md'
+                ? 'border-blue-500 bg-blue-50 shadow-md ring-2 ring-blue-200'
                 : 'border-gray-200 bg-white hover:border-gray-300'
             }`}
           >
@@ -111,8 +113,8 @@ const ButtonStyleSelector: React.FC = () => {
         ))}
       </div>
 
-      <div className="bg-gray-50 rounded-lg p-4">
-        <p className="text-sm text-gray-600">
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg p-4 border border-blue-100">
+        <p className="text-sm text-gray-700">
           💡 Le style sélectionné sera appliqué à tous les boutons de votre campagne. 
           Les couleurs s'adaptent automatiquement à votre palette de marque.
         </p>

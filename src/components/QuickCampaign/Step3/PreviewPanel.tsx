@@ -25,10 +25,10 @@ const PreviewPanel: React.FC = () => {
   return (
     <div className="col-span-7 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
       {/* Header */}
-      <div className="bg-gradient-to-r from-gray-50 to-slate-100 px-6 py-4 border-b border-gray-100">
+      <div className="bg-gradient-to-r from-slate-50 to-blue-50 px-6 py-4 border-b border-gray-100">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
-            <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
               <Eye className="w-5 h-5 text-white" />
             </div>
             <div>
@@ -73,7 +73,7 @@ const PreviewPanel: React.FC = () => {
       </div>
 
       {/* Preview Content */}
-      <div className="h-[calc(100vh-20rem)] bg-gray-50">
+      <div className="h-[calc(100vh-20rem)] bg-gradient-to-br from-gray-50 to-gray-100">
         {selectedGameType ? (
           <PreviewContent
             selectedDevice={selectedDevice}

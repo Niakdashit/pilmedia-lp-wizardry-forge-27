@@ -1,134 +1,109 @@
-
 import React from 'react';
+import { Sparkles, Circle } from 'lucide-react';
 import { useQuickCampaignStore } from '../../../stores/quickCampaignStore';
 
 const AdvancedWheelCustomization: React.FC = () => {
   const { wheelCustomization, setWheelCustomization } = useQuickCampaignStore();
 
-  const handleChange = (field: string, value: any) => {
-    setWheelCustomization({
-      ...wheelCustomization,
-      [field]: value
-    });
-  };
-
   return (
     <div className="space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Bordures */}
-        <div className="space-y-3">
-          <label className="text-sm font-medium text-gray-700">Rayon des bordures</label>
+      <div className="flex items-center space-x-2">
+        <Circle className="w-5 h-5 text-blue-600" />
+        <h3 className="text-lg font-semibold text-gray-900">Personnalisation de la roue</h3>
+      </div>
+
+      {/* Border Radius */}
+      <div className="bg-gray-50 rounded-xl p-4">
+        <label className="block text-sm font-medium text-gray-700 mb-3">
+          Arrondi des bordures: <span className="text-blue-600 font-semibold">{wheelCustomization.borderRadius}%</span>
+        </label>
+        <input
+          type="range"
+          min="0"
+          max="50"
+          value={wheelCustomization.borderRadius}
+          onChange={(e) => setWheelCustomization({ borderRadius: parseInt(e.target.value) })}
+          className="w-full h-2 bg-gradient-to-r from-blue-200 to-purple-200 rounded-lg appearance-none cursor-pointer"
+        />
+        <div className="flex justify-between text-xs text-gray-500 mt-2">
+          <span>Carré</span>
+          <span>Très arrondi</span>
+        </div>
+      </div>
+
+      {/* Shadow */}
+      <div className="bg-gray-50 rounded-xl p-4 space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-3">
+            Intensité de l'ombre: <span className="text-blue-600 font-semibold">{wheelCustomization.shadowIntensity}%</span>
+          </label>
           <input
             type="range"
             min="0"
             max="100"
-            value={wheelCustomization.borderRadius}
-            onChange={(e) => handleChange('borderRadius', parseInt(e.target.value))}
-            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-          />
-          <span className="text-xs text-gray-500">{wheelCustomization.borderRadius}%</span>
-        </div>
-
-        {/* Intensité de l'ombre */}
-        <div className="space-y-3">
-          <label className="text-sm font-medium text-gray-700">Intensité de l'ombre</label>
-          <input
-            type="range"
-            min="0"
-            max="50"
             value={wheelCustomization.shadowIntensity}
-            onChange={(e) => handleChange('shadowIntensity', parseInt(e.target.value))}
-            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-          />
-          <span className="text-xs text-gray-500">{wheelCustomization.shadowIntensity}px</span>
-        </div>
-
-        {/* Couleur de l'ombre */}
-        <div className="space-y-3">
-          <label className="text-sm font-medium text-gray-700">Couleur de l'ombre</label>
-          <input
-            type="color"
-            value={wheelCustomization.shadowColor}
-            onChange={(e) => handleChange('shadowColor', e.target.value)}
-            className="w-full h-10 border border-gray-200 rounded-lg cursor-pointer"
+            onChange={(e) => setWheelCustomization({ shadowIntensity: parseInt(e.target.value) })}
+            className="w-full h-2 bg-gradient-to-r from-gray-200 to-gray-800 rounded-lg appearance-none cursor-pointer"
           />
         </div>
-
-        {/* Texture */}
-        <div className="space-y-3">
-          <label className="text-sm font-medium text-gray-700">Texture</label>
-          <select
-            value={wheelCustomization.texture || 'metallic'}
-            onChange={(e) => handleChange('texture', e.target.value)}
-            className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
-          >
-            <option value="metallic">Métallique</option>
-            <option value="glass">Verre</option>
-            <option value="neon">Néon</option>
-            <option value="wood">Bois</option>
-          </select>
+        
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Couleur de l'ombre
+          </label>
+          <div className="flex items-center space-x-3">
+            <input
+              type="color"
+              value={wheelCustomization.shadowColor}
+              onChange={(e) => setWheelCustomization({ shadowColor: e.target.value })}
+              className="w-12 h-8 rounded-lg border border-gray-300 cursor-pointer"
+            />
+            <span className="text-sm text-gray-600">{wheelCustomization.shadowColor}</span>
+          </div>
         </div>
       </div>
 
-      {/* Effets spéciaux */}
-      <div className="space-y-4">
-        <h4 className="text-sm font-medium text-gray-700">Effets spéciaux</h4>
+      {/* Effects */}
+      <div className="bg-gray-50 rounded-xl p-4 space-y-4">
+        <div className="flex items-center space-x-2">
+          <Sparkles className="w-4 h-4 text-purple-600" />
+          <h4 className="font-medium text-gray-900">Effets spéciaux</h4>
+        </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-3">
           <label className="flex items-center space-x-3 cursor-pointer">
             <input
               type="checkbox"
               checked={wheelCustomization.bevelEffect}
-              onChange={(e) => handleChange('bevelEffect', e.target.checked)}
-              className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+              onChange={(e) => setWheelCustomization({ bevelEffect: e.target.checked })}
+              className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
             />
-            <span className="text-sm text-gray-700">Effet de biseau</span>
+            <span className="text-sm text-gray-700">Effet de biseau 3D</span>
           </label>
-
+          
           <label className="flex items-center space-x-3 cursor-pointer">
             <input
               type="checkbox"
               checked={wheelCustomization.glowEffect}
-              onChange={(e) => handleChange('glowEffect', e.target.checked)}
-              className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
+              onChange={(e) => setWheelCustomization({ glowEffect: e.target.checked })}
+              className="w-4 h-4 text-purple-600 border-gray-300 rounded focus:ring-purple-500"
             />
             <span className="text-sm text-gray-700">Effet de lueur</span>
           </label>
-
-          <label className="flex items-center space-x-3 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={wheelCustomization.pulseAnimation}
-              onChange={(e) => handleChange('pulseAnimation', e.target.checked)}
-              className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
-            />
-            <span className="text-sm text-gray-700">Animation pulsante</span>
-          </label>
-
-          <label className="flex items-center space-x-3 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={wheelCustomization.particleEffect}
-              onChange={(e) => handleChange('particleEffect', e.target.checked)}
-              className="rounded border-gray-300 text-purple-600 focus:ring-purple-500"
-            />
-            <span className="text-sm text-gray-700">Effet de particules</span>
-          </label>
+          
+          {wheelCustomization.glowEffect && (
+            <div className="ml-7 flex items-center space-x-3">
+              <input
+                type="color"
+                value={wheelCustomization.glowColor}
+                onChange={(e) => setWheelCustomization({ glowColor: e.target.value })}
+                className="w-8 h-6 rounded border border-gray-300 cursor-pointer"
+              />
+              <span className="text-xs text-gray-600">Couleur de la lueur</span>
+            </div>
+          )}
         </div>
       </div>
-
-      {/* Couleur de lueur */}
-      {wheelCustomization.glowEffect && (
-        <div className="space-y-3">
-          <label className="text-sm font-medium text-gray-700">Couleur de la lueur</label>
-          <input
-            type="color"
-            value={wheelCustomization.glowColor}
-            onChange={(e) => handleChange('glowColor', e.target.value)}
-            className="w-full h-10 border border-gray-200 rounded-lg cursor-pointer"
-          />
-        </div>
-      )}
     </div>
   );
 };
