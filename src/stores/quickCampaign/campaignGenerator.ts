@@ -3,140 +3,153 @@ import { QuickCampaignState } from './types';
 
 export const generatePreviewCampaign = (state: QuickCampaignState) => {
   const baseConfig = {
-    id: 'quick-preview',
+    id: 'preview-campaign',
     name: state.campaignName,
-    type: state.selectedGameType || 'wheel',
+    type: state.selectedGameType,
+    status: 'draft',
+    formFields: [
+      { id: 'prenom', label: 'Prénom', type: 'text', required: true },
+      { id: 'nom', label: 'Nom', type: 'text', required: true },
+      { id: 'email', label: 'Email', type: 'email', required: true }
+    ],
+    gamePosition: state.gamePosition,
     design: {
+      background: state.backgroundImageUrl || '#f8fafc',
+      backgroundImage: state.backgroundImageUrl,
+      mobileBackgroundImage: state.backgroundImageUrl,
       customColors: state.customColors,
-      centerLogo: state.logoUrl || null,
-      backgroundImage: state.backgroundImageUrl || null,
-      mobileBackgroundImage: state.backgroundImageUrl || null,
-      containerBackgroundColor: '#ffffff',
-      borderColor: state.customColors.primary,
-      borderRadius: '16px',
-      buttonColor: state.customColors.accent,
-      buttonTextColor: state.customColors.primary,
-      textColor: state.customColors.textColor || '#000000'
+      primaryColor: state.customColors.primary,
+      secondaryColor: state.customColors.secondary,
+      titleColor: '#000000',
+      buttonColor: state.customColors.primary,
+      borderRadius: '0.5rem',
+      fontFamily: 'Inter'
     },
     buttonConfig: {
-      color: state.customColors.accent,
-      textColor: state.customColors.primary,
+      color: state.customColors.primary,
       borderColor: state.customColors.primary,
-      borderWidth: 2,
+      borderWidth: 1,
       borderRadius: 8,
       size: 'medium',
-      text: 'Jouer maintenant !',
+      text: 'Participer',
       visible: true
     },
-    screens: [
-      {
-        title: 'Prêt à jouer ?',
-        description: 'Participez à notre jeu et tentez de gagner des prix !',
-        buttonText: 'Participer'
+    screens: {
+      1: {
+        title: 'Bienvenue !',
+        description: 'Participez à notre jeu et tentez de gagner !',
+        buttonText: 'Participer',
+        showTitle: true,
+        showDescription: true
       },
-      {
-        title: 'Vos informations',
-        description: 'Remplissez le formulaire pour continuer',
-        buttonText: "C'est parti !"
-      },
-      {
-        title: 'Jouez maintenant !',
-        description: 'Bonne chance !',
-        buttonText: 'Jouer'
-      },
-      {
-        title: 'Merci !',
+      3: {
+        title: 'Félicitations !',
         description: 'Merci pour votre participation !',
-        confirmationTitle: 'Félicitations !',
-        confirmationMessage: 'Votre participation a été enregistrée.',
-        replayButtonText: 'Rejouer',
-        winMessage: 'Bravo ! Vous avez gagné !',
-        loseMessage: 'Pas de chance cette fois !'
+        showTitle: true,
+        showDescription: true
       }
-    ],
-    config: {
-      roulette: {}
     },
-    gameConfig: {},
     mobileConfig: {
-      gamePosition: state.gamePosition,
-      buttonColor: state.customColors.accent,
-      buttonTextColor: state.customColors.primary,
-      buttonPlacement: 'bottom'
+      gamePosition: state.gamePosition
     }
   };
 
-  // Roue
-  if (state.selectedGameType === 'wheel') {
-    baseConfig.config.roulette = {
-      segments: Array.from({ length: state.segmentCount }).map((_, i) => ({
-        label: '',
+  // Configuration spécifique par type de jeu
+  const gameConfigs: Record<string, any> = {
+    wheel: {
+      winProbability: 0.1,
+      maxWinners: 10,
+      segments: Array.from({ length: state.segmentCount }, (_, i) => ({
+        id: i + 1,
+        label: `Prix ${i + 1}`,
+        value: `Segment ${i + 1}`,
         color: i % 2 === 0 ? state.customColors.primary : state.customColors.secondary,
-        image: null
+        isWinning: i < 2
       })),
-      borderColor: state.customColors.secondary,
-      borderOutlineColor: state.customColors.accent,
-      segmentColor1: state.customColors.primary,
-      segmentColor2: state.customColors.secondary,
-      theme: state.selectedTheme
-    };
-
-    baseConfig.gameConfig = {
-      wheel: {
+      buttonLabel: 'Tourner la roue',
+      buttonColor: state.customColors.primary
+    },
+    jackpot: {
+      instantWin: {
         mode: 'instant_winner',
         winProbability: 0.1,
         maxWinners: 10,
         winnersCount: 0
-      }
-    };
-  }
-
-  // Quiz
-  if (state.selectedGameType === 'quiz') {
-    baseConfig.gameConfig = {
-      quiz: {
-        questions: state.quizQuestions,
-        timePerQuestion: 30,
-        buttonLabel: 'Commencer le Quiz',
-        buttonColor: state.customColors.accent
-      }
-    };
-  }
-
-  // Jackpot
-  if (state.selectedGameType === 'jackpot') {
-    baseConfig.gameConfig = {
-      jackpot: {
-        instantWin: {
-          mode: 'instant_winner',
-          winProbability: 0.1,
-          maxWinners: 10,
-          winnersCount: 0
-        },
-        buttonLabel: 'Lancer le Jackpot',
-        ...state.jackpotColors
-      }
-    };
-  }
-
-  // Scratch
-  if (state.selectedGameType === 'scratch') {
-    baseConfig.gameConfig = {
-      scratch: {
-        cards: [
-          {
-            id: 1,
-            revealImage: '',
-            revealMessage: 'Félicitations !',
-            scratchColor: '#C0C0C0'
+      },
+      ...state.jackpotColors,
+      buttonLabel: 'Lancer le Jackpot',
+      buttonColor: state.customColors.primary
+    },
+    quiz: {
+      questions: state.quizQuestions.length > 0 ? state.quizQuestions : [
+        {
+          id: 1,
+          text: 'Quelle est votre couleur préférée ?',
+          type: 'multiple',
+          options: [
+            { id: 1, text: 'Rouge', isCorrect: false },
+            { id: 2, text: 'Bleu', isCorrect: true },
+            { id: 3, text: 'Vert', isCorrect: false },
+            { id: 4, text: 'Jaune', isCorrect: false }
+          ],
+          feedback: {
+            correct: 'Excellent choix !',
+            incorrect: 'Dommage, essayez encore !'
           }
-        ],
-        buttonLabel: 'Gratter',
-        winMessage: 'Bravo ! Vous avez gagné !',
-        loseMessage: 'Pas de chance cette fois !'
+        }
+      ],
+      buttonLabel: 'Répondre',
+      buttonColor: state.customColors.primary
+    },
+    scratch: {
+      prizes: [
+        { id: 1, label: 'Gagnant !', probability: 0.1 },
+        { id: 2, label: 'Perdu', probability: 0.9 }
+      ],
+      buttonLabel: 'Gratter',
+      buttonColor: state.customColors.primary,
+      scratchArea: {
+        width: 300,
+        height: 200,
+        revealPercentage: 50
       }
-    };
-  }
+    },
+    dice: {
+      winningNumbers: [6],
+      maxRolls: 3,
+      buttonLabel: 'Lancer les dés',
+      buttonColor: state.customColors.primary
+    },
+    memory: {
+      gridSize: 4,
+      timeLimit: 60,
+      pairs: 8,
+      buttonLabel: 'Commencer',
+      buttonColor: state.customColors.primary
+    },
+    puzzle: {
+      pieces: 16,
+      timeLimit: 120,
+      buttonLabel: 'Commencer le puzzle',
+      buttonColor: state.customColors.primary
+    },
+    form: {
+      fields: baseConfig.formFields,
+      buttonLabel: 'Envoyer',
+      buttonColor: state.customColors.primary
+    }
+  };
 
-  return baseConfig;
+  return {
+    ...baseConfig,
+    gameConfig: {
+      [state.selectedGameType || 'wheel']: gameConfigs[state.selectedGameType || 'wheel'] || gameConfigs.wheel
+    },
+    config: {
+      roulette: gameConfigs[state.selectedGameType || 'wheel'] || gameConfigs.wheel
+    },
+    funnel: state.selectedGameType && ['wheel', 'scratch', 'jackpot', 'dice'].includes(state.selectedGameType) 
+      ? 'unlocked_game' 
+      : 'standard'
+  };
 };
