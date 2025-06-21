@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { DollarSign, Crown, Zap, Gift, Target, TrendingUp } from 'lucide-react';
 import { useQuickCampaignStore } from '../../../stores/quickCampaignStore';
@@ -8,8 +7,7 @@ const MonetizationFeatures: React.FC = () => {
     monetization, 
     setPricingPlan, 
     setLeadCapture, 
-    setAnalytics, 
-    setSocialSharing 
+    setAnalytics
   } = useQuickCampaignStore();
   
   const [selectedPlan, setSelectedPlan] = useState<'basic' | 'premium' | 'enterprise'>(
