@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { Palette, Sparkles, Circle } from 'lucide-react';
+import { Sparkles, Circle } from 'lucide-react';
 import { useQuickCampaignStore } from '../../../stores/quickCampaignStore';
 
 const AdvancedWheelCustomization: React.FC = () => {
