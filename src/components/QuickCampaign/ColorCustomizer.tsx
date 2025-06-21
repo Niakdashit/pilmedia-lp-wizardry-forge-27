@@ -5,18 +5,18 @@ import { useQuickCampaignStore } from "../../stores/quickCampaignStore";
 import { getAccessibleTextColor } from "../../utils/BrandStyleAnalyzer";
 
 const DEFAULT_COLORS = {
-  primary: "#8b5cf6",
-  secondary: "#a78bfa",
-  accent: "#c4b5fd",
+  primary: "#3B82F6",
+  secondary: "#60A5FA",
+  accent: "#93C5FD",
 };
 
 const PRESET_PALETTES = [
-  { name: "Violet", colors: { primary: "#8b5cf6", secondary: "#a78bfa", accent: "#c4b5fd" } },
-  { name: "Bleu", colors: { primary: "#3b82f6", secondary: "#60a5fa", accent: "#93c5fd" } },
-  { name: "Vert", colors: { primary: "#10b981", secondary: "#34d399", accent: "#6ee7b7" } },
-  { name: "Rouge", colors: { primary: "#ef4444", secondary: "#f87171", accent: "#fca5a5" } },
-  { name: "Orange", colors: { primary: "#f59e0b", secondary: "#fbbf24", accent: "#fcd34d" } },
-  { name: "Rose", colors: { primary: "#ec4899", secondary: "#f472b6", accent: "#f9a8d4" } },
+  { name: "Bleu", colors: { primary: "#3B82F6", secondary: "#60A5FA", accent: "#93C5FD" } },
+  { name: "Violet", colors: { primary: "#8B5CF6", secondary: "#A78BFA", accent: "#C4B5FD" } },
+  { name: "Vert", colors: { primary: "#10B981", secondary: "#34D399", accent: "#6EE7B7" } },
+  { name: "Rouge", colors: { primary: "#EF4444", secondary: "#F87171", accent: "#FCA5A5" } },
+  { name: "Orange", colors: { primary: "#F59E0B", secondary: "#FBBF24", accent: "#FCD34D" } },
+  { name: "Rose", colors: { primary: "#EC4899", secondary: "#F472B6", accent: "#F9A8D4" } },
 ];
 
 const ColorCustomizer: React.FC = () => {
@@ -75,8 +75,8 @@ const ColorCustomizer: React.FC = () => {
       {/* Palettes prédéfinies */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h4 className="text-sm font-medium text-gray-700 flex items-center">
-            <Sparkles className="w-4 h-4 mr-2 text-purple-500" />
+          <h4 className="text-sm font-semibold text-gray-900 flex items-center">
+            <Sparkles className="w-4 h-4 mr-2 text-blue-500" />
             Palettes suggérées
           </h4>
         </div>
@@ -85,7 +85,7 @@ const ColorCustomizer: React.FC = () => {
             <button
               key={palette.name}
               onClick={() => applyPresetPalette(palette)}
-              className="group relative overflow-hidden rounded-xl border-2 border-gray-200 hover:border-gray-300 transition-all duration-200 hover:scale-105"
+              className="group relative overflow-hidden rounded-xl border-2 border-gray-200 hover:border-blue-300 transition-all duration-200 hover:scale-105 hover:shadow-md"
             >
               <div className="flex h-12">
                 <div 
@@ -114,7 +114,7 @@ const ColorCustomizer: React.FC = () => {
       {/* Couleurs personnalisées */}
       <div>
         <div className="flex items-center justify-between mb-4">
-          <h4 className="text-sm font-medium text-gray-700 flex items-center">
+          <h4 className="text-sm font-semibold text-gray-900 flex items-center">
             <Palette className="w-4 h-4 mr-2 text-blue-500" />
             Couleurs personnalisées
           </h4>
@@ -133,7 +133,7 @@ const ColorCustomizer: React.FC = () => {
             { key: "secondary" as const, label: "Couleur secondaire", description: "Couleur complémentaire" },
             { key: "accent" as const, label: "Couleur d'accent", description: "Pour les boutons et éléments actifs" },
           ].map(({ key, label, description }) => (
-            <div key={key} className="bg-gray-50 rounded-xl p-4">
+            <div key={key} className="bg-gray-50 rounded-xl p-4 border border-gray-100">
               <div className="flex items-center justify-between mb-3">
                 <div>
                   <label className="text-sm font-medium text-gray-900">{label}</label>
@@ -166,9 +166,9 @@ const ColorCustomizer: React.FC = () => {
       </div>
 
       {/* Aperçu des couleurs */}
-      <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-4">
-        <h4 className="text-sm font-medium text-gray-700 mb-3">Aperçu</h4>
-        <div className="flex items-center space-x-3">
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
+        <h4 className="text-sm font-semibold text-gray-900 mb-3">Aperçu</h4>
+        <div className="flex flex-wrap items-center gap-3">
           <div 
             className="px-4 py-2 rounded-lg text-white text-sm font-medium shadow-sm"
             style={{ backgroundColor: customColors.primary }}
