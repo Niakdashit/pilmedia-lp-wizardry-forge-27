@@ -8,8 +8,7 @@ interface AdvancedWheelRendererProps {
 }
 
 const AdvancedWheelRenderer: React.FC<AdvancedWheelRendererProps> = ({
-  children,
-  canvasSize
+  children
 }) => {
   const { wheelCustomization, customPointer, wheelCenter, advancedMode } = useQuickCampaignStore();
 
@@ -147,17 +146,19 @@ const AdvancedWheelRenderer: React.FC<AdvancedWheelRendererProps> = ({
       </div>
 
       {/* Styles CSS personnalisés pour les animations */}
-      <style jsx>{`
-        @keyframes spin {
-          from { transform: rotate(0deg); }
-          to { transform: rotate(360deg); }
-        }
-        
-        @keyframes pulse {
-          0%, 100% { transform: scale(1); }
-          50% { transform: scale(1.05); }
-        }
-      `}</style>
+      <style>
+        {`
+          @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+          }
+          
+          @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+          }
+        `}
+      </style>
     </div>
   );
 };

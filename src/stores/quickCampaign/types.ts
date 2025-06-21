@@ -73,6 +73,19 @@ export interface QuickCampaignState {
       size: number;
     }>;
   };
+  // New properties for monetization and extensions
+  monetization: {
+    selectedPlan: string;
+    leadCapture: boolean;
+    analytics: boolean;
+    socialSharing: boolean;
+    emailIntegration: any;
+  };
+  extensions: Array<{
+    id: string;
+    enabled: boolean;
+    config: any;
+  }>;
 }
 
 export interface QuickCampaignActions {

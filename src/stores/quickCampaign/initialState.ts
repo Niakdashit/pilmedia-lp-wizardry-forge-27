@@ -82,5 +82,14 @@ export const initialState: QuickCampaignState = {
   segmentOverlays: {
     enabled: false,
     overlays: []
-  }
+  },
+  // New properties for monetization and extensions
+  monetization: {
+    selectedPlan: 'basic',
+    leadCapture: false,
+    analytics: false,
+    socialSharing: false,
+    emailIntegration: {}
+  },
+  extensions: []
 };

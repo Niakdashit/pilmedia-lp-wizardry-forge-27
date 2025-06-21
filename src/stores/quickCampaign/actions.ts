@@ -2,6 +2,12 @@
 import { QuickCampaignState } from './types';
 import { initialState } from './initialState';
 
+interface Extension {
+  id: string;
+  enabled: boolean;
+  config: any;
+}
+
 export const createActions = (set: any, get: any) => ({
   setCurrentStep: (step: number) => set({ currentStep: step }),
   setCampaignName: (name: string) => set({ campaignName: name }),
@@ -73,19 +79,19 @@ export const createActions = (set: any, get: any) => ({
   toggleExtension: (extensionId: string) => 
     set((state: QuickCampaignState) => {
       const extensions = state.extensions || [];
-      const isEnabled = extensions.some(ext => ext.id === extensionId && ext.enabled);
+      const isEnabled = extensions.some((ext: Extension) => ext.id === extensionId && ext.enabled);
       
       if (isEnabled) {
         return {
-          extensions: extensions.map(ext => 
+          extensions: extensions.map((ext: Extension) => 
             ext.id === extensionId ? { ...ext, enabled: false } : ext
           )
         };
       } else {
-        const existingExtension = extensions.find(ext => ext.id === extensionId);
+        const existingExtension = extensions.find((ext: Extension) => ext.id === extensionId);
         if (existingExtension) {
           return {
-            extensions: extensions.map(ext => 
+            extensions: extensions.map((ext: Extension) => 
               ext.id === extensionId ? { ...ext, enabled: true } : ext
             )
           };
@@ -99,7 +105,7 @@ export const createActions = (set: any, get: any) => ({
 
   setExtensionConfig: (extensionId: string, config: any) => 
     set((state: QuickCampaignState) => ({
-      extensions: (state.extensions || []).map(ext => 
+      extensions: (state.extensions || []).map((ext: Extension) => 
         ext.id === extensionId ? { ...ext, config: { ...ext.config, ...config } } : ext
       )
     })),
