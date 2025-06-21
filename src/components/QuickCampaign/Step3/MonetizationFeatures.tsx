@@ -1,8 +1,25 @@
+
 import React, { useState } from 'react';
 import { DollarSign, Crown, Zap, Gift, Target, TrendingUp } from 'lucide-react';
+import { useQuickCampaignStore } from '../../../stores/quickCampaignStore';
 
 const MonetizationFeatures: React.FC = () => {
-  const [selectedPlan, setSelectedPlan] = useState<'basic' | 'premium' | 'enterprise'>('basic');
+  const { 
+    monetization, 
+    setPricingPlan, 
+    setLeadCapture, 
+    setAnalytics, 
+    setSocialSharing 
+  } = useQuickCampaignStore();
+  
+  const [selectedPlan, setSelectedPlan] = useState<'basic' | 'premium' | 'enterprise'>(
+    monetization.selectedPlan as 'basic' | 'premium' | 'enterprise' || 'basic'
+  );
+
+  const handlePlanChange = (plan: 'basic' | 'premium' | 'enterprise') => {
+    setSelectedPlan(plan);
+    setPricingPlan(plan);
+  };
 
   const plans = [
     {
@@ -64,7 +81,7 @@ const MonetizationFeatures: React.FC = () => {
         {plans.map((plan) => (
           <div
             key={plan.id}
-            onClick={() => setSelectedPlan(plan.id)}
+            onClick={() => handlePlanChange(plan.id)}
             className={`relative p-4 rounded-xl border-2 transition-all cursor-pointer ${
               selectedPlan === plan.id
                 ? `border-${plan.color}-500 bg-${plan.color}-50 ring-2 ring-${plan.color}-200`
@@ -158,8 +175,11 @@ const MonetizationFeatures: React.FC = () => {
             <p className="text-sm text-gray-600 mb-3">
               Testez différentes variantes pour maximiser les conversions
             </p>
-            <button className="w-full bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700 transition-colors">
-              Configurer les tests
+            <button 
+              onClick={() => setAnalytics(!monetization.analytics)}
+              className="w-full bg-green-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-green-700 transition-colors"
+            >
+              {monetization.analytics ? 'Désactiver' : 'Configurer les tests'}
             </button>
           </div>
           
@@ -168,8 +188,11 @@ const MonetizationFeatures: React.FC = () => {
             <p className="text-sm text-gray-600 mb-3">
               Qualifiez automatiquement vos prospects selon leur engagement
             </p>
-            <button className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors">
-              Activer le scoring
+            <button 
+              onClick={() => setLeadCapture(!monetization.leadCapture)}
+              className="w-full bg-blue-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-700 transition-colors"
+            >
+              {monetization.leadCapture ? 'Désactiver' : 'Activer le scoring'}
             </button>
           </div>
         </div>
@@ -184,7 +207,10 @@ const MonetizationFeatures: React.FC = () => {
             <p className="text-gray-600 mb-4">
               Passez au Premium pour accéder à toutes les fonctionnalités avancées et multiplier vos résultats.
             </p>
-            <button className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-6 py-3 rounded-lg font-medium hover:from-yellow-600 hover:to-orange-600 transition-all transform hover:scale-105">
+            <button 
+              onClick={() => handlePlanChange('premium')}
+              className="bg-gradient-to-r from-yellow-500 to-orange-500 text-white px-6 py-3 rounded-lg font-medium hover:from-yellow-600 hover:to-orange-600 transition-all transform hover:scale-105"
+            >
               Passer au Premium - 29€/mois
             </button>
             <p className="text-xs text-gray-500 mt-2">Essai gratuit 14 jours • Annulation à tout moment</p>

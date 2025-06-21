@@ -50,7 +50,7 @@ export const createActions = (set: any, get: any) => ({
       segmentOverlays: { ...state.segmentOverlays, ...overlays }
     })),
 
-  // Nouvelles actions pour les fonctionnalités avancées
+  // Actions pour les fonctionnalités de monétisation
   setPricingPlan: (plan: string) => 
     set((state: QuickCampaignState) => ({
       monetization: { ...state.monetization, selectedPlan: plan }
@@ -109,6 +109,27 @@ export const createActions = (set: any, get: any) => ({
         ext.id === extensionId ? { ...ext, config: { ...ext.config, ...config } } : ext
       )
     })),
+
+  generatePreviewCampaign: () => {
+    const state = get() as QuickCampaignState;
+    return {
+      id: 'quick-preview',
+      name: state.campaignName,
+      type: state.selectedGameType || 'wheel',
+      design: {
+        customColors: state.customColors,
+        centerLogo: state.logoUrl || null,
+        backgroundImage: state.backgroundImageUrl || null,
+        mobileBackgroundImage: state.backgroundImageUrl || null,
+        containerBackgroundColor: '#ffffff',
+        borderColor: state.customColors.primary,
+        borderRadius: '16px',
+        buttonColor: state.customColors.accent,
+        buttonTextColor: state.customColors.primary,
+        textColor: state.customColors.textColor || '#000000'
+      }
+    };
+  },
 
   reset: () => {
     const state = get() as QuickCampaignState;

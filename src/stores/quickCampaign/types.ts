@@ -112,6 +112,14 @@ export interface QuickCampaignActions {
   setCustomPointer: (pointer: Partial<QuickCampaignState['customPointer']>) => void;
   setWheelCenter: (center: Partial<QuickCampaignState['wheelCenter']>) => void;
   setSegmentOverlays: (overlays: Partial<QuickCampaignState['segmentOverlays']>) => void;
+  // Actions pour les fonctionnalités de monétisation
+  setPricingPlan: (plan: string) => void;
+  setLeadCapture: (enabled: boolean) => void;
+  setAnalytics: (enabled: boolean) => void;
+  setSocialSharing: (enabled: boolean) => void;
+  setEmailIntegration: (config: any) => void;
+  toggleExtension: (extensionId: string) => void;
+  setExtensionConfig: (extensionId: string, config: any) => void;
   generatePreviewCampaign: () => any;
   reset: () => void;
 }

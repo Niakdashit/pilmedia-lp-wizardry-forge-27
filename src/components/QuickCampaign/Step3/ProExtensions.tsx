@@ -1,6 +1,7 @@
 
 import React, { useState } from 'react';
-import { Puzzle, Smartphone, Code, Database, Mail, BarChart3 } from 'lucide-react';
+import { Puzzle, Smartphone, Code, Database, BarChart3 } from 'lucide-react';
+import { useQuickCampaignStore } from '../../../stores/quickCampaignStore';
 
 interface Extension {
   id: string;
@@ -13,8 +14,10 @@ interface Extension {
 }
 
 const ProExtensions: React.FC = () => {
+  const { extensions, toggleExtension } = useQuickCampaignStore();
   const [activeCategory, setActiveCategory] = useState<'all' | 'integration' | 'analytics' | 'automation' | 'design'>('all');
-  const [extensions, setExtensions] = useState<Extension[]>([
+  
+  const [localExtensions, setLocalExtensions] = useState<Extension[]>([
     {
       id: 'zapier',
       name: 'Zapier Integration',
@@ -22,7 +25,7 @@ const ProExtensions: React.FC = () => {
       icon: <Puzzle className="w-5 h-5" />,
       category: 'integration',
       isPremium: true,
-      isActive: false
+      isActive: extensions.some(ext => ext.id === 'zapier' && ext.enabled)
     },
     {
       id: 'google-analytics',
@@ -31,16 +34,7 @@ const ProExtensions: React.FC = () => {
       icon: <BarChart3 className="w-5 h-5" />,
       category: 'analytics',
       isPremium: false,
-      isActive: true
-    },
-    {
-      id: 'mailchimp',
-      name: 'Mailchimp Sync',
-      description: 'Synchronisation automatique des contacts',
-      icon: <Mail className="w-5 h-5" />,
-      category: 'integration',
-      isPremium: true,
-      isActive: false
+      isActive: extensions.some(ext => ext.id === 'google-analytics' && ext.enabled)
     },
     {
       id: 'crm-hubspot',
@@ -49,7 +43,7 @@ const ProExtensions: React.FC = () => {
       icon: <Database className="w-5 h-5" />,
       category: 'integration',
       isPremium: true,
-      isActive: false
+      isActive: extensions.some(ext => ext.id === 'crm-hubspot' && ext.enabled)
     },
     {
       id: 'mobile-app',
@@ -58,7 +52,7 @@ const ProExtensions: React.FC = () => {
       icon: <Smartphone className="w-5 h-5" />,
       category: 'design',
       isPremium: true,
-      isActive: false
+      isActive: extensions.some(ext => ext.id === 'mobile-app' && ext.enabled)
     },
     {
       id: 'custom-api',
@@ -67,24 +61,25 @@ const ProExtensions: React.FC = () => {
       icon: <Code className="w-5 h-5" />,
       category: 'automation',
       isPremium: true,
-      isActive: false
+      isActive: extensions.some(ext => ext.id === 'custom-api' && ext.enabled)
     }
   ]);
 
   const categories = [
-    { id: 'all', name: 'Toutes', count: extensions.length },
-    { id: 'integration', name: 'Intégrations', count: extensions.filter(e => e.category === 'integration').length },
-    { id: 'analytics', name: 'Analytics', count: extensions.filter(e => e.category === 'analytics').length },
-    { id: 'automation', name: 'Automation', count: extensions.filter(e => e.category === 'automation').length },
-    { id: 'design', name: 'Design', count: extensions.filter(e => e.category === 'design').length }
+    { id: 'all', name: 'Toutes', count: localExtensions.length },
+    { id: 'integration', name: 'Intégrations', count: localExtensions.filter(e => e.category === 'integration').length },
+    { id: 'analytics', name: 'Analytics', count: localExtensions.filter(e => e.category === 'analytics').length },
+    { id: 'automation', name: 'Automation', count: localExtensions.filter(e => e.category === 'automation').length },
+    { id: 'design', name: 'Design', count: localExtensions.filter(e => e.category === 'design').length }
   ];
 
   const filteredExtensions = activeCategory === 'all' 
-    ? extensions 
-    : extensions.filter(ext => ext.category === activeCategory);
+    ? localExtensions 
+    : localExtensions.filter(ext => ext.category === activeCategory);
 
-  const toggleExtension = (id: string) => {
-    setExtensions(prev => 
+  const handleToggleExtension = (id: string) => {
+    toggleExtension(id);
+    setLocalExtensions(prev => 
       prev.map(ext => 
         ext.id === id ? { ...ext, isActive: !ext.isActive } : ext
       )
@@ -160,7 +155,7 @@ const ProExtensions: React.FC = () => {
                       type="checkbox"
                       className="sr-only peer"
                       checked={extension.isActive}
-                      onChange={() => toggleExtension(extension.id)}
+                      onChange={() => handleToggleExtension(extension.id)}
                       disabled={extension.isPremium && !extension.isActive}
                     />
                     <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-indigo-600"></div>
@@ -173,11 +168,11 @@ const ProExtensions: React.FC = () => {
       </div>
 
       {/* Active Extensions Summary */}
-      {extensions.some(e => e.isActive) && (
+      {localExtensions.some(e => e.isActive) && (
         <div className="bg-indigo-50 rounded-xl p-4 border border-indigo-200">
           <h4 className="font-medium text-indigo-900 mb-3">Extensions actives</h4>
           <div className="space-y-2">
-            {extensions.filter(e => e.isActive).map((extension) => (
+            {localExtensions.filter(e => e.isActive).map((extension) => (
               <div key={extension.id} className="flex items-center justify-between text-sm">
                 <div className="flex items-center space-x-2">
                   {extension.icon}

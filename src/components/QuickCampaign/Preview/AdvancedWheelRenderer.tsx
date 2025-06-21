@@ -4,7 +4,6 @@ import { useQuickCampaignStore } from '../../../stores/quickCampaignStore';
 
 interface AdvancedWheelRendererProps {
   children: React.ReactNode;
-  canvasSize: number;
 }
 
 const AdvancedWheelRenderer: React.FC<AdvancedWheelRendererProps> = ({

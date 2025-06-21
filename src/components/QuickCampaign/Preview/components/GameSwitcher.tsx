@@ -73,17 +73,6 @@ const GameSwitcher: React.FC<GameSwitcherProps> = ({
     height: '100%'
   };
 
-  // Calculer la taille du canvas pour les effets avancés
-  const getCanvasSize = () => {
-    switch (gameSize) {
-      case 'small': return 200;
-      case 'medium': return 300;
-      case 'large': return 400;
-      case 'xlarge': return 500;
-      default: return 300;
-    }
-  };
-
   switch (gameType) {
     case 'wheel':
       const wheelContent = (
@@ -106,7 +95,7 @@ const GameSwitcher: React.FC<GameSwitcherProps> = ({
         <div style={baseContainerStyle}>
           <div style={baseWrapperStyle}>
             {advancedMode ? (
-              <AdvancedWheelRenderer canvasSize={getCanvasSize()}>
+              <AdvancedWheelRenderer>
                 {wheelContent}
               </AdvancedWheelRenderer>
             ) : (
