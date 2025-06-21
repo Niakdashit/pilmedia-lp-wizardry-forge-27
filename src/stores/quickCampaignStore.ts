@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { QuickCampaignStore } from './types';
-import { initialState } from './quickCampaign/initialState';
+import { initialState } from './quickCampaign/initialState.ts';
 
 export const useQuickCampaignStore = create<QuickCampaignStore>((set, get) => ({
   ...initialState,
