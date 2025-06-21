@@ -57,7 +57,14 @@ export const initialState: QuickCampaignState = {
     shadowColor: '#000000',
     bevelEffect: false,
     glowEffect: false,
-    glowColor: '#3B82F6'
+    glowColor: '#3B82F6',
+    // Nouvelles propriétés pour les effets avancés
+    texture: 'metallic',
+    pulseAnimation: false,
+    particleEffect: false,
+    continuousRotation: false,
+    depth3D: 0,
+    perspective: 0
   },
   customPointer: {
     enabled: false,

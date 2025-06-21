@@ -40,6 +40,13 @@ export interface QuickCampaignState {
     bevelEffect: boolean;
     glowEffect: boolean;
     glowColor: string;
+    // Nouvelles propriétés pour les effets avancés
+    texture?: 'metallic' | 'glass' | 'neon' | 'wood';
+    pulseAnimation?: boolean;
+    particleEffect?: boolean;
+    continuousRotation?: boolean;
+    depth3D?: number;
+    perspective?: number;
   };
   customPointer: {
     enabled: boolean;
