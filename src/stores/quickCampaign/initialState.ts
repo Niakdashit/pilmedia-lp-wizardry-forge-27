@@ -1,3 +1,4 @@
+
 import { QuickCampaignState } from './types';
 
 export const initialState: QuickCampaignState = {
@@ -47,5 +48,32 @@ export const initialState: QuickCampaignState = {
         incorrect: 'Dommage, essayez encore !'
       }
     }
-  ]
+  ],
+  // Nouvelles propriétés pour le mode avancé
+  advancedMode: false,
+  wheelCustomization: {
+    borderRadius: 50,
+    shadowIntensity: 20,
+    shadowColor: '#000000',
+    bevelEffect: false,
+    glowEffect: false,
+    glowColor: '#3B82F6'
+  },
+  customPointer: {
+    enabled: false,
+    file: null,
+    url: null,
+    type: 'default'
+  },
+  wheelCenter: {
+    enabled: false,
+    type: 'logo',
+    file: null,
+    url: null,
+    size: 80
+  },
+  segmentOverlays: {
+    enabled: false,
+    overlays: []
+  }
 };

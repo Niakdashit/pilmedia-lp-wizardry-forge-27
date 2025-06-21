@@ -31,6 +31,41 @@ export interface QuickCampaignState {
     slotBackgroundColor: string;
   };
   quizQuestions: any[];
+  // Nouvelles propriétés pour le mode avancé
+  advancedMode: boolean;
+  wheelCustomization: {
+    borderRadius: number;
+    shadowIntensity: number;
+    shadowColor: string;
+    bevelEffect: boolean;
+    glowEffect: boolean;
+    glowColor: string;
+  };
+  customPointer: {
+    enabled: boolean;
+    file: File | null;
+    url: string | null;
+    type: 'default' | 'custom';
+  };
+  wheelCenter: {
+    enabled: boolean;
+    type: 'logo' | 'image' | 'animation';
+    file: File | null;
+    url: string | null;
+    size: number;
+  };
+  segmentOverlays: {
+    enabled: boolean;
+    overlays: Array<{
+      id: string;
+      segmentIndex: number;
+      type: 'sticker' | 'pattern' | 'image';
+      file: File | null;
+      url: string | null;
+      position: { x: number; y: number };
+      size: number;
+    }>;
+  };
 }
 
 export interface QuickCampaignActions {
@@ -51,6 +86,12 @@ export interface QuickCampaignActions {
   setCustomColors: (colors: { primary: string; secondary: string; accent: string; textColor?: string; buttonStyle?: string }) => void;
   setJackpotColors: (colors: any) => void;
   setQuizQuestions: (questions: any[]) => void;
+  // Nouvelles actions pour le mode avancé
+  setAdvancedMode: (enabled: boolean) => void;
+  setWheelCustomization: (customization: Partial<QuickCampaignState['wheelCustomization']>) => void;
+  setCustomPointer: (pointer: Partial<QuickCampaignState['customPointer']>) => void;
+  setWheelCenter: (center: Partial<QuickCampaignState['wheelCenter']>) => void;
+  setSegmentOverlays: (overlays: Partial<QuickCampaignState['segmentOverlays']>) => void;
   generatePreviewCampaign: () => any;
   reset: () => void;
 }

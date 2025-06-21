@@ -21,12 +21,45 @@ export const createActions = (set: any, get: any) => ({
   setJackpotColors: (colors: any) => set({ jackpotColors: colors }),
   setQuizQuestions: (questions: any[]) => set({ quizQuestions: questions }),
 
+  // Nouvelles actions pour le mode avancé
+  setAdvancedMode: (enabled: boolean) => set({ advancedMode: enabled }),
+  
+  setWheelCustomization: (customization: Partial<QuickCampaignState['wheelCustomization']>) => 
+    set((state: QuickCampaignState) => ({
+      wheelCustomization: { ...state.wheelCustomization, ...customization }
+    })),
+  
+  setCustomPointer: (pointer: Partial<QuickCampaignState['customPointer']>) => 
+    set((state: QuickCampaignState) => ({
+      customPointer: { ...state.customPointer, ...pointer }
+    })),
+  
+  setWheelCenter: (center: Partial<QuickCampaignState['wheelCenter']>) => 
+    set((state: QuickCampaignState) => ({
+      wheelCenter: { ...state.wheelCenter, ...center }
+    })),
+  
+  setSegmentOverlays: (overlays: Partial<QuickCampaignState['segmentOverlays']>) => 
+    set((state: QuickCampaignState) => ({
+      segmentOverlays: { ...state.segmentOverlays, ...overlays }
+    })),
+
   reset: () => {
     const state = get() as QuickCampaignState;
     const url = state.backgroundImageUrl;
+    const pointerUrl = state.customPointer.url;
+    const centerUrl = state.wheelCenter.url;
+    
     if (url) {
       URL.revokeObjectURL(url);
     }
+    if (pointerUrl) {
+      URL.revokeObjectURL(pointerUrl);
+    }
+    if (centerUrl) {
+      URL.revokeObjectURL(centerUrl);
+    }
+    
     set(initialState);
   }
 });
