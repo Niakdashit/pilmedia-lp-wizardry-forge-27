@@ -1,7 +1,6 @@
-
 import { create } from 'zustand';
-import { QuickCampaignStore } from './quickCampaign/types';
-import { initialState } from './quickCampaign/initialState.ts';
+import { QuickCampaignStore } from './types';
+import { initialState } from './initialState';
 
 export const useQuickCampaignStore = create<QuickCampaignStore>((set, get) => ({
   ...initialState,
@@ -20,8 +19,8 @@ export const useQuickCampaignStore = create<QuickCampaignStore>((set, get) => ({
   setBackgroundImageUrl: (url: string | null) => set({ backgroundImageUrl: url }),
   setSegmentCount: (count: number) => set({ segmentCount: count }),
   setGamePosition: (position: 'top' | 'center' | 'bottom' | 'left' | 'right') => set({ gamePosition: position }),
-  setCustomColors: (colors: { primary: string; secondary: string; accent: string; textColor?: string; buttonStyle?: string }) => set({ customColors: colors }),
-  setJackpotColors: (colors: any) => set({ jackpotColors: colors }),
+  setCustomColors: (colors) => set({ customColors: colors }),
+  setJackpotColors: (colors) => set({ jackpotColors: colors }),
   setAdvancedMode: (mode: boolean) => set({ advancedMode: mode }),
   setPointerImage: (file: File | null) => set({ pointerImage: file }),
   setPointerImageUrl: (url: string | null) => set({ pointerImageUrl: url }),

@@ -19,21 +19,6 @@ export const initialState: QuickCampaignState = {
   pointerImage: null,
   pointerImageUrl: null,
   borderRadius: 16,
-
-  segmentPrizes: Array.from({ length: 4 }).map(() => ({
-    label: '',
-    image: null
-  })),
-
-  stats: {
-    spins: 0,
-    wins: 0,
-    clicks: 0
-  },
-
-  skins: [],
-  activeSkinIndex: 0,
-
   customColors: {
     primary: '#3B82F6',
     secondary: '#60A5FA',
@@ -41,7 +26,6 @@ export const initialState: QuickCampaignState = {
     textColor: '#ffffff',
     buttonStyle: 'primary'
   },
-
   jackpotColors: {
     containerBackgroundColor: '#1f2937',
     backgroundColor: '#3B82F6',
@@ -51,7 +35,6 @@ export const initialState: QuickCampaignState = {
     slotBorderWidth: 2,
     slotBackgroundColor: '#ffffff'
   },
-
   quizQuestions: [
     {
       id: 1,

@@ -1,29 +1,23 @@
+
 import { QuickCampaignState } from './types';
 
 export const generatePreviewCampaign = (state: QuickCampaignState) => {
-  const skin = state.skins?.[state.activeSkinIndex] || {
-    customColors: state.customColors,
-    pointerImageUrl: state.pointerImageUrl,
-    borderRadius: state.borderRadius,
-    id: 'default'
-  };
-
   const baseConfig = {
     id: 'quick-preview',
     name: state.campaignName,
     type: state.selectedGameType || 'wheel',
     design: {
-      customColors: skin.customColors || state.customColors,
+      customColors: state.customColors,
       centerLogo: state.logoUrl || null,
       backgroundImage: state.backgroundImageUrl || null,
       mobileBackgroundImage: state.backgroundImageUrl || null,
-      pointerImage: skin.pointerImageUrl || state.pointerImageUrl || null,
+      pointerImage: state.pointerImageUrl || null,
       containerBackgroundColor: '#ffffff',
-      borderColor: (skin.customColors || state.customColors).primary,
-      borderRadius: `${skin.borderRadius ?? state.borderRadius}px`,
-      buttonColor: (skin.customColors || state.customColors).accent,
-      buttonTextColor: (skin.customColors || state.customColors).primary,
-      textColor: (skin.customColors || state.customColors).textColor || '#000000'
+      borderColor: state.customColors.primary,
+      borderRadius: `${state.borderRadius}px`,
+      buttonColor: state.customColors.accent,
+      buttonTextColor: state.customColors.primary,
+      textColor: state.customColors.textColor || '#000000'
     },
     buttonConfig: {
       color: state.customColors.accent,
@@ -73,12 +67,13 @@ export const generatePreviewCampaign = (state: QuickCampaignState) => {
     }
   };
 
+  // Roue
   if (state.selectedGameType === 'wheel') {
     baseConfig.config.roulette = {
       segments: Array.from({ length: state.segmentCount }).map((_, i) => ({
-        label: state.segmentPrizes[i]?.label || '',
+        label: '',
         color: i % 2 === 0 ? state.customColors.primary : state.customColors.secondary,
-        image: state.segmentPrizes[i]?.image || null
+        image: null
       })),
       borderColor: state.customColors.secondary,
       borderOutlineColor: state.customColors.accent,
@@ -97,6 +92,7 @@ export const generatePreviewCampaign = (state: QuickCampaignState) => {
     };
   }
 
+  // Quiz
   if (state.selectedGameType === 'quiz') {
     baseConfig.gameConfig = {
       quiz: {
@@ -108,6 +104,7 @@ export const generatePreviewCampaign = (state: QuickCampaignState) => {
     };
   }
 
+  // Jackpot
   if (state.selectedGameType === 'jackpot') {
     baseConfig.gameConfig = {
       jackpot: {
@@ -123,6 +120,7 @@ export const generatePreviewCampaign = (state: QuickCampaignState) => {
     };
   }
 
+  // Scratch
   if (state.selectedGameType === 'scratch') {
     baseConfig.gameConfig = {
       scratch: {
