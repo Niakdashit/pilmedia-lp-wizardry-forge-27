@@ -21,7 +21,7 @@ const Step3Header: React.FC = () => {
           <div className="h-8 w-px bg-gray-300" />
           
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+            <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
               <Palette className="w-6 h-6 text-white" />
             </div>
             <div>
@@ -32,9 +32,9 @@ const Step3Header: React.FC = () => {
         </div>
 
         <div className="flex items-center space-x-3">
-          <div className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-lg border border-blue-200">
-            <Sparkles className="w-4 h-4 text-blue-600" />
-            <span className="text-sm font-medium text-blue-700">Étape 3/4</span>
+          <div className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg border border-purple-200">
+            <Sparkles className="w-4 h-4 text-purple-600" />
+            <span className="text-sm font-medium text-purple-700">Étape 3/4</span>
           </div>
         </div>
       </div>

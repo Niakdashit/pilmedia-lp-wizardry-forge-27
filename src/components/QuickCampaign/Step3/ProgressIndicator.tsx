@@ -65,7 +65,7 @@ const ProgressIndicator: React.FC = () => {
 
         <button
           onClick={() => setCurrentStep(4)}
-          className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl hover:from-blue-600 hover:to-indigo-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+          className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-xl hover:from-emerald-600 hover:to-teal-700 transition-all duration-200 shadow-lg hover:shadow-xl"
         >
           <span className="font-medium">Finaliser</span>
           <ArrowRight className="w-4 h-4" />
