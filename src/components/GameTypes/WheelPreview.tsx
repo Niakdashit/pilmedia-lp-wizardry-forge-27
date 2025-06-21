@@ -71,7 +71,6 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
     borderColor,
     borderOutlineColor,
     customColors,
-    pointerImage,
     buttonConfig
   } = getWheelPreviewConfig(campaign);
 
@@ -113,7 +112,6 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
           formValidated={formValidated}
           showValidationMessage={showValidationMessage}
           onWheelClick={handleWheelClick}
-          pointerImage={pointerImage}
         />
 
         <WheelButton

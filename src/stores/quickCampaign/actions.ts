@@ -1,3 +1,4 @@
+
 import { QuickCampaignState } from './types';
 import { initialState } from './initialState';
 
@@ -18,21 +19,13 @@ export const createActions = (set: any, get: any) => ({
   setGamePosition: (position: 'top' | 'center' | 'bottom' | 'left' | 'right') => set({ gamePosition: position }),
   setCustomColors: (colors: { primary: string; secondary: string; accent: string; textColor?: string; buttonStyle?: string }) => set({ customColors: colors }),
   setJackpotColors: (colors: any) => set({ jackpotColors: colors }),
-  setAdvancedMode: (mode: boolean) => set({ advancedMode: mode }),
-  setPointerImage: (file: File | null) => set({ pointerImage: file }),
-  setPointerImageUrl: (url: string | null) => set({ pointerImageUrl: url }),
-  setBorderRadius: (radius: number) => set({ borderRadius: radius }),
   setQuizQuestions: (questions: any[]) => set({ quizQuestions: questions }),
 
   reset: () => {
     const state = get() as QuickCampaignState;
-    const bgUrl = state.backgroundImageUrl;
-    if (bgUrl) {
-      URL.revokeObjectURL(bgUrl);
-    }
-    const pointerUrl = state.pointerImageUrl;
-    if (pointerUrl) {
-      URL.revokeObjectURL(pointerUrl);
+    const url = state.backgroundImageUrl;
+    if (url) {
+      URL.revokeObjectURL(url);
     }
     set(initialState);
   }

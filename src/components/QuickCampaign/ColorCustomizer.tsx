@@ -2,7 +2,7 @@
 import React from "react";
 import { Palette, RotateCcw, Sparkles } from "lucide-react";
 import { useQuickCampaignStore } from "../../stores/quickCampaignStore";
-import { getAccessibleTextColor, calculateContrast } from "../../utils/BrandStyleAnalyzer";
+import { getAccessibleTextColor } from "../../utils/BrandStyleAnalyzer";
 
 const DEFAULT_COLORS = {
   primary: "#8b5cf6",
@@ -169,21 +169,21 @@ const ColorCustomizer: React.FC = () => {
       <div className="bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl p-4">
         <h4 className="text-sm font-medium text-gray-700 mb-3">Aperçu</h4>
         <div className="flex items-center space-x-3">
-          <div
+          <div 
             className="px-4 py-2 rounded-lg text-white text-sm font-medium shadow-sm"
             style={{ backgroundColor: customColors.primary }}
           >
             Bouton Principal
           </div>
-          <div
+          <div 
             className="px-4 py-2 rounded-lg text-white text-sm font-medium shadow-sm"
             style={{ backgroundColor: customColors.secondary }}
           >
             Bouton Secondaire
           </div>
-          <div
+          <div 
             className="px-4 py-2 rounded-lg text-sm font-medium shadow-sm"
-            style={{
+            style={{ 
               backgroundColor: customColors.accent,
               color: customColors.textColor || '#000000'
             }}
@@ -191,11 +191,6 @@ const ColorCustomizer: React.FC = () => {
             Bouton d'Action
           </div>
         </div>
-        {calculateContrast(customColors.accent, customColors.textColor || '#000000') < 4.5 && (
-          <p className="mt-3 text-xs text-red-600">
-            Contraste insuffisant entre la couleur d'accent et le texte.
-          </p>
-        )}
       </div>
     </div>
   );

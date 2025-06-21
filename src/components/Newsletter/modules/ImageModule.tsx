@@ -12,7 +12,7 @@ export const ImageModule: React.FC<ImageModuleProps> = ({ module }) => {
       {module.content ? (
         <img
           src={module.content}
-          alt="Newsletter image"
+          alt=""
           className="max-w-full h-auto rounded border"
         />
       ) : (
