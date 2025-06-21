@@ -21,7 +21,7 @@ export const createActions = (set: any, get: any) => ({
   setJackpotColors: (colors: any) => set({ jackpotColors: colors }),
   setQuizQuestions: (questions: any[]) => set({ quizQuestions: questions }),
 
-  // Nouvelles actions pour le mode avancé
+  // Actions pour le mode avancé
   setAdvancedMode: (enabled: boolean) => set({ advancedMode: enabled }),
   
   setWheelCustomization: (customization: Partial<QuickCampaignState['wheelCustomization']>) => 
@@ -42,6 +42,66 @@ export const createActions = (set: any, get: any) => ({
   setSegmentOverlays: (overlays: Partial<QuickCampaignState['segmentOverlays']>) => 
     set((state: QuickCampaignState) => ({
       segmentOverlays: { ...state.segmentOverlays, ...overlays }
+    })),
+
+  // Nouvelles actions pour les fonctionnalités avancées
+  setPricingPlan: (plan: string) => 
+    set((state: QuickCampaignState) => ({
+      monetization: { ...state.monetization, selectedPlan: plan }
+    })),
+
+  setLeadCapture: (enabled: boolean) => 
+    set((state: QuickCampaignState) => ({
+      monetization: { ...state.monetization, leadCapture: enabled }
+    })),
+
+  setAnalytics: (enabled: boolean) => 
+    set((state: QuickCampaignState) => ({
+      monetization: { ...state.monetization, analytics: enabled }
+    })),
+
+  setSocialSharing: (enabled: boolean) => 
+    set((state: QuickCampaignState) => ({
+      monetization: { ...state.monetization, socialSharing: enabled }
+    })),
+
+  setEmailIntegration: (config: any) => 
+    set((state: QuickCampaignState) => ({
+      monetization: { ...state.monetization, emailIntegration: config }
+    })),
+
+  toggleExtension: (extensionId: string) => 
+    set((state: QuickCampaignState) => {
+      const extensions = state.extensions || [];
+      const isEnabled = extensions.some(ext => ext.id === extensionId && ext.enabled);
+      
+      if (isEnabled) {
+        return {
+          extensions: extensions.map(ext => 
+            ext.id === extensionId ? { ...ext, enabled: false } : ext
+          )
+        };
+      } else {
+        const existingExtension = extensions.find(ext => ext.id === extensionId);
+        if (existingExtension) {
+          return {
+            extensions: extensions.map(ext => 
+              ext.id === extensionId ? { ...ext, enabled: true } : ext
+            )
+          };
+        } else {
+          return {
+            extensions: [...extensions, { id: extensionId, enabled: true, config: {} }]
+          };
+        }
+      }
+    }),
+
+  setExtensionConfig: (extensionId: string, config: any) => 
+    set((state: QuickCampaignState) => ({
+      extensions: (state.extensions || []).map(ext => 
+        ext.id === extensionId ? { ...ext, config: { ...ext.config, ...config } } : ext
+      )
     })),
 
   reset: () => {

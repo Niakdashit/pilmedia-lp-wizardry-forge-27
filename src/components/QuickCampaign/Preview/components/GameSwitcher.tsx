@@ -6,6 +6,8 @@ import QuizPreview from '../../../GameTypes/QuizPreview';
 import ScratchPreview from '../../../GameTypes/ScratchPreview';
 import DicePreview from '../../../GameTypes/DicePreview';
 import FormPreview from '../../../GameTypes/FormPreview';
+import AdvancedWheelRenderer from '../AdvancedWheelRenderer';
+import { useQuickCampaignStore } from '../../../../stores/quickCampaignStore';
 
 interface GameSwitcherProps {
   gameType: string;
@@ -48,6 +50,8 @@ const GameSwitcher: React.FC<GameSwitcherProps> = ({
   getPositionStyles,
   renderKey
 }) => {
+  const { advancedMode } = useQuickCampaignStore();
+
   const baseContainerStyle = {
     ...containerStyle,
     minHeight: '400px',
@@ -69,24 +73,45 @@ const GameSwitcher: React.FC<GameSwitcherProps> = ({
     height: '100%'
   };
 
+  // Calculer la taille du canvas pour les effets avancés
+  const getCanvasSize = () => {
+    switch (gameSize) {
+      case 'small': return 200;
+      case 'medium': return 300;
+      case 'large': return 400;
+      case 'xlarge': return 500;
+      default: return 300;
+    }
+  };
+
   switch (gameType) {
     case 'wheel':
+      const wheelContent = (
+        <WheelPreview
+          campaign={synchronizedCampaign}
+          config={mockCampaign.gameConfig?.wheel || {
+            mode: "instant_winner" as const,
+            winProbability: 0.1,
+            maxWinners: 10,
+            winnersCount: 0
+          }}
+          gameSize={gameSize}
+          gamePosition={gamePosition}
+          previewDevice={previewDevice}
+          key={renderKey}
+        />
+      );
+
       return (
         <div style={baseContainerStyle}>
           <div style={baseWrapperStyle}>
-            <WheelPreview
-              campaign={synchronizedCampaign}
-              config={mockCampaign.gameConfig?.wheel || {
-                mode: "instant_winner" as const,
-                winProbability: 0.1,
-                maxWinners: 10,
-                winnersCount: 0
-              }}
-              gameSize={gameSize}
-              gamePosition={gamePosition}
-              previewDevice={previewDevice}
-              key={renderKey}
-            />
+            {advancedMode ? (
+              <AdvancedWheelRenderer canvasSize={getCanvasSize()}>
+                {wheelContent}
+              </AdvancedWheelRenderer>
+            ) : (
+              wheelContent
+            )}
           </div>
         </div>
       );
