@@ -1,5 +1,7 @@
+
 import React from 'react';
 import { useQuickCampaignStore } from '../../../stores/quickCampaignStore';
+import { PrizeData } from '../../../stores/quickCampaign/types';
 
 const WheelConfiguration: React.FC = () => {
   const {
@@ -93,7 +95,7 @@ const WheelConfiguration: React.FC = () => {
 
             <div className="bg-gray-50 rounded-xl p-4">
               <label className="block text-sm font-medium text-gray-700 mb-3">Récompenses</label>
-              {segmentPrizes.slice(0, segmentCount).map((prize, idx) => (
+              {segmentPrizes.slice(0, segmentCount).map((prize: PrizeData, idx: number) => (
                 <div key={idx} className="flex items-center space-x-2 mb-2">
                   <input
                     type="text"

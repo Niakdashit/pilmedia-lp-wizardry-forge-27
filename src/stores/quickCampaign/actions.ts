@@ -1,4 +1,5 @@
-import { QuickCampaignState } from './types';
+
+import { QuickCampaignState, PrizeData } from './types';
 import { initialState } from './initialState';
 
 export const createActions = (set: any, get: any) => ({
@@ -42,7 +43,7 @@ export const createActions = (set: any, get: any) => ({
   setPointerImageUrl: (url: string | null) => set({ pointerImageUrl: url }),
   setBorderRadius: (radius: number) => set({ borderRadius: radius }),
 
-  setPrize: (index: number, prize: { label: string; image: string | null }) =>
+  setPrize: (index: number, prize: PrizeData) =>
     set((state: QuickCampaignState) => {
       const segmentPrizes = [...state.segmentPrizes];
       segmentPrizes[index] = prize;
@@ -92,7 +93,7 @@ export const createActions = (set: any, get: any) => ({
       config: {
         type: state.selectedGameType,
         roulette: {
-          segments: state.segmentPrizes.map((p, i) => ({
+          segments: state.segmentPrizes.map((p: PrizeData, i: number) => ({
             id: i + 1,
             label: p.label || `Segment ${i + 1}`,
             image: p.image || null
