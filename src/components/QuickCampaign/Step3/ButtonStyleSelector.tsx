@@ -9,87 +9,113 @@ const ButtonStyleSelector: React.FC = () => {
     {
       id: 'primary',
       name: 'Bouton Principal',
-      preview: {
+      preview: 'Aperçu',
+      style: {
         backgroundColor: customColors.primary,
         color: '#ffffff',
-        border: `2px solid ${customColors.primary}`,
-        borderRadius: '8px'
-      },
-      textColor: '#ffffff'
+        border: 'none',
+        borderRadius: '8px',
+        padding: '12px 24px',
+        fontWeight: '600',
+        cursor: 'pointer',
+        transition: 'all 0.2s ease'
+      }
     },
     {
       id: 'secondary',
       name: 'Bouton Secondaire',
-      preview: {
+      preview: 'Aperçu',
+      style: {
         backgroundColor: customColors.secondary,
         color: customColors.primary,
-        border: `2px solid ${customColors.secondary}`,
-        borderRadius: '8px'
-      },
-      textColor: customColors.primary
+        border: `2px solid ${customColors.primary}`,
+        borderRadius: '8px',
+        padding: '10px 22px',
+        fontWeight: '600',
+        cursor: 'pointer',
+        transition: 'all 0.2s ease'
+      }
     },
     {
       id: 'outline',
       name: 'Bouton Contour',
-      preview: {
+      preview: 'Aperçu',
+      style: {
         backgroundColor: 'transparent',
         color: customColors.primary,
         border: `2px solid ${customColors.primary}`,
-        borderRadius: '8px'
-      },
-      textColor: customColors.primary
+        borderRadius: '8px',
+        padding: '10px 22px',
+        fontWeight: '600',
+        cursor: 'pointer',
+        transition: 'all 0.2s ease'
+      }
     },
     {
       id: 'gradient',
       name: 'Bouton Dégradé',
-      preview: {
-        background: `linear-gradient(45deg, ${customColors.primary}, ${customColors.secondary})`,
+      preview: 'Aperçu',
+      style: {
+        background: `linear-gradient(135deg, ${customColors.primary}, ${customColors.secondary})`,
         color: '#ffffff',
         border: 'none',
-        borderRadius: '8px'
-      },
-      textColor: '#ffffff'
+        borderRadius: '8px',
+        padding: '12px 24px',
+        fontWeight: '600',
+        cursor: 'pointer',
+        transition: 'all 0.2s ease'
+      }
     }
   ];
 
-  const updateButtonStyle = (styleId: string) => {
-    const style = buttonStyles.find(s => s.id === styleId);
-    if (style) {
-      setCustomColors({
-        ...customColors,
-        buttonStyle: styleId,
-        textColor: style.textColor
-      });
-    }
+  const handleStyleSelect = (styleId: string) => {
+    setCustomColors({
+      ...customColors,
+      buttonStyle: styleId
+    });
   };
 
   return (
-    <div className="space-y-4">
-      <h3 className="text-lg font-semibold text-gray-800 flex items-center">
-        🎨 Style du bouton
-      </h3>
-      
-      <div className="grid grid-cols-2 gap-3">
+    <div className="space-y-6">
+      <div className="flex items-center space-x-2">
+        <div className="w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center">
+          <span className="text-white text-xs">🎨</span>
+        </div>
+        <h3 className="text-lg font-semibold text-gray-900">Style du bouton</h3>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {buttonStyles.map((style) => (
-          <button
+          <div
             key={style.id}
-            onClick={() => updateButtonStyle(style.id)}
-            className="p-3 border-2 rounded-xl hover:border-blue-400 transition-all duration-200 group"
-            style={{
-              borderColor: customColors.buttonStyle === style.id ? '#3B82F6' : '#E5E7EB'
-            }}
+            onClick={() => handleStyleSelect(style.id)}
+            className={`p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 hover:shadow-lg ${
+              customColors.buttonStyle === style.id
+                ? 'border-blue-500 bg-blue-50 shadow-md'
+                : 'border-gray-200 bg-white hover:border-gray-300'
+            }`}
           >
-            <div className="text-center space-y-2">
-              <div
-                className="w-full py-2 px-4 text-sm font-medium rounded-lg transition-transform group-hover:scale-105"
-                style={style.preview}
+            <div className="flex flex-col items-center space-y-3">
+              <button
+                style={style.style}
+                className="min-w-[120px] hover:opacity-90 active:scale-95"
+                onClick={(e) => e.preventDefault()}
               >
-                Aperçu
-              </div>
-              <p className="text-xs text-gray-600">{style.name}</p>
+                {style.preview}
+              </button>
+              <span className="text-sm font-medium text-gray-700">
+                {style.name}
+              </span>
             </div>
-          </button>
+          </div>
         ))}
+      </div>
+
+      <div className="bg-gray-50 rounded-lg p-4">
+        <p className="text-sm text-gray-600">
+          💡 Le style sélectionné sera appliqué à tous les boutons de votre campagne. 
+          Les couleurs s'adaptent automatiquement à votre palette de marque.
+        </p>
       </div>
     </div>
   );
