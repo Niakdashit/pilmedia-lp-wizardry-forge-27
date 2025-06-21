@@ -1,6 +1,5 @@
-
 import React, { useRef, useState } from 'react';
-import { Layers, Upload, X, Plus, Image, Sticker, Grid } from 'lucide-react';
+import { Layers, X, Image, Sticker, Grid } from 'lucide-react';
 import { useQuickCampaignStore } from '../../../stores/quickCampaignStore';
 
 const SegmentOverlayCustomization: React.FC = () => {
