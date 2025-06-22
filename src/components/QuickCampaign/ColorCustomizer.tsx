@@ -1,12 +1,15 @@
+
 import React from "react";
-import { Palette, RotateCcw, Sparkles } from "lucide-react";
+import { Palette, RotateCcw } from "lucide-react";
 import { useQuickCampaignStore } from "../../stores/quickCampaignStore";
 import { getAccessibleTextColor } from "../../utils/BrandStyleAnalyzer";
+
 const DEFAULT_COLORS = {
   primary: "#3B82F6",
   secondary: "#60A5FA",
   accent: "#93C5FD"
 };
+
 const PRESET_PALETTES = [{
   name: "Bleu",
   colors: {
@@ -50,6 +53,7 @@ const PRESET_PALETTES = [{
     accent: "#F9A8D4"
   }
 }];
+
 const ColorCustomizer: React.FC = () => {
   const {
     customColors,
@@ -58,6 +62,7 @@ const ColorCustomizer: React.FC = () => {
     setJackpotColors,
     selectedGameType
   } = useQuickCampaignStore();
+
   const handleColorChange = (field: "primary" | "secondary" | "accent", value: string) => {
     const newColors = {
       ...customColors,
@@ -77,13 +82,7 @@ const ColorCustomizer: React.FC = () => {
       });
     }
   };
-  const applyPresetPalette = (palette: typeof PRESET_PALETTES[0]) => {
-    const newColors = {
-      ...palette.colors,
-      textColor: getAccessibleTextColor(palette.colors.accent)
-    };
-    setCustomColors(newColors);
-  };
+
   const resetToDefault = () => {
     setCustomColors({
       primary: DEFAULT_COLORS.primary,
@@ -92,10 +91,8 @@ const ColorCustomizer: React.FC = () => {
       textColor: getAccessibleTextColor(DEFAULT_COLORS.accent)
     });
   };
-  return <div className="space-y-6">
-      {/* Palettes prédéfinies */}
-      
 
+  return <div className="space-y-6">
       {/* Couleurs personnalisées */}
       <div>
         <div className="flex items-center justify-between mb-4">
@@ -169,4 +166,5 @@ const ColorCustomizer: React.FC = () => {
       </div>
     </div>;
 };
+
 export default ColorCustomizer;
