@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Settings, Palette, Sparkles, Crown, ChevronDown, ChevronRight, Layout } from 'lucide-react';
-import WheelConfiguration from './WheelConfiguration';
+import GameConfigSelector from './GameConfigs/GameConfigSelector';
 import ButtonStyleSelector from './ButtonStyleSelector';
 import GamePositionSelector from './GamePositionSelector';
 import AdvancedModeToggle from './AdvancedModeToggle';
@@ -16,7 +16,7 @@ import ColorCustomizer from '../ColorCustomizer';
 const ConfigurationPanel: React.FC = () => {
   const { advancedMode } = useQuickCampaignStore();
   const [expandedSections, setExpandedSections] = useState<Set<string>>(
-    new Set(['basic', 'colors'])
+    new Set(['gameConfig', 'colors'])
   );
 
   const toggleSection = (sectionId: string) => {
@@ -33,12 +33,12 @@ const ConfigurationPanel: React.FC = () => {
 
   const configSections = [
     {
-      id: 'basic',
-      title: 'Configuration de base',
+      id: 'gameConfig',
+      title: 'Configuration du jeu',
       icon: Settings,
       color: 'bg-blue-500',
       bgColor: 'from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200',
-      component: <WheelConfiguration />
+      component: <GameConfigSelector />
     },
     {
       id: 'colors',
