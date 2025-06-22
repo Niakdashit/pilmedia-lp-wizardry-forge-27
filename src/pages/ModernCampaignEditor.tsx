@@ -4,7 +4,6 @@ import { useModernCampaignEditor } from '../hooks/useModernCampaignEditor';
 import { gameTypeLabels } from '../components/ModernEditor/constants/gameTypeLabels';
 import ModernEditorLayout from '../components/ModernEditor/ModernEditorLayout';
 import ModernPreviewModal from '../components/ModernEditor/ModernPreviewModal';
-import Sidebar from '../components/Sidebar/Sidebar';
 import { useAppContext } from '../context/AppContext';
 
 const ModernCampaignEditor: React.FC = () => {
@@ -32,33 +31,30 @@ const ModernCampaignEditor: React.FC = () => {
   }, [sidebarCollapsed, dispatch]);
 
   return (
-    <div className="min-h-screen bg-[#ebf4f7] flex w-full">
-      <Sidebar />
-      <div className="flex-1 min-w-0">
-        <ModernEditorLayout
-          campaign={campaign}
-          setCampaign={setCampaign}
-          activeTab={activeTab}
-          onTabChange={setActiveTab}
-          previewDevice={previewDevice}
-          onDeviceChange={setPreviewDevice}
-          onSave={() => handleSave(true)}
-          onPreview={() => setShowPreviewModal(true)}
-          isLoading={isLoading}
-          campaignType={campaignType}
-          isNewCampaign={isNewCampaign}
-          gameTypeLabels={gameTypeLabels}
-        />
+    <div className="flex-1 min-w-0">
+      <ModernEditorLayout
+        campaign={campaign}
+        setCampaign={setCampaign}
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        previewDevice={previewDevice}
+        onDeviceChange={setPreviewDevice}
+        onSave={() => handleSave(true)}
+        onPreview={() => setShowPreviewModal(true)}
+        isLoading={isLoading}
+        campaignType={campaignType}
+        isNewCampaign={isNewCampaign}
+        gameTypeLabels={gameTypeLabels}
+      />
 
-        {/* Preview Modal */}
-        {showPreviewModal && (
-          <ModernPreviewModal
-            isOpen={showPreviewModal}
-            onClose={() => setShowPreviewModal(false)}
-            campaign={campaign}
-          />
-        )}
-      </div>
+      {/* Preview Modal */}
+      {showPreviewModal && (
+        <ModernPreviewModal
+          isOpen={showPreviewModal}
+          onClose={() => setShowPreviewModal(false)}
+          campaign={campaign}
+        />
+      )}
     </div>
   );
 };
