@@ -2,6 +2,7 @@
 import React from 'react';
 import { ArrowLeft, Eye, Save, Share2, MoreHorizontal } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import PreviewDeviceButtons from './PreviewDeviceButtons';
 
 interface EditorHeaderProps {
   campaign: any;
@@ -9,6 +10,8 @@ interface EditorHeaderProps {
   onPreview: () => void;
   isLoading?: boolean;
   isNewCampaign?: boolean;
+  selectedDevice?: 'desktop' | 'tablet' | 'mobile';
+  onDeviceChange?: (device: 'desktop' | 'tablet' | 'mobile') => void;
 }
 
 const EditorHeader: React.FC<EditorHeaderProps> = ({
@@ -16,7 +19,9 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
   onSave,
   onPreview,
   isLoading = false,
-  isNewCampaign = false
+  isNewCampaign = false,
+  selectedDevice = 'desktop',
+  onDeviceChange = () => {}
 }) => {
   const navigate = useNavigate();
 
@@ -48,6 +53,14 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
                 </span>
               </div>
             </div>
+          </div>
+
+          {/* Center section - Device buttons */}
+          <div className="flex items-center space-x-4">
+            <PreviewDeviceButtons 
+              selectedDevice={selectedDevice}
+              onDeviceChange={onDeviceChange}
+            />
           </div>
 
           {/* Right section */}
