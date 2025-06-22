@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Sparkles } from 'lucide-react';
 import ModernEditorSidebar from './ModernEditorSidebar';
@@ -7,6 +7,7 @@ import ModernEditorPanel from './ModernEditorPanel';
 import AIAssistantSidebar from './AIAssistantSidebar';
 import EditorHeader from './components/EditorHeader';
 import PreviewCanvas from './components/PreviewCanvas';
+import { useAppContext } from '../../context/AppContext';
 
 interface ModernEditorLayoutProps {
   campaign: any;
@@ -38,6 +39,12 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
 }) => {
   const [showAIAssistant, setShowAIAssistant] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const { dispatch } = useAppContext();
+
+  // Force collapse the main sidebar when entering this page
+  useEffect(() => {
+    dispatch({ type: 'SET_SIDEBAR_COLLAPSED', payload: true });
+  }, [dispatch]);
 
   const handleAIGenerate = async () => {
     setIsGenerating(true);
@@ -47,7 +54,7 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#f8fafc] via-[#ebf4f7] to-[#f1f5f9] flex flex-col">
-      {/* Header - aligné avec le top */}
+      {/* Header */}
       <EditorHeader
         campaign={campaign}
         onSave={onSave}
@@ -58,9 +65,9 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
         onDeviceChange={onDeviceChange}
       />
 
-      {/* Main Content - flex layout sans gap pour alignement parfait */}
+      {/* Main Content */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar - aligné directement avec le header */}
+        {/* Editor Sidebar - Fixed width */}
         <div className="w-80 bg-white/95 backdrop-blur-sm border-r border-gray-200/50 shadow-xl h-full overflow-y-auto">
           <div className="flex h-full">
             {/* Navigation tabs */}
@@ -83,7 +90,7 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
           </div>
         </div>
 
-        {/* Main Content Area - Preview Canvas */}
+        {/* Main Content Area - Preview Canvas with fixed dimensions */}
         <div className="flex-1 flex flex-col">
           {/* AI Assistant Toggle */}
           <div className="p-4 bg-white/50 border-b border-gray-200/50">
@@ -98,12 +105,26 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
             </div>
           </div>
 
-          {/* Preview Area */}
-          <div className="flex-1 relative">
-            <PreviewCanvas
-              campaign={campaign}
-              selectedDevice={previewDevice}
-            />
+          {/* Preview Area with fixed dimensions */}
+          <div className="flex-1 relative overflow-hidden">
+            <div className="w-full h-full flex items-center justify-center p-8 bg-gray-50">
+              <div 
+                className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden"
+                style={{ 
+                  width: '1200px', 
+                  height: '800px',
+                  minWidth: '1200px',
+                  minHeight: '800px',
+                  maxWidth: '1200px',
+                  maxHeight: '800px'
+                }}
+              >
+                <PreviewCanvas
+                  campaign={campaign}
+                  selectedDevice={previewDevice}
+                />
+              </div>
+            </div>
 
             {/* AI Assistant Sidebar */}
             <AnimatePresence>
