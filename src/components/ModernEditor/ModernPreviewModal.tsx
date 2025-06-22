@@ -27,7 +27,7 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
       case 'tablet':
         return { width: '768px', height: '1024px' };
       default:
-        return { width: '100%', maxWidth: '1200px', height: '100%', maxHeight: '800px' };
+        return { width: '1200px', height: '800px' };
     }
   };
 
@@ -102,7 +102,6 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
                 className={`p-2 rounded-md transition-colors ${
                   device === 'desktop' ? 'bg-white shadow-sm' : 'hover:bg-gray-200'
                 }`}
-                aria-label="Desktop"
               >
                 <Monitor className="w-4 h-4" />
               </button>
@@ -111,7 +110,6 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
                 className={`p-2 rounded-md transition-colors ${
                   device === 'tablet' ? 'bg-white shadow-sm' : 'hover:bg-gray-200'
                 }`}
-                aria-label="Tablette"
               >
                 <Tablet className="w-4 h-4" />
               </button>
@@ -120,7 +118,6 @@ const ModernPreviewModal: React.FC<ModernPreviewModalProps> = ({
                 className={`p-2 rounded-md transition-colors ${
                   device === 'mobile' ? 'bg-white shadow-sm' : 'hover:bg-gray-200'
                 }`}
-                aria-label="Mobile"
               >
                 <Smartphone className="w-4 h-4" />
               </button>

@@ -16,36 +16,33 @@ const PreviewDeviceButtons: React.FC<PreviewDeviceButtonsProps> = ({
       <button
         onClick={() => onDeviceChange('desktop')}
         className={`p-2 rounded-md transition-colors ${
-          selectedDevice === 'desktop'
-            ? 'bg-white shadow-sm text-[#841b60]'
+          selectedDevice === 'desktop' 
+            ? 'bg-white shadow-sm text-[#841b60]' 
             : 'text-gray-600 hover:text-gray-900'
         }`}
         title="Desktop"
-        aria-label="Desktop"
       >
         <Monitor className="w-4 h-4" />
       </button>
       <button
         onClick={() => onDeviceChange('tablet')}
         className={`p-2 rounded-md transition-colors ${
-          selectedDevice === 'tablet'
-            ? 'bg-white shadow-sm text-[#841b60]'
+          selectedDevice === 'tablet' 
+            ? 'bg-white shadow-sm text-[#841b60]' 
             : 'text-gray-600 hover:text-gray-900'
         }`}
         title="Tablette"
-        aria-label="Tablette"
       >
         <Tablet className="w-4 h-4" />
       </button>
       <button
         onClick={() => onDeviceChange('mobile')}
         className={`p-2 rounded-md transition-colors ${
-          selectedDevice === 'mobile'
-            ? 'bg-white shadow-sm text-[#841b60]'
+          selectedDevice === 'mobile' 
+            ? 'bg-white shadow-sm text-[#841b60]' 
             : 'text-gray-600 hover:text-gray-900'
         }`}
         title="Mobile"
-        aria-label="Mobile"
       >
         <Smartphone className="w-4 h-4" />
       </button>
