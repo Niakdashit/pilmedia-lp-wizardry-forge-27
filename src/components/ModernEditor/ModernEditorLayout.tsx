@@ -58,9 +58,9 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
       />
 
       {/* Main Content */}
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden flex-col lg:flex-row">
         {/* Editor Sidebar - largeur augmentée de 15% supplémentaire */}
-        <div className="bg-white/95 backdrop-blur-sm border-r border-gray-200/50 shadow-sm flex-shrink-0 px-0 mx-[2px]" style={{ width: '310px' }}>
+        <div className="bg-white/95 backdrop-blur-sm border-r border-gray-200/50 shadow-sm flex-shrink-0 px-0 mx-[2px] w-full sm:w-64 md:w-72 lg:w-80 overflow-y-auto">
           <div className="flex h-full">
             {/* Navigation tabs - alignés à gauche */}
             <div className="w-16 border-r border-gray-200/50 flex-shrink-0">
@@ -94,13 +94,9 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
           </div>
 
           {/* Zone de prévisualisation - dimensions absolues fixes */}
-          <div className="flex-1 flex items-center justify-center p-4 overflow-hidden">
-            <div 
-              className="bg-white rounded-xl shadow-lg border border-gray-200/50 overflow-hidden flex-shrink-0"
-              style={{
-                width: '1200px',
-                height: '800px'
-              }}
+          <div className="flex-1 flex items-center justify-center p-4 overflow-auto">
+            <div
+              className="bg-white rounded-xl shadow-lg border border-gray-200/50 overflow-hidden flex-shrink-0 w-full max-w-[1200px] h-full max-h-[80vh]"
             >
               <GameCanvasPreview
                 campaign={campaign}
