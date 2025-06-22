@@ -8,14 +8,14 @@ interface EditorLayoutProps {
 }
 
 const EditorLayout: React.FC<EditorLayoutProps> = ({ children }) => {
-  const { sidebarCollapsed, setSidebarCollapsed } = useAppContext();
+  const { sidebarCollapsed, dispatch } = useAppContext();
   
   // Force sidebar to be collapsed by default in editor
   React.useEffect(() => {
     if (!sidebarCollapsed) {
-      setSidebarCollapsed(true);
+      dispatch({ type: 'SET_SIDEBAR_COLLAPSED', payload: true });
     }
-  }, [sidebarCollapsed, setSidebarCollapsed]);
+  }, [sidebarCollapsed, dispatch]);
 
   return (
     <div className="min-h-screen bg-[#ebf4f7] flex w-full">
