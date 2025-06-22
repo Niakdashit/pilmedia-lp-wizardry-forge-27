@@ -35,6 +35,10 @@ export default {
           800: '#075985',
           900: '#0c4a6e',
           950: '#082f49',
+        },
+        brand: {
+          DEFAULT: '#3b82f6',
+          dark: '#1d4ed8',
         }
       },
       backgroundImage: {
