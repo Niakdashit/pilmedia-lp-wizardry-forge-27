@@ -32,8 +32,6 @@ interface GameSwitcherProps {
   gamePosition: 'top' | 'center' | 'bottom' | 'left' | 'right';
   previewDevice: 'desktop' | 'tablet' | 'mobile';
   containerStyle: React.CSSProperties;
-  wrapperStyle: React.CSSProperties;
-  getPositionStyles: () => React.CSSProperties;
   renderKey: string;
 }
 
@@ -47,8 +45,6 @@ const GameSwitcher: React.FC<GameSwitcherProps> = ({
   gamePosition,
   previewDevice,
   containerStyle,
-  wrapperStyle,
-  getPositionStyles,
   renderKey
 }) => {
   const { advancedMode } = useQuickCampaignStore();
