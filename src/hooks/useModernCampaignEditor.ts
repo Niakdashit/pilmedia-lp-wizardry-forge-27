@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams, useSearchParams, useNavigate } from 'react-router-dom';
-import { CampaignType, getDefaultGameConfig } from '../utils/campaignTypes';
+import { CampaignType } from '../utils/campaignTypes';
 import { useCampaigns } from './useCampaigns';
 import { getDefaultCampaign } from '../components/ModernEditor/utils/defaultCampaign';
 
