@@ -1,7 +1,6 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Sparkles } from 'lucide-react';
 import ModernEditorSidebar from './ModernEditorSidebar';
 import ModernEditorPanel from './ModernEditorPanel';
 import AIAssistantSidebar from './AIAssistantSidebar';
@@ -36,7 +35,7 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
   isNewCampaign,
   campaignType
 }) => {
-  const [showAIAssistant, setShowAIAssistant] = useState(false);
+  const [showAIAssistant] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
 
   const handleAIGenerate = async () => {
@@ -91,13 +90,6 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
               <h2 className="text-lg font-semibold text-gray-800">
                 Aperçu en temps réel
               </h2>
-              <button
-                onClick={() => setShowAIAssistant(!showAIAssistant)}
-                className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-[#841b60] to-[#6d164f] text-white rounded-full hover:shadow-lg transition-all duration-300 hover:scale-105"
-              >
-                <Sparkles className="w-4 h-4" />
-                <span>Assistant IA</span>
-              </button>
             </div>
           </div>
 
