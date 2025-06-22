@@ -96,7 +96,6 @@ const QuizPreview: React.FC<QuizPreviewProps> = ({
   };
 
   const containerStyle = {
-    width: '100%',
     backgroundColor: synchronizedCampaign.design.containerBackgroundColor || '#ffffff',
     borderColor: synchronizedCampaign.design.borderColor || '#e5e7eb',
     borderRadius: synchronizedCampaign.design.borderRadius || '16px',

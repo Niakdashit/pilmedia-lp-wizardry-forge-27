@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { useParticipations } from '../../../hooks/useParticipations';
 import { useGameSize } from '../../../hooks/useGameSize';
 import { useWheelSpin } from '../../../hooks/useWheelSpin';
-import { DEFAULT_FIELDS, getWheelSegments } from '../../../utils/wheelConfig';
+import { DEFAULT_FIELDS, getWheelSegments, getWheelDimensions } from '../../../utils/wheelConfig';
 
 interface InstantWinConfig {
   mode: "instant_winner";
@@ -22,39 +22,6 @@ interface UseWheelPreviewLogicProps {
   gamePosition?: 'top' | 'center' | 'bottom' | 'left' | 'right';
   previewDevice?: 'desktop' | 'tablet' | 'mobile';
 }
-
-const getWheelDimensions = (
-  gameDimensions: { width: number; height: number },
-  gamePosition: string,
-  shouldCropWheel: boolean
-) => {
-  const baseSize = Math.min(gameDimensions.width, gameDimensions.height);
-  const canvasSize = Math.max(200, Math.min(400, baseSize - 40));
-  
-  let containerWidth = canvasSize + 40;
-  let containerHeight = canvasSize + 40;
-  
-  if (shouldCropWheel) {
-    switch (gamePosition) {
-      case 'left':
-      case 'right':
-        containerWidth = Math.floor(canvasSize * 0.7);
-        break;
-      case 'bottom':
-        containerHeight = Math.floor(canvasSize * 0.7);
-        break;
-    }
-  }
-  
-  const pointerSize = Math.max(12, Math.min(20, canvasSize / 20));
-  
-  return {
-    canvasSize,
-    containerWidth,
-    containerHeight,
-    pointerSize
-  };
-};
 
 export const useWheelPreviewLogic = ({
   campaign,

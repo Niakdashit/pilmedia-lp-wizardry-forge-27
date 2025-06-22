@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { DEVICE_CONSTRAINTS } from './utils/previewConstraints';
 
 interface DeviceFrameProps {
   device: 'desktop' | 'tablet' | 'mobile';
@@ -9,88 +8,54 @@ interface DeviceFrameProps {
 
 const DeviceFrame: React.FC<DeviceFrameProps> = ({ device, children }) => {
   if (device === 'desktop') {
+    return <>{children}</>;
+  }
+
+  if (device === 'tablet') {
     return (
-      <div className="w-full h-full flex items-center justify-center overflow-hidden">
-        {children}
+      <div className="relative">
+        {/* Tablet Frame */}
+        <div className="bg-gray-800 rounded-3xl p-6 shadow-2xl">
+          <div className="bg-black rounded-2xl p-2">
+            <div className="bg-white rounded-xl overflow-hidden relative" style={{ width: '768px', height: '1024px' }}>
+              {/* Home indicator for tablet */}
+              <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-gray-400 rounded-full"></div>
+              {children}
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
 
-  const { maxWidth, maxHeight, aspectRatio } = DEVICE_CONSTRAINTS[device];
-
-  const getDeviceStyles = () => {
-    if (device === 'mobile') {
-      return {
-        frame: "bg-gray-900 rounded-[2rem] p-2 shadow-2xl",
-        inner: "bg-black rounded-[1.5rem] p-1",
-        screen: "bg-white rounded-[1.25rem] overflow-hidden relative"
-      };
-    }
-    
-    return {
-      frame: "bg-gray-800 rounded-xl p-3 shadow-2xl",
-      inner: "bg-black rounded-lg p-2",
-      screen: "bg-white rounded-md overflow-hidden relative"
-    };
-  };
-
-  const styles = getDeviceStyles();
-  
-  // Calculer les dimensions avec un padding pour le frame
-  const framePadding = device === 'mobile' ? 32 : 24;
-  const frameWidth = Math.min(maxWidth + framePadding, window.innerWidth * 0.8);
-  const frameHeight = Math.min(maxHeight + framePadding, window.innerHeight * 0.8);
-
+  // Mobile frame
   return (
-    <div 
-      className="flex items-center justify-center w-full h-full overflow-hidden"
-      style={{ padding: '20px' }}
-    >
-      <div
-        className={`${styles.frame} flex items-center justify-center overflow-hidden`}
-        style={{
-          width: frameWidth,
-          height: frameHeight,
-          maxWidth: '100%',
-          maxHeight: '100%',
-          aspectRatio: aspectRatio?.toString(),
-        }}
-      >
-        <div className={`${styles.inner} flex items-center justify-center w-full h-full overflow-hidden`}>
-          <div className={`${styles.screen} w-full h-full flex flex-col overflow-hidden`}>
-            {/* Éléments spécifiques au device */}
-            {device === 'mobile' && (
-              <>
-                {/* Notch */}
-                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-24 h-4 bg-black rounded-b-lg z-20"></div>
-                
-                {/* Status bar */}
-                <div className="absolute top-1 left-2 right-2 flex justify-between items-center text-xs font-medium z-20 text-black">
-                  <span>9:41</span>
-                  <div className="flex items-center space-x-1">
-                    <div className="w-4 h-2 border border-black rounded-sm">
-                      <div className="w-3 h-1 bg-green-500 rounded-sm"></div>
-                    </div>
-                  </div>
+    <div className="relative">
+      {/* Mobile Frame */}
+      <div className="bg-gray-900 rounded-[3rem] p-2 shadow-2xl">
+        <div className="bg-black rounded-[2.5rem] p-1">
+          <div className="bg-white rounded-[2rem] overflow-hidden relative" style={{ width: '375px', height: '812px' }}>
+            {/* Notch */}
+            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-32 h-6 bg-black rounded-b-2xl z-10"></div>
+            
+            {/* Status bar icons */}
+            <div className="absolute top-2 left-4 right-4 flex justify-between items-center text-xs font-medium z-10">
+              <span className="text-black">9:41</span>
+              <div className="flex items-center space-x-1">
+                <div className="w-4 h-2 border border-black rounded-sm">
+                  <div className="w-3 h-1 bg-black rounded-sm"></div>
                 </div>
-                
-                {/* Home indicator */}
-                <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-20 h-1 bg-gray-400 rounded-full z-20"></div>
-              </>
-            )}
-
-            {/* Contenu principal avec overflow strict */}
-            <div className="flex-1 w-full h-full overflow-hidden relative">
-              <div 
-                className="w-full h-full overflow-hidden"
-                style={{
-                  maxWidth: maxWidth,
-                  maxHeight: maxHeight,
-                }}
-              >
-                {children}
+                <div className="w-6 h-3 border border-black rounded-sm relative">
+                  <div className="w-4 h-2 bg-green-500 rounded-sm absolute top-0.5 left-0.5"></div>
+                  <div className="w-1 h-1 bg-black rounded-sm absolute top-1 -right-0.5"></div>
+                </div>
               </div>
             </div>
+            
+            {/* Home indicator */}
+            <div className="absolute bottom-2 left-1/2 transform -translate-x-1/2 w-32 h-1 bg-gray-400 rounded-full z-10"></div>
+            
+            {children}
           </div>
         </div>
       </div>

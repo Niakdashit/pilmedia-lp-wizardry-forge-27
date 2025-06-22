@@ -12,15 +12,6 @@ serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
-  if (!openAIApiKey) {
-    return new Response(
-      JSON.stringify({ error: 'Missing OPENAI_API_KEY' }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      },
-    );
-  }
   try {
     const body = await req.json();
 

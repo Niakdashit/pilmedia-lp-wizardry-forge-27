@@ -6,9 +6,6 @@ import QuizPreview from '../../../GameTypes/QuizPreview';
 import ScratchPreview from '../../../GameTypes/ScratchPreview';
 import DicePreview from '../../../GameTypes/DicePreview';
 import FormPreview from '../../../GameTypes/FormPreview';
-import AdvancedWheelRenderer from '../AdvancedWheelRenderer';
-import { useQuickCampaignStore } from '../../../../stores/quickCampaignStore';
-import { calculateConstrainedSize } from '../utils/previewConstraints';
 
 interface GameSwitcherProps {
   gameType: string;
@@ -32,6 +29,8 @@ interface GameSwitcherProps {
   gamePosition: 'top' | 'center' | 'bottom' | 'left' | 'right';
   previewDevice: 'desktop' | 'tablet' | 'mobile';
   containerStyle: React.CSSProperties;
+  wrapperStyle: React.CSSProperties;
+  getPositionStyles: () => React.CSSProperties;
   renderKey: string;
 }
 
@@ -45,76 +44,49 @@ const GameSwitcher: React.FC<GameSwitcherProps> = ({
   gamePosition,
   previewDevice,
   containerStyle,
+  wrapperStyle,
+  getPositionStyles,
   renderKey
 }) => {
-  const { advancedMode } = useQuickCampaignStore();
-
-  // Calculer les dimensions contraintes pour le conteneur
-  const containerWidth = containerStyle.maxWidth ? 
-    parseInt(containerStyle.maxWidth.toString()) : 800;
-  const containerHeight = containerStyle.maxHeight ? 
-    parseInt(containerStyle.maxHeight.toString()) : 600;
-
-  const gameConstraints = calculateConstrainedSize(
-    containerWidth,
-    containerHeight,
-    gameType,
-    40
-  );
-
-  const baseContainerStyle: React.CSSProperties = {
+  const baseContainerStyle = {
+    ...containerStyle,
+    minHeight: '400px',
+    padding: '20px',
+    boxSizing: 'border-box' as const,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    overflow: 'hidden',
-    width: '100%',
-    height: '100%',
-    maxWidth: `${gameConstraints.width}px`,
-    maxHeight: `${gameConstraints.height}px`,
-    padding: '20px',
-    boxSizing: 'border-box',
-    position: 'relative',
+    overflow: 'hidden'
   };
 
-  const gameContentStyle: React.CSSProperties = {
+  const baseWrapperStyle = {
+    ...wrapperStyle,
+    ...getPositionStyles(),
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
-    height: '100%',
-    maxWidth: `${gameConstraints.width - 40}px`,
-    maxHeight: `${gameConstraints.height - 40}px`,
-    overflow: 'hidden',
+    height: '100%'
   };
 
   switch (gameType) {
     case 'wheel':
-      const wheelContent = (
-        <WheelPreview
-          campaign={synchronizedCampaign}
-          config={mockCampaign.gameConfig?.wheel || {
-            mode: "instant_winner" as const,
-            winProbability: 0.1,
-            maxWinners: 10,
-            winnersCount: 0
-          }}
-          gameSize={gameSize}
-          gamePosition={gamePosition}
-          previewDevice={previewDevice}
-          key={renderKey}
-        />
-      );
-
       return (
         <div style={baseContainerStyle}>
-          <div style={gameContentStyle}>
-            {advancedMode ? (
-              <AdvancedWheelRenderer>
-                {wheelContent}
-              </AdvancedWheelRenderer>
-            ) : (
-              wheelContent
-            )}
+          <div style={baseWrapperStyle}>
+            <WheelPreview
+              campaign={synchronizedCampaign}
+              config={mockCampaign.gameConfig?.wheel || {
+                mode: "instant_winner" as const,
+                winProbability: 0.1,
+                maxWinners: 10,
+                winnersCount: 0
+              }}
+              gameSize={gameSize}
+              gamePosition={gamePosition}
+              previewDevice={previewDevice}
+              key={renderKey}
+            />
           </div>
         </div>
       );
@@ -122,7 +94,7 @@ const GameSwitcher: React.FC<GameSwitcherProps> = ({
     case 'jackpot':
       return (
         <div style={baseContainerStyle}>
-          <div style={gameContentStyle}>
+          <div style={baseWrapperStyle}>
             <Jackpot
               isPreview={true}
               instantWinConfig={mockCampaign.gameConfig?.jackpot?.instantWin || {
@@ -131,7 +103,7 @@ const GameSwitcher: React.FC<GameSwitcherProps> = ({
                 maxWinners: 10,
                 winnersCount: 0
               }}
-              buttonLabel={mockCampaign.gameConfig?.jackpot?.buttonLabel || 'Lancer le Jackpot'}
+              buttonLabel={mockCampaign.gameConfig?.jackpot?.buttonLabel || mockCampaign.buttonConfig?.text || 'Lancer le Jackpot'}
               buttonColor={finalColors.primary}
               backgroundImage={mockCampaign.gameConfig?.jackpot?.backgroundImage}
               containerBackgroundColor={jackpotColors.containerBackgroundColor}
@@ -146,39 +118,10 @@ const GameSwitcher: React.FC<GameSwitcherProps> = ({
         </div>
       );
 
-    case 'quiz':
-      return (
-        <div style={baseContainerStyle}>
-          <div style={{
-            ...gameContentStyle,
-            maxWidth: `${Math.min(gameConstraints.width - 40, 600)}px`,
-          }}>
-            <QuizPreview
-              config={mockCampaign.gameConfig?.quiz || {
-                questions: [
-                  {
-                    id: 1,
-                    text: 'Question exemple',
-                    type: 'multiple',
-                    options: [
-                      { id: 1, text: 'Option A', isCorrect: false },
-                      { id: 2, text: 'Option B', isCorrect: true }
-                    ]
-                  }
-                ]
-              }}
-              design={synchronizedCampaign.design}
-              useCustomLayout={true}
-              key={renderKey}
-            />
-          </div>
-        </div>
-      );
-
     case 'scratch':
       return (
         <div style={baseContainerStyle}>
-          <div style={gameContentStyle}>
+          <div style={baseWrapperStyle}>
             <ScratchPreview
               config={mockCampaign.gameConfig?.scratch || {}}
               autoStart
@@ -190,7 +133,7 @@ const GameSwitcher: React.FC<GameSwitcherProps> = ({
     case 'dice':
       return (
         <div style={baseContainerStyle}>
-          <div style={gameContentStyle}>
+          <div style={baseWrapperStyle}>
             <DicePreview
               config={mockCampaign.gameConfig?.dice || {}}
             />
@@ -198,10 +141,31 @@ const GameSwitcher: React.FC<GameSwitcherProps> = ({
         </div>
       );
 
+    case 'quiz':
+      return (
+        <div style={baseContainerStyle}>
+          <div style={baseWrapperStyle}>
+            <div style={{ 
+              width: '100%', 
+              maxWidth: '800px', 
+              margin: '0 auto',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <QuizPreview
+                config={mockCampaign.gameConfig?.quiz || {}}
+                design={synchronizedCampaign.design}
+              />
+            </div>
+          </div>
+        </div>
+      );
+
     case 'form':
       return (
         <div style={baseContainerStyle}>
-          <div style={gameContentStyle}>
+          <div style={baseWrapperStyle}>
             <FormPreview
               campaign={synchronizedCampaign}
               gameSize={gameSize}
@@ -213,8 +177,8 @@ const GameSwitcher: React.FC<GameSwitcherProps> = ({
     default:
       return (
         <div style={baseContainerStyle}>
-          <div style={gameContentStyle}>
-            <div className="text-center text-gray-500 p-4">
+          <div style={baseWrapperStyle}>
+            <div className="text-center text-gray-500">
               <p>Type de jeu non supporté: {gameType}</p>
             </div>
           </div>
