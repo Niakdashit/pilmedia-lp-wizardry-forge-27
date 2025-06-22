@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { DndContext, DragEndEvent, DragOverlay } from '@dnd-kit/core';
 import { Eye, Send, Save } from 'lucide-react';
@@ -115,4 +114,5 @@ const Newsletter: React.FC = () => {
     </div>
   );
 };
+
 export default Newsletter;

@@ -1,18 +1,16 @@
+
 import React, { useEffect } from 'react';
 import Sidebar from '../Sidebar/Sidebar';
 import { useAppContext } from '../../context/AppContext';
 import { Menu } from 'lucide-react';
 import logo from '@/assets/logo.png';
+
 interface LayoutProps {
   children: React.ReactNode;
 }
-const Layout: React.FC<LayoutProps> = ({
-  children
-}) => {
-  const {
-    sidebarCollapsed,
-    toggleSidebar
-  } = useAppContext();
+
+const Layout: React.FC<LayoutProps> = ({ children }) => {
+  const { sidebarCollapsed, toggleSidebar } = useAppContext();
 
   // Empêche le scroll du background seulement quand la sidebar est ouverte sur mobile
   useEffect(() => {
@@ -31,26 +29,34 @@ const Layout: React.FC<LayoutProps> = ({
         document.body.classList.toggle('overflow-hidden', isMobile && !sidebarCollapsed);
       }
     };
+
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [sidebarCollapsed]);
-  return <div className="flex min-h-screen bg-[#ebf4f7] overflow-hidden">
+
+  return (
+    <div className="flex min-h-screen bg-[#F8FAFC] overflow-hidden">
       <Sidebar />
       {/* Overlay mobile/tablette pour cliquer et fermer la sidebar */}
-      <div onClick={toggleSidebar} className={`md:hidden fixed inset-0 bg-black/30 transition-opacity z-30 ${sidebarCollapsed ? 'pointer-events-none opacity-0' : 'opacity-100'}`} />
+      <div
+        onClick={toggleSidebar}
+        className={`md:hidden fixed inset-0 bg-black/10 transition-opacity z-30 ${sidebarCollapsed ? 'pointer-events-none opacity-0' : 'opacity-100'}`}
+      />
       <div className="flex-1 flex flex-col min-w-0">
-        <header className="md:hidden flex items-center justify-between bg-white border-b border-gray-200 p-4">
-          <button onClick={toggleSidebar} className="text-gray-500">
+        <header className="md:hidden flex items-center justify-between bg-white border-b border-[#EDF3F7] p-4 shadow-sm">
+          <button onClick={toggleSidebar} className="text-[#64748B]">
             <Menu className="w-6 h-6" />
           </button>
           <img src={logo} alt="Leadya Logo" className="h-8 w-auto" />
         </header>
         <main className="flex-1 overflow-y-auto w-full">
-          <div className="p-8 w-full py-0">
+          <div className="p-8 w-full">
             {children}
           </div>
         </main>
       </div>
-    </div>;
+    </div>
+  );
 };
+
 export default Layout;

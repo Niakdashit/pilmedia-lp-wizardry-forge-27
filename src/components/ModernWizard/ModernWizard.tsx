@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { CampaignType } from '../../utils/campaignTypes';
@@ -5,8 +6,9 @@ import GameSelectionStep from './steps/GameSelectionStep';
 import BrandAssetsStep from './steps/BrandAssetsStep';
 import GenerationStep from './steps/GenerationStep';
 import PreviewStep from './steps/PreviewStep';
+import AdvancedStep from './steps/AdvancedStep';
 import PublishStep from './steps/PublishStep';
-import { Settings, Upload, Wand2, Eye, Sparkles } from 'lucide-react';
+
 export interface WizardData {
   selectedGame?: CampaignType;
   logo?: string;
@@ -16,52 +18,43 @@ export interface WizardData {
   generatedCampaign?: any;
   customizations?: any;
 }
+
 const ModernWizard: React.FC = () => {
   const [searchParams] = useSearchParams();
   const [currentStep, setCurrentStep] = useState(0);
   const [wizardData, setWizardData] = useState<WizardData>({
     selectedGame: searchParams.get('type') as CampaignType || undefined
   });
-  const steps = [{
-    id: 'mechanic',
-    label: 'Mécanique',
-    icon: Settings
-  }, {
-    id: 'content',
-    label: 'Contenus',
-    icon: Upload
-  }, {
-    id: 'generation',
-    label: 'Génération',
-    icon: Wand2
-  }, {
-    id: 'preview',
-    label: 'Aperçu',
-    icon: Eye
-  }, {
-    id: 'publish',
-    label: 'Publication',
-    icon: Sparkles
-  }];
+
+  const steps = [
+    'game-selection',
+    'brand-assets',
+    'generation',
+    'preview',
+    'advanced',
+    'publish'
+  ];
+
   const updateWizardData = (data: Partial<WizardData>) => {
-    setWizardData(prev => ({
-      ...prev,
-      ...data
-    }));
+    setWizardData(prev => ({ ...prev, ...data }));
   };
+
   const nextStep = () => {
     if (currentStep < steps.length - 1) {
       setCurrentStep(currentStep + 1);
     }
   };
+
   const prevStep = () => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
     }
   };
+
   const goToStep = (stepIndex: number) => {
     setCurrentStep(stepIndex);
   };
+
   const renderCurrentStep = () => {
     const commonProps = {
       wizardData,
@@ -72,58 +65,44 @@ const ModernWizard: React.FC = () => {
       currentStep,
       totalSteps: steps.length
     };
-    switch (steps[currentStep].id) {
-      case 'mechanic':
+
+    switch (steps[currentStep]) {
+      case 'game-selection':
         return <GameSelectionStep {...commonProps} />;
-      case 'content':
+      case 'brand-assets':
         return <BrandAssetsStep {...commonProps} />;
       case 'generation':
         return <GenerationStep {...commonProps} />;
       case 'preview':
         return <PreviewStep {...commonProps} />;
+      case 'advanced':
+        return <AdvancedStep {...commonProps} />;
       case 'publish':
         return <PublishStep {...commonProps} />;
       default:
         return <GameSelectionStep {...commonProps} />;
     }
   };
-  return <div className="min-h-screen">
-      <div className="max-w-7xl mx-auto py-8 px-0">
-        {/* Page Header */}
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-[#141e29] mb-3">Créer une nouvelle campagne</h1>
-          <p className="text-lg text-gray-600 max-w-2xl">
-            Configurez votre expérience interactive en quelques étapes simples
-          </p>
-        </div>
-        
-        {/* Stepper */}
-        <div className="bg-white/70 backdrop-blur-sm rounded-2xl p-6 shadow-sm border border-gray-100/50 mb-8">
-          <div className="flex items-center justify-between max-w-4xl">
-            {steps.map((step, index) => {
-            const Icon = step.icon;
-            const isActive = currentStep === index;
-            const isCompleted = currentStep > index;
-            const isAccessible = index <= currentStep + 1;
-            return <React.Fragment key={step.id}>
-                  <button onClick={() => isAccessible && goToStep(index)} disabled={!isAccessible} className={`flex flex-col items-center space-y-2 px-4 py-3 rounded-xl transition-all duration-200 ${isActive ? 'bg-[#951b6d] text-white shadow-md' : isCompleted ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100' : isAccessible ? 'bg-gray-50 text-gray-600 hover:bg-gray-100' : 'bg-gray-25 text-gray-400 cursor-not-allowed'}`}>
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${isActive ? 'bg-white/20' : isCompleted ? 'bg-emerald-100' : 'bg-white'}`}>
-                      <Icon className="w-4 h-4" />
-                    </div>
-                    <span className="text-xs font-medium">{step.label}</span>
-                  </button>
-                  
-                  {index < steps.length - 1 && <div className={`w-12 h-px ${currentStep > index ? 'bg-emerald-300' : 'bg-gray-200'}`} />}
-                </React.Fragment>;
-          })}
-          </div>
-        </div>
 
-        {/* Main Content */}
-        <div className="space-y-6">
-          {renderCurrentStep()}
-        </div>
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-[#161B33] to-[#24123B] relative overflow-hidden">
+      {/* Enhanced animated background */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute top-20 left-10 w-40 h-40 bg-blue-400/25 rounded-full blur-3xl animate-pulse" style={{animationDuration: '2.5s'}}></div>
+        <div className="absolute top-40 right-20 w-32 h-32 bg-[#841b60]/30 rounded-full blur-2xl animate-ping" style={{animationDuration: '3.5s'}}></div>
+        <div className="absolute bottom-20 left-1/4 w-48 h-48 bg-indigo-400/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s', animationDuration: '4s'}}></div>
+        <div className="absolute top-1/3 right-10 w-28 h-28 bg-violet-400/25 rounded-full blur-2xl animate-ping" style={{animationDuration: '5s', animationDelay: '2s'}}></div>
+        
+        {/* Glass morphism overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-[#1a1f3a]/30 via-transparent to-[#2a1340]/15"></div>
       </div>
-    </div>;
+
+      {/* Content */}
+      <div className="relative z-10">
+        {renderCurrentStep()}
+      </div>
+    </div>
+  );
 };
+
 export default ModernWizard;

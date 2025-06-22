@@ -10,15 +10,15 @@ interface SetupStepProps {
 }
 
 const iconComponents: Record<CampaignType, React.ReactElement> = {
-  wheel: <RotateCcw className="w-8 h-8" />,
-  quiz: <Brain className="w-8 h-8" />,
-  jackpot: <DollarSign className="w-8 h-8" />,
-  scratch: <Layers className="w-8 h-8" />,
-  memory: <Grid3X3 className="w-8 h-8" />,
-  puzzle: <Puzzle className="w-8 h-8" />,
-  dice: <Dice6 className="w-8 h-8" />,
-  form: <FileText className="w-8 h-8" />,
-  swiper: <Zap className="w-8 h-8" />
+  wheel: <RotateCcw className="w-6 h-6" />,
+  quiz: <Brain className="w-6 h-6" />,
+  jackpot: <DollarSign className="w-6 h-6" />,
+  scratch: <Layers className="w-6 h-6" />,
+  memory: <Grid3X3 className="w-6 h-6" />,
+  puzzle: <Puzzle className="w-6 h-6" />,
+  dice: <Dice6 className="w-6 h-6" />,
+  form: <FileText className="w-6 h-6" />,
+  swiper: <Zap className="w-6 h-6" />
 };
 
 const gameTypes: { type: CampaignType; name: string; description: string }[] = [
@@ -37,102 +37,119 @@ const SetupStep: React.FC<SetupStepProps> = ({ campaign, setCampaign, onNext }) 
     setCampaign({ ...campaign, type: gameType });
     setTimeout(() => {
       onNext();
-    }, 800);
+    }, 300);
   };
 
   return (
-    <div className="min-h-[calc(100vh-200px)] flex flex-col items-center justify-center px-6 bg-gradient-to-br from-[#161B33] to-[#24123B] relative overflow-hidden">
-      {/* Animated background elements */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-20 left-10 w-40 h-40 bg-blue-400/25 rounded-full blur-3xl animate-pulse" style={{animationDuration: '2.5s'}}></div>
-        <div className="absolute top-40 right-20 w-32 h-32 bg-[#841b60]/30 rounded-full blur-2xl animate-ping" style={{animationDuration: '3.5s'}}></div>
-        <div className="absolute bottom-20 left-1/4 w-48 h-48 bg-indigo-400/20 rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s', animationDuration: '4s'}}></div>
-      </div>
-
-      <div className="relative z-10">
-        {/* Hero Section */}
-        <div className="text-center mb-16 max-w-4xl mx-auto">
-          <div className="inline-block mb-6">
-            <div className="w-20 h-20 bg-gradient-to-br from-[#841b60] to-[#6d164f] rounded-3xl flex items-center justify-center mb-6 mx-auto shadow-2xl">
-              <div className="w-8 h-8 bg-white rounded-lg"></div>
-            </div>
+    <div className="min-h-screen bg-white px-6 py-12">
+      <div className="max-w-6xl mx-auto">
+        {/* Header Section */}
+        <div className="text-left mb-16 max-w-3xl">
+          <div className="mb-8">
+            <h1 className="text-5xl font-light text-gray-900 mb-6 leading-tight">
+              Choisissez votre
+              <span className="relative">
+                <span className="bg-gradient-to-r from-[#841b60] to-[#a855f7] bg-clip-text text-transparent font-medium"> mécanique</span>
+                <div className="absolute -bottom-1 left-0 w-full h-0.5 bg-gradient-to-r from-[#841b60] to-[#a855f7] opacity-30"></div>
+              </span>
+            </h1>
+            
+            <p className="text-xl text-gray-600 leading-relaxed font-light">
+              Sélectionnez la mécanique de jeu qui captivera votre audience et 
+              transformera vos visiteurs en participants engagés.
+            </p>
           </div>
-          
-          <h1 className="text-6xl font-bold text-white mb-6 leading-tight">
-            Créez votre
-            <span className="bg-gradient-to-r from-[#841b60] to-[#a855f7] bg-clip-text text-transparent"> expérience </span>
-            interactive
-          </h1>
-          
-          <p className="text-xl text-gray-300 mb-12 leading-relaxed max-w-2xl mx-auto">
-            Sélectionnez la mécanique de jeu qui captivera votre audience et 
-            transformera vos visiteurs en participants engagés.
-          </p>
         </div>
 
-        {/* Game Selection Dock */}
-        <div className="relative">
-          <div className="flex items-center justify-center space-x-6 p-8 bg-white/10 backdrop-blur-xl rounded-3xl border border-white/20 shadow-2xl">
-            {gameTypes.map((game, index) => (
-              <div
-                key={game.type}
-                className={`
-                  relative group cursor-pointer transition-all duration-500 transform hover:scale-110
-                  ${campaign.type === game.type ? 'scale-110' : ''}
-                `}
-                onClick={() => handleGameSelect(game.type)}
-                style={{ animationDelay: `${index * 100}ms` }}
-              >
-                {/* Main bubble */}
+        {/* Game Selection Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
+          {gameTypes.map((game, index) => (
+            <div
+              key={game.type}
+              className={`
+                group relative cursor-pointer transition-all duration-500 transform hover:scale-105
+                ${campaign.type === game.type ? 'scale-105' : ''}
+              `}
+              onClick={() => handleGameSelect(game.type)}
+              style={{ animationDelay: `${index * 50}ms` }}
+            >
+              {/* Main Card */}
+              <div className={`
+                relative p-8 rounded-3xl transition-all duration-300
+                ${campaign.type === game.type
+                  ? 'bg-white/90 backdrop-blur-xl shadow-xl shadow-[#841b60]/10 border border-[#841b60]/20' 
+                  : 'bg-white/60 backdrop-blur-sm shadow-lg hover:shadow-xl hover:bg-white/80 border border-gray-100'
+                }
+              `}>
+                {/* Icon Container */}
                 <div className={`
-                  w-24 h-24 rounded-3xl flex items-center justify-center
-                  transition-all duration-300 group-hover:shadow-2xl
+                  w-16 h-16 rounded-2xl flex items-center justify-center mb-6 transition-all duration-300
                   ${campaign.type === game.type
-                    ? 'bg-gradient-to-br from-[#841b60] to-[#6d164f] shadow-2xl shadow-[#841b60]/50' 
-                    : 'bg-white/20 backdrop-blur-xl border border-white/30 group-hover:bg-white/30'
+                    ? 'bg-gradient-to-br from-[#841b60] to-[#6d164f] shadow-lg shadow-[#841b60]/25' 
+                    : 'bg-gray-50 group-hover:bg-gray-100'
                   }
                 `}>
                   <div className={`
                     transition-colors duration-300
-                    ${campaign.type === game.type ? 'text-white' : 'text-gray-300 group-hover:text-white'}
+                    ${campaign.type === game.type ? 'text-white' : 'text-gray-600 group-hover:text-gray-700'}
                   `}>
                     {iconComponents[game.type]}
                   </div>
                 </div>
 
-                {/* Selection ring */}
-                {campaign.type === game.type && (
-                  <div className="absolute inset-0 rounded-3xl border-2 border-[#841b60] animate-pulse"></div>
-                )}
-
-                {/* Tooltip */}
-                <div className="absolute top-full mt-4 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
-                  <div className="bg-black/80 backdrop-blur-sm rounded-2xl px-4 py-3 min-w-48 text-center">
-                    <div className="text-white font-semibold text-sm mb-1">{game.name}</div>
-                    <div className="text-gray-300 text-xs">{game.description}</div>
-                  </div>
-                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-b-4 border-transparent border-b-black/80"></div>
+                {/* Content */}
+                <div className="space-y-3">
+                  <h3 className={`
+                    font-semibold text-base leading-tight transition-colors duration-300
+                    ${campaign.type === game.type ? 'text-[#841b60]' : 'text-gray-900 group-hover:text-gray-800'}
+                  `}>
+                    {game.name}
+                  </h3>
+                  
+                  <p className="text-sm text-gray-500 leading-relaxed">
+                    {game.description}
+                  </p>
                 </div>
 
-                {/* Floating particles */}
+                {/* Selection Indicator */}
                 {campaign.type === game.type && (
-                  <>
-                    <div className="absolute -top-2 -right-2 w-3 h-3 bg-[#841b60] rounded-full animate-ping"></div>
-                    <div className="absolute -bottom-2 -left-2 w-2 h-2 bg-violet-400 rounded-full animate-ping" style={{animationDelay: '0.5s'}}></div>
-                  </>
+                  <div className="absolute -top-2 -right-2">
+                    <div className="w-4 h-4 bg-[#841b60] rounded-full shadow-lg animate-pulse"></div>
+                  </div>
                 )}
+
+                {/* Hover Border Glow */}
+                <div className={`
+                  absolute inset-0 rounded-3xl transition-opacity duration-300 pointer-events-none
+                  ${campaign.type === game.type 
+                    ? 'bg-gradient-to-r from-[#841b60]/5 to-[#a855f7]/5 opacity-100' 
+                    : 'bg-gradient-to-r from-[#841b60]/5 to-[#a855f7]/5 opacity-0 group-hover:opacity-100'
+                  }
+                `}></div>
               </div>
-            ))}
-          </div>
-          
-          {/* Floating elements */}
-          <div className="absolute -top-4 -left-4 w-8 h-8 bg-[#841b60]/50 rounded-full blur-sm animate-pulse"></div>
-          <div className="absolute -bottom-4 -right-4 w-6 h-6 bg-violet-400/50 rounded-full blur-sm animate-pulse" style={{animationDelay: '1s'}}></div>
+            </div>
+          ))}
         </div>
+
+        {/* Selection Confirmation */}
+        {campaign.type && (
+          <div className="bg-white/80 backdrop-blur-xl rounded-2xl border border-gray-100 shadow-lg p-8 text-center">
+            <div className="flex items-center justify-center mb-4">
+              <div className="w-3 h-3 bg-[#841b60] rounded-full animate-pulse mr-3"></div>
+              <span className="text-gray-600 font-medium">
+                Mécanique sélectionnée: {gameTypes.find(g => g.type === campaign.type)?.name}
+              </span>
+            </div>
+            
+            <p className="text-gray-500 text-sm">
+              Transition automatique vers l'étape suivante...
+            </p>
+          </div>
+        )}
 
         {/* Instruction */}
         <div className="mt-12 text-center">
-          <p className="text-gray-400 text-sm">
+          <p className="text-gray-400 text-sm font-light">
             Cliquez sur une mécanique pour commencer votre création
           </p>
         </div>
