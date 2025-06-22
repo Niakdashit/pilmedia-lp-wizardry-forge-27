@@ -1,6 +1,4 @@
 import React from 'react';
-import { useGamePositionCalculator } from '../../CampaignEditor/GamePositionCalculator';
-import useCenteredStyles from '../../../hooks/useCenteredStyles';
 import { synchronizeCampaignWithColors } from './utils/campaignSynchronizer';
 import GameSwitcher from './components/GameSwitcher';
 
@@ -60,13 +58,15 @@ const GameRenderer: React.FC<GameRendererProps> = ({
     return synchronizeCampaignWithColors(mockCampaign, finalColors, logoUrl);
   }, [mockCampaign, finalColors, logoUrl]);
 
-  // Styles et positionnement
-  const { containerStyle, wrapperStyle } = useCenteredStyles();
-  const { getPositionStyles } = useGamePositionCalculator({
-    gameSize,
-    gamePosition,
-    shouldCropWheel: false
-  });
+  // Container style for the game
+  const containerStyle: React.CSSProperties = {
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    overflow: 'hidden'
+  };
 
   // Clé de rendu forcé pour la mise à jour des couleurs
   const renderKey = `${gameType}-${JSON.stringify(finalColors)}-${Date.now()}`;
@@ -82,8 +82,6 @@ const GameRenderer: React.FC<GameRendererProps> = ({
       gamePosition={gamePosition}
       previewDevice={previewDevice}
       containerStyle={containerStyle}
-      wrapperStyle={wrapperStyle}
-      getPositionStyles={getPositionStyles}
       renderKey={renderKey}
     />
   );

@@ -2,6 +2,11 @@
 import React from 'react';
 import FunnelUnlockedGame from '../../funnels/FunnelUnlockedGame';
 import FunnelStandard from '../../funnels/FunnelStandard';
+import DeviceFrame from './DeviceFrame';
+import CampaignPreviewFrame from './CampaignPreviewFrame';
+import { useQuickCampaignStore } from '../../../stores/quickCampaignStore';
+import ConstrainedContainer from './components/ConstrainedContainer';
+import { DEVICE_CONSTRAINTS } from './utils/previewConstraints';
 
 interface PreviewContentProps {
   selectedDevice: 'desktop' | 'tablet' | 'mobile';
@@ -11,6 +16,8 @@ interface PreviewContentProps {
     primary: string;
     secondary: string;
     accent?: string;
+    textColor?: string;
+    buttonStyle?: string;
   };
   jackpotColors: {
     containerBackgroundColor: string;
@@ -30,147 +37,117 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
   customColors,
   jackpotColors
 }) => {
+  const { backgroundImageUrl, gamePosition } = useQuickCampaignStore();
   const unlockedTypes = ['wheel', 'scratch', 'jackpot', 'dice'];
+  const constraints = DEVICE_CONSTRAINTS[selectedDevice];
 
-  // Enhanced campaign with custom colors and proper configuration
-  const enhancedCampaign = {
-    ...mockCampaign,
-    design: {
-      ...mockCampaign.design,
-      customColors: customColors,
-      buttonColor: customColors.primary,
-      titleColor: mockCampaign.design?.titleColor || '#000000',
-      background: mockCampaign.design?.background || '#f8fafc'
-    },
-    buttonConfig: {
-      ...mockCampaign.buttonConfig,
-      color: customColors.primary,
-      borderColor: customColors.primary
-    },
-    gameConfig: {
-      ...mockCampaign.gameConfig,
-      jackpot: {
-        ...mockCampaign.gameConfig?.jackpot,
-        ...jackpotColors,
-        buttonColor: customColors.primary
-      },
-      [selectedGameType]: {
-        ...mockCampaign.gameConfig?.[selectedGameType],
+  // Configuration cohérente des couleurs
+  const enhancedCampaign = React.useMemo(() => {
+    return {
+      ...mockCampaign,
+      design: {
+        ...mockCampaign.design,
+        customColors: customColors,
         buttonColor: customColors.primary,
-        buttonLabel: mockCampaign.gameConfig?.[selectedGameType]?.buttonLabel || 'Jouer'
+        titleColor: customColors.textColor || '#000000',
+        background: mockCampaign.design?.background || '#f8fafc',
+        backgroundImage: backgroundImageUrl || mockCampaign.design?.backgroundImage,
+        mobileBackgroundImage: backgroundImageUrl || mockCampaign.design?.mobileBackgroundImage,
+        containerBackgroundColor: '#ffffff',
+        borderColor: customColors.primary,
+        borderRadius: '16px'
+      },
+      buttonConfig: {
+        ...mockCampaign.buttonConfig,
+        color: customColors.primary,
+        borderColor: customColors.primary,
+        textColor: customColors.textColor || '#ffffff',
+        size: 'medium',
+        borderRadius: 8
+      },
+      gameConfig: {
+        ...mockCampaign.gameConfig,
+        jackpot: {
+          ...mockCampaign.gameConfig?.jackpot,
+          ...jackpotColors,
+          buttonColor: customColors.primary
+        },
+        [selectedGameType]: {
+          ...mockCampaign.gameConfig?.[selectedGameType],
+          buttonColor: customColors.primary,
+          buttonLabel: mockCampaign.gameConfig?.[selectedGameType]?.buttonLabel || 'Jouer'
+        }
+      },
+      mobileConfig: {
+        ...mockCampaign.mobileConfig,
+        gamePosition: gamePosition,
+        buttonColor: customColors.primary,
+        buttonTextColor: customColors.textColor || '#ffffff'
+      },
+      config: {
+        ...mockCampaign.config,
+        roulette: {
+          ...mockCampaign.config?.roulette,
+          borderColor: customColors.primary,
+          borderOutlineColor: customColors.accent || customColors.secondary,
+          segmentColor1: customColors.primary,
+          segmentColor2: customColors.secondary
+        }
       }
-    }
-  };
+    };
+  }, [mockCampaign, selectedGameType, customColors, jackpotColors, backgroundImageUrl, gamePosition]);
 
   const getFunnelComponent = () => {
     const funnel = enhancedCampaign.funnel || (unlockedTypes.includes(selectedGameType) ? 'unlocked_game' : 'standard');
+    
     if (funnel === 'unlocked_game') {
       return (
         <FunnelUnlockedGame
           campaign={enhancedCampaign}
           previewMode={selectedDevice === 'desktop' ? 'desktop' : selectedDevice}
           modalContained={false}
+          key={`funnel-${JSON.stringify(customColors)}-${gamePosition}-${selectedDevice}`}
         />
       );
     }
+    
     return (
       <FunnelStandard
         campaign={enhancedCampaign}
-        key={JSON.stringify({
-          gameConfig: enhancedCampaign.gameConfig,
-          design: enhancedCampaign.design,
-          screens: enhancedCampaign.screens,
-          customColors: customColors
-        })}
+        key={`standard-${JSON.stringify(customColors)}-${gamePosition}-${selectedDevice}`}
       />
     );
   };
 
-  const getContainerStyle = () => {
-    const baseStyle = {
-      width: '100%',
-      height: '100%',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: enhancedCampaign.design?.background || '#f9fafb',
-      position: 'relative' as const,
-      overflow: 'hidden' as const
-    };
-
-    const mobileBg = enhancedCampaign.design?.mobileBackgroundImage;
-    const bgImage = selectedDevice === 'mobile' && mobileBg
-      ? mobileBg
-      : enhancedCampaign.design?.backgroundImage;
-
-    if (bgImage) {
-      return {
-        ...baseStyle,
-        backgroundImage: `url(${bgImage})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
-      };
-    }
-
-    return baseStyle;
-  };
-
-  const getDeviceContainerStyle = () => {
-    switch (selectedDevice) {
-      case 'tablet':
-        return {
-          maxWidth: '768px',
-          maxHeight: '1024px',
-          margin: '0 auto',
-          border: '1px solid #e5e7eb',
-          borderRadius: '12px',
-          overflow: 'hidden' as const,
-          backgroundColor: '#ffffff'
-        };
-      case 'mobile':
-        return {
-          maxWidth: '375px',
-          maxHeight: '812px',
-          margin: '0 auto',
-          border: '1px solid #e5e7eb',
-          borderRadius: '20px',
-          overflow: 'hidden' as const,
-          backgroundColor: '#ffffff'
-        };
-      default:
-        return {
-          width: '100%',
-          height: '100%'
-        };
-    }
-  };
+  const previewContent = (
+    <CampaignPreviewFrame selectedDevice={selectedDevice}>
+      <div 
+        className="w-full h-full flex items-center justify-center overflow-hidden"
+        style={{
+          maxWidth: `${constraints.maxWidth}px`,
+          maxHeight: `${constraints.maxHeight}px`,
+        }}
+      >
+        {getFunnelComponent()}
+      </div>
+    </CampaignPreviewFrame>
+  );
 
   return (
-    <div className="flex-1 pt-20 overflow-auto">
-      <div className="w-full h-full flex items-center justify-center p-4">
-        <div style={getDeviceContainerStyle()}>
-          <div style={getContainerStyle()}>
-            {/* Background overlay for better contrast if background image exists */}
-            {(selectedDevice === 'mobile'
-              ? enhancedCampaign.design?.mobileBackgroundImage
-              : enhancedCampaign.design?.backgroundImage) && (
-              <div
-                className="absolute inset-0 bg-black opacity-20"
-                style={{ zIndex: 1 }}
-              />
-            )}
-            
-            {/* Content container */}
-            <div 
-              className="relative z-10 w-full h-full flex items-center justify-center p-4"
-              style={{ minHeight: selectedDevice === 'desktop' ? '600px' : '100%' }}
-            >
-              {getFunnelComponent()}
-            </div>
-          </div>
-        </div>
-      </div>
+    <div className="flex-1 overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
+      <ConstrainedContainer
+        maxWidth={selectedDevice === 'desktop' ? 1400 : constraints.maxWidth + 100}
+        maxHeight={selectedDevice === 'desktop' ? 900 : constraints.maxHeight + 100}
+        className="p-2"
+      >
+        {selectedDevice === 'desktop' ? (
+          previewContent
+        ) : (
+          <DeviceFrame device={selectedDevice}>
+            {previewContent}
+          </DeviceFrame>
+        )}
+      </ConstrainedContainer>
     </div>
   );
 };
