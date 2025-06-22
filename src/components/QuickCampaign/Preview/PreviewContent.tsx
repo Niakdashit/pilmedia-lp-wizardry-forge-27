@@ -136,9 +136,9 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
   return (
     <div className="flex-1 overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
       <ConstrainedContainer
-        maxWidth={selectedDevice === 'desktop' ? 1200 : constraints.maxWidth + 100}
-        maxHeight={selectedDevice === 'desktop' ? 800 : constraints.maxHeight + 100}
-        className="p-4"
+        maxWidth={selectedDevice === 'desktop' ? 1400 : constraints.maxWidth + 100}
+        maxHeight={selectedDevice === 'desktop' ? 900 : constraints.maxHeight + 100}
+        className="p-2"
       >
         {selectedDevice === 'desktop' ? (
           previewContent

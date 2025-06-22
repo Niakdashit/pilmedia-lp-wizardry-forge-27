@@ -7,8 +7,8 @@ export interface PreviewConstraints {
 
 export const DEVICE_CONSTRAINTS = {
   desktop: {
-    maxWidth: 1200,
-    maxHeight: 800,
+    maxWidth: 1400,
+    maxHeight: 900,
   },
   tablet: {
     maxWidth: 768,
