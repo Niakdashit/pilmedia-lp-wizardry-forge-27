@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Plus } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -91,7 +90,7 @@ const Gamification: React.FC = () => {
               Chaque type de jeu est personnalisable et peut être intégré à vos campagnes marketing.
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {gamificationTypes.map((game, index) => {
               const IconComponent = getCampaignTypeIcon(game.type);
@@ -117,10 +116,10 @@ const Gamification: React.FC = () => {
             })}
           </div>
         </div>
-        
+
         <div className="bg-white rounded-xl shadow-sm p-6">
           <h2 className="text-xl font-bold text-gray-800 mb-4">Campagnes avec gamification</h2>
-          
+
           <div className="overflow-hidden bg-white rounded-lg border border-gray-200">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
@@ -210,4 +209,3 @@ const Gamification: React.FC = () => {
 };
 
 export default Gamification;
-
