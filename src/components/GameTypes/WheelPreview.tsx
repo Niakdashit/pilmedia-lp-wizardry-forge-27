@@ -81,7 +81,9 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
         gameDimensions={gameDimensions}
         previewDevice={previewDevice}
       >
-        <p>Aucun segment configuré pour la roue</p>
+        <div className="flex items-center justify-center p-8">
+          <p className="text-gray-500">Aucun segment configuré pour la roue</p>
+        </div>
       </WheelContainer>
     );
   }
@@ -92,35 +94,38 @@ const WheelPreview: React.FC<WheelPreviewProps> = ({
       gameDimensions={gameDimensions}
       previewDevice={previewDevice}
     >
-      {/* Wheel content */}
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
-        <WheelPreviewContent
-          segments={segments}
-          rotation={rotation}
-          centerImage={centerImage}
-          centerLogo={centerLogo}
-          theme={theme}
-          customColors={customColors}
-          borderColor={borderColor}
-          borderOutlineColor={borderOutlineColor}
-          canvasSize={canvasSize}
-          containerWidth={containerWidth}
-          containerHeight={containerHeight}
-          pointerSize={pointerSize}
-          shouldCropWheel={shouldCropWheel}
-          gamePosition={gamePosition}
-          formValidated={formValidated}
-          showValidationMessage={showValidationMessage}
-          onWheelClick={handleWheelClick}
-        />
+      <div className="flex flex-col items-center justify-center space-y-6 w-full h-full">
+        <div className="flex-shrink-0">
+          <WheelPreviewContent
+            segments={segments}
+            rotation={rotation}
+            centerImage={centerImage}
+            centerLogo={centerLogo}
+            theme={theme}
+            customColors={customColors}
+            borderColor={borderColor}
+            borderOutlineColor={borderOutlineColor}
+            canvasSize={canvasSize}
+            containerWidth={containerWidth}
+            containerHeight={containerHeight}
+            pointerSize={pointerSize}
+            shouldCropWheel={shouldCropWheel}
+            gamePosition={gamePosition}
+            formValidated={formValidated}
+            showValidationMessage={showValidationMessage}
+            onWheelClick={handleWheelClick}
+          />
+        </div>
 
-        <WheelButton
-          buttonConfig={buttonConfig}
-          spinning={spinning}
-          disabled={disabled}
-          formValidated={formValidated}
-          onClick={handleWheelClick}
-        />
+        <div className="flex-shrink-0">
+          <WheelButton
+            buttonConfig={buttonConfig}
+            spinning={spinning}
+            disabled={disabled}
+            formValidated={formValidated}
+            onClick={handleWheelClick}
+          />
+        </div>
       </div>
 
       <WheelFormModal

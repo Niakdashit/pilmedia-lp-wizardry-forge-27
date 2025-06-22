@@ -17,17 +17,19 @@ const CampaignPreviewFrame: React.FC<CampaignPreviewFrameProps> = ({
     const baseStyle = {
       width: '100%',
       height: '100%',
-      minHeight: selectedDevice === 'desktop' ? '460px' : '500px',
+      minHeight: selectedDevice === 'desktop' ? '500px' : '400px',
       backgroundColor: '#ffffff',
       position: 'relative' as const,
-      overflow: 'hidden' as const
+      overflow: 'hidden' as const,
+      display: 'flex',
+      flexDirection: 'column' as const
     };
 
     if (backgroundImageUrl) {
       return {
         ...baseStyle,
         backgroundImage: `url(${backgroundImageUrl})`,
-        backgroundSize: selectedDevice === 'desktop' ? 'cover' : 'cover',
+        backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat'
       };
@@ -38,10 +40,9 @@ const CampaignPreviewFrame: React.FC<CampaignPreviewFrameProps> = ({
 
   return (
     <div style={getContainerStyle()}>
-      {/* Contenu sans masque blanc */}
-      <div className="h-full relative">
-        <div className="h-full flex items-center justify-center">
-          <div className={`w-full ${selectedDevice === 'desktop' ? 'max-w-4xl' : 'max-w-full px-4'}`}>
+      <div className="flex-1 relative">
+        <div className="w-full h-full flex items-center justify-center p-4">
+          <div className={`w-full ${selectedDevice === 'desktop' ? 'max-w-6xl' : 'max-w-full'}`}>
             {children}
           </div>
         </div>

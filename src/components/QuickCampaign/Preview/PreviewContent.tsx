@@ -38,67 +38,81 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
   const { backgroundImageUrl, gamePosition } = useQuickCampaignStore();
   const unlockedTypes = ['wheel', 'scratch', 'jackpot', 'dice'];
 
-  // Enhanced campaign with custom colors and proper configuration
-  const enhancedCampaign = {
-    ...mockCampaign,
-    design: {
-      ...mockCampaign.design,
-      customColors: customColors,
-      buttonColor: customColors.primary,
-      titleColor: mockCampaign.design?.titleColor || '#000000',
-      background: mockCampaign.design?.background || '#f8fafc',
-      backgroundImage: backgroundImageUrl || mockCampaign.design?.backgroundImage,
-      mobileBackgroundImage: backgroundImageUrl || mockCampaign.design?.mobileBackgroundImage
-    },
-    buttonConfig: {
-      ...mockCampaign.buttonConfig,
-      color: customColors.primary,
-      borderColor: customColors.primary,
-      textColor: customColors.textColor || '#ffffff'
-    },
-    gameConfig: {
-      ...mockCampaign.gameConfig,
-      jackpot: {
-        ...mockCampaign.gameConfig?.jackpot,
-        ...jackpotColors,
-        buttonColor: customColors.primary
-      },
-      [selectedGameType]: {
-        ...mockCampaign.gameConfig?.[selectedGameType],
+  // Configuration cohérente des couleurs
+  const enhancedCampaign = React.useMemo(() => {
+    return {
+      ...mockCampaign,
+      design: {
+        ...mockCampaign.design,
+        customColors: customColors,
         buttonColor: customColors.primary,
-        buttonLabel: mockCampaign.gameConfig?.[selectedGameType]?.buttonLabel || 'Jouer'
+        titleColor: customColors.textColor || '#000000',
+        background: mockCampaign.design?.background || '#f8fafc',
+        backgroundImage: backgroundImageUrl || mockCampaign.design?.backgroundImage,
+        mobileBackgroundImage: backgroundImageUrl || mockCampaign.design?.mobileBackgroundImage,
+        containerBackgroundColor: '#ffffff',
+        borderColor: customColors.primary,
+        borderRadius: '16px'
+      },
+      buttonConfig: {
+        ...mockCampaign.buttonConfig,
+        color: customColors.primary,
+        borderColor: customColors.primary,
+        textColor: customColors.textColor || '#ffffff',
+        size: 'medium',
+        borderRadius: 8
+      },
+      gameConfig: {
+        ...mockCampaign.gameConfig,
+        jackpot: {
+          ...mockCampaign.gameConfig?.jackpot,
+          ...jackpotColors,
+          buttonColor: customColors.primary
+        },
+        [selectedGameType]: {
+          ...mockCampaign.gameConfig?.[selectedGameType],
+          buttonColor: customColors.primary,
+          buttonLabel: mockCampaign.gameConfig?.[selectedGameType]?.buttonLabel || 'Jouer'
+        }
+      },
+      mobileConfig: {
+        ...mockCampaign.mobileConfig,
+        gamePosition: gamePosition,
+        buttonColor: customColors.primary,
+        buttonTextColor: customColors.textColor || '#ffffff'
+      },
+      // Ajout de la configuration des couleurs spécifique à la roue
+      config: {
+        ...mockCampaign.config,
+        roulette: {
+          ...mockCampaign.config?.roulette,
+          borderColor: customColors.primary,
+          borderOutlineColor: customColors.accent || customColors.secondary,
+          segmentColor1: customColors.primary,
+          segmentColor2: customColors.secondary
+        }
       }
-    },
-    mobileConfig: {
-      ...mockCampaign.mobileConfig,
-      gamePosition: gamePosition
-    }
-  };
+    };
+  }, [mockCampaign, selectedGameType, customColors, jackpotColors, backgroundImageUrl, gamePosition]);
 
   const getFunnelComponent = () => {
     const funnel = enhancedCampaign.funnel || (unlockedTypes.includes(selectedGameType) ? 'unlocked_game' : 'standard');
+    
     if (funnel === 'unlocked_game') {
       return (
         <FunnelUnlockedGame
           campaign={enhancedCampaign}
           previewMode={selectedDevice === 'desktop' ? 'desktop' : selectedDevice}
           modalContained={false}
+          key={`funnel-${JSON.stringify(customColors)}-${gamePosition}-${selectedDevice}`}
         />
       );
     }
+    
     return (
       <FunnelStandard
         campaign={enhancedCampaign}
-        key={JSON.stringify({
-          gameConfig: enhancedCampaign.gameConfig,
-          design: enhancedCampaign.design,
-          screens: enhancedCampaign.screens,
-          customColors: customColors,
-          backgroundImageUrl: backgroundImageUrl,
-          gamePosition: gamePosition,
-          buttonStyle: customColors.buttonStyle,
-          textColor: customColors.textColor
-        })}
+        key={`standard-${JSON.stringify(customColors)}-${gamePosition}-${selectedDevice}`}
       />
     );
   };
