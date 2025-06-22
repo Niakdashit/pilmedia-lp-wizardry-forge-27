@@ -2,6 +2,7 @@
 import React from 'react';
 import { ArrowLeft, Eye, Save, Share2, MoreHorizontal } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import PreviewDeviceButtons from './PreviewDeviceButtons';
 
 interface EditorHeaderProps {
   campaign: any;
@@ -18,16 +19,18 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
   onSave,
   onPreview,
   isLoading = false,
-  isNewCampaign = false
+  isNewCampaign = false,
+  selectedDevice = 'desktop',
+  onDeviceChange = () => {}
 }) => {
   const navigate = useNavigate();
 
   return (
-    <div className="bg-white border-b border-gray-200 flex-shrink-0 z-50">
+    <div className="bg-white/95 backdrop-blur-sm border-b border-gray-100 flex-shrink-0 z-50">
       <div className="px-6 py-4">
         <div className="flex items-center justify-between">
-          {/* Left section */}
-          <div className="flex items-center space-x-4">
+          {/* Left section - aligné avec le sidebar */}
+          <div className="flex items-center space-x-4 w-80 flex-shrink-0">
             <button
               onClick={() => navigate('/gamification')}
               className="p-2 hover:bg-gray-50 rounded-xl transition-colors group"
@@ -36,10 +39,10 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
             </button>
             <div className="flex-1 min-w-0">
               <h1 className="text-xl font-bold text-gray-900 truncate">
-                {campaign.name || (isNewCampaign ? 'Nouvel Éditeur' : 'Campagne Exemple')}
+                {campaign.name || (isNewCampaign ? 'Nouvelle Campagne' : 'Campagne')}
               </h1>
               <div className="flex items-center space-x-2 text-sm text-gray-500">
-                <span>{campaign.type || 'wheel'}</span>
+                <span>Dernière modification: maintenant</span>
                 <span>•</span>
                 <span className={`px-2 py-1 rounded-full text-xs ${
                   campaign.status === 'published' 
@@ -52,8 +55,16 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
             </div>
           </div>
 
+          {/* Center section - Device buttons dans la zone centrale */}
+          <div className="flex items-center justify-center flex-1">
+            <PreviewDeviceButtons 
+              selectedDevice={selectedDevice}
+              onDeviceChange={onDeviceChange}
+            />
+          </div>
+
           {/* Right section - Actions */}
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-3 flex-shrink-0">
             <button
               onClick={onPreview}
               className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-all"
