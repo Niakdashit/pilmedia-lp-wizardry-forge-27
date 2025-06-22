@@ -11,12 +11,16 @@ interface ModernEditorPanelProps {
   activeStep: string;
   campaign: any;
   setCampaign: (updater: (prev: any) => any) => void;
+  onNextStep?: () => void;
+  onPrevStep?: () => void;
 }
 
 const ModernEditorPanel: React.FC<ModernEditorPanelProps> = ({
   activeStep,
   campaign,
-  setCampaign
+  setCampaign,
+  onNextStep,
+  onPrevStep
 }) => {
   // Ensure campaign has default structure to prevent undefined errors
   const safeSetCampaign = (updater: any) => {
@@ -71,8 +75,12 @@ const ModernEditorPanel: React.FC<ModernEditorPanelProps> = ({
       case 'gameconfig':
         return (
           <ModernGameConfigTab 
-            campaign={safeCampaign}
-            setCampaign={safeSetCampaign}
+            gameSize={safeCampaign.gameSize || 'medium'}
+            gamePosition={safeCampaign.gamePosition || 'center'}
+            onGameSizeChange={(size) => safeSetCampaign((prev: any) => ({ ...prev, gameSize: size }))}
+            onGamePositionChange={(position) => safeSetCampaign((prev: any) => ({ ...prev, gamePosition: position }))}
+            buttonConfig={safeCampaign.buttonConfig || {}}
+            onButtonConfigChange={(config) => safeSetCampaign((prev: any) => ({ ...prev, buttonConfig: config }))}
           />
         );
       
