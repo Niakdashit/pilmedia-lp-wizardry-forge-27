@@ -163,7 +163,7 @@ const ParticipationsManager: React.FC<ParticipationsManagerProps> = ({
                       <div className="max-w-xs">
                         {Object.entries(participation.form_data).map(([key, value]) => (
                           <div key={key} className="truncate">
-                            <span className="font-medium">{key}:</span> {value}
+                            <span className="font-medium">{key}:</span> {String(value)}
                           </div>
                         ))}
                       </div>

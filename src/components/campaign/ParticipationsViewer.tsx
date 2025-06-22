@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Download, Eye, Calendar, Users } from 'lucide-react';
-import { useParticipations } from '../../hooks/useParticipations';
+import { useParticipations, Participation } from '../../hooks/useParticipations';
 
 interface ParticipationsViewerProps {
   campaignId: string;
@@ -12,8 +12,8 @@ const ParticipationsViewer: React.FC<ParticipationsViewerProps> = ({
   campaignId, 
   campaignName 
 }) => {
-  const [participations, setParticipations] = useState<any[]>([]);
-  const [selectedParticipation, setSelectedParticipation] = useState<any>(null);
+  const [participations, setParticipations] = useState<Participation[]>([]);
+  const [selectedParticipation, setSelectedParticipation] = useState<Participation | null>(null);
   const [showModal, setShowModal] = useState(false);
   
   const { getParticipationsByCampaign, exportParticipationsToCSV, loading } = useParticipations();
@@ -31,7 +31,7 @@ const ParticipationsViewer: React.FC<ParticipationsViewerProps> = ({
     exportParticipationsToCSV(participations, campaignName);
   };
 
-  const viewParticipation = (participation: any) => {
+  const viewParticipation = (participation: Participation) => {
     setSelectedParticipation(participation);
     setShowModal(true);
   };

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Settings, Gamepad2 } from 'lucide-react';
+import { Gamepad2 } from 'lucide-react';
 import ModernGameTab from '../ModernGameTab';
 
 interface GameStepProps {

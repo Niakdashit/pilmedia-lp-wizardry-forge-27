@@ -28,6 +28,22 @@ export const createSynchronizedQuizCampaign = (campaign: any) => {
   };
 };
 
+export const createEnhancedQuizDesign = (config: { design?: any }) => {
+  const design = config.design || {};
+  
+  return {
+    backgroundColor: design.background || '#f8fafc',
+    primaryColor: design.primaryColor || '#841b60',
+    secondaryColor: design.secondaryColor || '#ffffff',
+    textColor: design.titleColor || '#000000',
+    buttonColor: design.buttonColor || '#841b60',
+    buttonTextColor: design.buttonTextColor || '#ffffff',
+    borderRadius: design.borderRadius || '0.5rem',
+    fontFamily: design.fontFamily || 'Inter',
+    ...design
+  };
+};
+
 export const validateQuizConfiguration = (campaign: any): { isValid: boolean; errors: string[] } => {
   const errors: string[] = [];
   

@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Palette, Type, Image, Sliders } from 'lucide-react';
+import { Palette } from 'lucide-react';
 import ModernDesignTab from '../ModernDesignTab';
 
 interface ContentStepProps {
