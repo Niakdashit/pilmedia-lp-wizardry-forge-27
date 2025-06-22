@@ -3,53 +3,54 @@ import { useState, useCallback } from 'react';
 
 export const useCampaignState = (initialCampaign: any) => {
   const [campaign, setCampaign] = useState(initialCampaign);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
-  const updateCampaign = useCallback((updates: any) => {
+  const updateCampaign = useCallback((updater: any) => {
     setCampaign((prev: any) => {
-      const newCampaign = typeof updates === 'function' ? updates(prev) : { ...prev, ...updates };
+      const newCampaign = typeof updater === 'function' ? updater(prev) : updater;
+      setHasUnsavedChanges(true);
       return newCampaign;
     });
   }, []);
 
-  const updateMobileConfig = useCallback((key: string, value: any) => {
+  const updateCampaignField = useCallback((field: string, value: any) => {
     updateCampaign((prev: any) => ({
       ...prev,
-      mobileConfig: { 
-        ...prev.mobileConfig, 
-        [key]: value 
+      [field]: value
+    }));
+  }, [updateCampaign]);
+
+  const updateDesign = useCallback((designUpdates: any) => {
+    updateCampaign((prev: any) => ({
+      ...prev,
+      design: {
+        ...prev.design,
+        ...designUpdates
       }
     }));
   }, [updateCampaign]);
 
-  const updateGameConfig = useCallback((gameType: string, config: any) => {
+  const updateGameConfig = useCallback((gameConfigUpdates: any) => {
     updateCampaign((prev: any) => ({
       ...prev,
       gameConfig: {
         ...prev.gameConfig,
-        [gameType]: config
+        ...gameConfigUpdates
       }
     }));
   }, [updateCampaign]);
 
-  const updateScreen = useCallback((screenIndex: number, updates: any) => {
-    updateCampaign((prev: any) => ({
-      ...prev,
-      screens: {
-        ...prev.screens,
-        [screenIndex]: {
-          ...prev.screens[screenIndex],
-          ...updates
-        }
-      }
-    }));
-  }, [updateCampaign]);
+  const resetUnsavedChanges = useCallback(() => {
+    setHasUnsavedChanges(false);
+  }, []);
 
   return {
     campaign,
-    setCampaign,
-    updateCampaign,
-    updateMobileConfig,
+    setCampaign: updateCampaign,
+    updateCampaignField,
+    updateDesign,
     updateGameConfig,
-    updateScreen
+    hasUnsavedChanges,
+    resetUnsavedChanges
   };
 };

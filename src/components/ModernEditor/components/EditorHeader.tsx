@@ -1,102 +1,84 @@
 
 import React from 'react';
-import { ArrowLeft, Eye, Save, Menu } from 'lucide-react';
-import { CampaignType } from '../../../utils/campaignTypes';
-import EditorDeviceSelector from './EditorDeviceSelector';
+import { ArrowLeft, Eye, Save, Share2, MoreHorizontal } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 interface EditorHeaderProps {
   campaign: any;
-  isNewCampaign: boolean;
-  campaignType: CampaignType;
-  gameTypeLabels: Record<string, string>;
-  previewDevice: 'desktop' | 'tablet' | 'mobile';
-  onDeviceChange: (device: 'desktop' | 'tablet' | 'mobile') => void;
-  onExit: () => void;
-  onMobilePanelToggle: () => void;
-  onPreview: () => void;
   onSave: () => void;
-  isLoading: boolean;
+  onPreview: () => void;
+  isLoading?: boolean;
+  isNewCampaign?: boolean;
 }
 
 const EditorHeader: React.FC<EditorHeaderProps> = ({
   campaign,
-  isNewCampaign,
-  campaignType,
-  gameTypeLabels,
-  previewDevice,
-  onDeviceChange,
-  onExit,
-  onMobilePanelToggle,
-  onPreview,
   onSave,
-  isLoading
+  onPreview,
+  isLoading = false,
+  isNewCampaign = false
 }) => {
-  return (
-    <div className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-b border-gray-200/50 shadow-sm">
-      <div className="flex items-center justify-between px-4 md:px-6 py-3">
-        {/* Left section */}
-        <div className="flex items-center space-x-4">
-          {/* Exit button */}
-          <button
-            onClick={onExit}
-            className="p-2 hover:bg-gray-100 rounded-xl transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          
-          {/* Mobile panel toggle */}
-          <button
-            onClick={onMobilePanelToggle}
-            className="md:hidden p-2 hover:bg-gray-100 rounded-xl transition-colors"
-          >
-            <Menu className="w-5 h-5" />
-          </button>
+  const navigate = useNavigate();
 
-          <div>
-            <h1 className="text-lg md:text-xl font-bold text-gray-900">
-              {isNewCampaign ? 'Nouvel Éditeur' : campaign.name}
-            </h1>
-            <p className="text-xs md:text-sm text-gray-500">
-              {gameTypeLabels[campaignType]} • {isNewCampaign ? 'Brouillon' : campaign.status}
-            </p>
+  return (
+    <div className="bg-white/95 backdrop-blur-sm border-b border-gray-100 sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-6 py-4">
+        <div className="flex items-center justify-between">
+          {/* Left section */}
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={() => navigate('/gamification')}
+              className="p-2 hover:bg-gray-50 rounded-xl transition-colors group"
+            >
+              <ArrowLeft className="w-5 h-5 text-gray-600 group-hover:text-gray-900" />
+            </button>
+            <div>
+              <h1 className="text-xl font-bold text-gray-900">
+                {campaign.name || (isNewCampaign ? 'Nouvelle Campagne' : 'Campagne')}
+              </h1>
+              <div className="flex items-center space-x-2 text-sm text-gray-500">
+                <span>Dernière modification: maintenant</span>
+                <span>•</span>
+                <span className={`px-2 py-1 rounded-full text-xs ${
+                  campaign.status === 'published' 
+                    ? 'bg-green-100 text-green-700' 
+                    : 'bg-yellow-100 text-yellow-700'
+                }`}>
+                  {campaign.status === 'published' ? 'Publié' : 'Brouillon'}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          {/* Right section */}
+          <div className="flex items-center space-x-3">
+            <button
+              onClick={onPreview}
+              className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-all"
+            >
+              <Eye className="w-4 h-4" />
+              <span>Aperçu</span>
+            </button>
+
+            <button className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-all">
+              <Share2 className="w-4 h-4" />
+              <span>Partager</span>
+            </button>
+
+            <button className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-all">
+              <MoreHorizontal className="w-5 h-5" />
+            </button>
+
+            <button
+              onClick={onSave}
+              disabled={isLoading}
+              className="flex items-center space-x-2 px-6 py-2 bg-[#841b60] hover:bg-[#6d164f] text-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 disabled:opacity-50"
+            >
+              <Save className="w-4 h-4" />
+              <span>{isLoading ? 'Sauvegarde...' : 'Sauvegarder'}</span>
+            </button>
           </div>
         </div>
-
-        {/* Center - Device selector */}
-        <div className="hidden md:flex">
-          <EditorDeviceSelector
-            previewDevice={previewDevice}
-            onDeviceChange={onDeviceChange}
-          />
-        </div>
-
-        {/* Right section */}
-        <div className="flex items-center space-x-2 md:space-x-3">
-          <button
-            onClick={onPreview}
-            className="flex items-center space-x-2 px-3 md:px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-xl transition-colors"
-          >
-            <Eye className="w-4 h-4" />
-            <span className="hidden md:inline">Aperçu</span>
-          </button>
-          
-          <button
-            onClick={onSave}
-            disabled={isLoading}
-            className="flex items-center space-x-2 px-3 md:px-4 py-2 bg-gradient-to-r from-[#841b60] to-[#6d164f] hover:from-[#6d164f] hover:to-[#841b60] text-white rounded-xl transition-all shadow-lg hover:shadow-xl disabled:opacity-50"
-          >
-            <Save className="w-4 h-4" />
-            <span className="hidden md:inline">{isLoading ? 'Sauvegarde...' : 'Sauvegarder'}</span>
-          </button>
-        </div>
-      </div>
-
-      {/* Mobile device selector */}
-      <div className="md:hidden flex justify-center py-2 border-t border-gray-100">
-        <EditorDeviceSelector
-          previewDevice={previewDevice}
-          onDeviceChange={onDeviceChange}
-        />
       </div>
     </div>
   );

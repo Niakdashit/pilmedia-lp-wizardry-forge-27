@@ -1,39 +1,67 @@
 
-import { useState, useCallback } from 'react';
-import { GameSize, GAME_SIZES } from '../components/configurators/GameSizeSelector';
+import { useMemo } from 'react';
 
-export interface GameDimensions {
-  width: number;
-  height: number;
-}
+export type GameSize = 'small' | 'medium' | 'large' | 'xlarge';
 
-export const useGameSize = (initialSize: GameSize = 'small') => {
-  const [gameSize, setGameSize] = useState<GameSize>(initialSize);
+export const useGameSize = (size: GameSize = 'medium') => {
+  const getGameDimensions = useMemo(() => {
+    return () => {
+      switch (size) {
+        case 'small':
+          return { width: 200, height: 200 };
+        case 'medium':
+          return { width: 300, height: 300 };
+        case 'large':
+          return { width: 400, height: 400 };
+        case 'xlarge':
+          return { width: 500, height: 500 };
+        default:
+          return { width: 300, height: 300 };
+      }
+    };
+  }, [size]);
 
-  const updateGameSize = useCallback((size: GameSize) => {
-    setGameSize(size);
+  const getContainerDimensions = useMemo(() => {
+    return (containerSize: 'small' | 'medium' | 'large' = 'medium') => {
+      switch (containerSize) {
+        case 'small':
+          return { width: 400, height: 300 };
+        case 'medium':
+          return { width: 600, height: 450 };
+        case 'large':
+          return { width: 800, height: 600 };
+        default:
+          return { width: 600, height: 450 };
+      }
+    };
   }, []);
 
-  const getGameDimensions = useCallback((): GameDimensions => {
-    return GAME_SIZES[gameSize];
-  }, [gameSize]);
-
-  const getGameStyle = useCallback(() => {
-    const dimensions = GAME_SIZES[gameSize];
-    return {
-      width: `${dimensions.width}px`,
-      height: `${dimensions.height}px`,
-      maxWidth: `${dimensions.width}px`,
-      maxHeight: `${dimensions.height}px`,
-      minWidth: `${dimensions.width}px`,
-      minHeight: `${dimensions.height}px`
+  const getResponsiveDimensions = useMemo(() => {
+    return (device: 'desktop' | 'tablet' | 'mobile' = 'desktop') => {
+      const baseDimensions = getGameDimensions();
+      
+      switch (device) {
+        case 'mobile':
+          return {
+            width: Math.min(baseDimensions.width, 250),
+            height: Math.min(baseDimensions.height, 250)
+          };
+        case 'tablet':
+          return {
+            width: Math.min(baseDimensions.width, 350),
+            height: Math.min(baseDimensions.height, 350)
+          };
+        case 'desktop':
+        default:
+          return baseDimensions;
+      }
     };
-  }, [gameSize]);
+  }, [getGameDimensions]);
 
   return {
-    gameSize,
-    updateGameSize,
     getGameDimensions,
-    getGameStyle
+    getContainerDimensions,
+    getResponsiveDimensions,
+    currentSize: size
   };
 };

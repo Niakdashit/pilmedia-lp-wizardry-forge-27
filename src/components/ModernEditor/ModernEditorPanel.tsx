@@ -30,18 +30,36 @@ const ModernEditorPanel: React.FC<ModernEditorPanelProps> = ({
   const safeSetCampaign = (updater: any) => {
     if (typeof updater === 'function') {
       setCampaign((prev: any) => {
-        const currentCampaign = prev || { design: {}, type: 'wheel' };
+        const currentCampaign = prev || { 
+          design: {}, 
+          type: 'wheel',
+          screens: {},
+          buttonConfig: {},
+          gameConfig: {}
+        };
         return updater(currentCampaign);
       });
     } else {
-      setCampaign(() => updater || { design: {}, type: 'wheel' });
+      setCampaign(() => updater || { 
+        design: {}, 
+        type: 'wheel',
+        screens: {},
+        buttonConfig: {},
+        gameConfig: {}
+      });
     }
   };
 
-  const safeCampaign = campaign || { design: {}, type: 'wheel' };
+  const safeCampaign = campaign || { 
+    design: {}, 
+    type: 'wheel',
+    screens: {},
+    buttonConfig: {},
+    gameConfig: {}
+  };
 
   return (
-    <>
+    <div className="p-6">
       {activeStep === 'setup' && (
         <SetupStep 
           campaign={safeCampaign} 
@@ -58,18 +76,37 @@ const ModernEditorPanel: React.FC<ModernEditorPanelProps> = ({
         />
       )}
       {activeStep === 'game' && (
-        <GameStep />
+        <GameStep 
+          campaign={safeCampaign}
+          setCampaign={safeSetCampaign}
+          onNext={handleNext}
+          onPrev={handlePrev}
+        />
       )}
       {activeStep === 'wording' && (
-        <WordingStep />
+        <WordingStep 
+          campaign={safeCampaign}
+          setCampaign={safeSetCampaign}
+          onNext={handleNext}
+          onPrev={handlePrev}
+        />
       )}
       {activeStep === 'preview' && (
-        <PreviewStep />
+        <PreviewStep 
+          campaign={safeCampaign}
+          setCampaign={safeSetCampaign}
+          onNext={handleNext}
+          onPrev={handlePrev}
+        />
       )}
       {activeStep === 'publish' && (
-        <PublishStep />
+        <PublishStep 
+          campaign={safeCampaign}
+          setCampaign={safeSetCampaign}
+          onPrev={handlePrev}
+        />
       )}
-    </>
+    </div>
   );
 };
 

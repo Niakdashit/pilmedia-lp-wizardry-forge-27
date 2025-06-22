@@ -1,3 +1,4 @@
+
 import React from 'react';
 import WheelGameConfig from './GameConfigs/WheelGameConfig';
 import JackpotGameConfig from './GameConfigs/JackpotGameConfig';
@@ -6,6 +7,7 @@ import PuzzleGameConfig from './GameConfigs/PuzzleGameConfig';
 import QuizGameConfig from './GameConfigs/QuizGameConfig';
 import DiceGameConfig from './GameConfigs/DiceGameConfig';
 import ScratchGameConfig from './GameConfigs/ScratchGameConfig';
+import ModernGameConfigTab from './ModernGameConfigTab';
 
 interface ModernGameTabProps {
   campaign: any;
@@ -37,18 +39,25 @@ const ModernGameTab: React.FC<ModernGameTabProps> = ({
     }
   };
 
-  return <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Configuration du jeu</h2>
-        
-      </div>
+  return (
+    <div className="space-y-8">
+      {/* Configuration du jeu et positionnement */}
+      <ModernGameConfigTab
+        gameSize={campaign.gameSize || 'medium'}
+        gamePosition={campaign.gamePosition || 'center'}
+        onGameSizeChange={(size) => setCampaign((prev: any) => ({ ...prev, gameSize: size }))}
+        onGamePositionChange={(position) => setCampaign((prev: any) => ({ ...prev, gamePosition: position }))}
+        buttonConfig={campaign.buttonConfig || {}}
+        onButtonConfigChange={(config) => setCampaign((prev: any) => ({ ...prev, buttonConfig: config }))}
+      />
 
       {/* Configuration spécifique au jeu */}
-      <div className="border-t pt-6">
-        
+      <div className="border-t border-gray-200 pt-8">
+        <h3 className="text-lg font-medium text-gray-900 mb-6">Configuration spécifique</h3>
         {renderGameConfig()}
       </div>
-    </div>;
+    </div>
+  );
 };
 
 export default ModernGameTab;
