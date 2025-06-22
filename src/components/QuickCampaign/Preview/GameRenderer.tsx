@@ -1,6 +1,4 @@
-
 import React from 'react';
-import { useQuickCampaignStore } from '../../../stores/quickCampaignStore';
 import { synchronizeCampaignWithColors } from './utils/campaignSynchronizer';
 import GameSwitcher from './components/GameSwitcher';
 
