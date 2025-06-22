@@ -94,7 +94,6 @@ const ModernEditorPanel: React.FC<ModernEditorPanelProps> = ({
       {activeStep === 'preview' && (
         <PreviewStep 
           campaign={safeCampaign}
-          setCampaign={safeSetCampaign}
           onNext={handleNext}
           onPrev={handlePrev}
         />
@@ -102,7 +101,6 @@ const ModernEditorPanel: React.FC<ModernEditorPanelProps> = ({
       {activeStep === 'publish' && (
         <PublishStep 
           campaign={safeCampaign}
-          setCampaign={safeSetCampaign}
           onPrev={handlePrev}
         />
       )}

@@ -6,7 +6,7 @@ export interface Participation {
   campaign_id: string;
   form_data: Record<string, string>;
   user_email: string;
-  created_at: string;
+  created_at?: string; // Make optional for creation
   utm_source?: string;
 }
 
@@ -14,7 +14,7 @@ export const useParticipations = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const createParticipation = async (participation: Participation): Promise<boolean> => {
+  const createParticipation = async (participation: Omit<Participation, 'created_at'> & { created_at?: string }): Promise<boolean> => {
     setLoading(true);
     setError(null);
     
@@ -24,7 +24,7 @@ export const useParticipations = () => {
       
       console.log('Participation created:', {
         ...participation,
-        created_at: new Date().toISOString()
+        created_at: participation.created_at || new Date().toISOString()
       });
       
       return true;
@@ -36,7 +36,7 @@ export const useParticipations = () => {
     }
   };
 
-  const getParticipations = async (campaignId: string): Promise<Participation[]> => {
+  const getParticipations = async (): Promise<Participation[]> => {
     setLoading(true);
     setError(null);
     
@@ -55,7 +55,8 @@ export const useParticipations = () => {
   };
 
   const getParticipationsByCampaign = async (campaignId: string): Promise<Participation[]> => {
-    return getParticipations(campaignId);
+    console.log('Loading participations for campaign:', campaignId);
+    return getParticipations();
   };
 
   const exportParticipationsToCSV = (participations: Participation[], campaignName: string) => {
@@ -64,7 +65,7 @@ export const useParticipations = () => {
       const csvContent = [
         headers.join(','),
         ...participations.map(p => [
-          new Date(p.created_at).toLocaleDateString('fr-FR'),
+          p.created_at ? new Date(p.created_at).toLocaleDateString('fr-FR') : '',
           p.user_email || '',
           p.form_data.prenom || '',
           p.form_data.nom || '',
