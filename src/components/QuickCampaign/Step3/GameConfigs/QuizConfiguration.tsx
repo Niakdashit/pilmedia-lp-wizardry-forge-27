@@ -1,13 +1,30 @@
 
 import React from 'react';
-import { HelpCircle, Plus, Trash2, Check, X } from 'lucide-react';
+import { HelpCircle, Plus, Trash2, Check } from 'lucide-react';
 import { useQuickCampaignStore } from '../../../../stores/quickCampaignStore';
+
+interface QuizOption {
+  id: number;
+  text: string;
+  isCorrect: boolean;
+}
+
+interface QuizQuestion {
+  id: number;
+  text: string;
+  type: string;
+  options: QuizOption[];
+  feedback: {
+    correct: string;
+    incorrect: string;
+  };
+}
 
 const QuizConfiguration: React.FC = () => {
   const { quizQuestions, setQuizQuestions } = useQuickCampaignStore();
 
   const addQuestion = () => {
-    const newQuestion = {
+    const newQuestion: QuizQuestion = {
       id: Date.now(),
       text: 'Nouvelle question',
       type: 'multiple',
@@ -26,20 +43,20 @@ const QuizConfiguration: React.FC = () => {
   };
 
   const removeQuestion = (questionId: number) => {
-    setQuizQuestions(quizQuestions.filter(q => q.id !== questionId));
+    setQuizQuestions(quizQuestions.filter((q: QuizQuestion) => q.id !== questionId));
   };
 
   const updateQuestion = (questionId: number, field: string, value: any) => {
-    setQuizQuestions(quizQuestions.map(q => 
+    setQuizQuestions(quizQuestions.map((q: QuizQuestion) => 
       q.id === questionId ? { ...q, [field]: value } : q
     ));
   };
 
   const updateOption = (questionId: number, optionId: number, field: string, value: any) => {
-    setQuizQuestions(quizQuestions.map(q => 
+    setQuizQuestions(quizQuestions.map((q: QuizQuestion) => 
       q.id === questionId ? {
         ...q,
-        options: q.options.map(opt => 
+        options: q.options.map((opt: QuizOption) => 
           opt.id === optionId ? { ...opt, [field]: value } : opt
         )
       } : q
@@ -47,10 +64,10 @@ const QuizConfiguration: React.FC = () => {
   };
 
   const setCorrectAnswer = (questionId: number, optionId: number) => {
-    setQuizQuestions(quizQuestions.map(q => 
+    setQuizQuestions(quizQuestions.map((q: QuizQuestion) => 
       q.id === questionId ? {
         ...q,
-        options: q.options.map(opt => ({ ...opt, isCorrect: opt.id === optionId }))
+        options: q.options.map((opt: QuizOption) => ({ ...opt, isCorrect: opt.id === optionId }))
       } : q
     ));
   };
@@ -72,7 +89,7 @@ const QuizConfiguration: React.FC = () => {
       </div>
 
       <div className="space-y-6">
-        {quizQuestions.map((question, index) => (
+        {quizQuestions.map((question: QuizQuestion, index: number) => (
           <div key={question.id} className="border border-gray-200 rounded-xl p-4 space-y-4">
             <div className="flex items-start justify-between">
               <h4 className="font-medium text-gray-800">Question {index + 1}</h4>
@@ -104,7 +121,7 @@ const QuizConfiguration: React.FC = () => {
                 Options de réponse
               </label>
               <div className="space-y-2">
-                {question.options.map((option) => (
+                {question.options.map((option: QuizOption) => (
                   <div key={option.id} className="flex items-center space-x-2">
                     <button
                       onClick={() => setCorrectAnswer(question.id, option.id)}
