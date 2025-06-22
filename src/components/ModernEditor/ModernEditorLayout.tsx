@@ -6,7 +6,7 @@ import ModernEditorSidebar from './ModernEditorSidebar';
 import ModernEditorPanel from './ModernEditorPanel';
 import AIAssistantSidebar from './AIAssistantSidebar';
 import EditorHeader from './components/EditorHeader';
-import PreviewCanvas from './components/PreviewCanvas';
+import GameCanvasPreview from '../CampaignEditor/GameCanvasPreview';
 
 interface ModernEditorLayoutProps {
   campaign: any;
@@ -47,7 +47,7 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#f8fafc] via-[#ebf4f7] to-[#f1f5f9] flex flex-col">
-      {/* Header - aligné avec le top */}
+      {/* Header */}
       <EditorHeader
         campaign={campaign}
         onSave={onSave}
@@ -58,13 +58,13 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
         onDeviceChange={onDeviceChange}
       />
 
-      {/* Main Content - flex layout sans gap pour alignement parfait */}
+      {/* Main Content */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Sidebar - aligné directement avec le header */}
-        <div className="w-80 bg-white/95 backdrop-blur-sm border-r border-gray-200/50 shadow-xl h-full overflow-y-auto">
+        {/* Sidebar - aligné parfaitement avec le header */}
+        <div className="w-80 bg-white/95 backdrop-blur-sm border-r border-gray-200/50 shadow-xl flex-shrink-0">
           <div className="flex h-full">
-            {/* Navigation tabs */}
-            <div className="w-20 border-r border-gray-200/50">
+            {/* Navigation tabs - alignés à gauche */}
+            <div className="w-20 border-r border-gray-200/50 flex-shrink-0">
               <ModernEditorSidebar
                 activeTab={activeTab}
                 onTabChange={onTabChange}
@@ -72,7 +72,7 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
               />
             </div>
 
-            {/* Panel content */}
+            {/* Panel content - prend le reste de l'espace du sidebar */}
             <div className="flex-1 overflow-y-auto">
               <ModernEditorPanel
                 activeStep={activeTab}
@@ -83,11 +83,14 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
           </div>
         </div>
 
-        {/* Main Content Area - Preview Canvas */}
-        <div className="flex-1 flex flex-col">
-          {/* AI Assistant Toggle */}
-          <div className="p-4 bg-white/50 border-b border-gray-200/50">
-            <div className="flex justify-end">
+        {/* Zone centrale - 100% de l'espace disponible */}
+        <div className="flex-1 flex flex-col min-w-0">
+          {/* Barre d'outils centrée */}
+          <div className="bg-white/50 border-b border-gray-200/50 px-6 py-3 flex-shrink-0">
+            <div className="flex justify-between items-center">
+              <h2 className="text-lg font-semibold text-gray-800">
+                Aperçu en temps réel
+              </h2>
               <button
                 onClick={() => setShowAIAssistant(!showAIAssistant)}
                 className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-[#841b60] to-[#6d164f] text-white rounded-full hover:shadow-lg transition-all duration-300 hover:scale-105"
@@ -98,14 +101,19 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
             </div>
           </div>
 
-          {/* Preview Area */}
-          <div className="flex-1 relative">
-            <PreviewCanvas
-              campaign={campaign}
-              selectedDevice={previewDevice}
-            />
+          {/* Zone de prévisualisation - prend tout l'espace disponible */}
+          <div className="flex-1 relative bg-gray-50/50 overflow-hidden">
+            <div className="absolute inset-0 p-6">
+              <GameCanvasPreview
+                campaign={campaign}
+                gameSize={campaign.gameSize || 'medium'}
+                previewDevice={previewDevice}
+                className="w-full h-full"
+                key={`preview-${activeTab}-${JSON.stringify(campaign.gameConfig)}-${previewDevice}`}
+              />
+            </div>
 
-            {/* AI Assistant Sidebar */}
+            {/* AI Assistant Sidebar - positionné absolument */}
             <AnimatePresence>
               {showAIAssistant && (
                 <motion.div
@@ -113,7 +121,7 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: 300 }}
                   transition={{ duration: 0.3 }}
-                  className="absolute top-4 right-4 w-80 bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200 p-6"
+                  className="absolute top-4 right-4 w-80 bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200 p-6 z-10"
                 >
                   <AIAssistantSidebar 
                     campaign={campaign}

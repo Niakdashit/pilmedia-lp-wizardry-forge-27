@@ -26,19 +26,19 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
   const navigate = useNavigate();
 
   return (
-    <div className="bg-white/95 backdrop-blur-sm border-b border-gray-100 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-6 py-4">
+    <div className="bg-white/95 backdrop-blur-sm border-b border-gray-100 flex-shrink-0 z-50">
+      <div className="px-6 py-4">
         <div className="flex items-center justify-between">
-          {/* Left section */}
-          <div className="flex items-center space-x-4">
+          {/* Left section - aligné avec le sidebar */}
+          <div className="flex items-center space-x-4 w-80 flex-shrink-0">
             <button
               onClick={() => navigate('/gamification')}
               className="p-2 hover:bg-gray-50 rounded-xl transition-colors group"
             >
               <ArrowLeft className="w-5 h-5 text-gray-600 group-hover:text-gray-900" />
             </button>
-            <div>
-              <h1 className="text-xl font-bold text-gray-900">
+            <div className="flex-1 min-w-0">
+              <h1 className="text-xl font-bold text-gray-900 truncate">
                 {campaign.name || (isNewCampaign ? 'Nouvelle Campagne' : 'Campagne')}
               </h1>
               <div className="flex items-center space-x-2 text-sm text-gray-500">
@@ -55,16 +55,16 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
             </div>
           </div>
 
-          {/* Center section - Device buttons */}
-          <div className="flex items-center space-x-4">
+          {/* Center section - Device buttons dans la zone centrale */}
+          <div className="flex items-center justify-center flex-1">
             <PreviewDeviceButtons 
               selectedDevice={selectedDevice}
               onDeviceChange={onDeviceChange}
             />
           </div>
 
-          {/* Right section */}
-          <div className="flex items-center space-x-3">
+          {/* Right section - Actions */}
+          <div className="flex items-center space-x-3 flex-shrink-0">
             <button
               onClick={onPreview}
               className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-all"
