@@ -46,7 +46,7 @@ const ParticipationsManager: React.FC<ParticipationsManagerProps> = ({
   const getParticipationsByDay = () => {
     const today = new Date().toDateString();
     return participations.filter(p => 
-      new Date(p.created_at).toDateString() === today
+      p.created_at && new Date(p.created_at).toDateString() === today
     ).length;
   };
 
@@ -154,7 +154,7 @@ const ParticipationsManager: React.FC<ParticipationsManagerProps> = ({
                 {participations.map((participation) => (
                   <tr key={participation.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {new Date(participation.created_at).toLocaleString('fr-FR')}
+                      {participation.created_at ? new Date(participation.created_at).toLocaleString('fr-FR') : 'Date inconnue'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {participation.user_email || '-'}

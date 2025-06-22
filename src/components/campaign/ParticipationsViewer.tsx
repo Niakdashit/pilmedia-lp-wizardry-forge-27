@@ -72,7 +72,7 @@ const ParticipationsViewer: React.FC<ParticipationsViewerProps> = ({
             </div>
             <p className="text-2xl font-bold text-green-800">
               {participations.filter(p => 
-                new Date(p.created_at).toDateString() === new Date().toDateString()
+                p.created_at && new Date(p.created_at).toDateString() === new Date().toDateString()
               ).length}
             </p>
           </div>
@@ -84,6 +84,7 @@ const ParticipationsViewer: React.FC<ParticipationsViewerProps> = ({
             </div>
             <p className="text-2xl font-bold text-purple-800">
               {participations.filter(p => {
+                if (!p.created_at) return false;
                 const participationDate = new Date(p.created_at);
                 const weekAgo = new Date();
                 weekAgo.setDate(weekAgo.getDate() - 7);
@@ -118,7 +119,7 @@ const ParticipationsViewer: React.FC<ParticipationsViewerProps> = ({
                       {participation.form_data.prenom} {participation.form_data.nom}
                     </p>
                     <p className="text-xs text-gray-400">
-                      {new Date(participation.created_at).toLocaleString('fr-FR')}
+                      {participation.created_at ? new Date(participation.created_at).toLocaleString('fr-FR') : 'Date inconnue'}
                     </p>
                   </div>
                   <button
@@ -153,7 +154,7 @@ const ParticipationsViewer: React.FC<ParticipationsViewerProps> = ({
               <div>
                 <h4 className="font-medium mb-2">Informations générales</h4>
                 <div className="bg-gray-50 rounded p-3 space-y-2 text-sm">
-                  <p><span className="font-medium">Date :</span> {new Date(selectedParticipation.created_at).toLocaleString('fr-FR')}</p>
+                  <p><span className="font-medium">Date :</span> {selectedParticipation.created_at ? new Date(selectedParticipation.created_at).toLocaleString('fr-FR') : 'Date inconnue'}</p>
                   <p><span className="font-medium">Email :</span> {selectedParticipation.user_email}</p>
                   {selectedParticipation.utm_source && (
                     <p><span className="font-medium">Source UTM :</span> {selectedParticipation.utm_source}</p>
