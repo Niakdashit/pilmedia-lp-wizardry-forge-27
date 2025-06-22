@@ -106,7 +106,7 @@ const ModernEditorPanel: React.FC<ModernEditorPanelProps> = ({
       
       default:
         return (
-          <div className="p-6 text-center text-gray-500">
+          <div className="p-4 text-center text-gray-500">
             Sélectionnez un onglet pour commencer
           </div>
         );
@@ -115,7 +115,7 @@ const ModernEditorPanel: React.FC<ModernEditorPanelProps> = ({
 
   return (
     <div className="h-full overflow-y-auto">
-      <div className="p-6">
+      <div className="p-2">
         {renderContent()}
       </div>
     </div>
