@@ -1,6 +1,7 @@
 
 import React from 'react';
-import { Eye, Save, Share2, MoreHorizontal } from 'lucide-react';
+import { ArrowLeft, Eye, Save, Share2, MoreHorizontal } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import PreviewDeviceButtons from './PreviewDeviceButtons';
 
 interface EditorHeaderProps {
@@ -22,14 +23,22 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
   selectedDevice = 'desktop',
   onDeviceChange = () => {}
 }) => {
+  const navigate = useNavigate();
+
   return (
-    <div className="bg-white/95 backdrop-blur-sm border-b border-gray-100 flex-shrink-0 z-50">
-      <div className="px-6 py-4">
+    <div className="bg-white/95 backdrop-blur-sm border-b border-gray-100 sticky top-0 z-50">
+      <div className="max-w-7xl mx-auto px-6 py-4">
         <div className="flex items-center justify-between">
-          {/* Left section - Titre de la campagne */}
-          <div className="flex items-center space-x-4 flex-shrink-0">
-            <div className="flex-1 min-w-0">
-              <h1 className="text-xl font-bold text-gray-900 truncate">
+          {/* Left section */}
+          <div className="flex items-center space-x-4">
+            <button
+              onClick={() => navigate('/gamification')}
+              className="p-2 hover:bg-gray-50 rounded-xl transition-colors group"
+            >
+              <ArrowLeft className="w-5 h-5 text-gray-600 group-hover:text-gray-900" />
+            </button>
+            <div>
+              <h1 className="text-xl font-bold text-gray-900">
                 {campaign.name || (isNewCampaign ? 'Nouvelle Campagne' : 'Campagne')}
               </h1>
               <div className="flex items-center space-x-2 text-sm text-gray-500">
@@ -47,15 +56,15 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
           </div>
 
           {/* Center section - Device buttons */}
-          <div className="flex items-center justify-center flex-1">
+          <div className="flex items-center space-x-4">
             <PreviewDeviceButtons 
               selectedDevice={selectedDevice}
               onDeviceChange={onDeviceChange}
             />
           </div>
 
-          {/* Right section - Actions */}
-          <div className="flex items-center space-x-3 flex-shrink-0">
+          {/* Right section */}
+          <div className="flex items-center space-x-3">
             <button
               onClick={onPreview}
               className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-all"

@@ -1,11 +1,12 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Sparkles } from 'lucide-react';
 import ModernEditorSidebar from './ModernEditorSidebar';
 import ModernEditorPanel from './ModernEditorPanel';
 import AIAssistantSidebar from './AIAssistantSidebar';
 import EditorHeader from './components/EditorHeader';
-import GameCanvasPreview from '../CampaignEditor/GameCanvasPreview';
+import PreviewCanvas from './components/PreviewCanvas';
 
 interface ModernEditorLayoutProps {
   campaign: any;
@@ -35,7 +36,7 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
   isNewCampaign,
   campaignType
 }) => {
-  const [showAIAssistant] = useState(false);
+  const [showAIAssistant, setShowAIAssistant] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
 
   const handleAIGenerate = async () => {
@@ -45,8 +46,8 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
   };
 
   return (
-    <div className="flex flex-col min-w-0 h-screen">
-      {/* Header */}
+    <div className="min-h-screen bg-gradient-to-br from-[#f8fafc] via-[#ebf4f7] to-[#f1f5f9] flex flex-col">
+      {/* Header - aligné avec le top */}
       <EditorHeader
         campaign={campaign}
         onSave={onSave}
@@ -57,13 +58,13 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
         onDeviceChange={onDeviceChange}
       />
 
-      {/* Main Content */}
+      {/* Main Content - flex layout sans gap pour alignement parfait */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Editor Sidebar - largeur réduite */}
-        <div className="w-64 bg-white/95 backdrop-blur-sm border-r border-gray-200/50 shadow-sm flex-shrink-0">
+        {/* Sidebar - aligné directement avec le header */}
+        <div className="w-80 bg-white/95 backdrop-blur-sm border-r border-gray-200/50 shadow-xl h-full overflow-y-auto">
           <div className="flex h-full">
-            {/* Navigation tabs - alignés à gauche */}
-            <div className="w-16 border-r border-gray-200/50 flex-shrink-0">
+            {/* Navigation tabs */}
+            <div className="w-20 border-r border-gray-200/50">
               <ModernEditorSidebar
                 activeTab={activeTab}
                 onTabChange={onTabChange}
@@ -71,7 +72,7 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
               />
             </div>
 
-            {/* Panel content - prend le reste de l'espace du sidebar */}
+            {/* Panel content */}
             <div className="flex-1 overflow-y-auto">
               <ModernEditorPanel
                 activeStep={activeTab}
@@ -82,55 +83,48 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
           </div>
         </div>
 
-        {/* Zone centrale - dimensions fixes pour l'aperçu */}
-        <div className="flex-1 flex flex-col min-w-0 bg-gray-50/50">
-          {/* Barre d'outils centrée */}
-          <div className="bg-white/50 border-b border-gray-200/50 px-4 py-2 flex-shrink-0">
-            <div className="flex justify-center items-center">
-              <h2 className="text-sm font-medium text-gray-600">
-                Aperçu en temps réel
-              </h2>
-            </div>
-          </div>
-
-          {/* Zone de prévisualisation - dimensions absolues fixes */}
-          <div className="flex-1 flex items-center justify-center p-4 overflow-hidden">
-            <div 
-              className="bg-white rounded-xl shadow-lg border border-gray-200/50 overflow-hidden flex-shrink-0"
-              style={{
-                width: '1200px',
-                height: '800px'
-              }}
-            >
-              <GameCanvasPreview
-                campaign={campaign}
-                gameSize={campaign.gameSize || 'medium'}
-                previewDevice={previewDevice}
-                className="w-full h-full"
-                key={`preview-${activeTab}-${JSON.stringify(campaign.gameConfig)}-${previewDevice}`}
-              />
-            </div>
-          </div>
-
-          {/* AI Assistant Sidebar - positionné absolument */}
-          <AnimatePresence>
-            {showAIAssistant && (
-              <motion.div
-                initial={{ opacity: 0, x: 300 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 300 }}
-                transition={{ duration: 0.3 }}
-                className="absolute top-4 right-4 w-80 bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200 p-6 z-10"
+        {/* Main Content Area - Preview Canvas */}
+        <div className="flex-1 flex flex-col">
+          {/* AI Assistant Toggle */}
+          <div className="p-4 bg-white/50 border-b border-gray-200/50">
+            <div className="flex justify-end">
+              <button
+                onClick={() => setShowAIAssistant(!showAIAssistant)}
+                className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-[#841b60] to-[#6d164f] text-white rounded-full hover:shadow-lg transition-all duration-300 hover:scale-105"
               >
-                <AIAssistantSidebar 
-                  campaign={campaign}
-                  setCampaign={setCampaign}
-                  isGenerating={isGenerating}
-                  onGenerate={handleAIGenerate}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
+                <Sparkles className="w-4 h-4" />
+                <span>Assistant IA</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Preview Area */}
+          <div className="flex-1 relative">
+            <PreviewCanvas
+              campaign={campaign}
+              selectedDevice={previewDevice}
+            />
+
+            {/* AI Assistant Sidebar */}
+            <AnimatePresence>
+              {showAIAssistant && (
+                <motion.div
+                  initial={{ opacity: 0, x: 300 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 300 }}
+                  transition={{ duration: 0.3 }}
+                  className="absolute top-4 right-4 w-80 bg-white/95 backdrop-blur-sm rounded-2xl shadow-xl border border-gray-200 p-6"
+                >
+                  <AIAssistantSidebar 
+                    campaign={campaign}
+                    setCampaign={setCampaign}
+                    isGenerating={isGenerating}
+                    onGenerate={handleAIGenerate}
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
       </div>
     </div>
