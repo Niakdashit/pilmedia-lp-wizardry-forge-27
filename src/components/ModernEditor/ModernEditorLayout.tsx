@@ -47,7 +47,7 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
 
   return (
     <Layout>
-      <div className="min-h-screen bg-white flex flex-col overflow-hidden">
+      <div className="min-h-screen bg-gray-50 flex flex-col overflow-hidden">
         {/* Header */}
         <EditorHeader
           campaign={campaign}
@@ -59,12 +59,12 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
           onDeviceChange={onDeviceChange}
         />
 
-        {/* Main Content */}
+        {/* Main Content - Two columns layout */}
         <div className="flex flex-1 overflow-hidden">
-          {/* Left Sidebar - Configuration Panel */}
-          <div className="w-80 bg-white border-r border-gray-200 flex flex-col">
-            {/* Navigation tabs */}
-            <div className="w-20 border-r border-gray-200 flex-shrink-0">
+          {/* Left Panel - Configuration */}
+          <div className="w-96 bg-white border-r border-gray-200 flex overflow-hidden">
+            {/* Sidebar Navigation */}
+            <div className="w-20 border-r border-gray-200 bg-gray-50">
               <ModernEditorSidebar
                 activeTab={activeTab}
                 onTabChange={onTabChange}
@@ -72,8 +72,8 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
               />
             </div>
 
-            {/* Panel content */}
-            <div className="flex-1 overflow-hidden">
+            {/* Configuration Panel */}
+            <div className="flex-1 overflow-y-auto">
               <ModernEditorPanel
                 activeStep={activeTab}
                 campaign={campaign}
@@ -82,19 +82,17 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
             </div>
           </div>
 
-          {/* Right Side - Preview Area */}
-          <div className="flex-1 flex flex-col min-w-0 bg-gradient-to-br from-purple-400 via-pink-500 to-red-500">
-            {/* Fixed size preview container */}
-            <div className="flex-1 flex items-center justify-center p-8">
-              <div className="w-full max-w-4xl h-full max-h-[600px] bg-white rounded-2xl shadow-2xl overflow-hidden">
-                <GameCanvasPreview
-                  campaign={campaign}
-                  gameSize={campaign.gameSize || 'medium'}
-                  previewDevice={previewDevice}
-                  className="w-full h-full"
-                  key={`preview-${activeTab}-${JSON.stringify(campaign.gameConfig)}-${previewDevice}`}
-                />
-              </div>
+          {/* Right Panel - Preview */}
+          <div className="flex-1 bg-gradient-to-br from-purple-400 via-pink-500 to-red-500 flex items-center justify-center p-8 relative overflow-hidden">
+            {/* Preview Container with fixed dimensions */}
+            <div className="w-full max-w-4xl h-[600px] bg-white rounded-2xl shadow-2xl overflow-hidden">
+              <GameCanvasPreview
+                campaign={campaign}
+                gameSize={campaign.gameSize || 'medium'}
+                previewDevice={previewDevice}
+                className="w-full h-full"
+                key={`preview-${activeTab}-${JSON.stringify(campaign.gameConfig)}-${previewDevice}`}
+              />
             </div>
 
             {/* AI Assistant Sidebar - positioned absolutely */}

@@ -2,7 +2,6 @@
 import React from 'react';
 import { ArrowLeft, Eye, Save, Share2, MoreHorizontal } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import PreviewDeviceButtons from './PreviewDeviceButtons';
 
 interface EditorHeaderProps {
   campaign: any;
@@ -19,9 +18,7 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
   onSave,
   onPreview,
   isLoading = false,
-  isNewCampaign = false,
-  selectedDevice = 'desktop',
-  onDeviceChange = () => {}
+  isNewCampaign = false
 }) => {
   const navigate = useNavigate();
 
@@ -39,10 +36,10 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
             </button>
             <div className="flex-1 min-w-0">
               <h1 className="text-xl font-bold text-gray-900 truncate">
-                {campaign.name || (isNewCampaign ? 'Nouvel Éditeur' : 'Éditeur')}
+                {campaign.name || (isNewCampaign ? 'Nouvel Éditeur' : 'Campagne Exemple')}
               </h1>
               <div className="flex items-center space-x-2 text-sm text-gray-500">
-                <span>{campaign.type || 'Quiz Interactif'}</span>
+                <span>{campaign.type || 'wheel'}</span>
                 <span>•</span>
                 <span className={`px-2 py-1 rounded-full text-xs ${
                   campaign.status === 'published' 
@@ -53,14 +50,6 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
                 </span>
               </div>
             </div>
-          </div>
-
-          {/* Center section - Device buttons */}
-          <div className="flex items-center justify-center">
-            <PreviewDeviceButtons 
-              selectedDevice={selectedDevice}
-              onDeviceChange={onDeviceChange}
-            />
           </div>
 
           {/* Right section - Actions */}
