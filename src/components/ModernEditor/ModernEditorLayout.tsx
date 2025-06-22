@@ -103,7 +103,6 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
             <PreviewCanvas
               campaign={campaign}
               selectedDevice={previewDevice}
-              onPreview={onPreview}
             />
 
             {/* AI Assistant Sidebar */}

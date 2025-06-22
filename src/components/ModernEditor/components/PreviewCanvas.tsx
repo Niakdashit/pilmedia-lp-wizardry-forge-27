@@ -5,13 +5,11 @@ import { Eye } from 'lucide-react';
 interface PreviewCanvasProps {
   campaign: any;
   selectedDevice: 'desktop' | 'tablet' | 'mobile';
-  onPreview: () => void;
 }
 
 const PreviewCanvas: React.FC<PreviewCanvasProps> = ({
   campaign,
-  selectedDevice,
-  onPreview
+  selectedDevice
 }) => {
   const getDeviceStyles = () => {
     switch (selectedDevice) {
