@@ -4,6 +4,7 @@ import { useModernCampaignEditor } from '../hooks/useModernCampaignEditor';
 import { gameTypeLabels } from '../components/ModernEditor/constants/gameTypeLabels';
 import ModernEditorLayout from '../components/ModernEditor/ModernEditorLayout';
 import ModernPreviewModal from '../components/ModernEditor/ModernPreviewModal';
+import EditorLayout from '../components/Layout/EditorLayout';
 
 const ModernCampaignEditor: React.FC = () => {
   const {
@@ -22,7 +23,7 @@ const ModernCampaignEditor: React.FC = () => {
   } = useModernCampaignEditor();
 
   return (
-    <div className="relative">
+    <EditorLayout>
       <ModernEditorLayout
         campaign={campaign}
         setCampaign={setCampaign}
@@ -46,7 +47,7 @@ const ModernCampaignEditor: React.FC = () => {
           campaign={campaign}
         />
       )}
-    </div>
+    </EditorLayout>
   );
 };
 
