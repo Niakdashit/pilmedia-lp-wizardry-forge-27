@@ -1,31 +1,23 @@
 
 import React from 'react';
-import SetupStep from './steps/SetupStep';
-import ContentStep from './steps/ContentStep';
-import GameStep from './steps/GameStep';
-import WordingStep from './steps/WordingStep';
-import PreviewStep from './steps/PreviewStep';
-import PublishStep from './steps/PublishStep';
+import ModernGeneralTab from './ModernGeneralTab';
+import ModernGameTab from './ModernGameTab';
+import ModernGameConfigTab from './ModernGameConfigTab';
+import ModernDesignTab from './ModernDesignTab';
+import ModernFormTab from './ModernFormTab';
+import ModernMobileTab from './ModernMobileTab';
 
 interface ModernEditorPanelProps {
   activeStep: string;
   campaign: any;
   setCampaign: (updater: (prev: any) => any) => void;
-  onNextStep?: () => void;
-  onPrevStep?: () => void;
 }
 
 const ModernEditorPanel: React.FC<ModernEditorPanelProps> = ({
   activeStep,
   campaign,
-  setCampaign,
-  onNextStep,
-  onPrevStep
+  setCampaign
 }) => {
-  // Default handlers if not provided
-  const handleNext = onNextStep || (() => console.log('Next step'));
-  const handlePrev = onPrevStep || (() => console.log('Previous step'));
-
   // Ensure campaign has default structure to prevent undefined errors
   const safeSetCampaign = (updater: any) => {
     if (typeof updater === 'function') {
@@ -58,52 +50,68 @@ const ModernEditorPanel: React.FC<ModernEditorPanelProps> = ({
     gameConfig: {}
   };
 
+  const renderContent = () => {
+    switch (activeStep) {
+      case 'general':
+        return (
+          <ModernGeneralTab
+            campaign={safeCampaign} 
+            setCampaign={safeSetCampaign}
+          />
+        );
+      
+      case 'game':
+        return (
+          <ModernGameTab 
+            campaign={safeCampaign}
+            setCampaign={safeSetCampaign}
+          />
+        );
+      
+      case 'gameconfig':
+        return (
+          <ModernGameConfigTab 
+            campaign={safeCampaign}
+            setCampaign={safeSetCampaign}
+          />
+        );
+      
+      case 'design':
+        return (
+          <ModernDesignTab
+            campaign={safeCampaign}
+            setCampaign={safeSetCampaign}
+          />
+        );
+      
+      case 'form':
+        return (
+          <ModernFormTab
+            campaign={safeCampaign}
+            setCampaign={safeSetCampaign}
+          />
+        );
+      
+      case 'mobile':
+        return (
+          <ModernMobileTab
+            campaign={safeCampaign}
+            setCampaign={safeSetCampaign}
+          />
+        );
+      
+      default:
+        return (
+          <div className="p-6 text-center text-gray-500">
+            Sélectionnez un onglet pour commencer
+          </div>
+        );
+    }
+  };
+
   return (
-    <div className="p-6">
-      {activeStep === 'setup' && (
-        <SetupStep 
-          campaign={safeCampaign} 
-          setCampaign={safeSetCampaign}
-          onNext={handleNext}
-        />
-      )}
-      {activeStep === 'content' && (
-        <ContentStep 
-          campaign={safeCampaign}
-          setCampaign={safeSetCampaign}
-          onNext={handleNext}
-          onPrev={handlePrev}
-        />
-      )}
-      {activeStep === 'game' && (
-        <GameStep 
-          campaign={safeCampaign}
-          setCampaign={safeSetCampaign}
-          onNext={handleNext}
-          onPrev={handlePrev}
-        />
-      )}
-      {activeStep === 'wording' && (
-        <WordingStep 
-          campaign={safeCampaign}
-          setCampaign={safeSetCampaign}
-          onNext={handleNext}
-          onPrev={handlePrev}
-        />
-      )}
-      {activeStep === 'preview' && (
-        <PreviewStep 
-          campaign={safeCampaign}
-          onNext={handleNext}
-          onPrev={handlePrev}
-        />
-      )}
-      {activeStep === 'publish' && (
-        <PublishStep 
-          campaign={safeCampaign}
-          onPrev={handlePrev}
-        />
-      )}
+    <div className="h-full overflow-y-auto">
+      {renderContent()}
     </div>
   );
 };
