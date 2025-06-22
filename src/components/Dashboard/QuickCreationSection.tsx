@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { FolderOpen, Layers } from 'lucide-react';
@@ -5,96 +6,91 @@ import { getCampaignTypeIcon } from '../../utils/campaignTypes';
 import { GameType } from './types';
 
 const QuickCreationSection: React.FC = () => {
-  const gameTypes: GameType[] = [
-    { type: 'wheel', label: 'Roue de la fortune' },
-    { type: 'quiz', label: 'Quiz' },
-    { type: 'scratch', label: 'Grattage' },
-    { type: 'dice', label: 'Dés' },
-    { type: 'jackpot', label: 'Jackpot' },
-    { type: 'memory', label: 'Memory' },
-    { type: 'puzzle', label: 'Puzzle' },
-    { type: 'form', label: 'Formulaire' }
-  ];
+  const gameTypes: GameType[] = [{
+    type: 'wheel',
+    label: 'Roue de la fortune'
+  }, {
+    type: 'quiz',
+    label: 'Quiz'
+  }, {
+    type: 'scratch',
+    label: 'Grattage'
+  }, {
+    type: 'dice',
+    label: 'Dés'
+  }, {
+    type: 'jackpot',
+    label: 'Jackpot'
+  }, {
+    type: 'memory',
+    label: 'Memory'
+  }, {
+    type: 'puzzle',
+    label: 'Puzzle'
+  }, {
+    type: 'form',
+    label: 'Formulaire'
+  }];
 
-  return (
-    <div className="w-full mt-8">
-      <div className="bg-white rounded-xl border border-[#EDF3F7] shadow-sm overflow-hidden">
-        <div className="p-8">
+  return <div className="w-full mt-8">
+      <div className="relative border-2 border-[#ffffff] rounded-3xl p-8 bg-gradient-to-b from-[#841b60]/5 to-white overflow-hidden bg-[#ffeef6]/0">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#841b60]/3 via-transparent to-transparent pointer-events-none"></div>
+        
+        <div className="relative z-10">
           <div className="text-center mb-8">
-            <h2 className="text-2xl font-bold mb-2 text-[#141E29]">
-              Qu'allez-vous 
-              <span className="text-[#951B6D] relative">
-                {' '}créer
-                <div className="absolute -bottom-1 left-0 w-full h-0.5 bg-[#951B6D] opacity-40"></div>
-              </span>
-              {' '}aujourd'hui ?
-            </h2>
+            <h2 className="text-2xl font-bold mb-2 text-[#841b60]">Qu'allez-vous créer aujourd'hui ?</h2>
           </div>
 
           <div className="flex justify-center mb-8">
-            {/* Desktop layout */}
-            <div className="hidden md:flex items-center justify-center space-x-6 max-w-5xl">
+            {/* Container pour desktop avec flex center */}
+            <div className="hidden md:flex items-center justify-center space-x-8 max-w-5xl">
               {gameTypes.map((game, index) => {
-                const IconComponent = getCampaignTypeIcon(game.type);
-                return (
-                  <Link 
-                    key={game.type} 
-                    to={`/quick-campaign?type=${game.type}`} 
-                    className="flex flex-col items-center group cursor-pointer opacity-0 animate-fade-in"
-                    style={{
-                      animationDelay: `${index * 0.1}s`,
-                      animationFillMode: 'forwards'
-                    }}
-                  >
-                    <div className="w-16 h-16 bg-[#F8FAFC] border border-[#EDF3F7] rounded-xl shadow-sm flex items-center justify-center group-hover:shadow-md transform group-hover:scale-105 group-hover:-translate-y-1 transition-all duration-300">
-                      <IconComponent className="w-8 h-8 text-[#951B6D] group-hover:text-[#A020F0] transition-colors" />
+              const IconComponent = getCampaignTypeIcon(game.type);
+              return <Link key={game.type} to={`/quick-campaign?type=${game.type}`} className="flex flex-col items-center group cursor-pointer opacity-0 animate-fade-in" style={{
+                animationDelay: `${index * 0.1}s`,
+                animationFillMode: 'forwards'
+              }}>
+                    <div className="w-16 h-16 bg-white rounded-full shadow-lg flex items-center justify-center group-hover:shadow-xl transform group-hover:scale-110 transition-all duration-300 border border-gray-100">
+                      <IconComponent className="w-8 h-8 text-[#841b60] group-hover:text-[#6d164f] transition-colors" />
                     </div>
-                    <span className="mt-3 text-sm font-semibold text-[#64748B] group-hover:text-[#951B6D] transition-colors text-center">
+                    <span className="mt-2 text-sm font-medium text-gray-700 group-hover:text-[#841b60] transition-colors text-center">
                       {game.label}
                     </span>
-                  </Link>
-                );
-              })}
+                  </Link>;
+            })}
             </div>
 
-            {/* Mobile layout */}
+            {/* Container pour mobile avec scroll horizontal */}
             <div className="md:hidden w-full">
-              <div className="flex space-x-4 overflow-x-auto pb-4 px-2 scrollbar-hide">
+              <div className="flex space-x-6 overflow-x-auto pb-4 px-2 scrollbar-hide" style={{
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none'
+            }}>
                 {gameTypes.map((game, index) => {
-                  const IconComponent = getCampaignTypeIcon(game.type);
-                  return (
-                    <Link 
-                      key={game.type} 
-                      to={`/quick-campaign?type=${game.type}`} 
-                      className="flex flex-col items-center group cursor-pointer opacity-0 animate-fade-in flex-shrink-0"
-                      style={{
-                        animationDelay: `${index * 0.1}s`,
-                        animationFillMode: 'forwards'
-                      }}
-                    >
-                      <div className="w-16 h-16 bg-[#F8FAFC] border border-[#EDF3F7] rounded-xl shadow-sm flex items-center justify-center group-hover:shadow-md transform group-hover:scale-105 transition-all duration-300">
-                        <IconComponent className="w-8 h-8 text-[#951B6D] transition-colors" />
+                const IconComponent = getCampaignTypeIcon(game.type);
+                return <Link key={game.type} to={`/quick-campaign?type=${game.type}`} className="flex flex-col items-center group cursor-pointer opacity-0 animate-fade-in flex-shrink-0" style={{
+                  animationDelay: `${index * 0.1}s`,
+                  animationFillMode: 'forwards'
+                }}>
+                      <div className="w-16 h-16 bg-white rounded-full shadow-lg flex items-center justify-center group-hover:shadow-xl transform group-hover:scale-110 transition-all duration-300 border border-gray-100">
+                        <IconComponent className="w-8 h-8 text-[#841b60] group-hover:text-[#6d164f] transition-colors" />
                       </div>
-                      <span className="mt-3 text-sm font-semibold text-[#64748B] transition-colors text-center">
+                      <span className="mt-2 text-sm font-medium text-gray-700 group-hover:text-[#841b60] transition-colors text-center">
                         {game.label}
                       </span>
-                    </Link>
-                  );
-                })}
+                    </Link>;
+              })}
               </div>
             </div>
           </div>
 
           <div className="flex flex-col md:flex-row justify-center items-center gap-4">
-            <Link 
-              to="/campaigns" 
-              className="inline-flex items-center px-6 py-3 bg-[#951B6D] text-white font-bold rounded-xl hover:bg-[#A020F0] transition-all duration-300 shadow-sm hover:shadow-md transform hover:-translate-y-0.5"
-            >
+            <Link to="/campaigns" className="inline-flex items-center px-6 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
               <FolderOpen className="w-5 h-5 mr-2" />
               Mes campagnes
             </Link>
             
-            <button className="inline-flex items-center px-6 py-3 bg-[#F3F6F9] text-[#64748B] font-bold rounded-xl hover:bg-[#EDF3F7] hover:text-[#951B6D] transition-all duration-300 shadow-sm hover:shadow-md">
+            <button className="inline-flex items-center px-6 py-4 bg-[#841b60] text-white font-semibold rounded-2xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
               <Layers className="w-5 h-5 mr-2" />
               Modèles
             </button>
@@ -126,8 +122,7 @@ const QuickCreationSection: React.FC = () => {
           display: none;
         }
       `}</style>
-    </div>
-  );
+    </div>;
 };
 
 export default QuickCreationSection;

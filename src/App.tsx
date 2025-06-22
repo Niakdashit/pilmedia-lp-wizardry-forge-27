@@ -17,7 +17,10 @@ import Statistics from './pages/Statistics';
 import Studies from './pages/Studies';
 import Account from './pages/Account';
 import ModernCampaignEditor from './pages/ModernCampaignEditor';
-import ModernWizardPage from './pages/ModernWizardPage';
+import GameConfigurationPage from './pages/GameConfigurationPage';
+import BrandCustomizationPage from './pages/BrandCustomizationPage';
+import AIGenerationPage from './pages/AIGenerationPage';
+import GameMechanicSelectionPage from './pages/GameMechanicSelectionPage';
 
 function App() {
   return (
@@ -116,10 +119,14 @@ function App() {
               <Route path="/campaigns" element={<Layout><Campaigns /></Layout>} />
               <Route path="/campaign/:id" element={<Layout><CampaignEditor /></Layout>} />
               <Route path="/modern-campaign/:id" element={<ModernCampaignEditor />} />
-              <Route path="/modern-wizard" element={<ModernWizardPage />} />
               <Route path="/quick-campaign" element={<Layout><QuickCampaign /></Layout>} />
               <Route path="/newsletter" element={<Layout><Newsletter /></Layout>} />
               <Route path="/gamification" element={<Layout><Gamification /></Layout>} />
+              <Route path="/gamification/mechanic-selection" element={<GameMechanicSelectionPage />} />
+              <Route path="/gamification/configuration" element={<GameConfigurationPage />} />
+              <Route path="/gamification/brand-customization" element={<BrandCustomizationPage />} />
+              <Route path="/gamification/ai-generation" element={<AIGenerationPage />} />
+              <Route path="/gamification/editor/new" element={<ModernCampaignEditor />} />
               <Route path="/contacts" element={<Layout><Contacts /></Layout>} />
               <Route path="/social" element={<Layout><Social /></Layout>} />
               <Route path="/data" element={<Layout><Data /></Layout>} />
