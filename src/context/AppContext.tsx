@@ -1,5 +1,5 @@
 
-import { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
+import React, { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
 
 interface AppState {
   user: any;
@@ -37,7 +37,7 @@ function appReducer(state: AppState, action: any): AppState {
   }
 }
 
-export const AppProvider = ({ children }: { children: ReactNode }) => {
+export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
 
   // keep sidebar state in sync with screen size

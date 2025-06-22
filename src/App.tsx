@@ -1,4 +1,5 @@
 
+import React from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -31,7 +32,7 @@ import ModernEditorPage from './pages/ModernEditorPage';
 import AdminLayout from './components/Admin/AdminLayout';
 import Layout from './components/Layout/Layout';
 
-function App() {
+const App: React.FC = () => {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin');
   const isLoginRoute = location.pathname === '/login' || location.pathname === '/';
@@ -96,6 +97,6 @@ function App() {
       </div>
     </AppProvider>
   );
-}
+};
 
 export default App;
