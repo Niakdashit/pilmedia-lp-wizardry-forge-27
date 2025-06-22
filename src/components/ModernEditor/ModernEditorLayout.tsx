@@ -59,8 +59,8 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
 
       {/* Main Content */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Editor Sidebar - largeur fixe réduite */}
-        <div className="w-72 bg-white/95 backdrop-blur-sm border-r border-gray-200/50 shadow-sm flex-shrink-0">
+        {/* Editor Sidebar - largeur réduite */}
+        <div className="w-64 bg-white/95 backdrop-blur-sm border-r border-gray-200/50 shadow-sm flex-shrink-0">
           <div className="flex h-full">
             {/* Navigation tabs - alignés à gauche */}
             <div className="w-16 border-r border-gray-200/50 flex-shrink-0">
@@ -96,14 +96,10 @@ const ModernEditorLayout: React.FC<ModernEditorLayoutProps> = ({
           {/* Zone de prévisualisation - dimensions absolues fixes */}
           <div className="flex-1 flex items-center justify-center p-4 overflow-hidden">
             <div 
-              className="bg-white rounded-xl shadow-lg border border-gray-200/50 overflow-hidden"
+              className="bg-white rounded-xl shadow-lg border border-gray-200/50 overflow-hidden flex-shrink-0"
               style={{
                 width: '1200px',
-                height: '800px',
-                minWidth: '1200px',
-                minHeight: '800px',
-                maxWidth: '1200px',
-                maxHeight: '800px'
+                height: '800px'
               }}
             >
               <GameCanvasPreview

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import ModernGeneralTab from './ModernGeneralTab';
 import ModernGameTab from './ModernGameTab';
@@ -114,7 +115,7 @@ const ModernEditorPanel: React.FC<ModernEditorPanelProps> = ({
 
   return (
     <div className="h-full overflow-y-auto">
-      <div className="p-3">
+      <div className="p-2">
         {renderContent()}
       </div>
     </div>
