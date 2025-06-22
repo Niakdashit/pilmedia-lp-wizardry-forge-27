@@ -1,6 +1,8 @@
 
 import React from 'react';
 import { useQuickCampaignStore } from '../../../stores/quickCampaignStore';
+import ConstrainedContainer from './components/ConstrainedContainer';
+import { DEVICE_CONSTRAINTS } from './utils/previewConstraints';
 
 interface CampaignPreviewFrameProps {
   children: React.ReactNode;
@@ -12,43 +14,35 @@ const CampaignPreviewFrame: React.FC<CampaignPreviewFrameProps> = ({
   selectedDevice
 }) => {
   const { backgroundImageUrl } = useQuickCampaignStore();
+  const constraints = DEVICE_CONSTRAINTS[selectedDevice];
 
-  const getContainerStyle = () => {
-    const baseStyle = {
-      width: '100%',
-      height: '100%',
-      minHeight: selectedDevice === 'desktop' ? '500px' : '400px',
-      backgroundColor: '#ffffff',
-      position: 'relative' as const,
-      overflow: 'hidden' as const, // Always hidden to prevent overflow
-      display: 'flex',
-      flexDirection: 'column' as const,
-      boxSizing: 'border-box' as const
-    };
-
-    if (backgroundImageUrl) {
-      return {
-        ...baseStyle,
-        backgroundImage: `url(${backgroundImageUrl})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
-      };
-    }
-
-    return baseStyle;
+  const containerStyle: React.CSSProperties = {
+    backgroundColor: '#ffffff',
+    backgroundImage: backgroundImageUrl ? `url(${backgroundImageUrl})` : undefined,
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    border: '1px solid #e5e7eb',
+    borderRadius: selectedDevice === 'mobile' ? '24px' : '12px',
   };
 
   return (
-    <div style={getContainerStyle()}>
-      <div className="flex-1 relative overflow-hidden">
-        <div className="w-full h-full flex items-center justify-center p-4 overflow-hidden">
-          <div className={`w-full overflow-hidden ${selectedDevice === 'desktop' ? 'max-w-6xl' : 'max-w-full'}`}>
-            {children}
-          </div>
-        </div>
+    <ConstrainedContainer
+      maxWidth={constraints.maxWidth}
+      maxHeight={constraints.maxHeight}
+      style={containerStyle}
+    >
+      <div 
+        className="w-full h-full p-4 overflow-hidden box-border"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
+        }}
+      >
+        {children}
       </div>
-    </div>
+    </ConstrainedContainer>
   );
 };
 

@@ -5,6 +5,8 @@ import FunnelStandard from '../../funnels/FunnelStandard';
 import DeviceFrame from './DeviceFrame';
 import CampaignPreviewFrame from './CampaignPreviewFrame';
 import { useQuickCampaignStore } from '../../../stores/quickCampaignStore';
+import ConstrainedContainer from './components/ConstrainedContainer';
+import { DEVICE_CONSTRAINTS } from './utils/previewConstraints';
 
 interface PreviewContentProps {
   selectedDevice: 'desktop' | 'tablet' | 'mobile';
@@ -37,6 +39,7 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
 }) => {
   const { backgroundImageUrl, gamePosition } = useQuickCampaignStore();
   const unlockedTypes = ['wheel', 'scratch', 'jackpot', 'dice'];
+  const constraints = DEVICE_CONSTRAINTS[selectedDevice];
 
   // Configuration cohérente des couleurs
   const enhancedCampaign = React.useMemo(() => {
@@ -81,7 +84,6 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
         buttonColor: customColors.primary,
         buttonTextColor: customColors.textColor || '#ffffff'
       },
-      // Ajout de la configuration des couleurs spécifique à la roue
       config: {
         ...mockCampaign.config,
         roulette: {
@@ -117,25 +119,35 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
     );
   };
 
+  const previewContent = (
+    <CampaignPreviewFrame selectedDevice={selectedDevice}>
+      <div 
+        className="w-full h-full flex items-center justify-center overflow-hidden"
+        style={{
+          maxWidth: `${constraints.maxWidth}px`,
+          maxHeight: `${constraints.maxHeight}px`,
+        }}
+      >
+        {getFunnelComponent()}
+      </div>
+    </CampaignPreviewFrame>
+  );
+
   return (
-    <div className="flex-1 overflow-hidden">
-      <div className="w-full h-full flex items-center justify-center p-4 overflow-hidden">
+    <div className="flex-1 overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
+      <ConstrainedContainer
+        maxWidth={selectedDevice === 'desktop' ? 1200 : constraints.maxWidth + 100}
+        maxHeight={selectedDevice === 'desktop' ? 800 : constraints.maxHeight + 100}
+        className="p-4"
+      >
         {selectedDevice === 'desktop' ? (
-          <CampaignPreviewFrame selectedDevice={selectedDevice}>
-            <div className="w-full h-full flex items-center justify-center overflow-hidden">
-              {getFunnelComponent()}
-            </div>
-          </CampaignPreviewFrame>
+          previewContent
         ) : (
           <DeviceFrame device={selectedDevice}>
-            <CampaignPreviewFrame selectedDevice={selectedDevice}>
-              <div className="w-full h-full flex items-center justify-center overflow-hidden">
-                {getFunnelComponent()}
-              </div>
-            </CampaignPreviewFrame>
+            {previewContent}
           </DeviceFrame>
         )}
-      </div>
+      </ConstrainedContainer>
     </div>
   );
 };

@@ -23,9 +23,9 @@ const PreviewPanel: React.FC = () => {
   ];
 
   return (
-    <div className="col-span-7 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
+    <div className="col-span-7 bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden flex flex-col">
       {/* Header */}
-      <div className="bg-gradient-to-r from-slate-50 to-blue-50 px-6 py-4 border-b border-gray-100">
+      <div className="bg-gradient-to-r from-slate-50 to-blue-50 px-6 py-4 border-b border-gray-100 flex-shrink-0">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-3">
             <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
@@ -73,7 +73,7 @@ const PreviewPanel: React.FC = () => {
       </div>
 
       {/* Preview Content */}
-      <div className="h-[calc(100vh-20rem)] bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="flex-1 overflow-hidden">
         {selectedGameType ? (
           <PreviewContent
             selectedDevice={selectedDevice}

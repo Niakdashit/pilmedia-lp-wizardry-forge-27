@@ -45,18 +45,26 @@ const WheelPreviewContent: React.FC<WheelPreviewContentProps> = ({
   showValidationMessage,
   onWheelClick
 }) => {
-  const getContainerStyle = () => {
-    const baseStyle = {
-      position: 'relative' as const,
+  // Assurer que le canvas ne dépasse jamais du conteneur
+  const constrainedCanvasSize = Math.min(
+    canvasSize,
+    containerWidth - 20,
+    containerHeight - 20
+  );
+
+  const getContainerStyle = (): React.CSSProperties => {
+    return {
+      position: 'relative',
       width: containerWidth,
       height: containerHeight,
-      overflow: shouldCropWheel ? 'hidden' : 'visible',
+      maxWidth: containerWidth,
+      maxHeight: containerHeight,
+      overflow: 'hidden',
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'center'
+      justifyContent: 'center',
+      boxSizing: 'border-box'
     };
-
-    return baseStyle;
   };
 
   const getWheelOffset = () => {
@@ -64,11 +72,11 @@ const WheelPreviewContent: React.FC<WheelPreviewContentProps> = ({
     
     switch (gamePosition) {
       case 'left':
-        return { left: -canvasSize * 0.4, top: 0 };
+        return { left: -constrainedCanvasSize * 0.4, top: 0 };
       case 'right':
-        return { left: canvasSize * 0.4, top: 0 };
+        return { left: constrainedCanvasSize * 0.4, top: 0 };
       case 'bottom':
-        return { left: 0, top: canvasSize * 0.3 };
+        return { left: 0, top: constrainedCanvasSize * 0.3 };
       default:
         return { left: 0, top: 0 };
     }
@@ -82,8 +90,8 @@ const WheelPreviewContent: React.FC<WheelPreviewContentProps> = ({
       <div 
         style={{
           position: 'absolute',
-          width: canvasSize - 20,
-          height: canvasSize - 20,
+          width: constrainedCanvasSize - 20,
+          height: constrainedCanvasSize - 20,
           left: wheelOffset.left + 10,
           top: wheelOffset.top + 15,
           borderRadius: '50%',
@@ -97,11 +105,18 @@ const WheelPreviewContent: React.FC<WheelPreviewContentProps> = ({
         formValidated={formValidated}
         onWheelClick={onWheelClick}
       >
-        <div style={{
-          position: 'relative',
-          left: wheelOffset.left,
-          top: wheelOffset.top
-        }}>
+        <div 
+          style={{
+            position: 'relative',
+            left: wheelOffset.left,
+            top: wheelOffset.top,
+            width: constrainedCanvasSize,
+            height: constrainedCanvasSize,
+            maxWidth: constrainedCanvasSize,
+            maxHeight: constrainedCanvasSize,
+            overflow: 'hidden'
+          }}
+        >
           <WheelCanvas
             segments={segments}
             rotation={rotation}
@@ -111,22 +126,22 @@ const WheelPreviewContent: React.FC<WheelPreviewContentProps> = ({
             customColors={customColors}
             borderColor={borderColor}
             borderOutlineColor={borderOutlineColor}
-            canvasSize={canvasSize}
+            canvasSize={constrainedCanvasSize}
             offset="0px"
           />
           
           <WheelDecorations
             theme={theme}
-            canvasSize={canvasSize}
+            canvasSize={constrainedCanvasSize}
             shouldCropWheel={shouldCropWheel}
             gamePosition={gamePosition}
           />
           
           <WheelPointer
-            canvasSize={canvasSize}
+            canvasSize={constrainedCanvasSize}
             shouldCropWheel={shouldCropWheel}
             gamePosition={gamePosition}
-            pointerSize={pointerSize}
+            pointerSize={Math.min(pointerSize, constrainedCanvasSize / 20)}
           />
         </div>
       </WheelInteractionHandler>
