@@ -16,7 +16,7 @@ interface EditorMobilePanelProps {
   campaignType: CampaignType;
 }
 
-const EditorMobilePanel: React.FC<EditorMobilePanelProps> = ({
+const EditorMobilePanelProps: React.FC<EditorMobilePanelProps> = ({
   isOpen,
   onClose,
   activeTab,
@@ -66,7 +66,7 @@ const EditorMobilePanel: React.FC<EditorMobilePanelProps> = ({
               {/* Panel content */}
               <div className="flex-1 overflow-y-auto min-w-0">
                 <ModernEditorPanel
-                  activeStep={activeTab}
+                  activeTab={activeTab}
                   campaign={campaign}
                   setCampaign={setCampaign}
                 />
@@ -79,4 +79,4 @@ const EditorMobilePanel: React.FC<EditorMobilePanelProps> = ({
   );
 };
 
-export default EditorMobilePanel;
+export default EditorMobilePanelProps;
