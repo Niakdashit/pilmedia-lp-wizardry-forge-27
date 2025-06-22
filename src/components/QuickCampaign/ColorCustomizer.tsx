@@ -10,50 +10,6 @@ const DEFAULT_COLORS = {
   accent: "#93C5FD"
 };
 
-const PRESET_PALETTES = [{
-  name: "Bleu",
-  colors: {
-    primary: "#3B82F6",
-    secondary: "#60A5FA",
-    accent: "#93C5FD"
-  }
-}, {
-  name: "Violet",
-  colors: {
-    primary: "#8B5CF6",
-    secondary: "#A78BFA",
-    accent: "#C4B5FD"
-  }
-}, {
-  name: "Vert",
-  colors: {
-    primary: "#10B981",
-    secondary: "#34D399",
-    accent: "#6EE7B7"
-  }
-}, {
-  name: "Rouge",
-  colors: {
-    primary: "#EF4444",
-    secondary: "#F87171",
-    accent: "#FCA5A5"
-  }
-}, {
-  name: "Orange",
-  colors: {
-    primary: "#F59E0B",
-    secondary: "#FBBF24",
-    accent: "#FCD34D"
-  }
-}, {
-  name: "Rose",
-  colors: {
-    primary: "#EC4899",
-    secondary: "#F472B6",
-    accent: "#F9A8D4"
-  }
-}];
-
 const ColorCustomizer: React.FC = () => {
   const {
     customColors,
