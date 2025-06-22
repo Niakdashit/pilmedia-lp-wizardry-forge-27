@@ -72,7 +72,7 @@ const Gamification: React.FC = () => {
         actions={
           <div className="flex gap-x-4">
             <Link
-              to="/modern-wizard"
+              to="/modern-campaign/new"
               className="inline-flex items-center px-6 py-2.5 bg-[#841b60] text-white font-semibold rounded-xl hover:bg-[#6d164f] transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-base"
             >
               <Plus className="w-5 h-5 mr-2" />
@@ -105,8 +105,8 @@ const Gamification: React.FC = () => {
                   <div className="p-4">
                     <h3 className="font-bold text-gray-800 mb-1">{game.name}</h3>
                     <p className="text-sm text-gray-600 mb-4">{game.description}</p>
-                    <Link 
-                      to={`/modern-wizard?type=${game.type}`} 
+                    <Link
+                      to={`/modern-campaign/new?type=${game.type}`}
                       className="w-full px-4 py-2 bg-gray-100 text-gray-800 font-medium rounded-lg hover:bg-gray-200 transition-colors duration-200 block text-center"
                     >
                       Créer une campagne
