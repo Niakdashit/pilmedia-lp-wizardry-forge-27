@@ -1,4 +1,3 @@
-
 import React from 'react';
 import ModernGeneralTab from './ModernGeneralTab';
 import ModernGameTab from './ModernGameTab';
@@ -11,16 +10,12 @@ interface ModernEditorPanelProps {
   activeStep: string;
   campaign: any;
   setCampaign: (updater: (prev: any) => any) => void;
-  onNextStep?: () => void;
-  onPrevStep?: () => void;
 }
 
 const ModernEditorPanel: React.FC<ModernEditorPanelProps> = ({
   activeStep,
   campaign,
-  setCampaign,
-  onNextStep,
-  onPrevStep
+  setCampaign
 }) => {
   // Ensure campaign has default structure to prevent undefined errors
   const safeSetCampaign = (updater: any) => {
