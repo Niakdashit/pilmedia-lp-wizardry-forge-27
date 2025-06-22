@@ -118,18 +118,18 @@ const PreviewContent: React.FC<PreviewContentProps> = ({
   };
 
   return (
-    <div className="flex-1 overflow-auto">
-      <div className="w-full h-full flex items-center justify-center p-4">
+    <div className="flex-1 overflow-hidden">
+      <div className="w-full h-full flex items-center justify-center p-4 overflow-hidden">
         {selectedDevice === 'desktop' ? (
           <CampaignPreviewFrame selectedDevice={selectedDevice}>
-            <div className="w-full h-full flex items-center justify-center">
+            <div className="w-full h-full flex items-center justify-center overflow-hidden">
               {getFunnelComponent()}
             </div>
           </CampaignPreviewFrame>
         ) : (
           <DeviceFrame device={selectedDevice}>
             <CampaignPreviewFrame selectedDevice={selectedDevice}>
-              <div className="w-full h-full flex items-center justify-center">
+              <div className="w-full h-full flex items-center justify-center overflow-hidden">
                 {getFunnelComponent()}
               </div>
             </CampaignPreviewFrame>

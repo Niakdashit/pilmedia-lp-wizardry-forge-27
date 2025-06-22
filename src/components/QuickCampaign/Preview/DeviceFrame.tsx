@@ -16,7 +16,7 @@ const DEVICE_DIMENSIONS = {
 const DeviceFrame: React.FC<DeviceFrameProps> = ({ device, children }) => {
   if (device === 'desktop') {
     return (
-      <div className="flex items-center justify-center w-full h-full">
+      <div className="flex items-center justify-center w-full h-full overflow-hidden">
         {children}
       </div>
     );
@@ -44,23 +44,23 @@ const DeviceFrame: React.FC<DeviceFrameProps> = ({ device, children }) => {
 
   return (
     <div
-      className="relative w-full h-full flex items-center justify-center"
+      className="relative w-full h-full flex items-center justify-center overflow-hidden"
       style={{
         padding: FRAME_PADDING,
         boxSizing: 'border-box',
       }}
     >
       <div
-        className={`${styles.frame} flex items-center justify-center`}
+        className={`${styles.frame} flex items-center justify-center overflow-hidden`}
         style={{
           maxWidth: '90%',
           maxHeight: '90%',
           aspectRatio: aspect.toString(),
         }}
       >
-        <div className={`${styles.inner} flex items-center justify-center w-full h-full`}>
+        <div className={`${styles.inner} flex items-center justify-center w-full h-full overflow-hidden`}>
           <div className={`${styles.screen} w-full h-full flex flex-col`}>
-            {/* Éléments spécifiques à chaque device */}
+            {/* Device-specific elements */}
             {device === 'mobile' && (
               <>
                 {/* Notch */}
@@ -89,9 +89,11 @@ const DeviceFrame: React.FC<DeviceFrameProps> = ({ device, children }) => {
               <div className="absolute bottom-1 left-1/2 transform -translate-x-1/2 w-24 h-1 bg-gray-400 rounded-full z-20"></div>
             )}
 
-            {/* Contenu avec scroll */}
-            <div className="flex-1 w-full h-full overflow-auto relative z-10">
-              {children}
+            {/* Content with strict overflow control */}
+            <div className="flex-1 w-full h-full overflow-hidden relative z-10">
+              <div className="w-full h-full overflow-hidden">
+                {children}
+              </div>
             </div>
           </div>
         </div>

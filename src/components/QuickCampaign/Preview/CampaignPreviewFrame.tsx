@@ -20,9 +20,10 @@ const CampaignPreviewFrame: React.FC<CampaignPreviewFrameProps> = ({
       minHeight: selectedDevice === 'desktop' ? '500px' : '400px',
       backgroundColor: '#ffffff',
       position: 'relative' as const,
-      overflow: 'hidden' as const,
+      overflow: 'hidden' as const, // Always hidden to prevent overflow
       display: 'flex',
-      flexDirection: 'column' as const
+      flexDirection: 'column' as const,
+      boxSizing: 'border-box' as const
     };
 
     if (backgroundImageUrl) {
@@ -40,9 +41,9 @@ const CampaignPreviewFrame: React.FC<CampaignPreviewFrameProps> = ({
 
   return (
     <div style={getContainerStyle()}>
-      <div className="flex-1 relative">
-        <div className="w-full h-full flex items-center justify-center p-4">
-          <div className={`w-full ${selectedDevice === 'desktop' ? 'max-w-6xl' : 'max-w-full'}`}>
+      <div className="flex-1 relative overflow-hidden">
+        <div className="w-full h-full flex items-center justify-center p-4 overflow-hidden">
+          <div className={`w-full overflow-hidden ${selectedDevice === 'desktop' ? 'max-w-6xl' : 'max-w-full'}`}>
             {children}
           </div>
         </div>

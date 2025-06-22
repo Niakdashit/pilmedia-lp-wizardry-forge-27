@@ -32,9 +32,11 @@ const WheelContainer: React.FC<WheelContainerProps> = ({
       width: '100%',
       height: '100%',
       minHeight: '300px',
-      overflow: shouldCropWheel ? 'hidden' : 'visible',
+      overflow: 'hidden', // Always hidden to prevent overflow
       padding: '20px',
-      boxSizing: 'border-box'
+      boxSizing: 'border-box',
+      maxWidth: '100%',
+      maxHeight: '100%'
     };
 
     // For cropped mobile views, adjust the container
@@ -43,22 +45,22 @@ const WheelContainer: React.FC<WheelContainerProps> = ({
         case 'left':
           return {
             ...baseStyle,
-            width: `${gameDimensions.width / 2}px`,
-            clipPath: 'inset(0 0 0 50%)',
+            width: `${Math.min(gameDimensions.width / 2, 300)}px`,
+            maxWidth: `${Math.min(gameDimensions.width / 2, 300)}px`,
             justifyContent: 'flex-start'
           };
         case 'right':
           return {
             ...baseStyle,
-            width: `${gameDimensions.width / 2}px`,
-            clipPath: 'inset(0 50% 0 0)',
+            width: `${Math.min(gameDimensions.width / 2, 300)}px`,
+            maxWidth: `${Math.min(gameDimensions.width / 2, 300)}px`,
             justifyContent: 'flex-end'
           };
         case 'bottom':
           return {
             ...baseStyle,
-            height: `${gameDimensions.height / 2}px`,
-            clipPath: 'inset(0 0 50% 0)',
+            height: `${Math.min(gameDimensions.height / 2, 300)}px`,
+            maxHeight: `${Math.min(gameDimensions.height / 2, 300)}px`,
             alignItems: 'flex-end'
           };
       }
@@ -69,7 +71,9 @@ const WheelContainer: React.FC<WheelContainerProps> = ({
 
   return (
     <div style={getContainerStyles()}>
-      {children}
+      <div className="w-full h-full overflow-hidden flex flex-col items-center justify-center">
+        {children}
+      </div>
     </div>
   );
 };
