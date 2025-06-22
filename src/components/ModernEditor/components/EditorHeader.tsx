@@ -26,11 +26,11 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
   const navigate = useNavigate();
 
   return (
-    <div className="bg-white/95 backdrop-blur-sm border-b border-gray-100 flex-shrink-0 z-50">
+    <div className="bg-white border-b border-gray-200 flex-shrink-0 z-50">
       <div className="px-6 py-4">
         <div className="flex items-center justify-between">
-          {/* Left section - aligné avec le sidebar */}
-          <div className="flex items-center space-x-4 w-80 flex-shrink-0">
+          {/* Left section */}
+          <div className="flex items-center space-x-4">
             <button
               onClick={() => navigate('/gamification')}
               className="p-2 hover:bg-gray-50 rounded-xl transition-colors group"
@@ -39,10 +39,10 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
             </button>
             <div className="flex-1 min-w-0">
               <h1 className="text-xl font-bold text-gray-900 truncate">
-                {campaign.name || (isNewCampaign ? 'Nouvelle Campagne' : 'Campagne')}
+                {campaign.name || (isNewCampaign ? 'Nouvel Éditeur' : 'Éditeur')}
               </h1>
               <div className="flex items-center space-x-2 text-sm text-gray-500">
-                <span>Dernière modification: maintenant</span>
+                <span>{campaign.type || 'Quiz Interactif'}</span>
                 <span>•</span>
                 <span className={`px-2 py-1 rounded-full text-xs ${
                   campaign.status === 'published' 
@@ -55,8 +55,8 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
             </div>
           </div>
 
-          {/* Center section - Device buttons dans la zone centrale */}
-          <div className="flex items-center justify-center flex-1">
+          {/* Center section - Device buttons */}
+          <div className="flex items-center justify-center">
             <PreviewDeviceButtons 
               selectedDevice={selectedDevice}
               onDeviceChange={onDeviceChange}
@@ -64,7 +64,7 @@ const EditorHeader: React.FC<EditorHeaderProps> = ({
           </div>
 
           {/* Right section - Actions */}
-          <div className="flex items-center space-x-3 flex-shrink-0">
+          <div className="flex items-center space-x-3">
             <button
               onClick={onPreview}
               className="flex items-center space-x-2 px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-50 rounded-lg transition-all"
